@@ -1,0 +1,1 @@
+CC0 zakończona: repo przygotowane, legacy/marka/ czeka na logo SVG. Następna sesja: CC1 (szkielet aplikacji).
