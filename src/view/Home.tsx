@@ -1,102 +1,65 @@
 import { Header } from './Header';
+import { SearchField } from './ui/SearchField';
+import { Annotate } from './annotation/Annotate';
+import { AnnotationProvider } from './annotation/AnnotationProvider';
+import { UNIT_COUNTS } from '@/core/units/counts';
 
 export function Home() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <AnnotationProvider>
+      <div className="min-h-screen flex flex-col bg-kalka text-tusz overflow-x-hidden">
+        <Header />
 
-      <main className="flex-grow p-4 md:p-8 max-w-4xl mx-auto w-full">
-        <section className="mb-12">
-          <h1 className="text-4xl font-[800] leading-[1.05] tracking-[-0.02em] mb-4">
-            Faktografia Atlas
-          </h1>
-          <p className="text-lg font-[500] leading-[1.3] mb-6">
-            Mapa Polski z danymi GUS. W budowie.
-          </p>
-          <p className="max-w-[70ch]">
-            Faktografia sprawdza fakty, więc jej językiem jest korekta: dane są czyste i spokojne,
-            a uwagę kieruje ręczny, lekko nierówny znak czerwonym. Ta nierówność jest celowa.
-          </p>
-        </section>
+        <main className="flex-grow flex flex-col md:flex-row items-center justify-between p-6 md:p-12 lg:px-16 gap-8 max-w-[1440px] mx-auto w-full">
+          {/* Left section (max-w-[560px]) */}
+          <section className="w-full md:max-w-[560px] flex flex-col gap-6 z-10">
+            <h1 className="text-3xl md:text-5xl font-[800] leading-[1.05] tracking-[-0.02em]">
+              Mapa Polski z danymi GUS
+            </h1>
 
-        <section className="mb-12">
-          <h2 className="text-xl font-[700] mb-6">Skala typograficzna</h2>
+            <p className="text-md md:text-lg font-[500] leading-[1.3]">
+              {UNIT_COUNTS.woj} województw, {UNIT_COUNTS.pow} powiatów i{' '}
+              <Annotate type="underline">{UNIT_COUNTS.gmi} gmin</Annotate>. Dane z Banku Danych Lokalnych, aktualizowane co noc.
+            </p>
 
-          <div className="space-y-4">
-            <div>
-              <div className="text-olowek text-xs mb-1">76 px (800)</div>
-              <div className="text-5xl font-[800] leading-[1.05] tracking-[-0.02em]">Wielki Tytuł</div>
+            <div className="flex flex-col gap-2 w-full max-w-[480px] pt-2">
+              <div className="relative flex items-center w-full">
+                <SearchField
+                  id="home-search-field"
+                  label="Szukaj miejsca"
+                  placeholder="Wpisz nazwę gminy, powiatu albo miejscowości"
+                  className="pr-20"
+                  readOnly
+                />
+                <span className="absolute right-3 bottom-2.5 pointer-events-none px-1.5 py-0.5 border border-linia bg-arkusz text-olowek text-xs font-mono">
+                  Ctrl K
+                </span>
+              </div>
+              <p className="text-xs text-olowek">albo kliknij region na mapie</p>
             </div>
-            <div>
-              <div className="text-olowek text-xs mb-1">61 px (800)</div>
-              <div className="text-4xl font-[800] leading-[1.05] tracking-[-0.02em]">Nagłówek 1</div>
-            </div>
-            <div>
-              <div className="text-olowek text-xs mb-1">49 px (800) tabular-nums</div>
-              <div className="text-3xl font-[800] leading-[1.0] tabular-nums">1 234 567</div>
-            </div>
-            <div>
-              <div className="text-olowek text-xs mb-1">39 px (700)</div>
-              <div className="text-2xl font-[700] leading-[1.15]">Nagłówek 2</div>
-            </div>
-            <div>
-              <div className="text-olowek text-xs mb-1">31 px (700)</div>
-              <div className="text-xl font-[700] leading-[1.15]">Nagłówek 3</div>
-            </div>
-            <div>
-              <div className="text-olowek text-xs mb-1">25 px (500)</div>
-              <div className="text-lg font-[500] leading-[1.3]">Podtytuł</div>
-            </div>
-            <div>
-              <div className="text-olowek text-xs mb-1">20 px (500)</div>
-              <div className="text-md font-[500] leading-[1.3]">Mniejszy podtytuł</div>
-            </div>
-            <div>
-              <div className="text-olowek text-xs mb-1">17 px (400)</div>
-              <div className="text-sm font-[400] leading-[1.6]">Tekst zwykły. Zdania pisane normalnie, wielka litera tylko na początku.</div>
-            </div>
-            <div>
-              <div className="text-olowek text-xs mb-1">13 px (400)</div>
-              <div className="text-xs font-[400] text-olowek leading-[1.5]">Drobny tekst, źródła. Źródło: GUS, Bank Danych Lokalnych.</div>
-            </div>
-          </div>
-        </section>
 
-        <section className="mb-12">
-          <h2 className="text-xl font-[700] mb-6">Liczby w kolumnach (Mono)</h2>
-          <div className="font-mono text-sm flex flex-col gap-2 bg-arkusz p-4 border border-linia inline-flex">
-            <div>TERYT: 1217011</div>
-            <div>TERYT: 1465011</div>
-            <div>TERYT: 0264011</div>
-          </div>
-        </section>
+            <p className="text-xs font-[400] text-olowek leading-[1.5] pt-6 md:pt-12">
+              Źródło: GUS, Bank Danych Lokalnych. Licencja CC BY 4.0. Granice jednostek: domena publiczna.
+            </p>
+          </section>
 
-        <section className="mb-12">
-          <h2 className="text-xl font-[700] mb-6">Kolory (Kalka i korekta)</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <ColorSwatch name="kalka" bg="bg-kalka" text="text-tusz" />
-            <ColorSwatch name="arkusz" bg="bg-arkusz" text="text-tusz" />
-            <ColorSwatch name="tusz" bg="bg-tusz" text="text-kalka" />
-            <ColorSwatch name="olowek" bg="bg-olowek" text="text-kalka" />
-
-            <ColorSwatch name="korekta" bg="bg-korekta" text="text-white" />
-            <ColorSwatch name="korekta-tekst" bg="bg-korekta-tekst" text="text-white" />
-            <ColorSwatch name="ochra" bg="bg-ochra" text="text-white" />
-            <ColorSwatch name="ochra-tekst" bg="bg-ochra-tekst" text="text-white" />
-          </div>
-        </section>
-      </main>
-    </div>
-  );
-}
-
-function ColorSwatch({ name, bg }: { name: string, bg: string, text: string }) {
-  return (
-    <div className="flex flex-col border border-linia">
-      <div className={`h-24 ${bg}`}></div>
-      <div className={`p-2 bg-arkusz text-tusz text-xs border-t border-linia`}>
-        --{name}
+          {/* Right section (kalka SVG mask) */}
+          <div
+            className="w-full md:w-[calc(100%-560px)] h-[320px] md:h-[580px] bg-tusz flex-shrink-0"
+            style={{
+              maskImage: 'url(/geo/kalka.svg)',
+              maskRepeat: 'no-repeat',
+              maskPosition: 'center',
+              maskSize: 'contain',
+              WebkitMaskImage: 'url(/geo/kalka.svg)',
+              WebkitMaskRepeat: 'no-repeat',
+              WebkitMaskPosition: 'center',
+              WebkitMaskSize: 'contain',
+            }}
+            aria-hidden="true"
+          />
+        </main>
       </div>
-    </div>
+    </AnnotationProvider>
   );
 }

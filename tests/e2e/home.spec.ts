@@ -1,17 +1,111 @@
 import { test, expect } from '@playwright/test';
+import { AxeBuilder } from '@axe-core/playwright';
 
 test.describe('Home Page', () => {
-  test('loads properly and shows title', async ({ page }) => {
+  test('loads properly, displays heading and subtitle with correct numbers', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveTitle(/Faktografia Atlas/);
 
-    // Check for logo
     const logo = page.locator('img[alt="Faktografia"]');
     await expect(logo).toBeVisible();
 
-    // Check for main heading
-    const heading = page.locator('h1', { hasText: 'Faktografia Atlas' });
+    const heading = page.locator('h1', { hasText: 'Mapa Polski z danymi GUS' });
     await expect(heading).toBeVisible();
+
+    const subtitle = page.locator('main');
+    await expect(subtitle).toContainText('16 województw, 380 powiatów i 2479 gmin. Dane z Banku Danych Lokalnych, aktualizowane co noc.');
+  });
+
+  test('logo switches in light/dark mode and ?logo=znak replaces logo with mark', async ({ page }) => {
+    await page.goto('/?logo=znak');
+
+    const logoZnak = page.locator('header img[alt="Faktografia"]');
+    const themeButton = page.locator('header button', { hasText: 'Motyw:' }).first();
+
+    // Force light mode
+    await themeButton.click(); // Jasny
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await expect(logoZnak).toHaveAttribute('src', '/brand/faktografia-znak-granat.svg');
+
+    // Switch to dark mode
+    await themeButton.click(); // Ciemny
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await expect(logoZnak).toHaveAttribute('src', '/brand/faktografia-znak-jasne.svg');
+
+    // Remove ?logo=znak, verify standard logo
+    await page.goto('/');
+    const logo = page.locator('header img[alt="Faktografia"]');
+    await expect(logo).toHaveAttribute('src', '/brand/faktografia-logo-jasne.svg');
+  });
+
+  test('header links navigate to working pages on desktop', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+
+    await page.locator('header nav').getByRole('link', { name: 'O projekcie' }).click();
+    await expect(page).toHaveURL(/\/o-projekcie/);
+    await expect(page.locator('h1', { hasText: 'O projekcie' })).toBeVisible();
+
+    await page.locator('header nav').getByRole('link', { name: 'Skąd są dane' }).click();
+    await expect(page).toHaveURL(/\/zrodla/);
+    await expect(page.locator('h1', { hasText: 'Skąd są dane' })).toBeVisible();
+  });
+
+  test('mobile menu in Sheet works with keyboard and closes on Escape', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    const menuBtn = page.locator('header button[aria-label="Menu"]');
+    await expect(menuBtn).toBeVisible();
+
+    await menuBtn.click();
+    const aboutLink = page.locator('header').getByRole('link', { name: 'O projekcie' });
+    await expect(aboutLink).toBeVisible();
+
+    // Close on Escape
+    await page.keyboard.press('Escape');
+    await expect(aboutLink).not.toBeVisible();
+
+    // Open and click link
+    await menuBtn.click();
+    await expect(aboutLink).toBeVisible();
+    await aboutLink.click();
+    await expect(page).toHaveURL(/\/o-projekcie/);
+  });
+
+  test('has exactly one visible annotation on /', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(700); // Allow rough-notation animation to initialize
+    const annotations = page.locator('svg.rough-annotation');
+    await expect(annotations).toHaveCount(1);
+  });
+
+  test('no horizontal scroll at 390px viewport width', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    const isNotHorizontallyScrollable = await page.evaluate(() => {
+      return document.documentElement.scrollWidth <= document.documentElement.clientWidth;
+    });
+    expect(isNotHorizontallyScrollable).toBe(true);
+  });
+
+  test('axe accessibility audits pass in light and dark mode on /, /o-projekcie, and /zrodla', async ({ page }) => {
+    const paths = ['/', '/o-projekcie', '/zrodla'];
+
+    for (const path of paths) {
+      // Light mode
+      await page.goto(path);
+      let results = await new AxeBuilder({ page }).analyze();
+      expect(results.violations, `Axe violations on ${path} (light)`).toEqual([]);
+
+      // Dark mode
+      await page.addInitScript(() => {
+        localStorage.setItem('faktografia-theme', 'dark');
+      });
+      await page.goto(path);
+      results = await new AxeBuilder({ page }).analyze();
+      expect(results.violations, `Axe violations on ${path} (dark)`).toEqual([]);
+    }
   });
 
   test('prefers dark theme from localStorage set via addInitScript', async ({ page }) => {
@@ -22,14 +116,14 @@ test.describe('Home Page', () => {
     await page.goto('/');
 
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    const logo = page.locator('img[alt="Faktografia"]');
+    const logo = page.locator('header img[alt="Faktografia"]');
     await expect(logo).toHaveAttribute('src', '/brand/faktografia-logo-jasne.svg');
   });
 
   test('theme switcher button touch target is at least 44x44 px', async ({ page }) => {
     await page.goto('/');
 
-    const themeButton = page.locator('button', { hasText: 'Motyw:' });
+    const themeButton = page.locator('header button', { hasText: 'Motyw:' }).first();
     await expect(themeButton).toBeVisible();
 
     const box = await themeButton.boundingBox();
@@ -72,22 +166,18 @@ test.describe('Home Page', () => {
   test('theme switcher works', async ({ page }) => {
     await page.goto('/');
 
-    const themeButton = page.locator('button', { hasText: 'Motyw:' });
+    const themeButton = page.locator('header button', { hasText: 'Motyw:' }).first();
     await expect(themeButton).toBeVisible();
 
-    // Force click to cycle theme.
-    // Initial is system. Click -> light
     await themeButton.click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
     await expect(themeButton).toContainText('Motyw: Jasny');
 
-    // Click -> dark
     await themeButton.click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await expect(themeButton).toContainText('Motyw: Ciemny');
 
-    // Logo should switch to light version in dark mode
-    const logo = page.locator('img[alt="Faktografia"]');
+    const logo = page.locator('header img[alt="Faktografia"]');
     await expect(logo).toHaveAttribute('src', '/brand/faktografia-logo-jasne.svg');
   });
 
