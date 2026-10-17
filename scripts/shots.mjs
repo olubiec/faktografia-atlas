@@ -6,10 +6,35 @@ import path from 'path';
 const configPath = path.resolve('scripts/shots.config.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
+async function waitForServer(url, timeout = 30000) {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return true;
+    } catch {
+      await new Promise((r) => setTimeout(r, 500));
+    }
+  }
+  return false;
+}
+
 async function run() {
+  console.log('Starting preview server...');
+  const server = spawn('npx', ['vite', 'preview', '--port', '4173'], { stdio: 'inherit' });
+
+  const serverReady = await waitForServer('http://localhost:4173');
+  if (!serverReady) {
+    console.error('Server failed to start');
+    server.kill();
+    process.exit(1);
+  }
+
+  const browser = await chromium.launch();
+
   const viewports = [
     { name: 'desktop', width: 1440, height: 900 },
-    { name: 'mobile', width: 390, height: 844 }
+    { name: 'mobile', width: 390, height: 844 },
   ];
 
   const themes = ['light', 'dark'];
@@ -19,85 +44,21 @@ async function run() {
     fs.mkdirSync(outDir, { recursive: true });
   }
 
-  let baseUrl = 'http://localhost:4173';
-  let server = null;
-
-  try {
-    const res = await fetch('http://localhost:4173');
-    if (res.ok || res.status === 200) {
-      console.log('Preview server already running on port 4173.');
-    } else {
-      throw new Error('Not running');
-    }
-  } catch {
-    console.log('Starting preview server...');
-    const viteBin = path.resolve('node_modules/.bin/vite');
-    server = spawn(viteBin, ['preview', '--port', '4173'], {
-      stdio: ['ignore', 'pipe', 'pipe'],
-      env: { ...process.env, NO_COLOR: '1', FORCE_COLOR: '0' }
-    });
-
-    baseUrl = await new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        reject(new Error('Server start timed out after 30s'));
-      }, 30000);
-
-      const onData = (data) => {
-        const text = data.toString();
-        process.stdout.write(text);
-
-        // Strip non-printable characters for clean matching
-        const cleanText = text.replace(/[^\x20-\x7E\s]/g, '');
-        const match = cleanText.match(/http:\/\/[^\s:]+:(\d+)/);
-        if (match) {
-          clearTimeout(timeout);
-          resolve(`http://localhost:${match[1]}`);
-        }
-      };
-
-      server.stdout.on('data', onData);
-      server.stderr.on('data', (d) => process.stderr.write(d));
-      server.on('error', (err) => {
-        clearTimeout(timeout);
-        reject(err);
-      });
-    });
-  }
-
-  let ready = false;
-  for (let i = 0; i < 30; i++) {
-    try {
-      await fetch(baseUrl);
-      ready = true;
-      break;
-    } catch {
-      await new Promise(r => setTimeout(r, 500));
-    }
-  }
-
-  if (!ready) {
-    if (server) server.kill();
-    throw new Error(`Server at ${baseUrl} is not responding`);
-  }
-
-  const browser = await chromium.launch();
-
   for (const view of config) {
     for (const vp of viewports) {
       for (const theme of themes) {
         console.log(`Taking screenshot: ${view.name} - ${vp.name} - ${theme}`);
         const context = await browser.newContext({
           viewport: { width: vp.width, height: vp.height },
-          colorScheme: theme
+          colorScheme: theme,
         });
 
         const page = await context.newPage();
-        await page.goto(`${baseUrl}${view.url}`);
-        // ensure theme sets on load
-        await page.evaluate(() => {
-          localStorage.setItem('faktografia-theme', 'system');
-        });
-        await page.waitForTimeout(500); // allow render
+        await page.goto(`http://localhost:4173${view.url}`);
+        await page.evaluate((t) => {
+          document.documentElement.setAttribute('data-theme', t);
+        }, theme);
+        await page.waitForTimeout(500);
 
         const fileName = `${view.name === 'home' ? '' : view.name + '-'}${vp.name}-${theme}.jpg`;
         await page.screenshot({ path: path.join(outDir, fileName), type: 'jpeg', quality: 80 });
@@ -106,14 +67,40 @@ async function run() {
     }
   }
 
-  await browser.close();
-  if (server) {
-    server.kill();
+  // Zrzuty ekranu poszczególnych typów zakreśleń z /__test/annotation
+  const types = ['circle', 'underline', 'bracket', 'box'];
+  for (const type of types) {
+    for (const theme of themes) {
+      console.log(`Taking annotation screenshot: ${type} - ${theme}`);
+      const context = await browser.newContext({
+        viewport: { width: 1200, height: 800 },
+        colorScheme: theme,
+      });
+
+      const page = await context.newPage();
+      await page.goto('http://localhost:4173/__test/annotation');
+      await page.evaluate((t) => {
+        document.documentElement.setAttribute('data-theme', t);
+      }, theme);
+      await page.waitForTimeout(300);
+
+      // Kliknij odpowiedni przycisk zakreślenia
+      const btnName = `Pokaż ${type}`;
+      await page.getByRole('button', { name: btnName }).click();
+      await page.waitForTimeout(700); // Czas na animację zakreślenia (600ms)
+
+      const fileName = `annotation-${type}-${theme}.png`;
+      await page.screenshot({ path: path.join(outDir, fileName) });
+      await context.close();
+    }
   }
+
+  await browser.close();
+  server.kill();
   console.log('Screenshots completed.');
 }
 
-run().catch(err => {
+run().catch((err) => {
   console.error(err);
   process.exit(1);
 });
