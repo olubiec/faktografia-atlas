@@ -22,8 +22,8 @@ Testy na main: 34 jednostkowe, 14 e2e.
 
 | Zadanie | Zgłoszenie | Uwagi |
 |---|---|---|
-| CC3.2 lista jednostek (units.json) | #24 | Jules |
-| CC2.4 strona /design + wzorce zrzutów | #25 | Jules; po PR właściciel uruchamia „Update snapshots” w Actions |
+| CC3.2 lista jednostek (units.json) | #24 | PR #27 po przeglądzie, gotowy do scalenia |
+| CC2.4 strona /design + wzorce zrzutów | #25 | PR #28: wzorce zrzutów przez etykietę `aktualizuj-zrzuty` |
 | CC1.5 makiety 4 ekranów | — | Claude; płótno „Faktografia Atlas – makiety”, czeka na akceptację, potem PNG do docs/design/ |
 
 ## Następne
@@ -41,4 +41,5 @@ Testy na main: 34 jednostkowe, 14 e2e.
 
 - Przed CC6.4: klucz `BDL_CLIENT_ID` w sekretach GitHub i w ustawieniach repo w Julesie.
 - Przed CC11: klucz PostHog.
-- Decyzja: czy repo ma być publiczne (bezpłatny CodeRabbit, ochrona gałęzi main).
+- Decyzja: czy repo ma być publiczne. Bez tego main nie ma ochrony (GitHub Free chroni gałęzie tylko w publicznych repo), nie ma też darmowego CodeRabbita i CodeQL.
+- Podpięcie Vercel do repo (podgląd każdego PR na telefonie).

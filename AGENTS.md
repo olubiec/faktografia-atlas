@@ -17,6 +17,12 @@ Plan: docs/MASTER_PLAN.md. Styl: docs/STYL.md + config/tokens.json. Stan: STAN_P
    lista zmienionych plików; czego nie zrobiłeś i dlaczego. Przy zmianach w UI: lista kontrolna z docs/STYL.md §12.
 4. Na koniec zapisz treść zadania jako docs/sessions/<ID>.md. NIE edytuj STAN_PROJEKTU.md, package.json ani pnpm-lock.yaml (chyba że zadanie wprost na to pozwala) — STAN aktualizuje przegląd końca sesji.
 
+## Gałąź i PR
+- Jedna gałąź od aktualnego `main`. Aktualizacja do main: TYLKO `git merge origin/main`. Bez rebase, bez zakładania gałęzi od nowa, bez `--force`.
+- Przed każdym pushem `git diff --name-status --diff-filter=D origin/main...HEAD` musi być puste: nie usuwasz niczego, co jest na main (chyba że zadanie wprost to nakazuje).
+- Zmieniasz tylko pliki z „Zakresu” zadania.
+- Wzorce zrzutów (`*-snapshots/`) powstają wyłącznie w CI: dodaj do PR etykietę `aktualizuj-zrzuty` (robi to właściciel), nie generuj ich u siebie.
+
 ## Zawsze
 - Stos: Vite + React + TypeScript strict, pnpm. Biblioteki z docs/MASTER_PLAN.md §6.
   Przed użyciem biblioteki przeczytaj jej typy w node_modules.
