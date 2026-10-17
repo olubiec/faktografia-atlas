@@ -54,7 +54,7 @@ describe('BDL API Client (Sztuczny Fetch)', () => {
 
   test('ponawia zapytanie przy HTTP 429 i 5xx z potęgującym opóźnieniem (maks 5 prób)', async () => {
     let attempts = 0;
-    const mockFetch = vi.fn().mockImplementation(async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockImplementation(async () => {
       attempts++;
       if (attempts < 3) {
         return new Response(JSON.stringify({ error: 'Too Many Requests' }), {
@@ -80,7 +80,7 @@ describe('BDL API Client (Sztuczny Fetch)', () => {
 
   test('nie ponawia zapytania przy błędach nieodnawialnych np. HTTP 404', async () => {
     let attempts = 0;
-    const mockFetch = vi.fn().mockImplementation(async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockImplementation(async () => {
       attempts++;
       return new Response('Not Found', {
         status: 404,
@@ -98,7 +98,7 @@ describe('BDL API Client (Sztuczny Fetch)', () => {
 
   test('zgłasza błąd po 5 nieudanych próbach (429 / 5xx)', async () => {
     let attempts = 0;
-    const mockFetch = vi.fn().mockImplementation(async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockImplementation(async () => {
       attempts++;
       return new Response(JSON.stringify({ error: 'Server Error' }), {
         status: 500,
@@ -108,13 +108,13 @@ describe('BDL API Client (Sztuczny Fetch)', () => {
 
     await expect(
       bdlGet('/test', {}, { fetchFn: mockFetch, initialDelayMs: 1, maxRetries: 5 })
-    ).rejects.toThrow();
+    ).rejects.toThrow('HTTP 500 Internal Server Error');
 
     expect(attempts).toBe(5);
   });
 
   test('stronicowanie pobiera dane z 3 stron', async () => {
-    const mockFetch = vi.fn().mockImplementation(async (url: string) => {
+    const mockFetch = vi.fn<typeof fetch>().mockImplementation(async (url: string) => {
       const parsedUrl = new URL(url);
       const page = parsedUrl.searchParams.get('page') || '0';
 
@@ -168,7 +168,7 @@ describe('BDL API Client (Sztuczny Fetch)', () => {
 
   test('ustawia nagłówek X-ClientId tylko gdy klucz jest ustawiony', async () => {
     let lastHeaders: Headers | null = null;
-    const mockFetch = vi.fn().mockImplementation(async (_url: string, init?: RequestInit) => {
+    const mockFetch = vi.fn<typeof fetch>().mockImplementation(async (_url: string, init?: RequestInit) => {
       lastHeaders = new Headers(init?.headers);
       return new Response(JSON.stringify({ totalRecords: 0, results: [] }), { status: 200 });
     });
@@ -188,17 +188,16 @@ describe('BDL API Client (Sztuczny Fetch)', () => {
     const SECRET = 'SECRET_KLUCZ_API_99999';
     process.env.BDL_CLIENT_ID = SECRET;
 
-    const mockFetch = vi.fn().mockImplementation(async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockImplementation(async () => {
       return new Response('Błąd serwera', { status: 500 });
     });
 
-    try {
-      await bdlGet('/test', {}, { fetchFn: mockFetch, initialDelayMs: 1, maxRetries: 1 });
-      expect.fail('Powinien zgłosić wyjątek');
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      expect(errorMessage).not.toContain(SECRET);
-    }
+    const error = await bdlGet('/test', {}, { fetchFn: mockFetch, initialDelayMs: 1, maxRetries: 1 }).catch(
+      (err: unknown) => err
+    );
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    expect(error).toBeInstanceOf(Error);
+    expect(errorMessage).not.toContain(SECRET);
   });
 });
 
@@ -206,6 +205,7 @@ describe('Architektura: brak importów klienta BDL poza src/core/bdl', () => {
   test('żaden plik w src/view ani src/core (poza src/core/bdl) nie importuje klienta BDL', () => {
     const srcDir = path.resolve(__dirname, '../../src');
 
+    const importing: string[] = [];
     function checkDir(dir: string) {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
       for (const entry of entries) {
@@ -222,14 +222,12 @@ describe('Architektura: brak importów klienta BDL poza src/core/bdl', () => {
           const importsBdl =
             /from\s+['"].*bdl(\/client)?['"]/i.test(content) ||
             /import\(['"].*bdl(\/client)?['"]\)/i.test(content);
-          expect(
-            importsBdl,
-            `Plik ${fullPath} nie powinien importować klienta BDL!`
-          ).toBe(false);
+          if (importsBdl) importing.push(fullPath);
         }
       }
     }
 
     checkDir(srcDir);
+    expect(importing, 'Te pliki nie powinny importować klienta BDL').toEqual([]);
   });
 });

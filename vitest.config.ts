@@ -3,6 +3,11 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@': import.meta.dirname + '/src',
+    },
+  },
   test: {
     environment: 'node', // for tokens.test.ts since we read files
   },
