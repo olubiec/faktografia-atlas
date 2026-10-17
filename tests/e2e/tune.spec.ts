@@ -246,6 +246,47 @@ test.describe('Tune Panel ?tune', () => {
     expect(cssMd).toBe('20px');
   });
 
+  test('re-modifying controls after Przywróć updates both CSS and input field values', async ({ page }) => {
+    await page.goto('/design?tune');
+
+    const panel = page.locator('#tune-panel-container');
+    await expect(panel).toBeVisible();
+
+    // 1. Zmień md na 22 -> "Przywróć" -> zmień md na 30 -> --text-md = 30px i pole md pokazuje 30
+    await panel.getByRole('button', { name: 'Typografia' }).click();
+    const mdInput = panel.locator('input[aria-label="md"]').first();
+    await mdInput.fill('22');
+    await mdInput.press('Enter');
+
+    await panel.getByRole('button', { name: 'Przywróć' }).click();
+
+    await mdInput.fill('30');
+    await mdInput.press('Enter');
+
+    const cssMd = await page.evaluate(() =>
+      document.documentElement.style.getPropertyValue('--text-md'),
+    );
+    expect(cssMd).toBe('30px');
+    await expect(mdInput).toHaveValue('30');
+
+    // 2. To samo dla koloru korekta
+    await panel.getByRole('button', { name: 'Kolory' }).click();
+    const korektaInput = panel.getByRole('textbox', { name: 'korekta', exact: true }).first();
+    await korektaInput.fill('#00ff00');
+    await korektaInput.press('Enter');
+
+    await panel.getByRole('button', { name: 'Przywróć' }).click();
+
+    await korektaInput.fill('#0000ff');
+    await korektaInput.press('Enter');
+
+    const cssKorekta = await page.evaluate(() =>
+      document.documentElement.style.getPropertyValue('--korekta'),
+    );
+    expect(cssKorekta).toBe('#0000ff');
+    await expect(korektaInput).toHaveValue('#0000ff');
+  });
+
   test('axe accessibility scan passes on /design?tune in light and dark mode', async ({ page }) => {
     await page.goto('/design?tune');
 
