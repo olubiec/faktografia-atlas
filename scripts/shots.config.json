@@ -1,4 +1,3 @@
 [
-  { "url": "/", "name": "home" },
-  { "url": "/__test/interactive", "name": "interactive" }
+  { "url": "/", "name": "home" }
 ]

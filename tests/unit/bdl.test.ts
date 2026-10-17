@@ -185,8 +185,8 @@ describe('BDL API Client (Sztuczny Fetch)', () => {
   });
 
   test('klucz nie pojawia się w żaden sposób w komunikatach błędu', async () => {
-    const FAKE_VALUE = 'dummy-test-value';
-    process.env.BDL_CLIENT_ID = FAKE_VALUE;
+    const SECRET = 'SECRET_KLUCZ_API_99999';
+    process.env.BDL_CLIENT_ID = SECRET;
 
     const mockFetch = vi.fn().mockImplementation(async () => {
       return new Response('Błąd serwera', { status: 500 });
@@ -197,7 +197,7 @@ describe('BDL API Client (Sztuczny Fetch)', () => {
       expect.fail('Powinien zgłosić wyjątek');
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : String(err);
-      expect(errorMessage).not.toContain(FAKE_VALUE);
+      expect(errorMessage).not.toContain(SECRET);
     }
   });
 });
