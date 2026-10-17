@@ -1,10 +1,14 @@
-name: Fetch Localities (PRNG)
+name: Fetch localities (PRNG)
 
+# Tylko ręcznie. Wynik trafia na osobną gałąź (domyślnie data/localities),
+# nigdy do main: właściciel otwiera z niej PR, a Claude sprawdza liczby.
 on:
   workflow_dispatch:
-  schedule:
-    # Uruchamianie pierwszego dnia miesiąca o godzinie 2:00 UTC
-    - cron: '0 2 1 * *'
+    inputs:
+      branch:
+        description: 'Gałąź docelowa dla public/data/localities.json (nie main)'
+        required: true
+        default: 'data/localities'
 
 permissions:
   contents: write
@@ -12,8 +16,32 @@ permissions:
 jobs:
   fetch-localities:
     runs-on: ubuntu-latest
+    env:
+      BRANCH: ${{ github.event.inputs.branch }}
     steps:
+      - name: Odmów zapisu do main
+        run: |
+          if [ "$BRANCH" = "main" ] || [ -z "$BRANCH" ]; then
+            echo "::error::Gałąź docelowa nie może być main ani pusta."
+            exit 1
+          fi
+
       - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przełącz na gałąź docelową (utwórz od main, jeśli nie istnieje)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            git fetch origin "$BRANCH"
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+            git merge --no-edit origin/main
+          else
+            git checkout -b "$BRANCH"
+          fi
 
       - uses: pnpm/action-setup@v6
 
@@ -26,16 +54,23 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Fetch PRNG localities
-        run: pnpm localities
+        run: pnpm localities --cache "$RUNNER_TEMP/prng-cache.json" | tee "$RUNNER_TEMP/localities-report.txt"
 
-      - name: Commit and push changes
+      - name: Podsumowanie zadania
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          {
+            echo "### Miejscowości (PRNG)"
+            echo '```'
+            cat "$RUNNER_TEMP/localities-report.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Zatwierdź i wypchnij tylko public/data/localities.json
+        run: |
           git add public/data/localities.json
           if git diff --staged --quiet; then
-            echo "Brak zmian w pliku public/data/localities.json."
+            echo "Brak zmian w public/data/localities.json."
           else
             git commit -m "data: update PRNG localities"
-            git push origin HEAD:${{ github.ref_name }}
+            git push origin "HEAD:refs/heads/$BRANCH"
           fi

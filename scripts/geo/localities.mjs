@@ -6,6 +6,7 @@
  */
 
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildLocalities, serialize, summarize } from './localities-parse.mjs';
@@ -26,10 +27,12 @@ export function parseArgs(argv = process.argv.slice(2)) {
     outPath: DEFAULT_OUT_PATH,
     unitsPath: DEFAULT_UNITS_PATH,
     cachePath: null,
+    outExplicit: false,
     concurrency: 5,
     limit: 150,
     timeoutMs: 15000,
-    maxRetries: 3
+    maxRetries: 5,
+    minIntervalMs: 200
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -41,6 +44,7 @@ export function parseArgs(argv = process.argv.slice(2)) {
       }
     } else if (arg === '--out' && argv[i + 1]) {
       args.outPath = path.resolve(argv[++i]);
+      args.outExplicit = true;
     } else if (arg === '--units' && argv[i + 1]) {
       args.unitsPath = path.resolve(argv[++i]);
     } else if (arg === '--cache' && argv[i + 1]) {
@@ -56,10 +60,16 @@ export function parseArgs(argv = process.argv.slice(2)) {
     args.fixture = true;
   }
 
+  // Tryb fixture nigdy nie zapisuje do public/data (są tam dane prawdziwe):
+  // bez jawnego --out wynik trafia do katalogu tymczasowego.
+  if (args.fixture && !args.outExplicit) {
+    args.outPath = path.join(os.tmpdir(), 'localities.fixture.json');
+  }
+
   return args;
 }
 
-export async function fetchWithRetry(url, options = {}, timeoutMs = 15000, maxRetries = 3) {
+export async function fetchWithRetry(url, options = {}, timeoutMs = 15000, maxRetries = 5) {
   let attempt = 0;
   while (attempt < maxRetries) {
     attempt++;
@@ -83,10 +93,39 @@ export async function fetchWithRetry(url, options = {}, timeoutMs = 15000, maxRe
   }
 }
 
-export async function fetchAllPrngFeatures({ limit = 150, concurrency = 5, timeoutMs = 15000, maxRetries = 3 } = {}) {
+/**
+ * Ogranicznik tempa: kolejne starty zapytań co najmniej `minIntervalMs` od siebie
+ * (200 ms = najwyżej 5 zapytań na sekundę), także gdy strony pobiera się równolegle.
+ */
+export function createRateLimiter(minIntervalMs = 200, now = () => Date.now(), sleep = (ms) => new Promise((r) => setTimeout(r, ms))) {
+  let nextStart = 0;
+  return async function waitTurn() {
+    const t = now();
+    const start = Math.max(t, nextStart);
+    nextStart = start + minIntervalMs;
+    if (start > t) {
+      await sleep(start - t);
+    }
+  };
+}
+
+/** Liczy wartości `rodzajObiektu` wśród obiektów z kategorii „miejscowość” (do kontroli listy STANDALONE_KINDS). */
+export function countKinds(features) {
+  const counts = {};
+  for (const f of features) {
+    const props = f?.properties ?? {};
+    if (props.kategoriaObiektu !== 'miejscowość') continue;
+    const kind = props.rodzajObiektu ?? '(brak)';
+    counts[kind] = (counts[kind] ?? 0) + 1;
+  }
+  return Object.fromEntries(Object.entries(counts).sort((a, b) => b[1] - a[1]));
+}
+
+export async function fetchAllPrngFeatures({ limit = 150, concurrency = 5, timeoutMs = 15000, maxRetries = 5, minIntervalMs = 200, fetchJson = fetchWithRetry, waitTurn = createRateLimiter(minIntervalMs) } = {}) {
+  await waitTurn();
   const initialUrl = `${PRNG_ENDPOINT}&limit=${limit}&offset=0`;
   console.log(`[PRNG] Pobieranie pierwszej strony: ${initialUrl}`);
-  const firstData = await fetchWithRetry(initialUrl, {}, timeoutMs, maxRetries);
+  const firstData = await fetchJson(initialUrl, {}, timeoutMs, maxRetries);
 
   const total = firstData?.numberMatched ?? 0;
   const initialFeatures = firstData?.features ?? [];
@@ -109,13 +148,11 @@ export async function fetchAllPrngFeatures({ limit = 150, concurrency = 5, timeo
       const pageIndex = p + b;
       const offset = pageIndex * limit;
       const pageUrl = `${PRNG_ENDPOINT}&limit=${limit}&offset=${offset}`;
+      // Błąd strony przerywa całe pobieranie: lepiej brak pliku niż plik z dziurami.
       promises.push(
-        fetchWithRetry(pageUrl, {}, timeoutMs, maxRetries)
+        waitTurn()
+          .then(() => fetchJson(pageUrl, {}, timeoutMs, maxRetries))
           .then((data) => data?.features || [])
-          .catch((err) => {
-            console.error(`[PRNG] Błąd pobierania strony offset=${offset}: ${err.message}`);
-            return [];
-          })
       );
     }
 
@@ -163,7 +200,8 @@ export async function main() {
       limit: args.limit,
       concurrency: args.concurrency,
       timeoutMs: args.timeoutMs,
-      maxRetries: args.maxRetries
+      maxRetries: args.maxRetries,
+      minIntervalMs: args.minIntervalMs
     });
 
     if (args.cachePath) {
@@ -185,6 +223,7 @@ export async function main() {
   console.log(`  - Wg rodzajów:`, stats.byKind);
   console.log(`  - Z przybliżoną pozycją (approx): ${stats.approx}`);
   console.log(`  - Pominięte obiekty: ${stats.skipped}`);
+  console.log('  - Wszystkie rodzaje obiektów w kategorii „miejscowość” (do kontroli STANDALONE_KINDS):', countKinds(rawFeatures));
 
   const jsonOutput = serialize(result.localities);
 

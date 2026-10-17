@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { parseArgs, fetchWithRetry, main } from '../../scripts/geo/localities.mjs';
+import { parseArgs, fetchWithRetry, fetchAllPrngFeatures, createRateLimiter, countKinds, main } from '../../scripts/geo/localities.mjs';
 
 describe('PRNG Localities Fetch Script', () => {
   let tmpDir: string;
@@ -97,6 +97,43 @@ describe('PRNG Localities Fetch Script', () => {
       } as Response));
 
       await expect(fetchWithRetry('https://example.com/api', {}, 100, 2)).rejects.toThrow(/Failed to fetch/);
+    });
+  });
+
+  describe('ograniczenie tempa i błędy stron', () => {
+    it('createRateLimiter rozstawia starty co najmniej o interwał (5 zapytań na sekundę)', async () => {
+      let clock = 0;
+      const sleeps: number[] = [];
+      const wait = createRateLimiter(200, () => clock, async (ms: number) => { sleeps.push(ms); clock += ms; });
+      for (let i = 0; i < 5; i++) await wait();
+      expect(sleeps).toEqual([200, 200, 200, 200]);
+    });
+
+    it('fetchAllPrngFeatures pobiera wszystkie strony i zachowuje kolejność liczby obiektów', async () => {
+      const page = (n: number) => ({ numberMatched: 5, features: Array.from({ length: n }, (_, i) => ({ i })) });
+      const fetchJson = vi.fn<(url: string) => Promise<unknown>>().mockResolvedValueOnce(page(2)).mockResolvedValueOnce(page(2)).mockResolvedValueOnce(page(1));
+      const features = await fetchAllPrngFeatures({ limit: 2, concurrency: 2, fetchJson, waitTurn: async () => {} });
+      expect(features.length).toBe(5);
+      expect(fetchJson).toHaveBeenCalledTimes(3);
+    });
+
+    it('błąd jednej strony przerywa pobieranie zamiast po cichu gubić dane', async () => {
+      const fetchJson = vi.fn<(url: string) => Promise<unknown>>()
+        .mockResolvedValueOnce({ numberMatched: 4, features: [{}, {}] })
+        .mockRejectedValueOnce(new Error('HTTP 503'));
+      await expect(fetchAllPrngFeatures({ limit: 2, concurrency: 1, fetchJson, waitTurn: async () => {} })).rejects.toThrow('HTTP 503');
+    });
+
+    it('countKinds liczy rodzaje tylko w kategorii „miejscowość”', () => {
+      const f = (kategoriaObiektu: string, rodzajObiektu: string) => ({ properties: { kategoriaObiektu, rodzajObiektu } });
+      const counts = countKinds([f('miejscowość', 'wieś'), f('miejscowość', 'wieś'), f('miejscowość', 'miasto'), f('rzeka', 'rzeka')]);
+      expect(counts).toEqual({ 'wieś': 2, 'miasto': 1 });
+    });
+
+    it('tryb fixture bez --out zapisuje poza public/data', () => {
+      const args = parseArgs(['--fixture']);
+      expect(args.outPath).not.toContain(path.join('public', 'data'));
+      expect(parseArgs(['--fixture', '--out', 'x.json']).outPath).toContain('x.json');
     });
   });
 
