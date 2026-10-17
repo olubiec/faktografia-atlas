@@ -74,16 +74,19 @@ Pliki w `public/brand/`, wszystkie bez tła, tekst zamieniony na krzywe (nie zal
 
 | Plik | Gdzie |
 |---|---|
-| faktografia-logo-granat.svg | nagłówek strony w trybie jasnym, slajdy jasne |
-| faktografia-logo-jasne.svg | nagłówek w trybie ciemnym, slajdy ciemne |
+| faktografia-naglowek-granat.svg | nagłówek strony w trybie jasnym: F na konturze Polski z siatką powiatów, bez napisu |
+| faktografia-naglowek-jasny.svg | to samo w trybie ciemnym |
+| faktografia-logo-granat.svg | wersja z napisem, tylko slajdy jasne (nie na stronie) |
+| faktografia-logo-jasne.svg | wersja z napisem, tylko slajdy ciemne (nie na stronie) |
 | faktografia-favicon.svg | ikonka karty przeglądarki, rozmiary poniżej 48 px |
 | faktografia-znak-granat.svg | duży znak (F na zarysach granic) na jasnym tle: strona „o projekcie”, ekran ładowania |
 | faktografia-znak-jasny.svg | duży znak na ciemnym tle: avatar IG/TikTok, okładki karuzel |
 
 Zasady:
-- Logo w nagłówku: wysokość 28–32 px na telefonie, 36–40 px na komputerze.
+- Na stronie nie ma napisu „Faktografia” obok znaku. W nagłówku tylko znak nagłówkowy: 40 px na telefonie, 48 px na komputerze, nigdy mniej niż 32 px.
+- Znak nagłówkowy jest generowany z `public/geo/admin.topo.json` (kontur Polski, granice województw i powiatów, F ze znaku). Nie rysuj go ręcznie.
 - Pole ochronne: wokół logo wolne miejsce co najmniej wysokości litery F.
-- Duży znak z zarysami granic nie schodzi poniżej 120 px (granice znikają). Poniżej używaj favicony.
+- Duży znak z zarysami granic nie schodzi poniżej 120 px (granice znikają). Poniżej 120 px używaj znaku nagłówkowego, poniżej 32 px favicony.
 - Nie zmieniaj kolorów, proporcji ani kąta F. Nie dodawaj cieni ani obrysów.
 
 ## 5. Układ

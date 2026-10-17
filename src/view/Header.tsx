@@ -50,9 +50,9 @@ export function Header() {
     <header className="flex justify-between items-center py-4 px-4 md:px-8 border-b border-linia">
       <div>
         <img
-          src={activeIsDark ? "/brand/faktografia-logo-jasne.svg" : "/brand/faktografia-logo-granat.svg"}
-          alt="Faktografia"
-          className="h-[32px] md:h-[40px]"
+          src={activeIsDark ? "/brand/faktografia-naglowek-jasny.svg" : "/brand/faktografia-naglowek-granat.svg"}
+          alt="Faktografia Atlas"
+          className="h-[40px] w-[40px] md:h-[48px] md:w-[48px]"
         />
       </div>
       <button

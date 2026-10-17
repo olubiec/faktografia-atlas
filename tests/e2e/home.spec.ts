@@ -6,7 +6,7 @@ test.describe('Home Page', () => {
     await expect(page).toHaveTitle(/Faktografia Atlas/);
 
     // Check for logo
-    const logo = page.locator('img[alt="Faktografia"]');
+    const logo = page.locator('img[alt="Faktografia Atlas"]');
     await expect(logo).toBeVisible();
 
     // Check for main heading
@@ -48,8 +48,8 @@ test.describe('Home Page', () => {
     await expect(themeButton).toContainText('Motyw: Ciemny');
 
     // Logo should switch to light version in dark mode
-    const logo = page.locator('img[alt="Faktografia"]');
-    await expect(logo).toHaveAttribute('src', '/brand/faktografia-logo-jasne.svg');
+    const logo = page.locator('img[alt="Faktografia Atlas"]');
+    await expect(logo).toHaveAttribute('src', '/brand/faktografia-naglowek-jasny.svg');
   });
 
   test('404 page works', async ({ page }) => {
