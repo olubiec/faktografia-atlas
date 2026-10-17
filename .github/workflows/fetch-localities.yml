@@ -1,0 +1,41 @@
+name: Fetch Localities (PRNG)
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Uruchamianie pierwszego dnia miesiąca o godzinie 2:00 UTC
+    - cron: '0 2 1 * *'
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-localities:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Fetch PRNG localities
+        run: pnpm localities
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/localities.json
+          if git diff --staged --quiet; then
+            echo "Brak zmian w pliku public/data/localities.json."
+          else
+            git commit -m "data: update PRNG localities"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
