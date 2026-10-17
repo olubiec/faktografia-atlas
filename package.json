@@ -13,6 +13,7 @@
     "tokens": "node scripts/tokens.mjs",
     "geo": "node scripts/geo/build.mjs",
     "units": "node scripts/geo/units.mjs",
+    "map-units": "node scripts/data/map-units.mjs",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint --deny-warnings",
