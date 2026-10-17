@@ -18,7 +18,7 @@ Wykonawcy: **J** Jules, **C** Claude, **Ty** właściciel.
 |---|---|
 | CI: lint, typy, testy jednostkowe, build, e2e, gitleaks, `pnpm audit` | automat |
 | Przegląd: diff zgodny z zakresem zadania, zero usuniętych plików z main (`git diff --diff-filter=D`), każdy warunek odbioru ma test, testy nie osłabione, brak sekretów i `VITE_*` z kluczami | C |
-| Gdy PR zmienia wygląd: etykieta `aktualizuj-zrzuty`, potem ocena różnic w zrzutach | Ty dodajesz etykietę, C ocenia |
+| Gdy PR zmienia wygląd: Actions → Update snapshots → nazwa gałęzi PR, potem C zamyka i otwiera PR, żeby CI ruszyło na nowych wzorcach, i ocenia różnice | Ty uruchamiasz, C ocenia |
 | Lista 8 punktów z telefonu (niżej) i scalenie przez **squash** | Ty |
 | Gdy Jules nie reaguje na komentarz w PR: poprawka C tylko za Twoją zgodą | C |
 
@@ -52,13 +52,13 @@ CC1, CC1.1, CC1.1b, CC1.2, CC2.1, CC2.2, CC2.3, CC3.1, CC6.1 – na main. Szczeg
 ### Fala 3 (w toku)
 | Zadanie | Kto | Zgłoszenie | Zależy od |
 |---|---|---|---|
-| CC3.2 units.json + logika jednostek | J | #24 / PR #27 | CC3.1 |
-| CC2.4 strona /design + wzorce zrzutów (workflow z etykietą `aktualizuj-zrzuty`) | J | #25 / PR #28 | CC2.1–2.3 |
-| CC1.5 makiety 4 ekranów + logo | C | płótno „Faktografia Atlas – makiety” | — |
+| CC3.2 units.json + logika jednostek | J | #24 / PR #27, scalone | CC3.1 |
+| CC2.4 strona /design + wzorce zrzutów | J | #25 / PR #28, scalone | CC2.1–2.3 |
+| CC1.5 makiety 4 ekranów + logo | C | docs/design/, zrobione | — |
 | CC2.5 nagłówek (logo i przełącznik „logo / znak F na powiatach”) + ekran startowy wg makiety | J | po akceptacji makiet | CC2.1, CC1.5 |
-| CC6.2 mapowanie jednostek GUS ↔ TERYT | J | po scaleniu CC3.2 | CC6.1, CC3.2 |
+| CC6.2 mapowanie jednostek GUS ↔ TERYT | J | #29 | CC6.1, CC3.2 |
 
-**Dodatkowo w fali 3:** makiety jako PNG w `docs/design/` (C); pierwsze wzorce zrzutów /design przez etykietę (Ty); kroki „teraz” z tabeli wyżej.
+**Dodatkowo w fali 3:** makiety jako PNG w `docs/design/` (C, zrobione); kroki „teraz” z tabeli wyżej.
 
 ### Fala 4
 | Zadanie | Kto | Zależy od |
