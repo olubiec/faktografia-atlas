@@ -11,6 +11,7 @@
     "predev": "node scripts/tokens.mjs",
     "prebuild": "node scripts/tokens.mjs",
     "tokens": "node scripts/tokens.mjs",
+    "geo": "node scripts/geo/build.mjs",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint --deny-warnings",
