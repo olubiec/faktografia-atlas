@@ -1,1 +1,1 @@
-CC0 zakończona: repo przygotowane, legacy/marka/ czeka na logo SVG. Następna sesja: CC1 (szkielet aplikacji).
+CC0 zakończona: repo przygotowane, system stylu Kalka i korekta w docs/STYL.md, tokeny w config/tokens.json, logo w public/brand/, plan w docs/MASTER_PLAN.md (v2). Następna sesja: CC1 (szkielet aplikacji).
