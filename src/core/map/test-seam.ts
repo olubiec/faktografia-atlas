@@ -28,7 +28,7 @@ export function installAtlasSeam(
   getState: () => AtlasState
 ): undefined {
   const search = win.location?.search ?? '';
-  const hasE2e = search.includes('e2e');
+  const hasE2e = new URLSearchParams(search).has('e2e');
 
   if (!hasE2e) {
     return undefined;

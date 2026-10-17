@@ -1,8 +1,11 @@
+import { lazy, Suspense } from 'react';
 import { Header } from './Header';
 import { SearchField } from './ui/SearchField';
 import { Annotate } from './annotation/Annotate';
 import { AnnotationProvider } from './annotation/AnnotationProvider';
 import { UNIT_COUNTS } from '@/core/units/counts';
+
+const AtlasMap = lazy(() => import('./map/AtlasMap'));
 
 export function Home() {
   return (
@@ -46,21 +49,12 @@ export function Home() {
             </p>
           </section>
 
-          {/* Right section (kalka SVG mask) */}
-          <div
-            className="w-full md:flex-1 h-[320px] md:h-[min(780px,calc(100vh-150px))] bg-tusz flex-shrink-0"
-            style={{
-              maskImage: 'url(/geo/kalka.svg)',
-              maskRepeat: 'no-repeat',
-              maskPosition: 'center',
-              maskSize: 'contain',
-              WebkitMaskImage: 'url(/geo/kalka.svg)',
-              WebkitMaskRepeat: 'no-repeat',
-              WebkitMaskPosition: 'center',
-              WebkitMaskSize: 'contain',
-            }}
-            aria-hidden="true"
-          />
+          {/* Right section (interactive map) */}
+          <div className="w-full md:flex-1 h-[320px] md:h-[min(780px,calc(100vh-150px))] flex-shrink-0 relative">
+            <Suspense fallback={<div className="w-full h-full bg-kalka" />}>
+              <AtlasMap />
+            </Suspense>
+          </div>
         </main>
       </div>
     </AnnotationProvider>
