@@ -20,10 +20,9 @@ describe('Admin TopoJSON Geometry Build', () => {
   it('file exists and size is <= 3 MB', () => {
     expect(fs.existsSync(topoPath)).toBe(true);
     expect(stats).not.toBeNull();
-    if (stats) {
-      expect(stats.size).toBeGreaterThan(0);
-      expect(stats.size).toBeLessThanOrEqual(3 * 1024 * 1024);
-    }
+    const size = stats?.size ?? 0;
+    expect(size).toBeGreaterThan(0);
+    expect(size).toBeLessThanOrEqual(3 * 1024 * 1024);
   });
 
   it('is a valid TopoJSON topology containing woj, pow, and gmi layers', () => {

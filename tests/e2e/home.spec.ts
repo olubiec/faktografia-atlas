@@ -14,6 +14,30 @@ test.describe('Home Page', () => {
     await expect(heading).toBeVisible();
   });
 
+  test('prefers dark theme from localStorage set via addInitScript', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('faktografia-theme', 'dark');
+    });
+
+    await page.goto('/');
+
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    const logo = page.locator('img[alt="Faktografia"]');
+    await expect(logo).toHaveAttribute('src', '/brand/faktografia-logo-jasne.svg');
+  });
+
+  test('theme switcher button touch target is at least 44x44 px', async ({ page }) => {
+    await page.goto('/');
+
+    const themeButton = page.locator('button', { hasText: 'Motyw:' });
+    await expect(themeButton).toBeVisible();
+
+    const box = await themeButton.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.width).toBeGreaterThanOrEqual(44);
+    expect(box!.height).toBeGreaterThanOrEqual(44);
+  });
+
   test('no requests to Google Fonts', async ({ page }) => {
     const googleFontsRequests: string[] = [];
 
@@ -28,6 +52,21 @@ test.describe('Home Page', () => {
     await page.waitForLoadState('networkidle');
 
     expect(googleFontsRequests).toHaveLength(0);
+  });
+
+  test('no CSP errors in console', async ({ page }) => {
+    const cspErrors: string[] = [];
+
+    page.on('console', msg => {
+      if (msg.type() === 'error' && msg.text().toLowerCase().includes('content security policy')) {
+        cspErrors.push(msg.text());
+      }
+    });
+
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    expect(cspErrors).toEqual([]);
   });
 
   test('theme switcher works', async ({ page }) => {

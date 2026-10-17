@@ -20,7 +20,7 @@ function getKorektaColor(): string {
       .trim();
     if (computed) return computed;
   }
-  return '#E3242B';
+  return 'currentColor';
 }
 
 export const Annotate: React.FC<AnnotateProps> = ({
