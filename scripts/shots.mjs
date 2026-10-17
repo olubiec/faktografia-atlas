@@ -32,7 +32,10 @@ async function run() {
   } catch {
     console.log('Starting preview server...');
     const viteBin = path.resolve('node_modules/.bin/vite');
-    server = spawn(viteBin, ['preview', '--port', '4173'], { stdio: ['ignore', 'pipe', 'pipe'] });
+    server = spawn(viteBin, ['preview', '--port', '4173'], {
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: { ...process.env, NO_COLOR: '1', FORCE_COLOR: '0' }
+    });
 
     baseUrl = await new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
@@ -42,7 +45,10 @@ async function run() {
       const onData = (data) => {
         const text = data.toString();
         process.stdout.write(text);
-        const match = text.match(/http:\/\/(?:localhost|127\.0\.0\.1):(\d+)/);
+
+        // Strip non-printable characters for clean matching
+        const cleanText = text.replace(/[^\x20-\x7E\s]/g, '');
+        const match = cleanText.match(/http:\/\/[^\s:]+:(\d+)/);
         if (match) {
           clearTimeout(timeout);
           resolve(`http://localhost:${match[1]}`);
