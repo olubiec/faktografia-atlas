@@ -15,6 +15,7 @@
     "units": "node scripts/geo/units.mjs",
     "kalka": "node scripts/geo/kalka.mjs",
     "map-units": "node scripts/data/map-units.mjs",
+    "localities": "node scripts/geo/localities.mjs",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint --deny-warnings",

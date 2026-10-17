@@ -75,8 +75,11 @@ Kolekcja miejscowości z Państwowego Rejestru Nazw Geograficznych (PRNG) budowa
 
 ### Metadane źródła
 - **Źródło danych:** GUGiK, OGC API Features, kolekcja `NazwaGeograficznaRP` (`https://ogcapi.geoportal.gov.pl/res/ims/maps/PRNG/apiFeatures`).
-- **Skrypt parsera:** `scripts/geo/localities-parse.mjs` (czysta biblioteka bez wywołań sieciowych).
-- **Licencja:** Państwowy Rejestr Nazw Geograficznych (PRNG) – szczegółowe warunki licencji oraz weryfikacja do sprawdzenia podczas pobierania w kroku CC5.3b.
+- **Skrypt parsera i pobierający:** `scripts/geo/localities-parse.mjs` (logika parsowania) oraz `scripts/geo/localities.mjs` (`pnpm localities`).
+- **Automatyzacja:** workflow `.github/workflows/fetch-localities.yml` uruchamiany wyłącznie ręcznie.
+- **Jak odświeżyć miejscowości (dla właściciela):** GitHub → Actions → „Fetch localities (PRNG)” → Run workflow → zostaw gałąź `data/localities` → po zakończeniu otwórz PR z tej gałęzi do main i poproś o przegląd liczb. Workflow nigdy nie pisze do main.
+- **Licencja:** do uzupełnienia w przeglądzie (warunki ponownego wykorzystania danych PRNG do sprawdzenia w źródle: https://www.geoportal.gov.pl/).
+- **Plik wynikowy:** `public/data/localities.json` (limit rozmiaru ≤ 3 MB).
 
 ### Pola i struktura źródłowa
 - `idPRNG`: numeryczny identyfikator w PRNG (konwertowany na `string`)
