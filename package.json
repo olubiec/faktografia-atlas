@@ -1,16 +1,20 @@
 {
-  "name": "scaffold",
+  "name": "faktografia-atlas",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "pnpm@10.30.3",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "predev": "node scripts/tokens.mjs",
     "prebuild": "node scripts/tokens.mjs",
     "tokens": "node scripts/tokens.mjs",
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "oxlint",
-    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --deny-warnings",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
     "test": "vitest run tests/unit",
     "test:e2e": "playwright test",
     "shots": "node scripts/shots.mjs",

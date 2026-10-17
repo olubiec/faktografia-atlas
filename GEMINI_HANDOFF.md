@@ -18,6 +18,7 @@ CC0 zakończona: repo przygotowane, system stylu Kalka i korekta w docs/STYL.md,
 ./docs/README.md
 ./docs/STYL.md
 ./docs/sessions/.gitkeep
+./docs/sessions/CC1.1.md
 ./docs/sessions/CC1.md
 ./docs/shots/.gitkeep
 ./docs/shots/desktop-dark.jpg
@@ -27,7 +28,6 @@ CC0 zakończona: repo przygotowane, system stylu Kalka i korekta w docs/STYL.md,
 ./index.html
 ./legacy/marka/.gitkeep
 ./package.json
-./playwright-report/index.html
 ./playwright.config.ts
 ./pnpm-lock.yaml
 ./public/brand/faktografia-favicon.svg
@@ -37,6 +37,7 @@ CC0 zakończona: repo przygotowane, system stylu Kalka i korekta w docs/STYL.md,
 ./public/brand/faktografia-znak-jasny.svg
 ./public/favicon.svg
 ./public/icons.svg
+./public/theme-init.js
 ./scripts/handoff.mjs
 ./scripts/shots.config.json
 ./scripts/shots.mjs
@@ -51,7 +52,6 @@ CC0 zakończona: repo przygotowane, system stylu Kalka i korekta w docs/STYL.md,
 ./src/view/Header.tsx
 ./src/view/Home.tsx
 ./src/view/NotFound.tsx
-./test-results/.last-run.json
 ./tests/e2e/home.spec.ts
 ./tests/unit/tokens.test.ts
 ./tsconfig.app.json
@@ -113,8 +113,8 @@ src/view/NotFound.tsx:
 
 [2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
 [2m      Tests [22m [1m[32m3 passed[39m[22m[90m (3)[39m
-[2m   Start at [22m 07:54:04
-[2m   Duration [22m 195ms[2m (import 42%, transform 21%, tests 21%, worker 16%, environment 1%)[22m
+[2m   Start at [22m 09:18:55
+[2m   Duration [22m 200ms[2m (import 41%, tests 22%, transform 22%, worker 15%, environment 1%)[22m
 
 
 ```
