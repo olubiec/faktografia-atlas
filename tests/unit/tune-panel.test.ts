@@ -51,6 +51,34 @@ describe('TunePanel unit tests', () => {
 
       expect(diffTokens(tokensJson, currentTokens)).toEqual({});
     });
+
+    it('przywraca zmodyfikowane font.scale do stanu początkowego z tokens.json', () => {
+      const currentTokens = structuredClone(tokensJson);
+      currentTokens.font.scale.md = 22;
+
+      expect(diffTokens(tokensJson, currentTokens)).not.toEqual({});
+
+      resetTokens(currentTokens, tokensJson);
+
+      expect(currentTokens.font.scale.md).toBe(tokensJson.font.scale.md);
+      expect(diffTokens(tokensJson, currentTokens)).toEqual({});
+    });
+  });
+
+  describe('diffTokens z font.scale', () => {
+    it('oblicza różnicę dla font.scale gdy zmieniono md z 20 na 22', () => {
+      const currentTokens = structuredClone(tokensJson);
+      currentTokens.font.scale.md = 22;
+
+      const diff = diffTokens(tokensJson, currentTokens);
+      expect(diff).toEqual({
+        font: {
+          scale: {
+            md: 22,
+          },
+        },
+      });
+    });
   });
 
   describe('getCurrentTheme', () => {
@@ -86,6 +114,15 @@ describe('TunePanel unit tests', () => {
       applyCssVariables(currentTokens, 'dark');
 
       expect(document.documentElement.style.getPropertyValue('--kalka')).toBe('#654321');
+    });
+
+    it('ustawia zmienne CSS dla font.scale na documentElement', () => {
+      const currentTokens = structuredClone(tokensJson);
+      currentTokens.font.scale.md = 22;
+
+      applyCssVariables(currentTokens, 'light');
+
+      expect(document.documentElement.style.getPropertyValue('--text-md')).toBe('22px');
     });
   });
 });

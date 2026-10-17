@@ -128,6 +128,16 @@ export function applyCssVariables(
   if (typeof noDataVal === 'string') {
     rootStyle.setProperty(noDataVar, noDataVal);
   }
+
+  // 5. Typografia (font.scale)
+  const scaleObj = currentTokens.font.scale;
+  const scaleMap = tokensMap.font.scale;
+  for (const [key, cssVar] of Object.entries(scaleMap)) {
+    const val = scaleObj[key as keyof typeof scaleObj];
+    if (typeof val === 'number') {
+      rootStyle.setProperty(cssVar, `${val}px`);
+    }
+  }
 }
 
 /**
@@ -145,6 +155,7 @@ export function resetTokens(
   currentTokens.data.diverging.dark = [...originalTokens.data.diverging.dark];
   currentTokens.data.noData.light = originalTokens.data.noData.light;
   currentTokens.data.noData.dark = originalTokens.data.noData.dark;
+  currentTokens.font.scale = { ...originalTokens.font.scale };
 }
 
 /**
@@ -172,9 +183,10 @@ export function initTunePanel(): () => void {
   const pane = new Pane({ container, title: 'Tune', expanded: true }) as unknown as TunePane;
 
   const tab = pane.addTab({
-    pages: [{ title: 'Kolory' }],
+    pages: [{ title: 'Kolory' }, { title: 'Typografia' }],
   });
   const colorsPage = tab.pages[0];
+  const typographyPage = tab.pages[1];
 
   // Sekcja Jasny (Light)
   const lightFolder = colorsPage.addFolder({ title: 'Jasny (Light)', expanded: true });
@@ -206,13 +218,23 @@ export function initTunePanel(): () => void {
   });
   darkFolder.addBinding(currentTokens.data.noData, 'dark', { label: 'noData' });
 
+  // Zakładka "Typografia"
+  for (const key of Object.keys(tokensMap.font.scale) as Array<keyof typeof tokensMap.font.scale>) {
+    typographyPage.addBinding(currentTokens.font.scale, key, {
+      label: key,
+      min: 10,
+      max: 96,
+      step: 1,
+    });
+  }
+
   // Reakcja na zmiany wartości w panelu
   pane.on('change', () => {
     applyCssVariables(currentTokens);
   });
 
   // Przycisk "Kopiuj JSON"
-  colorsPage.addButton({ title: 'Kopiuj JSON' }).on('click', () => {
+  pane.addButton({ title: 'Kopiuj JSON' }).on('click', () => {
     const diff = diffTokens(tokensJson, currentTokens);
     const jsonStr = JSON.stringify(diff, null, 2);
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -221,7 +243,7 @@ export function initTunePanel(): () => void {
   });
 
   // Przycisk "Przywróć"
-  colorsPage.addButton({ title: 'Przywróć' }).on('click', () => {
+  pane.addButton({ title: 'Przywróć' }).on('click', () => {
     resetTokens(currentTokens, tokensJson);
     pane.refresh();
     applyCssVariables(currentTokens);

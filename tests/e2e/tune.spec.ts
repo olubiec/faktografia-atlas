@@ -126,6 +126,126 @@ test.describe('Tune Panel ?tune', () => {
     expect(cssKalkaInline).toBe('');
   });
 
+  test('tab Typografia exists with sliders (10-96 px) and changes font-size of .text-md element', async ({ page }) => {
+    await page.goto('/design?tune');
+
+    const panel = page.locator('#tune-panel-container');
+    await expect(panel).toBeVisible();
+
+    const typoTab = panel.getByRole('button', { name: 'Typografia' });
+    await expect(typoTab).toBeVisible();
+    await typoTab.click();
+
+    const degrees = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl'];
+    for (const deg of degrees) {
+      const input = panel.locator(`input[aria-label="${deg}"]`);
+      await expect(input).toBeVisible();
+    }
+
+    const mdInput = panel.locator('input[aria-label="md"]').first();
+    await mdInput.fill('5');
+    await mdInput.press('Enter');
+    let cssMd = await page.evaluate(() =>
+      document.documentElement.style.getPropertyValue('--text-md'),
+    );
+    expect(cssMd).toBe('10px');
+
+    await mdInput.fill('100');
+    await mdInput.press('Enter');
+    cssMd = await page.evaluate(() =>
+      document.documentElement.style.getPropertyValue('--text-md'),
+    );
+    expect(cssMd).toBe('96px');
+
+    await mdInput.fill('22');
+    await mdInput.press('Enter');
+
+    cssMd = await page.evaluate(() =>
+      document.documentElement.style.getPropertyValue('--text-md'),
+    );
+    expect(cssMd).toBe('22px');
+
+    const computedFontSize = await page.evaluate(() => {
+      const elem = document.querySelector('.text-md');
+      return elem ? window.getComputedStyle(elem).fontSize : null;
+    });
+    expect(computedFontSize).toBe('22px');
+  });
+
+  test('Kopiuj JSON from both tabs copies both color and typography changes', async ({ context, page }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.goto('/design?tune');
+
+    const panel = page.locator('#tune-panel-container');
+    await expect(panel).toBeVisible();
+
+    const korektaInput = panel.getByRole('textbox', { name: 'korekta', exact: true }).first();
+    await expect(korektaInput).toBeVisible();
+    await korektaInput.fill('#00ff00');
+    await korektaInput.press('Enter');
+
+    await panel.getByRole('button', { name: 'Typografia' }).click();
+
+    const mdInput = panel.locator('input[aria-label="md"]').first();
+    await mdInput.fill('22');
+    await mdInput.press('Enter');
+
+    await panel.getByRole('button', { name: 'Kopiuj JSON' }).click();
+
+    const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
+    const parsedJson = JSON.parse(clipboardText);
+
+    expect(parsedJson).toEqual({
+      color: {
+        light: {
+          korekta: '#00ff00',
+        },
+      },
+      font: {
+        scale: {
+          md: 22,
+        },
+      },
+    });
+  });
+
+  test('Przywróć resets both colors and typography changes', async ({ page }) => {
+    await page.goto('/design?tune');
+
+    const panel = page.locator('#tune-panel-container');
+    await expect(panel).toBeVisible();
+
+    const korektaInput = panel.getByRole('textbox', { name: 'korekta', exact: true }).first();
+    await korektaInput.fill('#00ff00');
+    await korektaInput.press('Enter');
+
+    await panel.getByRole('button', { name: 'Typografia' }).click();
+
+    const mdInput = panel.locator('input[aria-label="md"]').first();
+    await mdInput.fill('22');
+    await mdInput.press('Enter');
+
+    let cssKorekta = await page.evaluate(() =>
+      document.documentElement.style.getPropertyValue('--korekta'),
+    );
+    let cssMd = await page.evaluate(() =>
+      document.documentElement.style.getPropertyValue('--text-md'),
+    );
+    expect(cssKorekta).toBe('#00ff00');
+    expect(cssMd).toBe('22px');
+
+    await panel.getByRole('button', { name: 'Przywróć' }).click();
+
+    cssKorekta = await page.evaluate(() =>
+      document.documentElement.style.getPropertyValue('--korekta'),
+    );
+    cssMd = await page.evaluate(() =>
+      document.documentElement.style.getPropertyValue('--text-md'),
+    );
+    expect(cssKorekta).toBe('#E3242B');
+    expect(cssMd).toBe('20px');
+  });
+
   test('axe accessibility scan passes on /design?tune in light and dark mode', async ({ page }) => {
     await page.goto('/design?tune');
 
