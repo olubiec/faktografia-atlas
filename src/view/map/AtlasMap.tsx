@@ -13,6 +13,11 @@ import { installAtlasSeam, type AtlasState } from '@/core/map/test-seam';
 import { createMapLayers, getMapColorsFromCss } from './layers';
 import type { Unit } from '@/core/units/types';
 
+// Obejście problemu z workerem MapLibre GL w środowisku bez wsparcia dla workerów modułowych (np. headless/CI)
+if (typeof window !== 'undefined' && (maplibregl as any).workerCount !== undefined) {
+  (maplibregl as any).workerCount = 0;
+}
+
 function DeckGLOverlay(props: MapboxOverlayProps) {
   const overlay = useControl<MapboxOverlay>(() => new MapboxOverlay(props));
   overlay.setProps(props);
