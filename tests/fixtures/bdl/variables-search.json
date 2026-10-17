@@ -1,0 +1,924 @@
+{
+  "totalRecords": 671,
+  "page": 0,
+  "pageSize": 100,
+  "links": {
+    "first": "https://bdl.stat.gov.pl/api/v1/variables/search?name=ludno%C5%9B%C4%87&format=json&lang=pl&page-size=100&page=0",
+    "self": "https://bdl.stat.gov.pl/api/v1/variables/search?name=ludno%C5%9B%C4%87&format=json&lang=pl&page-size=100&page=0",
+    "next": "https://bdl.stat.gov.pl/api/v1/variables/search?name=ludno%C5%9B%C4%87&format=json&lang=pl&page-size=100&page=1",
+    "last": "https://bdl.stat.gov.pl/api/v1/variables/search?name=ludno%C5%9B%C4%87&format=json&lang=pl&page-size=100&page=6"
+  },
+  "results": [
+    {
+      "id": 99719,
+      "subjectId": "P1362",
+      "n1": "ludność zameldowana na pobyt czasowy",
+      "n2": "ogółem",
+      "n3": "ogółem",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 99718,
+      "subjectId": "P1362",
+      "n1": "ludność zameldowana na pobyt czasowy",
+      "n2": "ogółem",
+      "n3": "mężczyźni",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 99722,
+      "subjectId": "P1362",
+      "n1": "ludność zameldowana na pobyt czasowy",
+      "n2": "ogółem",
+      "n3": "kobiety",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 99720,
+      "subjectId": "P1362",
+      "n1": "ludność zameldowana na pobyt czasowy",
+      "n2": "miasta",
+      "n3": "ogółem",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 99723,
+      "subjectId": "P1362",
+      "n1": "ludność zameldowana na pobyt czasowy",
+      "n2": "miasta",
+      "n3": "mężczyźni",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 99715,
+      "subjectId": "P1362",
+      "n1": "ludność zameldowana na pobyt czasowy",
+      "n2": "miasta",
+      "n3": "kobiety",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 99721,
+      "subjectId": "P1362",
+      "n1": "ludność zameldowana na pobyt czasowy",
+      "n2": "wieś",
+      "n3": "ogółem",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 99716,
+      "subjectId": "P1362",
+      "n1": "ludność zameldowana na pobyt czasowy",
+      "n2": "wieś",
+      "n3": "mężczyźni",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 99717,
+      "subjectId": "P1362",
+      "n1": "ludność zameldowana na pobyt czasowy",
+      "n2": "wieś",
+      "n3": "kobiety",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 3872,
+      "subjectId": "P1362",
+      "n1": "ludność czasowo nieobecna w miejscu stałego zameldowania",
+      "n2": "ogółem",
+      "n3": "ogółem",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 32402,
+      "subjectId": "P1362",
+      "n1": "ludność czasowo nieobecna w miejscu stałego zameldowania",
+      "n2": "ogółem",
+      "n3": "mężczyźni",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 32403,
+      "subjectId": "P1362",
+      "n1": "ludność czasowo nieobecna w miejscu stałego zameldowania",
+      "n2": "ogółem",
+      "n3": "kobiety",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 3873,
+      "subjectId": "P1362",
+      "n1": "ludność czasowo nieobecna w miejscu stałego zameldowania",
+      "n2": "miasta",
+      "n3": "ogółem",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 3875,
+      "subjectId": "P1362",
+      "n1": "ludność czasowo nieobecna w miejscu stałego zameldowania",
+      "n2": "miasta",
+      "n3": "mężczyźni",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 3874,
+      "subjectId": "P1362",
+      "n1": "ludność czasowo nieobecna w miejscu stałego zameldowania",
+      "n2": "miasta",
+      "n3": "kobiety",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 3876,
+      "subjectId": "P1362",
+      "n1": "ludność czasowo nieobecna w miejscu stałego zameldowania",
+      "n2": "wieś",
+      "n3": "ogółem",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 3878,
+      "subjectId": "P1362",
+      "n1": "ludność czasowo nieobecna w miejscu stałego zameldowania",
+      "n2": "wieś",
+      "n3": "mężczyźni",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 3877,
+      "subjectId": "P1362",
+      "n1": "ludność czasowo nieobecna w miejscu stałego zameldowania",
+      "n2": "wieś",
+      "n3": "kobiety",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 4238,
+      "subjectId": "P1385",
+      "n1": "ludność ogółem w wieku 15 lat i więcej (stan na 31 grudnia)",
+      "n2": "ogółem",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 4239,
+      "subjectId": "P1385",
+      "n1": "ludność ogółem w wieku 15 lat i więcej (stan na 31 grudnia)",
+      "n2": "mężczyźni",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 4240,
+      "subjectId": "P1385",
+      "n1": "ludność ogółem w wieku 15 lat i więcej (stan na 31 grudnia)",
+      "n2": "kobiety",
+      "level": 3,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 492,
+      "subjectId": "P1600",
+      "n1": "ludność korzystająca z sieci wodociągowej w miastach",
+      "level": 6,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 9152,
+      "subjectId": "P1600",
+      "n1": "ludność korzystająca z sieci wodociągowej",
+      "level": 6,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 1641698,
+      "subjectId": "P1600",
+      "n1": "ludność korzystająca z sieci wodociągowej na wsi",
+      "level": 6,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 496,
+      "subjectId": "P1601",
+      "n1": "ludność korzystająca z sieci kanalizacyjnej w miastach",
+      "level": 6,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 9153,
+      "subjectId": "P1601",
+      "n1": "ludność korzystająca z sieci kanalizacyjnej",
+      "level": 6,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 1641700,
+      "subjectId": "P1601",
+      "n1": "ludność korzystająca z sieci kanalizacyjnej na wsi",
+      "level": 6,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 2119,
+      "subjectId": "P1670",
+      "n1": "ludność korzystająca z oczyszczalni ścieków miejskich i wiejskich",
+      "n2": "ogółem",
+      "level": 6,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 10087,
+      "subjectId": "P1670",
+      "n1": "ludność korzystająca z oczyszczalni ścieków miejskich i wiejskich",
+      "n2": "z podwyższonym usuwaniem biogenów",
+      "level": 6,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 55910,
+      "subjectId": "P2196",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "ogółem",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 55907,
+      "subjectId": "P2196",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "wodociąg razem",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 55904,
+      "subjectId": "P2196",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "wodociąg z sieci",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 55918,
+      "subjectId": "P2196",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "wodociąg lokalny",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 55898,
+      "subjectId": "P2196",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "bez wodociągu",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 55914,
+      "subjectId": "P2196",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "ustęp spłukiwany razem",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 55917,
+      "subjectId": "P2196",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "ustęp spłukiwany z odprowadzeniem do sieci",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 55916,
+      "subjectId": "P2196",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "ustęp spłukiwany z odprowadzeniem do urządzenia lokalnego",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56288,
+      "subjectId": "P2204",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "ogółem",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56285,
+      "subjectId": "P2204",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "CO zbiorowe",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56297,
+      "subjectId": "P2204",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "CO indywidualne",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56291,
+      "subjectId": "P2204",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "piece",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56303,
+      "subjectId": "P2205",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "ogółem",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56341,
+      "subjectId": "P2205",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "CO razem",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56313,
+      "subjectId": "P2205",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "CO zbiorowe",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56299,
+      "subjectId": "P2205",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "CO indywidualne razem",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56340,
+      "subjectId": "P2205",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "CO indywidualne źródło energii paliwa stałe",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56316,
+      "subjectId": "P2205",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "CO indywidualne źródło energii energia elektryczna",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56311,
+      "subjectId": "P2205",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "CO indywidualne źródło energii paliwa gazowe",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56306,
+      "subjectId": "P2205",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "piece razem",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56333,
+      "subjectId": "P2205",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "piece źródło energii paliwa stałe",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56310,
+      "subjectId": "P2205",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "piece źródło energii energia elektryczna",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56362,
+      "subjectId": "P2206",
+      "n1": "ludność",
+      "n2": "ogółem",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56350,
+      "subjectId": "P2206",
+      "n1": "ludność",
+      "n2": "poniżej 0,50 osoby/izbę",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56356,
+      "subjectId": "P2206",
+      "n1": "ludność",
+      "n2": "0,50 - 0,99 osoby/izbę",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56351,
+      "subjectId": "P2206",
+      "n1": "ludność",
+      "n2": "1,00 osoby/izbę",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56355,
+      "subjectId": "P2206",
+      "n1": "ludność",
+      "n2": "1,01 - 1,49 osoby/izbę",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56352,
+      "subjectId": "P2206",
+      "n1": "ludność",
+      "n2": "1,50 - 1,99 osoby/izbę",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56361,
+      "subjectId": "P2206",
+      "n1": "ludność",
+      "n2": "2,00 - 2,99 osoby/izbę",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56353,
+      "subjectId": "P2206",
+      "n1": "ludność",
+      "n2": "3,00 i więcej osoby/izbę",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56377,
+      "subjectId": "P2207",
+      "n1": "ludność",
+      "n2": "ogółem",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56374,
+      "subjectId": "P2207",
+      "n1": "ludność",
+      "n2": "poniżej 7,0 m2/osobę",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56368,
+      "subjectId": "P2207",
+      "n1": "ludność",
+      "n2": "7,0 - 9,9 m2/osobę",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56369,
+      "subjectId": "P2207",
+      "n1": "ludność",
+      "n2": "10,0 - 14,9 m2/osobę",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56367,
+      "subjectId": "P2207",
+      "n1": "ludność",
+      "n2": "15,0 - 19,9 m2/osobę",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56366,
+      "subjectId": "P2207",
+      "n1": "ludność",
+      "n2": "20,0 - 29,9 m2/osobę",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56370,
+      "subjectId": "P2207",
+      "n1": "ludność",
+      "n2": "30,0 i więcej m2/osobę",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56922,
+      "subjectId": "P2208",
+      "n1": "ludność",
+      "n2": "ogółem",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56926,
+      "subjectId": "P2208",
+      "n1": "ludność",
+      "n2": "1 izba",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56916,
+      "subjectId": "P2208",
+      "n1": "ludność",
+      "n2": "2 izby",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56918,
+      "subjectId": "P2208",
+      "n1": "ludność",
+      "n2": "3 izby",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56928,
+      "subjectId": "P2208",
+      "n1": "ludność",
+      "n2": "4 izby",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56929,
+      "subjectId": "P2208",
+      "n1": "ludność",
+      "n2": "5 izb i więcej",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56409,
+      "subjectId": "P2209",
+      "n1": "ludność",
+      "n2": "1 gospodarstwo domowe razem",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56400,
+      "subjectId": "P2209",
+      "n1": "ludność",
+      "n2": "1 gospodarstwo domowe jednoosobowe",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56401,
+      "subjectId": "P2209",
+      "n1": "ludność",
+      "n2": "1 gospodarstwo domowe wieloosobowe",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56417,
+      "subjectId": "P2209",
+      "n1": "ludność",
+      "n2": "2 gospodarstwa domowe razem",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56397,
+      "subjectId": "P2209",
+      "n1": "ludność",
+      "n2": "2 gospodarstwa domowe oba jednoosobowe",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56399,
+      "subjectId": "P2209",
+      "n1": "ludność",
+      "n2": "2 gospodarstwa domowe jedno z nich wieloosobowe",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56415,
+      "subjectId": "P2209",
+      "n1": "ludność",
+      "n2": "2 gospodarstwa domowe oba wieloosobowe",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56403,
+      "subjectId": "P2209",
+      "n1": "ludność",
+      "n2": "3 i więcej gospodarstw domowych",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56436,
+      "subjectId": "P2210",
+      "n1": "ludność",
+      "n2": "ogółem",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56427,
+      "subjectId": "P2210",
+      "n1": "ludność",
+      "n2": "1 gospodarstwo domowe razem",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56424,
+      "subjectId": "P2210",
+      "n1": "ludność",
+      "n2": "1 gospodarstwo domowe jednorodzinne",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56432,
+      "subjectId": "P2210",
+      "n1": "ludność",
+      "n2": "1 gospodarstwo domowe dwu i więcej rodzinne",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56446,
+      "subjectId": "P2210",
+      "n1": "ludność",
+      "n2": "1 gospodarstwo domowe nierodzinne",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56431,
+      "subjectId": "P2210",
+      "n1": "ludność",
+      "n2": "2 gospodarstwa domowe razem",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56428,
+      "subjectId": "P2210",
+      "n1": "ludność",
+      "n2": "2 gospodarstwa domowe oba rodzinne",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56444,
+      "subjectId": "P2210",
+      "n1": "ludność",
+      "n2": "2 gospodarstwa domowe rodzinne i nierodzinne",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56440,
+      "subjectId": "P2210",
+      "n1": "ludność",
+      "n2": "3 i więcej gospodarstw domowych",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56474,
+      "subjectId": "P2213",
+      "n1": "budynki ogółem",
+      "n2": "ludność w mieszkaniach",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56468,
+      "subjectId": "P2213",
+      "n1": "budynki mieszkalne",
+      "n2": "ludność w mieszkaniach",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56484,
+      "subjectId": "P2214",
+      "n1": "ludność w mieszkaniach",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56511,
+      "subjectId": "P2215",
+      "n1": "ogółem",
+      "n2": "ludność w mieszkaniach",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56492,
+      "subjectId": "P2215",
+      "n1": "osób fizycznych",
+      "n2": "ludność w mieszkaniach",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56508,
+      "subjectId": "P2215",
+      "n1": "gminy",
+      "n2": "ludność w mieszkaniach",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56509,
+      "subjectId": "P2215",
+      "n1": "pozostałych podmiotów",
+      "n2": "ludność w mieszkaniach",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 56506,
+      "subjectId": "P2215",
+      "n1": "wspólna",
+      "n2": "ludność w mieszkaniach",
+      "level": 5,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 55885,
+      "subjectId": "P2218",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "ogółem",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 55888,
+      "subjectId": "P2218",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "łazienka",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    },
+    {
+      "id": 55892,
+      "subjectId": "P2218",
+      "n1": "ludność w mieszkaniach zamieszkanych stale",
+      "n2": "ciepła woda bieżąca",
+      "level": 7,
+      "measureUnitId": 26,
+      "measureUnitName": "osoba"
+    }
+  ]
+}

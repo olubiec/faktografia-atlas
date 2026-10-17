@@ -1,0 +1,185 @@
+{
+  "totalRecords": 16,
+  "variableId": 60559,
+  "measureUnitId": 26,
+  "aggregateId": 1,
+  "lastUpdate": null,
+  "results": [
+    {
+      "id": "011200000000",
+      "name": "MAŁOPOLSKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 225.8,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "012400000000",
+      "name": "ŚLĄSKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 352.4,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "020800000000",
+      "name": "LUBUSKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 70.1,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "023000000000",
+      "name": "WIELKOPOLSKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 117.1,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "023200000000",
+      "name": "ZACHODNIOPOMORSKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 71.6,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "030200000000",
+      "name": "DOLNOŚLĄSKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 144.8,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "031600000000",
+      "name": "OPOLSKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 100.1,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "040400000000",
+      "name": "KUJAWSKO-POMORSKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 111.7,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "042200000000",
+      "name": "POMORSKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 128.6,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "042800000000",
+      "name": "WARMIŃSKO-MAZURSKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 56.5,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "051000000000",
+      "name": "ŁÓDZKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 130.5,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "052600000000",
+      "name": "ŚWIĘTOKRZYSKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 100.6,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "060600000000",
+      "name": "LUBELSKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 80.6,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "061800000000",
+      "name": "PODKARPACKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 116.5,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "062000000000",
+      "name": "PODLASKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 56.6,
+          "attrId": 1
+        }
+      ]
+    },
+    {
+      "id": "071400000000",
+      "name": "MAZOWIECKIE",
+      "values": [
+        {
+          "year": "2022",
+          "val": 155,
+          "attrId": 1
+        }
+      ]
+    }
+  ]
+}
