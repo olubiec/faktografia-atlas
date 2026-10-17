@@ -68,37 +68,31 @@ test.describe('Design System Page /design', () => {
 
     await page.emulateMedia({ reducedMotion: 'reduce' });
 
+    const screenshotOptions = {
+      fullPage: true,
+      animations: 'disabled' as const,
+      maxDiffPixelRatio: 0.005,
+    };
+
     // 1. Desktop Light (1440x900)
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/design');
     await page.waitForTimeout(500);
-    await expect(page).toHaveScreenshot('design-desktop-light.png', {
-      fullPage: true,
-      animations: 'disabled',
-    });
+    await expect(page).toHaveScreenshot('design-desktop-light.png', screenshotOptions);
 
     // 2. Desktop Dark (1440x900)
     await page.click('#theme-toggle');
     await page.waitForTimeout(500);
-    await expect(page).toHaveScreenshot('design-desktop-dark.png', {
-      fullPage: true,
-      animations: 'disabled',
-    });
+    await expect(page).toHaveScreenshot('design-desktop-dark.png', screenshotOptions);
 
     // 3. Mobile Dark (390x844)
     await page.setViewportSize({ width: 390, height: 844 });
     await page.waitForTimeout(500);
-    await expect(page).toHaveScreenshot('design-mobile-dark.png', {
-      fullPage: true,
-      animations: 'disabled',
-    });
+    await expect(page).toHaveScreenshot('design-mobile-dark.png', screenshotOptions);
 
     // 4. Mobile Light (390x844)
     await page.click('#theme-toggle');
     await page.waitForTimeout(500);
-    await expect(page).toHaveScreenshot('design-mobile-light.png', {
-      fullPage: true,
-      animations: 'disabled',
-    });
+    await expect(page).toHaveScreenshot('design-mobile-light.png', screenshotOptions);
   });
 });
