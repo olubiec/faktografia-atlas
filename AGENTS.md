@@ -10,7 +10,7 @@ Bieżąca sesja: docs/sessions/CCx.md.
 Nie jest programistą i często pracuje z telefonu. Opis każdego PR pisz po polsku, prosto:
 co zrobiłeś, co widać na zrzutach w docs/shots/, co nie działa lub zostało na później.
 
-## Zasady techniczne
+## Zawsze
 1. Stack: Vite + React + TypeScript (strict), pnpm. Biblioteki tylko z docs/MASTER_PLAN.md, sekcja 6.
    Inną dodajesz wyłącznie z uzasadnieniem w opisie PR.
 2. Przed użyciem biblioteki przeczytaj jej typy w node_modules. Nie zgaduj API.
@@ -28,6 +28,7 @@ co zrobiłeś, co widać na zrzutach w docs/shots/, co nie działa lub zostało 
 12. Repozytoria referencyjne klonuj wyłącznie do /tmp/ref. Przy zaadaptowanym kodzie komentarz:
     źródło, autor, licencja.
 13. Jeśli czegoś brakuje albo coś jest niejasne, zatrzymaj się i zapytaj, zamiast zgadywać.
+14. Po `shadcn add` zamień wszystkie ikony lucide na iconoir-react (Icon z src/view/ui) i usuń klasy shadow-*, rounded-*, backdrop-blur.
 
 ## Najpierw zapytaj
 Zmiana package.json lub pnpm-lock.yaml
