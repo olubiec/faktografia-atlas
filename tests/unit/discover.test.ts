@@ -6,7 +6,7 @@ import { BdlDiscoverer, INDICATORS } from '../../scripts/data/discover.mjs';
 const REPORT_PATH = path.resolve('docs/data-report.md');
 const FIXTURE_PATH = path.resolve('tests/fixtures/bdl/discover-cache.json');
 
-describe('BdlDiscoverer & docs/data-report.md (CC6.3)', () => {
+describe('BdlDiscoverer & docs/data-report.md (CC6.3b)', () => {
   it('lista INDICATORS zawiera dokładnie 20 wskaźników z MASTER_PLAN.md §4.2', () => {
     expect(INDICATORS).toHaveLength(20);
 
@@ -51,24 +51,33 @@ describe('BdlDiscoverer & docs/data-report.md (CC6.3)', () => {
     }
   });
 
-  it('raport zawiera "brak danych" dla wskaźników bez wytypowanych zmiennych', async () => {
+  it('pokrycie gmin jest liczone z uwzględnieniem jednostek z units.json (części gmin pomijane)', async () => {
     const discoverer = new BdlDiscoverer({ offline: true });
-    const report = await discoverer.generateReport();
-
-    // Wskaźnik "Wydatki budżetu gminy na mieszkańca (zł)" oraz "Mieszkania oddane do użytku na 1000 ludności" mają brak kandydatów
-    expect(report).toContain('## Pieniądze — Wydatki budżetu gminy na mieszkańca (zł)');
-    expect(report).toContain('## Mieszkania — Mieszkania oddane do użytku na 1000 ludności');
-    expect(report).toContain('brak danych (nie znaleziono odpowiedniej zmiennej w BDL)');
+    // DLA ZMIENNEJ 72305 (Ludność ogółem) BDL zwraca 3934 rekordy na poziomie 6,
+    // ale pokrycie gmin z units.json wynosi dokładnie 2479 (całościowe gminy).
+    const coverage = await discoverer.getCoverage(72305, 2025);
+    expect(coverage.gmiCount).toBe(2479);
+    expect(coverage.powCount).toBe(380);
   });
 
-  it('liczby w raporcie zgadzają się z wartościami w fixturze API dla znanych zmiennych (np. Gęstość zaludnienia ID 60559)', async () => {
+  it('liczby w raporcie zgadzają się z wartościami w fixturze API dla wybranych wskaźników', async () => {
     const discoverer = new BdlDiscoverer({ offline: true });
     const report = await discoverer.generateReport();
 
-    // DLA ID 60559 Zakopane (1217011) ma wartość gęstości zaludnienia z BDL
+    // ID 60559 (Gęstość zaludnienia)
     expect(report).toContain('Zmienna BDL ID 60559');
     expect(report).toContain('295.8'); // Wartość dla Zakopanego z BDL 2025
     expect(report).toContain('225.9'); // Wartość dla Małopolski z BDL 2025
+
+    // ID 76973 (Dochody budżetu gminy na mieszkańca)
+    expect(report).toContain('Zmienna BDL ID 76973');
+    expect(report).toContain('10906.2'); // Zakopane
+    expect(report).toContain('9245.19'); // Małopolska
+
+    // ID 76964 (Wydatki budżetu gminy na mieszkańca)
+    expect(report).toContain('Zmienna BDL ID 76964');
+    expect(report).toContain('10416.2'); // Zakopane
+    expect(report).toContain('9468.74'); // Małopolska
   });
 
   it('istniejący plik docs/data-report.md jest kompletny i ma wpisy dla wszystkich 20 wskaźników', () => {

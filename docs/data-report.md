@@ -2,6 +2,7 @@
 
 Raport proponuje kandydatów na zmienne BDL dla 20 wskaźników z `docs/MASTER_PLAN.md §4.2`.
 Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpowiedzi API GUS BDL zarchiwizowanych w `tests/fixtures/bdl/discover-cache.json`.
+Uwaga dotycząca gmin miejsko-wiejskich: API BDL na poziomie 6 zwraca do 3934 rekordów, ponieważ rozdziela gminy miejsko-wiejskie na część miejską i wiejską. W niniejszym raporcie pokrycie dla gmin (poziom 6) jest liczone wyłącznie dla 2479 całościowych jednostek gminnych mających odpowiednik w `public/data/units.json` (bdlId), pomijając podrzędne części gmin.
 
 ---
 
@@ -18,8 +19,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 1995–2025 (31 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 3429342 (2025)
   - Zakopane (gmina 1217011): 24921 (2025)
@@ -37,8 +38,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 225.9 (2025)
   - Zakopane (gmina 1217011): 295.8 (2025)
@@ -56,8 +57,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): -1.97 (2025)
   - Zakopane (gmina 1217011): -4.68 (2025)
@@ -69,8 +70,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** powiat (poziom 5)
 - **Dostępne lata:** 1999–2025 (27 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 0 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): -1.97 (2025)
   - Zakopane (dane dla Powiatu Tatrzańskiego 1217): -1.59 (2025)
@@ -88,8 +89,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2003–2025 (23 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 1.8 (2025)
   - Zakopane (gmina 1217011): -1.9 (2025)
@@ -101,8 +102,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 1995–2025 (31 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 6164 (2025)
   - Zakopane (gmina 1217011): -47 (2025)
@@ -120,8 +121,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2003–2025 (23 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 19.2 (2025)
   - Zakopane (gmina 1217011): 25.1 (2025)
@@ -133,8 +134,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 1995–2025 (31 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 759335 (2025)
   - Zakopane (gmina 1217011): 7157 (2025)
@@ -152,8 +153,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2023–2026 (4 lat/a)
 - **Pokrycie w ostatnim roku (2026):**
-  - Gminy (poziom 6): 3946 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2026):**
   - Małopolska (województwo 12): 42 (2026)
   - Zakopane (gmina 1217011): 45 (2026)
@@ -171,8 +172,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** powiat (poziom 5)
 - **Dostępne lata:** 2011–2025 (15 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 0 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 4.7 (2025)
   - Zakopane (dane dla Powiatu Tatrzańskiego 1217): 9 (2025)
@@ -184,8 +185,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** powiat (poziom 5)
 - **Dostępne lata:** 2011–2026 (16 lat/a)
 - **Pokrycie w ostatnim roku (2026):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 0 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2026):**
   - Małopolska (województwo 12): 4.9 (2026)
   - Zakopane (dane dla Powiatu Tatrzańskiego 1217): 9.4 (2026)
@@ -196,18 +197,18 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 
 ### Proponowani kandydaci
 
-#### Kandydat 1: Zmienna BDL ID 217828
-- **Nazwa w BDL:** `styczeń -> bezrobotni zarejestrowani na 1 ofertę pracy`
-- **Uzasadnienie wyboru:** Bezrobotni zarejestrowani (dane na poziomie powiatu)
-- **Jednostka miary:** osoba
+#### Kandydat 1: Zmienna BDL ID 1613094
+- **Nazwa w BDL:** `bezrobotni w liczbie ludności w wieku produkcyjnym`
+- **Uzasadnienie wyboru:** Udział bezrobotnych zarejestrowanych w liczbie ludności w wieku produkcyjnym (%)
+- **Jednostka miary:** %
 - **Najniższy poziom z danymi:** powiat (poziom 5)
-- **Dostępne lata:** 2011–2026 (16 lat/a)
-- **Pokrycie w ostatnim roku (2026):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
-- **Przykładowe wartości (2026):**
-  - Małopolska (województwo 12): 26 (2026)
-  - Zakopane (dane dla Powiatu Tatrzańskiego 1217): 71 (2026)
+- **Dostępne lata:** 2014–2025 (12 lat/a)
+- **Pokrycie w ostatnim roku (2025):**
+  - Gminy (poziom 6 z units.json): 0 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
+- **Przykładowe wartości (2025):**
+  - Małopolska (województwo 12): 1.2 (2025)
+  - Zakopane (dane dla Powiatu Tatrzańskiego 1217): 3.2 (2025)
 
 ## Pieniądze — Przeciętne wynagrodzenie brutto (zł)
 - **Oczekiwany najniższy poziom:** powiat
@@ -215,18 +216,18 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 
 ### Proponowani kandydaci
 
-#### Kandydat 1: Zmienna BDL ID 58787
-- **Nazwa w BDL:** `miesięczne wynagrodzenie brutto na 1 zatrudnionego -> ogółem`
-- **Uzasadnienie wyboru:** Miesięczne wynagrodzenie brutto na 1 zatrudnionego (podregion, bez firm do 9 prac.)
+#### Kandydat 1: Zmienna BDL ID 64428
+- **Nazwa w BDL:** `ogółem`
+- **Uzasadnienie wyboru:** Przeciętne miesięczne wynagrodzenia brutto (zł) (powiat, bez firm do 9 prac.)
 - **Jednostka miary:** zł
-- **Najniższy poziom z danymi:** podregion (poziom 3)
-- **Dostępne lata:** 2003–2008 (6 lat/a)
-- **Pokrycie w ostatnim roku (2008):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 0 rek.
-- **Przykładowe wartości (2008):**
-  - Małopolska (województwo 12): 2708 (2008)
-  - Zakopane: brak danych
+- **Najniższy poziom z danymi:** powiat (poziom 5)
+- **Dostępne lata:** 2002–2025 (24 lat/a)
+- **Pokrycie w ostatnim roku (2025):**
+  - Gminy (poziom 6 z units.json): 0 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
+- **Przykładowe wartości (2025):**
+  - Małopolska (województwo 12): 9613.68 (2025)
+  - Zakopane (dane dla Powiatu Tatrzańskiego 1217): 8152.25 (2025)
 
 ## Pieniądze — Dochody budżetu gminy na mieszkańca (zł)
 - **Oczekiwany najniższy poziom:** gmina
@@ -234,23 +235,37 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 
 ### Proponowani kandydaci
 
-#### Kandydat 1: Zmienna BDL ID 1621732
-- **Nazwa w BDL:** `dochody budżetów gmin (ogółem, gminy łącznie z miastami na prawach powiatu) w mln zł`
-- **Uzasadnienie wyboru:** Dochody budżetów gmin w mln zł (poziom podregionu)
-- **Jednostka miary:** mln zł
-- **Najniższy poziom z danymi:** podregion (poziom 3)
-- **Dostępne lata:** 2003–2025 (23 lat/a)
+#### Kandydat 1: Zmienna BDL ID 76973
+- **Nazwa w BDL:** `gminy łącznie z miastami na prawach powiatu -> ogółem`
+- **Uzasadnienie wyboru:** Dochody ogółem na 1 mieszkańca w budżetach gmin (zł)
+- **Jednostka miary:** zł
+- **Najniższy poziom z danymi:** gmina (poziom 6)
+- **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 0 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
-  - Małopolska (województwo 12): 31689 (2025)
-  - Zakopane: brak danych
+  - Małopolska (województwo 12): 9245.19 (2025)
+  - Zakopane (gmina 1217011): 10906.2 (2025)
 
 ## Pieniądze — Wydatki budżetu gminy na mieszkańca (zł)
 - **Oczekiwany najniższy poziom:** gmina
 - **Kierunek ("więcej = lepiej?"):** neutralny
-- **Status:** brak danych (nie znaleziono odpowiedniej zmiennej w BDL)
+
+### Proponowani kandydaci
+
+#### Kandydat 1: Zmienna BDL ID 76964
+- **Nazwa w BDL:** `gminy łącznie z miastami na prawach powiatu -> ogółem`
+- **Uzasadnienie wyboru:** Wydatki ogółem na 1 mieszkańca w budżetach gmin (zł)
+- **Jednostka miary:** zł
+- **Najniższy poziom z danymi:** gmina (poziom 6)
+- **Dostępne lata:** 2002–2025 (24 lat/a)
+- **Pokrycie w ostatnim roku (2025):**
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
+- **Przykładowe wartości (2025):**
+  - Małopolska (województwo 12): 9468.74 (2025)
+  - Zakopane (gmina 1217011): 10416.2 (2025)
 
 ## Pieniądze — Podmioty REGON na 10 tys. ludności
 - **Oczekiwany najniższy poziom:** gmina
@@ -265,8 +280,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 1506 (2025)
   - Zakopane (gmina 1217011): 2713 (2025)
@@ -274,7 +289,21 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 ## Mieszkania — Mieszkania oddane do użytku na 1000 ludności
 - **Oczekiwany najniższy poziom:** gmina
 - **Kierunek ("więcej = lepiej?"):** tak
-- **Status:** brak danych (nie znaleziono odpowiedniej zmiennej w BDL)
+
+### Proponowani kandydaci
+
+#### Kandydat 1: Zmienna BDL ID 747060
+- **Nazwa w BDL:** `mieszkania oddane do użytkowania na 1000 ludności`
+- **Uzasadnienie wyboru:** Mieszkania oddane do użytkowania na 1000 ludności (gmina)
+- **Jednostka miary:** -
+- **Najniższy poziom z danymi:** gmina (poziom 6)
+- **Dostępne lata:** 2002–2025 (24 lat/a)
+- **Pokrycie w ostatnim roku (2025):**
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
+- **Przykładowe wartości (2025):**
+  - Małopolska (województwo 12): 5.9 (2025)
+  - Zakopane (gmina 1217011): 6.9 (2025)
 
 ## Mieszkania — Przeciętna pow. użytkowa mieszkania na osobę (m²)
 - **Oczekiwany najniższy poziom:** gmina
@@ -289,8 +318,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 32.5 (2025)
   - Zakopane (gmina 1217011): 41.9 (2025)
@@ -308,8 +337,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 28.6 (2025)
   - Zakopane (gmina 1217011): 51.6 (2025)
@@ -320,31 +349,18 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 
 ### Proponowani kandydaci
 
-#### Kandydat 1: Zmienna BDL ID 9153
-- **Nazwa w BDL:** `ludność korzystająca z sieci kanalizacyjnej`
-- **Uzasadnienie wyboru:** Ludność korzystająca z sieci kanalizacyjnej (ogółem)
-- **Jednostka miary:** osoba
+#### Kandydat 1: Zmienna BDL ID 79130
+- **Nazwa w BDL:** `ogółem -> kanalizacja`
+- **Uzasadnienie wyboru:** Korzystający z instalacji w % ogółu ludności – kanalizacja (gmina, %)
+- **Jednostka miary:** %
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
-  - Małopolska (województwo 12): 2314068 (2025)
-  - Zakopane (gmina 1217011): 21177 (2025)
-
-#### Kandydat 2: Zmienna BDL ID 496
-- **Nazwa w BDL:** `ludność korzystająca z sieci kanalizacyjnej w miastach`
-- **Uzasadnienie wyboru:** Ludność korzystająca z sieci kanalizacyjnej w miastach
-- **Jednostka miary:** osoba
-- **Najniższy poziom z danymi:** gmina (poziom 6)
-- **Dostępne lata:** 1995–2025 (31 lat/a)
-- **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
-- **Przykładowe wartości (2025):**
-  - Małopolska (województwo 12): 1476104 (2025)
-  - Zakopane (gmina 1217011): 21177 (2025)
+  - Małopolska (województwo 12): 67.5 (2025)
+  - Zakopane (gmina 1217011): 85 (2025)
 
 ## Życie — Wychowanie przedszkolne, dzieci 3–6 lat (%)
 - **Oczekiwany najniższy poziom:** gmina
@@ -352,18 +368,18 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 
 ### Proponowani kandydaci
 
-#### Kandydat 1: Zmienna BDL ID 458614
-- **Nazwa w BDL:** `dzieci w przedszkolach i innych formach wychowania przedszkolnego na 1 tys. dzieci w wieku 3-5 lat`
-- **Uzasadnienie wyboru:** Dzieci w placówkach wychowania przedszkolnego na 1 tys. dzieci w wieku 3-5 lat
-- **Jednostka miary:** osoba
+#### Kandydat 1: Zmienna BDL ID 1617169
+- **Nazwa w BDL:** `odsetek dzieci objętych wychowaniem przedszkolnym -> ogółem -> dzieci w wieku 3 - 6 lat`
+- **Uzasadnienie wyboru:** Dzieci objęte wychowaniem przedszkolnym w % dzieci w wieku 3–6 lat (gmina, %)
+- **Jednostka miary:** %
 - **Najniższy poziom z danymi:** gmina (poziom 6)
-- **Dostępne lata:** 2003–2025 (23 lat/a)
-- **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 0 rek.
-- **Przykładowe wartości (2025):**
-  - Małopolska (województwo 12): 954 (2024)
-  - Zakopane (gmina 1217011): 1151 (2024)
+- **Dostępne lata:** 2003–2025 (22 lat/a)
+- **Pokrycie w ostatnim roku (2024):**
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
+- **Przykładowe wartości (2024):**
+  - Małopolska (województwo 12): 97 (2024)
+  - Zakopane (gmina 1217011): 115.2 (2024)
 
 ## Życie — Czytelnicy bibliotek publicznych na 1000 ludności
 - **Oczekiwany najniższy poziom:** gmina
@@ -378,8 +394,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 193 (2025)
   - Zakopane (gmina 1217011): 183 (2025)
@@ -391,8 +407,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 1995–2025 (31 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 2479 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 661473 (2025)
   - Zakopane (gmina 1217011): 4570 (2025)
@@ -410,8 +426,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** powiat (poziom 5)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 0 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 4947.56 (2025)
   - Zakopane (dane dla Powiatu Tatrzańskiego 1217): 63739.08 (2025)
@@ -423,8 +439,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** miejscowość / gmina (poziom 7)
 - **Dostępne lata:** 1995–2025 (31 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 0 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 16958537 (2025)
   - Zakopane (gmina 1217011): 1369379 (2014)
@@ -442,8 +458,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** powiat (poziom 5)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6 z units.json): 0 / 2479
+  - Powiaty (poziom 5 z units.json): 380 / 380
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 606.8 (2025)
   - Zakopane (dane dla Powiatu Tatrzańskiego 1217): 547.4 (2025)

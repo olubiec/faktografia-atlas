@@ -13572,5 +13572,5222 @@
       2023,
       2024
     ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/variables/1613094?format=json&lang=pl": {
+    "id": 1613094,
+    "subjectId": "P2671",
+    "n1": "bezrobotni w liczbie ludności w wieku produkcyjnym",
+    "level": 5,
+    "measureUnitId": 50,
+    "measureUnitName": "%",
+    "years": [
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011200000000?var-id=1613094&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011200000000",
+    "unitName": "MAŁOPOLSKIE",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 1613094,
+        "measureUnitId": 50,
+        "lastUpdate": "2026-05-20T10:27:10.79",
+        "values": [
+          {
+            "year": "2014",
+            "val": 2.7,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 2.3,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 1.8,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 1.5,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 1.4,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 1.1,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 1.5,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 1.6,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 1.2,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 1.1,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 1.1,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 1.2,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917011?var-id=1613094&format=json&lang=pl": {
+    "totalRecords": 0,
+    "unitId": "011216917011",
+    "unitName": "Zakopane",
+    "aggregateId": 1,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917000?var-id=1613094&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917000",
+    "unitName": "Powiat tatrzański",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 1613094,
+        "measureUnitId": 50,
+        "lastUpdate": "2026-05-20T10:27:10.79",
+        "values": [
+          {
+            "year": "2014",
+            "val": 4.4,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 4.6,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 4.4,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 3.9,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 3.5,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 2.9,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 3,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 3,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 2.8,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 2.9,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 3,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 3.2,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=5&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 1613094,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2025",
+            "val": 0.5,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=6&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1613094,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 1613094,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 0.4,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1613094,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/variables/64428?format=json&lang=pl": {
+    "id": 64428,
+    "subjectId": "P2497",
+    "n1": "ogółem",
+    "level": 5,
+    "measureUnitId": 4,
+    "measureUnitName": "zł",
+    "years": [
+      2002,
+      2003,
+      2004,
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011200000000?var-id=64428&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011200000000",
+    "unitName": "MAŁOPOLSKIE",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 64428,
+        "measureUnitId": 4,
+        "lastUpdate": "2026-09-08T08:53:45.71",
+        "values": [
+          {
+            "year": "2002",
+            "val": 2060.99,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 2109.69,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 2216.21,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 2303.42,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 2443.91,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 2666.24,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 2903.63,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 3057.71,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 3169.9,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 3332.98,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 3456.16,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 3574.22,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 3700.06,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 3906.96,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 4077.91,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 4347.1,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 4678.95,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 5098.26,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 5536.07,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 6046.95,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 6824.68,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 7736.56,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 8818.71,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 9613.68,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917011?var-id=64428&format=json&lang=pl": {
+    "totalRecords": 0,
+    "unitId": "011216917011",
+    "unitName": "Zakopane",
+    "aggregateId": 1,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917000?var-id=64428&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917000",
+    "unitName": "Powiat tatrzański",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 64428,
+        "measureUnitId": 4,
+        "lastUpdate": "2026-09-08T08:53:45.71",
+        "values": [
+          {
+            "year": "2002",
+            "val": 1765.52,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 1882.78,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 1976.93,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 2012.72,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 2149.16,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 2345.74,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 2543.73,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 2740.25,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 2801.91,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 3025.93,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 3165.78,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 3276.19,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 3401.2,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 3520.09,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 3687.87,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 3916.6,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 4190.35,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 4459.57,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 4655.05,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 5056.45,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 5519.76,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 6396.51,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 7423.09,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 8152.25,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=5&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 64428,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2025",
+            "val": 7720.95,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=6&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 64428,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 64428,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 7099.82,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 64428,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/variables/76973?format=json&lang=pl": {
+    "id": 76973,
+    "subjectId": "P2627",
+    "n1": "gminy łącznie z miastami na prawach powiatu",
+    "n2": "ogółem",
+    "level": 6,
+    "measureUnitId": 4,
+    "measureUnitName": "zł",
+    "years": [
+      2002,
+      2003,
+      2004,
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011200000000?var-id=76973&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011200000000",
+    "unitName": "MAŁOPOLSKIE",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 76973,
+        "measureUnitId": 4,
+        "lastUpdate": "2026-08-03T14:11:33.367",
+        "values": [
+          {
+            "year": "2002",
+            "val": 1551,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 1598,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 1767,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 2016,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 2291.31,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 2613.53,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 2805.1,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 2956.7,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 3253.43,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 3354.49,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 3417.42,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 3518.93,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 3742.49,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 3898.49,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 4463.09,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 4807.51,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 5211.47,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 5840.24,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 6349.52,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 7184.32,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 7086.38,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 7081.44,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 8432.56,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 9245.19,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917011?var-id=76973&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917011",
+    "unitName": "Zakopane",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 76973,
+        "measureUnitId": 4,
+        "lastUpdate": "2026-08-03T14:11:33.367",
+        "values": [
+          {
+            "year": "2002",
+            "val": 1893,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 1917,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 2041,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 2254,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 2367.03,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 2732.53,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 2959.83,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 3068.02,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 3392.85,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 3278.47,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 3381.97,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 3469.01,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 3732.43,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 4292.29,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 4691.4,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 5698.72,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 5521.07,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 6325.61,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 7282.36,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 8260.83,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 9308.36,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 9366.96,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 10014.14,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 10906.2,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917000?var-id=76973&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917000",
+    "unitName": "Powiat tatrzański",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 76973,
+        "measureUnitId": 4,
+        "lastUpdate": "2026-08-03T14:11:33.367",
+        "values": [
+          {
+            "year": "2002",
+            "val": 1527,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 1554,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 1702,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 1876,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 2154.78,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 2391.3,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 2624.54,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 2772.5,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 3152.48,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 2963.74,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 3030.52,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 3140.31,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 3383.4,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 3843.09,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 4341.81,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 4867.99,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 5009.22,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 5653.19,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 6501.64,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 7358.43,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 7727.39,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 7358.09,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 8338.16,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 9265.91,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=5&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 76973,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2025",
+            "val": 8657.06,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=6&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3934,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=3933"
+    },
+    "variableId": 76973,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2025",
+            "val": 8289.82,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 76973,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 7788.61,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 76973,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 7945.9,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/variables/76964?format=json&lang=pl": {
+    "id": 76964,
+    "subjectId": "P2644",
+    "n1": "gminy łącznie z miastami na prawach powiatu",
+    "n2": "ogółem",
+    "level": 6,
+    "measureUnitId": 4,
+    "measureUnitName": "zł",
+    "years": [
+      2002,
+      2003,
+      2004,
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011200000000?var-id=76964&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011200000000",
+    "unitName": "MAŁOPOLSKIE",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 76964,
+        "measureUnitId": 4,
+        "lastUpdate": "2026-08-03T14:24:24.923",
+        "values": [
+          {
+            "year": "2002",
+            "val": 1622,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 1638,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 1848,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 2061,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 2384.27,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 2650.68,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 2890.71,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 3185.58,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 3435.92,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 3494.64,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 3473.47,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 3497.96,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 3771.71,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 3913.69,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 4368.07,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 4817.4,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 5443.58,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 5974.75,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 6342.36,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 6855.04,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 7497.21,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 7900.88,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 8723.18,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 9468.74,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917011?var-id=76964&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917011",
+    "unitName": "Zakopane",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 76964,
+        "measureUnitId": 4,
+        "lastUpdate": "2026-08-03T14:24:24.923",
+        "values": [
+          {
+            "year": "2002",
+            "val": 1863,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 1809,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 1835,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 2176,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 2309.84,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 2463.07,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 3081.37,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 3107.24,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 4255.33,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 3204.62,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 3870.33,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 3406.25,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 4062.59,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 4165.26,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 4795.69,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 6120.99,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 6692.29,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 6057.68,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 6178.48,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 7120.23,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 10028.09,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 10577.02,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 10788.1,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 10416.2,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917000?var-id=76964&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917000",
+    "unitName": "Powiat tatrzański",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 76964,
+        "measureUnitId": 4,
+        "lastUpdate": "2026-08-03T14:24:24.923",
+        "values": [
+          {
+            "year": "2002",
+            "val": 1535,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 1494,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 1577,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 1848,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 2155.83,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 2244.97,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 2644.12,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 2896.59,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 3595.99,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 2926.73,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 3217.77,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 2989.94,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 3675.41,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 3814.17,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 4313.23,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 5081.43,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 5590.48,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 5543.47,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 5974.53,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 6422.19,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 7952.75,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 8112.02,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 8665.99,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 8984.27,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=5&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 76964,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2025",
+            "val": 8349.53,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=6&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3934,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=3933"
+    },
+    "variableId": 76964,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2025",
+            "val": 7382.69,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 76964,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 7981.74,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 76964,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 7571.04,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/variables/747060?format=json&lang=pl": {
+    "id": 747060,
+    "subjectId": "P3820",
+    "n1": "mieszkania oddane do użytkowania na 1000 ludności",
+    "level": 6,
+    "measureUnitId": 1,
+    "measureUnitName": "-",
+    "years": [
+      2002,
+      2003,
+      2004,
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011200000000?var-id=747060&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011200000000",
+    "unitName": "MAŁOPOLSKIE",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 747060,
+        "measureUnitId": 1,
+        "lastUpdate": "2026-04-20T12:16:09.8",
+        "values": [
+          {
+            "year": "2002",
+            "val": 3,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 7.2,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 3.3,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 3.3,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 3.8,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 3.8,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 4.9,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 5.7,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 3.7,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 3.8,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 4.6,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 4.6,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 4.6,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 4.3,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 5.1,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 5.9,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 5.4,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 6.4,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 5.8,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 6.4,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 7,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 6.3,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 5.9,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 5.9,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917011?var-id=747060&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917011",
+    "unitName": "Zakopane",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 747060,
+        "measureUnitId": 1,
+        "lastUpdate": "2026-04-20T12:16:09.8",
+        "values": [
+          {
+            "year": "2002",
+            "val": 4.8,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 3.5,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 4.9,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 3,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 5.3,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 5.1,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 9.4,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 13.2,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 9.7,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 7.2,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 2.2,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 3.1,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 4.3,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 5.1,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 7.3,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 5,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 5.4,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 4.5,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 3.8,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 5.6,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 4.9,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 13.5,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 3.2,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 6.9,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917000?var-id=747060&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917000",
+    "unitName": "Powiat tatrzański",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 747060,
+        "measureUnitId": 1,
+        "lastUpdate": "2026-04-20T12:16:09.8",
+        "values": [
+          {
+            "year": "2002",
+            "val": 3,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 3.3,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 4,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 2.8,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 3.6,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 3.7,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 5.5,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 7.9,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 5.9,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 5.2,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 4.1,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 3,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 3.9,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 3.8,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 4.6,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 3.3,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 4.2,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 4.4,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 4.3,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 4.6,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 4.4,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 7.7,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 4.8,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 6.1,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=5&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 747060,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2025",
+            "val": 5.9,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=6&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3934,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=3933"
+    },
+    "variableId": 747060,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2025",
+            "val": 7.4,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 747060,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 5.7,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 747060,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 11.2,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/variables/79130?format=json&lang=pl": {
+    "id": 79130,
+    "subjectId": "P2433",
+    "n1": "ogółem",
+    "n2": "kanalizacja",
+    "level": 6,
+    "measureUnitId": 50,
+    "measureUnitName": "%",
+    "years": [
+      2002,
+      2003,
+      2004,
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011200000000?var-id=79130&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011200000000",
+    "unitName": "MAŁOPOLSKIE",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 79130,
+        "measureUnitId": 50,
+        "lastUpdate": "2026-09-23T12:35:23.307",
+        "values": [
+          {
+            "year": "2002",
+            "val": 45.7,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 46.5,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 47.6,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 48.8,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 49.6,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 50.1,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 51.1,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 51.9,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 52.7,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 54.5,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 55.1,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 56,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 59.8,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 61.4,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 62.6,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 63,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 63.3,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 63.9,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 64.6,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 65.2,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 65.7,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 66.2,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 66.8,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 67.5,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917011?var-id=79130&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917011",
+    "unitName": "Zakopane",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 79130,
+        "measureUnitId": 50,
+        "lastUpdate": "2026-09-23T12:35:23.307",
+        "values": [
+          {
+            "year": "2002",
+            "val": 65.3,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 66.2,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 68,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 69.2,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 73.2,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 74.2,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 75.9,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 78.5,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 79.8,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 81.9,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 82.1,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 82.3,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 82.5,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 82.7,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 82.9,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 83.1,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 83.4,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 83.7,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 83.8,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 84.1,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 84.3,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 84.5,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 84.7,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 85,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917000?var-id=79130&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917000",
+    "unitName": "Powiat tatrzański",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 79130,
+        "measureUnitId": 50,
+        "lastUpdate": "2026-09-23T12:35:23.307",
+        "values": [
+          {
+            "year": "2002",
+            "val": 41.1,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 43.5,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 44.7,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 46.2,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 48.4,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 49,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 52.5,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 57.4,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 58.6,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 60.2,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 60.8,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 60.4,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 61.4,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 62.1,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 63.4,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 64,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 64.2,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 64.7,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 64.8,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 65.3,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 65.6,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 65.8,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 66.3,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 66.8,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=5&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 79130,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2025",
+            "val": 62.1,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=6&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3934,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=3933"
+    },
+    "variableId": 79130,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2025",
+            "val": 93.3,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 79130,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 61.6,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 79130,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 93.2,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/variables/1617169?format=json&lang=pl": {
+    "id": 1617169,
+    "subjectId": "P4013",
+    "n1": "odsetek dzieci objętych wychowaniem przedszkolnym",
+    "n2": "ogółem",
+    "n3": "dzieci w wieku 3 - 6 lat",
+    "level": 6,
+    "measureUnitId": 50,
+    "measureUnitName": "%",
+    "years": [
+      2003,
+      2004,
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011200000000?var-id=1617169&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011200000000",
+    "unitName": "MAŁOPOLSKIE",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 1617169,
+        "measureUnitId": 50,
+        "lastUpdate": "2025-10-15T15:00:21.11",
+        "values": [
+          {
+            "year": "2003",
+            "val": 64.3,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 65.9,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 54.6,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 57.7,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 58.2,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 62.5,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 67,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 67.5,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 70.9,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 72.2,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 75.2,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 83.1,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 82.6,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 87.9,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 90.8,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 91.8,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 88.2,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 90.6,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 94.9,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 95.9,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 97,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917011?var-id=1617169&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917011",
+    "unitName": "Zakopane",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 1617169,
+        "measureUnitId": 50,
+        "lastUpdate": "2025-10-15T15:00:21.11",
+        "values": [
+          {
+            "year": "2003",
+            "val": 75.6,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 76.5,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 69.6,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 80.6,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 91.2,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 98.4,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 100.8,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 97.9,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 99.1,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 100.2,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 97.2,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 100.4,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 98.3,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 102.3,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 105.8,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 106.7,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 110.2,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 110.1,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 114.4,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 111.9,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 115.2,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917000?var-id=1617169&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917000",
+    "unitName": "Powiat tatrzański",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 1617169,
+        "measureUnitId": 50,
+        "lastUpdate": "2025-10-15T15:00:21.11",
+        "values": [
+          {
+            "year": "2003",
+            "val": 57.6,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 59.4,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 41.9,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 47.8,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 50,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 55.1,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 60,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 61.1,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 65.9,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 65,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 64.2,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 68,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 72.1,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 77.7,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 82.5,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 86.2,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 83.9,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 86.3,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 91.2,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 90.5,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 93.6,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=5&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1617169,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=6&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1617169,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 1617169,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 97.3,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 1617169,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 111.9,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/variables/72305?format=json&lang=pl": {
+    "id": 72305,
+    "subjectId": "P2137",
+    "n1": "ogółem",
+    "n2": "ogółem",
+    "level": 6,
+    "measureUnitId": 26,
+    "measureUnitName": "osoba",
+    "years": [
+      1995,
+      1996,
+      1997,
+      1998,
+      1999,
+      2000,
+      2001,
+      2002,
+      2003,
+      2004,
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011200000000?var-id=72305&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011200000000",
+    "unitName": "MAŁOPOLSKIE",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 72305,
+        "measureUnitId": 26,
+        "lastUpdate": "2026-05-06T08:51:41.913",
+        "values": [
+          {
+            "year": "1995",
+            "val": 3190186,
+            "attrId": 1
+          },
+          {
+            "year": "1996",
+            "val": 3197064,
+            "attrId": 1
+          },
+          {
+            "year": "1997",
+            "val": 3206630,
+            "attrId": 1
+          },
+          {
+            "year": "1998",
+            "val": 3215885,
+            "attrId": 1
+          },
+          {
+            "year": "1999",
+            "val": 3217865,
+            "attrId": 1
+          },
+          {
+            "year": "2000",
+            "val": 3229139,
+            "attrId": 1
+          },
+          {
+            "year": "2001",
+            "val": 3236268,
+            "attrId": 1
+          },
+          {
+            "year": "2002",
+            "val": 3237217,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 3252949,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 3260201,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 3266187,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 3271206,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 3279036,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 3287136,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 3298270,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 3336699,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 3346796,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 3354077,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 3360581,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 3368336,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 3372618,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 3382260,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 3391380,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 3400577,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 3410901,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 3432692,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 3430370,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 3429014,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 3429632,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 3429084,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 3429342,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917011?var-id=72305&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917011",
+    "unitName": "Zakopane",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 72305,
+        "measureUnitId": 26,
+        "lastUpdate": "2026-05-06T08:51:41.913",
+        "values": [
+          {
+            "year": "1995",
+            "val": 29693,
+            "attrId": 1
+          },
+          {
+            "year": "1996",
+            "val": 29783,
+            "attrId": 1
+          },
+          {
+            "year": "1997",
+            "val": 29847,
+            "attrId": 1
+          },
+          {
+            "year": "1998",
+            "val": 29822,
+            "attrId": 1
+          },
+          {
+            "year": "1999",
+            "val": 28537,
+            "attrId": 1
+          },
+          {
+            "year": "2000",
+            "val": 28189,
+            "attrId": 1
+          },
+          {
+            "year": "2001",
+            "val": 28214,
+            "attrId": 1
+          },
+          {
+            "year": "2002",
+            "val": 28046,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 27900,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 27742,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 27610,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 27261,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 27085,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 26846,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 26737,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 27877,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 27879,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 27837,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 27721,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 27556,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 27442,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 27305,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 27266,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 27191,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 27010,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 25867,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 25562,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 25389,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 25204,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 25059,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 24921,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-unit/011216917000?var-id=72305&format=json&lang=pl": {
+    "totalRecords": 1,
+    "unitId": "011216917000",
+    "unitName": "Powiat tatrzański",
+    "aggregateId": 1,
+    "results": [
+      {
+        "id": 72305,
+        "measureUnitId": 26,
+        "lastUpdate": "2026-05-06T08:51:41.913",
+        "values": [
+          {
+            "year": "1995",
+            "val": 64881,
+            "attrId": 1
+          },
+          {
+            "year": "1996",
+            "val": 65284,
+            "attrId": 1
+          },
+          {
+            "year": "1997",
+            "val": 65558,
+            "attrId": 1
+          },
+          {
+            "year": "1998",
+            "val": 65782,
+            "attrId": 1
+          },
+          {
+            "year": "1999",
+            "val": 65081,
+            "attrId": 1
+          },
+          {
+            "year": "2000",
+            "val": 64920,
+            "attrId": 1
+          },
+          {
+            "year": "2001",
+            "val": 65238,
+            "attrId": 1
+          },
+          {
+            "year": "2002",
+            "val": 65296,
+            "attrId": 1
+          },
+          {
+            "year": "2003",
+            "val": 65382,
+            "attrId": 1
+          },
+          {
+            "year": "2004",
+            "val": 65335,
+            "attrId": 1
+          },
+          {
+            "year": "2005",
+            "val": 65461,
+            "attrId": 1
+          },
+          {
+            "year": "2006",
+            "val": 65196,
+            "attrId": 1
+          },
+          {
+            "year": "2007",
+            "val": 65168,
+            "attrId": 1
+          },
+          {
+            "year": "2008",
+            "val": 65148,
+            "attrId": 1
+          },
+          {
+            "year": "2009",
+            "val": 65298,
+            "attrId": 1
+          },
+          {
+            "year": "2010",
+            "val": 67325,
+            "attrId": 1
+          },
+          {
+            "year": "2011",
+            "val": 67640,
+            "attrId": 1
+          },
+          {
+            "year": "2012",
+            "val": 67831,
+            "attrId": 1
+          },
+          {
+            "year": "2013",
+            "val": 67847,
+            "attrId": 1
+          },
+          {
+            "year": "2014",
+            "val": 67851,
+            "attrId": 1
+          },
+          {
+            "year": "2015",
+            "val": 67884,
+            "attrId": 1
+          },
+          {
+            "year": "2016",
+            "val": 67905,
+            "attrId": 1
+          },
+          {
+            "year": "2017",
+            "val": 68034,
+            "attrId": 1
+          },
+          {
+            "year": "2018",
+            "val": 68146,
+            "attrId": 1
+          },
+          {
+            "year": "2019",
+            "val": 68072,
+            "attrId": 1
+          },
+          {
+            "year": "2020",
+            "val": 67028,
+            "attrId": 1
+          },
+          {
+            "year": "2021",
+            "val": 66701,
+            "attrId": 1
+          },
+          {
+            "year": "2022",
+            "val": 66566,
+            "attrId": 1
+          },
+          {
+            "year": "2023",
+            "val": 66478,
+            "attrId": 1
+          },
+          {
+            "year": "2024",
+            "val": 66346,
+            "attrId": 1
+          },
+          {
+            "year": "2025",
+            "val": 66181,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=5&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 72305,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2025",
+            "val": 106926,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=6&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3934,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=3933"
+    },
+    "variableId": 72305,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2025",
+            "val": 28187,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 72305,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 106985,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 72305,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 28339,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 72305,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/72305?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 72305,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60559?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60559?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60559?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60559?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60559?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 60559,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 164.9,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60559?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60559?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60559?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60559?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60559?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 60559,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 948.1,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60559?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60559,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60559?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60559,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/450551?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/450551?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/450551?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/450551?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/450551?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 450551,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": -0.99,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/450551?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/450551?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/450551?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/450551?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/450551?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 450551,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": -3.45,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/450551?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 450551,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/450551?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 450551,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1616456?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1616456?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1616456?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1616456?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1616456?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 1616456,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": -0.99,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1616456?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1616456,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1616456?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1616456,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1616456?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1616456,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/453193?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/453193?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/453193?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/453193?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/453193?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 453193,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 1.6,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/453193?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/453193?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/453193?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/453193?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/453193?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 453193,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": -1.1,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/453193?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 453193,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/453193?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 453193,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1365234?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1365234?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1365234?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1365234?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1365234?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 1365234,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 169,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1365234?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1365234?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1365234?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1365234?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1365234?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 1365234,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": -32,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1365234?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1365234,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1365234?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1365234,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/634989?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/634989?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/634989?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/634989?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/634989?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 634989,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 17.7,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/634989?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/634989?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/634989?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/634989?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/634989?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 634989,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 22.1,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/634989?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 634989,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/634989?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 634989,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/155?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/155?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/155?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/155?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/155?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 155,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 21978,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/155?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/155?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/155?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/155?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/155?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 155,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 7092,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/155?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 155,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/155?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 155,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=5&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 1650633,
+    "measureUnitId": 80,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2025",
+            "val": 42,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=6&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3934,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=6&year=2025&page-size=1&format=json&lang=pl&page=3933"
+    },
+    "variableId": 1650633,
+    "measureUnitId": 80,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2025",
+            "val": 43,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 1650633,
+    "measureUnitId": 80,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 42,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1650633?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 1650633,
+    "measureUnitId": 80,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 43,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/461691?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/461691?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/461691?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/461691?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/461691?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 461691,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 2.4,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/461691?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 461691,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/461691?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 461691,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/461691?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 461691,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/461685?unit-level=5&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/461685?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/461685?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/461685?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/461685?unit-level=5&year=2025&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 461685,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2025",
+            "val": 2.6,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/461685?unit-level=6&year=2025&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 461685,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/461685?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/461685?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/461685?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/461685?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/461685?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 461685,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 2.5,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/461685?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 461685,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1613094,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1613094?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1613094,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 64428,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/64428?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 64428,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 76973,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/76973?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 76973,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 76964,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/76964?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 76964,
+    "measureUnitId": 4,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60530?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60530?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60530?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60530?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60530?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 60530,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 1111,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60530?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60530?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60530?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60530?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60530?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 60530,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 1490,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60530?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60530,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60530?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60530,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 747060,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/747060?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 747060,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60573?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60573?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60573?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60573?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60573?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 60573,
+    "measureUnitId": 16,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 31.3,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60573?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60573?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60573?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60573?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60573?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 60573,
+    "measureUnitId": 16,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 32.2,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60573?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60573,
+    "measureUnitId": 16,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60573?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60573,
+    "measureUnitId": 16,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/194828?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/194828?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/194828?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/194828?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/194828?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 194828,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 28.6,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/194828?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/194828?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/194828?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/194828?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/194828?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 194828,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 8.4,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/194828?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 194828,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/194828?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 194828,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 79130,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/79130?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 79130,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1617169,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1617169?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1617169,
+    "measureUnitId": 50,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60191?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60191?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60191?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60191?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60191?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 60191,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 146,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60191?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60191?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60191?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60191?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60191?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 60191,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 230,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60191?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60191,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60191?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60191,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1234?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1234?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1234?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1234?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1234?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 1234,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 15597,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1234?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 3918,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1234?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1234?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1234?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/1234?unit-level=6&year=2024&page-size=1&format=json&lang=pl&page=3917"
+    },
+    "variableId": 1234,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001011",
+        "name": "Bochnia",
+        "values": [
+          {
+            "year": "2024",
+            "val": 6514,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1234?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1234,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/1234?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 1234,
+    "measureUnitId": 26,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60298?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60298?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60298?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60298?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60298?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 60298,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 907.54,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60298?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60298,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60298?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60298,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60298?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60298,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/40921?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/40921?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/40921?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/40921?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/40921?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 40921,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 97026,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/40921?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 40921,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/40921?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 40921,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/40921?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 40921,
+    "measureUnitId": 1,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60533?unit-level=5&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 380,
+    "links": {
+      "first": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60533?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "self": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60533?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=0",
+      "next": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60533?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=1",
+      "last": "https://bdl.stat.gov.pl/api/v1/data/by-variable/60533?unit-level=5&year=2024&page-size=1&format=json&lang=pl&page=379"
+    },
+    "variableId": 60533,
+    "measureUnitId": 8,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": [
+      {
+        "id": "011212001000",
+        "name": "Powiat bocheński",
+        "values": [
+          {
+            "year": "2024",
+            "val": 577.9,
+            "attrId": 1
+          }
+        ]
+      }
+    ]
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60533?unit-level=6&year=2024&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60533,
+    "measureUnitId": 8,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60533?unit-level=5&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60533,
+    "measureUnitId": 8,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
+  },
+  "https://bdl.stat.gov.pl/api/v1/data/by-variable/60533?unit-level=6&year=2026&page-size=1&format=json&lang=pl": {
+    "totalRecords": 0,
+    "variableId": 60533,
+    "measureUnitId": 8,
+    "aggregateId": 1,
+    "lastUpdate": null,
+    "results": []
   }
 }

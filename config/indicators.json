@@ -1,0 +1,204 @@
+[
+  {
+    "id": "population",
+    "bdlVarId": 72305,
+    "name": "Ludność ogółem",
+    "unit": "osoba",
+    "description": "Liczba ludności zamieszkującej daną jednostkę na koniec roku.",
+    "group": "Ludność",
+    "higherIsBetter": null,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "density",
+    "bdlVarId": 60559,
+    "name": "Gęstość zaludnienia (os./km²)",
+    "unit": "os./km²",
+    "description": "Liczba ludności przypadająca na 1 km² powierzchni.",
+    "group": "Ludność",
+    "higherIsBetter": null,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "natural-increase",
+    "bdlVarId": 450551,
+    "name": "Przyrost naturalny na 1000 ludności",
+    "unit": "na 1000",
+    "description": "Różnica między liczbą urodzeń żywych a liczbą zgonów w przeliczeniu na 1000 ludności.",
+    "group": "Ludność",
+    "higherIsBetter": true,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "migration-balance",
+    "bdlVarId": 453193,
+    "name": "Saldo migracji na 1000 ludności",
+    "unit": "na 1000",
+    "description": "Różnica między zameldowaniami a wymeldowaniami w przeliczeniu na 1000 ludności.",
+    "group": "Ludność",
+    "higherIsBetter": true,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "share-65plus",
+    "bdlVarId": 634989,
+    "name": "Udział ludności 65+ (%)",
+    "unit": "%",
+    "description": "Odsetek osób w wieku 65 lat i więcej w populacji ogółem.",
+    "group": "Ludność",
+    "higherIsBetter": null,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "median-age",
+    "bdlVarId": 1650633,
+    "name": "Mediana wieku",
+    "unit": "lata",
+    "description": "Wiek, powyżej i poniżej którego znajduje się dokładnie połowa ludności.",
+    "group": "Ludność",
+    "higherIsBetter": null,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "unemployment-rate",
+    "bdlVarId": 461691,
+    "name": "Stopa bezrobocia rejestrowanego (%)",
+    "unit": "%",
+    "description": "Udział zarejestrowanych bezrobotnych w cywilnej ludności aktywnej zawodowo.",
+    "group": "Praca",
+    "higherIsBetter": false,
+    "minLevel": "pow"
+  },
+  {
+    "id": "unemployed-share-working-age",
+    "bdlVarId": 1613094,
+    "name": "Udział bezrobotnych w ludności w wieku produkcyjnym (%)",
+    "unit": "%",
+    "description": "Udział bezrobotnych zarejestrowanych w liczbie ludności w wieku produkcyjnym.",
+    "group": "Praca",
+    "higherIsBetter": false,
+    "minLevel": "pow"
+  },
+  {
+    "id": "avg-wage",
+    "bdlVarId": 64428,
+    "name": "Przeciętne wynagrodzenie brutto (zł)",
+    "unit": "zł",
+    "description": "Przeciętne miesięczne wynagrodzenie brutto w przeliczeniu na jednego zatrudnionego.",
+    "group": "Pieniądze",
+    "higherIsBetter": true,
+    "minLevel": "pow",
+    "footnote": "bez firm do 9 pracowników"
+  },
+  {
+    "id": "income-per-capita",
+    "bdlVarId": 76973,
+    "name": "Dochody budżetu gminy na mieszkańca (zł)",
+    "unit": "zł",
+    "description": "Dochody ogółem budżetów gmin w przeliczeniu na jednego mieszkańca.",
+    "group": "Pieniądze",
+    "higherIsBetter": true,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "spending-per-capita",
+    "bdlVarId": 76964,
+    "name": "Wydatki budżetu gminy na mieszkańca (zł)",
+    "unit": "zł",
+    "description": "Wydatki ogółem budżetów gmin w przeliczeniu na jednego mieszkańca.",
+    "group": "Pieniądze",
+    "higherIsBetter": null,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "regon-per-10k",
+    "bdlVarId": 60530,
+    "name": "Podmioty REGON na 10 tys. ludności",
+    "unit": "na 10 tys.",
+    "description": "Liczba podmiotów gospodarki narodowej wpisanych do rejestru REGON na 10 tys. ludności.",
+    "group": "Pieniądze",
+    "higherIsBetter": true,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "dwellings-per-1000",
+    "bdlVarId": 747060,
+    "name": "Mieszkania oddane do użytku na 1000 ludności",
+    "unit": "na 1000",
+    "description": "Liczba nowych mieszkań oddanych do użytkowania w przeliczeniu na 1000 ludności.",
+    "group": "Mieszkania",
+    "higherIsBetter": true,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "dwelling-area-per-person",
+    "bdlVarId": 60573,
+    "name": "Przeciętna pow. użytkowa mieszkania na osobę (m²)",
+    "unit": "m²",
+    "description": "Przeciętna powierzchnia użytkowa mieszkań przypadająca na jedną osobę.",
+    "group": "Mieszkania",
+    "higherIsBetter": true,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "forest-cover",
+    "bdlVarId": 194828,
+    "name": "Lesistość (%)",
+    "unit": "%",
+    "description": "Stosunek procentowy powierzchni lasów do ogólnej powierzchni danej jednostki.",
+    "group": "Środowisko",
+    "higherIsBetter": true,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "sewerage-share",
+    "bdlVarId": 79130,
+    "name": "Ludność korzystająca z kanalizacji (%)",
+    "unit": "%",
+    "description": "Odsetek ludności korzystającej z sieci kanalizacyjnej w ogóle populacji.",
+    "group": "Środowisko",
+    "higherIsBetter": true,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "preschool-3-6",
+    "bdlVarId": 1617169,
+    "name": "Wychowanie przedszkolne, dzieci 3–6 lat (%)",
+    "unit": "%",
+    "description": "Odsetek dzieci objętych wychowaniem przedszkolnym w liczbie dzieci w wieku 3–6 lat.",
+    "group": "Życie",
+    "higherIsBetter": true,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "library-readers-per-1000",
+    "bdlVarId": 60191,
+    "name": "Czytelnicy bibliotek publicznych na 1000 ludności",
+    "unit": "na 1000",
+    "description": "Liczba zarejestrowanych czytelników bibliotek publicznych na 1000 ludności.",
+    "group": "Życie",
+    "higherIsBetter": true,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "tourist-nights-per-1000",
+    "bdlVarId": 60298,
+    "name": "Noclegi udzielone turystom na 1000 ludności",
+    "unit": "na 1000",
+    "description": "Liczba udzielonych noclegów w obiektach turystycznych na 1000 ludności.",
+    "group": "Życie",
+    "higherIsBetter": null,
+    "minLevel": "pow"
+  },
+  {
+    "id": "cars-per-1000",
+    "bdlVarId": 60533,
+    "name": "Samochody osobowe na 1000 ludności",
+    "unit": "na 1000",
+    "description": "Liczba zarejestrowanych samochodów osobowych w przeliczeniu na 1000 ludności.",
+    "group": "Transport",
+    "higherIsBetter": null,
+    "minLevel": "pow",
+    "footnote": "rejestracje flot leasingowych zawyżają niektóre miasta"
+  }
+]

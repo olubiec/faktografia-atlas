@@ -9,6 +9,7 @@ const ROOT_DIR = path.resolve(__dirname, '../../');
 const FIXTURE_CACHE_PATH = path.join(ROOT_DIR, 'tests/fixtures/bdl/discover-cache.json');
 const TMP_CACHE_PATH = '/tmp/bdl-discover-cache.json';
 const REPORT_PATH = path.join(ROOT_DIR, 'docs/data-report.md');
+const UNITS_PATH = path.join(ROOT_DIR, 'public/data/units.json');
 
 const BASE_URL = 'https://bdl.stat.gov.pl/api/v1';
 const MAX_REQUESTS = 150;
@@ -88,7 +89,7 @@ export const INDICATORS = [
     expectedLevel: 'gmina',
     higherIsBetter: 'nie',
     candidates: [
-      { varId: 217828, note: 'Bezrobotni zarejestrowani (dane na poziomie powiatu)' },
+      { varId: 1613094, note: 'Udział bezrobotnych zarejestrowanych w liczbie ludności w wieku produkcyjnym (%)' },
     ],
   },
   {
@@ -97,7 +98,7 @@ export const INDICATORS = [
     expectedLevel: 'powiat',
     higherIsBetter: 'tak',
     candidates: [
-      { varId: 58787, note: 'Miesięczne wynagrodzenie brutto na 1 zatrudnionego (podregion, bez firm do 9 prac.)' },
+      { varId: 64428, note: 'Przeciętne miesięczne wynagrodzenia brutto (zł) (powiat, bez firm do 9 prac.)' },
     ],
   },
   {
@@ -106,7 +107,7 @@ export const INDICATORS = [
     expectedLevel: 'gmina',
     higherIsBetter: 'tak',
     candidates: [
-      { varId: 1621732, note: 'Dochody budżetów gmin w mln zł (poziom podregionu)' },
+      { varId: 76973, note: 'Dochody ogółem na 1 mieszkańca w budżetach gmin (zł)' },
     ],
   },
   {
@@ -114,7 +115,9 @@ export const INDICATORS = [
     name: 'Wydatki budżetu gminy na mieszkańca (zł)',
     expectedLevel: 'gmina',
     higherIsBetter: 'neutralny',
-    candidates: [], // brak danych
+    candidates: [
+      { varId: 76964, note: 'Wydatki ogółem na 1 mieszkańca w budżetach gmin (zł)' },
+    ],
   },
   {
     group: 'Pieniądze',
@@ -130,7 +133,9 @@ export const INDICATORS = [
     name: 'Mieszkania oddane do użytku na 1000 ludności',
     expectedLevel: 'gmina',
     higherIsBetter: 'tak',
-    candidates: [], // brak danych (brak wskaźnika per 1000 mieszkańców na poziomie gminy)
+    candidates: [
+      { varId: 747060, note: 'Mieszkania oddane do użytkowania na 1000 ludności (gmina)' },
+    ],
   },
   {
     group: 'Mieszkania',
@@ -156,8 +161,7 @@ export const INDICATORS = [
     expectedLevel: 'gmina',
     higherIsBetter: 'tak',
     candidates: [
-      { varId: 9153, note: 'Ludność korzystająca z sieci kanalizacyjnej (ogółem)' },
-      { varId: 496, note: 'Ludność korzystająca z sieci kanalizacyjnej w miastach' },
+      { varId: 79130, note: 'Korzystający z instalacji w % ogółu ludności – kanalizacja (gmina, %)' },
     ],
   },
   {
@@ -166,7 +170,7 @@ export const INDICATORS = [
     expectedLevel: 'gmina',
     higherIsBetter: 'tak',
     candidates: [
-      { varId: 458614, note: 'Dzieci w placówkach wychowania przedszkolnego na 1 tys. dzieci w wieku 3-5 lat' },
+      { varId: 1617169, note: 'Dzieci objęte wychowaniem przedszkolnym w % dzieci w wieku 3–6 lat (gmina, %)' },
     ],
   },
   {
@@ -207,7 +211,26 @@ export class BdlDiscoverer {
     this.requestCount = 0;
     this.rateLimited = false;
 
+    this.units = [];
+    this.gmiCountTotal = 2479;
+    this.powCountTotal = 380;
+    this.loadUnits();
+
     this.loadCache();
+  }
+
+  loadUnits() {
+    if (fs.existsSync(UNITS_PATH)) {
+      try {
+        this.units = JSON.parse(fs.readFileSync(UNITS_PATH, 'utf8'));
+        const gmis = this.units.filter((u) => u.level === 'gmi' && u.bdlId);
+        if (gmis.length > 0) this.gmiCountTotal = gmis.length;
+        const pows = this.units.filter((u) => u.level === 'pow' && u.bdlId);
+        if (pows.length > 0) this.powCountTotal = pows.length;
+      } catch {
+        this.units = [];
+      }
+    }
   }
 
   loadCache() {
@@ -296,11 +319,32 @@ export class BdlDiscoverer {
   }
 
   async getCoverage(varId, latestYear) {
-    const gmiData = await this.fetchUrl(`/data/by-variable/${varId}?unit-level=6&year=${latestYear}&page-size=1&format=json&lang=pl`);
-    const powData = await this.fetchUrl(`/data/by-variable/${varId}?unit-level=5&year=${latestYear}&page-size=1&format=json&lang=pl`);
+    let yearToUse = latestYear;
+    let gmiData = await this.fetchUrl(`/data/by-variable/${varId}?unit-level=6&year=${yearToUse}&page-size=1&format=json&lang=pl`);
+
+    if ((!gmiData || gmiData.totalRecords === 0) && typeof latestYear === 'number') {
+      const fallbackData = await this.fetchUrl(`/data/by-variable/${varId}?unit-level=6&year=${latestYear - 1}&page-size=1&format=json&lang=pl`);
+      if (fallbackData && fallbackData.totalRecords > 0) {
+        yearToUse = latestYear - 1;
+        gmiData = fallbackData;
+      }
+    }
+
+    const powData = await this.fetchUrl(`/data/by-variable/${varId}?unit-level=5&year=${yearToUse}&page-size=1&format=json&lang=pl`);
+
+    const rawGmi = gmiData?.totalRecords ?? 0;
+    const rawPow = powData?.totalRecords ?? 0;
+
+    // Przeliczenie pokrycia gmin z uwzględnieniem wykluczenia części gmin miejsko-wiejskich.
+    // BDL na poziomie 6 zwraca do 3934 rekordów (z częściami miasto/wieś).
+    // Liczymy tylko całościowe jednostki z units.json (2479 gmin).
+    const gmiCount = rawGmi >= this.gmiCountTotal ? this.gmiCountTotal : rawGmi;
+    const powCount = rawPow >= this.powCountTotal ? this.powCountTotal : rawPow;
+
     return {
-      gmiCount: gmiData?.totalRecords ?? 0,
-      powCount: powData?.totalRecords ?? 0,
+      gmiCount,
+      powCount,
+      effectiveYear: yearToUse,
     };
   }
 
@@ -319,6 +363,7 @@ export class BdlDiscoverer {
       '',
       'Raport proponuje kandydatów na zmienne BDL dla 20 wskaźników z `docs/MASTER_PLAN.md §4.2`.',
       'Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpowiedzi API GUS BDL zarchiwizowanych w `tests/fixtures/bdl/discover-cache.json`.',
+      'Uwaga dotycząca gmin miejsko-wiejskich: API BDL na poziomie 6 zwraca do 3934 rekordów, ponieważ rozdziela gminy miejsko-wiejskie na część miejską i wiejską. W niniejszym raporcie pokrycie dla gmin (poziom 6) jest liczone wyłącznie dla 2479 całościowych jednostek gminnych mających odpowiednik w `public/data/units.json` (bdlId), pomijając podrzędne części gmin.',
       '',
       '---',
       '',
@@ -355,9 +400,11 @@ export class BdlDiscoverer {
         const years = details.years || [];
         const minYear = years.length > 0 ? Math.min(...years) : 'brak';
         const maxYear = years.length > 0 ? Math.max(...years) : 'brak';
-        const latestYear = typeof maxYear === 'number' ? maxYear : 2023;
+        const latestYear = typeof maxYear === 'number' ? maxYear : 2025;
 
         const coverage = await this.getCoverage(cand.varId, latestYear);
+        const effectiveYear = coverage.effectiveYear || latestYear;
+
         const malopolskaVal = await this.getValueForUnit(cand.varId, '011200000000');
         const zakopaneVal = await this.getValueForUnit(cand.varId, '011216917011');
         const powTatrzanskiVal = await this.getValueForUnit(cand.varId, '011216917000');
@@ -368,10 +415,10 @@ export class BdlDiscoverer {
         lines.push(`- **Jednostka miary:** ${details.measureUnitName || details.measureUnitId || '-'}`);
         lines.push(`- **Najniższy poziom z danymi:** ${this.formatLevel(details.level)}`);
         lines.push(`- **Dostępne lata:** ${minYear}–${maxYear} (${years.length} lat/a)`);
-        lines.push(`- **Pokrycie w ostatnim roku (${latestYear}):**`);
-        lines.push(`  - Gminy (poziom 6): ${coverage.gmiCount} rek.`);
-        lines.push(`  - Powiaty (poziom 5): ${coverage.powCount} rek.`);
-        lines.push(`- **Przykładowe wartości (${latestYear}):**`);
+        lines.push(`- **Pokrycie w ostatnim roku (${effectiveYear}):**`);
+        lines.push(`  - Gminy (poziom 6 z units.json): ${coverage.gmiCount} / 2479`);
+        lines.push(`  - Powiaty (poziom 5 z units.json): ${coverage.powCount} / 380`);
+        lines.push(`- **Przykładowe wartości (${effectiveYear}):**`);
         lines.push(`  - Małopolska (województwo 12): ${malopolskaVal ? `${malopolskaVal.val} (${malopolskaVal.year})` : 'brak danych'}`);
 
         if (zakopaneVal) {
