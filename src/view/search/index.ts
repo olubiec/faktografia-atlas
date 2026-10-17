@@ -1,2 +1,1 @@
-export { SearchDialog } from './SearchDialog';
-export { useSearch, getSearchIndex } from './useSearch';
+export { useSearch, loadSearchIndex } from './useSearch';

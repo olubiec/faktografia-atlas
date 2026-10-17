@@ -1,9 +1,9 @@
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { lazy, Suspense, useEffect, useState, useSyncExternalStore } from 'react';
 import { Link, useLocation } from 'react-router';
 import { Menu, Search, Xmark } from 'iconoir-react';
 import { Sheet } from '@/view/ui/Sheet';
 import { Icon } from '@/view/ui/Icon';
-import { SearchDialog } from '@/view/search';
+const SearchDialog = lazy(() => import('@/view/search/SearchDialog').then((m) => ({ default: m.SearchDialog })));
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -30,6 +30,13 @@ export function Header() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  // Okno ładujemy dopiero przy pierwszym otwarciu (kod i dane poza głównym pakietem).
+  const [searchMounted, setSearchMounted] = useState(false);
+
+  const changeSearchOpen = (value: boolean | ((prev: boolean) => boolean)) => {
+    setSearchMounted(true);
+    setSearchOpen(value);
+  };
   const location = useLocation();
 
   const searchParams = new URLSearchParams(location.search);
@@ -52,7 +59,7 @@ export function Header() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        setSearchOpen((prev) => !prev);
+        changeSearchOpen((prev) => !prev);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -65,7 +72,7 @@ export function Header() {
 
     const handleHomeSearchClick = (e: Event) => {
       e.preventDefault();
-      setSearchOpen(true);
+      changeSearchOpen(true);
     };
 
     homeSearchInput.addEventListener('click', handleHomeSearchClick);
@@ -118,7 +125,7 @@ export function Header() {
       {/* Header Search Trigger Button */}
       <button
         type="button"
-        onClick={() => setSearchOpen(true)}
+        onClick={() => changeSearchOpen(true)}
         className="flex items-center gap-2 px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs md:text-sm min-h-[44px] cursor-pointer rounded-none"
       >
         <Icon icon={Search} aria-hidden={true} size={20} />
@@ -189,7 +196,11 @@ export function Header() {
       )}
 
       {/* Search Modal */}
-      <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
+      {searchMounted && (
+        <Suspense fallback={null}>
+          <SearchDialog open={searchOpen} onOpenChange={changeSearchOpen} />
+        </Suspense>
+      )}
     </header>
   );
 }

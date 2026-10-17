@@ -15,7 +15,7 @@ export interface SearchDialogProps {
 export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
-  const results = useSearch(query);
+  const { results, ready, error } = useSearch(query);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -81,7 +81,19 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
 
             {/* Lista wyników */}
             <Command.List className="flex-1 overflow-y-auto p-2">
-              {query.trim().length >= 2 && results.length === 0 && (
+              {query.trim().length >= 2 && error && (
+                <div role="alert" className="p-6 text-center text-olowek text-sm">
+                  Nie udało się wczytać listy miejsc. Odśwież stronę i spróbuj ponownie.
+                </div>
+              )}
+
+              {query.trim().length >= 2 && !ready && !error && (
+                <div role="status" className="p-6 text-center text-olowek text-sm">
+                  Ładowanie listy miejsc…
+                </div>
+              )}
+
+              {query.trim().length >= 2 && ready && results.length === 0 && (
                 <Command.Empty className="p-6 text-center text-olowek text-sm">
                   Brak wyników dla „{query}”
                 </Command.Empty>

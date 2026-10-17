@@ -2,8 +2,32 @@ import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 
 test.describe('Search Command Dialog (CC5.2)', () => {
+  test('lista jednostek nie jest pobierana przed otwarciem okna, a po otwarciu dokładnie raz', async ({ page }) => {
+    const unitsRequests: string[] = [];
+    page.on('request', (req) => {
+      if (req.url().includes('/data/units.json')) unitsRequests.push(req.url());
+    });
+
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    expect(unitsRequests).toHaveLength(0);
+
+    await page.keyboard.press('Control+k');
+    const searchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
+    await expect(searchInput).toBeVisible();
+    await searchInput.fill('lodz');
+    await expect(page.locator('div[role="dialog"] [cmdk-item]').first()).toBeVisible();
+
+    await page.keyboard.press('Escape');
+    await page.keyboard.press('Control+k');
+    await searchInput.fill('zakop');
+    await expect(page.locator('div[role="dialog"] [cmdk-item]').first()).toBeVisible();
+    expect(unitsRequests).toHaveLength(1);
+  });
+
   test('opens search modal via Ctrl+K and closes via Esc, restoring focus', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     const searchTrigger = page.locator('header button').first();
     await searchTrigger.focus();
@@ -26,6 +50,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
 
   test('opens search modal via clicking header search button or home page input', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     // Kliknięcie w przycisk wyszukiwania w nagłówku
     const searchTrigger = page.locator('header button').first();
@@ -45,6 +70,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
 
   test('searches for "lodz" and selects Łódź gmina miejska on Enter, updating URL', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     await page.keyboard.press('Control+k');
     const searchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
@@ -69,6 +95,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
 
   test('supports ArrowDown keyboard navigation between search results', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     await page.keyboard.press('Control+k');
     const searchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
@@ -89,6 +116,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
 
   test('displays empty state message when no results match', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     await page.keyboard.press('Control+k');
     const searchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
@@ -104,6 +132,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
   test('takes full screen on mobile viewport (390x844)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     const searchTrigger = page.locator('header button').first();
     await searchTrigger.click();
@@ -119,6 +148,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
 
   test('axe accessibility audit passes on open search dialog with results', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     await page.keyboard.press('Control+k');
     const searchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
