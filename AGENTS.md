@@ -21,7 +21,7 @@ Plan: docs/MASTER_PLAN.md. Styl: docs/STYL.md + config/tokens.json. Stan: STAN_P
 - Jedna gałąź od aktualnego `main`. Aktualizacja do main: TYLKO `git merge origin/main`. Bez rebase, bez zakładania gałęzi od nowa, bez `--force`.
 - Przed każdym pushem `git diff --name-status --diff-filter=D origin/main...HEAD` musi być puste: nie usuwasz niczego, co jest na main (chyba że zadanie wprost to nakazuje).
 - Zmieniasz tylko pliki z „Zakresu” zadania.
-- Wzorce zrzutów (`*-snapshots/`) powstają wyłącznie w CI: dodaj do PR etykietę `aktualizuj-zrzuty` (robi to właściciel), nie generuj ich u siebie.
+- Wzorce zrzutów (`*-snapshots/`) powstają wyłącznie w CI (workflow „Update snapshots” uruchamiany przez właściciela), nie generuj ich u siebie. W PR napisz, że trzeba je odświeżyć.
 
 ## Zawsze
 - Stos: Vite + React + TypeScript strict, pnpm. Biblioteki z docs/MASTER_PLAN.md §6.
