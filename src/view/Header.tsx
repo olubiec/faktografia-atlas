@@ -1,8 +1,9 @@
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { lazy, Suspense, useEffect, useState, useSyncExternalStore } from 'react';
 import { Link, useLocation } from 'react-router';
-import { Menu, Xmark } from 'iconoir-react';
+import { Menu, Search, Xmark } from 'iconoir-react';
 import { Sheet } from '@/view/ui/Sheet';
 import { Icon } from '@/view/ui/Icon';
+const SearchDialog = lazy(() => import('@/view/search/SearchDialog').then((m) => ({ default: m.SearchDialog })));
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -28,6 +29,14 @@ export function Header() {
   });
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  // Okno ładujemy dopiero przy pierwszym otwarciu (kod i dane poza głównym pakietem).
+  const [searchMounted, setSearchMounted] = useState(false);
+
+  const changeSearchOpen = (value: boolean | ((prev: boolean) => boolean)) => {
+    setSearchMounted(true);
+    setSearchOpen(value);
+  };
   const location = useLocation();
 
   const searchParams = new URLSearchParams(location.search);
@@ -45,6 +54,34 @@ export function Header() {
       html.removeAttribute('data-theme');
     }
   }, [theme]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        changeSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    const homeSearchInput = document.getElementById('home-search-field');
+    if (!homeSearchInput) return;
+
+    const handleHomeSearchClick = (e: Event) => {
+      e.preventDefault();
+      changeSearchOpen(true);
+    };
+
+    homeSearchInput.addEventListener('click', handleHomeSearchClick);
+    homeSearchInput.addEventListener('focus', handleHomeSearchClick);
+    return () => {
+      homeSearchInput.removeEventListener('click', handleHomeSearchClick);
+      homeSearchInput.removeEventListener('focus', handleHomeSearchClick);
+    };
+  }, [location.pathname]);
 
   useEffect(() => {
     if (!mobileMenuOpen) return;
@@ -85,6 +122,19 @@ export function Header() {
         />
       </Link>
 
+      {/* Header Search Trigger Button */}
+      <button
+        type="button"
+        onClick={() => changeSearchOpen(true)}
+        className="flex items-center gap-2 px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs md:text-sm min-h-[44px] cursor-pointer rounded-none"
+      >
+        <Icon icon={Search} aria-hidden={true} size={20} />
+        <span className="hidden sm:inline text-olowek">Szukaj miejsca...</span>
+        <span className="hidden md:inline-block px-1.5 py-0.5 border border-linia bg-kalka text-olowek text-xs font-mono ml-1">
+          Ctrl K
+        </span>
+      </button>
+
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center gap-6 text-sm font-[500]">
         <Link
@@ -101,7 +151,7 @@ export function Header() {
         </Link>
         <button
           onClick={cycleTheme}
-          className="min-w-[44px] min-h-[44px] px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs flex items-center justify-center cursor-pointer"
+          className="min-w-[44px] min-h-[44px] px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs flex items-center justify-center cursor-pointer rounded-none"
         >
           Motyw: {themeText}
         </button>
@@ -111,7 +161,7 @@ export function Header() {
       <div className="flex md:hidden items-center gap-2">
         <button
           onClick={cycleTheme}
-          className="min-w-[44px] min-h-[44px] px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs flex items-center justify-center cursor-pointer"
+          className="min-w-[44px] min-h-[44px] px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs flex items-center justify-center cursor-pointer rounded-none"
         >
           Motyw: {themeText}
         </button>
@@ -119,7 +169,7 @@ export function Header() {
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Menu"
           aria-expanded={mobileMenuOpen}
-          className="min-w-[44px] min-h-[44px] border border-linia bg-arkusz flex items-center justify-center text-tusz cursor-pointer"
+          className="min-w-[44px] min-h-[44px] border border-linia bg-arkusz flex items-center justify-center text-tusz cursor-pointer rounded-none"
         >
           <Icon icon={mobileMenuOpen ? Xmark : Menu} aria-hidden={true} size={20} />
         </button>
@@ -143,6 +193,13 @@ export function Header() {
             Skąd są dane
           </Link>
         </Sheet>
+      )}
+
+      {/* Search Modal */}
+      {searchMounted && (
+        <Suspense fallback={null}>
+          <SearchDialog open={searchOpen} onOpenChange={changeSearchOpen} />
+        </Suspense>
       )}
     </header>
   );
