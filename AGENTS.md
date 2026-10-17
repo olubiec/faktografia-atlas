@@ -1,44 +1,47 @@
 # Faktografia Atlas — zasady dla agentów
 
 ## Projekt
-Publiczna strona: interaktywna mapa Polski (województwo > powiat > gmina > miejscowość) z danymi GUS.
-Później: generator karuzel IG działający TYLKO lokalnie (nigdy w wersji publicznej).
-Plan: docs/MASTER_PLAN.md. Styl: docs/STYL.md (Kalka i korekta). Stan: STAN_PROJEKTU.md.
-Bieżąca sesja: docs/sessions/CCx.md.
+Publiczna strona z interaktywną mapą Polski (województwo > powiat > gmina > miejscowość) i danymi GUS.
+Właściciel nie czyta kodu: ocenia zachowanie na podglądzie Vercel, często z telefonu.
+Plan: docs/MASTER_PLAN.md. Styl: docs/STYL.md + config/tokens.json. Stan: STAN_PROJEKTU.md.
 
-## Właściciel
-Nie jest programistą i często pracuje z telefonu. Opis każdego PR pisz po polsku, prosto:
-co zrobiłeś, co widać na zrzutach w docs/shots/, co nie działa lub zostało na później.
+## Polecenia
+- `pnpm install`
+- `pnpm verify` — pełna weryfikacja, musi przejść przed PR
+- `pnpm test` — szybkie testy jednostkowe
+
+## Definicja „gotowe”
+1. Najpierw testy dla warunków odbioru z zadania; pokaż, że nie przechodzą.
+2. Potem implementacja, aż `pnpm verify` przejdzie.
+3. Opis PR po polsku, prosto: co zmieniło się dla użytkownika; tabela „warunek odbioru → test lub zrzut”;
+   lista zmienionych plików; czego nie zrobiłeś i dlaczego. Przy zmianach w UI: lista kontrolna z docs/STYL.md §12.
+4. Na koniec zapisz treść zadania jako docs/sessions/<ID>.md. NIE edytuj STAN_PROJEKTU.md, package.json ani pnpm-lock.yaml (chyba że zadanie wprost na to pozwala) — STAN aktualizuje przegląd końca sesji.
 
 ## Zawsze
-1. Stack: Vite + React + TypeScript (strict), pnpm. Biblioteki tylko z docs/MASTER_PLAN.md, sekcja 6.
-   Inną dodajesz wyłącznie z uzasadnieniem w opisie PR.
-2. Przed użyciem biblioteki przeczytaj jej typy w node_modules. Nie zgaduj API.
-3. src/core = czysta logika bez DOM, testowana w Vitest. src/view = React. Parametry w config/*.json.
-4. Nazwy w kodzie po angielsku, komentarze po polsku. Małe pliki (do ok. 200 linii).
-5. Zmieniaj tylko pliki potrzebne w bieżącej sesji.
-6. Liczby wyłącznie z plików w public/data generowanych skryptami z API GUS. Nigdy ręcznie.
-7. Kody TERYT zawsze jako string.
-8. Sekrety tylko ze zmiennych środowiskowych (np. BDL_CLIENT_ID). Nigdy w kodzie, commitach, logach.
-9. Design: obowiązuje docs/STYL.md. Kolory, kroje, odstępy i czasy wyłącznie z config/tokens.json.
-   Logo tylko z public/brand/. Przed każdym PR przejdź listę kontrolną z docs/STYL.md, sekcja 12,
-   i wpisz w opisie PR, że jest spełniona.
-10. Napisy nie mogą wychodzić poza swoje pola (zawijanie, skracanie, dopasowanie).
-11. Animacje wyłączane przy prefers-reduced-motion.
-12. Repozytoria referencyjne klonuj wyłącznie do /tmp/ref. Przy zaadaptowanym kodzie komentarz:
-    źródło, autor, licencja.
-13. Jeśli czegoś brakuje albo coś jest niejasne, zatrzymaj się i zapytaj, zamiast zgadywać.
-14. Po `shadcn add` zamień wszystkie ikony lucide na iconoir-react (Icon z src/view/ui) i usuń klasy shadow-*, rounded-*, backdrop-blur.
+- Stos: Vite + React + TypeScript strict, pnpm. Biblioteki z docs/MASTER_PLAN.md §6.
+  Przed użyciem biblioteki przeczytaj jej typy w node_modules.
+- src/core = czysta logika testowana w Vitest; src/view = React. Nazwy po angielsku, komentarze po polsku,
+  pliki do ok. 200 linii.
+- Kolory, kroje, rozmiary tekstu, odstępy i czasy wyłącznie z tokenów (klasy Tailwind z @theme).
+  Zero wartości wpisanych na sztywno. Logo tylko z public/brand/.
+- Kody TERYT jako string. Liczby wyłącznie z public/data (generowane skryptami).
+- Testy na danych z tests/fixtures (nagrane prawdziwe odpowiedzi), nigdy z sieci.
+- Zrzuty pikselowe (toHaveScreenshot) tylko dla elementów DOM i SVG. Mapę WebGL sprawdzaj przez stan
+  wystawiony w `window.__atlas` (tylko w trybie testowym), nie przez piksele.
+- Napisy nie wychodzą poza pola. Animacje wyłączone przy prefers-reduced-motion. Pola dotykowe min. 44 px.
+- Repozytoria referencyjne tylko w /tmp/ref; przy zaadaptowanym kodzie komentarz: źródło i licencja.
+- Zmieniaj tylko pliki potrzebne do zadania.
+- Po `shadcn add` zamień wszystkie ikony lucide na iconoir-react (Icon z src/view/ui) i usuń klasy shadow-*, rounded-*, backdrop-blur.
 
-## Najpierw zapytaj
-Zmiana package.json lub pnpm-lock.yaml
+## Najpierw zapytaj (napisz w PR i zatrzymaj się)
+- Nowa zależność spoza docs/MASTER_PLAN.md §6. Zmiana package.json lub pnpm-lock.yaml.
+- Zmiana config/tokens.json, docs/STYL.md, docs/MASTER_PLAN.md, .github/, istniejących testów
+  lub wzorców zrzutów — chyba że zadanie wprost tego wymaga.
+- Warunek odbioru niejasny lub sprzeczny.
 
-## Polecenia (tylko z pnpm)
-`dev`, `build`, `lint` (oxlint), `typecheck` (tsc noEmit), `test` (vitest tests/unit),
-`test:e2e` (playwright tests/e2e), `shots` (zrzuty Playwright do docs/shots),
-`verify` (odpala lint, typecheck, test, build, test:e2e, shots).
-
-## Definicja gotowe (od CC1)
-1. `pnpm verify` przechodzi (lint, typecheck, testy, build, zrzuty do docs/shots/).
-2. 2-3 zdania dopisane do STAN_PROJEKTU.md.
-3. Na koniec zapisz treść zadania jako docs/sessions/<ID>.md. NIE edytuj STAN_PROJEKTU.md, package.json ani pnpm-lock.yaml (chyba że zadanie wprost na to pozwala) — STAN aktualizuje przegląd końca sesji.
+## Nigdy
+- Sekretów w kodzie, commitach, logach ani w zmiennych `VITE_*` (są publiczne w przeglądarce).
+- Wywołań API GUS z kodu strony. Dane GUS pobiera wyłącznie robot w GitHub Actions do public/data.
+- Osłabiania testów: skip/only, @ts-ignore, oxlint-disable, usuwania asercji.
+- Wstawiania danych jako HTML (dangerouslySetInnerHTML, HTML w tooltipach deck.gl).
+- Kodu generatora karuzel w tym repo (powstanie osobno, prywatnie).
