@@ -6,27 +6,43 @@ import path from 'path';
 const configPath = path.resolve('scripts/shots.config.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
-async function waitForServer(url, timeout = 30000) {
+async function isPortInUse(url) {
+  try {
+    await fetch(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function waitForServer(urls, timeout = 30000) {
   const start = Date.now();
   while (Date.now() - start < timeout) {
-    try {
-      const res = await fetch(url);
-      if (res.ok) return true;
-    } catch {
-      await new Promise(r => setTimeout(r, 500));
+    for (const url of urls) {
+      if (await isPortInUse(url)) return true;
     }
+    await new Promise(r => setTimeout(r, 500));
   }
   return false;
 }
 
 async function run() {
-  console.log('Starting preview server...');
-  const server = spawn('npx', ['vite', 'preview', '--port', '4173'], { stdio: 'inherit' });
+  const testUrls = ['http://localhost:4173', 'http://127.0.0.1:4173'];
+  let server = null;
+  let serverReady = await waitForServer(testUrls, 1000);
 
-  const serverReady = await waitForServer('http://localhost:4173');
+  if (!serverReady) {
+    console.log('Starting preview server...');
+    const viteBin = path.resolve('node_modules/.bin/vite');
+    server = spawn(viteBin, ['preview', '--port', '4173'], { stdio: 'inherit' });
+    serverReady = await waitForServer(testUrls, 30000);
+  } else {
+    console.log('Preview server already running on port 4173.');
+  }
+
   if (!serverReady) {
     console.error('Server failed to start');
-    server.kill();
+    if (server) server.kill();
     process.exit(1);
   }
 
@@ -69,7 +85,9 @@ async function run() {
   }
 
   await browser.close();
-  server.kill();
+  if (server) {
+    server.kill();
+  }
   console.log('Screenshots completed.');
 }
 
