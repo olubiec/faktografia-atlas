@@ -6,7 +6,7 @@ Ten plik mówi, co wysłać do Julesa, kiedy i z jakim tekstem. Zmiany w nim id�
 
 1. **1 wpis = 1 zgłoszenie = 1 sesja Julesa = 1 PR.**
 2. **Wysyłka tylko, gdy zależności są scalone na main** (kolumna „Zależy od”). Zadanie z niespełnioną zależnością ma status `czeka`.
-3. **Najwyżej 2 zadania Julesa naraz** (sesje + PR w przeglądzie). Trzecie czeka w statusie `gotowe`.
+3. **Naraz tyle zadań, ile mają rozłączne pliki.** Dwa zadania, które dotykają tych samych plików (np. `Home.tsx`, `Header.tsx`), nie idą równolegle. Reszta może.
 4. **Jedna rzecz na raz w jednym miejscu:** tylko jedna sesja aktualizuje ten plik, zawsze przez PR.
 5. **Kto co robi:**
    - **Haiku** (sesja wysyłkowa): zakłada zgłoszenie z gotowego szablonu, dodaje etykietę `jules`, wpisuje numer do tabeli. Nie ocenia kodu, nie scala.
@@ -16,24 +16,37 @@ Ten plik mówi, co wysłać do Julesa, kiedy i z jakim tekstem. Zmiany w nim id�
 6. **Statusy:** `czeka` (zależność), `gotowe` (można wysłać), `wysłane` (#zgłoszenia), `w przeglądzie` (PR), `scalone`.
 7. **Żadne zgłoszenie nie zmienia `package.json`, `.github/`, `src/App.tsx` ani `public/data/` poza wskazanym zakresem.**
 
-## Stan na 17.10 (po scaleniu PR #30)
+## Stan na 17.10, wieczór
 
 | Zadanie | Zgłoszenie | PR | Zależy od | Status |
 |---|---|---|---|---|
 | CC1.5 makiety | — | #30 | — | scalone |
-| CC6.2 mapowanie GUS ↔ TERYT | #29 | #36 (wersja robocza) | CC3.2 | w przeglądzie |
-| CC5.1 indeks wyszukiwania | #32 | #35 (wersja robocza) | CC3.2 | w przeglądzie |
-| CC2.6 panel ?tune | #34 (ponowiony) | #37 (wersja robocza) | CC2.4 | w przeglądzie |
-| CC5.3 miejscowości (PRNG) | #33 | — | CC3.2 | wysłane |
-| CC2.5 nagłówek i ekran startowy | #31 (jeszcze bez etykiety) | — | CC2.1, CC1.5 (scalone) | gotowe |
+| CC6.2 mapowanie GUS ↔ TERYT | #29 | #36 | CC3.2 | scalone |
+| CC5.1 indeks wyszukiwania | #32 | #35 | CC3.2 | scalone |
+| CC2.6a tokens-map, diffTokens | #40 | #41 | CC2.4 | scalone |
+| CC5.3a parser PRNG | #33 | #43 | CC3.2 | scalone |
+| CC6.3 raport wskaźników BDL | — | #45 | CC6.2 | scalone (raport czeka na akceptację) |
+| CC2.5 nagłówek i ekran startowy | #31 | #46 | CC2.1, CC1.5 | scalone |
+| CC5.2 okno Ctrl+K | #50 | #51 | CC5.1, CC2.2 | w przeglądzie (poprawki Claude'a) |
+| CC5.3b pobieranie PRNG przez Actions | #49 | #53 | CC5.3a | w przeglądzie (poprawki Claude'a) |
+| CC4.1a logika widoku mapy, szew testowy | #54 | #57 | CC2.5, CC3.2 | w przeglądzie |
+| CC2.6b-1 panel ?tune, zakładka Kolory | #56 | #58 | CC2.6a | w przeglądzie |
+| CC4.1b komponent mapy | #55 | — | CC4.1a scalone | czeka |
+| CC2.6b-2 panel ?tune, pozostałe zakładki | — | — | CC2.6b-1 scalone | czeka |
+| CC4.2 przechodzenie w głąb | — | — | CC4.1b scalone | czeka |
+| CC6.4 pobieranie danych | — | — | akceptacja raportu CC6.3, sekret `BDL_CLIENT_ID` | czeka |
 
-**Następna wysyłka:** CC2.5 (#31). Etykietę `jules` dodaj dopiero, gdy co najmniej jedna z sesji 35–37 zostanie scalona albo zamknięta. Wtedy nie przekroczysz limitu 2 równoległych zadań.
+Zamknięte bez scalenia: #37, #39 (CC2.6, pętla Julesa), #47 (CC2.6b, bez PR przez ponad 3 h), #52 (CC4.1, pusty PR), #48 (zastąpione przez #54 i #55).
+
+**Następna wysyłka:** CC4.1b (#55, dodaj etykietę `jules` po scaleniu #57). CC2.6b-2 rozpisz po scaleniu #58.
+
+**Po scaleniu #53:** właściciel uruchamia Actions → „Fetch localities (PRNG)” (gałąź `data/localities`), Claude sprawdza liczby i licencję PRNG.
 
 ## Fala 4–5: wpisy do wysłania
 
 ### CC4.1 mapa: kalka, kontur, szew testowy
-- **Zależy od:** CC2.5 scalone, CC3.2 scalone
-- **Status:** `czeka`
+- **Podzielone** na CC4.1a (#54, logika) i CC4.1b (#55, komponent). Pełne treści są w tych zgłoszeniach; poniższy tekst to pierwotny opis.
+- **Status:** `wysłane` (CC4.1a), `czeka` (CC4.1b)
 
 > Kontekst: przeczytaj AGENTS.md („Gałąź i PR”), docs/STYL.md, docs/MASTER_PLAN.md §3 (mapa) oraz `docs/design/README.md` (makiety 01 i 02).
 > Dane: `public/geo/admin.topo.json` (województwa, powiaty, gminy), `public/data/units.json` (jednostki).
@@ -54,7 +67,7 @@ Ten plik mówi, co wysłać do Julesa, kiedy i z jakim tekstem. Zmiany w nim id�
 
 ### CC6.3 wybór 20 wskaźników → raport (STOP na przeglądzie)
 - **Zależy od:** CC6.2 scalone
-- **Status:** `czeka`
+- **Status:** `scalone` (#45)
 
 > Kontekst: przeczytaj AGENTS.md („Gałąź i PR”), docs/MASTER_PLAN.md §4.2 (lista wskaźników) i docs/data-sources.md.
 >
@@ -72,7 +85,7 @@ Ten plik mówi, co wysłać do Julesa, kiedy i z jakim tekstem. Zmiany w nim id�
 
 ### CC5.2 okno wyszukiwania (Ctrl+K)
 - **Zależy od:** CC5.1 scalone, CC2.2 scalone
-- **Status:** `czeka`
+- **Status:** `w przeglądzie` (#51)
 
 > Kontekst: przeczytaj AGENTS.md („Gałąź i PR”), docs/STYL.md (§ komponenty: cmdk, dialog) i `src/core/search` z CC5.1.
 >
