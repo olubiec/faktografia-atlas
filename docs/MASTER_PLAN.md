@@ -1,4 +1,4 @@
-# MASTER PLAN — Faktografia Atlas (v1, 2026-10-16)
+# MASTER PLAN — Faktografia Atlas (v2, 2026-10-17: nowy styl "Kalka i korekta")
 
 Źródło prawdy dla Gema #2 i agenta Jules. Powstał z raportu Gema #1 (research) i poprawek Claude'a
 (dyrektor kreatywny). Gdzie raport Gema #1 i ten plik się różnią, obowiązuje ten plik.
@@ -20,7 +20,7 @@ Właściciel nie jest programistą. Kod pisze Jules w sesjach CC1..CCn; jedna se
 
 - **Teraz:** mapa 3 poziomów + wyszukiwarka miejscowości; katalog ok. 20 wskaźników GUS BDL z nocną
   aktualizacją; Fiszka; kartogram (kolor + kreskowanie) + suwak lat + porównanie 2–3 miejsc;
-  sygnatury designu S1–S7; tryb 3D "Arkusze"; statystyki wyszukiwań po zgodzie; generator karuzel
+  system stylu "Kalka i korekta" (docs/STYL.md); tryb 3D "Arkusze"; statystyki wyszukiwań po zgodzie; generator karuzel
   tylko lokalnie (7 szablonów).
 - **Później:** dane miesięczne (GUS DBW), dane na żywo (GIOŚ/IMGW/NBP), wybory PKW, podstrony SEO
   gmin, auto-publikacja IG, baza danych.
@@ -28,79 +28,27 @@ Właściciel nie jest programistą. Kod pisze Jules w sesjach CC1..CCn; jedna se
   całego BDL, liczby wpisywane przez AI, śledzenie osób (IP, fingerprint), kopiowanie starego
   generatora.
 
-## 3. DESIGN — "ROCZNIK, KTÓRY OŻYŁ"
+## 3. DESIGN — "KALKA I KOREKTA" (obowiązuje docs/STYL.md)
 
-Drukowany polski rocznik statystyczny i atlas narodowy z połowy XX w., przeniesiony do przeglądarki
-i ożywiony. Druk 2–3 farbami na ciepłym papierze, kreskowanie zamiast gradientów, przypisy, numery
-katalogowe, rygorystyczna siatka. Nowoczesność = ruch, precyzja, płynność.
+**Cały system stylu jest w `docs/STYL.md`, a wartości w `config/tokens.json`.** Ta sekcja to tylko skrót.
+Dawny koncept "Rocznik, który ożył" (kremowy papier, terakota, Bona Nova, faktura, druk w trzech
+przebiegach) jest ANULOWANY.
 
-**Uwaga do raportu Gema #1:** to NIE jest "analityczny brutalizm" i nie ma "świetlistych krawędzi".
-Inspiracje (Du Bois, Isotype, roczniki GUS) dotyczą płaskich farb, siatki i kreskowania. Tryb 3D
-istnieje (S3), ale tylko na żądanie użytkownika, domyślnie mapa jest płaska.
-
-### 3.1 Paleta (startowe wartości w config/tokens.json, strojone w panelu ?tune)
-
-| Token | Jasny "papier" | Ciemny "odbitka nocna" |
-|---|---|---|
-| paper | #F3ECDD | #1C1510 |
-| paper-raised | #FBF7EE | #2A2018 |
-| rule | #D8CBB0 | #4A3B2C |
-| ink | #241C15 | #EFE6D3 |
-| ink-muted | #6B5D4A | #B8A98F |
-| spot-teal (farba danych) | #00838A | #3FB5B9 |
-| spot-terracotta (akcent) | #C1440E | #E8763F |
-
-- Skala sekwencyjna: 5 klas w teal (od paper do spot-teal ciemniejszego o 25%).
-- Skala dywergentna: teal <-> paper <-> terracotta.
-- Drugi kanał danych: gęstość kreskowania (klasa 1 = brak, klasa 5 = gęste). Kolor i kreska razem.
-- Brak danych: paper + kropkowanie w kolorze rule.
-- Farby nakładają się jak w druku (mix-blend-mode: multiply w trybie jasnym).
-
-### 3.2 Typografia (self-hosted, zero zapytań do Google)
-
-- Nagłówki i duże liczby: **Bona Nova** (`@fontsource/bona-nova`, OFL). Rewitalizacja kroju Bona
-  Andrzeja Heidricha, projektanta polskich banknotów.
-- Interfejs: **Schibsted Grotesk** (`@fontsource/schibsted-grotesk`, OFL).
-- Metadane, TERYT, przypisy: **IBM Plex Mono** (`@fontsource/ibm-plex-mono`, OFL), tabular-nums.
-
-### 3.3 Sygnatury i jak je zbudować
-
-| # | Nazwa | Co widzi użytkownik | Jak (technicznie) | Sesja |
-|---|---|---|---|---|
-| S1 | Druk w trzech przebiegach | Przy pierwszym wejściu mapa składa się z 3 "farb" z lekkim niespasowaniem, które wskakuje w pasery (< 1,2 s) | 3 instancje GeoJsonLayer (ink-kontur, teal-wypełnienie, terracotta-akcent) z `modelMatrix` przesuniętym o kilka px; przesunięcie animowane do 0 przez `motion` (animate/useMotionValue). Raz na sesję (sessionStorage). Brak przy reduced-motion. Bez sprężyn: krzywa ease-out | CC9 |
-| S2 | Kreskowanie | Kartogram = kolor + kreski pod 45° o gęstości zależnej od klasy | `@deck.gl/extensions` FillStyleExtension z `{pattern: true, proceduralPattern: true}` (wzór: deck.gl `modules/extensions/src/fill-style/procedural-pattern.ts`) | CC8 |
-| S3 | Arkusze | Tryb 3D: gminy unoszą się jak ułożone arkusze papieru, matowe boki, jaśniejsza górna krawędź | GeoJsonLayer `extruded: true`, `getElevation` z wartości, `material` matowy, LightingEffect (AmbientLight + DirectionalLight); podkład wygaszony do gładkiego papieru (bez etykiet i dróg) | CC10 |
-| S4 | Fiszka | Profil jak karta katalogowa: nr katalogowy = TERYT, pieczątka "STAN NA <rok>", metadane w mono, przypisy na dole | Komponent React; układ wzorowany na Census Reporter (patrz sekcja 8) | CC7 |
-| S5 | Licznik | Liczby przewijają się jak w liczniku mechanicznym | `@number-flow/react` | CC7 |
-| S6 | Przypisy | Numerowane indeksy górne przy liczbach, na desktopie notki na marginesie | Komponent Footnote + lista źródeł | CC2 |
-| S7 | Faktura | Bardzo subtelne ziarno papieru | `@paper-design/shaders-react` (grain/paper texture), opacity ≤ 0,06; wyłączone przy reduced-motion i na słabych urządzeniach | CC2 |
-
-### 3.4 Zakazy anty-"AI slop" (twarde)
-
-Gradienty fioletowo-niebieskie; glassmorphism i rozmycia; bloby w tle; emoji jako ikony; domyślny
-wygląd shadcn / Tailwind UI; fonty Inter, Geist, Space Grotesk, Roboto; zaokrąglone karty z cieniem
-wszędzie (promień max 2 px); neony i poświaty; ikony "sparkles"; hasła marketingowe ("Odkryj moc
-danych!"). Zamiast tego: cienkie linie 1 px w kolorze rule, siatka 8 px, numeracja sekcji (§ 1, § 2),
-prawdziwe dane jako dekoracja.
-
-### 3.5 Ruch
-
-- Czasy 150–400 ms, ease-out "druku" (szybki start, miękkie lądowanie). Zero sprężyn i odbić.
-- Zmiana poziomu mapy: lot kamery (`fitBounds`, 800 ms) + przenikanie warstw.
-- Zmiana wskaźnika/roku: interpolacja kolorów kartogramu (deck.gl `transitions`), legenda liczy się licznikiem.
-- Mobile first: dolny arkusz z Fiszką (react-modal-sheet), mapa widoczna nad nim (snap: 40% / 90%).
-- `prefers-reduced-motion`: wszystkie animacje skracane do 0 ms, S1 i S7 wyłączone.
-
-### 3.6 Panel strojenia `?tune`
-
-Tweakpane v4 widoczny tylko z parametrem `?tune` w URL (w podglądach Vercel też). Suwaki: wszystkie
-tokeny kolorów, czasy animacji, kamera 3D, siła faktury. Przycisk "Kopiuj JSON" kopiuje komplet
-wartości w formacie config/tokens.json. Właściciel wkleja ten JSON w uwagach do kolejnej sesji.
-
-### 3.7 Logo
-
-Wordmark Faktografia w SVG: `legacy/marka/` (właściciel dodaje ręcznie). Jeśli pliku nie ma,
-nagłówek pokazuje słowo "Faktografia" złożone krojem Bona Nova i zostawia TODO w STAN_PROJEKTU.md.
+- Idea: kalka kreślarska na mapie Polski. Dane i granice granatowym tuszem, jedyny akcent to czerwony
+  długopis korektora, który zakreśla najważniejszą rzecz (najwyżej jedna rzecz na ekranie).
+- Kolory: kalka #EEF1EF, arkusz #F8FAF9, linia #C5CDD3, tusz #15233F, ołówek #4D5B72, korekta #E3242B,
+  ochra #C77700 (tylko skala dywergentna). Tryb ciemny: "negatyw kalki" (#0F1A30). Szczegóły w STYL.md.
+- Krój: Atkinson Hyperlegible Next (tekst i nagłówki), Atkinson Hyperlegible Mono (tylko kolumny liczb).
+  Jedyny szeryf w marce to litera F w znaku.
+- Logo: pliki w `public/brand/` (logo granat/jasne, favicon, znak F na zarysach granic granat/jasny).
+- Ręczne zakreślenia: rough-notation (tekst) i rough.js (owal wokół jednostki na mapie).
+- Ruch "kreślenie": przy wejściu kontur Polski rysuje się tuszem (1,2 s), potem wypełnienie, potem
+  zakreślenie wybranego miejsca. Dalej ruch tylko w odpowiedzi na działania. Bez sprężyn.
+- Ikony: iconoir-react, linia 1,5 px.
+- Mapa bez podkładu ulic: sama kalka z granicami z TopoJSON; podkład OpenFreeMap tylko przy dużym
+  przybliżeniu, bardzo blady.
+- Radius 0, bez cieni, bez gradientów, bez szkła. Lista kontrolna "Nie robimy" w STYL.md, sekcja 12.
+- Panel `?tune` (Tweakpane) zostaje: suwaki tokenów z config/tokens.json + "Kopiuj JSON".
 
 ---
 
@@ -227,7 +175,7 @@ faktografia-atlas/
 │   ├── core/                 bdl/, geo/, scale/, search/, format/
 │   ├── view/
 │   │   ├── map/              MapView.tsx, layers/, Legend.tsx, Breadcrumbs.tsx
-│   │   ├── fiszka/           Fiszka.tsx, KpiRow.tsx, Sparkline.tsx, Stamp.tsx
+│   │   ├── fiszka/           Fiszka.tsx, KpiRow.tsx, Sparkline.tsx
 │   │   ├── search/           SearchPalette.tsx
 │   │   ├── ui/               Footnote.tsx, PaperTexture.tsx, Sheet.tsx, primitives/
 │   │   └── tune/             TunePanel.tsx
@@ -261,11 +209,12 @@ faktografia-atlas/
 | Rdzeń | react, react-dom, vite, typescript | najnowsze stabilne | MIT | CC1 |
 | Routing | react-router | 8.x | MIT | CC1 |
 | Style | tailwindcss, @tailwindcss/vite | 4.x | MIT | CC1 |
-| Fonty | @fontsource/bona-nova, @fontsource/schibsted-grotesk, @fontsource/ibm-plex-mono | 5.x | OFL-1.1 | CC1 |
+| Fonty | @fontsource/atkinson-hyperlegible-next, @fontsource/atkinson-hyperlegible-mono | 5.x | OFL-1.1 | CC1 |
 | Testy | vitest, @playwright/test, @axe-core/playwright (dostępność, tylko dev) | najnowsze | MIT / Apache / MPL (dev) | CC1/CC2 |
 | Prymitywy UI | @radix-ui/react-dialog, -tooltip, -tabs, -toggle-group, -slider, -popover | najnowsze | MIT | CC2 |
 | Strojenie | tweakpane | 4.x | MIT | CC2 |
-| Faktura | @paper-design/shaders-react | 0.0.x (młoda paczka, przypiąć wersję) | Apache-2.0 | CC2 |
+| Zakreślenia | rough-notation, roughjs | 0.5.x / 4.x | MIT | CC2 |
+| Ikony | iconoir-react | 7.x | MIT | CC2 |
 | Mapa | maplibre-gl, react-map-gl (import z `react-map-gl/maplibre`) | 6.x / 8.x | BSD-3 / MIT | CC4 |
 | Warstwy | @deck.gl/core, @deck.gl/layers, @deck.gl/mapbox, @deck.gl/extensions | 9.x | MIT | CC4, CC8, CC10 |
 | Geometria | topojson-client (strona), mapshaper + topojson-server (tylko skrypty) | — | ISC / MPL-2.0 | CC3 |
@@ -273,7 +222,6 @@ faktografia-atlas/
 | Wyszukiwarka | cmdk, minisearch | 1.x / 7.x | MIT | CC5 |
 | Stan URL | nuqs | 2.x | MIT | CC4 |
 | Ruch | motion | najnowsza | MIT | CC2+ |
-| Liczby | @number-flow/react | 0.6.x | MIT | CC7 |
 | Wykresy | @observablehq/plot | 0.6.x | ISC | CC7 |
 | Skale | d3-scale, d3-array | 4.x / 3.x | ISC | CC8 |
 | Dolny arkusz | react-modal-sheet | 5.x | MIT | CC7 |
@@ -293,11 +241,10 @@ Klonuj tylko do `/tmp/ref/<nazwa>` (`git clone --depth 1 <URL> /tmp/ref/<nazwa>`
 | Repo | Pliki | Co bierzemy | Sesja |
 |---|---|---|---|
 | https://github.com/visgl/react-map-gl | `examples/maplibre/deckgl-overlay/`, `examples/maplibre/zoom-to-bounds/`, `examples/maplibre/geojson/`, `examples/maplibre/interaction/` | Połączenie MapLibre + deck.gl (MapboxOverlay przez `useControl`), lot do bbox, hover i klik | CC4 |
-| https://github.com/visgl/deck.gl | `examples/get-started/react/maplibre/`, `examples/website/geojson/app.tsx`, `modules/extensions/src/fill-style/procedural-pattern.ts`, `docs/api-reference/extensions/fill-style-extension.md`, `docs/api-reference/core/lighting-effect.md` | Integracja React+MapLibre, wytłoczone poligony z oświetleniem (S3), kreskowanie proceduralne (S2) | CC4, CC8, CC10 |
+| https://github.com/visgl/deck.gl | `examples/get-started/react/maplibre/`, `examples/website/geojson/app.tsx`, `modules/extensions/src/fill-style/procedural-pattern.ts`, `docs/api-reference/extensions/fill-style-extension.md`, `docs/api-reference/core/lighting-effect.md` | Integracja React+MapLibre, wytłoczone poligony z oświetleniem (tryb 3D), kreskowanie proceduralne (drugi kanał kartogramu) | CC4, CC8, CC10 |
 | https://github.com/owid/owid-grapher | `packages/@ourworldindata/grapher/src/color/BinningStrategies.ts`, `ColorScale.ts`, `ColorScaleBin.ts` | Strategie podziału na klasy (kwantyle, równe przedziały), obsługa braków danych w legendzie. Przepisujemy własną, małą wersję w `src/core/scale/` (nie kopiujemy całego modułu; zachowaj atrybucję MIT) | CC8 |
 | https://github.com/censusreporter/censusreporter | `censusreporter/apps/census/templates/profile/profile_detail.html`, `_blocks/_stat_list.html`, `_blocks/_comparative_list_item.html` | Hierarchia profilu miejsca: główna liczba, porównanie z jednostką nadrzędną i krajem obok każdej liczby | CC7 |
 | https://github.com/statisticspoland/R_Package_to_API_BDL | pliki R z wywołaniami endpointów (grep `by-variable`, `unit-level`) | Wzór parametrów API BDL. Nie ufamy numerom issues z raportu Gema #1 (niezweryfikowane) | CC6 |
-| https://github.com/paper-design/shaders | README i katalog pakietu react | Parametry shaderów grain/paper texture | CC2 |
 
 ## 8. INSPIRACJE WIZUALNE (tylko do oglądania, nie do kodu)
 
@@ -314,24 +261,25 @@ Każda sesja kończy się: zielonym `pnpm verify`, nowymi zrzutami w `docs/shots
 dopiskiem w STAN_PROJEKTU.md, plikiem `docs/sessions/CCx.md` z treścią zadania i PR po polsku.
 
 ### CC1 — Szkielet i narzędzia
-- **Efekt:** strona z papierowym tłem, logo (lub wordmarkiem) i próbnikiem trzech krojów; działają testy i zrzuty.
-- **Paczki:** react, react-dom, vite, typescript, react-router, tailwindcss, @tailwindcss/vite, 3× @fontsource, vitest, @playwright/test, eslint.
+- **Efekt:** strona w tle `kalka` z logo `public/brand/faktografia-logo-granat.svg`, faviconą i próbnikiem kroju Atkinson; działają testy i zrzuty.
+- **Paczki:** react, react-dom, vite, typescript, react-router, tailwindcss, @tailwindcss/vite, @fontsource/atkinson-hyperlegible-next, @fontsource/atkinson-hyperlegible-mono, vitest, @playwright/test, eslint.
 - **Warunki odbioru:**
   - [ ] `pnpm verify` przechodzi lokalnie i w `ci.yml` (GitHub Actions).
-  - [ ] `config/tokens.json` z paletą z sekcji 3.1 -> `src/styles/tokens.css` przez `scripts/tokens.mjs`.
+  - [ ] `config/tokens.json` (już w repo, nie zmieniać wartości) -> `src/styles/tokens.css` przez `scripts/tokens.mjs`, tryb jasny i ciemny.
   - [ ] Test Playwright potwierdza zero zapytań do fonts.googleapis.com i fonts.gstatic.com.
   - [ ] 4 zrzuty w `docs/shots/`, tryb ciemny przez `prefers-color-scheme` i przełącznik.
   - [ ] `GEMINI_HANDOFF.md` wygenerowany skryptem, zawiera eksporty z src/.
   - [ ] `vercel.json` z rewrite wszystkich ścieżek do `/index.html` (SPA).
 
 ### CC2 — System wizualny
-- **Efekt:** strona `/design`: kolory, skala typograficzna, przyciski, zakładki, dymek, okno, suwak, przypisy (S6), faktura papieru (S7); panel `?tune`.
-- **Paczki:** @radix-ui/react-*, tweakpane, @paper-design/shaders-react, motion, @axe-core/playwright.
+- **Efekt:** strona `/design` zgodna z docs/STYL.md: kolory, skale danych, typografia, przyciski, zakładki, pole wyszukiwania, arkusz, przypisy, ręczne zakreślenie (rough-notation), ikony Iconoir; panel `?tune`.
+- **Paczki:** @radix-ui/react-*, tweakpane, rough-notation, roughjs, iconoir-react, motion, @axe-core/playwright.
 - **Warunki odbioru:**
   - [ ] Każdy komponent ostylowany tylko tokenami; zero zaokrągleń > 2 px, zero cieni rozmytych.
   - [ ] `?tune` zmienia kolory na żywo, "Kopiuj JSON" daje poprawny tokens.json.
   - [ ] Test axe: brak naruszeń kontrastu WCAG AA na `/design` w obu trybach.
-  - [ ] Faktura wyłączona przy `prefers-reduced-motion` (test).
+  - [ ] Zakreślenia bez animacji przy `prefers-reduced-motion` (test); najwyżej jedno zakreślenie naraz.
+  - [ ] Przejście listy kontrolnej "Nie robimy" z docs/STYL.md, sekcja 12.
   - [ ] Zrzuty `/design` desktop i mobile.
 
 ### CC3 — Geometria i jednostki
@@ -373,12 +321,12 @@ dopiskiem w STAN_PROJEKTU.md, plikiem `docs/sessions/CCx.md` z treścią zadania
   - [ ] `nightly-data.yml` działa (uruchomienie ręczne przez workflow_dispatch zakończone sukcesem).
 - **STOP:** po tej sesji właściciel wysyła raport Claude'owi przed CC7.
 
-### CC7 — Fiszka
-- **Efekt:** klik w gminę: karta katalogowa z liczbami (licznik), mini-wykresami i przypisami; na telefonie dolny arkusz.
-- **Paczki:** @number-flow/react, @observablehq/plot, react-modal-sheet.
+### CC7 — Fiszka (arkusz z profilem miejsca)
+- **Efekt:** klik w gminę: arkusz z profilem miejsca (liczby, mini-wykresy, przypisy, zakreślenie najważniejszej liczby); na telefonie dolny arkusz.
+- **Paczki:** @observablehq/plot, react-modal-sheet, rough-notation.
 - **Referencje:** censusreporter `profile_detail.html`, `_stat_list.html`.
 - **Warunki odbioru:**
-  - [ ] Nagłówek: nazwa, typ, TERYT jako numer katalogowy, pieczątka "STAN NA <rok>".
+  - [ ] Nagłówek: nazwa, typ jednostki, TERYT (krój mono), rok danych.
   - [ ] Każda liczba: wartość, zmiana r/r, porównanie z województwem i Polską, przypis źródła.
   - [ ] Dane z wyższego poziomu oznaczone ("dane dla powiatu X").
   - [ ] Miejscowość pokazuje Fiszkę gminy z dopiskiem.
@@ -394,15 +342,15 @@ dopiskiem w STAN_PROJEKTU.md, plikiem `docs/sessions/CCx.md` z treścią zadania
   - [ ] Płynna zmiana kolorów przy zmianie roku (deck.gl transitions, 300 ms).
   - [ ] Zrzuty: 2 różne wskaźniki, legenda, porównanie.
 
-### CC9 — Ruch i S1
-- **Efekt:** "druk w trzech przebiegach" przy pierwszym wejściu; dopracowane przejścia poziomów i panelu.
+### CC9 — Ruch "kreślenie"
+- **Efekt:** przy pierwszym wejściu kontur Polski rysuje się tuszem, regiony się wypełniają, długopis zakreśla wybrane miejsce; dopracowane przejścia poziomów i arkusza.
 - **Paczki:** motion (już jest).
 - **Warunki odbioru:**
-  - [ ] S1 zgodnie z sekcją 3.3, < 1,2 s, raz na sesję, brak przy reduced-motion.
+  - [ ] Scena wejścia zgodnie z docs/STYL.md sekcja 8, raz na sesję (sessionStorage), brak przy reduced-motion.
   - [ ] Nagranie wideo Playwright (`docs/shots/s1.webm`) z wejścia na stronę.
 
 ### CC10 — Tryb 3D "Arkusze"
-- **Efekt:** przełącznik "3D": gminy unoszą się proporcjonalnie do wartości wskaźnika, matowy papier, światło z góry-lewej.
+- **Efekt:** przełącznik "3D": jednostki unoszą się jak warstwy kalki proporcjonalnie do wartości, matowe, światło z góry-lewej.
 - **Referencje:** deck.gl `examples/website/geojson/app.tsx`, `lighting-effect.md`.
 - **Warunki odbioru:**
   - [ ] Przejście 2D <-> 3D animowane (pitch 0 -> 50°, 800 ms), etykiety podkładu wygaszone w 3D.
