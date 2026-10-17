@@ -50,7 +50,7 @@ Zasady:
   znaki łatwe do pomylenia w liczbach (1, l, I oraz 0 i O).
 - **Liczby w kolumnach: Atkinson Hyperlegible Mono** (`@fontsource/atkinson-hyperlegible-mono`).
   Tylko w tabelach, rankingach i kodach TERYT, gdzie liczby muszą się równać. Nigdy jako ozdobny podpis.
-- **Jedynym krojem szeryfowym w całej marce jest litera F w znaku.** Żadnych nagłówków szeryfowych.
+- **Krój szeryfowy występuje tylko w znakach marki:** litera F w znaku i logo „**Fakto**grafia” (pogrubione „Fakto”, pochyłe „grafia”, czerwone podkreślenie). Logo jest zamienione na krzywe, więc nie dodajemy fontu szeryfowego do strony. Żadnych nagłówków ani tekstów szeryfowych.
 - Fonty ładowane lokalnie (self-hosting przez @fontsource), zero zapytań do Google Fonts.
 
 Skala (stosunek 1,25): 13, 17, 20, 25, 31, 39, 49, 61, 76 px.
@@ -74,8 +74,8 @@ Pliki w `public/brand/`, wszystkie bez tła, tekst zamieniony na krzywe (nie zal
 
 | Plik | Gdzie |
 |---|---|
-| faktografia-logo-granat.svg | nagłówek strony w trybie jasnym, slajdy jasne |
-| faktografia-logo-jasne.svg | nagłówek w trybie ciemnym, slajdy ciemne |
+| faktografia-logo-granat.svg | logo „Faktografia” z czerwonym podkreśleniem: nagłówek strony w trybie jasnym, slajdy jasne |
+| faktografia-logo-jasne.svg | to samo logo w trybie ciemnym (#E7ECF3, podkreślenie #FF5A5F) |
 | faktografia-favicon.svg | ikonka karty przeglądarki, rozmiary poniżej 48 px |
 | faktografia-znak-granat.svg | duży znak (F na zarysach granic) na jasnym tle: strona „o projekcie”, ekran ładowania |
 | faktografia-znak-jasny.svg | duży znak na ciemnym tle: avatar IG/TikTok, okładki karuzel |
@@ -145,7 +145,7 @@ Zasady:
 
 ## 12. Nie robimy (lista kontrolna przed każdym PR)
 
-- [ ] Brak kremowego/beżowego tła, terakoty i szeryfowych nagłówków.
+- [ ] Brak kremowego/beżowego tła, terakoty i szeryfowych nagłówków (szeryf tylko w logo i znaku F).
 - [ ] Brak gradientów, rozmyć, szkła (glassmorphism), poświat, miękkich cieni.
 - [ ] Brak zaokrągleń (radius 0).
 - [ ] Brak wersalików w etykietach, „eyebrow” nad nagłówkami, kropek między metadanymi, strzałek przy linkach.
