@@ -38,6 +38,11 @@ const generateVariables = (colorTheme, dataTheme, motionZero = false) => {
   vars.push(`  --font-sans: ${tokens.font.sans};`);
   vars.push(`  --font-mono: ${tokens.font.mono};`);
 
+  // Font Scale
+  Object.entries(tokens.font.scale).forEach(([key, value]) => {
+    vars.push(`  --text-${key}: ${value}px;`);
+  });
+
   // Radius
   vars.push(`  --radius: ${tokens.radius.default}px;`);
 

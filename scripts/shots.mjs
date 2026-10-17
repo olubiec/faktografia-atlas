@@ -12,7 +12,7 @@ async function waitForServer(url, timeout = 30000) {
     try {
       const res = await fetch(url);
       if (res.ok) return true;
-    } catch (e) {
+    } catch {
       await new Promise(r => setTimeout(r, 500));
     }
   }
@@ -56,9 +56,9 @@ async function run() {
         const page = await context.newPage();
         await page.goto(`http://localhost:4173${view.url}`);
         // ensure theme sets on load
-        await page.evaluate((t) => {
+        await page.evaluate(() => {
           localStorage.setItem('faktografia-theme', 'system');
-        }, theme);
+        });
         await page.waitForTimeout(500); // allow render
 
         const fileName = `${view.name === 'home' ? '' : view.name + '-'}${vp.name}-${theme}.jpg`;
