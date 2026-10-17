@@ -4,7 +4,7 @@
 Publiczna strona: interaktywna mapa Polski (województwo > powiat > gmina > miejscowość) z danymi GUS.
 Później: generator karuzel IG działający TYLKO lokalnie (nigdy w wersji publicznej).
 Plan: docs/MASTER_PLAN.md. Styl: docs/STYL.md (Kalka i korekta). Stan: STAN_PROJEKTU.md.
-Bieżąca sesja: docs/sessions/CCx.md. Raport dla planisty: GEMINI_HANDOFF.md (skrypt `pnpm handoff`).
+Bieżąca sesja: docs/sessions/CCx.md.
 
 ## Właściciel
 Nie jest programistą i często pracuje z telefonu. Opis każdego PR pisz po polsku, prosto:
@@ -29,8 +29,15 @@ co zrobiłeś, co widać na zrzutach w docs/shots/, co nie działa lub zostało 
     źródło, autor, licencja.
 13. Jeśli czegoś brakuje albo coś jest niejasne, zatrzymaj się i zapytaj, zamiast zgadywać.
 
-## Koniec każdej sesji (od CC1)
-- `pnpm verify` przechodzi (lint, typecheck, testy, build, zrzuty do docs/shots/).
-- `pnpm handoff` aktualizuje GEMINI_HANDOFF.md.
-- 2-3 zdania dopisane do STAN_PROJEKTU.md.
-- Treść zadania zapisana jako docs/sessions/CCx.md.
+## Najpierw zapytaj
+Zmiana package.json lub pnpm-lock.yaml
+
+## Polecenia (tylko z pnpm)
+`dev`, `build`, `lint` (oxlint), `typecheck` (tsc noEmit), `test` (vitest tests/unit),
+`test:e2e` (playwright tests/e2e), `shots` (zrzuty Playwright do docs/shots),
+`verify` (odpala lint, typecheck, test, build, test:e2e, shots).
+
+## Definicja gotowe (od CC1)
+1. `pnpm verify` przechodzi (lint, typecheck, testy, build, zrzuty do docs/shots/).
+2. 2-3 zdania dopisane do STAN_PROJEKTU.md.
+3. Na koniec zapisz treść zadania jako docs/sessions/<ID>.md. NIE edytuj STAN_PROJEKTU.md, package.json ani pnpm-lock.yaml (chyba że zadanie wprost na to pozwala) — STAN aktualizuje przegląd końca sesji.
