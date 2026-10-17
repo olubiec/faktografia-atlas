@@ -40,3 +40,29 @@ Plik zawiera wspólną topologię granic 3 poziomów podziału administracyjnego
 | `woj` | 16 | 2 cyfry (np. `"02"`) | `teryt`, `name` |
 | `pow` | 380 | 4 cyfry (np. `"0201"`) | `teryt`, `name` |
 | `gmi` | 2479 | 7 cyfr (np. `"0201011"`) | `teryt`, `name` |
+
+---
+
+## 2. Lista jednostek administracyjnych (`public/data/units.json`)
+
+Plik zawiera kompletną bazę jednostek administracyjnych Polski wraz z ich rodzicami, obrysami (bbox) i wewnętrznymi punktami etykiet (centroid).
+
+### Metadane źródła
+- **Źródło danych:** Plik geometrii `public/geo/admin.topo.json` (odczyt bez użycia sieci).
+- **Skrypt generujący:** `scripts/geo/units.mjs` (`pnpm units`)
+- **Narzędzie:** `mapshaper` (`this.bbox`, `this.innerX`, `this.innerY`)
+
+### Własności obiektów
+- `teryt`: kod TERYT jako string (2/4/7 cyfr)
+- `bdlId`: identyfikator GUS BDL (domyślnie `null`)
+- `name`: nazwa jednostki
+- `level`: poziom (`"woj"`, `"pow"`, `"gmi"`)
+- `parent`: kod TERYT jednostki nadrzędnej (`null` dla województw, 2-cyfrowy dla powiatów, 4-cyfrowy dla gmin)
+- `bbox`: prostokąt otaczający `[minLon, minLat, maxLon, maxLat]` zaokrąglony do 4 miejsc po przecinku
+- `centroid`: wewnętrzny punkt etykiety `[lon, lat]` (leżący wewnątrz obszaru, także dla gmin obwarzankowych) zaokrąglony do 4 miejsc po przecinku
+
+### Podsumowanie wyniku
+- **Lokalizacja pliku:** `public/data/units.json`
+- **Liczba jednostek:** 2875 (16 województw, 380 powiatów, 2479 gmin)
+- **Rozmiar pliku:** ~427 KB (poniżej limitu 600 KB)
+- **Format:** Plik JSON posortowany po kodzie `teryt`, bez wcięć.
