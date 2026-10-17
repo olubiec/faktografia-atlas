@@ -1,0 +1,209 @@
+{
+  "_uwaga": "Plik zbudowany ręcznie według schematu API PRNG (GUGiK, OGC API Features, kolekcja NazwaGeograficznaRP) na potrzeby testów, z wyjątkiem obiektu 'Osiedle Struga' (idPRNG 2), który zawiera prawdziwe dane.",
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "idPRNG": 2,
+        "nazwaGlowna": "Osiedle Struga",
+        "kategoriaObiektu": "miejscowość",
+        "rodzajObiektu": "część miasta",
+        "idSIMCMiejscowosciNadrzednej": "0983988",
+        "nazwaGminy": "Stronie Śląskie",
+        "terytGminy": "0202021",
+        "nazwaPowiatu": "kłodzki",
+        "nazwaWojewodztwa": "dolnośląskie"
+      },
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [16.6547025603303, 50.7179844577178]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "idPRNG": 101,
+        "nazwaGlowna": "Zakopane",
+        "kategoriaObiektu": "miejscowość",
+        "rodzajObiektu": "miasto",
+        "nazwaGminy": "Zakopane",
+        "terytGminy": "1217011",
+        "nazwaPowiatu": "tatrzański",
+        "nazwaWojewodztwa": "małopolskie"
+      },
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [19.955612, 49.299181]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "idPRNG": 102,
+        "nazwaGlowna": "Bukowina Tatrzańska",
+        "kategoriaObiektu": "miejscowość",
+        "rodzajObiektu": "wieś",
+        "nazwaGminy": "Bukowina Tatrzańska",
+        "terytGminy": "1217032",
+        "nazwaPowiatu": "tatrzański",
+        "nazwaWojewodztwa": "małopolskie"
+      },
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [20.104231, 49.343056]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "idPRNG": 103,
+        "nazwaGlowna": "Leśniczówka Stara",
+        "kategoriaObiektu": "miejscowość",
+        "rodzajObiektu": "osada leśna",
+        "nazwaGminy": "Zakopane",
+        "terytGminy": "1217011"
+      },
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [19.9800, 49.2800]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "idPRNG": 104,
+        "nazwaGlowna": "Nowa Osada",
+        "kategoriaObiektu": "miejscowość",
+        "rodzajObiektu": "osada",
+        "nazwaGminy": "Zakopane",
+        "terytGminy": "1217011"
+      },
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [19.9600, 49.2900]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "idPRNG": 105,
+        "nazwaGlowna": "Kolonia Polna",
+        "kategoriaObiektu": "miejscowość",
+        "rodzajObiektu": "kolonia",
+        "nazwaGminy": "Bukowina Tatrzańska",
+        "terytGminy": "1217032"
+      },
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [20.1100, 49.3500]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "idPRNG": 106,
+        "nazwaGlowna": "Część Wsi Testowa",
+        "kategoriaObiektu": "miejscowość",
+        "rodzajObiektu": "część wsi",
+        "terytGminy": "1217032"
+      },
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [20.1200, 49.3600]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "idPRNG": 107,
+        "nazwaGlowna": "Przysiółek Testowy",
+        "kategoriaObiektu": "miejscowość",
+        "rodzajObiektu": "przysiółek",
+        "terytGminy": "1217032"
+      },
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [20.1300, 49.3700]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "idPRNG": 108,
+        "nazwaGlowna": "Inny Obiekt",
+        "kategoriaObiektu": "uroczysko",
+        "rodzajObiektu": "wieś",
+        "terytGminy": "1217032"
+      },
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [20.1400, 49.3800]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "idPRNG": 109,
+        "nazwaGlowna": "Miejscowość Bez Geometrii",
+        "kategoriaObiektu": "miejscowość",
+        "rodzajObiektu": "wieś",
+        "nazwaGminy": "Zakopane",
+        "terytGminy": "1217011"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "idPRNG": 110,
+        "nazwaGlowna": "Miejscowość Z Błędną Gminą",
+        "kategoriaObiektu": "miejscowość",
+        "rodzajObiektu": "wieś",
+        "nazwaGminy": "Nieistniejąca",
+        "terytGminy": "9999999"
+      },
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [20.0000, 50.0000]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "idPRNG": 101,
+        "nazwaGlowna": "Zakopane Duplikat",
+        "kategoriaObiektu": "miejscowość",
+        "rodzajObiektu": "miasto",
+        "nazwaGminy": "Zakopane",
+        "terytGminy": "1217011"
+      },
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [19.9556, 49.2991]
+        ]
+      }
+    }
+  ]
+}

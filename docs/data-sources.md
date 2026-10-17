@@ -66,3 +66,22 @@ Plik zawiera kompletną bazę jednostek administracyjnych Polski wraz z ich rodz
 - **Liczba jednostek:** 2875 (16 województw, 380 powiatów, 2479 gmin)
 - **Rozmiar pliku:** ~427 KB (poniżej limitu 600 KB)
 - **Format:** Plik JSON posortowany po kodzie `teryt`, bez wcięć.
+
+---
+
+## 3. Miejscowości (PRNG)
+
+Kolekcja miejscowości z Państwowego Rejestru Nazw Geograficznych (PRNG) budowana na potrzeby wyszukiwarki.
+
+### Metadane źródła
+- **Źródło danych:** GUGiK, OGC API Features, kolekcja `NazwaGeograficznaRP` (`https://ogcapi.geoportal.gov.pl/res/ims/maps/PRNG/apiFeatures`).
+- **Skrypt parsera:** `scripts/geo/localities-parse.mjs` (czysta biblioteka bez wywołań sieciowych).
+- **Licencja:** Państwowy Rejestr Nazw Geograficznych (PRNG) – szczegółowe warunki licencji oraz weryfikacja do sprawdzenia podczas pobierania w kroku CC5.3b.
+
+### Pola i struktura źródłowa
+- `idPRNG`: numeryczny identyfikator w PRNG (konwertowany na `string`)
+- `nazwaGlowna`: nazwa miejscowości (`name`)
+- `kategoriaObiektu`: klasa obiektu geograficznego (akceptowane wyłącznie `"miejscowość"`)
+- `rodzajObiektu`: rodzaj miejscowości (dozwolone wyłącznie samodzielne miejscowości z listy: `"miasto"`, `"wieś"`, `"osada"`, `"kolonia"`, `"osada leśna"`)
+- `terytGminy`: 7-cyfrowy TERYT gminy przypisanej do miejscowości
+- `geometry`: `MultiPoint` lub `Point` ze współrzędnymi `[lon, lat]` (zaokrąglone do 4 miejsc po przecinku; w przypadku braku geometrii wyznaczany jest centroid gminy i ustawiana flaga `approx: true`)
