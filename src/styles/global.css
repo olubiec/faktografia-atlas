@@ -1,0 +1,31 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+@theme {
+  --color-kalka: var(--kalka);
+  --color-arkusz: var(--arkusz);
+  --color-linia: var(--linia);
+  --color-tusz: var(--tusz);
+  --color-olowek: var(--olowek);
+  --color-korekta: var(--korekta);
+  --color-korekta-tekst: var(--korekta-tekst);
+  --color-ochra: var(--ochra);
+  --color-ochra-tekst: var(--ochra-tekst);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+
+  --radius: var(--radius);
+}
+
+@layer base {
+  body {
+    background-color: var(--kalka);
+    color: var(--tusz);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
