@@ -16,6 +16,26 @@ test.describe('Home Page', () => {
     await expect(subtitle).toContainText('16 województw, 380 powiatów i 2479 gmin. Dane z Banku Danych Lokalnych, aktualizowane co noc.');
   });
 
+  test('na telefonie zakreślenie „2479 gmin” mieści się w jednej linii', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    const count = page.locator('main span.whitespace-nowrap');
+    const box = await count.boundingBox();
+    const lineHeight = await count.evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
+    expect(box).not.toBeNull();
+    expect(box!.height).toBeLessThan(lineHeight * 1.5);
+  });
+
+  test('pole wyszukiwania mieści cały napis podpowiedzi na telefonie i komputerze', async ({ page }) => {
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/');
+      const input = page.locator('#home-search-field');
+      const scroll = await input.evaluate((el) => (el as HTMLInputElement).scrollWidth - (el as HTMLInputElement).clientWidth);
+      expect(scroll).toBeLessThanOrEqual(0);
+    }
+  });
+
   test('logo switches in light/dark mode and ?logo=znak replaces logo with mark', async ({ page }) => {
     await page.goto('/?logo=znak');
 

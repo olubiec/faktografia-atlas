@@ -19,19 +19,22 @@ export function Home() {
 
             <p className="text-md md:text-lg font-[500] leading-[1.3]">
               {UNIT_COUNTS.woj} województw, {UNIT_COUNTS.pow} powiatów i{' '}
-              <Annotate type="underline">{UNIT_COUNTS.gmi} gmin</Annotate>. Dane z Banku Danych Lokalnych, aktualizowane co noc.
+              <span className="whitespace-nowrap">
+                <Annotate type="underline">{UNIT_COUNTS.gmi} gmin</Annotate>
+              </span>
+              . Dane z Banku Danych Lokalnych, aktualizowane co noc.
             </p>
 
-            <div className="flex flex-col gap-2 w-full max-w-[480px] pt-2">
+            <div className="flex flex-col gap-2 w-full max-w-[560px] pt-2">
               <div className="relative flex items-center w-full">
                 <SearchField
                   id="home-search-field"
                   label="Szukaj miejsca"
-                  placeholder="Wpisz nazwę gminy, powiatu albo miejscowości"
+                  placeholder="Gmina, powiat albo miejscowość"
                   className="pr-20"
                   readOnly
                 />
-                <span className="absolute right-3 bottom-2.5 pointer-events-none px-1.5 py-0.5 border border-linia bg-arkusz text-olowek text-xs font-mono">
+                <span className="absolute right-3 bottom-2.5 hidden md:inline pointer-events-none px-1.5 py-0.5 border border-linia bg-arkusz text-olowek text-xs font-mono">
                   Ctrl K
                 </span>
               </div>
@@ -45,7 +48,7 @@ export function Home() {
 
           {/* Right section (kalka SVG mask) */}
           <div
-            className="w-full md:w-[calc(100%-560px)] h-[320px] md:h-[580px] bg-tusz flex-shrink-0"
+            className="w-full md:flex-1 h-[320px] md:h-[min(780px,calc(100vh-150px))] bg-tusz flex-shrink-0"
             style={{
               maskImage: 'url(/geo/kalka.svg)',
               maskRepeat: 'no-repeat',
