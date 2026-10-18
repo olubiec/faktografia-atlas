@@ -1,0 +1,16 @@
+{
+  "id": 1650633,
+  "subjectId": "P4280",
+  "n1": "styczeń",
+  "n2": "mediana wieku",
+  "n3": "ogółem",
+  "level": 6,
+  "measureUnitId": 80,
+  "measureUnitName": "lata",
+  "years": [
+    2023,
+    2024,
+    2025,
+    2026
+  ]
+}
