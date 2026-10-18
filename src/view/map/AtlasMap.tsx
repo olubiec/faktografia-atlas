@@ -10,7 +10,15 @@ import unitsData from '../../../public/data/units.json';
 import adminTopo from '../../../public/geo/admin.topo.json';
 import { countryBounds, initialViewState, mapLimits, type ViewState } from '@/core/map/view';
 import { installAtlasSeam, type AtlasState } from '@/core/map/test-seam';
+import { buildIndex } from '@/core/units/units';
+import {
+  getDrillState,
+  getParentTeryt,
+  getInitialSelectedFromUrl,
+  updateUrlTeryt,
+} from '@/core/map/drill';
 import { createMapLayers, getMapColorsFromCss } from './layers';
+import { BackButton } from './BackButton';
 import type { Unit } from '@/core/units/types';
 
 // Wyłączamy pracownika MapLibre GL za pomocą oficjalnego API maplibregl.setWorkerCount(0),
@@ -27,12 +35,23 @@ function DeckGLOverlay(props: MapboxOverlayProps) {
 
 export function AtlasMap() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [colors, setColors] = useState(getMapColorsFromCss);
   const [isReady, setIsReady] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
+  const unitIndex = useMemo(() => buildIndex(unitsData as Unit[]), []);
   const bounds = useMemo(() => countryBounds(unitsData as Unit[]), []);
   const limits = useMemo(() => mapLimits(bounds), [bounds]);
+
+  const [selectedTeryt, setSelectedTeryt] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    return getInitialSelectedFromUrl(window.location.search, unitIndex);
+  });
+
+  const drillState = useMemo(() => {
+    return getDrillState(selectedTeryt, unitIndex);
+  }, [selectedTeryt, unitIndex]);
 
   const [currentViewState, setCurrentViewState] = useState<ViewState>({
     longitude: 19.145,
@@ -64,6 +83,18 @@ export function AtlasMap() {
     return () => observer.disconnect();
   }, [updateColorsAndTheme]);
 
+  const updateViewStateForBbox = useCallback(
+    (targetBbox: [number, number, number, number] | null) => {
+      const { width, height } = dimensions;
+      if (width > 0 && height > 0) {
+        const activeBbox = targetBbox ?? bounds;
+        const newView = initialViewState(activeBbox, width, height);
+        setCurrentViewState(newView);
+      }
+    },
+    [bounds, dimensions]
+  );
+
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -71,7 +102,9 @@ export function AtlasMap() {
       if (!containerRef.current) return;
       const { clientWidth, clientHeight } = containerRef.current;
       if (clientWidth > 0 && clientHeight > 0) {
-        const init = initialViewState(bounds, clientWidth, clientHeight);
+        setDimensions({ width: clientWidth, height: clientHeight });
+        const activeBbox = drillState.bbox ?? bounds;
+        const init = initialViewState(activeBbox, clientWidth, clientHeight);
         setCurrentViewState(init);
       }
     };
@@ -81,7 +114,49 @@ export function AtlasMap() {
     resizeObserver.observe(containerRef.current);
 
     return () => resizeObserver.disconnect();
-  }, [bounds]);
+  }, [bounds, drillState.bbox]);
+
+  // Obsługa powrotu/przejścia w historii przeglądarki
+  useEffect(() => {
+    const handlePopState = () => {
+      if (typeof window === 'undefined') return;
+      const fromUrl = getInitialSelectedFromUrl(window.location.search, unitIndex);
+      setSelectedTeryt(fromUrl);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [unitIndex]);
+
+  const handleSelectUnit = useCallback(
+    (teryt: string) => {
+      setSelectedTeryt(teryt);
+      updateUrlTeryt(teryt);
+
+      const targetUnit = unitIndex.byTeryt.get(teryt);
+      if (targetUnit) {
+        updateViewStateForBbox(targetUnit.bbox);
+      }
+    },
+    [unitIndex, updateViewStateForBbox]
+  );
+
+  const handleBack = useCallback(() => {
+    const parent = getParentTeryt(selectedTeryt, unitIndex);
+    setSelectedTeryt(parent);
+    updateUrlTeryt(parent);
+
+    if (parent) {
+      const parentUnit = unitIndex.byTeryt.get(parent);
+      updateViewStateForBbox(parentUnit ? parentUnit.bbox : bounds);
+    } else {
+      updateViewStateForBbox(bounds);
+    }
+  }, [selectedTeryt, unitIndex, updateViewStateForBbox, bounds]);
+
+  const layers = useMemo(() => {
+    return createMapLayers(adminTopo, colors, drillState, handleSelectUnit);
+  }, [colors, drillState, handleSelectUnit]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
     const panStep = 0.5 / Math.pow(2, currentViewState.zoom - 5);
@@ -117,22 +192,18 @@ export function AtlasMap() {
   const getState = useCallback((): AtlasState => {
     return {
       ready: isReady,
-      layers: ['woj-layer', 'country-layer'],
-      selected: null,
+      layers: layers.map((layer) => layer.id),
+      selected: drillState.selected,
       viewState: currentViewState,
       theme,
     };
-  }, [isReady, currentViewState, theme]);
+  }, [isReady, layers, drillState.selected, currentViewState, theme]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       installAtlasSeam(window as any, getState);
     }
   }, [getState]);
-
-  const layers = useMemo(() => {
-    return createMapLayers(adminTopo, colors);
-  }, [colors]);
 
   const mapStyle: StyleSpecification = useMemo(() => {
     const [r, g, b] = colors.kalka;
@@ -161,6 +232,7 @@ export function AtlasMap() {
       aria-label="Mapa Polski"
       onKeyDown={handleKeyDown}
     >
+      <BackButton onClick={handleBack} visible={selectedTeryt !== null} />
       <Map
         mapLib={maplibregl}
         {...currentViewState}
