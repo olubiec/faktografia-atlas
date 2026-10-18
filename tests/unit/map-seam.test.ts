@@ -26,6 +26,17 @@ describe('Atlas Test Seam (src/core/map/test-seam.ts)', () => {
     expect(mockWin.__atlas).toBeUndefined();
   });
 
+  it('does not define window.__atlas when URL parameter name is e2e, e.g. ?name=e2e', () => {
+    const mockWin: WindowWithAtlas = {
+      location: { search: '?name=e2e' },
+    };
+
+    const result = installAtlasSeam(mockWin, () => sampleState);
+
+    expect(result).toBeUndefined();
+    expect(mockWin.__atlas).toBeUndefined();
+  });
+
   it('defines window.__atlas when URL contains ?e2e', () => {
     const mockWin: WindowWithAtlas = {
       location: { search: '?u=1217011&e2e' },
