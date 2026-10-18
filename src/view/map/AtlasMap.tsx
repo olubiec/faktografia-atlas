@@ -8,6 +8,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 
 import unitsData from '../../../public/data/units.json';
 import adminTopo from '../../../public/geo/admin.topo.json';
+import tokensJson from '../../../config/tokens.json';
 import { countryBounds, initialViewState, mapLimits, type ViewState } from '@/core/map/view';
 import { installAtlasSeam, type AtlasState } from '@/core/map/test-seam';
 import { buildIndex } from '@/core/units/units';
@@ -221,7 +222,7 @@ export function AtlasMap() {
   const mapStyle: StyleSpecification = useMemo(() => {
     const kalkaRgb = colors
       ? `rgb(${colors.kalka[0]}, ${colors.kalka[1]}, ${colors.kalka[2]})`
-      : 'rgb(238, 241, 239)';
+      : tokensJson.color.light.kalka;
 
     return {
       version: 8,
