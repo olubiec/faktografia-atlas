@@ -1,0 +1,173 @@
+{
+  "_comment": "dane syntetyczne do testu",
+  "units": [
+    {
+      "teryt": "02",
+      "bdlId": "010000000000",
+      "name": "DOLNOŚLĄSKIE",
+      "level": "woj",
+      "parent": null,
+      "bbox": [14.81, 50.08, 17.79, 51.80],
+      "centroid": [16.3, 50.9]
+    },
+    {
+      "teryt": "04",
+      "bdlId": "020000000000",
+      "name": "KUJAWSKO-POMORSKIE",
+      "level": "woj",
+      "parent": null,
+      "bbox": [17.25, 52.33, 19.76, 53.78],
+      "centroid": [18.5, 53.0]
+    },
+    {
+      "teryt": "0201",
+      "bdlId": "010210000000",
+      "name": "bolesławiecki",
+      "level": "pow",
+      "parent": "02",
+      "bbox": [15.22, 51.12, 15.89, 51.52],
+      "centroid": [15.5, 51.3]
+    },
+    {
+      "teryt": "0202",
+      "bdlId": "010220000000",
+      "name": "dzierżoniowski",
+      "level": "pow",
+      "parent": "02",
+      "bbox": [16.51, 50.64, 16.92, 50.93],
+      "centroid": [16.7, 50.8]
+    },
+    {
+      "teryt": "0401",
+      "bdlId": "020410000000",
+      "name": "aleksandrowski",
+      "level": "pow",
+      "parent": "04",
+      "bbox": [18.50, 52.75, 19.00, 53.00],
+      "centroid": [18.75, 52.87]
+    },
+    {
+      "teryt": "0201011",
+      "bdlId": "010210101011",
+      "name": "Bolesławiec",
+      "level": "gmi",
+      "parent": "0201",
+      "bbox": [15.53, 51.24, 15.60, 51.28],
+      "centroid": [15.56, 51.26]
+    },
+    {
+      "teryt": "0201022",
+      "bdlId": "010210102022",
+      "name": "Nowogrodziec",
+      "level": "gmi",
+      "parent": "0201",
+      "bbox": [15.35, 51.15, 15.50, 51.25],
+      "centroid": [15.42, 51.20]
+    },
+    {
+      "teryt": "0202011",
+      "bdlId": "010220101011",
+      "name": "Dzierżoniów",
+      "level": "gmi",
+      "parent": "0202",
+      "bbox": [16.63, 50.71, 16.67, 50.75],
+      "centroid": [16.65, 50.73]
+    },
+    {
+      "teryt": "0401011",
+      "bdlId": "020410101011",
+      "name": "Aleksandrów Kujawski",
+      "level": "gmi",
+      "parent": "0401",
+      "bbox": [18.68, 52.86, 18.72, 52.89],
+      "centroid": [18.70, 52.87]
+    }
+  ],
+  "indicators": [
+    {
+      "id": "ind-higher-better",
+      "bdlVarId": 1001,
+      "name": "Wskaźnik wyżej lepiej",
+      "unit": "pkt",
+      "description": "Opis wskaźnika higherIsBetter=true",
+      "group": "Test",
+      "higherIsBetter": true,
+      "minLevel": "gmi"
+    },
+    {
+      "id": "ind-lower-better",
+      "bdlVarId": 1002,
+      "name": "Wskaźnik niżej lepiej",
+      "unit": "%",
+      "description": "Opis wskaźnika higherIsBetter=false",
+      "group": "Test",
+      "higherIsBetter": false,
+      "minLevel": "gmi"
+    },
+    {
+      "id": "ind-neutral",
+      "bdlVarId": 1003,
+      "name": "Wskaźnik neutralny",
+      "unit": "osob",
+      "description": "Opis wskaźnika higherIsBetter=null",
+      "group": "Test",
+      "higherIsBetter": null,
+      "minLevel": "gmi"
+    },
+    {
+      "id": "ind-parent-pow",
+      "bdlVarId": 1004,
+      "name": "Wskaźnik na poziomie powiatu",
+      "unit": "zł",
+      "description": "Opis wskaźnika minLevel=pow",
+      "group": "Test",
+      "higherIsBetter": true,
+      "minLevel": "pow"
+    }
+  ],
+  "valuesById": {
+    "ind-higher-better": {
+      "indicatorId": "ind-higher-better",
+      "years": [2022, 2023],
+      "values": {
+        "0201011": [100.0, 150.0],
+        "0201022": [120.0, 150.0],
+        "0202011": [80.0, 100.0],
+        "0401011": [90.0, null]
+      },
+      "fetchedAt": "2026-01-01T00:00:00.000Z"
+    },
+    "ind-lower-better": {
+      "indicatorId": "ind-lower-better",
+      "years": [2023],
+      "values": {
+        "0201011": [5.0],
+        "0201022": [2.5],
+        "0202011": [10.0],
+        "0401011": [12.0]
+      },
+      "fetchedAt": "2026-01-01T00:00:00.000Z"
+    },
+    "ind-neutral": {
+      "indicatorId": "ind-neutral",
+      "years": [2023],
+      "values": {
+        "0201011": [500.0],
+        "0201022": [1000.0],
+        "0202011": [null],
+        "0401011": [250.0]
+      },
+      "fetchedAt": "2026-01-01T00:00:00.000Z"
+    },
+    "ind-parent-pow": {
+      "indicatorId": "ind-parent-pow",
+      "years": [2023],
+      "values": {
+        "0201": [4500.0],
+        "0202": [4000.0],
+        "0401": [5000.0]
+      },
+      "fetchedAt": "2026-01-01T00:00:00.000Z"
+    }
+  }
+}
