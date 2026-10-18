@@ -1,0 +1,101 @@
+name: BDL record
+
+# Tylko ręcznie. Nagrywa odpowiedzi API BDL (GUS) dla wskaźników z config/indicators.json
+# do tests/fixtures/bdl/recorded/ na osobną gałąź (domyślnie data/bdl-fixtures), nigdy do main.
+# Jules pracuje potem na tych nagraniach offline.
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Gałąź docelowa dla nagrań (nie main)'
+        required: true
+        default: 'data/bdl-fixtures'
+      only:
+        description: 'Opcjonalnie: id wskaźników po przecinku (puste = wszystkie)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      BRANCH: ${{ github.event.inputs.branch }}
+      ONLY: ${{ github.event.inputs.only }}
+    steps:
+      - name: Odmów zapisu do main
+        run: |
+          if [ "$BRANCH" = "main" ] || [ -z "$BRANCH" ]; then
+            echo "::error::Gałąź docelowa nie może być main ani pusta."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przełącz na gałąź docelową (utwórz od main, jeśli nie istnieje)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            git fetch origin "$BRANCH"
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+            git merge --no-edit origin/main
+          else
+            git checkout -b "$BRANCH"
+          fi
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Sprawdź sekret
+        env:
+          BDL_CLIENT_ID: ${{ secrets.BDL_CLIENT_ID }}
+        run: |
+          if [ -z "$BDL_CLIENT_ID" ]; then
+            echo "::error::Brak sekretu BDL_CLIENT_ID (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+
+      # Skrypt używa tylko wbudowanych modułów Node, instalacja paczek nie jest potrzebna.
+      - name: Nagraj odpowiedzi BDL
+        shell: bash
+        env:
+          BDL_CLIENT_ID: ${{ secrets.BDL_CLIENT_ID }}
+        run: |
+          ARGS=""
+          if [ -n "$ONLY" ]; then ARGS="--only=$ONLY"; fi
+          if ! node scripts/data/record-bdl.mjs $ARGS 2>&1 | tee "$RUNNER_TEMP/bdl-report.txt"; then
+            echo "::error::Nagrywanie BDL nie powiodło się. PRZYCZYNA: $(grep -m2 -E '^Error|HTTP|Brak' "$RUNNER_TEMP/bdl-report.txt" | tr '\n' ' ' | cut -c1-600)"
+            exit 1
+          fi
+
+      - name: Podsumowanie
+        if: always()
+        run: |
+          {
+            echo "### Nagrania BDL"
+            echo '```'
+            cat "$RUNNER_TEMP/bdl-report.txt" 2>/dev/null | tail -n 60
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Zatwierdź i wypchnij tylko tests/fixtures/bdl/recorded/
+        shell: bash
+        run: |
+          git add tests/fixtures/bdl/recorded/
+          if git diff --staged --quiet; then
+            echo "Brak zmian w nagraniach."
+          else
+            git commit -m "data: nagrania BDL (tests/fixtures/bdl/recorded)"
+            if ! git push origin "HEAD:refs/heads/$BRANCH" 2>&1 | tee "$RUNNER_TEMP/push.log"; then
+              echo "::error::git push na gałąź $BRANCH nie powiódł się: $(tail -n 4 "$RUNNER_TEMP/push.log" | tr '\n' ' ' | cut -c1-600)"
+              exit 1
+            fi
+          fi
