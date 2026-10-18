@@ -16,7 +16,7 @@ Ten plik mówi, co wysłać do Julesa, kiedy i z jakim tekstem. Zmiany w nim id�
 6. **Statusy:** `czeka` (zależność), `gotowe` (można wysłać), `wysłane` (#zgłoszenia), `w przeglądzie` (PR), `scalone`.
 7. **Żadne zgłoszenie nie zmienia `package.json`, `.github/`, `src/App.tsx` ani `public/data/` poza wskazanym zakresem.**
 
-## Stan na 17.10, wieczór
+## Stan na 18.10, rano
 
 | Zadanie | Zgłoszenie | PR | Zależy od | Status |
 |---|---|---|---|---|
@@ -27,26 +27,32 @@ Ten plik mówi, co wysłać do Julesa, kiedy i z jakim tekstem. Zmiany w nim id�
 | CC5.3a parser PRNG | #33 | #43 | CC3.2 | scalone |
 | CC6.3 raport wskaźników BDL | — | #45 | CC6.2 | scalone (raport czeka na akceptację) |
 | CC2.5 nagłówek i ekran startowy | #31 | #46 | CC2.1, CC1.5 | scalone |
-| CC5.2 okno Ctrl+K | #50 | #51 | CC5.1, CC2.2 | w przeglądzie (poprawki Claude'a) |
-| CC5.3b pobieranie PRNG przez Actions | #49 | #53 | CC5.3a | w przeglądzie (poprawki Claude'a) |
-| CC4.1a logika widoku mapy, szew testowy | #54 | #57 | CC2.5, CC3.2 | w przeglądzie |
-| CC2.6b-1 panel ?tune, zakładka Kolory | #56 | #58 | CC2.6a | w przeglądzie |
-| CC4.1b komponent mapy | #55 | — | CC4.1a scalone | czeka |
-| CC2.6b-2 panel ?tune, pozostałe zakładki | — | — | CC2.6b-1 scalone | czeka |
-| CC4.2 przechodzenie w głąb | — | — | CC4.1b scalone | czeka |
-| CC6.4 pobieranie danych | — | — | akceptacja raportu CC6.3, sekret `BDL_CLIENT_ID` | czeka |
+| CC5.2 okno Ctrl+K | #50 | #51 | CC5.1, CC2.2 | scalone |
+| CC5.3b pobieranie PRNG przez Actions | #49 | #53 | CC5.3a | scalone (workflow dwa razy czerwony, patrz niżej) |
+| CC4.1a logika widoku mapy, szew testowy | #54 | #57 | CC2.5, CC3.2 | scalone |
+| CC2.6b-1 panel ?tune, zakładka Kolory | #56 | #58 | CC2.6a | scalone |
+| CC2.6b-2 panel ?tune, zakładka Typografia | #60 | #62 | CC2.6b-1 | scalone |
+| CC4.1b komponent mapy | #55 | #63 | CC4.1a | scalone |
+| CC6.3b config/indicators.json, poprawki raportu | #61 | #64 | CC6.3 | w przeglądzie, **wymaga poprawek** (patrz niżej) |
+| Naprawa workflow „Fetch localities (PRNG)” | — | #65 | CC5.3b | w przeglądzie |
+| CC4.2 przechodzenie w głąb | #66 | — | CC4.1b | wysłane |
+| CC6.4 pobieranie danych | — | — | CC6.3b scalone, sekret `BDL_CLIENT_ID` | czeka |
 
 Zamknięte bez scalenia: #37, #39 (CC2.6, pętla Julesa), #47 (CC2.6b, bez PR przez ponad 3 h), #52 (CC4.1, pusty PR), #48 (zastąpione przez #54 i #55).
 
-**Następna wysyłka:** CC4.1b (#55, dodaj etykietę `jules` po scaleniu #57). CC2.6b-2 rozpisz po scaleniu #58.
+**CC6.3b (#64), blokada:** Jules pięć razy z rzędu odpowiedział na uwagi pustym commitem. Do poprawienia zostają: (1) `unemployed-share-working-age` ma `bdlVarId` 1613094 (temat P2671, bezrobotni dłużej niż rok); właściwa zmienna to **79214** (temat P2670, „ogółem”, gmina, %, 2003–2025); (2) `scripts/data/discover.mjs` przycina pokrycie do liczby gmin zamiast liczyć rekordy po `bdlId` z `units.json`. Obie poprawki wymagają nagrania fixtur z API BDL, a sesja Claude'a nie ma dostępu do `bdl.stat.gov.pl`. Droga: nowa sesja Julesa na gałęzi PR #64 albo dopuszczenie domeny dla sesji Claude'a.
 
-**Po scaleniu #53:** właściciel uruchamia Actions → „Fetch localities (PRNG)” (gałąź `data/localities`), Claude sprawdza liczby i licencję PRNG.
+**Dane miejscowości:** workflow „Fetch localities (PRNG)” padł dwa razy (17.10, po 21–28 min): błąd skryptu był ukryty przez `| tee` bez `pipefail`. Poprawka w #65; po jej scaleniu właściciel uruchamia workflow ponownie (gałąź `data/localities`), Claude sprawdza liczby i licencję PRNG. Bez `public/data/localities.json` nie ruszy CC5.4.
+
+**Następna wysyłka:** CC6.4 po scaleniu #64 i ustawieniu sekretu `BDL_CLIENT_ID`. Potem fala 6 (CC4.3, CC5.4, CC6.5, CC7.1, CC8.1) po scaleniu CC4.2 i CC6.4.
+
+**Reguła rundy:** odpowiedź Julesa na komentarz bez zmian w plikach (`git diff --stat HEAD~1` puste) liczy się jako nieudana runda. Po dwóch takich rundach poziom 2 z WORKFLOW §10 (poprawka Claude'a na gałęzi PR albo nowa, węższa sesja).
 
 ## Fala 4–5: wpisy do wysłania
 
 ### CC4.1 mapa: kalka, kontur, szew testowy
 - **Podzielone** na CC4.1a (#54, logika) i CC4.1b (#55, komponent). Pełne treści są w tych zgłoszeniach; poniższy tekst to pierwotny opis.
-- **Status:** `wysłane` (CC4.1a), `czeka` (CC4.1b)
+- **Status:** `scalone` (CC4.1a #57, CC4.1b #63)
 
 > Kontekst: przeczytaj AGENTS.md („Gałąź i PR”), docs/STYL.md, docs/MASTER_PLAN.md §3 (mapa) oraz `docs/design/README.md` (makiety 01 i 02).
 > Dane: `public/geo/admin.topo.json` (województwa, powiaty, gminy), `public/data/units.json` (jednostki).
@@ -85,7 +91,7 @@ Zamknięte bez scalenia: #37, #39 (CC2.6, pętla Julesa), #47 (CC2.6b, bez PR pr
 
 ### CC5.2 okno wyszukiwania (Ctrl+K)
 - **Zależy od:** CC5.1 scalone, CC2.2 scalone
-- **Status:** `w przeglądzie` (#51)
+- **Status:** `scalone` (#51)
 
 > Kontekst: przeczytaj AGENTS.md („Gałąź i PR”), docs/STYL.md (§ komponenty: cmdk, dialog) i `src/core/search` z CC5.1.
 >
@@ -104,7 +110,7 @@ Zamknięte bez scalenia: #37, #39 (CC2.6, pętla Julesa), #47 (CC2.6b, bez PR pr
 
 ### CC4.2 przechodzenie w głąb (województwo → powiaty → gminy)
 - **Zależy od:** CC4.1 scalone
-- **Status:** `czeka`
+- **Status:** `wysłane` (#66). Pełna, doprecyzowana treść jest w zgłoszeniu #66; poniższy tekst to pierwotny opis.
 
 > Kontekst: przeczytaj AGENTS.md („Gałąź i PR”), docs/MASTER_PLAN.md §3 (mapa) i `docs/design/README.md`.
 >
@@ -122,7 +128,7 @@ Zamknięte bez scalenia: #37, #39 (CC2.6, pętla Julesa), #47 (CC2.6b, bez PR pr
 > Zasady gałęzi: jak wyżej.
 
 ### CC6.4 pobieranie danych do public/data (po przeglądzie CC6.3)
-- **Zależy od:** przegląd CC6.3 zaakceptowany przez właściciela, sekret `BDL_CLIENT_ID` w GitHub Secrets i w ustawieniach Julesa
+- **Zależy od:** CC6.3b scalone (#64, `config/indicators.json` na main), sekret `BDL_CLIENT_ID` w GitHub Secrets i w ustawieniach Julesa (ustawia właściciel)
 - **Status:** `czeka`
 
 > Kontekst: przeczytaj AGENTS.md („Gałąź i PR”, „Zawsze”), docs/MASTER_PLAN.md §4 i `config/indicators.json` (z zaakceptowanego CC6.3).
@@ -137,6 +143,8 @@ Zamknięte bez scalenia: #37, #39 (CC2.6, pętla Julesa), #47 (CC2.6b, bez PR pr
 > 3. Strona czyta tylko `public/data`; test e2e sprawdza, że żadne żądanie nie idzie do `bdl.stat.gov.pl`.
 > 4. Klucz nigdy nie trafia do logów, plików ani commitów (gitleaks zielony).
 > 5. Brak klucza w środowisku kończy skrypt czytelnym błędem, nie cichym pustym plikiem.
+>
+> Dodatkowo: nie zmieniaj `config/indicators.json`. Brak wartości zapisuj jako `null`, nigdy jako `0`. Pobieraj z paginacją (max 100 wierszy na stronę). Liczby w plikach tylko z odpowiedzi API. Nie pushuj pustych commitów (`git diff --stat HEAD~1` niepuste) i nie zmieniaj istniejących testów.
 >
 > Zasady gałęzi: jak wyżej.
 
