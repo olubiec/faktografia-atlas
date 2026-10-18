@@ -11,12 +11,8 @@ import adminTopo from '../../../public/geo/admin.topo.json';
 import { countryBounds, initialViewState, mapLimits, type ViewState } from '@/core/map/view';
 import { installAtlasSeam, type AtlasState } from '@/core/map/test-seam';
 import { buildIndex } from '@/core/units/units';
-import {
-  getDrillState,
-  getParentTeryt,
-  getInitialSelectedFromUrl,
-  updateUrlTeryt,
-} from '@/core/map/drill';
+import { getDrillState, getParentTeryt } from '@/core/map/drill';
+import { readUrlState, writeUrlState } from '@/core/url/state';
 import { createMapLayers, getMapColorsFromCss } from './layers';
 import { BackButton } from './BackButton';
 import { Breadcrumbs } from './Breadcrumbs';
@@ -48,7 +44,7 @@ export function AtlasMap() {
 
   const [selectedTeryt, setSelectedTeryt] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
-    return getInitialSelectedFromUrl(window.location.search, unitIndex);
+    return readUrlState(window.location.search, unitIndex).u ?? null;
   });
 
   const drillState = useMemo(() => {
@@ -63,7 +59,9 @@ export function AtlasMap() {
 
   const updateColorsAndTheme = useCallback(() => {
     const newColors = getMapColorsFromCss();
-    setColors(newColors);
+    if (newColors) {
+      setColors(newColors);
+    }
 
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
       (document.documentElement.classList.contains('dark') &&
@@ -122,7 +120,7 @@ export function AtlasMap() {
   useEffect(() => {
     const handlePopState = () => {
       if (typeof window === 'undefined') return;
-      const fromUrl = getInitialSelectedFromUrl(window.location.search, unitIndex);
+      const fromUrl = readUrlState(window.location.search, unitIndex).u ?? null;
       setSelectedTeryt(fromUrl);
     };
 
@@ -133,7 +131,7 @@ export function AtlasMap() {
   const handleSelectUnit = useCallback(
     (teryt: string) => {
       setSelectedTeryt(teryt);
-      updateUrlTeryt(teryt);
+      writeUrlState({ u: teryt });
 
       const targetUnit = unitIndex.byTeryt.get(teryt);
       if (targetUnit) {
@@ -147,7 +145,7 @@ export function AtlasMap() {
     (teryt: string | null) => {
       if (teryt === null) {
         setSelectedTeryt(null);
-        updateUrlTeryt(null);
+        writeUrlState({ u: null });
         updateViewStateForBbox(bounds);
       } else {
         handleSelectUnit(teryt);
@@ -159,7 +157,7 @@ export function AtlasMap() {
   const handleBack = useCallback(() => {
     const parent = getParentTeryt(selectedTeryt, unitIndex);
     setSelectedTeryt(parent);
-    updateUrlTeryt(parent);
+    writeUrlState({ u: parent });
 
     if (parent) {
       const parentUnit = unitIndex.byTeryt.get(parent);
@@ -221,8 +219,9 @@ export function AtlasMap() {
   }, [getState]);
 
   const mapStyle: StyleSpecification = useMemo(() => {
-    const [r, g, b] = colors.kalka;
-    const kalkaRgb = `rgb(${r}, ${g}, ${b})`;
+    const kalkaRgb = colors
+      ? `rgb(${colors.kalka[0]}, ${colors.kalka[1]}, ${colors.kalka[2]})`
+      : 'rgb(238, 241, 239)';
 
     return {
       version: 8,
@@ -237,7 +236,7 @@ export function AtlasMap() {
         },
       ],
     };
-  }, [colors.kalka]);
+  }, [colors]);
 
   return (
     <div
