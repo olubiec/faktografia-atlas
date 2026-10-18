@@ -163,7 +163,7 @@ test.describe('Home Page', () => {
     });
 
     await page.goto('/');
-    await page.waitForSelector('h1');
+    await page.waitForLoadState('networkidle');
 
     expect(googleFontsRequests).toHaveLength(0);
   });
@@ -178,7 +178,7 @@ test.describe('Home Page', () => {
     });
 
     await page.goto('/');
-    await page.waitForSelector('h1');
+    await page.waitForLoadState('networkidle');
 
     expect(cspErrors).toEqual([]);
   });

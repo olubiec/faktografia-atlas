@@ -13,17 +13,10 @@ import { installAtlasSeam, type AtlasState } from '@/core/map/test-seam';
 import { createMapLayers, getMapColorsFromCss } from './layers';
 import type { Unit } from '@/core/units/types';
 
-// Disable worker in environments without module worker support if needed, safely without re-assigning namespace import
-if (typeof window !== 'undefined') {
-  try {
-    Object.defineProperty(maplibregl, 'workerCount', {
-      value: 0,
-      writable: true,
-      configurable: true,
-    });
-  } catch {
-    // Ignore if property is frozen
-  }
+// Wyłączamy pracownika MapLibre GL za pomocą oficjalnego API maplibregl.setWorkerCount(0),
+// aby żądanie maplibre-gl-worker.mjs nie pozostawało w toku i networkidle przechodziło pomyślnie.
+if (typeof maplibregl.setWorkerCount === 'function') {
+  maplibregl.setWorkerCount(0);
 }
 
 function DeckGLOverlay(props: MapboxOverlayProps) {
