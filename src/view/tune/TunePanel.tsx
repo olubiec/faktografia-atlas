@@ -90,6 +90,7 @@ export function getCurrentTheme(): 'light' | 'dark' {
 export function applyCssVariables(
   currentTokens: typeof tokensJson,
   theme: 'light' | 'dark' = getCurrentTheme(),
+  originalTokens: typeof tokensJson = tokensJson,
 ): void {
   if (typeof document === 'undefined') return;
   const rootStyle = document.documentElement.style;
@@ -97,36 +98,57 @@ export function applyCssVariables(
   // 1. Kolory podstawowe
   const colorObj = currentTokens.color[theme];
   const colorMap = tokensMap.color[theme];
+  const origColorObj = originalTokens.color[theme];
   for (const [key, cssVar] of Object.entries(colorMap)) {
     const val = colorObj[key as keyof typeof colorObj];
+    const origVal = origColorObj[key as keyof typeof origColorObj];
     if (typeof val === 'string') {
-      rootStyle.setProperty(cssVar, val);
+      const isOriginal = typeof origVal === 'string' && val.toLowerCase() === origVal.toLowerCase();
+      rootStyle.setProperty(cssVar, isOriginal ? origVal : val);
     }
   }
 
   // 2. Dane sekwencyjne
   const seqArr = currentTokens.data.sequential[theme];
   const seqMap = tokensMap.data.sequential[theme];
+  const origSeqArr = originalTokens.data.sequential[theme];
   seqArr.forEach((val, idx) => {
     if (seqMap[idx]) {
-      rootStyle.setProperty(seqMap[idx], val);
+      const origVal = origSeqArr[idx];
+      const isOriginal = typeof origVal === 'string' && val.toLowerCase() === origVal.toLowerCase();
+      rootStyle.setProperty(seqMap[idx], isOriginal ? origVal : val);
     }
   });
 
   // 3. Dane dywergentne
   const divArr = currentTokens.data.diverging[theme];
   const divMap = tokensMap.data.diverging[theme];
+  const origDivArr = originalTokens.data.diverging[theme];
   divArr.forEach((val, idx) => {
     if (divMap[idx]) {
-      rootStyle.setProperty(divMap[idx], val);
+      const origVal = origDivArr[idx];
+      const isOriginal = typeof origVal === 'string' && val.toLowerCase() === origVal.toLowerCase();
+      rootStyle.setProperty(divMap[idx], isOriginal ? origVal : val);
     }
   });
 
   // 4. Brak danych
   const noDataVal = currentTokens.data.noData[theme];
   const noDataVar = tokensMap.data.noData[theme];
+  const origNoDataVal = originalTokens.data.noData[theme];
   if (typeof noDataVal === 'string') {
-    rootStyle.setProperty(noDataVar, noDataVal);
+    const isOriginal = typeof origNoDataVal === 'string' && noDataVal.toLowerCase() === origNoDataVal.toLowerCase();
+    rootStyle.setProperty(noDataVar, isOriginal ? origNoDataVal : noDataVal);
+  }
+
+  // 5. Typografia (font.scale)
+  const scaleObj = currentTokens.font.scale;
+  const scaleMap = tokensMap.font.scale;
+  for (const [key, cssVar] of Object.entries(scaleMap)) {
+    const val = scaleObj[key as keyof typeof scaleObj];
+    if (typeof val === 'number') {
+      rootStyle.setProperty(cssVar, `${val}px`);
+    }
   }
 }
 
@@ -137,14 +159,27 @@ export function resetTokens(
   currentTokens: typeof tokensJson,
   originalTokens: typeof tokensJson = tokensJson,
 ): void {
-  currentTokens.color.light = { ...originalTokens.color.light };
-  currentTokens.color.dark = { ...originalTokens.color.dark };
-  currentTokens.data.sequential.light = [...originalTokens.data.sequential.light];
-  currentTokens.data.sequential.dark = [...originalTokens.data.sequential.dark];
-  currentTokens.data.diverging.light = [...originalTokens.data.diverging.light];
-  currentTokens.data.diverging.dark = [...originalTokens.data.diverging.dark];
+  Object.assign(currentTokens.color.light, originalTokens.color.light);
+  Object.assign(currentTokens.color.dark, originalTokens.color.dark);
+
+  originalTokens.data.sequential.light.forEach((val, idx) => {
+    currentTokens.data.sequential.light[idx] = val;
+  });
+  originalTokens.data.sequential.dark.forEach((val, idx) => {
+    currentTokens.data.sequential.dark[idx] = val;
+  });
+
+  originalTokens.data.diverging.light.forEach((val, idx) => {
+    currentTokens.data.diverging.light[idx] = val;
+  });
+  originalTokens.data.diverging.dark.forEach((val, idx) => {
+    currentTokens.data.diverging.dark[idx] = val;
+  });
+
   currentTokens.data.noData.light = originalTokens.data.noData.light;
   currentTokens.data.noData.dark = originalTokens.data.noData.dark;
+
+  Object.assign(currentTokens.font.scale, originalTokens.font.scale);
 }
 
 /**
@@ -172,9 +207,10 @@ export function initTunePanel(): () => void {
   const pane = new Pane({ container, title: 'Tune', expanded: true }) as unknown as TunePane;
 
   const tab = pane.addTab({
-    pages: [{ title: 'Kolory' }],
+    pages: [{ title: 'Kolory' }, { title: 'Typografia' }],
   });
   const colorsPage = tab.pages[0];
+  const typographyPage = tab.pages[1];
 
   // Sekcja Jasny (Light)
   const lightFolder = colorsPage.addFolder({ title: 'Jasny (Light)', expanded: true });
@@ -206,13 +242,23 @@ export function initTunePanel(): () => void {
   });
   darkFolder.addBinding(currentTokens.data.noData, 'dark', { label: 'noData' });
 
+  // Zakładka "Typografia"
+  for (const key of Object.keys(tokensMap.font.scale) as Array<keyof typeof tokensMap.font.scale>) {
+    typographyPage.addBinding(currentTokens.font.scale, key, {
+      label: key,
+      min: 10,
+      max: 96,
+      step: 1,
+    });
+  }
+
   // Reakcja na zmiany wartości w panelu
   pane.on('change', () => {
     applyCssVariables(currentTokens);
   });
 
   // Przycisk "Kopiuj JSON"
-  colorsPage.addButton({ title: 'Kopiuj JSON' }).on('click', () => {
+  pane.addButton({ title: 'Kopiuj JSON' }).on('click', () => {
     const diff = diffTokens(tokensJson, currentTokens);
     const jsonStr = JSON.stringify(diff, null, 2);
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -221,10 +267,10 @@ export function initTunePanel(): () => void {
   });
 
   // Przycisk "Przywróć"
-  colorsPage.addButton({ title: 'Przywróć' }).on('click', () => {
+  pane.addButton({ title: 'Przywróć' }).on('click', () => {
     resetTokens(currentTokens, tokensJson);
-    pane.refresh();
     applyCssVariables(currentTokens);
+    pane.refresh();
   });
 
   // Reakcja na zmianę motywu w przeglądarce / HTML
