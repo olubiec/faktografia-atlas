@@ -1,14 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Command } from 'cmdk';
 import { Dialog as DialogPrimitive } from 'radix-ui';
 import { Search, Xmark } from 'iconoir-react';
 import { Icon } from '@/view/ui/Icon';
-import { loadSearchIndex, useSearch } from './useSearch';
-import { loadLocalities } from '@/core/search/load-localities';
-import { searchLocalities, type LocalitySearchResult } from '@/core/search/localities';
-import type { SearchResult, Locality } from '@/core/search';
-import type { Unit } from '@/core/units/types';
+import { useSearch } from './useSearch';
+import type { SearchResult } from '@/core/search';
 
 export interface SearchDialogProps {
   open: boolean;
@@ -17,8 +14,6 @@ export interface SearchDialogProps {
 
 export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   const [query, setQuery] = useState('');
-  const [localities, setLocalities] = useState<Locality[]>([]);
-  const [unitsMap, setUnitsMap] = useState<Map<string, Unit>>(new Map());
   const navigate = useNavigate();
   const { results, ready, error } = useSearch(query);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -26,34 +21,10 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   useEffect(() => {
     if (open) {
       previousFocusRef.current = document.activeElement as HTMLElement | null;
-
-      let cancelled = false;
-      loadLocalities().then((data) => {
-        if (!cancelled) setLocalities(data);
-      });
-
-      loadSearchIndex()
-        .then((idx) => {
-          if (!cancelled) setUnitsMap(idx.unitsMap);
-        })
-        .catch(() => {
-          // Błędy wczytywania jednostek są obsługiwane przez useSearch
-        });
-
-      return () => {
-        cancelled = true;
-      };
     } else if (previousFocusRef.current && typeof previousFocusRef.current.focus === 'function') {
       previousFocusRef.current.focus();
     }
   }, [open]);
-
-  const localityResults = useMemo(() => {
-    if (!query || query.trim().length < 2 || localities.length === 0) {
-      return [];
-    }
-    return searchLocalities(query, localities, unitsMap, { limit: 50 });
-  }, [query, localities, unitsMap]);
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
@@ -62,12 +33,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
     onOpenChange(newOpen);
   };
 
-  const handleSelectUnit = (item: SearchResult) => {
-    handleOpenChange(false);
-    navigate(`/?u=${item.teryt}`);
-  };
-
-  const handleSelectLocality = (item: LocalitySearchResult) => {
+  const handleSelect = (item: SearchResult) => {
     handleOpenChange(false);
     navigate(`/?u=${item.teryt}`);
   };
@@ -127,7 +93,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                 </div>
               )}
 
-              {query.trim().length >= 2 && ready && results.length === 0 && localityResults.length === 0 && (
+              {query.trim().length >= 2 && ready && results.length === 0 && (
                 <Command.Empty className="p-6 text-center text-olowek text-sm">
                   Brak wyników dla „{query}”
                 </Command.Empty>
@@ -139,64 +105,24 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                 </div>
               )}
 
-              {/* Grupa jednostek administracyjnych */}
-              {results.length > 0 && (
-                <Command.Group
-                  heading={localityResults.length > 0 ? 'Jednostki administracyjne' : undefined}
-                  className="[&_[cmdk-group-heading]]:px-4 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-olowek"
+              {results.map((item) => (
+                <Command.Item
+                  key={item.teryt}
+                  value={item.teryt}
+                  onSelect={() => handleSelect(item)}
+                  className="flex items-center justify-between px-4 py-3 min-h-[44px] cursor-pointer text-tusz data-[selected=true]:bg-linia/20 data-[selected=true]:text-tusz hover:bg-linia/20 border-b border-linia/30 last:border-b-0 rounded-none"
                 >
-                  {results.map((item) => (
-                    <Command.Item
-                      key={`unit:${item.teryt}`}
-                      value={`unit:${item.teryt}`}
-                      onSelect={() => handleSelectUnit(item)}
-                      className="flex items-center justify-between px-4 py-3 min-h-[44px] cursor-pointer text-tusz data-[selected=true]:bg-linia/20 data-[selected=true]:text-tusz hover:bg-linia/20 border-b border-linia/30 last:border-b-0 rounded-none"
-                    >
-                      <div className="flex flex-col gap-0.5 min-w-0 pr-2">
-                        <span className="font-[600] text-sm text-tusz truncate">{item.name}</span>
-                        {item.context && (
-                          <span className="text-xs text-olowek truncate">{item.context}</span>
-                        )}
-                      </div>
-                      <span className="text-xs text-olowek border border-linia px-2 py-0.5 bg-kalka flex-shrink-0 whitespace-nowrap font-mono">
-                        {item.label}
-                      </span>
-                    </Command.Item>
-                  ))}
-                </Command.Group>
-              )}
-
-              {/* Grupa miejscowości */}
-              {localityResults.length > 0 && (
-                <Command.Group
-                  heading="Miejscowości"
-                  className="[&_[cmdk-group-heading]]:px-4 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-olowek"
-                >
-                  {localityResults.map((item) => (
-                    <Command.Item
-                      key={`loc:${item.id}`}
-                      value={`loc:${item.id}`}
-                      onSelect={() => handleSelectLocality(item)}
-                      className="flex items-center justify-between px-4 py-3 min-h-[44px] cursor-pointer text-tusz data-[selected=true]:bg-linia/20 data-[selected=true]:text-tusz hover:bg-linia/20 border-b border-linia/30 last:border-b-0 rounded-none"
-                    >
-                      <div className="flex flex-col gap-0.5 min-w-0 pr-2">
-                        <span className="font-[600] text-sm text-tusz truncate">
-                          {item.name}
-                          {item.type && <span className="font-normal text-olowek ml-1">({item.type})</span>}
-                        </span>
-                        {item.gminaName && (
-                          <span className="text-xs text-olowek truncate">
-                            {item.context || `gmina ${item.gminaName}`}
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-xs text-olowek border border-linia px-2 py-0.5 bg-kalka flex-shrink-0 whitespace-nowrap font-mono">
-                        {item.type || 'miejscowość'}
-                      </span>
-                    </Command.Item>
-                  ))}
-                </Command.Group>
-              )}
+                  <div className="flex flex-col gap-0.5 min-w-0 pr-2">
+                    <span className="font-[600] text-sm text-tusz truncate">{item.name}</span>
+                    {item.context && (
+                      <span className="text-xs text-olowek truncate">{item.context}</span>
+                    )}
+                  </div>
+                  <span className="text-xs text-olowek border border-linia px-2 py-0.5 bg-kalka flex-shrink-0 whitespace-nowrap font-mono">
+                    {item.label}
+                  </span>
+                </Command.Item>
+              ))}
             </Command.List>
           </Command>
         </DialogPrimitive.Content>

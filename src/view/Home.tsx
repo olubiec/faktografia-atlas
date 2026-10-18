@@ -10,7 +10,7 @@ const AtlasMap = lazy(() => import('./map/AtlasMap'));
 export function Home() {
   return (
     <AnnotationProvider>
-      <div className="min-h-screen flex flex-col bg-kalka text-tusz overflow-x-hidden">
+      <div className="min-h-screen flex flex-col bg-kalka text-tusz overflow-x-hidden relative">
         <Header />
 
         <main className="flex-grow flex flex-col md:flex-row items-center justify-between p-6 md:p-12 lg:px-16 gap-8 max-w-[1440px] mx-auto w-full">
@@ -55,7 +55,12 @@ export function Home() {
               <AtlasMap />
             </Suspense>
           </div>
+
+          <div data-slot="side" />
         </main>
+
+        <div data-slot="bottom" />
+        <div data-slot="overlay" />
       </div>
     </AnnotationProvider>
   );

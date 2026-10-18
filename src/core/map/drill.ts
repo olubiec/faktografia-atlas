@@ -1,6 +1,13 @@
 import type { UnitIndex } from '../units/types';
 import { getUnit } from '../units/units';
 
+export {
+  readUrlState,
+  writeUrlState,
+  getInitialSelectedFromUrl,
+  updateUrlTeryt,
+} from '../url/state';
+
 export type DrillState = {
   selected: string | null;
   parent: string | null;
@@ -104,33 +111,4 @@ export function getParentTeryt(
   const unit = getUnit(index, selectedTeryt);
   if (!unit) return null;
   return unit.parent;
-}
-
-/**
- * Odczytuje i weryfikuje parametr TERYT (?u=) z adresu URL.
- */
-export function getInitialSelectedFromUrl(
-  search: string,
-  index: UnitIndex
-): string | null {
-  if (!search) return null;
-  const params = new URLSearchParams(search);
-  const u = params.get('u');
-  if (!u) return null;
-  const unit = getUnit(index, u);
-  return unit ? unit.teryt : null;
-}
-
-/**
- * Aktualizuje parametr ?u= w adresie URL bez przeładowania strony (replaceState).
- */
-export function updateUrlTeryt(teryt: string | null): void {
-  if (typeof window === 'undefined') return;
-  const url = new URL(window.location.href);
-  if (teryt) {
-    url.searchParams.set('u', teryt);
-  } else {
-    url.searchParams.delete('u');
-  }
-  window.history.replaceState(null, '', url.toString());
 }
