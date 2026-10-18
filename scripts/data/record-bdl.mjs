@@ -6,7 +6,7 @@
 // dla poziomu 5 (powiaty) i 6 (gminy; tylko gdy minLevel = "gmi").
 // Żeby pliki nie były ogromne, w każdym rekordzie zostają tylko 2 ostatnie lata z wartościami
 // (struktura stron, `totalRecords` i `links` bez zmian).
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -56,6 +56,16 @@ export function assertNoSecret(text, secret) {
   }
 }
 
+/** Czy plik już istnieje (nagranie z poprzedniego uruchomienia – nie pobieramy drugi raz). */
+export async function exists(file) {
+  try {
+    await access(file);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // Z kluczem: 10/s, 500/15 min, 5000/12 h. Jedno zapytanie co 2 s mieści się w 500/15 min z zapasem.
@@ -98,25 +108,37 @@ async function main() {
     .filter((i) => !only || only.has(i.id));
   await mkdir(outDir, { recursive: true });
 
-  const stats = { requests: 0 };
+  const stats = { requests: 0, reused: 0 };
   const report = [];
   for (const ind of indicators) {
-    const meta = await getJson(variableUrl(ind.bdlVarId), clientId, stats);
-    if (!meta) throw new Error(`Zmienna ${ind.bdlVarId} (${ind.id}) nie istnieje w BDL.`);
-    const metaText = JSON.stringify(meta, null, 2);
-    assertNoSecret(metaText, clientId);
-    await writeFile(path.join(outDir, `${ind.bdlVarId}-variable.json`), metaText + '\n');
+    const metaFile = path.join(outDir, `${ind.bdlVarId}-variable.json`);
+    if (!(await exists(metaFile))) {
+      const meta = await getJson(variableUrl(ind.bdlVarId), clientId, stats);
+      if (!meta) throw new Error(`Zmienna ${ind.bdlVarId} (${ind.id}) nie istnieje w BDL.`);
+      const metaText = JSON.stringify(meta, null, 2);
+      assertNoSecret(metaText, clientId);
+      await writeFile(metaFile, metaText + '\n');
+    }
 
     for (const level of levelsFor(ind)) {
       let page = 0;
       let records = 0;
       for (;;) {
-        const json = await getJson(dataUrl(ind.bdlVarId, level, page), clientId, stats);
-        if (!json) break;
-        const text = JSON.stringify(trimYears(json));
-        assertNoSecret(text, clientId);
-        await writeFile(path.join(outDir, fixtureName(ind.bdlVarId, level, page)), text + '\n');
+        const file = path.join(outDir, fixtureName(ind.bdlVarId, level, page));
+        let json;
+        if (await exists(file)) {
+          // wznowienie: strona nagrana wcześniej (kolejne uruchomienie po przerwaniu)
+          json = JSON.parse(await readFile(file, 'utf8'));
+          stats.reused++;
+        } else {
+          json = await getJson(dataUrl(ind.bdlVarId, level, page), clientId, stats);
+          if (!json) break;
+          const text = JSON.stringify(trimYears(json));
+          assertNoSecret(text, clientId);
+          await writeFile(file, text + '\n');
+        }
         records += json.results?.length ?? 0;
+        if (page % 10 === 0) console.log(`  ${ind.id} poziom ${level}: strona ${page}, zapytań łącznie ${stats.requests}`);
         if (!hasNext(json)) break;
         page++;
         if (page > 200) throw new Error(`Za dużo stron dla ${ind.id} na poziomie ${level}.`);
@@ -125,7 +147,7 @@ async function main() {
       console.log(report.at(-1));
     }
   }
-  const summary = `Wskaźników: ${indicators.length}, zapytań: ${stats.requests}\n` + report.join('\n') + '\n';
+  const summary = `Wskaźników: ${indicators.length}, zapytań: ${stats.requests}, stron z poprzedniego uruchomienia: ${stats.reused}\n` + report.join('\n') + '\n';
   await writeFile(path.join(outDir, 'REPORT.txt'), summary);
   console.log(summary);
 }
