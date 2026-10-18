@@ -32,7 +32,9 @@ export function parseArgs(argv = process.argv.slice(2)) {
     limit: 150,
     timeoutMs: 15000,
     maxRetries: 5,
-    minIntervalMs: 200
+    minIntervalMs: 200,
+    pagesDir: null,
+    timeBudgetMin: null
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -49,6 +51,12 @@ export function parseArgs(argv = process.argv.slice(2)) {
       args.unitsPath = path.resolve(argv[++i]);
     } else if (arg === '--cache' && argv[i + 1]) {
       args.cachePath = path.resolve(argv[++i]);
+    } else if (arg === '--pages-dir' && argv[i + 1]) {
+      args.pagesDir = path.resolve(argv[++i]);
+    } else if (arg === '--time-budget-min' && argv[i + 1]) {
+      args.timeBudgetMin = Math.max(1, parseInt(argv[++i], 10) || 0) || null;
+    } else if (arg === '--timeout-ms' && argv[i + 1]) {
+      args.timeoutMs = Math.max(1000, parseInt(argv[++i], 10) || 15000);
     } else if (arg === '--concurrency' && argv[i + 1]) {
       args.concurrency = Math.max(1, parseInt(argv[++i], 10) || 5);
     } else if (arg === '--limit' && argv[i + 1]) {
@@ -121,11 +129,54 @@ export function countKinds(features) {
   return Object.fromEntries(Object.entries(counts).sort((a, b) => b[1] - a[1]));
 }
 
-export async function fetchAllPrngFeatures({ limit = 150, concurrency = 5, timeoutMs = 15000, maxRetries = 5, minIntervalMs = 200, fetchJson = fetchWithRetry, waitTurn = createRateLimiter(minIntervalMs) } = {}) {
-  await waitTurn();
-  const initialUrl = `${PRNG_ENDPOINT}&limit=${limit}&offset=0`;
-  console.log(`[PRNG] Pobieranie pierwszej strony: ${initialUrl}`);
-  const firstData = await fetchJson(initialUrl, {}, timeoutMs, maxRetries);
+/** Zostawia tylko pola potrzebne parserowi (localities-parse.mjs), żeby zapis stron był mały. */
+export function slimFeature(feature) {
+  const p = feature?.properties ?? {};
+  const properties = { kategoriaObiektu: p.kategoriaObiektu, rodzajObiektu: p.rodzajObiektu };
+  if (p.kategoriaObiektu !== 'miejscowość') return { properties };
+  return {
+    properties: { ...properties, idPRNG: p.idPRNG, nazwaGlowna: p.nazwaGlowna, terytGminy: p.terytGminy },
+    geometry: feature?.geometry ?? null
+  };
+}
+
+/**
+ * Zapis pobranych stron na dysku: kolejne uruchomienie (np. po przekroczeniu czasu)
+ * wznawia pobieranie od brakujących stron zamiast od zera.
+ */
+export function createPageStore(dir) {
+  fs.mkdirSync(dir, { recursive: true });
+  const file = (i) => path.join(dir, `p${String(i).padStart(5, '0')}.json`);
+  return {
+    has: (i) => fs.existsSync(file(i)),
+    get: (i) => JSON.parse(fs.readFileSync(file(i), 'utf8')),
+    put: (i, value) => fs.writeFileSync(file(i), JSON.stringify(value), 'utf8')
+  };
+}
+
+export class PartialFetchError extends Error {
+  constructor(done, total) {
+    super(`Pobrano ${done}/${total} stron przed upływem limitu czasu. Uruchom ponownie – pobieranie wznowi się od brakujących stron.`);
+    this.name = 'PartialFetchError';
+    this.done = done;
+    this.total = total;
+  }
+}
+
+export async function fetchAllPrngFeatures({ limit = 150, concurrency = 5, timeoutMs = 15000, maxRetries = 5, minIntervalMs = 200, fetchJson = fetchWithRetry, waitTurn = createRateLimiter(minIntervalMs), pageStore = null, deadline = null, now = () => Date.now() } = {}) {
+  const loadPage = async (pageIndex) => {
+    if (pageStore?.has(pageIndex)) return pageStore.get(pageIndex);
+    await waitTurn();
+    const url = `${PRNG_ENDPOINT}&limit=${limit}&offset=${pageIndex * limit}`;
+    const data = await fetchJson(url, {}, timeoutMs, maxRetries);
+    if (!pageStore) return data;
+    const slim = { numberMatched: data?.numberMatched, features: (data?.features ?? []).map(slimFeature) };
+    pageStore.put(pageIndex, slim);
+    return slim;
+  };
+
+  console.log(`[PRNG] Pobieranie pierwszej strony: ${PRNG_ENDPOINT}&limit=${limit}&offset=0`);
+  const firstData = await loadPage(0);
 
   const total = firstData?.numberMatched ?? 0;
   const initialFeatures = firstData?.features ?? [];
@@ -143,17 +194,13 @@ export async function fetchAllPrngFeatures({ limit = 150, concurrency = 5, timeo
   let loadedPages = 1;
 
   for (let p = 1; p < totalPages; p += concurrency) {
+    if (deadline !== null && now() > deadline) {
+      throw new PartialFetchError(loadedPages, totalPages);
+    }
     const promises = [];
     for (let b = 0; b < concurrency && (p + b) < totalPages; b++) {
-      const pageIndex = p + b;
-      const offset = pageIndex * limit;
-      const pageUrl = `${PRNG_ENDPOINT}&limit=${limit}&offset=${offset}`;
       // Błąd strony przerywa całe pobieranie: lepiej brak pliku niż plik z dziurami.
-      promises.push(
-        waitTurn()
-          .then(() => fetchJson(pageUrl, {}, timeoutMs, maxRetries))
-          .then((data) => data?.features || [])
-      );
+      promises.push(loadPage(p + b).then((data) => data?.features || []));
     }
 
     const pagesData = await Promise.all(promises);
@@ -201,7 +248,9 @@ export async function main() {
       concurrency: args.concurrency,
       timeoutMs: args.timeoutMs,
       maxRetries: args.maxRetries,
-      minIntervalMs: args.minIntervalMs
+      minIntervalMs: args.minIntervalMs,
+      pageStore: args.pagesDir ? createPageStore(args.pagesDir) : null,
+      deadline: args.timeBudgetMin ? Date.now() + args.timeBudgetMin * 60000 : null
     });
 
     if (args.cachePath) {
@@ -239,6 +288,10 @@ export async function main() {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename)) {
   main().catch((err) => {
+    if (err instanceof PartialFetchError) {
+      console.error(`[PRNG] Częściowo: ${err.message}`);
+      process.exit(3);
+    }
     console.error('[PRNG] Błąd krytyczny:', err);
     process.exit(1);
   });
