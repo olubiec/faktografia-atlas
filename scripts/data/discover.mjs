@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { countCoverage } from './coverage.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,6 +10,8 @@ const ROOT_DIR = path.resolve(__dirname, '../../');
 const FIXTURE_CACHE_PATH = path.join(ROOT_DIR, 'tests/fixtures/bdl/discover-cache.json');
 const TMP_CACHE_PATH = '/tmp/bdl-discover-cache.json';
 const REPORT_PATH = path.join(ROOT_DIR, 'docs/data-report.md');
+const UNITS_PATH = path.join(ROOT_DIR, 'public/data/units.json');
+const RECORDED_DIR = path.join(ROOT_DIR, 'tests/fixtures/bdl/recorded');
 
 const BASE_URL = 'https://bdl.stat.gov.pl/api/v1';
 const MAX_REQUESTS = 150;
@@ -207,7 +210,19 @@ export class BdlDiscoverer {
     this.requestCount = 0;
     this.rateLimited = false;
 
+    this.units = [];
+    this.loadUnits();
     this.loadCache();
+  }
+
+  loadUnits() {
+    if (fs.existsSync(UNITS_PATH)) {
+      try {
+        this.units = JSON.parse(fs.readFileSync(UNITS_PATH, 'utf8'));
+      } catch {
+        this.units = [];
+      }
+    }
   }
 
   loadCache() {
@@ -286,7 +301,55 @@ export class BdlDiscoverer {
     }
   }
 
+  getRecordedRecords(varId, levelNum) {
+    const prefix = `${varId}-l${levelNum}-p`;
+    if (!fs.existsSync(RECORDED_DIR)) return [];
+    const files = fs
+      .readdirSync(RECORDED_DIR)
+      .filter((f) => f.startsWith(prefix) && f.endsWith('.json'))
+      .sort();
+
+    const records = [];
+    for (const f of files) {
+      try {
+        const page = JSON.parse(fs.readFileSync(path.join(RECORDED_DIR, f), 'utf8'));
+        if (Array.isArray(page.results)) {
+          records.push(...page.results);
+        }
+      } catch {
+        // Ignoruj błędy odczytu pojedynczych plików
+      }
+    }
+    return records;
+  }
+
+  getLatestRecordedYear(records) {
+    let latestYear = null;
+    for (const r of records) {
+      for (const val of r.values || []) {
+        if (val.val !== null && val.val !== undefined && !Number.isNaN(val.val)) {
+          if (latestYear === null || Number(val.year) > Number(latestYear)) {
+            latestYear = val.year;
+          }
+        }
+      }
+    }
+    return latestYear;
+  }
+
   async getValueForUnit(varId, unitId) {
+    const recorded6 = this.getRecordedRecords(varId, 6);
+    const recorded5 = this.getRecordedRecords(varId, 5);
+    const allRecorded = [...recorded6, ...recorded5];
+    const match = allRecorded.find((r) => r.id === unitId);
+    if (match && match.values && match.values.length > 0) {
+      const validValues = match.values.filter((v) => v.val !== null && v.val !== undefined && !Number.isNaN(v.val));
+      if (validValues.length > 0) {
+        const sorted = [...validValues].sort((a, b) => Number(b.year) - Number(a.year));
+        return sorted[0];
+      }
+    }
+
     const data = await this.fetchUrl(`/data/by-unit/${unitId}?var-id=${varId}&format=json&lang=pl`);
     if (!data || !data.results || data.results.length === 0) return null;
     const res = data.results[0];
@@ -296,6 +359,15 @@ export class BdlDiscoverer {
   }
 
   async getCoverage(varId, latestYear) {
+    const recordedGmi = this.getRecordedRecords(varId, 6);
+    const recordedPow = this.getRecordedRecords(varId, 5);
+
+    if (recordedGmi.length > 0 || recordedPow.length > 0) {
+      const gmiCount = countCoverage(recordedGmi, this.units, 'gmi', latestYear);
+      const powCount = countCoverage(recordedPow, this.units, 'pow', latestYear);
+      return { gmiCount, powCount };
+    }
+
     const gmiData = await this.fetchUrl(`/data/by-variable/${varId}?unit-level=6&year=${latestYear}&page-size=1&format=json&lang=pl`);
     const powData = await this.fetchUrl(`/data/by-variable/${varId}?unit-level=5&year=${latestYear}&page-size=1&format=json&lang=pl`);
     return {
@@ -314,79 +386,120 @@ export class BdlDiscoverer {
   }
 
   async generateReport() {
+    const totalGmiUnits = this.units.filter((u) => u.level === 'gmi').length || 2479;
+    const totalPowUnits = this.units.filter((u) => u.level === 'pow').length || 380;
+
+    const summaryTableRows = [];
+
     const lines = [
       '# Raport odkrywania wskaźników GUS BDL (CC6.3)',
       '',
       'Raport proponuje kandydatów na zmienne BDL dla 20 wskaźników z `docs/MASTER_PLAN.md §4.2`.',
-      'Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpowiedzi API GUS BDL zarchiwizowanych w `tests/fixtures/bdl/discover-cache.json`.',
+      'Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpowiedzi API GUS BDL zarchiwizowanych w `tests/fixtures/bdl/discover-cache.json` oraz `tests/fixtures/bdl/recorded/`.',
       '',
       '---',
       '',
+      '## Podsumowanie pokrycia wskaźników BDL',
+      '',
+      '| ID wskaźnika | Var ID | Poziom | Ostatni rok | Liczba gmin z wartością / wszystkich | Liczba powiatów z wartością / wszystkich |',
+      '|---|---|---|---|---|---|',
     ];
 
+    const reportBodyLines = [];
+
     for (const ind of INDICATORS) {
-      lines.push(`## ${ind.group} — ${ind.name}`);
-      lines.push(`- **Oczekiwany najniższy poziom:** ${ind.expectedLevel}`);
-      lines.push(`- **Kierunek ("więcej = lepiej?"):** ${ind.higherIsBetter}`);
+      reportBodyLines.push(`## ${ind.group} — ${ind.name}`);
+      reportBodyLines.push(`- **Oczekiwany najniższy poziom:** ${ind.expectedLevel}`);
+      reportBodyLines.push(`- **Kierunek ("więcej = lepiej?"):** ${ind.higherIsBetter}`);
 
       if (!ind.candidates || ind.candidates.length === 0) {
-        lines.push('- **Status:** brak danych (nie znaleziono odpowiedniej zmiennej w BDL)');
-        lines.push('');
+        reportBodyLines.push('- **Status:** brak danych (nie znaleziono odpowiedniej zmiennej w BDL)');
+        reportBodyLines.push('');
+        summaryTableRows.push(`| ${ind.name} | brak | ${ind.expectedLevel} | brak | 0 / ${totalGmiUnits} | 0 / ${totalPowUnits} |`);
         continue;
       }
 
-      lines.push('');
-      lines.push('### Proponowani kandydaci');
-      lines.push('');
+      reportBodyLines.push('');
+      reportBodyLines.push('### Proponowani kandydaci');
+      reportBodyLines.push('');
 
       for (let i = 0; i < ind.candidates.length; i++) {
         const cand = ind.candidates[i];
-        const details = await this.fetchUrl(`/variables/${cand.varId}?format=json&lang=pl`);
+        let details = null;
+
+        const metaFile = path.join(RECORDED_DIR, `${cand.varId}-variable.json`);
+        if (fs.existsSync(metaFile)) {
+          try {
+            details = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+          } catch {
+            details = null;
+          }
+        }
 
         if (!details) {
-          lines.push(`#### Kandydat ${i + 1}: Zmienna BDL ID ${cand.varId}`);
-          lines.push(`- **Uzasadnienie:** ${cand.note}`);
-          lines.push('- **Status:** brak szczegółowych metadanych z API');
-          lines.push('');
+          details = await this.fetchUrl(`/variables/${cand.varId}?format=json&lang=pl`);
+        }
+
+        if (!details) {
+          reportBodyLines.push(`#### Kandydat ${i + 1}: Zmienna BDL ID ${cand.varId}`);
+          reportBodyLines.push(`- **Uzasadnienie:** ${cand.note}`);
+          reportBodyLines.push('- **Status:** brak szczegółowych metadanych z API');
+          reportBodyLines.push('');
+          if (i === 0) {
+            summaryTableRows.push(`| ${ind.name} | ${cand.varId} | ${ind.expectedLevel} | brak | 0 / ${totalGmiUnits} | 0 / ${totalPowUnits} |`);
+          }
           continue;
         }
 
         const nameParts = [details.n1, details.n2, details.n3, details.n4, details.n5].filter(Boolean).join(' -> ');
         const years = details.years || [];
         const minYear = years.length > 0 ? Math.min(...years) : 'brak';
-        const maxYear = years.length > 0 ? Math.max(...years) : 'brak';
-        const latestYear = typeof maxYear === 'number' ? maxYear : 2023;
+
+        const rec6 = this.getRecordedRecords(cand.varId, 6);
+        const rec5 = this.getRecordedRecords(cand.varId, 5);
+        let latestYear = this.getLatestRecordedYear(rec6) || this.getLatestRecordedYear(rec5);
+
+        if (!latestYear) {
+          const maxYear = years.length > 0 ? Math.max(...years) : 'brak';
+          latestYear = typeof maxYear === 'number' ? maxYear : 2023;
+        }
 
         const coverage = await this.getCoverage(cand.varId, latestYear);
         const malopolskaVal = await this.getValueForUnit(cand.varId, '011200000000');
         const zakopaneVal = await this.getValueForUnit(cand.varId, '011216917011');
         const powTatrzanskiVal = await this.getValueForUnit(cand.varId, '011216917000');
 
-        lines.push(`#### Kandydat ${i + 1}: Zmienna BDL ID ${cand.varId}`);
-        lines.push(`- **Nazwa w BDL:** \`${nameParts}\``);
-        lines.push(`- **Uzasadnienie wyboru:** ${cand.note}`);
-        lines.push(`- **Jednostka miary:** ${details.measureUnitName || details.measureUnitId || '-'}`);
-        lines.push(`- **Najniższy poziom z danymi:** ${this.formatLevel(details.level)}`);
-        lines.push(`- **Dostępne lata:** ${minYear}–${maxYear} (${years.length} lat/a)`);
-        lines.push(`- **Pokrycie w ostatnim roku (${latestYear}):**`);
-        lines.push(`  - Gminy (poziom 6): ${coverage.gmiCount} rek.`);
-        lines.push(`  - Powiaty (poziom 5): ${coverage.powCount} rek.`);
-        lines.push(`- **Przykładowe wartości (${latestYear}):**`);
-        lines.push(`  - Małopolska (województwo 12): ${malopolskaVal ? `${malopolskaVal.val} (${malopolskaVal.year})` : 'brak danych'}`);
+        reportBodyLines.push(`#### Kandydat ${i + 1}: Zmienna BDL ID ${cand.varId}`);
+        reportBodyLines.push(`- **Nazwa w BDL:** \`${nameParts}\``);
+        reportBodyLines.push(`- **Uzasadnienie wyboru:** ${cand.note}`);
+        reportBodyLines.push(`- **Jednostka miary:** ${details.measureUnitName || details.measureUnitId || '-'}`);
+        reportBodyLines.push(`- **Najniższy poziom z danymi:** ${this.formatLevel(details.level)}`);
+        reportBodyLines.push(`- **Dostępne lata:** ${minYear}–${latestYear} (${years.length > 0 ? years.length : '-'} lat/a)`);
+        reportBodyLines.push(`- **Pokrycie w ostatnim roku (${latestYear}):**`);
+        reportBodyLines.push(`  - Gminy (poziom 6): ${coverage.gmiCount} / ${totalGmiUnits} rek.`);
+        reportBodyLines.push(`  - Powiaty (poziom 5): ${coverage.powCount} / ${totalPowUnits} rek.`);
+        reportBodyLines.push(`- **Przykładowe wartości (${latestYear}):**`);
+        reportBodyLines.push(`  - Małopolska (województwo 12): ${malopolskaVal ? `${malopolskaVal.val} (${malopolskaVal.year})` : 'brak danych'}`);
 
         if (zakopaneVal) {
-          lines.push(`  - Zakopane (gmina 1217011): ${zakopaneVal.val} (${zakopaneVal.year})`);
+          reportBodyLines.push(`  - Zakopane (gmina 1217011): ${zakopaneVal.val} (${zakopaneVal.year})`);
         } else if (powTatrzanskiVal) {
-          lines.push(`  - Zakopane (dane dla Powiatu Tatrzańskiego 1217): ${powTatrzanskiVal.val} (${powTatrzanskiVal.year})`);
+          reportBodyLines.push(`  - Zakopane (dane dla Powiatu Tatrzańskiego 1217): ${powTatrzanskiVal.val} (${powTatrzanskiVal.year})`);
         } else {
-          lines.push(`  - Zakopane: brak danych`);
+          reportBodyLines.push(`  - Zakopane: brak danych`);
         }
 
-        lines.push('');
+        reportBodyLines.push('');
+
+        if (i === 0) {
+          summaryTableRows.push(
+            `| ${ind.name} | ${cand.varId} | ${this.formatLevel(details.level)} | ${latestYear} | ${coverage.gmiCount} / ${totalGmiUnits} | ${coverage.powCount} / ${totalPowUnits} |`
+          );
+        }
       }
     }
 
-    return lines.join('\n');
+    return [...lines, ...summaryTableRows, '', '---', '', ...reportBodyLines].join('\n');
   }
 }
 

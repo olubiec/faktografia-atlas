@@ -1,7 +1,34 @@
 # Raport odkrywania wskaźników GUS BDL (CC6.3)
 
 Raport proponuje kandydatów na zmienne BDL dla 20 wskaźników z `docs/MASTER_PLAN.md §4.2`.
-Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpowiedzi API GUS BDL zarchiwizowanych w `tests/fixtures/bdl/discover-cache.json`.
+Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpowiedzi API GUS BDL zarchiwizowanych w `tests/fixtures/bdl/discover-cache.json` oraz `tests/fixtures/bdl/recorded/`.
+
+---
+
+## Podsumowanie pokrycia wskaźników BDL
+
+| ID wskaźnika | Var ID | Poziom | Ostatni rok | Liczba gmin z wartością / wszystkich | Liczba powiatów z wartością / wszystkich |
+|---|---|---|---|---|---|
+| Ludność ogółem | 72305 | gmina (poziom 6) | 2025 | 2479 / 2479 | 380 / 380 |
+| Gęstość zaludnienia (os./km²) | 60559 | gmina (poziom 6) | 2025 | 2479 / 2479 | 380 / 380 |
+| Przyrost naturalny na 1000 ludności | 450551 | gmina (poziom 6) | 2025 | 2479 / 2479 | 380 / 380 |
+| Saldo migracji na 1000 ludności | 453193 | gmina (poziom 6) | 2025 | 2479 / 2479 | 380 / 380 |
+| Udział ludności 65+ (%) | 634989 | gmina (poziom 6) | 2025 | 2479 / 2479 | 380 / 380 |
+| Mediana wieku | 1650633 | gmina (poziom 6) | 2026 | 2473 / 2479 | 380 / 380 |
+| Stopa bezrobocia rejestrowanego (%) | 461691 | powiat (poziom 5) | 2025 | 0 / 2479 | 380 / 380 |
+| Udział bezrobotnych w ludności w wieku produkcyjnym (%) | 217828 | powiat (poziom 5) | 2026 | 0 / 2479 | 380 / 380 |
+| Przeciętne wynagrodzenie brutto (zł) | 58787 | podregion (poziom 3) | 2008 | 0 / 2479 | 0 / 380 |
+| Dochody budżetu gminy na mieszkańca (zł) | 1621732 | podregion (poziom 3) | 2025 | 0 / 2479 | 0 / 380 |
+| Wydatki budżetu gminy na mieszkańca (zł) | brak | gmina | brak | 0 / 2479 | 0 / 380 |
+| Podmioty REGON na 10 tys. ludności | 60530 | gmina (poziom 6) | 2025 | 2479 / 2479 | 380 / 380 |
+| Mieszkania oddane do użytku na 1000 ludności | brak | gmina | brak | 0 / 2479 | 0 / 380 |
+| Przeciętna pow. użytkowa mieszkania na osobę (m²) | 60573 | gmina (poziom 6) | 2025 | 2479 / 2479 | 380 / 380 |
+| Lesistość (%) | 194828 | gmina (poziom 6) | 2025 | 2479 / 2479 | 380 / 380 |
+| Ludność korzystająca z kanalizacji (%) | 9153 | gmina (poziom 6) | 2025 | 3934 / 2479 | 380 / 380 |
+| Wychowanie przedszkolne, dzieci 3–6 lat (%) | 458614 | gmina (poziom 6) | 2025 | 0 / 2479 | 0 / 380 |
+| Czytelnicy bibliotek publicznych na 1000 ludności | 60191 | gmina (poziom 6) | 2025 | 2479 / 2479 | 380 / 380 |
+| Noclegi udzielone turystom na 1000 ludności | 60298 | powiat (poziom 5) | 2025 | 0 / 2479 | 380 / 380 |
+| Samochody osobowe na 1000 ludności | 60533 | powiat (poziom 5) | 2025 | 0 / 2479 | 380 / 380 |
 
 ---
 
@@ -18,10 +45,10 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 1995–2025 (31 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 2479 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
-  - Małopolska (województwo 12): 3429342 (2025)
+  - Małopolska (województwo 12): brak danych
   - Zakopane (gmina 1217011): 24921 (2025)
 
 ## Ludność — Gęstość zaludnienia (os./km²)
@@ -37,8 +64,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 2479 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 225.9 (2025)
   - Zakopane (gmina 1217011): 295.8 (2025)
@@ -56,8 +83,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 2479 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): -1.97 (2025)
   - Zakopane (gmina 1217011): -4.68 (2025)
@@ -69,8 +96,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** powiat (poziom 5)
 - **Dostępne lata:** 1999–2025 (27 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 0 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): -1.97 (2025)
   - Zakopane (dane dla Powiatu Tatrzańskiego 1217): -1.59 (2025)
@@ -88,8 +115,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2003–2025 (23 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 2479 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 1.8 (2025)
   - Zakopane (gmina 1217011): -1.9 (2025)
@@ -101,8 +128,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 1995–2025 (31 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 3934 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 6164 (2025)
   - Zakopane (gmina 1217011): -47 (2025)
@@ -120,8 +147,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2003–2025 (23 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 2479 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 19.2 (2025)
   - Zakopane (gmina 1217011): 25.1 (2025)
@@ -133,8 +160,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 1995–2025 (31 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 3934 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 759335 (2025)
   - Zakopane (gmina 1217011): 7157 (2025)
@@ -152,8 +179,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2023–2026 (4 lat/a)
 - **Pokrycie w ostatnim roku (2026):**
-  - Gminy (poziom 6): 3946 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 2473 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2026):**
   - Małopolska (województwo 12): 42 (2026)
   - Zakopane (gmina 1217011): 45 (2026)
@@ -171,8 +198,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** powiat (poziom 5)
 - **Dostępne lata:** 2011–2025 (15 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 0 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 4.7 (2025)
   - Zakopane (dane dla Powiatu Tatrzańskiego 1217): 9 (2025)
@@ -184,8 +211,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** powiat (poziom 5)
 - **Dostępne lata:** 2011–2026 (16 lat/a)
 - **Pokrycie w ostatnim roku (2026):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 0 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2026):**
   - Małopolska (województwo 12): 4.9 (2026)
   - Zakopane (dane dla Powiatu Tatrzańskiego 1217): 9.4 (2026)
@@ -203,8 +230,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** powiat (poziom 5)
 - **Dostępne lata:** 2011–2026 (16 lat/a)
 - **Pokrycie w ostatnim roku (2026):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 0 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2026):**
   - Małopolska (województwo 12): 26 (2026)
   - Zakopane (dane dla Powiatu Tatrzańskiego 1217): 71 (2026)
@@ -222,8 +249,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** podregion (poziom 3)
 - **Dostępne lata:** 2003–2008 (6 lat/a)
 - **Pokrycie w ostatnim roku (2008):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 0 rek.
+  - Gminy (poziom 6): 0 / 2479 rek.
+  - Powiaty (poziom 5): 0 / 380 rek.
 - **Przykładowe wartości (2008):**
   - Małopolska (województwo 12): 2708 (2008)
   - Zakopane: brak danych
@@ -241,8 +268,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** podregion (poziom 3)
 - **Dostępne lata:** 2003–2025 (23 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 0 rek.
+  - Gminy (poziom 6): 0 / 2479 rek.
+  - Powiaty (poziom 5): 0 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 31689 (2025)
   - Zakopane: brak danych
@@ -265,8 +292,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 2479 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 1506 (2025)
   - Zakopane (gmina 1217011): 2713 (2025)
@@ -289,8 +316,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 2479 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 32.5 (2025)
   - Zakopane (gmina 1217011): 41.9 (2025)
@@ -308,8 +335,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 2479 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 28.6 (2025)
   - Zakopane (gmina 1217011): 51.6 (2025)
@@ -327,8 +354,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 3934 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 2314068 (2025)
   - Zakopane (gmina 1217011): 21177 (2025)
@@ -340,8 +367,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 1995–2025 (31 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 3934 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 1476104 (2025)
   - Zakopane (gmina 1217011): 21177 (2025)
@@ -359,8 +386,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2003–2025 (23 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 0 rek.
+  - Gminy (poziom 6): 0 / 2479 rek.
+  - Powiaty (poziom 5): 0 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 954 (2024)
   - Zakopane (gmina 1217011): 1151 (2024)
@@ -378,8 +405,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 2479 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 193 (2025)
   - Zakopane (gmina 1217011): 183 (2025)
@@ -391,8 +418,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** gmina (poziom 6)
 - **Dostępne lata:** 1995–2025 (31 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 3934 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 3934 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 661473 (2025)
   - Zakopane (gmina 1217011): 4570 (2025)
@@ -410,8 +437,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** powiat (poziom 5)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 0 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 4947.56 (2025)
   - Zakopane (dane dla Powiatu Tatrzańskiego 1217): 63739.08 (2025)
@@ -423,8 +450,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** miejscowość / gmina (poziom 7)
 - **Dostępne lata:** 1995–2025 (31 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 0 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 16958537 (2025)
   - Zakopane (gmina 1217011): 1369379 (2014)
@@ -442,8 +469,8 @@ Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpow
 - **Najniższy poziom z danymi:** powiat (poziom 5)
 - **Dostępne lata:** 2002–2025 (24 lat/a)
 - **Pokrycie w ostatnim roku (2025):**
-  - Gminy (poziom 6): 0 rek.
-  - Powiaty (poziom 5): 380 rek.
+  - Gminy (poziom 6): 0 / 2479 rek.
+  - Powiaty (poziom 5): 380 / 380 rek.
 - **Przykładowe wartości (2025):**
   - Małopolska (województwo 12): 606.8 (2025)
   - Zakopane (dane dla Powiatu Tatrzańskiego 1217): 547.4 (2025)
