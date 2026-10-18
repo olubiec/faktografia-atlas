@@ -16,6 +16,7 @@ permissions:
 jobs:
   fetch-localities:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     env:
       BRANCH: ${{ github.event.inputs.branch }}
     steps:
@@ -53,8 +54,24 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # `shell: bash` włącza pipefail: bez niego błąd skryptu przed `| tee` był ukryty
+      # (krok świecił na zielono, a plik wynikowy nie powstawał).
       - name: Fetch PRNG localities
-        run: pnpm localities --cache "$RUNNER_TEMP/prng-cache.json" | tee "$RUNNER_TEMP/localities-report.txt"
+        shell: bash
+        run: |
+          if ! pnpm localities --cache "$RUNNER_TEMP/prng-cache.json" 2>&1 | tee "$RUNNER_TEMP/localities-report.txt"; then
+            echo "::error::pnpm localities nie powiodło się. Ostatnie linie: $(tail -n 6 "$RUNNER_TEMP/localities-report.txt" | tr '\n' ' ' | cut -c1-900)"
+            exit 1
+          fi
+
+      - name: Sprawdź plik wynikowy
+        shell: bash
+        run: |
+          if [ ! -s public/data/localities.json ]; then
+            echo "::error::Brak pliku public/data/localities.json po pobraniu (skrypt zakończył się bez wyniku)."
+            exit 1
+          fi
+          echo "Plik public/data/localities.json: $(wc -c < public/data/localities.json) bajtów."
 
       - name: Podsumowanie zadania
         run: |
@@ -66,11 +83,15 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Zatwierdź i wypchnij tylko public/data/localities.json
+        shell: bash
         run: |
           git add public/data/localities.json
           if git diff --staged --quiet; then
             echo "Brak zmian w public/data/localities.json."
           else
             git commit -m "data: update PRNG localities"
-            git push origin "HEAD:refs/heads/$BRANCH"
+            if ! git push origin "HEAD:refs/heads/$BRANCH" 2>&1 | tee "$RUNNER_TEMP/push.log"; then
+              echo "::error::git push na gałąź $BRANCH nie powiódł się: $(tail -n 4 "$RUNNER_TEMP/push.log" | tr '\n' ' ' | cut -c1-600)"
+              exit 1
+            fi
           fi
