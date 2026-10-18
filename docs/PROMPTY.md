@@ -45,7 +45,8 @@ Zadanie, które potrzebuje sieci **i** kodu, dzielimy zawsze na dwa: najpierw S 
 - Lista plików w promptcie jest **zamknięta**: Jules zmienia tylko te pliki.
 
 ### 2.3 Równoległość
-- Najwyżej **2 zadania Julesa naraz**.
+- Liczba zadań naraz = liczba **wolnych torów** (sekcja 4.1), nie stały limit. Plan Julesa pozwala na 15 sesji jednocześnie, więc ograniczeniem nie jest Jules, tylko konflikty plików i przegląd. Praktycznie 3–5 zadań naraz.
+- Jeśli na przegląd czeka więcej niż 4 PR, nie wysyłaj nowych, dopóki kolejka się nie zmniejszy (przegląd jest wąskim gardłem, a nieprzejrzany PR szybko się dezaktualizuje).
 - Nigdy dwa zadania w tym samym katalogu (`src/view/map/`, `src/core/map/`, `src/view/search/`…) ani w tym samym pliku (szczególnie `AtlasMap.tsx`, `Home.tsx`, `Header.tsx`, `layers.ts`).
 - Kolejne zadanie zależne wysyłamy dopiero po **scaleniu** poprzedniego na main.
 
@@ -81,7 +82,7 @@ Legenda: **K** Jules, **S** workflow (Claude pisze, właściciel klika „Run wo
 
 ### 4.1 Tory pracy: kto może iść równolegle
 
-Projekt dzielimy na **tory**. Każdy tor ma własne katalogi. Dwa zadania z **różnych torów** mogą iść naraz (najwyżej 2 zadania Julesa jednocześnie). Dwa zadania z **tego samego toru** idą zawsze po kolei.
+Projekt dzielimy na **tory**. Każdy tor ma własne katalogi. Dwa zadania z **różnych torów** mogą iść naraz (tyle zadań, ile jest wolnych torów). Dwa zadania z **tego samego toru** idą zawsze po kolei.
 
 | Tor | Katalogi i pliki (tylko ten tor je zmienia) | Sesje |
 |---|---|---|
@@ -163,7 +164,7 @@ Po CC4.R zadania „podpięcie” są małe (1–2 pliki), a nowe warstwy nie do
 
 ### 4.4 Siatka fal: co idzie jednocześnie
 
-Każdy wiersz to fala. Kolumny to tory. W jednej fali naraz pracują najwyżej **2 zadania Julesa** (z różnych kolumn) + zadania C/S. Gdy zadanie się scali, w tej samej fali wchodzi następne z kolejki toru. Nie czekamy na koniec całej fali.
+Każdy wiersz to fala. Kolumny to tory. W jednej fali naraz pracuje **po jednym zadaniu Julesa w każdym torze** (każda kolumna osobno) + zadania C/S. Gdy zadanie się scali, w tej samej fali wchodzi następne z kolejki toru. Nie czekamy na koniec całej fali.
 
 | Fala | Tor M (mapa) | Tor W / P (wyszukiwarka, profil) | Tor K (kartogram) | Tor D (dane, C+S) | Bramka wyjścia z fali |
 |---|---|---|---|---|---|
@@ -176,7 +177,7 @@ Każdy wiersz to fala. Kolumny to tory. W jednej fali naraz pracują najwyżej *
 | **12** | — | — | — | CC11.3a (C) → CC11.3b; Z: CC11.4 | audyt przed startem, domena, 2 telefony |
 
 Uwagi do siatki:
-- W fali 6 tor M (CC4.R) i tor W (CC5.4a) mogą iść razem, ale CC4.R nie może iść razem z CC5.4b ani z niczym innym w `src/view/map/`.
+- W fali 6 tory M (CC4.R), W (CC5.4a), P (CC7.1) i K mogą iść razem, ale CC4.R nie może iść razem z CC5.4b ani z niczym innym w `src/view/map/`.
 - Tor M jest najbardziej obciążony. Dlatego w nim są tylko zadania, które naprawdę muszą dotknąć mapy; wszystko inne (legenda, arkusz, suwak, porównanie) powstaje w swoim torze jako gotowy komponent i wchodzi do slotu.
 - Tor D nie zajmuje Julesa przez większość czasu (to praca C+S), więc w fali 6 Jules ma równolegle tory M, W i K.
 - Kolejność w torze (→) jest wiążąca. Zadania z tej samej komórki po „∥” mogą iść razem.
@@ -308,7 +309,7 @@ Warunki odbioru:
 5. Bez Reacta i DOM.
 ```
 
-### CC7.1 – Logika profilu · K · po scaleniu CC5.4a lub CC8.1 (limit 2 naraz)
+### CC7.1 – Logika profilu · K · można teraz (tor P)
 
 ```markdown
 Zadanie: CC7.1 – logika profilu jednostki (czysta logika)
