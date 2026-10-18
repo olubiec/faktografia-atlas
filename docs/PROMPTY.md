@@ -69,7 +69,8 @@ Zadanie, które potrzebuje sieci **i** kodu, dzielimy zawsze na dwa: najpierw S 
 ## 3. Stan na 18.10.2026, 14:30
 
 Scalone na main: fale 0–5 bez CC6.3b/CC6.4, w tym CC4.2 (#69), CC4.3 (#71), poprawki workflow PRNG (#65, #72).
-Wysłane 18.10: CC5.4a (#74), CC8.1 (#75).
+Scalone 18.10: CC5.4a (#80), CC8.1 (#78), CC4.R (#81), CC7.1 (#86), CC7.1b (#87), nagrania BDL na main (#89: 20 wskaźników, 757 plików).
+Wysłane 18.10: CC6.3d (#90), CC6.4a (#91). Workflow „Fetch localities (PRNG)”: uruchamiać przyciskiem „Run workflow”, NIE „Re-run” (re-run używa starej wersji workflow).
 Zamknięte bez scalenia: #64 i #68 (CC6.3b/c: pętla, patrz sekcja 1). Gałąź `feat/indicators-config-cc6.3b-13743892434589782789` zostaje: jest na niej `config/indicators.json` (20 wpisów) do odzyskania.
 Brakuje na main: `config/indicators.json`, `public/data/localities.json`, `public/data/values/`.
 Sekret `BDL_CLIENT_ID`: ustawiony przez właściciela 18.10 (GitHub i Jules).
@@ -416,6 +417,31 @@ Warunki odbioru:
 3. Dymek miejscowości tylko tekstem (istniejący test zakazu HTML przechodzi).
 4. Punkty z `approx: true` mają inny, opisany w PR wygląd z tokenów.
 5. Istniejące testy `drill.spec.ts`, `breadcrumbs.spec.ts`, `map.spec.ts` przechodzą bez zmian.
+```
+
+### CC7.2a – Arkusz profilu (komputer), sam komponent · K · tor P · można teraz
+
+```markdown
+Zadanie: CC7.2a – komponent arkusza profilu jednostki (komputer), bez podpinania do mapy
+
+Kontekst: logika profilu jest na main (`buildProfile` w `src/core/profile/profile.ts`, formatowanie w `src/core/format/number.ts`). Makieta: `docs/design/03-profil-komputer.png` (arkusz po prawej, 440 px). Tu powstaje sam komponent, przyjmujący gotowy profil jako props; podpięcie do mapy to osobne zadanie (CC7.2b). Dane w testach: `tests/fixtures/synthetic/profile-sample.json`.
+
+Cel dla użytkownika: brak widocznej zmiany na stronie (komponent nie jest jeszcze podpięty); jest widoczny na stronie /design.
+
+Zakres (tylko te pliki):
+- `src/view/profile/ProfileSheet.tsx` (nowy; użyj `src/view/ui/Sheet.tsx`, `Icon`, komponentów z `src/components/ui/`)
+- `src/view/profile/ProfileIndicatorRow.tsx` (nowy)
+- `src/view/design/` – jedna sekcja z przykładem arkusza na danych syntetycznych (tylko dopisanie; sprawdź, jak zbudowana jest strona /design)
+- `tests/unit/profile-sheet.test.tsx` (nowy), `docs/sessions/CC7.2a.md`
+
+Warunki odbioru:
+1. Nagłówek: nazwa jednostki jako tytuł, poziom i „TERYT <kod>” małym tekstem, przycisk zamknięcia (min. 44 px, `aria-label`, Esc wywołuje `onClose`).
+2. Wskaźniki pogrupowane wg `indicator.group`; wiersz: nazwa, wartość przez `formatValue` (z jednostką), rok, miejsce w kraju („2. miejsce wśród 16”; dla wskaźnika neutralnego bez słów „lepsze/gorsze”). Brak danych: tekst „brak danych”, nigdy „0”.
+3. Wartość z poziomu wyższego (`fromParent`): w wierszu dopisek „dane dla powiatu <nazwa>” (nazwa z przekazanych `units`).
+4. Pod listą źródło przez `formatSource(rok)`. Wskaźnik z `footnote` pokazuje przypis pod wierszem.
+5. Zgodne z makietą 03 i STYL.md §5: tło `arkusz`, ramka 1 px `linia`, bez cieni i zaokrągleń, tylko tokeny; najdłuższa nazwa jednostki i najdłuższa nazwa wskaźnika nie wychodzą poza pole (test z tekstami z `units.json` / `config/indicators.json`); axe bez naruszeń na stronie /design.
+
+Poza zakresem: wykres, zakładki „Powiaty”/„Porównaj”, zakreślenie, podpięcie do mapy, układ telefonu.
 ```
 
 ### CC6.5b – Test kontraktu danych · K · po CC6.4c
