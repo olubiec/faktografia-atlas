@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { assertNoSecret, dataUrl, fixtureName, hasNext, levelsFor, trimYears } from '../../scripts/data/record-bdl.mjs';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { assertNoSecret, dataUrl, exists, fixtureName, hasNext, levelsFor, trimYears } from '../../scripts/data/record-bdl.mjs';
 
 describe('scripts/data/record-bdl.mjs (CC6.3c-2)', () => {
   it('buduje adres strony danych z poziomem i stroną', () => {
@@ -45,5 +48,13 @@ describe('scripts/data/record-bdl.mjs (CC6.3c-2)', () => {
   it('przerywa, gdy w nagraniu jest klucz', () => {
     expect(() => assertNoSecret('{"a":"SECRET-123"}', 'SECRET-123')).toThrow('klucz API');
     expect(() => assertNoSecret('{"a":1}', 'SECRET-123')).not.toThrow();
+  });
+
+  it('exists rozpoznaje nagrane wcześniej pliki (wznowienie po przerwaniu)', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bdl-rec-'));
+    const file = path.join(dir, fixtureName(1, 6, 0));
+    expect(await exists(file)).toBe(false);
+    fs.writeFileSync(file, '{}');
+    expect(await exists(file)).toBe(true);
   });
 });

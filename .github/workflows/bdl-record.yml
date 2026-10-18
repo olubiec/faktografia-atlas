@@ -64,7 +64,10 @@ jobs:
           fi
 
       # Skrypt używa tylko wbudowanych modułów Node, instalacja paczek nie jest potrzebna.
+      # Krok ma własny limit (135 min), żeby kolejne kroki (zapis częściowych nagrań) zdążyły się wykonać.
+      # Gdy nagrywanie nie zdąży, uruchom workflow ponownie: pominie już nagrane strony.
       - name: Nagraj odpowiedzi BDL
+        timeout-minutes: 135
         shell: bash
         env:
           BDL_CLIENT_ID: ${{ secrets.BDL_CLIENT_ID }}
@@ -86,7 +89,8 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Zatwierdź i wypchnij tylko tests/fixtures/bdl/recorded/
+      - name: Zatwierdź i wypchnij tylko tests/fixtures/bdl/recorded/ (także częściowe)
+        if: always()
         shell: bash
         run: |
           git add tests/fixtures/bdl/recorded/
