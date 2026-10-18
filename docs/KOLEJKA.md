@@ -1,4 +1,6 @@
-# Kolejka zadań (źródło prawdy)
+# Kolejka zadań (historia)
+
+> **Od 18.10.2026 źródłem prawdy jest `docs/PROMPTY.md`** (zasady, plan fal 6–12, gotowe prompty). Ten plik zostaje jako historia fal 3–5.
 
 Ten plik mówi, co wysłać do Julesa, kiedy i z jakim tekstem. Zmiany w nim idą przez PR (jak każdy dokument), a nie bezpośrednio na main.
 
