@@ -16,7 +16,7 @@ permissions:
 jobs:
   fetch-localities:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 130
     env:
       BRANCH: ${{ github.event.inputs.branch }}
     steps:
@@ -54,15 +54,40 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # `shell: bash` włącza pipefail: bez niego błąd skryptu przed `| tee` był ukryty
-      # (krok świecił na zielono, a plik wynikowy nie powstawał).
+      # Pobrane strony PRNG (253 tys. obiektów, ok. 1700 stron) zostają w cache między uruchomieniami:
+      # gdy uruchomienie skończy się przed czasem albo na błędzie, następne wznawia od brakujących stron.
+      - name: Przywróć pobrane strony PRNG
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/prng-pages
+          key: prng-pages-${{ github.run_id }}
+          restore-keys: prng-pages-
+
+      # `shell: bash` włącza pipefail: bez niego błąd skryptu przed `| tee` był ukryty.
+      # Kod 3 = pobrano częściowo (limit czasu): strony są zapisane, trzeba uruchomić workflow ponownie.
       - name: Fetch PRNG localities
+        id: fetch
         shell: bash
         run: |
-          if ! pnpm localities --cache "$RUNNER_TEMP/prng-cache.json" 2>&1 | tee "$RUNNER_TEMP/localities-report.txt"; then
-            echo "::error::pnpm localities nie powiodło się. PRZYCZYNA: $(grep -m2 -E 'Failed to fetch|Error' "$RUNNER_TEMP/localities-report.txt" | tr '\n' ' ' | cut -c1-500) | KONIEC LOGU: $(tail -n 3 "$RUNNER_TEMP/localities-report.txt" | tr '\n' ' ' | cut -c1-300)"
+          set +e
+          pnpm localities --pages-dir "$HOME/prng-pages" --time-budget-min 100 --timeout-ms 60000 --concurrency 3 2>&1 | tee "$RUNNER_TEMP/localities-report.txt"
+          code=${PIPESTATUS[0]}
+          set -e
+          echo "Stron w cache: $(ls "$HOME/prng-pages" 2>/dev/null | wc -l)"
+          if [ "$code" = "3" ]; then
+            echo "::error::Pobrano częściowo ($(grep -m1 -o 'Pobrano [0-9]*/[0-9]* stron' "$RUNNER_TEMP/localities-report.txt")). Uruchom workflow ponownie: wznowi od brakujących stron."
+            exit 1
+          elif [ "$code" != "0" ]; then
+            echo "::error::pnpm localities nie powiodło się. PRZYCZYNA: $(grep -m2 -E 'Failed to fetch|Error' "$RUNNER_TEMP/localities-report.txt" | tr '\n' ' ' | cut -c1-500) | KONIEC LOGU: $(tail -n 3 "$RUNNER_TEMP/localities-report.txt" | tr '\n' ' ' | cut -c1-300). Pobrane strony są zapisane – uruchom ponownie."
             exit 1
           fi
+
+      - name: Zapisz pobrane strony PRNG
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: ~/prng-pages
+          key: prng-pages-${{ github.run_id }}
 
       - name: Sprawdź plik wynikowy
         shell: bash
@@ -74,6 +99,7 @@ jobs:
           echo "Plik public/data/localities.json: $(wc -c < public/data/localities.json) bajtów."
 
       - name: Podsumowanie zadania
+        if: always()
         run: |
           {
             echo "### Miejscowości (PRNG)"
