@@ -19,6 +19,8 @@ import {
 } from '@/core/map/drill';
 import { createMapLayers, getMapColorsFromCss } from './layers';
 import { BackButton } from './BackButton';
+import { Breadcrumbs } from './Breadcrumbs';
+import { UnitList } from './UnitList';
 import type { Unit } from '@/core/units/types';
 
 // Wyłączamy pracownika MapLibre GL za pomocą oficjalnego API maplibregl.setWorkerCount(0),
@@ -141,6 +143,19 @@ export function AtlasMap() {
     [unitIndex, updateViewStateForBbox]
   );
 
+  const handleSelectBreadcrumb = useCallback(
+    (teryt: string | null) => {
+      if (teryt === null) {
+        setSelectedTeryt(null);
+        updateUrlTeryt(null);
+        updateViewStateForBbox(bounds);
+      } else {
+        handleSelectUnit(teryt);
+      }
+    },
+    [handleSelectUnit, bounds, updateViewStateForBbox]
+  );
+
   const handleBack = useCallback(() => {
     const parent = getParentTeryt(selectedTeryt, unitIndex);
     setSelectedTeryt(parent);
@@ -232,7 +247,30 @@ export function AtlasMap() {
       aria-label="Mapa Polski"
       onKeyDown={handleKeyDown}
     >
-      <BackButton onClick={handleBack} visible={selectedTeryt !== null} />
+      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 max-w-[280px] sm:max-w-[320px] max-h-[calc(100%-2rem)] pointer-events-none">
+        <div className="pointer-events-auto">
+          <Breadcrumbs
+            teryt={selectedTeryt}
+            index={unitIndex}
+            onSelect={handleSelectBreadcrumb}
+          />
+        </div>
+
+        {selectedTeryt !== null && (
+          <div className="relative pointer-events-auto h-11 -mt-4 -ml-4">
+            <BackButton onClick={handleBack} visible={true} />
+          </div>
+        )}
+
+        <div className="pointer-events-auto overflow-hidden flex flex-col min-h-0">
+          <UnitList
+            selectedTeryt={selectedTeryt}
+            index={unitIndex}
+            onSelect={handleSelectUnit}
+          />
+        </div>
+      </div>
+
       <Map
         mapLib={maplibregl}
         {...currentViewState}
