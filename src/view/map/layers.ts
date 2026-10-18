@@ -1,6 +1,7 @@
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { feature, merge } from 'topojson-client';
 import type { FeatureCollection, Feature, Geometry } from 'geojson';
+import type { DrillState } from '@/core/map/drill';
 
 export type MapColors = {
   kalka: [number, number, number, number];
@@ -60,14 +61,18 @@ export function getMapColorsFromCss(): MapColors {
 
 let cachedFeatures: {
   wojFeatures: FeatureCollection;
+  powFeatures: FeatureCollection;
+  gmiFeatures: FeatureCollection;
   countryFeature: FeatureCollection;
 } | null = null;
 
 /**
- * Konwertuje dane TopoJSON do cech GeoJSON dla województw i połączonego konturu kraju.
+ * Konwertuje dane TopoJSON do cech GeoJSON dla województw, powiatów, gmin i konturu kraju.
  */
 export function loadGeoData(topoData: any): {
   wojFeatures: FeatureCollection;
+  powFeatures: FeatureCollection;
+  gmiFeatures: FeatureCollection;
   countryFeature: FeatureCollection;
 } {
   if (cachedFeatures) {
@@ -75,7 +80,12 @@ export function loadGeoData(topoData: any): {
   }
 
   const wojObj = topoData.objects.woj;
+  const powObj = topoData.objects.pow;
+  const gmiObj = topoData.objects.gmi;
+
   const wojFeatures = feature(topoData, wojObj) as unknown as FeatureCollection;
+  const powFeatures = feature(topoData, powObj) as unknown as FeatureCollection;
+  const gmiFeatures = feature(topoData, gmiObj) as unknown as FeatureCollection;
 
   const mergedGeometry = merge(
     topoData,
@@ -93,19 +103,28 @@ export function loadGeoData(topoData: any): {
     ],
   };
 
-  cachedFeatures = { wojFeatures, countryFeature };
+  cachedFeatures = { wojFeatures, powFeatures, gmiFeatures, countryFeature };
   return cachedFeatures;
 }
 
 /**
- * Tworzy warstwy deck.gl dla województw i konturu kraju.
+ * Tworzy warstwy deck.gl dla aktualnego stanu nawigacji w głąb (DrillState).
  */
 export function createMapLayers(
   topoData: any,
-  colors: MapColors
-): [GeoJsonLayer, GeoJsonLayer] {
-  const { wojFeatures, countryFeature } = loadGeoData(topoData);
+  colors: MapColors,
+  drillState?: DrillState,
+  onSelectUnit?: (teryt: string) => void
+): GeoJsonLayer[] {
+  const { wojFeatures, powFeatures, gmiFeatures, countryFeature } = loadGeoData(topoData);
 
+  const layerIds = drillState?.layerIds ?? ['woj-layer', 'country-layer'];
+  const activeWojTeryt = drillState?.activeWojTeryt ?? null;
+  const activePowTeryt = drillState?.activePowTeryt ?? null;
+
+  const resultLayers: GeoJsonLayer[] = [];
+
+  // Warstwa województw
   const wojLayer = new GeoJsonLayer({
     id: 'woj-layer',
     data: wojFeatures,
@@ -116,13 +135,89 @@ export function createMapLayers(
     getLineWidth: 1.2,
     lineWidthUnits: 'pixels',
     lineWidthMinPixels: 1,
-    pickable: false,
+    pickable: true,
+    onClick: (info) => {
+      if (info.object?.properties?.teryt && onSelectUnit) {
+        onSelectUnit(info.object.properties.teryt);
+      }
+    },
+    getTooltip: ({ object }: any) => (object?.properties?.name ? String(object.properties.name) : null),
     updateTriggers: {
       getFillColor: [colors.arkusz],
       getLineColor: [colors.kalka],
     },
   });
+  resultLayers.push(wojLayer);
 
+  // Warstwa powiatów (jeśli wymagana)
+  if (layerIds.includes('pow-layer') && activeWojTeryt) {
+    const filteredPowFeatures: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: powFeatures.features.filter((f) =>
+        f.properties?.teryt?.startsWith(activeWojTeryt)
+      ),
+    };
+
+    const powLayer = new GeoJsonLayer({
+      id: 'pow-layer',
+      data: filteredPowFeatures,
+      filled: true,
+      stroked: true,
+      getFillColor: colors.arkusz,
+      getLineColor: colors.kalka,
+      getLineWidth: 1.2,
+      lineWidthUnits: 'pixels',
+      lineWidthMinPixels: 1,
+      pickable: true,
+      onClick: (info) => {
+        if (info.object?.properties?.teryt && onSelectUnit) {
+          onSelectUnit(info.object.properties.teryt);
+        }
+      },
+      getTooltip: ({ object }: any) => (object?.properties?.name ? String(object.properties.name) : null),
+      updateTriggers: {
+        getFillColor: [colors.arkusz],
+        getLineColor: [colors.kalka],
+      },
+    });
+    resultLayers.push(powLayer);
+  }
+
+  // Warstwa gmin (jeśli wymagana)
+  if (layerIds.includes('gmi-layer') && activePowTeryt) {
+    const filteredGmiFeatures: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: gmiFeatures.features.filter((f) =>
+        f.properties?.teryt?.startsWith(activePowTeryt)
+      ),
+    };
+
+    const gmiLayer = new GeoJsonLayer({
+      id: 'gmi-layer',
+      data: filteredGmiFeatures,
+      filled: true,
+      stroked: true,
+      getFillColor: colors.arkusz,
+      getLineColor: colors.kalka,
+      getLineWidth: 1.2,
+      lineWidthUnits: 'pixels',
+      lineWidthMinPixels: 1,
+      pickable: true,
+      onClick: (info) => {
+        if (info.object?.properties?.teryt && onSelectUnit) {
+          onSelectUnit(info.object.properties.teryt);
+        }
+      },
+      getTooltip: ({ object }: any) => (object?.properties?.name ? String(object.properties.name) : null),
+      updateTriggers: {
+        getFillColor: [colors.arkusz],
+        getLineColor: [colors.kalka],
+      },
+    });
+    resultLayers.push(gmiLayer);
+  }
+
+  // Warstwa konturu kraju
   const countryLayer = new GeoJsonLayer({
     id: 'country-layer',
     data: countryFeature,
@@ -137,6 +232,7 @@ export function createMapLayers(
       getLineColor: [colors.tusz],
     },
   });
+  resultLayers.push(countryLayer);
 
-  return [wojLayer, countryLayer];
+  return resultLayers;
 }
