@@ -1,0 +1,124 @@
+name: Fetch data
+
+# Tylko ręcznie (Actions → Fetch data → Run workflow; NIE „Re-run”, bo ten używa starej wersji).
+# Pobiera z API BDL (GUS) wartości wskaźników z config/indicators.json (wszystkie lata, województwa,
+# powiaty i gminy dla wskaźników z minLevel gmi) do public/data/values/<id>.json na osobną gałąź
+# (domyślnie data/values), nigdy do main. Dane trafiają do main przez PR (otwiera go Claude po sprawdzeniu liczb).
+# Pobieranie jest wznawialne: gotowe pliki są pomijane (--skip-existing), więc jeśli krok nie zdąży,
+# uruchom workflow jeszcze raz.
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Gałąź docelowa dla public/data/values/ (nie main)'
+        required: true
+        default: 'data/values'
+      only:
+        description: 'Opcjonalnie: id wskaźników po przecinku (puste = wszystkie)'
+        required: false
+        default: ''
+      refresh:
+        description: 'Pobierz od nowa także wskaźniki, które już mają plik (true/false)'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-data
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      BRANCH: ${{ github.event.inputs.branch }}
+      ONLY: ${{ github.event.inputs.only }}
+      REFRESH: ${{ github.event.inputs.refresh }}
+    steps:
+      - name: Odmów zapisu do main
+        run: |
+          if [ "$BRANCH" = "main" ] || [ -z "$BRANCH" ]; then
+            echo "::error::Gałąź docelowa nie może być main ani pusta."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przełącz na gałąź docelową (utwórz od main, jeśli nie istnieje)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            git fetch origin "$BRANCH"
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+            git merge --no-edit origin/main
+          else
+            git checkout -b "$BRANCH"
+          fi
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Sprawdź sekret
+        env:
+          BDL_CLIENT_ID: ${{ secrets.BDL_CLIENT_ID }}
+        run: |
+          if [ -z "$BDL_CLIENT_ID" ]; then
+            echo "::error::Brak sekretu BDL_CLIENT_ID (Settings → Secrets and variables → Actions → Repository secrets)."
+            exit 1
+          fi
+
+      # Skrypt używa tylko wbudowanych modułów Node, instalacja paczek nie jest potrzebna.
+      # Krok ma własny limit (135 min), żeby kolejne kroki (zapis częściowych wyników) zdążyły się wykonać.
+      - name: Pobierz wartości z BDL
+        timeout-minutes: 135
+        shell: bash
+        env:
+          BDL_CLIENT_ID: ${{ secrets.BDL_CLIENT_ID }}
+        run: |
+          ARGS=""
+          if [ "$REFRESH" != "true" ]; then ARGS="--skip-existing"; fi
+          if [ -n "$ONLY" ]; then ARGS="$ARGS --only=$ONLY"; fi
+          if ! node scripts/data/fetch-values.mjs $ARGS 2>&1 | tee "$RUNNER_TEMP/data-report.txt"; then
+            echo "::error::Pobieranie danych nie powiodło się. PRZYCZYNA: $(grep -m2 -E '^Error|HTTP|Brak' "$RUNNER_TEMP/data-report.txt" | tr '\n' ' ' | cut -c1-600)"
+            exit 1
+          fi
+
+      - name: Podsumowanie (ile wskaźników ma plik)
+        if: always()
+        shell: bash
+        run: |
+          TOTAL="$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/indicators.json','utf8')).length)")"
+          DONE="$(ls public/data/values/*.json 2>/dev/null | wc -l | tr -d ' ')"
+          {
+            echo "### Wartości wskaźników: ${DONE}/${TOTAL}"
+            echo
+            if [ "$DONE" = "$TOTAL" ]; then echo "Komplet. Można otwierać PR z gałęzi \`$BRANCH\`."; else echo "Brakuje $((TOTAL-DONE)). Uruchom workflow jeszcze raz (**Run workflow**, nie Re-run)."; fi
+            echo
+            echo '```'
+            tail -n 60 "$RUNNER_TEMP/data-report.txt" 2>/dev/null
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "Wskaźniki z plikiem: ${DONE}/${TOTAL}"
+
+      - name: Zatwierdź i wypchnij tylko public/data/values/ (także częściowe)
+        if: always()
+        shell: bash
+        run: |
+          git add public/data/values/
+          if git diff --staged --quiet; then
+            echo "Brak zmian w danych."
+          else
+            git commit -m "data: wartości wskaźników BDL (public/data/values)"
+            if ! git push origin "HEAD:refs/heads/$BRANCH" 2>&1 | tee "$RUNNER_TEMP/push.log"; then
+              echo "::error::git push na gałąź $BRANCH nie powiódł się: $(tail -n 4 "$RUNNER_TEMP/push.log" | tr '\n' ' ' | cut -c1-600)"
+              exit 1
+            fi
+          fi
