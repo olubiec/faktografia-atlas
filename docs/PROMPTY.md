@@ -4,6 +4,8 @@ Ten plik jest instrukcją obsługi dla każdego, kto prowadzi Julesa: Claude'a, 
 Zawiera wnioski z dotychczasowych błędów, twarde zasady, gotowe prompty na najbliższą falę i podział wszystkich pozostałych fal na zadania.
 Ma pierwszeństwo przed `docs/KOLEJKA.md` (tamten plik zostaje jako historia) i uzupełnia `docs/PLAN.md` (cele fal).
 
+**Od 19.10.2026:** role modeli, skrypty i procedury → `docs/OPERACJE.md`; kolejka i prompty fal 7–9 → `docs/FALE.md`. Ten plik zostaje źródłem zasad twardych (§2), wspólnego bloku (§5) i trybu awaryjnego (§9).
+
 Jak używać:
 - **Claude lub Gemini jako Architekt:** przeczytaj sekcje 1–4. Prompt zadania składasz z sekcji 5 („Wspólny blok”) i treści zadania z sekcji 6 lub 7. Po każdym PR przechodzisz listę z sekcji 8.
 - **Właściciel bez Claude'a:** sekcja 9 („Tryb awaryjny”) mówi, co wkleić do Gemini i co klikać.
@@ -46,7 +48,7 @@ Zadanie, które potrzebuje sieci **i** kodu, dzielimy zawsze na dwa: najpierw S 
 
 ### 2.3 Równoległość
 - Liczba zadań naraz = liczba **wolnych torów** (sekcja 4.1), nie stały limit. Plan Julesa pozwala na 15 sesji jednocześnie, więc ograniczeniem nie jest Jules, tylko konflikty plików i przegląd. Praktycznie 3–5 zadań naraz.
-- Jeśli na przegląd czeka więcej niż 4 PR, nie wysyłaj nowych, dopóki kolejka się nie zmniejszy (przegląd jest wąskim gardłem, a nieprzejrzany PR szybko się dezaktualizuje).
+- Jeśli na przegląd czeka 6 lub więcej PR, nie wysyłaj nowych (od 19.10: zielone PR scala na bieżąco Haiku skryptem `merge.sh`, więc limit podniesiony z 4), dopóki kolejka się nie zmniejszy (przegląd jest wąskim gardłem, a nieprzejrzany PR szybko się dezaktualizuje).
 - Nigdy dwa zadania w tym samym katalogu (`src/view/map/`, `src/core/map/`, `src/view/search/`…) ani w tym samym pliku (szczególnie `AtlasMap.tsx`, `Home.tsx`, `Header.tsx`, `layers.ts`).
 - Kolejne zadanie zależne wysyłamy dopiero po **scaleniu** poprzedniego na main.
 
@@ -66,14 +68,12 @@ Zadanie, które potrzebuje sieci **i** kodu, dzielimy zawsze na dwa: najpierw S 
 
 ---
 
-## 3. Stan na 18.10.2026, 14:30
+## 3. Stan na 19.10.2026, 11:30
 
-Scalone na main: fale 0–5 bez CC6.3b/CC6.4, w tym CC4.2 (#69), CC4.3 (#71), poprawki workflow PRNG (#65, #72).
-Scalone 18.10: CC5.4a (#80), CC8.1 (#78), CC4.R (#81), CC7.1 (#86), CC7.1b (#87), nagrania BDL na main (#89: 20 wskaźników, 757 plików).
-Wysłane 18.10: CC6.3d (#90), CC6.4a (#91). Workflow „Fetch localities (PRNG)”: uruchamiać przyciskiem „Run workflow”, NIE „Re-run” (re-run używa starej wersji workflow).
-Zamknięte bez scalenia: #64 i #68 (CC6.3b/c: pętla, patrz sekcja 1). Gałąź `feat/indicators-config-cc6.3b-13743892434589782789` zostaje: jest na niej `config/indicators.json` (20 wpisów) do odzyskania.
-Brakuje na main: `config/indicators.json`, `public/data/localities.json`, `public/data/values/`.
-Sekret `BDL_CLIENT_ID`: ustawiony przez właściciela 18.10 (GitHub i Jules).
+Fala 6 zamknięta. Na main m.in.: `config/indicators.json` (20 wskaźników), nagrania BDL, `public/data/localities.json` (54 265 miejscowości, #102), CC6.3d (#95), CC6.4a (#94), CC6.4b `pnpm data:fetch` (#101), CC7.2a (#96), CC7.3 (#108), CC5.4b (#109), CC8.2b (#107), poprawki CI: gitleaks (#103), Update snapshots (#110).
+Brakuje na main: `public/data/values/` (zadanie CC6.4c – workflow „Fetch data”, `docs/FALE.md`).
+Workflowy z danymi uruchamiać przyciskiem „Run workflow”, NIE „Re-run”. Sekret `BDL_CLIENT_ID`: ustawiony (GitHub Actions i Jules).
+Dalej: `docs/FALE.md` §1.
 
 ---
 
@@ -447,24 +447,9 @@ Warunki odbioru:
 Poza zakresem: wykres, zakładki „Powiaty”/„Porównaj”, zakreślenie, podpięcie do mapy, układ telefonu.
 ```
 
-### CC6.5b – Test kontraktu danych · K · po CC6.4c
+### CC6.5b – Test kontraktu danych
 
-```markdown
-Zadanie: CC6.5b – test kontraktu plików danych i odpowiedzi BDL
-
-Kontekst: nocny robot (`.github/workflows/nightly-data.yml`, pisze Claude) będzie odświeżał `public/data/values/`. Test ma wykryć, że API GUS zmieniło format albo że plik danych jest uszkodzony, zanim trafi na stronę.
-
-Zakres (tylko te pliki):
-- `tests/unit/data-contract.test.ts` (nowy)
-- `scripts/data/contract.mjs` (nowy): walidacja kształtu, używana też przez robota
-- `docs/sessions/CC6.5b.md`
-
-Warunki odbioru:
-1. Każdy plik `public/data/values/*.json` spełnia `IndicatorValues`: klucze TERYT istnieją w `units.json`, długości tablic = długość `years`, wartości to liczby lub `null`.
-2. Każdy wskaźnik z `config/indicators.json` ma plik wartości.
-3. `validateBdlPage(json)` sprawdza pola, z których korzysta CC6.4a (`results[].id`, `values[].year`, `values[].val`, `links.next`); test na nagranej fixturze przechodzi, na uszkodzonej kopii pada z czytelnym komunikatem.
-4. `node scripts/data/contract.mjs` kończy się kodem 1 przy błędzie (robot użyje tego do przerwania commita).
-```
+Prompt przeniesiony do `docs/FALE.md` (fala 8).
 
 ### Zadania C i S w fali 6 (dla Claude'a lub Architekta zastępczego)
 
