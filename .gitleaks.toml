@@ -4,4 +4,4 @@ useDefault = true
 # Old commits on PR branches contained a fake test key; it never reached main.
 [allowlist]
 description = "Fake values in tests"
-regexes = ['''SECRET_KLUCZ_API_99999''']
+regexes = ['''SECRET_KLUCZ_API_99999''', '''dummy-secret-key-123''', '''test-key-abc123xyz''']
