@@ -505,7 +505,7 @@ Przed wysłaniem sprawdź: (1) czy lista plików nie pokrywa się z innym otwart
 
 1. **CI:** `verify` i `security` zielone.
 2. **Commit niepusty:** `git diff --stat <poprzedni sha> <nowy sha>` – przy odpowiedzi na uwagę musi coś pokazać.
-3. **Nic nie usunięte:** `git diff --name-status --diff-filter=D origin/main...<gałąź>` puste.
+3. **Nic nie usunięte:** `git diff --name-status --diff-filter=D origin/main...<gałąź>` puste. Sprawdzaj to **tuż przed scaleniem, po świeżym `git fetch` main i gałęzi PR** (nie wcześniej): 18.10 scalenie CC4.R cofnęło CC5.4a, bo gałąź PR była nieaktualna względem main. Po scaleniu sprawdź jeszcze `git diff --name-status --diff-filter=D <poprzedni main> main` (ma być puste).
 4. **Zakres:** lista plików w PR = lista z promptu (poza `docs/sessions/`).
 5. **Testy:** każdy warunek ma test, który naprawdę go sprawdza; istniejące testy niezmienione (`git diff origin/main...<gałąź> -- tests/` pokazuje tylko nowe pliki).
 6. **Zakazy:** brak hexów w `src/view`, brak `VITE_*` z kluczem, brak `dangerouslySetInnerHTML`/HTML w dymkach, brak `skip`/`only`/`@ts-ignore`/`oxlint-disable`.
