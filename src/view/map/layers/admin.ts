@@ -1,13 +1,19 @@
+import type { Layer } from '@deck.gl/core';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { feature, merge } from 'topojson-client';
 import type { FeatureCollection, Feature, Geometry } from 'geojson';
 import type { DrillState } from '@/core/map/drill';
 import tokensJson from '../../../../config/tokens.json';
 
+import type { ViewState } from '@/core/map/view';
+import type { Locality } from '@/core/search/types';
+
 export type MapColors = {
   kalka: [number, number, number, number];
   arkusz: [number, number, number, number];
   tusz: [number, number, number, number];
+  ochra?: [number, number, number, number];
+  olowek?: [number, number, number, number];
 };
 
 export type LayerContext = {
@@ -15,11 +21,13 @@ export type LayerContext = {
   colors: MapColors;
   drillState?: DrillState;
   onSelectUnit?: (teryt: string) => void;
+  viewState?: ViewState;
+  localities?: Locality[];
 };
 
 export type LayerFactory = {
   id: string;
-  create: (ctx: LayerContext) => GeoJsonLayer | null;
+  create: (ctx: LayerContext) => Layer | null;
 };
 
 /**
@@ -64,16 +72,20 @@ export function getMapColorsFromCss(): MapColors | null {
   const kalkaStr = style?.getPropertyValue('--kalka')?.trim() || tokensJson.color.light.kalka;
   const arkuszStr = style?.getPropertyValue('--arkusz')?.trim() || tokensJson.color.light.arkusz;
   const tuszStr = style?.getPropertyValue('--tusz')?.trim() || tokensJson.color.light.tusz;
+  const ochraStr = style?.getPropertyValue('--ochra')?.trim() || tokensJson.color.light.ochra;
+  const olowekStr = style?.getPropertyValue('--olowek')?.trim() || tokensJson.color.light.olowek;
 
   const kalka = parseCssColor(kalkaStr, 255);
   const arkusz = parseCssColor(arkuszStr, 255);
   const tusz = parseCssColor(tuszStr, 255);
+  const ochra = parseCssColor(ochraStr, 255) ?? undefined;
+  const olowek = parseCssColor(olowekStr, 255) ?? undefined;
 
   if (!kalka || !arkusz || !tusz) {
     return null;
   }
 
-  return { kalka, arkusz, tusz };
+  return { kalka, arkusz, tusz, ochra, olowek };
 }
 
 let cachedFeatures: {

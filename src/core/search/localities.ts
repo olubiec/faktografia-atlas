@@ -14,17 +14,17 @@ export interface LocalitySearchResult {
   label: string;
   context: string;
   score?: number;
+  lon?: number;
+  lat?: number;
 }
 
 export type LocalityData = Locality & {
-  id?: string;
   kind?: string;
   type?: string;
 };
 
 interface LocalitySearchDoc {
   id: string;
-  simc: string;
   name: string;
   normName: string;
   kind?: string;
@@ -48,10 +48,9 @@ export function buildLocalitiesIndex(
       : new Map<string, Unit>(units.map((u) => [u.teryt, u]));
 
   const docs: LocalitySearchDoc[] = localities.map((loc, index) => {
-    const locId = loc.id || loc.simc || `${loc.gminaTeryt}-${index}`;
+    const locId = loc.id || `${loc.gminaTeryt}-${index}`;
     return {
       id: locId,
-      simc: loc.simc || locId,
       name: loc.name,
       normName: normalize(loc.name),
       kind: loc.kind || loc.type,
@@ -62,7 +61,7 @@ export function buildLocalitiesIndex(
 
   const ms = new MiniSearch<LocalitySearchDoc>({
     fields: ['normName'],
-    storeFields: ['id', 'simc', 'name', 'normName', 'kind', 'gminaTeryt', 'locality'],
+    storeFields: ['id', 'name', 'normName', 'kind', 'gminaTeryt', 'locality'],
     processTerm: (term) => normalize(term),
   });
 
@@ -117,7 +116,7 @@ export function searchLocalities(
     const matchCat = getMatchCategory(qNorm, doc);
     const gminaUnit = index.unitsMap.get(doc.gminaTeryt);
     const gminaName = gminaUnit ? gminaUnit.name : '';
-    const locKind = doc.locality.kind || doc.locality.type || doc.kind;
+    const locKind = doc.locality?.kind || doc.locality?.type || doc.kind;
 
     const formattedGmina = gminaName
       ? gminaName.toLowerCase().startsWith('gmina ')
@@ -137,6 +136,8 @@ export function searchLocalities(
       context: formattedGmina,
       score: doc.score,
       matchCat,
+      lon: doc.locality?.lon,
+      lat: doc.locality?.lat,
     };
   });
 
@@ -161,5 +162,7 @@ export function searchLocalities(
     label: item.label,
     context: item.context,
     score: item.score,
+    lon: item.lon,
+    lat: item.lat,
   }));
 }

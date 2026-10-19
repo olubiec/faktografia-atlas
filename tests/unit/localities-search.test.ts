@@ -17,8 +17,7 @@ describe('Localities Search & Loading (CC5.4a)', () => {
     it('returns Łódź for queries "lodz" and "Łódź"', () => {
       const mockLocalities: Locality[] = [
         {
-          id: '1',
-          simc: '0983988',
+          id: '0983988',
           name: 'Łódź',
           gminaTeryt: '1061011',
           kind: 'miasto',
