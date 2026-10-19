@@ -127,7 +127,7 @@ export function ProfileBody({
       )}
 
       {/* Stopka z przypisami i źródłem */}
-      <footer className="pt-4 border-t border-linia text-xs text-olowek space-y-3">
+      <footer className="pt-4 border-t border-linia text-xs text-olowek space-y-1">
         <Footnotes footnotes={footnotes} />
         <p>{formatSource(latestYear)}</p>
       </footer>
