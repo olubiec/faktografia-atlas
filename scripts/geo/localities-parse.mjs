@@ -3,6 +3,8 @@
  * Biblioteka czystych funkcji bez efektów ubocznych przy imporcie.
  */
 
+export const LOCALITIES_MAX_BYTES = 8 * 1024 * 1024;
+
 export const STANDALONE_KINDS = Object.freeze([
   'miasto',
   'wieś',
@@ -201,6 +203,8 @@ export function assertSizeUnder(jsonString, maxBytes) {
  */
 export function serialize(localities) {
   const json = JSON.stringify(localities);
-  assertSizeUnder(json, 3 * 1024 * 1024);
+  // Rejestr PRNG ma ok. 60 tys. samodzielnych miejscowości: plik wychodzi ok. 5,5 MB (ok. 1,5 MB po gzip).
+  // Strona ładuje go leniwie dopiero po otwarciu wyszukiwarki, więc limit to 8 MB.
+  assertSizeUnder(json, LOCALITIES_MAX_BYTES);
   return json;
 }
