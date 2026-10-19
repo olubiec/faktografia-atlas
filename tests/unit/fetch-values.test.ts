@@ -39,7 +39,7 @@ describe('scripts/data/fetch-values.mjs (CC6.4b)', () => {
   });
 
   it('redactSecret usuwa klucz BDL_CLIENT_ID z tekstu', () => {
-    const secret = 'SECRET_API_KEY_123';
+    const secret = 'test-key-abc123xyz';
     const text = `Error: HTTP 500 dla https://bdl.stat.gov.pl/api/v1/data?key=${secret}`;
     const redacted = redactSecret(text, secret);
     expect(redacted).not.toContain(secret);
@@ -65,7 +65,7 @@ describe('scripts/data/fetch-values.mjs (CC6.4b)', () => {
       return { ok: true, status: 200, json: async () => ({ results: [] }) };
     });
 
-    const res = await fetchWithRetry('https://api.test/data', 'test-secret', {
+    const res = await fetchWithRetry('https://api.test/data', 'test-key-abc123xyz', {
       fetchFn: mockFetch,
       sleepFn: mockSleep,
       intervalMs: 2000,
@@ -90,7 +90,7 @@ describe('scripts/data/fetch-values.mjs (CC6.4b)', () => {
     });
 
     await expect(
-      fetchWithRetry('https://api.test/data', 'my-secret-key', {
+      fetchWithRetry('https://api.test/data', 'test-key-abc123xyz', {
         fetchFn: mockFetch,
         sleepFn: mockSleep,
         intervalMs: 10,
@@ -162,7 +162,7 @@ describe('scripts/data/fetch-values.mjs (CC6.4b)', () => {
       return { ok: false, status: 404 };
     });
 
-    const res = await fetchIndicatorValues(indicator, units, 'test-key', {
+    const res = await fetchIndicatorValues(indicator, units, 'test-key-abc123xyz', {
       fetchFn: mockFetch,
       sleepFn: async () => {},
       intervalMs: 1,
@@ -179,12 +179,12 @@ describe('scripts/data/fetch-values.mjs (CC6.4b)', () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'fetch-values-test-offline-'));
 
     const stdout = execFileSync('node', [scriptPath, '--only=preschool-3-6', `--out-dir=${tmpDir}`, '--offline-fixture'], {
-      env: { ...process.env, BDL_CLIENT_ID: 'dummy-secret-key-123' },
+      env: { ...process.env, BDL_CLIENT_ID: 'test-key-abc123xyz' },
       encoding: 'utf8',
       stdio: 'pipe',
     });
 
-    expect(stdout).not.toContain('dummy-secret-key-123');
+    expect(stdout).not.toContain('test-key-abc123xyz');
 
     const outFile = path.join(tmpDir, 'preschool-3-6.json');
     expect(fs.existsSync(outFile)).toBe(true);
