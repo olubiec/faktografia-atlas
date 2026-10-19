@@ -1,38 +1,43 @@
 import type { ProfileIndicatorItem } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import { formatValue } from '../../core/format/number';
+import { collectFootnotes, formatParentFootnoteText, type Footnote } from '../../core/profile/footnotes';
 import { Sparkline } from './Sparkline';
 
 export interface ProfileIndicatorRowProps {
   item: ProfileIndicatorItem;
   units: Unit[];
+  footnotes?: Footnote[];
 }
 
 /**
  * Wiersz wskaźnika w arkuszu profilu jednostki.
- * Wyświetla nazwę, mały wykres sparkline, sformatowaną wartość z jednostką, rok, miejsce w kraju,
- * ewentualny przypis oraz informację o danych dziedziczonych od rodzica.
+ * Wyświetla nazwę wskaźnika wraz z odnośnikami przypisów (sup), mały wykres sparkline,
+ * sformatowaną wartość z jednostką, rok oraz miejsce w kraju.
  */
-export function ProfileIndicatorRow({ item, units }: ProfileIndicatorRowProps) {
-  const { indicator, value, year, rankNational, totalNational, fromParent, series } = item;
+export function ProfileIndicatorRow({ item, units, footnotes }: ProfileIndicatorRowProps) {
+  const { indicator, value, year, rankNational, totalNational, series } = item;
 
   const formattedVal = formatValue(value, indicator.unit);
 
-  let parentNote: string | null = null;
-  if (fromParent) {
-    const parentUnit = units.find((u) => u.teryt === fromParent);
-    if (parentUnit) {
-      const levelWord =
-        parentUnit.level === 'pow'
-          ? 'powiatu'
-          : parentUnit.level === 'woj'
-            ? 'województwa'
-            : parentUnit.level === 'gmi'
-              ? 'gminy'
-              : 'jednostki';
-      parentNote = `dane dla ${levelWord} ${parentUnit.name}`;
-    } else {
-      parentNote = `dane dla ${fromParent}`;
+  const effectiveFootnotes = footnotes ?? collectFootnotes([item], units);
+  const itemFootnotes: Footnote[] = [];
+
+  if (item.fromParent) {
+    const parentText = formatParentFootnoteText(item.fromParent, units);
+    const fn = effectiveFootnotes.find((f) => f.text === parentText);
+    if (fn && !itemFootnotes.some((f) => f.id === fn.id)) {
+      itemFootnotes.push(fn);
+    }
+  }
+
+  if (item.indicator.footnote) {
+    const text = item.indicator.footnote.trim();
+    if (text) {
+      const fn = effectiveFootnotes.find((f) => f.text === text);
+      if (fn && !itemFootnotes.some((f) => f.id === fn.id)) {
+        itemFootnotes.push(fn);
+      }
     }
   }
 
@@ -43,6 +48,17 @@ export function ProfileIndicatorRow({ item, units }: ProfileIndicatorRowProps) {
       <div className="flex justify-between items-center gap-2">
         <span className="text-sm font-normal text-tusz break-words min-w-0 flex-1">
           {indicator.name}
+          {itemFootnotes.map((fn) => (
+            <sup key={fn.id} className="ml-0.5">
+              <a
+                href={`#footnote-${fn.id}`}
+                title={fn.text}
+                className="text-olowek hover:text-tusz underline focus:outline-none focus:ring-1 focus:ring-tusz"
+              >
+                {fn.id}
+              </a>
+            </sup>
+          ))}
         </span>
         <div className="flex items-center gap-2 shrink-0">
           {series && (
@@ -65,14 +81,6 @@ export function ProfileIndicatorRow({ item, units }: ProfileIndicatorRowProps) {
           </>
         )}
       </div>
-
-      {parentNote && (
-        <p className="text-xs text-olowek italic break-words">{parentNote}</p>
-      )}
-
-      {indicator.footnote && (
-        <p className="text-xs text-olowek break-words">{indicator.footnote}</p>
-      )}
     </div>
   );
 }
