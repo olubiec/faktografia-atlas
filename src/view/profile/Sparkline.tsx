@@ -30,7 +30,7 @@ export function Sparkline({ series, label }: SparklineProps) {
     container.replaceChildren();
 
     const chart = Plot.plot({
-      width: 64,
+      width: 48,
       height: 16,
       margin: 1,
       style: { display: 'block' },
