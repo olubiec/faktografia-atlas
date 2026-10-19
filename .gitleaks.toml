@@ -5,3 +5,6 @@ useDefault = true
 [allowlist]
 description = "Fake values in tests"
 regexes = ['''SECRET_KLUCZ_API_99999''']
+# Dwa commity z gałęzi Jules (CC6.4b) zawierają fałszywy klucz w teście (`SECRET_KLUCZ_API_99999`);
+# gitleaks skanuje całą historię, więc czerwienił wszystkie PR-y. Klucz jest fałszywy.
+commits = ["631f01c39a81d57d7409ccec371ab7fee51a4ecd", "eeca2c2ea6f551627ff3ada9ce06a3031112da63"]
