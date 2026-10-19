@@ -30,6 +30,7 @@ export type ProfileIndicatorItem = {
   totalVoivodeship: number;
   neutral: boolean;
   fromParent?: string;
+  series: { year: number; value: number | null }[];
 };
 
 export type UnitProfile = {
@@ -88,6 +89,15 @@ export function buildProfile(
     const fromParent = effectiveUnit.teryt !== targetUnit.teryt ? effectiveUnit.teryt : undefined;
 
     const indValues = valuesById[indicator.id];
+    const effectiveUnitValues = indValues?.values[effectiveUnit.teryt];
+    const series: { year: number; value: number | null }[] =
+      indValues && indValues.years
+        ? indValues.years.map((y, i) => ({
+            year: y,
+            value: effectiveUnitValues?.[i] ?? null,
+          }))
+        : [];
+
     if (!indValues || !indValues.years || indValues.years.length === 0) {
       profileItems.push({
         indicatorId: indicator.id,
@@ -100,6 +110,7 @@ export function buildProfile(
         totalVoivodeship: 0,
         neutral: indicator.higherIsBetter === null,
         fromParent,
+        series,
       });
       continue;
     }
@@ -126,6 +137,7 @@ export function buildProfile(
         totalVoivodeship: 0,
         neutral: indicator.higherIsBetter === null,
         fromParent,
+        series,
       });
       continue;
     }
@@ -194,6 +206,7 @@ export function buildProfile(
       totalVoivodeship: voivodeshipValues.length,
       neutral: indicator.higherIsBetter === null,
       fromParent,
+      series,
     });
   }
 
