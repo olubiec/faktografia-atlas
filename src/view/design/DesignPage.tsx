@@ -23,6 +23,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { AnnotationProvider } from "@/view/annotation/AnnotationProvider"
 import { Annotate } from "@/view/annotation/Annotate"
 import { ProfileSheet } from "@/view/profile/ProfileSheet"
+import { ProfileSheetMobile } from "@/view/profile/ProfileSheetMobile"
 import sampleProfileData from "../../../tests/fixtures/synthetic/profile-sample.json"
 import { buildProfile, type UnitProfile, type Indicator, type IndicatorValues } from "@/core/profile/profile"
 import type { Unit } from "@/core/units/types"
@@ -73,6 +74,7 @@ export function DesignPage() {
   const [colorValues, setColorValues] = useState<Record<string, string>>({})
   const [sliderVal, setSliderVal] = useState<number[]>([50])
   const [activeAnnotation, setActiveAnnotation] = useState<RoughAnnotationType | null>("circle")
+  const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false)
 
   const toggleTheme = () => {
     const nextTheme = theme === "light" ? "dark" : "light"
@@ -227,6 +229,30 @@ export function DesignPage() {
                   </p>
                 </div>
               </div>
+            </section>
+
+            {/* 13b. ProfileSheetMobile */}
+            <section id="profil-arkusz-mobile" aria-labelledby="heading-profil-arkusz-mobile" className="space-y-4">
+              <h2 id="heading-profil-arkusz-mobile" className="text-xl font-bold border-b border-linia pb-2">
+                13b. Mobilny arkusz profilu jednostki (ProfileSheetMobile)
+              </h2>
+              <div className="p-6 bg-arkusz border border-linia space-y-4">
+                <Button
+                  variant="secondary"
+                  onClick={() => setIsMobileSheetOpen(true)}
+                >
+                  Otwórz mobilny arkusz profilu
+                </Button>
+                <p className="text-xs text-olowek">
+                  Dolny, przeciągany arkusz dla urządzeń mobilnych oparty na <code className="font-mono text-tusz">react-modal-sheet</code> z 3 punktami zatrzymania (zwinięty ≈ nagłówek, połowa, pełny) i przyciskiem zamknięcia.
+                </p>
+              </div>
+              <ProfileSheetMobile
+                isOpen={isMobileSheetOpen}
+                profile={sampleProfile}
+                units={sampleUnits}
+                onClose={() => setIsMobileSheetOpen(false)}
+              />
             </section>
 
             {/* 3. Logo */}
@@ -472,10 +498,10 @@ export function DesignPage() {
               </div>
             </section>
 
-            {/* 13.1 ProfileSheet */}
+            {/* 13.1 ProfileSheet & ProfileSheetMobile */}
             <section id="profil-arkusz" aria-labelledby="heading-profil-arkusz" className="space-y-4">
               <h2 id="heading-profil-arkusz" className="text-xl font-bold border-b border-linia pb-2">
-                13a. Arkusz profilu jednostki (ProfileSheet)
+                13a. Arkusz profilu jednostki (ProfileSheet & ProfileSheetMobile)
               </h2>
               <div className="flex flex-col lg:flex-row gap-6 items-start">
                 <ProfileSheet
