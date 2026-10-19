@@ -2,7 +2,7 @@ import { GeoJsonLayer } from '@deck.gl/layers';
 import type { FeatureCollection } from 'geojson';
 import type { LayerFactory, LayerContext } from './admin';
 import { loadGeoData, parseCssColor } from './admin';
-import { classColorToken } from '@/core/map/classes';
+import { classColorToken, type ClassifyResult } from '@/core/map/classes';
 import tokensJson from '../../../../config/tokens.json';
 
 /**
@@ -42,7 +42,11 @@ export function resolveTokenColor(
     if (parsed) return parsed;
   }
 
-  return parseCssColor(tokensJson.color.light.arkusz) ?? [248, 250, 249, 255];
+  const fallback = parseCssColor(tokensJson.color.light.arkusz);
+  if (!fallback) {
+    throw new Error('Nieprawidłowy token koloru arkusz w config/tokens.json');
+  }
+  return fallback;
 }
 
 export const choroplethLayerFactory: LayerFactory = {
@@ -78,6 +82,18 @@ export const choroplethLayerFactory: LayerFactory = {
       features = wojFeatures;
     }
 
+    // Kolory klas liczymy raz na warstwę (11 tokenów), a nie osobno dla każdej z tysięcy jednostek.
+    const palette = new Map<string, [number, number, number, number]>();
+    const colorOf = (cls: ClassifyResult) => {
+      const token = classColorToken(cls, choropleth.classes, choropleth.scheme);
+      let color = palette.get(token);
+      if (!color) {
+        color = resolveTokenColor(token);
+        palette.set(token, color);
+      }
+      return color;
+    };
+
     return new GeoJsonLayer({
       id: 'choropleth-layer',
       data: features,
@@ -86,8 +102,7 @@ export const choroplethLayerFactory: LayerFactory = {
       getFillColor: (f: any) => {
         const teryt = f.properties?.teryt;
         const cls = teryt ? choropleth.classByTeryt[teryt] ?? 'no-data' : 'no-data';
-        const token = classColorToken(cls, choropleth.classes, choropleth.scheme);
-        return resolveTokenColor(token);
+        return colorOf(cls);
       },
       getLineColor: ctx.colors.kalka,
       getLineWidth: 1.2,
