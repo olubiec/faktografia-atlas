@@ -20,8 +20,6 @@ export function useMapColors() {
   }, []);
 
   useEffect(() => {
-    updateColorsAndTheme();
-
     const observer = new MutationObserver(() => {
       updateColorsAndTheme();
     });

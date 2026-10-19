@@ -58,49 +58,34 @@ describe('Map Hooks', () => {
 
   describe('useMapSelection', () => {
     it('exports required hook functions and drillState', () => {
-      let state: ReturnType<typeof useMapSelection>;
+      const state = renderHookServer(() => useMapSelection(unitIndex));
 
-      function TestComponent() {
-        state = useMapSelection(unitIndex);
-        return null;
-      }
-
-      renderToString(<TestComponent />);
-
-      expect(state!.selectedTeryt).toBeNull();
-      expect(state!.drillState).toBeDefined();
-      expect(typeof state!.selectUnit).toBe('function');
-      expect(typeof state!.selectBreadcrumb).toBe('function');
-      expect(typeof state!.goBack).toBe('function');
+      expect(state.selectedTeryt).toBeNull();
+      expect(state.drillState).toBeDefined();
+      expect(typeof state.selectUnit).toBe('function');
+      expect(typeof state.selectBreadcrumb).toBe('function');
+      expect(typeof state.goBack).toBe('function');
     });
 
     it('selectUnit("12") sets selectedTeryt and ?u=12 in URL, and goBack() returns to parent', () => {
-      let state: ReturnType<typeof useMapSelection> | null = null;
-
-      function TestComponent() {
-        state = useMapSelection(unitIndex);
-        return null;
-      }
-
-      renderToString(<TestComponent />);
-      expect(state!.selectedTeryt).toBeNull();
-      expect(state!.drillState.selected).toBeNull();
+      const state1 = renderHookServer(() => useMapSelection(unitIndex));
+      expect(state1.selectedTeryt).toBeNull();
 
       // Test selectUnit('12')
-      state!.selectUnit('12');
+      state1.selectUnit('12');
       expect(window.location.search).toBe('?u=12');
 
-      renderToString(<TestComponent />);
-      expect(state!.selectedTeryt).toBe('12');
-      expect(state!.drillState.selected).toBe('12');
+      const state2 = renderHookServer(() => useMapSelection(unitIndex));
+      expect(state2.selectedTeryt).toBe('12');
+      expect(state2.drillState.selected).toBe('12');
 
       // Test goBack()
-      state!.goBack();
+      state2.goBack();
       expect(window.location.search).toBe('');
 
-      renderToString(<TestComponent />);
-      expect(state!.selectedTeryt).toBeNull();
-      expect(state!.drillState.selected).toBeNull();
+      const state3 = renderHookServer(() => useMapSelection(unitIndex));
+      expect(state3.selectedTeryt).toBeNull();
+      expect(state3.drillState.selected).toBeNull();
     });
   });
 
