@@ -37,7 +37,7 @@ function DeckGLOverlay(props: MapboxOverlayProps) {
   return null;
 }
 
-const defaultKalka = parseCssColor(tokensJson.color.light.kalka) ?? [238, 241, 239, 255];
+const defaultKalka = parseCssColor(tokensJson.color.light.kalka);
 
 export function AtlasMap() {
   const [isReady, setIsReady] = useState(false);
@@ -101,7 +101,7 @@ export function AtlasMap() {
 
   const mapStyle: StyleSpecification = useMemo(() => {
     const c = colors?.kalka ?? defaultKalka;
-    const kalkaRgb = `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+    const kalkaRgb = c ? `rgb(${c[0]}, ${c[1]}, ${c[2]})` : tokensJson.color.light.kalka;
 
     return {
       version: 8,
