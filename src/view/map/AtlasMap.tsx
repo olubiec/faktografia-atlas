@@ -13,11 +13,16 @@ import { installAtlasSeam, type AtlasState } from '@/core/map/test-seam';
 import { buildIndex } from '@/core/units/units';
 import { getDrillState, getParentTeryt } from '@/core/map/drill';
 import { readUrlState, writeUrlState } from '@/core/url/state';
-import { createMapLayers, getMapColorsFromCss } from './layers';
+import { createMapLayers, getMapColorsFromCss, registerLayerFactory } from './layers';
+import { localitiesLayerFactory } from './layers/localities';
+import { loadLocalities } from '@/core/search/load-localities';
+import type { Locality } from '@/core/search/types';
 import { BackButton } from './BackButton';
 import { Breadcrumbs } from './Breadcrumbs';
 import { UnitList } from './UnitList';
 import type { Unit } from '@/core/units/types';
+
+registerLayerFactory(localitiesLayerFactory);
 
 // Wyłączamy pracownika MapLibre GL za pomocą oficjalnego API maplibregl.setWorkerCount(0),
 // aby żądanie maplibre-gl-worker.mjs nie pozostawało w toku i networkidle przechodziło pomyślnie.
@@ -37,6 +42,8 @@ export function AtlasMap() {
   const [colors, setColors] = useState(getMapColorsFromCss);
   const [isReady, setIsReady] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [localities, setLocalities] = useState<Locality[]>([]);
+  const localityTargetRef = useRef<ViewState | null>(null);
 
   const unitIndex = useMemo(() => buildIndex(unitsData as Unit[]), []);
   const bounds = useMemo(() => countryBounds(unitsData as Unit[]), []);
@@ -103,9 +110,14 @@ export function AtlasMap() {
       const { clientWidth, clientHeight } = containerRef.current;
       if (clientWidth > 0 && clientHeight > 0) {
         setDimensions({ width: clientWidth, height: clientHeight });
-        const activeBbox = drillState.bbox ?? bounds;
-        const init = initialViewState(activeBbox, clientWidth, clientHeight);
-        setCurrentViewState(init);
+        if (localityTargetRef.current) {
+          setCurrentViewState(localityTargetRef.current);
+          localityTargetRef.current = null;
+        } else {
+          const activeBbox = drillState.bbox ?? bounds;
+          const init = initialViewState(activeBbox, clientWidth, clientHeight);
+          setCurrentViewState(init);
+        }
       }
     };
 
@@ -115,6 +127,12 @@ export function AtlasMap() {
 
     return () => resizeObserver.disconnect();
   }, [bounds, drillState.bbox]);
+
+  useEffect(() => {
+    if (currentViewState.zoom >= 8.5) {
+      loadLocalities().then((data) => setLocalities(data));
+    }
+  }, [currentViewState.zoom]);
 
   // Obsługa powrotu/przejścia w historii przeglądarki
   useEffect(() => {
@@ -127,6 +145,34 @@ export function AtlasMap() {
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, [unitIndex]);
+
+  // Obsługa zdarzenia wyboru miejscowości w wyszukiwarce Ctrl+K
+  useEffect(() => {
+    const handleLocalitySelect = (
+      e: CustomEvent<{ teryt: string; lon?: number; lat?: number }>
+    ) => {
+      const { teryt, lon, lat } = e.detail;
+      loadLocalities().then((data) => setLocalities(data));
+      if (typeof lon === 'number' && typeof lat === 'number') {
+        const targetView: ViewState = {
+          longitude: lon,
+          latitude: lat,
+          zoom: 11.5,
+        };
+        localityTargetRef.current = targetView;
+        setCurrentViewState(targetView);
+      }
+      if (teryt) {
+        setSelectedTeryt(teryt);
+        writeUrlState({ u: teryt });
+      }
+    };
+
+    window.addEventListener('atlas:select-locality', handleLocalitySelect as EventListener);
+    return () => {
+      window.removeEventListener('atlas:select-locality', handleLocalitySelect as EventListener);
+    };
+  }, []);
 
   const handleSelectUnit = useCallback(
     (teryt: string) => {
@@ -168,8 +214,15 @@ export function AtlasMap() {
   }, [selectedTeryt, unitIndex, updateViewStateForBbox, bounds]);
 
   const layers = useMemo(() => {
-    return createMapLayers(adminTopo, colors, drillState, handleSelectUnit);
-  }, [colors, drillState, handleSelectUnit]);
+    return createMapLayers(
+      adminTopo,
+      colors,
+      drillState,
+      handleSelectUnit,
+      currentViewState,
+      localities
+    );
+  }, [colors, drillState, handleSelectUnit, currentViewState, localities]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
     const panStep = 0.5 / Math.pow(2, currentViewState.zoom - 5);

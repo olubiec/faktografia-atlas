@@ -137,8 +137,8 @@ export function buildSearchIndex(units: Unit[], localities: Locality[] = []): Se
     const parentGmi = unitsMap.get(loc.gminaTeryt);
     const context = parentGmi ? getUnitContext(parentGmi, unitsMap) : '';
     docs.push({
-      id: `loc:${loc.simc}`,
-      teryt: loc.simc,
+      id: `loc:${loc.id}`,
+      teryt: loc.id,
       kind: 'locality',
       name: loc.name,
       cleanName: loc.name,

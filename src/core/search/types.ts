@@ -4,11 +4,12 @@ import type { Unit, UnitLevel } from '../units/types';
 export type SearchResultKind = 'unit' | 'locality';
 
 export type Locality = {
-  simc: string;
+  id: string;
   name: string;
   gminaTeryt: string;
   lon: number;
   lat: number;
+  kind?: string;
   approx?: boolean;
 };
 
