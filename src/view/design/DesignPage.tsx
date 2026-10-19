@@ -23,6 +23,8 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { AnnotationProvider } from "@/view/annotation/AnnotationProvider"
 import { Annotate } from "@/view/annotation/Annotate"
 import { ProfileSheet } from "@/view/profile/ProfileSheet"
+import { Legend } from "@/view/legend/Legend"
+import { buildLegend } from "@/core/legend/legend"
 import { ProfileSheetMobile } from "@/view/profile/ProfileSheetMobile"
 import sampleProfileData from "../../../tests/fixtures/synthetic/profile-sample.json"
 import { buildProfile, type UnitProfile, type Indicator, type IndicatorValues } from "@/core/profile/profile"
@@ -555,6 +557,48 @@ export function DesignPage() {
                   >
                     Ukryj zakreślenie
                   </Button>
+                </div>
+              </div>
+            </section>
+
+            {/* 15. Legenda kartogramu */}
+            <section id="legenda" aria-labelledby="heading-legenda" className="space-y-4">
+              <h2 id="heading-legenda" className="text-xl font-bold border-b border-linia pb-2">
+                15. Legenda kartogramu (Legend)
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div>
+                  <h3 className="text-xs text-olowek mb-2">Skala sekwencyjna (4 progi, %)</h3>
+                  <Legend
+                    title="Stopa bezrobocia (%)"
+                    items={buildLegend({
+                      breaks: [3.5, 6.2, 9.8, 12.5],
+                      scheme: "sequential",
+                      unit: "%",
+                    })}
+                  />
+                </div>
+                <div>
+                  <h3 className="text-xs text-olowek mb-2">Skala dywergentna (2 progi, zł)</h3>
+                  <Legend
+                    title="Saldo migracji (zł)"
+                    items={buildLegend({
+                      breaks: [-500, 500],
+                      scheme: "diverging",
+                      unit: "zł",
+                    })}
+                  />
+                </div>
+                <div>
+                  <h3 className="text-xs text-olowek mb-2">Brak progów (tylko brak danych)</h3>
+                  <Legend
+                    title="Brak pomiarów"
+                    items={buildLegend({
+                      breaks: [],
+                      scheme: "sequential",
+                      unit: "%",
+                    })}
+                  />
                 </div>
               </div>
             </section>
