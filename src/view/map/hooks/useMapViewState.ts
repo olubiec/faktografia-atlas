@@ -1,0 +1,113 @@
+import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
+import unitsData from '../../../../public/data/units.json';
+import { countryBounds, initialViewState, mapLimits, type ViewState } from '@/core/map/view';
+import { loadLocalities } from '@/core/search/load-localities';
+import type { Locality } from '@/core/search/types';
+import type { Unit } from '@/core/units/types';
+
+export function useMapViewState(drillBbox?: [number, number, number, number] | null) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
+  const [localities, setLocalities] = useState<Locality[]>([]);
+  const localityTargetRef = useRef<ViewState | null>(null);
+
+  const bounds = useMemo(() => countryBounds(unitsData as Unit[]), []);
+  const limits = useMemo(() => mapLimits(bounds), [bounds]);
+
+  const [currentViewState, setCurrentViewState] = useState<ViewState>({
+    longitude: 19.145,
+    latitude: 51.919,
+    zoom: 5.5,
+  });
+
+  const updateViewStateForBbox = useCallback(
+    (targetBbox: [number, number, number, number] | null) => {
+      const { width, height } = dimensions;
+      if (width > 0 && height > 0) {
+        const activeBbox = targetBbox ?? bounds;
+        const newView = initialViewState(activeBbox, width, height);
+        setCurrentViewState(newView);
+      }
+    },
+    [bounds, dimensions]
+  );
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const measure = () => {
+      if (!containerRef.current) return;
+      const { clientWidth, clientHeight } = containerRef.current;
+      if (clientWidth > 0 && clientHeight > 0) {
+        setDimensions({ width: clientWidth, height: clientHeight });
+        if (localityTargetRef.current) {
+          setCurrentViewState(localityTargetRef.current);
+          localityTargetRef.current = null;
+        } else {
+          const activeBbox = drillBbox ?? bounds;
+          const init = initialViewState(activeBbox, clientWidth, clientHeight);
+          setCurrentViewState(init);
+        }
+      }
+    };
+
+    measure();
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(containerRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, [bounds, drillBbox]);
+
+  useEffect(() => {
+    if (currentViewState.zoom >= 8.5) {
+      loadLocalities().then((data) => setLocalities(data));
+    }
+  }, [currentViewState.zoom]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const panStep = 0.5 / Math.pow(2, currentViewState.zoom - 5);
+      const zoomStep = 0.5;
+
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        setCurrentViewState((prev) => ({ ...prev, longitude: prev.longitude + panStep }));
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setCurrentViewState((prev) => ({ ...prev, longitude: prev.longitude - panStep }));
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setCurrentViewState((prev) => ({ ...prev, latitude: prev.latitude + panStep }));
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setCurrentViewState((prev) => ({ ...prev, latitude: prev.latitude - panStep }));
+      } else if (e.key === '+' || e.key === '=') {
+        e.preventDefault();
+        setCurrentViewState((prev) => ({
+          ...prev,
+          zoom: Math.min(limits.maxZoom, prev.zoom + zoomStep),
+        }));
+      } else if (e.key === '-') {
+        e.preventDefault();
+        setCurrentViewState((prev) => ({
+          ...prev,
+          zoom: Math.max(limits.minZoomOffset + prev.zoom, prev.zoom - zoomStep),
+        }));
+      }
+    },
+    [currentViewState.zoom, limits.maxZoom, limits.minZoomOffset]
+  );
+
+  return {
+    containerRef,
+    currentViewState,
+    setCurrentViewState,
+    limits,
+    bounds,
+    localities,
+    setLocalities,
+    localityTargetRef,
+    updateViewStateForBbox,
+    handleKeyDown,
+  };
+}
