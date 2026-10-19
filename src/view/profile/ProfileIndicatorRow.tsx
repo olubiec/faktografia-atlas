@@ -40,7 +40,7 @@ export function ProfileIndicatorRow({ item, units }: ProfileIndicatorRowProps) {
 
   return (
     <div className="py-3 border-b border-linia last:border-b-0 space-y-1">
-      <div className="flex justify-between items-baseline gap-2">
+      <div className="flex justify-between items-center gap-2">
         <span className="text-sm font-normal text-tusz break-words min-w-0 flex-1">
           {indicator.name}
         </span>
