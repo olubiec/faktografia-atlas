@@ -42,6 +42,22 @@ describe('URL State Module (CC4.R)', () => {
       expect(sampleState.y).toBe(2023);
       expect(sampleState.c).toBe('jenks');
     });
+
+    it('odczytuje parametry i oraz y z URL (CC8.2a-1)', () => {
+      const state = readUrlState('?i=avg-wage&y=2023', index);
+      expect(state.i).toBe('avg-wage');
+      expect(state.y).toBe(2023);
+    });
+
+    it('pomija nieznane i oraz nieliczbowe y w URL (CC8.2a-1)', () => {
+      const state = readUrlState('?i=non-existent-indicator&y=invalid', index);
+      expect(state.i).toBeUndefined();
+      expect(state.y).toBeUndefined();
+
+      const state2 = readUrlState('?i=avg-wage&y=2023abc', index);
+      expect(state2.i).toBe('avg-wage');
+      expect(state2.y).toBeUndefined();
+    });
   });
 
   describe('writeUrlState', () => {
@@ -84,6 +100,38 @@ describe('URL State Module (CC4.R)', () => {
         null,
         '',
         'http://localhost/?e2e=1'
+      );
+    });
+
+    it('zapisuje i oraz y i zachowuje inne parametry URL (CC8.2a-1)', () => {
+      const replaceStateSpy = vi.fn<(data: any, unused: string, url?: string | URL | null) => void>();
+      global.window = {
+        location: new URL('http://localhost/?u=02&e2e=1'),
+        history: { replaceState: replaceStateSpy },
+      } as any;
+
+      writeUrlState({ i: 'population', y: 2022 });
+
+      expect(replaceStateSpy).toHaveBeenCalledWith(
+        null,
+        '',
+        'http://localhost/?u=02&e2e=1&i=population&y=2022'
+      );
+    });
+
+    it('usuwa i oraz y gdy są null/undefined (CC8.2a-1)', () => {
+      const replaceStateSpy = vi.fn<(data: any, unused: string, url?: string | URL | null) => void>();
+      global.window = {
+        location: new URL('http://localhost/?u=02&i=population&y=2022&e2e=1'),
+        history: { replaceState: replaceStateSpy },
+      } as any;
+
+      writeUrlState({ i: undefined, y: undefined });
+
+      expect(replaceStateSpy).toHaveBeenCalledWith(
+        null,
+        '',
+        'http://localhost/?u=02&e2e=1'
       );
     });
   });
