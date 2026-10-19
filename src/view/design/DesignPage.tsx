@@ -505,7 +505,7 @@ export function DesignPage() {
               <h2 id="heading-profil-arkusz" className="text-xl font-bold border-b border-linia pb-2">
                 13a. Arkusz profilu jednostki (ProfileSheet & ProfileSheetMobile)
               </h2>
-              <div className="flex flex-col lg:flex-row gap-6 items-start">
+              <div className="flex flex-col lg:flex-row gap-6 items-start overflow-hidden">
                 <ProfileSheet
                   profile={sampleProfile}
                   units={sampleUnits}

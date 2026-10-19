@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import type { UnitProfile, ProfileIndicatorItem } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
+import { collectFootnotes } from '../../core/profile/footnotes';
+import { Footnotes } from './Footnotes';
 import { Sheet } from '../ui/Sheet';
 import { Icon } from '../ui/Icon';
 import { ProfileIndicatorRow } from './ProfileIndicatorRow';
@@ -36,7 +38,7 @@ function getLevelLabel(level?: string | null): string {
 }
 
 /**
- * Treść profilu jednostki (nagłówek, lista wskaźników lub komunikat o braku danych, źródło).
+ * Treść profilu jednostki (nagłówek, lista wskaźników lub komunikat o braku danych, przypisy i źródło).
  * Współdzielona między wersją na komputer (ProfileSheet) a wersją na telefon (ProfileSheetMobile).
  */
 export function ProfileBody({
@@ -66,6 +68,9 @@ export function ProfileBody({
     if (ind.year === null) return max;
     return max === null ? ind.year : Math.max(max, ind.year);
   }, null);
+
+  // Zbieranie skonsolidowanej listy numerowanych przypisów dla profilu
+  const footnotes = collectFootnotes(profile.indicators, units);
 
   return (
     <div className="space-y-4">
@@ -112,6 +117,7 @@ export function ProfileBody({
                     key={item.indicatorId}
                     item={item}
                     units={units}
+                    footnotes={footnotes}
                   />
                 ))}
               </div>
@@ -120,8 +126,9 @@ export function ProfileBody({
         </div>
       )}
 
-      {/* Stopka ze źródłem */}
-      <footer className="pt-4 border-t border-linia text-xs text-olowek">
+      {/* Stopka z przypisami i źródłem */}
+      <footer className="pt-4 border-t border-linia text-xs text-olowek space-y-1">
+        <Footnotes footnotes={footnotes} />
         <p>{formatSource(latestYear)}</p>
       </footer>
     </div>
@@ -131,7 +138,7 @@ export function ProfileBody({
 /**
  * Komponent arkusza profilu jednostki (wersja na komputer, 440 px).
  * Prezentuje nagłówek jednostki, przycisk zamknięcia oraz wskaźniki
- * pogrupowane według kategorii z podanym źródłem danych.
+ * pogrupowane według kategorii ze skonsolidowaną listą przypisów i źródłem danych.
  */
 export function ProfileSheet({ profile, units, onClose, className }: ProfileSheetProps) {
   useEffect(() => {
