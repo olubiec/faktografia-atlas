@@ -22,6 +22,15 @@ import { Slider } from "@/components/ui/slider"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { AnnotationProvider } from "@/view/annotation/AnnotationProvider"
 import { Annotate } from "@/view/annotation/Annotate"
+import { ProfileSheet } from "@/view/profile/ProfileSheet"
+import sampleProfileData from "../../../tests/fixtures/synthetic/profile-sample.json"
+import { buildProfile, type UnitProfile, type Indicator, type IndicatorValues } from "@/core/profile/profile"
+import type { Unit } from "@/core/units/types"
+
+const sampleUnits = sampleProfileData.units as unknown as Unit[]
+const sampleIndicators = sampleProfileData.indicators as unknown as Indicator[]
+const sampleValuesById = sampleProfileData.valuesById as unknown as Record<string, IndicatorValues>
+const sampleProfile: UnitProfile = buildProfile("0201011", sampleIndicators, sampleValuesById, sampleUnits)
 import {
   NavArrowDown,
   Menu,
@@ -460,6 +469,28 @@ export function DesignPage() {
                     Zamknij panel
                   </Button>
                 </Sheet>
+              </div>
+            </section>
+
+            {/* 13.1 ProfileSheet */}
+            <section id="profil-arkusz" aria-labelledby="heading-profil-arkusz" className="space-y-4">
+              <h2 id="heading-profil-arkusz" className="text-xl font-bold border-b border-linia pb-2">
+                13a. Arkusz profilu jednostki (ProfileSheet)
+              </h2>
+              <div className="flex flex-col lg:flex-row gap-6 items-start">
+                <ProfileSheet
+                  profile={sampleProfile}
+                  units={sampleUnits}
+                  onClose={() => {}}
+                />
+                <div className="text-xs text-olowek space-y-2 max-w-sm">
+                  <p className="font-bold text-tusz">Arkusz profilu jednostki (komputer, 440 px)</p>
+                  <p>
+                    Komponent przyjmujący wygenerowany profil jednostki i tablicę metadanych jednostek.
+                    Wskaźniki są pogrupowane według kategorii, prezentując wartości sformatowane przez{' '}
+                    <code className="font-mono text-tusz">formatValue</code> oraz informację o randze i powiązaniach.
+                  </p>
+                </div>
               </div>
             </section>
 
