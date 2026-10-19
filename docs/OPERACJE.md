@@ -113,10 +113,11 @@ Wynik napisz jednym zdaniem w czacie („fala 8 OK” albo „profil zasłania m
 
 | Objaw | Przyczyna | Haiku | Sonnet / Ty |
 |---|---|---|---|
-| `verify` czerwone, krok **E2E tests**, PR zmienia `/design` | zrzuty wzorcowe nieaktualne | `snapshots.sh <PR>` | — |
-| `verify` czerwone, krok E2E, PR NIE zmienia /design | niestabilny test albo błąd | raz `rerun.sh <PR>`; druga czerwień → Sonnet | diagnoza |
+| `verify` czerwone, krok **E2E tests**, PR dotyka komponentu widocznego na `/design` (profil, legenda, wybór wskaźnika, przyciski, formularze – cokolwiek z `src/view/profile/`, `legend/`, `controls/`, `ui/`) – także gdy plik `DesignPage.tsx` nie jest zmieniony | zrzuty wzorcowe nieaktualne (np. #123: dodanie wykresu do wiersza profilu zmieniło /design) | `snapshots.sh <PR>` PRZED jakimkolwiek rerun | — |
+| `verify` czerwone, krok E2E, PR nie dotyka żadnego komponentu z /design | niestabilny test albo błąd | raz `rerun.sh <PR>`; druga czerwień → Sonnet | diagnoza (lokalnie e2e nie działa: wersja przeglądarki w środowisku Claude'a – diagnozuj po plikach PR) |
 | `security` czerwone, gitleaks | fałszywy klucz w teście w historii gałęzi | → Sonnet | dopisuje commit do `.gitleaks.toml` (allowlist) |
 | „BRAK CI” po commicie robota (Update snapshots, dane) | pushe robota nie uruchamiają CI | `kick-ci.sh <PR>` | — |
+| `merge.sh`: „bramki CI nie są zielone ()” zaraz po `update-branch` | wyścig: nowy commit, CI jeszcze się nie zaczęło | odczekaj 15 s i `wait-ci.sh <PR>`, potem `merge.sh` | — |
 | „Pull Request is still a draft” | PR Julesa jest szkicem | `merge.sh` robi to sam | — |
 | workflow z danymi czerwony po „Re-run” | Re-run używa starej wersji workflow | — | Ty: **Run workflow** |
 | workflow danych: „exceeds limit”, timeout, 429 | rozmiar/limit API | → Sonnet | poprawka skryptu; pobieranie jest wznawialne – kolejne „Run workflow” dokończy |
