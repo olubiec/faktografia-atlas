@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
 import { Command } from 'cmdk';
 import { Dialog as DialogPrimitive } from 'radix-ui';
 import { Search, Xmark } from 'iconoir-react';
@@ -7,6 +6,7 @@ import { Icon } from '@/view/ui/Icon';
 import { loadSearchIndex, useSearch } from './useSearch';
 import { loadLocalities } from '@/core/search/load-localities';
 import { searchLocalities, type LocalitySearchResult } from '@/core/search/localities';
+import { writeUrlState } from '@/core/url/state';
 import type { SearchResult, Locality } from '@/core/search';
 import type { Unit } from '@/core/units/types';
 
@@ -19,7 +19,6 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   const [query, setQuery] = useState('');
   const [localities, setLocalities] = useState<Locality[]>([]);
   const [unitsMap, setUnitsMap] = useState<Map<string, Unit>>(new Map());
-  const navigate = useNavigate();
   const { results, ready, error } = useSearch(query);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
@@ -64,12 +63,22 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
 
   const handleSelectUnit = (item: SearchResult) => {
     handleOpenChange(false);
-    navigate(`/?u=${item.teryt}`);
+    writeUrlState({ u: item.teryt });
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('popstate'));
+    }
   };
 
   const handleSelectLocality = (item: LocalitySearchResult) => {
     handleOpenChange(false);
-    navigate(`/?u=${item.teryt}`);
+    writeUrlState({ u: item.teryt });
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('atlas:select-locality', {
+          detail: { teryt: item.teryt, lon: item.lon, lat: item.lat },
+        })
+      );
+    }
   };
 
   const handleClose = () => {

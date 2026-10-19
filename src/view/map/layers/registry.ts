@@ -1,7 +1,10 @@
-import type { GeoJsonLayer } from '@deck.gl/layers';
+import type { Layer } from '@deck.gl/core';
 import type { DrillState } from '@/core/map/drill';
+import type { ViewState } from '@/core/map/view';
+import type { Locality } from '@/core/search/types';
 import type { MapColors, LayerFactory, LayerContext } from './admin';
 import { adminLayerFactories } from './admin';
+export { localitiesLayerFactory } from './localities';
 
 const layerFactoriesRegistry: LayerFactory[] = [...adminLayerFactories];
 
@@ -28,8 +31,10 @@ export function createMapLayers(
   topoData: any,
   colors: MapColors | null,
   drillState?: DrillState,
-  onSelectUnit?: (teryt: string) => void
-): GeoJsonLayer[] {
+  onSelectUnit?: (teryt: string) => void,
+  viewState?: ViewState,
+  localities?: Locality[]
+): Layer[] {
   if (!colors) return [];
 
   const ctx: LayerContext = {
@@ -37,14 +42,16 @@ export function createMapLayers(
     colors,
     drillState,
     onSelectUnit,
+    viewState,
+    localities,
   };
 
-  const layers: GeoJsonLayer[] = [];
+  const layers: Layer[] = [];
 
   for (const factory of getLayerFactories()) {
     const layer = factory.create(ctx);
     if (layer) {
-      layers.push(layer);
+      layers.push(layer as Layer);
     }
   }
 
