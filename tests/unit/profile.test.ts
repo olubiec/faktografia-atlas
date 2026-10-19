@@ -140,4 +140,26 @@ describe('buildProfile - logika profilu jednostki', () => {
     expect(item?.year).toBe(2022);
     expect(item?.value).toBe(90.0);
   });
+
+  it('zwraca pełną serię lat (series) w kolejności rosnącej z zachowaniem null', () => {
+    // 0401011 ind-higher-better: 2022: 90.0, 2023: null
+    const profile = buildProfile('0401011', indicators, valuesById, units);
+    const item = profile.indicators.find((i) => i.indicatorId === 'ind-higher-better');
+
+    expect(item).toBeDefined();
+    expect(item?.series).toEqual([
+      { year: 2022, value: 90.0 },
+      { year: 2023, value: null },
+    ]);
+  });
+
+  it('pobiera serię z jednostki nadrzędnej gdy zdefiniowane jest minLevel', () => {
+    // Gmina 0201011 (fromParent: 0201)
+    const profile = buildProfile('0201011', indicators, valuesById, units);
+    const item = profile.indicators.find((i) => i.indicatorId === 'ind-parent-pow');
+
+    expect(item).toBeDefined();
+    expect(item?.fromParent).toBe('0201');
+    expect(item?.series).toEqual([{ year: 2023, value: 4500.0 }]);
+  });
 });

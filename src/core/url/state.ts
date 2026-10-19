@@ -1,30 +1,50 @@
 import type { UnitIndex } from '../units/types';
 import { getUnit } from '../units/units';
+import indicators from '../../../config/indicators.json';
 
 export type UrlState = {
   u?: string | null;
-  i?: string;
-  y?: number;
-  c?: string;
+  i?: string | null;
+  y?: number | null;
+  c?: string | null;
 };
 
+const VALID_INDICATOR_IDS = new Set(indicators.map((ind) => ind.id));
+
 /**
- * Odczytuje stan z parametrów URL (np. ?u=). Nieznany TERYT jest ignorowany.
+ * Odczytuje stan z parametrów URL (np. ?u=, ?i=, ?y=). Nieznany TERYT, nieznany wskaźnik oraz nieliczbowy rok są ignorowane.
  */
 export function readUrlState(search: string, index?: UnitIndex): UrlState {
   if (!search) return {};
   const params = new URLSearchParams(search);
+  const result: UrlState = {};
+
   const uParam = params.get('u');
-
-  if (!uParam) return {};
-
-  if (index) {
-    const unit = getUnit(index, uParam);
-    if (!unit) return {};
-    return { u: unit.teryt };
+  if (uParam) {
+    if (index) {
+      const unit = getUnit(index, uParam);
+      if (unit) {
+        result.u = unit.teryt;
+      }
+    } else {
+      result.u = uParam;
+    }
   }
 
-  return { u: uParam };
+  const iParam = params.get('i');
+  if (iParam && VALID_INDICATOR_IDS.has(iParam)) {
+    result.i = iParam;
+  }
+
+  const yParam = params.get('y');
+  if (yParam) {
+    const parsedYear = Number.parseInt(yParam, 10);
+    if (!Number.isNaN(parsedYear) && String(parsedYear) === yParam.trim()) {
+      result.y = parsedYear;
+    }
+  }
+
+  return result;
 }
 
 /**
@@ -34,10 +54,28 @@ export function writeUrlState(state: UrlState): void {
   if (typeof window === 'undefined') return;
   const url = new URL(window.location.href);
 
-  if (state.u) {
-    url.searchParams.set('u', state.u);
-  } else {
-    url.searchParams.delete('u');
+  if ('u' in state) {
+    if (state.u) {
+      url.searchParams.set('u', state.u);
+    } else {
+      url.searchParams.delete('u');
+    }
+  }
+
+  if ('i' in state) {
+    if (state.i) {
+      url.searchParams.set('i', state.i);
+    } else {
+      url.searchParams.delete('i');
+    }
+  }
+
+  if ('y' in state) {
+    if (typeof state.y === 'number' && !Number.isNaN(state.y)) {
+      url.searchParams.set('y', String(state.y));
+    } else {
+      url.searchParams.delete('y');
+    }
   }
 
   window.history.replaceState(null, '', url.toString());

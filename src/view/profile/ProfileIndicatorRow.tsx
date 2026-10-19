@@ -1,6 +1,7 @@
 import type { ProfileIndicatorItem } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import { formatValue } from '../../core/format/number';
+import { Sparkline } from './Sparkline';
 
 export interface ProfileIndicatorRowProps {
   item: ProfileIndicatorItem;
@@ -9,11 +10,11 @@ export interface ProfileIndicatorRowProps {
 
 /**
  * Wiersz wskaźnika w arkuszu profilu jednostki.
- * Wyświetla nazwę, sformatowaną wartość z jednostką, rok, miejsce w kraju,
+ * Wyświetla nazwę, mały wykres sparkline, sformatowaną wartość z jednostką, rok, miejsce w kraju,
  * ewentualny przypis oraz informację o danych dziedziczonych od rodzica.
  */
 export function ProfileIndicatorRow({ item, units }: ProfileIndicatorRowProps) {
-  const { indicator, value, year, rankNational, totalNational, fromParent } = item;
+  const { indicator, value, year, rankNational, totalNational, fromParent, series } = item;
 
   const formattedVal = formatValue(value, indicator.unit);
 
@@ -39,13 +40,18 @@ export function ProfileIndicatorRow({ item, units }: ProfileIndicatorRowProps) {
 
   return (
     <div className="py-3 border-b border-linia last:border-b-0 space-y-1">
-      <div className="flex justify-between items-baseline gap-2">
+      <div className="flex justify-between items-center gap-2">
         <span className="text-sm font-normal text-tusz break-words min-w-0 flex-1">
           {indicator.name}
         </span>
-        <span className="text-sm font-bold font-mono text-tusz shrink-0 tabular-nums">
-          {formattedVal}
-        </span>
+        <div className="flex items-center gap-2 shrink-0">
+          {series && (
+            <Sparkline series={series} unit={indicator.unit} label={indicator.name} />
+          )}
+          <span className="text-sm font-bold font-mono text-tusz tabular-nums">
+            {formattedVal}
+          </span>
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-x-2 text-xs text-olowek font-mono">

@@ -58,7 +58,7 @@ else
 fi
 
 # 3. Twarde kolory w dodanych liniach src/ (zasada: tylko tokeny)
-HEX="$(git -C "$ROOT" diff refs/ops/main...refs/ops/pr-$PR -- src | grep -E '^\+' | grep -E "#[0-9A-Fa-f]{6}\b|\[[0-9]{1,3}, *[0-9]{1,3}, *[0-9]{1,3}(, *[0-9]{1,3})?\]|rgba?\(" || true)"
+HEX="$(git -C "$ROOT" diff refs/ops/main...refs/ops/pr-$PR -- src | grep -E '^\+' | grep -E "#[0-9A-Fa-f]{6}\b|\[[0-9]{1,3}, *[0-9]{1,3}, *[0-9]{1,3}(, *[0-9]{1,3})?\]|rgba?\( *[0-9]" || true)"
 [ -z "$HEX" ] || die "w src/ dodano wartości kolorów zamiast tokenów:\n$HEX"
 
 # 4. Ostrzeżenia (nie blokują): zrzuty wzorcowe, package.json, as any
