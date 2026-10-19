@@ -498,10 +498,10 @@ export function DesignPage() {
               </div>
             </section>
 
-            {/* 13.1 ProfileSheet */}
+            {/* 13.1 ProfileSheet & ProfileSheetMobile */}
             <section id="profil-arkusz" aria-labelledby="heading-profil-arkusz" className="space-y-4">
               <h2 id="heading-profil-arkusz" className="text-xl font-bold border-b border-linia pb-2">
-                13a. Arkusz profilu jednostki (ProfileSheet)
+                13a. Arkusz profilu jednostki (ProfileSheet & ProfileSheetMobile)
               </h2>
               <div className="flex flex-col lg:flex-row gap-6 items-start">
                 <ProfileSheet

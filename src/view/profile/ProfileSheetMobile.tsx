@@ -40,6 +40,8 @@ export function ProfileSheetMobile({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
+  if (!isOpen) return null;
+
   return (
     <Sheet
       isOpen={isOpen}
