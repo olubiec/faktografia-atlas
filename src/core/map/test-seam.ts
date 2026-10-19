@@ -1,3 +1,12 @@
+import type { UnitLevel } from '../units/types';
+
+export type ChoroplethSeamState = {
+  indicatorId: string;
+  year: number | null;
+  level: UnitLevel;
+  classes: number;
+} | null;
+
 export type AtlasState = {
   ready: boolean;
   layers: string[];
@@ -8,6 +17,7 @@ export type AtlasState = {
     zoom: number;
   };
   theme: 'light' | 'dark';
+  choropleth: ChoroplethSeamState;
 };
 
 export type WindowWithAtlas = {
@@ -45,6 +55,7 @@ export function installAtlasSeam(
         selected: state.selected,
         viewState: { ...state.viewState },
         theme: state.theme,
+        choropleth: state.choropleth ? { ...state.choropleth } : null,
       });
     },
     set(_value: AtlasState) {

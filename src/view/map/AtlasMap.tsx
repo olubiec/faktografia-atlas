@@ -14,6 +14,7 @@ import { installAtlasSeam, type AtlasState } from '@/core/map/test-seam';
 import { buildIndex } from '@/core/units/units';
 import { createMapLayers, registerLayerFactory, parseCssColor } from './layers';
 import { localitiesLayerFactory } from './layers/localities';
+import { choroplethLayerFactory } from './layers/choropleth';
 import { BackButton } from './BackButton';
 import { Breadcrumbs } from './Breadcrumbs';
 import { UnitList } from './UnitList';
@@ -22,8 +23,10 @@ import type { Unit } from '@/core/units/types';
 import { useMapSelection } from './hooks/useMapSelection';
 import { useMapViewState } from './hooks/useMapViewState';
 import { useMapColors } from './hooks/useMapColors';
+import { useChoropleth } from './hooks/useChoropleth';
 
 registerLayerFactory(localitiesLayerFactory);
+registerLayerFactory(choroplethLayerFactory);
 
 // Wyłączamy pracownika MapLibre GL za pomocą oficjalnego API maplibregl.setWorkerCount(0),
 // aby żądanie maplibre-gl-worker.mjs nie pozostawało w toku i networkidle przechodziło pomyślnie.
@@ -72,16 +75,25 @@ export function AtlasMap() {
     handleKeyDown,
   } = useMapViewState(drillState.bbox);
 
+  const choroplethData = useChoropleth(drillState, unitsData as Unit[]);
+
+  const extendedDrillState = useMemo(() => {
+    return {
+      ...drillState,
+      choropleth: choroplethData,
+    };
+  }, [drillState, choroplethData]);
+
   const layers = useMemo(() => {
     return createMapLayers(
       adminTopo,
       colors,
-      drillState,
+      extendedDrillState,
       selectUnit,
       currentViewState,
       localities
     );
-  }, [colors, drillState, selectUnit, currentViewState, localities]);
+  }, [colors, extendedDrillState, selectUnit, currentViewState, localities]);
 
   const getState = useCallback((): AtlasState => {
     return {
@@ -90,8 +102,16 @@ export function AtlasMap() {
       selected: drillState.selected,
       viewState: currentViewState,
       theme,
+      choropleth: choroplethData
+        ? {
+            indicatorId: choroplethData.indicatorId,
+            year: choroplethData.year,
+            level: choroplethData.level,
+            classes: choroplethData.classes,
+          }
+        : null,
     };
-  }, [isReady, layers, drillState.selected, currentViewState, theme]);
+  }, [isReady, layers, drillState.selected, currentViewState, theme, choroplethData]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

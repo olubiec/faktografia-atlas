@@ -7,6 +7,7 @@ import tokensJson from '../../../../config/tokens.json';
 
 import type { ViewState } from '@/core/map/view';
 import type { Locality } from '@/core/search/types';
+import type { ChoroplethData } from '../hooks/useChoropleth';
 
 export type MapColors = {
   kalka: [number, number, number, number];
@@ -19,10 +20,11 @@ export type MapColors = {
 export type LayerContext = {
   topoData: any;
   colors: MapColors;
-  drillState?: DrillState;
+  drillState?: DrillState & { choropleth?: ChoroplethData | null };
   onSelectUnit?: (teryt: string) => void;
   viewState?: ViewState;
   localities?: Locality[];
+  choropleth?: ChoroplethData | null;
 };
 
 export type LayerFactory = {
