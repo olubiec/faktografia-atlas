@@ -33,6 +33,7 @@ export function Sparkline({ series, label }: SparklineProps) {
       width: 64,
       height: 16,
       margin: 1,
+      style: { display: 'block' },
       ariaLabel: null,
       ariaDescription: null,
       x: { axis: null },
@@ -71,7 +72,7 @@ export function Sparkline({ series, label }: SparklineProps) {
   return (
     <span
       ref={containerRef}
-      className="inline-flex items-center shrink-0 text-tusz"
+      className="inline-flex items-center shrink-0 text-tusz h-4 overflow-hidden"
     />
   );
 }
