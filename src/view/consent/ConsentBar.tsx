@@ -51,7 +51,7 @@ export function ConsentBar({ storage }: ConsentBarProps) {
         <button
           type="button"
           onClick={handleAccept}
-          className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-medium bg-ochra text-arkusz hover:opacity-90 cursor-pointer rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
+          className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-medium bg-tusz text-arkusz border border-tusz hover:bg-tusz/90 cursor-pointer rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
         >
           Zgadzam się
         </button>
