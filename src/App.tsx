@@ -7,10 +7,12 @@ import { AnnotationTestPage } from './view/test/AnnotationTestPage';
 import UiTestPage from './view/test/UiTestPage';
 import { InteractiveTestPage } from './view/test/InteractiveTestPage';
 import { DesignPage } from './view/design/DesignPage';
+import { ConsentBar } from './view/consent/ConsentBar';
 
 export function App() {
   return (
     <BrowserRouter>
+      <ConsentBar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/o-projekcie" element={<About />} />
