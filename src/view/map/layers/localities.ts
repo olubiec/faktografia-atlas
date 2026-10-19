@@ -22,7 +22,7 @@ export const localitiesLayerFactory: LayerFactory = {
 
     const colors = ctx.colors;
     const tuszColor = colors.tusz;
-    const ochraColor = colors.ochra ?? [199, 119, 0, 255];
+    const ochraColor = colors.ochra ?? colors.tusz;
     const arkuszColor = colors.arkusz;
 
     return new ScatterplotLayer<Locality>({

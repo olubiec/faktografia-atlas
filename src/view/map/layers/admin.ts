@@ -78,8 +78,8 @@ export function getMapColorsFromCss(): MapColors | null {
   const kalka = parseCssColor(kalkaStr, 255);
   const arkusz = parseCssColor(arkuszStr, 255);
   const tusz = parseCssColor(tuszStr, 255);
-  const ochra = parseCssColor(ochraStr, 255) ?? [199, 119, 0, 255];
-  const olowek = parseCssColor(olowekStr, 255) ?? [77, 91, 114, 255];
+  const ochra = parseCssColor(ochraStr, 255) ?? undefined;
+  const olowek = parseCssColor(olowekStr, 255) ?? undefined;
 
   if (!kalka || !arkusz || !tusz) {
     return null;
