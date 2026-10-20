@@ -6,7 +6,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  // W CI adnotacje GitHuba z nazwami nieudanych testów (widać je bez logów) + raport HTML jako artefakt
+  reporter: process.env.CI ? [['github'], ['html']] : 'html',
   use: {
     baseURL: 'http://localhost:4173',
     trace: 'on-first-retry',
