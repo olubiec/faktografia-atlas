@@ -3,7 +3,7 @@
 ## Projekt
 Publiczna strona z interaktywną mapą Polski (województwo > powiat > gmina > miejscowość) i danymi GUS.
 Właściciel nie czyta kodu: ocenia zachowanie na podglądzie Vercel, często z telefonu.
-Plan: docs/MASTER_PLAN.md. Styl: docs/STYL.md + config/tokens.json. Stan: STAN_PROJEKTU.md.
+Plan: docs/MASTER_PLAN.md. **Co ma widzieć użytkownik, makiety i progi szybkości: docs/PRODUKT.md (pierwszeństwo).** Styl: docs/STYL.md + config/tokens.json. Stan: STAN_PROJEKTU.md.
 
 ## Polecenia
 - `pnpm install`
@@ -49,6 +49,8 @@ Plan: docs/MASTER_PLAN.md. Styl: docs/STYL.md + config/tokens.json. Stan: STAN_P
 - Warunek odbioru niejasny lub sprzeczny.
 
 ## Nigdy
+- Zmian w plikach ekranu (`src/view/Home.tsx`, `src/view/map/AtlasMap.tsx`, `src/view/profile/ProfileSheet*.tsx`, `src/view/map/hooks/*`), jeśli zadanie wprost ich nie wymienia – ekran składa Sonnet.
+- Importowania plików danych (`public/data/*.json`, `public/geo/*.json`) do kodu strony i pobierania wielu plików danych naraz, gdy wystarczy jeden (progi: docs/PRODUKT.md §7).
 - Sekretów w kodzie, commitach, logach ani w zmiennych `VITE_*` (są publiczne w przeglądarce).
 - Wywołań API GUS z kodu strony. Dane GUS pobiera wyłącznie robot w GitHub Actions do public/data.
 - Osłabiania testów: skip/only, @ts-ignore, oxlint-disable, usuwania asercji.

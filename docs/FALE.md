@@ -1,61 +1,57 @@
-# Fale 7–10: kolejka i gotowe prompty
+# Fale 7–10: kolejka i gotowe prompty (od 20.10 wieczorem: fala 9 = naprawa wg docs/PRODUKT.md)
 
 Napisane 19.10.2026 przez Opusa. Na ich podstawie Haiku (albo właściciel) wysyła zadania bez pisania czegokolwiek od nowa.
 Zasady pracy, role modeli i procedury: `docs/OPERACJE.md`. Wspólny blok promptów i zasady twarde: `docs/PROMPTY.md` §2 i §5.
 
 **Najważniejsza zmiana względem PROMPTY.md:** prompty kolejnych fal są napisane z góry, bo każde zadanie wcześniejszej fali **dostaje w prompcie dokładne nazwy plików i eksportów**, z których korzystają późniejsze. Linia `Wymaga na main:` w każdym prompcie wymienia te pliki i eksporty; `scripts/ops/new-task.sh` sam sprawdza, czy są już na main, i nie wyśle zadania za wcześnie.
 
-## 1. Kolejka (stan 20.10.2026; czytaj od góry; w każdym torze naraz najwyżej jedno zadanie)
+## 1. Kolejka (stan 20.10.2026 wieczór; czytaj od góry)
 
-Tor = grupa katalogów (PROMPTY.md §4.1). Fale 7 i 8a są scalone (#118–#134). Od 20.10 obowiązuje `docs/UZUPELNIENIE_WORKFLOW.md` (strażnikiem jest GitHub, nie skrypt; bramki to komendy; błąd 2× = reguła w CI). Nowe tory: **T** (`scripts/ci/color-rules.mjs` + jego testy), **Q** (`scripts/ci/pr-rules*.mjs` + testy), **D2** (`scripts/data/fetch-values.mjs`, raport danych) – rozłączne z **D** (`scripts/data/contract.mjs`).
+**Zmiana kursu 20.10:** test właściciela pokazał, że strona po falach 1–8 nie działa jako produkt (zamula, mapa bez kolorów, profil zasłania mapę, brak zestawień i objaśnień). Przyczyny i nowe założenia: **`docs/PRODUKT.md`** (ma pierwszeństwo). Fala 9 = „działa i wygląda jak makieta 02–04”. Stare prompty CC8.W i CC4.4 są **zastąpione** (nie wysyłać).
+
+Fale 1–8b i P są scalone (#1–#157). Zasady pracy po zmianie: `docs/OPERACJE.md` §0.
+
+**Nowy podział pracy w fali 9:** Jules robi tylko **osobne klocki** (nowe pliki, logika, komponenty na danych syntetycznych). **Ekran składa Sonnet** (zadania CC13.A–M) w swojej sesji, oglądając działającą stronę (PRODUKT.md §8). Jules nie dotyka `AtlasMap.tsx`, `Home.tsx`, `ProfileSheet*.tsx`, hooków mapy.
+
+Tory fali 9 (rozłączne pliki): **D2** dane profili, **E** objaśnienia, **W** wykres, **U** ranking, **S** wyszukiwarka, **P** przypisy, **M** ekran (tylko Sonnet).
 
 | Fala | Zadanie | Kto | Tor | Rusza, gdy | Kto sprawdza PR |
 |---|---|---|---|---|---|
-| 8b | dane: PR #135 z `data/values` | S + Sonnet | D | ZROBIONE 20.10 (#135) | — |
-| 8b | ~~CC7.2b – profil po kliknięciu w mapę~~ ZROBIONE #153 | J | M | teraz | Sonnet (plik zapalny) |
-| 8b | ~~CC6.5b – test kontraktu danych~~ ZROBIONE #150 | J | D | #135 scalony | Haiku |
-| 8b | ~~CC7.4c – zakreślenie w profilu~~ ZROBIONE #147 | J | P | teraz | Haiku |
-| 8b | ~~CC11.2 – strona /prywatnosc~~ ZROBIONE #151 | J | Z | teraz | Haiku |
-| 8b | ~~CC12.1 – test: kolory tylko z tokenów~~ ZROBIONE #152 | J | T | teraz | Sonnet (konfiguracja testów) |
-| 8b | ~~CC12.2 – logika reguł PR (ID, zakres, zapalne, zależności)~~ ZROBIONE #149 | J | Q | teraz | Sonnet (skrypt kontrolny) |
-| 8b | ~~CC12.3 – limit czasu zapytań BDL, zwarte pliki, raport danych~~ ZROBIONE #148 | J | D2 | #135 scalony | Sonnet (dane) |
-| P | CC12.R – reguły gałęzi `main` (+ `zasady-pr` jako wymagane po fali obserwacji) | C (Sonnet) + Ty | — | **repo publiczne (czeka na Ciebie)** | — |
-| P | ~~CC12.2w – workflow „Zasady PR”, `.github/zapalne.txt`, szablon PR, dopiski AGENTS.md~~ ZROBIONE #154 | C (Sonnet) | G | CC12.2 scalone | Sonnet |
-| P | ~~CC12.Z – zrzuty na etykietę, CI uruchamiane przez robota~~ ZROBIONE #144 | C (Sonnet) | G | teraz | Sonnet |
-| P | ~~CC12.D – „Fetch data” sam: po zmianie skryptu i nocą, sam otwiera PR (zastępuje CC6.5a)~~ ZROBIONE #156 | C (Sonnet) | G | CC6.5b i CC12.3 scalone | Sonnet |
-| P | ~~CC12.B – bramki fal jako komendy w `new-task.sh`~~ ZROBIONE #145 | C (Sonnet) | O | teraz | Sonnet |
-| P | ~~CC12.O – obieg w osobnej sesji / podagent, pomiar limitów~~ ZROBIONE #146 | C (Sonnet) | O | teraz | Sonnet |
-| 9 | CC8.W – legenda, wybór wskaźnika i roku na mapie | J | M | CC7.2b scalone + bramka fali 8b | Sonnet |
-| 9 | CC4.4 – blady podkład przy dużym zbliżeniu | J | M | CC8.W scalone | Sonnet |
-| 10 | CC9.1b, CC8.4, CC8.5a/b, CC10.x + co najmniej 1 punkt z „Dług” | Opus pisze prompty | — | koniec fali 9 | — |
-| 10 | CC12.M – odchudzenie `merge.sh` (kontrole zdublowane w CI) | C (Sonnet) | O | jedna czysta fala z nowymi sprawdzeniami | Sonnet |
-
-Tor **G** = `.github/`, tor **O** = `scripts/ops/`, `.claude/`, `docs/OPERACJE.md` (tylko Sonnet). Zadania C nie idą do Julesa: Haiku wpisuje je na górę raportu jako „URUCHOM SONNETA”.
+| 9 | CC13.1 – pliki profili per województwo + odczyt | J | D2 | teraz | Sonnet (dane) |
+| 9 | CC13.2 – objaśnienia: format, odczyt, przycisk (?) | J | E | teraz | Sonnet (config/dane) |
+| 9 | CC13.3 – czytelny wykres lat (TrendChart) | J | W | teraz | Haiku |
+| 9 | CC13.4 – ranking jednostek + słupki (RankingBars) | J | U | teraz | Haiku |
+| 9 | CC13.5a – wyszukiwarka zamyka się krzyżykiem | J | S | teraz | Haiku |
+| 9 | CC13.5b – przypisy: separator i „powiat powiat” | J | P | teraz | Haiku |
+| 9 | CC13.A – szybkość: dane poza kodem, profil z jednego pliku, progi w CI | C (Sonnet) | M | od razu (część profilu po CC13.1) | Sonnet + zrzuty |
+| 9 | CC13.B – ekran główny wg makiety 02 (panel wskaźnika, kolory na wejściu, dymek, najwyżej/najniżej) | C (Sonnet) | M | CC13.A, CC13.4 scalone | Sonnet + zrzuty + Ty |
+| 9 | CC13.C – profil obok mapy wg makiety 03 (zakładki, ranking, rozwijane wskaźniki, „Pokaż na mapie”) | C (Sonnet) | M | CC13.B, CC13.2, CC13.3, CC13.5b scalone | Sonnet + zrzuty + Ty |
+| 9 | CC13.M – telefon wg makiety 04 (pasek wskaźnika, arkusze) | C (Sonnet) | M | CC13.C scalone | Sonnet + zrzuty + Ty |
+| 9 | CC13.T – treść objaśnień 20 wskaźników | Gemini → Sonnet → **Ty akceptujesz** | E | równolegle; publikacja po CC13.2 | Ty |
+| 10 | CC8.5 porównanie, CC4.4 podkład, CC8.4 kreskowanie, CC9.1b scena wejścia, tryb ciemny mapy, `trackSearch`, mediana wieku „na styczeń” | Opus pisze prompty | — | bramka fali 9 + Twój test | — |
+| 10 | CC12.R – reguły gałęzi `main`, `zasady-pr` wymagane | C (Sonnet) | G | teraz (repo publiczne) | Sonnet |
+| 10 | CC12.M – odchudzenie `merge.sh` | C (Sonnet) | O | jedna czysta fala z `zasady-pr` | Sonnet |
 
 ### Bramki fal (komendy; wynik 0 = przechodzi)
 
-Bramki uruchamia `new-task.sh` (CC12.B, od 20.10) przed pierwszym zadaniem kolejnej fali i zwraca `STOP`, jeśli bramka nie przechodzi; ręcznie: `scripts/gates/fala-8b.sh`, `scripts/gates/fala-9.sh`. Model nigdy nie „odhacza” bramki słowami.
+Bramki uruchamia `new-task.sh` (CC12.B) przed pierwszym zadaniem kolejnej fali i zwraca `STOP`, jeśli bramka nie przechodzi; ręcznie: `scripts/gates/fala-8b.sh`, `scripts/gates/fala-9.sh`. Model nigdy nie „odhacza” bramki słowami.
 
-- **Bramka fali 8b** (przed falą 9):
-  `test "$(git ls-tree --name-only origin/main public/data/values/ | grep -c '\.json$')" -eq 20 && git cat-file -e origin/main:src/view/map/ProfilePortal.tsx && git cat-file -e origin/main:tests/unit/data-contract.test.ts`
-  — dane wszystkich 20 wskaźników na main, profil po kliknięciu i test kontraktu scalone (CI na main zielone = test kontraktu przechodzi).
-  **Ty (niezależnie, telefon):** `/?i=unemployment-rate` koloruje mapę; kliknięcie gminy otwiera profil.
-- **Bramka fali P** (przed CC12.M): na main przez całą falę 9 każdy PR miał zielone `zasady-pr`, a żaden nie został scalony z czerwonym (lista w raporcie Sonneta z linkami do przebiegów).
-- **Bramka fali 9** (przed falą 10): `git cat-file -e origin/main:src/view/map/MapControls.tsx && git cat-file -e origin/main:src/view/map/layers/basemap.ts`; **Ty:** panel „Wskaźnik”, suwak, legenda działają na telefonie, wysłany link otwiera ten sam widok.
+- **Bramka fali 8b** (przed falą 9): spełniona 20.10 (dane, profil, test kontraktu, CI). Test właściciela wykazał problemy → fala 9 je naprawia.
+- **Bramka fali 9** (przed falą 10): `scripts/gates/fala-9.sh` – na main są `public/data/profiles/12.json`, `public/data/explanations.json`, `tests/e2e/perf-budget.spec.ts`, `tests/e2e/main-screen.spec.ts`, `tests/e2e/profile-panel.spec.ts`, a CI na main jest zielone. **Ty:** test z `docs/OPERACJE.md` §4 („Test ekranu głównego”) na komputerze i telefonie – wynik jednym zdaniem.
 
 ### Dług (punkt · skąd · priorytet · proponowana fala)
 
-Opus przy planowaniu każdej fali bierze stąd co najmniej 1 punkt albo pisze, dlaczego nie. Rzeczy wpływające na niezawodność nie są długiem i idą od razu (stąd CC12.3).
+Opus przy planowaniu każdej fali bierze stąd co najmniej 1 punkt albo pisze, dlaczego nie. Rzeczy wpływające na niezawodność i szybkość nie są długiem i idą od razu.
 
 | Punkt | Skąd | Priorytet | Fala |
 |---|---|---|---|
-| `trackSearch` nie jest wywoływane w wyszukiwarce (SearchDialog) | przegląd #131 | średni | 10 |
-| Mediana wieku to stan „na styczeń” (lata do 2026) – legenda i profil muszą to mówić | sprawdzenie danych #135 | średni | 10 |
-| `update-snapshots.yml` ma domyślną gałąź `main` | audyt 20.10 | wysoki | P (CC12.Z) |
-| `getTooltip` w warstwach kartogramu i miejscowości nic nie robi | przegląd #133 | niski | 10 |
-| Zbędna gałąź `jules-feat/cc5.4b-localities-map-…` (API nie pozwala jej usunąć) | fala 6 | niski | Ty: Branches → kosz |
-| `STAN_PROJEKTU.md` nieaktualny | koniec fali 8 | średni | 9 (Sonnet) |
-| Podgląd Vercel na telefonie: obawa o `setWorkerCount(0)` | fala 6 | średni | bramka 8b (Ty) |
+| `trackSearch` nie jest wywoływane w wyszukiwarce | przegląd #131 | średni | 10 |
+| Mediana wieku to stan „na styczeń” (lata do 2026) – legenda i profil muszą to mówić | sprawdzenie danych #135 | średni | 9 (CC13.T: `howToRead`) |
+| `getTooltip` w warstwach nic nie robi | przegląd #133 | wysoki | 9 (CC13.B: dymek) |
+| Niestabilny test e2e w CI (ok. 1 na 3 przebiegi) | fala P | wysoki | 9 (Sonnet: nazwa z adnotacji → poprawka) |
+| Adres strony (Vercel) nieznany w repo | 20.10 | wysoki | Ty: podaj adres; Sonnet wpisuje do README i OPERACJE §4 |
+| Zbędna gałąź `jules-feat/cc5.4b-localities-map-…` | fala 6 | niski | Ty: Branches → kosz |
+| `STAN_PROJEKTU.md` nieaktualny | koniec fali 8 | średni | 9 (Sonnet na końcu fali) |
 
 
 ## 2. Prompty – fala 7
@@ -403,12 +399,12 @@ Warunki odbioru:
 Poza zakresem: legenda i wybór wskaźnika (CC8.W).
 ```
 
-## 4. Prompty – fala 9
+## 4. Prompty – stara fala 9 (ZASTĄPIONE 20.10 przez §6; nie wysyłać)
 
 ### CC8.W – Legenda, wybór wskaźnika i roku na mapie · K · tor M · fala 9
 
 ```markdown
-Zadanie: CC8.W – podpięcie legendy, wyboru wskaźnika i roku do mapy
+Zadanie (ZASTĄPIONE przez CC13.B): CC8.W – podpięcie legendy, wyboru wskaźnika i roku do mapy
 
 Wymaga na main: src/view/map/ProfilePortal.tsx#ProfilePortal, src/view/legend/Legend.tsx#Legend, src/view/controls/IndicatorPicker.tsx#IndicatorPicker, src/view/controls/YearSlider.tsx#YearSlider, src/core/legend/legend.ts#buildLegend
 
@@ -492,7 +488,7 @@ Poza zakresem: polityka cookies dla innych usług (nie ma innych).
 ### CC4.4 – Blady podkład przy dużym zbliżeniu · K · tor M · fala 9
 
 ```markdown
-Zadanie: CC4.4 – podkład OpenFreeMap (positron) od zoomu 9, bardzo blady
+Zadanie (DO PRZEPISANIA w fali 10): CC4.4 – podkład OpenFreeMap (positron) od zoomu 9, bardzo blady
 
 Wymaga na main: src/view/map/MapControls.tsx#MapControls, src/view/map/hooks/useMapColors.ts#useMapColors
 
@@ -614,3 +610,192 @@ Poza zakresem: przepisywanie istniejących plików wartości (zrobi to następne
 - **CC12.D – dane same**: `fetch-data.yml` dostaje `schedule` (ok. 03:10 czasu PL, bez `--skip-existing`), `push` na `main` ze ścieżkami `scripts/data/**`, `config/indicators.json`; po pobraniu test kontraktu (CC6.5b) i liczby kontrolne (suma ludności województw 36–39 mln, 16 województw, ≥ 2 470 gmin); przy zmianach sam otwiera PR z `data/values` i uruchamia CI przez `workflow_dispatch`. Wymaga ustawienia „Allow GitHub Actions to create and approve pull requests”. Zastępuje CC6.5a.
 - **CC12.B – bramki fal**: `scripts/gates/fala-<N>.sh` z komend w §1; `new-task.sh` przed zadaniem fali N uruchamia bramkę fali poprzedniej (kolumna „Fala” w §1) i zwraca `STOP: bramka fali … niespełniona: …`.
 - **CC12.O – obieg i pomiar**: `.claude/agents/obieg.md` (`model: haiku`, narzędzia Bash i Read, treść = OPERACJE §3) i `.claude/agents/recenzent.md` (`model: sonnet`, przegląd wg PROMPTY.md §8, przy SCAL nadaje `sprawdzone`); OPERACJE §1/§3: obieg w nowej sesji albo jako podagent; raport fali z liczbami: `/usage` na start i koniec, wizyty Sonneta planowane/nieplanowane, liczba `STOP` i ich przyczyny.
+
+## 6. Prompty – fala 9 (naprawa wg docs/PRODUKT.md) – zadania Julesa
+
+Wszystkie: tylko **nowe pliki** albo wskazane fragmenty; **bez zmian** w `AtlasMap.tsx`, `Home.tsx`, `ProfileSheet*.tsx`, `src/view/map/hooks/*`, `/design` i zrzutach wzorcowych. Integrację w ekran robi Sonnet (§7).
+
+### CC13.1 – Pliki profili per województwo + odczyt · K · tor D2 · fala 9
+
+```markdown
+Zadanie: CC13.1 – gotowe pliki profili dla każdego województwa i ich odczyt
+
+Wymaga na main: src/core/profile/profile.ts#buildProfile, public/data/values/population.json, public/data/units.json, scripts/data/values-report.mjs
+
+Kontekst: dziś wybór miejsca pobiera wszystkie 20 plików `public/data/values/*.json` (14 MB) i liczy profil w przeglądarce funkcją `buildProfile` (`src/core/profile/profile.ts`), co zacina stronę. Liczymy profile z góry: jeden plik na województwo zawiera gotowe wiersze profilu (wartość, rok, miejsca w rankingach, seria lat, `fromParent`) dla wszystkich jednostek tego województwa (samo województwo, jego powiaty i gminy). Strona pobiera jeden plik (ok. 100–250 kB po kompresji). Wzór skryptu z odczytem plików i testem: `scripts/data/values-report.mjs`.
+
+Cel dla użytkownika: po wyborze miejsca profil pojawia się bez zacięcia (podłączy to Sonnet w CC13.A).
+
+Zakres (tylko te pliki):
+- `scripts/data/build-profiles.mjs` (nowy): `buildProfileShards(indicators, valuesById, units)` → `{ [wojTeryt]: Shard }`; uruchomiony bez argumentów czyta `config/indicators.json`, `public/data/units.json`, `public/data/values/*.json` i zapisuje `public/data/profiles/<woj>.json` (bez wcięć)
+- `public/data/profiles/` (nowy katalog: 16 plików wygenerowanych skryptem z danych na main)
+- `src/core/data/load-profile.ts` (nowy): `loadProfileShard(wojTeryt)` (jedno żądanie na województwo, pamięć podręczna, błąd sieci → `null`) i `profileFromShard(teryt, shard, indicators, units)` → `UnitProfile` (ten sam typ co `buildProfile`)
+- `tests/unit/build-profiles.test.ts` (nowy)
+- `tests/unit/load-profile.test.ts` (nowy)
+- `docs/sessions/CC13.1.md`
+
+Kształt `Shard`: `{ woj: string, generatedAt: string, units: { [teryt]: Array<{ indicatorId, year, value, rankNational, rankVoivodeship, totalNational, totalVoivodeship, neutral, fromParent?, years: number[], series: (number|null)[] }> } }`.
+
+Warunki odbioru:
+1. **Zgodność z `buildProfile`:** dla co najmniej 30 jednostek z danych na main (wszystkie 16 województw, 7 powiatów, 7 gmin, w tym gmina z `fromParent`) `profileFromShard(...)` daje to samo co `buildProfile(...)` (porównanie `toEqual` na `indicators`).
+2. Każda jednostka z `units.json` jest w dokładnie jednym pliku (test zliczający 2875); plik zawiera tylko jednostki swojego województwa (prefiks TERYT).
+3. Pliki zapisane bez wcięć; największy plik ≤ 2,5 MB przed kompresją (test).
+4. `loadProfileShard` wykonuje jedno żądanie na województwo także przy dwóch równoczesnych wywołaniach; 404 albo błąd sieci → `null` bez wyjątku.
+5. Bez sieci w testach; skrypt nie wywołuje API GUS.
+
+Poza zakresem: podłączenie do mapy i profilu (CC13.A), workflow „Fetch data” (CC13.A).
+```
+
+### CC13.2 – Objaśnienia wskaźników: format, odczyt, przycisk (?) · K · tor E · fala 9
+
+```markdown
+Zadanie: CC13.2 – objaśnienia wskaźników: format danych, odczyt i przycisk (?)
+
+Wymaga na main: src/components/ui/popover.tsx, src/core/profile/profile.ts#buildProfile, src/view/ui/Icon.tsx#Icon
+
+Kontekst: użytkownik nie wie, co znaczą wskaźniki. Każdy wskaźnik dostanie krótkie objaśnienie w pliku `public/data/explanations.json` (treść przygotuje Sonnet z researchem, CC13.T; w tym zadaniu tylko format, odczyt i komponent). Opis pól: `docs/PRODUKT.md` §6. Popover: `src/components/ui/popover.tsx` (Radix). Walidacja: `zod` (jest w zależnościach, wzór w `src/core/bdl/schemas.ts`). Ikony tylko przez `Icon` z `src/view/ui/Icon.tsx` (iconoir-react).
+
+Cel dla użytkownika: przy nazwie wskaźnika jest przycisk (?), który pokazuje prostą definicję, jak czytać liczbę, porównanie ze światem, ciekawostkę i źródła z linkami.
+
+Zakres (tylko te pliki):
+- `src/core/explain/explanations.ts` (nowy): `ExplanationSchema` (zod), typ `Explanation`, `loadExplanations()` – leniwie pobiera `/data/explanations.json` raz, waliduje, zwraca `Map<indicatorId, Explanation>`; brak pliku, błąd sieci albo zły wpis → pomija (pusta mapa / bez tego wpisu), bez wyjątku
+- `src/view/explain/IndicatorInfo.tsx` (nowy): `<IndicatorInfo indicatorId name explanation? variant="popover"|"inline" />`; `popover` = przycisk (?) 44×44 px z `aria-label="Co to znaczy: <nazwa>"` otwierający popover; `inline` = ta sama treść w bloku (do rozwiniętego wiersza profilu); brak objaśnienia → nic nie renderuje
+- `tests/fixtures/explanations.sample.json` (nowy): 2 poprawne wpisy + 1 błędny
+- `tests/unit/explanations.test.ts` (nowy)
+- `tests/unit/indicator-info.test.tsx` (nowy)
+- `docs/sessions/CC13.2.md`
+
+Format wpisu: `{ "indicatorId": string, "short": string ≤160, "howToRead": string ≤240, "world": { "text": string ≤240, "source": string, "url": string (https), "year": number } | null, "funFact": { "text": string ≤200, "source": string, "url": string (https) } | null, "definitionUrl": string (https) }`; plik = `{ "version": 1, "items": Entry[] }`.
+
+Warunki odbioru:
+1. Walidacja: przekroczony limit znaków, adres nie-https albo brak `short` → wpis odrzucony (test na pliku z fixtures: 2 poprawne, 1 odrzucony).
+2. `loadExplanations` pobiera plik tylko raz przy wielu wywołaniach; 404 → pusta mapa bez błędu w konsoli.
+3. `IndicatorInfo` (popover): klawiatura (Enter otwiera, Escape zamyka i oddaje fokus na przycisk), linki źródeł z `target="_blank" rel="noopener noreferrer"`, tekst wyłącznie jako tekst (bez HTML z danych).
+4. `variant="inline"` pokazuje te same sekcje z nagłówkami „Co to jest”, „Jak czytać”, „Polska i świat”, „Ciekawostka”, „Źródła”; sekcje `null` są pomijane.
+5. Tylko tokeny (kolory, odstępy), przycisk min. 44 px, axe bez błędów w teście DOM; bez zmian /design i zrzutów.
+
+Poza zakresem: treść objaśnień (CC13.T), umieszczenie przycisku w panelu i profilu (CC13.B, CC13.C).
+```
+
+### CC13.3 – Czytelny wykres lat (TrendChart) · K · tor W · fala 9
+
+```markdown
+Zadanie: CC13.3 – czytelny wykres lat dla wskaźnika
+
+Wymaga na main: src/view/profile/Sparkline.tsx#Sparkline, src/core/format/number.ts#formatValue
+
+Kontekst: obecny `Sparkline` (`src/view/profile/Sparkline.tsx`, @observablehq/plot) jest za mały i bez lat, więc nic z niego nie widać. Potrzebny większy wykres do rozwiniętego wiersza profilu (podłączy go Sonnet w CC13.C). Liczby formatuje `formatValue(value, unit)` z `src/core/format/number.ts`. Seria: `{ year: number; value: number | null }[]` (pole `series` w `ProfileIndicatorItem`).
+
+Cel dla użytkownika: po rozwinięciu wskaźnika widać, jak zmieniał się przez lata: oś lat, najniższa i najwyższa wartość, ostatnia wartość wyróżniona, wartość dowolnego roku po najechaniu albo dotknięciu.
+
+Zakres (tylko te pliki):
+- `src/view/profile/TrendChart.tsx` (nowy): `<TrendChart series unit label compareSeries? compareLabel? />`; szerokość 100% kontenera (ResizeObserver), wysokość z tokenów
+- `tests/unit/trend-chart.test.tsx` (nowy)
+- `docs/sessions/CC13.3.md`
+
+Warunki odbioru:
+1. Oś X z latami: zawsze pierwszy i ostatni rok, pomiędzy najwyżej 4 etykiety; oś Y z wartością minimalną i maksymalną sformatowaną przez `formatValue` (z jednostką).
+2. Ostatnia wartość: punkt i podpis; lata z `null` są przerwą w linii (nie zerem).
+3. Najechanie myszą albo dotknięcie pokazuje „<rok>: <wartość>” (tekst w DOM, `aria-live="polite"`); klawiatura: strzałki lewo/prawo przesuwają wskazany rok, gdy wykres ma fokus.
+4. Opcjonalna seria porównawcza (`compareSeries`, np. średnia dla Polski) rysowana cieńszą linią z podpisem w legendzie; bez niej brak legendy.
+5. Mniej niż 2 lata z wartością → tekst „Za mało danych do wykresu”; kolory z tokenów (`currentColor`/zmienne CSS), `aria-label` „<nazwa>, <rok od>–<rok do>”; bez zmian /design i zrzutów.
+
+Poza zakresem: wstawienie wykresu do profilu (CC13.C), zmiana `Sparkline`.
+```
+
+### CC13.4 – Ranking jednostek + słupki (RankingBars) · K · tor U · fala 9
+
+```markdown
+Zadanie: CC13.4 – ranking jednostek dla wskaźnika i lista słupków
+
+Wymaga na main: src/core/profile/profile.ts#buildProfile, src/core/units/units.ts#buildIndex, src/core/format/number.ts#formatValue
+
+Kontekst: użytkownik chce zobaczyć jeden wskaźnik jako zestawienie miejsc (makieta `docs/design/03-profil-komputer.png`: słupki dla wszystkich województw, wybrane wyróżnione). Dane wskaźnika: typ `IndicatorValues` (`src/core/profile/profile.ts`, `values[teryt][indeks roku]`); jednostki: `Unit` z polami `teryt`, `name`, `level`, `parent` (`src/core/units/types.ts`); kierunek: `Indicator.higherIsBetter` (`true`/`false`/`null`). Remisy liczyć tak samo jak w `buildProfile`.
+
+Cel dla użytkownika: lista „najwyżej / najniżej” w panelu mapy i słupki wszystkich jednostek w profilu; klik w nazwę wybiera jednostkę.
+
+Zakres (tylko te pliki):
+- `src/core/ranking/ranking.ts` (nowy): `rankUnits({ values, units, level, year, parentTeryt?, higherIsBetter })` → `{ teryt, name, value, rank, total }[]` od najlepszego (dla `null` od największej wartości); `topBottom(list, n)` → `{ top, bottom }`
+- `src/view/ranking/RankingBars.tsx` (nowy): `<RankingBars items unit selectedTeryt? limit? onSelect? title? />`
+- `tests/unit/ranking.test.ts` (nowy)
+- `tests/unit/ranking-bars.test.tsx` (nowy)
+- `docs/sessions/CC13.4.md`
+
+Warunki odbioru:
+1. `rankUnits`: jednostki bez wartości w danym roku pominięte (osobno liczba „brak danych”); remisy mają to samo miejsce; `parentTeryt` zawęża do jednostek danego województwa/powiatu; `higherIsBetter: false` odwraca kolejność. Zgodność miejsc z `rankNational` z `buildProfile` dla 5 wskaźników na danych z main (test).
+2. `RankingBars`: nazwa, poziomy słupek proporcjonalny do wartości (wartości ujemne rysowane w lewo od linii zera), wartość przez `formatValue` czcionką mono; wybrana jednostka wyróżniona kolorem tokenu `korekta` i pogrubieniem (jak na makiecie 03).
+3. `limit` (domyślnie 10): pokazuje pierwsze `limit` + wybraną jednostkę (jeśli dalej) + przycisk „Pokaż wszystkie (n)”.
+4. Wiersze z `onSelect` są przyciskami (min. 44 px wysokości na dotyk, klawiatura), `aria-label` „<nazwa>: <wartość>, <miejsce>. miejsce”.
+5. Tylko tokeny; bez zmian /design i zrzutów.
+
+Poza zakresem: umieszczenie w panelu mapy i profilu (CC13.B, CC13.C).
+```
+
+### CC13.5a – Wyszukiwarka zamyka się krzyżykiem · K · tor S · fala 9
+
+```markdown
+Zadanie: CC13.5a – wyszukiwarka zamyka się krzyżykiem i Escape na stronie głównej
+
+Wymaga na main: src/view/Header.tsx, src/view/search/SearchDialog.tsx#SearchDialog, src/view/ui/SearchField.tsx
+
+Kontekst: na stronie głównej pole `#home-search-field` (`src/view/ui/SearchField.tsx`, tylko do odczytu) otwiera okno wyszukiwarki przy kliknięciu **i przy fokusie** (`src/view/Header.tsx`, nasłuch `focus`). Po zamknięciu okna (krzyżyk „Zamknij wyszukiwarkę” albo Escape) Radix oddaje fokus do tego pola, a fokus od razu otwiera okno ponownie – użytkownik widzi, że krzyżyk „nie działa”.
+
+Cel dla użytkownika: krzyżyk i Escape zamykają wyszukiwarkę; pole na stronie dalej otwiera ją kliknięciem, Enterem i Ctrl+K.
+
+Zakres (tylko te pliki):
+- `src/view/Header.tsx` (tylko: otwieranie z pola strony głównej na kliknięcie oraz Enter/Spację, nie na sam fokus)
+- `tests/e2e/search-close.spec.ts` (nowy)
+- `docs/sessions/CC13.5a.md`
+
+Warunki odbioru:
+1. Strona główna: klik w pole → okno otwarte; klik w krzyżyk → okno zamknięte i **nadal zamknięte po 1 s**; fokus wraca na pole.
+2. To samo dla Escape i dla kliknięcia w tło.
+3. Tab na pole + Enter otwiera okno; Ctrl+K otwiera i zamyka jak dotąd.
+4. Na telefonie (390 px) krzyżyk zamyka okno pełnoekranowe.
+5. Istniejące testy `search.spec.ts` przechodzą bez zmian.
+
+Poza zakresem: wygląd wyszukiwarki, wyniki.
+```
+
+### CC13.5b – Przypisy: separator i „powiat powiat” · K · tor P · fala 9
+
+```markdown
+Zadanie: CC13.5b – przypisy w profilu: rozdzielone numery i nazwa bez powtórzeń
+
+Wymaga na main: src/core/profile/footnotes.ts#formatParentFootnoteText, src/view/profile/ProfileIndicatorRow.tsx#ProfileIndicatorRow
+
+Kontekst: w profilu przypisy wyglądają źle: dwa numery przy jednym wskaźniku sklejają się w „¹³” (wygląda jak 13), a przypis o danych z jednostki wyższej brzmi „dane dla powiatu powiat chodzieski”, bo nazwy w `public/data/units.json` mają już słowo „powiat”/„gmina”. Funkcja: `formatParentFootnoteText` w `src/core/profile/footnotes.ts`; numery rysuje `ProfileIndicatorRow` (`src/view/profile/ProfileIndicatorRow.tsx`).
+
+Cel dla użytkownika: „ludności¹˒³” i „dane dla: powiat chodzieski”.
+
+Zakres (tylko te pliki):
+- `src/core/profile/footnotes.ts` (tylko: `formatParentFootnoteText` – gdy nazwa zaczyna się od „powiat ”, „gmina ”, „miasto ” albo „województwo ”, tekst `dane dla: <nazwa>`; w pozostałych przypadkach jak dotąd)
+- `src/view/profile/ProfileIndicatorRow.tsx` (tylko: między numerami przypisów separator „,” w indeksie górnym)
+- `tests/unit/footnotes-format.test.ts` (nowy)
+- `docs/sessions/CC13.5b.md`
+
+Warunki odbioru:
+1. Nazwa „powiat chodzieski” → „dane dla: powiat chodzieski”; nazwa „bolesławiecki” (bez słowa poziomu) → bez zmian: „dane dla powiatu bolesławiecki” (istniejące testy przechodzą bez zmian).
+2. Dwa przypisy przy wskaźniku → w DOM dwa linki z numerami i separator „,” między nimi; jeden przypis → bez separatora.
+3. Każdy numer to osobny link do `#footnote-<n>` z `title` = treść przypisu (jak dotąd).
+4. Istniejące testy `footnotes*.test.ts*` i `profile-sheet*.test.tsx` przechodzą bez zmian.
+5. Bez zmian /design i zrzutów.
+
+Poza zakresem: nowy układ profilu (CC13.C).
+```
+
+## 7. Zadania Sonneta – fala 9 (składanie ekranu; nie dla Julesa)
+
+Każde: jedna gałąź, jeden PR, **przed scaleniem** Sonnet uruchamia stronę (`pnpm build && pnpm exec vite preview`, Playwright z przeglądarką z `/opt/pw-browsers`), przechodzi ścieżkę z PRODUKT.md §3–§5 na 1440×900 i 390×844, ogląda zrzuty i porównuje z makietą; w PR opisuje różnice. Testy e2e piszą się na `window.__atlas` i DOM (AGENTS.md).
+
+- **CC13.A – szybkość** (tor M; część „profil” po CC13.1):
+  1. `units.json` i `admin.topo.json` poza kodem: osobne pliki pobierane `fetch` przy starcie mapy (z pamięcią podręczną), nie `import` w `AtlasMap.tsx` i `useMapViewState.ts`; wyszukiwarka i okruszki korzystają z tej samej pamięci.
+  2. `useProfile` korzysta z `loadProfileShard` + `profileFromShard` (CC13.1) zamiast 20 plików.
+  3. `public/data/values/*.json` przepisane bez wcięć (jednorazowo skryptem albo „Fetch data” z `refresh=true`); „Fetch data” po pobraniu uruchamia też `build-profiles.mjs` i dołącza `public/data/profiles/` do PR.
+  4. `tests/e2e/perf-budget.spec.ts`: na wejściu brak żądań `values/*` poza wskaźnikiem domyślnym i brak `profiles/*`; wybór jednostki = dokładnie 1 żądanie `profiles/*`; żaden plik JS > 2,5 MB przed kompresją; zmiana wskaźnika = najwyżej 1 żądanie.
+  5. Nazwa niestabilnego testu e2e z adnotacji (od #155) → poprawka albo zgłoszenie.
+- **CC13.B – ekran główny wg makiety 02 i PRODUKT.md §3** (tor M): układ (bez dużego nagłówka obok mapy; panel ≈ 400 px po lewej, mapa resztą szerokości), domyślny wskaźnik gęstość zaludnienia + poziom województwa, `IndicatorPicker` pod nazwą wskaźnika, przełącznik poziomu, `Legend`/`buildLegend` z opisem słownym, `YearSlider`, „Najwyżej / najniżej” (`rankUnits`/`topBottom` + `RankingBars`), dymek po najechaniu (zwykły tekst, „Otwórz profil”), (?) z `IndicatorInfo`; okruszki na mapie zamiast listy powiatów nachodzącej na mapę. Test `tests/e2e/main-screen.spec.ts`: na wejściu `__atlas.choropleth.indicatorId === 'density'`; zmiana wskaźnika i roku zmienia `?i=`/`?y=`; najechanie pokazuje dymek; brak nachodzenia (prostokąty panelu, mapy i nagłówka się nie przecinają). Zrzuty /design odświeżone etykietą.
+- **CC13.C – profil obok mapy wg makiety 03 i PRODUKT.md §4** (tor M): panel 440 px w układzie (mapa się zwęża, nic na mapie), zakładki Przegląd / Powiaty|Gminy / Porównaj (nieaktywna, „wkrótce”), bieżący wskaźnik z dużą liczbą i jednym zakreśleniem, `RankingBars` jednostek tego poziomu, grupy wskaźników jako rozwijane wiersze (`TrendChart` + `IndicatorInfo variant="inline"` + „Pokaż na mapie”), „Kopiuj link”. Test `tests/e2e/profile-panel.spec.ts`: otwarcie nie zmienia przybliżenia; „Pokaż na mapie” zmienia `__atlas.choropleth.indicatorId`; zamknięcie przywraca pełną szerokość; brak nachodzenia.
+- **CC13.M – telefon wg makiety 04 i PRODUKT.md §5** (tor M): pasek wskaźnika na dole, arkusz z panelem wskaźnika, profil 40% wysokości z przeciąganiem; test 390×844 (brak poziomego przewijania, pola ≥ 44 px, arkusze się nie nakładają).
+- **CC13.T – treść objaśnień** (tor E): polecenie dla Gemini z OPERACJE §7 dla 20 wskaźników → Sonnet otwiera każde źródło, poprawia, pilnuje limitów i uczciwych porównań (np. bezrobocie rejestrowane ≠ BAEL) → **właściciel akceptuje** listę w PR (tabela: wskaźnik → `short`) → `public/data/explanations.json`.
+- **Na koniec fali (Sonnet):** `scripts/gates/fala-9.sh` przechodzi, `STAN_PROJEKTU.md` zaktualizowany, tabela pomiaru (OPERACJE §11), prośba do właściciela o test z OPERACJE §4.
