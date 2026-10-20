@@ -43,11 +43,14 @@ test.describe('Design System Page /design', () => {
 
   test('axe accessibility scan passes in both light and dark mode', async ({ page }) => {
     await page.goto('/design');
+    // Bez przejść i animacji: axe nie może mierzyć kontrastu w połowie zmiany motywu (niestabilny test, #158)
+    await page.addStyleTag({ content: '*, *::before, *::after { transition: none !important; animation: none !important; }' });
 
     const lightResults = await new AxeBuilder({ page }).analyze();
     expect(lightResults.violations).toEqual([]);
 
     await page.click('#theme-toggle');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     const darkResults = await new AxeBuilder({ page }).analyze();
     expect(darkResults.violations).toEqual([]);
   });
