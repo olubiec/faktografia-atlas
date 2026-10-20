@@ -17,7 +17,7 @@ Cel: drogie modele **myślą raz, na zapas**; tani model i skrypty **wykonują**
 | **Gemini (czat)** | Research i druga opinia, §7 | Zmian w repo, decyzji, sekretów | darmowy |
 | **Ty** | Klikasz „Run workflow”, sprawdzasz bramki fal na telefonie (§4), uruchamiasz Jules, gdy nie ruszy sam, zatwierdzasz decyzje | Nie musisz czytać kodu | — |
 
-**Zmiana modelu:** w Claude Code wpisz `/model claude-haiku-5-5`, `/model claude-sonnet-5-5` albo `/model claude-opus-5-5`. Rozmowa i pliki zostają.
+**Zmiana modelu: nowa sesja, nie `/model` w długiej rozmowie.** Każdy model ma osobną pamięć podręczną (cache), więc `/model` w długim wątku wczytuje całą historię od nowa, a zmiana modelu w środku rozmowy pogarsza trzymanie się poleceń. Haiku: nowa sesja → wklej polecenie z §3. Sonnet: nowa sesja → wklej zamknięte zlecenie (co, który PR, gdzie zasady). Opus: nowa sesja na planowanie, start od `FALE.md`, `OPERACJE.md` i ostatniego raportu. Długi wątek tylko wtedy, gdy potrzebny jest jego kontekst.
 
 **Kiedy który (prosta reguła):**
 - „Co słychać? Wyślij następne. Scal gotowe.” → **Haiku**, polecenie z §3.
@@ -37,7 +37,7 @@ Uruchamia je Claude w swojej sesji (w katalogu repo). Każdy kończy się jednym
 | `wait-ci.sh <PR>` | czeka do ~9 min na bramki, wypisuje wynik | po nowym commicie w PR |
 | `merge.sh <PR> [--dry-run]` | CI zielone, świeże pobranie, brak usuniętych plików, pliki tylko z „Zakresu” issue, brak kolorów hex w `src/`, gotowość z draftu, squash, kontrola po scaleniu | PR ZIELONY i w `FALE.md` „Haiku” |
 | `rerun.sh <PR>` | JEDNO ponowne uruchomienie nieudanych jobów (niestabilny test) | pierwsza czerwień, jeśli §6 tak mówi |
-| `snapshots.sh <PR>` | odświeża zrzuty /design na gałęzi PR i uruchamia CI | tylko gdy PR celowo zmienia /design |
+| `snapshots.sh <PR>` | odświeża zrzuty /design na gałęzi PR i uruchamia CI | gdy PR zmienia cokolwiek widocznego na /design (§6, pierwszy wiersz) |
 | `kick-ci.sh <PR>` | pusty commit, gdy commit robota nie uruchomił CI | `status.sh` pokazuje „BRAK CI” |
 
 ---
@@ -62,6 +62,7 @@ Kroki (po kolei, każdy raz):
    STOP „brak eksportu/pliku” = zależność jeszcze nie scalona: to normalne, idziesz dalej.
    Zadania „C (Sonnet)” nie wysyłasz – wpisujesz do raportu.
 7. Raport po polsku, dokładnie w tym układzie (bez innych treści):
+   (na samej górze, jeśli są) URUCHOM SONNETA: <gotowe zlecenie do wklejenia w nowej sesji>
    SCALONO: …   WYSŁANO: …   CZEKA NA JULES/CI: …   DLA SONNETA: … (z powodem ze STOP)
    DLA CIEBIE (właściciela): … (np. „Run workflow X”, „uruchom Jules dla #N”, „bramka fali – test na telefonie”)
    SPRAWDŹ SAM: 1–2 linie, co właściciel może zobaczyć w aplikacji GitHub, żeby to potwierdzić.
@@ -114,7 +115,7 @@ Wynik napisz jednym zdaniem w czacie („fala 8 OK” albo „profil zasłania m
 | Objaw | Przyczyna | Haiku | Sonnet / Ty |
 |---|---|---|---|
 | `verify` czerwone, krok **E2E tests**, PR dotyka komponentu widocznego na `/design` (profil, legenda, wybór wskaźnika, przyciski, formularze – cokolwiek z `src/view/profile/`, `legend/`, `controls/`, `ui/`) – także gdy plik `DesignPage.tsx` nie jest zmieniony | zrzuty wzorcowe nieaktualne (np. #123: dodanie wykresu do wiersza profilu zmieniło /design) | `snapshots.sh <PR>` PRZED jakimkolwiek rerun | — |
-| `verify` czerwone, krok E2E, PR nie dotyka żadnego komponentu z /design | niestabilny test albo błąd | raz `rerun.sh <PR>`; druga czerwień → Sonnet | diagnoza (lokalnie e2e nie działa: wersja przeglądarki w środowisku Claude'a – diagnozuj po plikach PR) |
+| `verify` czerwone, krok E2E, PR nie dotyka żadnego komponentu z /design | niestabilny test albo błąd | raz `rerun.sh <PR>`; druga czerwień → Sonnet | diagnoza: lokalnie e2e działa z własną konfiguracją Playwright (`executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome'`); zrzuty /design tylko w CI |
 | `security` czerwone, gitleaks | fałszywy klucz w teście w historii gałęzi | → Sonnet | dopisuje commit do `.gitleaks.toml` (allowlist) |
 | „BRAK CI” po commicie robota (Update snapshots, dane) | pushe robota nie uruchamiają CI | `kick-ci.sh <PR>` | — |
 | `merge.sh`: „bramki CI nie są zielone ()” zaraz po `update-branch` | wyścig: nowy commit, CI jeszcze się nie zaczęło | odczekaj 15 s i `wait-ci.sh <PR>`, potem `merge.sh` | — |

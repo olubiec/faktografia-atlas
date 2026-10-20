@@ -1,40 +1,62 @@
-# Fale 7–9: kolejka i gotowe prompty
+# Fale 7–10: kolejka i gotowe prompty
 
 Napisane 19.10.2026 przez Opusa. Na ich podstawie Haiku (albo właściciel) wysyła zadania bez pisania czegokolwiek od nowa.
 Zasady pracy, role modeli i procedury: `docs/OPERACJE.md`. Wspólny blok promptów i zasady twarde: `docs/PROMPTY.md` §2 i §5.
 
 **Najważniejsza zmiana względem PROMPTY.md:** prompty kolejnych fal są napisane z góry, bo każde zadanie wcześniejszej fali **dostaje w prompcie dokładne nazwy plików i eksportów**, z których korzystają późniejsze. Linia `Wymaga na main:` w każdym prompcie wymienia te pliki i eksporty; `scripts/ops/new-task.sh` sam sprawdza, czy są już na main, i nie wyśle zadania za wcześnie.
 
-## 1. Kolejka (czytaj od góry; w każdym torze naraz najwyżej jedno zadanie)
+## 1. Kolejka (stan 20.10.2026; czytaj od góry; w każdym torze naraz najwyżej jedno zadanie)
 
-Tor = grupa katalogów (PROMPTY.md §4.1). Limit 6 plików (§2.2) sprawdzony dla każdego promptu. Wyjątek od „logika i widok osobno”: w CC7.4a, CC7.4b i CC11.1b część logiki ma mniej niż 50 linii, więc idzie razem z widokiem. Nowe tory: **R** (`src/core/motion/`, czysta logika ruchu) i **Z** obejmuje teraz także `src/App.tsx`.
+Tor = grupa katalogów (PROMPTY.md §4.1). Fale 7 i 8a są scalone (#118–#134). Od 20.10 obowiązuje `docs/UZUPELNIENIE_WORKFLOW.md` (strażnikiem jest GitHub, nie skrypt; bramki to komendy; błąd 2× = reguła w CI). Nowe tory: **T** (`scripts/ci/color-rules.mjs` + jego testy), **Q** (`scripts/ci/pr-rules*.mjs` + testy), **D2** (`scripts/data/fetch-values.mjs`, raport danych) – rozłączne z **D** (`scripts/data/contract.mjs`).
 
 | Fala | Zadanie | Kto | Tor | Rusza, gdy | Kto sprawdza PR |
 |---|---|---|---|---|---|
-| 7 | CC4.S – rozbicie AtlasMap na hooki | J | M | teraz | Sonnet (plik zapalny) |
-| 7 | CC8.2a-1 – logika kartogramu i ładowanie wartości | J | U + dane | teraz | Haiku (merge.sh) |
-| 7 | CC8.3a – wybór wskaźnika (komponent) | J | K | teraz | Haiku |
-| 7 | CC7.4a – wykres lat w profilu | J | P | teraz | Haiku |
-| 7 | CC11.1a – logika zgody | J | Z | teraz | Haiku |
-| 7 | CC9.1a – logika sceny wejścia | J | R | teraz | Haiku |
-| 7 | CC6.4c – workflow „Fetch data” (wartości z GUS do PR) | C (Sonnet) + Ty klikasz | D | teraz | Sonnet sprawdza liczby |
-| 8 | CC8.2a-2 – warstwa kartogramu na mapie | J | M | CC4.S i CC8.2a-1 scalone | Sonnet |
-| 8 | CC8.3b – suwak lat (komponent) | J | K | CC8.3a scalone | Haiku |
-| 8 | CC7.4b – przypisy i źródła w profilu | J | P | CC7.4a scalone | Haiku |
-| 8 | CC11.1b – pasek zgody i ładowanie statystyk | J | Z | CC11.1a scalone | Sonnet (prywatność) |
-| 8 | CC6.5b – test kontraktu danych | J | D | dane z CC6.4c na main | Haiku |
-| 8 | CC6.5a – workflow nocny | C (Sonnet) | D | dane z CC6.4c na main | Sonnet |
-| 8 | CC7.2b – profil po kliknięciu w mapę | J | M | CC8.2a-2 scalone | Sonnet |
-| 9 | CC8.W – legenda, wybór wskaźnika i roku na mapie | J | M | CC7.2b, CC8.3b scalone | Sonnet |
-| 9 | CC7.4c – zakreślenie w profilu | J | P | CC7.4b scalone | Haiku |
-| 9 | CC11.2 – strona /prywatnosc | J | Z | CC11.1b scalone | Haiku |
+| 8b | dane: PR #135 z `data/values` | S + Sonnet | D | liczby sprawdzone z BDL | Sonnet |
+| 8b | CC7.2b – profil po kliknięciu w mapę | J | M | teraz | Sonnet (plik zapalny) |
+| 8b | CC6.5b – test kontraktu danych | J | D | #135 scalony | Haiku |
+| 8b | CC7.4c – zakreślenie w profilu | J | P | teraz | Haiku |
+| 8b | CC11.2 – strona /prywatnosc | J | Z | teraz | Haiku |
+| 8b | CC12.1 – test: kolory tylko z tokenów | J | T | teraz | Sonnet (konfiguracja testów) |
+| 8b | CC12.2 – logika reguł PR (ID, zakres, zapalne, zależności) | J | Q | teraz | Sonnet (skrypt kontrolny) |
+| 8b | CC12.3 – limit czasu zapytań BDL, zwarte pliki, raport danych | J | D2 | #135 scalony | Sonnet (dane) |
+| P | CC12.R – reguły gałęzi `main` | C (Sonnet) + Ty | — | repo publiczne | — |
+| P | CC12.2w – workflow „Zasady PR”, `.github/zapalne.txt`, szablon PR, dopiski AGENTS.md | C (Sonnet) | G | CC12.2 scalone | Sonnet |
+| P | CC12.Z – zrzuty na etykietę, CI uruchamiane przez robota | C (Sonnet) | G | teraz | Sonnet |
+| P | CC12.D – „Fetch data” sam: po zmianie skryptu i nocą, sam otwiera PR (zastępuje CC6.5a) | C (Sonnet) | G | CC6.5b i CC12.3 scalone | Sonnet |
+| P | CC12.B – bramki fal jako komendy w `new-task.sh` | C (Sonnet) | O | teraz | Sonnet |
+| P | CC12.O – obieg w osobnej sesji / podagent, pomiar limitów | C (Sonnet) | O | teraz | Sonnet |
+| 9 | CC8.W – legenda, wybór wskaźnika i roku na mapie | J | M | CC7.2b scalone + bramka fali 8b | Sonnet |
 | 9 | CC4.4 – blady podkład przy dużym zbliżeniu | J | M | CC8.W scalone | Sonnet |
-| 10 | CC9.1b, CC8.4, CC8.5a/b, CC10.x | Opus pisze prompty | — | koniec fali 9 | — |
+| 10 | CC9.1b, CC8.4, CC8.5a/b, CC10.x + co najmniej 1 punkt z „Dług” | Opus pisze prompty | — | koniec fali 9 | — |
+| 10 | CC12.M – odchudzenie `merge.sh` (kontrole zdublowane w CI) | C (Sonnet) | O | jedna czysta fala z nowymi sprawdzeniami | Sonnet |
 
-Bramki fali (sprawdza Sonnet albo Ty z listy w OPERACJE.md §4):
-- **po fali 7:** `?i=` i `?y=` czytane z adresu (test), dane wartości na main, AtlasMap poniżej 200 linii;
-- **po fali 8:** `/?i=unemployment-rate` koloruje mapę na podglądzie Vercel, kliknięcie gminy otwiera profil; **Ty: test na telefonie**;
-- **po fali 9:** legenda, wybór wskaźnika i suwak działają na telefonie; zrzuty /design odświeżone.
+Tor **G** = `.github/`, tor **O** = `scripts/ops/`, `.claude/`, `docs/OPERACJE.md` (tylko Sonnet). Zadania C nie idą do Julesa: Haiku wpisuje je na górę raportu jako „URUCHOM SONNETA”.
+
+### Bramki fal (komendy; wynik 0 = przechodzi)
+
+Do czasu CC12.B uruchamia je Sonnet ręcznie i wkleja wynik do raportu. Po CC12.B robi to `new-task.sh` przed wysłaniem pierwszego zadania kolejnej fali i zwraca `STOP`, jeśli bramka nie przechodzi. Model nigdy nie „odhacza” bramki słowami.
+
+- **Bramka fali 8b** (przed falą 9):
+  `test "$(git ls-tree --name-only origin/main public/data/values/ | grep -c '\.json$')" -eq 20 && git cat-file -e origin/main:src/view/map/ProfilePortal.tsx && git cat-file -e origin/main:tests/unit/data-contract.test.ts`
+  — dane wszystkich 20 wskaźników na main, profil po kliknięciu i test kontraktu scalone (CI na main zielone = test kontraktu przechodzi).
+  **Ty (niezależnie, telefon):** `/?i=unemployment-rate` koloruje mapę; kliknięcie gminy otwiera profil.
+- **Bramka fali P** (przed CC12.M): na main przez całą falę 9 każdy PR miał zielone `zasady-pr`, a żaden nie został scalony z czerwonym (lista w raporcie Sonneta z linkami do przebiegów).
+- **Bramka fali 9** (przed falą 10): `git cat-file -e origin/main:src/view/map/MapControls.tsx && git cat-file -e origin/main:src/view/map/layers/basemap.ts`; **Ty:** panel „Wskaźnik”, suwak, legenda działają na telefonie, wysłany link otwiera ten sam widok.
+
+### Dług (punkt · skąd · priorytet · proponowana fala)
+
+Opus przy planowaniu każdej fali bierze stąd co najmniej 1 punkt albo pisze, dlaczego nie. Rzeczy wpływające na niezawodność nie są długiem i idą od razu (stąd CC12.3).
+
+| Punkt | Skąd | Priorytet | Fala |
+|---|---|---|---|
+| `trackSearch` nie jest wywoływane w wyszukiwarce (SearchDialog) | przegląd #131 | średni | 10 |
+| Mediana wieku to stan „na styczeń” (lata do 2026) – legenda i profil muszą to mówić | sprawdzenie danych #135 | średni | 10 |
+| `update-snapshots.yml` ma domyślną gałąź `main` | audyt 20.10 | wysoki | P (CC12.Z) |
+| `getTooltip` w warstwach kartogramu i miejscowości nic nie robi | przegląd #133 | niski | 10 |
+| Zbędna gałąź `jules-feat/cc5.4b-localities-map-…` (API nie pozwala jej usunąć) | fala 6 | niski | Ty: Branches → kosz |
+| `STAN_PROJEKTU.md` nieaktualny | koniec fali 8 | średni | 9 (Sonnet) |
+| Podgląd Vercel na telefonie: obawa o `setWorkerCount(0)` | fala 6 | średni | bramka 8b (Ty) |
+
 
 ## 2. Prompty – fala 7
 
@@ -494,3 +516,101 @@ Warunki odbioru:
 
 Poza zakresem: tryb ciemny podkładu (później).
 ```
+
+## 5. Prompty – fala 8b (jakość: reguły w CI)
+
+### CC12.1 – Test: kolory tylko z tokenów · K · tor T · fala 8b
+
+```markdown
+Zadanie: CC12.1 – test, który blokuje kolory wpisane na sztywno
+
+Wymaga na main: config/tokens.json, src/styles/tokens.css, src/view/annotation/roughEllipse.ts
+
+Kontekst: ten sam błąd wrócił 3 razy (#109, #122, #133): kolor wpisany w kodzie zamiast tokenu. Łapał go dopiero lokalny skrypt przy scalaniu, a poprawiał przeglądający. Teraz łapie go test w CI, a komunikat mówi, jak poprawić. Kolory wolno zapisać tylko w `config/tokens.json`, `src/styles/tokens.css` (generowany przez `scripts/tokens.mjs`) i `scripts/tokens.mjs`. W `src/` kolory idą z tokenów: klasy Tailwind z `@theme`, `var(--nazwa)` w CSS, w JS `tokensJson.color.<motyw>.<nazwa>` + `parseCssColor` (wzór: `src/view/map/AtlasMap.tsx`, `src/view/map/layers/choropleth.ts`). Jedyne obecne naruszenie: zapasowy `'#E3242B'` w `src/view/annotation/roughEllipse.ts`.
+
+Cel dla użytkownika: brak widocznej zmiany; kolor spoza tokenów zatrzymuje CI z czytelnym komunikatem.
+
+Zakres (tylko te pliki):
+- `scripts/ci/color-rules.mjs` (nowy): `findHardcodedColors(path, text)` → `{ line, match }[]`
+- `tests/unit/color-rules.test.ts` (nowy): przypadki wykrywane i niewykrywane
+- `tests/unit/no-hardcoded-colors.test.ts` (nowy): przechodzi po wszystkich `src/**/*.{ts,tsx,css}` poza dozwolonymi plikami
+- `src/view/annotation/roughEllipse.ts` (tylko: zapasowy kolor z `config/tokens.json` zamiast `'#E3242B'`)
+- `docs/sessions/CC12.1.md`
+
+Warunki odbioru:
+1. Wykrywa: `#abc`, `#aabbcc`, `#aabbccdd` w kodzie; `rgb(`, `rgba(`, `hsl(`, `hsla(` z liczbą w środku; klasy Tailwind `-[#…]` i `-[rgb…]`; tablicę 3–4 liczb we właściwości o nazwie kończącej się na `Color`/`color` (np. `getFillColor: [200, 10, 10]`, `getLineColor: () => [0, 0, 0, 255]`).
+2. Nie wykrywa: `rgb(${c[0]}, ${c[1]}, ${c[2]})` (szablon z tokenów), `var(--kalka)`, tekstu w komentarzach, kotwic i selektorów typu `'#main'`, `#u=1217011`, plików dozwolonych i katalogu `tests/`.
+3. Obecny kod przechodzi (po poprawce `roughEllipse.ts`); zakreślenie dalej ma kolor `korekta` (test).
+4. Komunikat błędu: `Kolor wpisany na sztywno: <plik>:<linia> (<wartość>). Użyj tokenu: klasa Tailwind z @theme, var(--nazwa) albo tokensJson.color.light.<nazwa> + parseCssColor. Zobacz AGENTS.md, sekcja „Zawsze”.`
+5. Test, w którym do danych testowych wstawiony jest kolor w trzech formach (klasa, CSS, `getFillColor`), dostaje 3 trafienia.
+
+Poza zakresem: konfiguracja oxlint, package.json (bez nowych zależności), inne pliki w `src/`.
+```
+
+### CC12.2 – Logika reguł PR · K · tor Q · fala 8b
+
+```markdown
+Zadanie: CC12.2 – logika reguł PR: ID zadania, zakres, pliki zapalne, nowe zależności
+
+Wymaga na main: scripts/ops/merge.sh, AGENTS.md
+
+Kontekst: dziś zakres PR sprawdza tylko lokalny `scripts/ops/merge.sh` (wyrażenie `Zakres[^\n]*\n(.*?)\n\s*\n` na treści issue) i bierze ID zadania wyłącznie z początku tytułu PR. Dlatego 4 PR (#119, #121, #130, #133) przeszły bez kontroli. PR-y Julesa mają w opisie `Fixes #<nr issue>`, a tytuł issue zaczyna się od ID (np. `CC7.4b – …`); gałęzie Julesa (`jules-<liczby>-<hash>`) ID nie zawierają. To zadanie to czysta logika i polecenie czytające plik JSON. Workflow, który zbiera dane z GitHuba i uruchamia polecenie, dopisze Sonnet (CC12.2w).
+
+Cel dla użytkownika: brak widocznej zmiany; za chwilę każdy PR z plikiem spoza zakresu albo bez ID dostanie czerwone CI z komunikatem, co poprawić.
+
+Zakres (tylko te pliki):
+- `scripts/ci/pr-rules.mjs` (nowy): `findTaskId(input)`, `parseScope(issueBody)`, `matchGlob(pattern, path)`, `checkPr(input)` → `{ ok, taskId, errors: string[], warnings: string[] }`
+- `scripts/ci/pr-rules-cli.mjs` (nowy): `node scripts/ci/pr-rules-cli.mjs <wejście.json>`; wypisuje błędy i ostrzeżenia po polsku, kod wyjścia 0 albo 1
+- `tests/unit/pr-rules.test.ts` (nowy)
+- `tests/fixtures/pr-rules/cc7.4b.json` (nowy): prawdziwy przypadek – treść promptu CC7.4b z `docs/FALE.md` jako treść issue + lista plików #132 (w tym `src/view/design/DesignPage.tsx`)
+- `docs/sessions/CC12.2.md`
+
+Wejście (`input`): `{ title, body, branch, labels: string[], files: { filename, status }[], linkedIssue: { number, title, body } | null, zapalne: string[], packageJson: { base, head } | null }`. Wzorce w `zapalne` i w zakresie: `**` = dowolne katalogi, `*` = dowolny fragment nazwy, ścieżka z `/` na końcu = cały katalog. Bez nowych zależności (własne dopasowanie wzorców).
+
+Warunki odbioru:
+1. ID zadania (`CC<liczba>(.<część>)*`): najpierw z tytułu `linkedIssue` (gdy treść PR ma `Fixes|Closes|Resolves|Zamyka #N`), potem z linii `Zadanie: <ID>` w treści, potem z dowolnego miejsca tytułu PR. Brak ID i brak etykiety `sprawdzone` → błąd: „Brak ID zadania. Dodaj w opisie PR linię `Fixes #<numer issue>` albo `Zadanie: CCx.y` (AGENTS.md, sekcja „Pull request”).”
+2. Zakres = ścieżki w odwrotnych apostrofach z listy pod nagłówkiem `Zakres` w treści issue (dopiski typu „(nowy)”, „(tylko: …)” są pomijane). Zawsze dozwolone: `docs/sessions/<ID>.md`. Pliki zrzutów (`*-snapshots/`) dozwolone, ale z ostrzeżeniem. Plik spoza zakresu albo plik usunięty (`status: removed`) → błąd z listą plików, chyba że PR ma etykietę `sprawdzone`.
+3. Plik pasujący do wzorca z `zapalne` bez etykiety `sprawdzone` → błąd: „PR zmienia plik zapalny <plik>. Potrzebny przegląd Sonneta; po przeglądzie dostanie etykietę `sprawdzone`.”
+4. Nowy klucz w `dependencies` albo `devDependencies` (`head` względem `base`) bez etykiety `nowa-zaleznosc` → błąd z nazwą pakietu; sama zmiana wersji nie jest błędem.
+5. Testy na każdy przypadek: ID z `Fixes`, z `Zadanie:`, ze środka tytułu (`feat(view): add YearSlider (CC8.3b)`), brak ID; plik w zakresie / poza / usunięty / katalog z `/`; zapalny z etykietą i bez; zależność nowa i zmiana wersji. Przypadek `cc7.4b.json` daje dokładnie jeden błąd: `src/view/design/DesignPage.tsx` poza zakresem.
+
+Poza zakresem: `.github/` (workflow i lista zapalnych pisze Sonnet), zmiany w `scripts/ops/`.
+```
+
+### CC12.3 – Limit czasu zapytań BDL, zwarte pliki, raport danych · K · tor D2 · fala 8b
+
+```markdown
+Zadanie: CC12.3 – limit czasu zapytań do BDL, zapis plików bez wcięć i raport danych z plików
+
+Wymaga na main: scripts/data/fetch-values.mjs#fetchWithRetry, public/data/values/population.json
+
+Kontekst: `fetchWithRetry` w `scripts/data/fetch-values.mjs` ponawia odpowiedzi 429 i 5xx, ale nie ma limitu czasu, więc zawieszone połączenie trzyma workflow „Fetch data” aż do limitu 135 min. Pliki `public/data/values/<id>.json` są zapisywane z wcięciami (`JSON.stringify(result, null, 2)`, razem ok. 15 MB); strona pobiera plik przy wyborze wskaźnika. `docs/data-report.md` jest ręczny i nieaktualny (opisuje odkrywanie zmiennych z CC6.3). Kształt plików: typ `IndicatorValues` w `src/core/profile/profile.ts`; pliki mają też pola `fetchedAt` i `report`.
+
+Cel dla użytkownika: wskaźniki ładują się szybciej (mniejsze pliki); zawieszone API kończy się czytelnym błędem po kilku minutach, a nie po dwóch godzinach; raport danych zawsze zgodny z plikami.
+
+Zakres (tylko te pliki):
+- `scripts/data/fetch-values.mjs` (tylko: opcja `timeoutMs` w `fetchWithRetry`, domyślnie 30000, przez `AbortSignal.timeout`; zapis bez wcięć)
+- `scripts/data/values-report.mjs` (nowy): `buildValuesReport(files, indicators, units)` → tekst Markdown; uruchomiony bez argumentów zapisuje `docs/data-report.md` z plików `public/data/values/`
+- `tests/unit/fetch-values-timeout.test.ts` (nowy)
+- `tests/unit/values-report.test.ts` (nowy)
+- `docs/data-report.md` (tylko: wynik `node scripts/data/values-report.mjs` na plikach z main)
+- `docs/sessions/CC12.3.md`
+
+Warunki odbioru:
+1. Zapytanie bez odpowiedzi (atrapa `fetch`, która czeka w nieskończoność i reaguje na `signal`) kończy się po `timeoutMs` i jest ponawiane jak błąd 5xx; po ostatniej próbie błąd „Przekroczono limit czasu zapytania (<ms> ms, próby: <n>): <adres bez klucza>”. W teście `timeoutMs: 50` i krótkie odstępy, bez prawdziwej sieci.
+2. Istniejące testy `tests/unit/fetch-values.test.ts` przechodzą bez zmian.
+3. Nowe pliki wartości są zapisywane jako `JSON.stringify(result) + '\n'`; `loadIndicatorValues` czyta taki plik (test na danych syntetycznych).
+4. Raport: tabela „wskaźnik → poziomy (woj./pow./gmi), lata od–do, % jednostek z wartością w ostatnim roku na najniższym poziomie, data pobrania (`fetchedAt`)” + nagłówek z informacją, że plik generuje skrypt. Test na danych syntetycznych; `docs/data-report.md` wygenerowany z plików na main.
+5. Bez sieci w testach; klucz `BDL_CLIENT_ID` nie pojawia się w żadnym komunikacie (test).
+
+Poza zakresem: przepisywanie istniejących plików wartości (zrobi to następne pobranie), workflow.
+```
+
+### Zadania Sonneta (C) – fala P
+
+- **CC12.R – reguły gałęzi** (po upublicznieniu repo): ruleset na `main` przez API: wymagany PR, zakaz force-push i usuwania, scalanie tylko squash (w ustawieniach repo wyłączyć merge commit i rebase), wymagane sprawdzenia `verify` i `security`; tryb strict wyłączony. `zasady-pr` dochodzi jako wymagane po jednej fali obserwacji. Włączyć skanowanie sekretów z blokadą pushu i CodeQL (domyślna konfiguracja).
+- **CC12.2w – workflow „Zasady PR”** (`.github/workflows/pr-rules.yml`, job `zasady-pr`): `pull_request` typy `opened, edited, synchronize, reopened, labeled, unlabeled`; zbiera przez `gh api` tytuł, treść, etykiety, pliki, powiązane issue i oba `package.json`, uruchamia `pr-rules-cli.mjs`. Przy `synchronize` zdejmuje etykietę `sprawdzone` (przegląd dotyczy tylko obejrzanych commitów). Do tego `.github/zapalne.txt` (`.github/**`, `scripts/ops/**`, `scripts/ci/**`, `scripts/data/**`, `src/view/map/AtlasMap.tsx`, `src/view/map/hooks/**`, `src/core/consent/**`, `src/view/consent/**`, `config/**`, `public/data/**`, `.oxlintrc.json`, `playwright.config.ts`, `vitest.config.ts`, `vercel.json`, `AGENTS.md`), `.github/pull_request_template.md` (pierwsza linia `Fixes #<nr issue>`, druga `Zadanie: CCx.y`), etykiety `sprawdzone`, `nowa-zaleznosc`, `aktualizuj-zrzuty`, dopiski do AGENTS.md (UZUPELNIENIE_WORKFLOW §4).
+- **CC12.Z – zrzuty na etykietę**: `update-snapshots.yml` uruchamiany także etykietą `aktualizuj-zrzuty` na PR; odmowa dla `main`; po commicie zdejmuje etykietę i uruchamia CI przez `workflow_dispatch` (commity robota same CI nie uruchamiają, a `workflow_dispatch` – tak). `ci.yml` dostaje `workflow_dispatch`. Bez automatycznego scalania. Po wdrożeniu `snapshots.sh` i `kick-ci.sh` tylko wołają te workflowy.
+- **CC12.D – dane same**: `fetch-data.yml` dostaje `schedule` (ok. 03:10 czasu PL, bez `--skip-existing`), `push` na `main` ze ścieżkami `scripts/data/**`, `config/indicators.json`; po pobraniu test kontraktu (CC6.5b) i liczby kontrolne (suma ludności województw 36–39 mln, 16 województw, ≥ 2 470 gmin); przy zmianach sam otwiera PR z `data/values` i uruchamia CI przez `workflow_dispatch`. Wymaga ustawienia „Allow GitHub Actions to create and approve pull requests”. Zastępuje CC6.5a.
+- **CC12.B – bramki fal**: `scripts/gates/fala-<N>.sh` z komend w §1; `new-task.sh` przed zadaniem fali N uruchamia bramkę fali poprzedniej (kolumna „Fala” w §1) i zwraca `STOP: bramka fali … niespełniona: …`.
+- **CC12.O – obieg i pomiar**: `.claude/agents/obieg.md` (`model: haiku`, narzędzia Bash i Read, treść = OPERACJE §3) i `.claude/agents/recenzent.md` (`model: sonnet`, przegląd wg PROMPTY.md §8, przy SCAL nadaje `sprawdzone`); OPERACJE §1/§3: obieg w nowej sesji albo jako podagent; raport fali z liczbami: `/usage` na start i koniec, wizyty Sonneta planowane/nieplanowane, liczba `STOP` i ich przyczyny.
