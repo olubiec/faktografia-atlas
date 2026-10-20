@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import type { UnitProfile, ProfileIndicatorItem } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import { collectFootnotes } from '../../core/profile/footnotes';
+import { pickHighlight } from '../../core/profile/highlight';
 import { Footnotes } from './Footnotes';
 import { Sheet } from '../ui/Sheet';
 import { Icon } from '../ui/Icon';
@@ -72,6 +73,9 @@ export function ProfileBody({
   // Zbieranie skonsolidowanej listy numerowanych przypisów dla profilu
   const footnotes = collectFootnotes(profile.indicators, units);
 
+  // Wyznaczenie zakreślenia dla wskaźnika z najlepszym wynikiem w województwie
+  const highlightedIndicatorId = pickHighlight(profile.indicators);
+
   return (
     <div className="space-y-4">
       {/* Nagłówek */}
@@ -118,6 +122,7 @@ export function ProfileBody({
                     item={item}
                     units={units}
                     footnotes={footnotes}
+                    isHighlighted={item.indicatorId === highlightedIndicatorId}
                   />
                 ))}
               </div>

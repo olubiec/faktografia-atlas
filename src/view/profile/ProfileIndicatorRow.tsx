@@ -3,11 +3,13 @@ import type { Unit } from '../../core/units/types';
 import { formatValue } from '../../core/format/number';
 import { collectFootnotes, formatParentFootnoteText, type Footnote } from '../../core/profile/footnotes';
 import { Sparkline } from './Sparkline';
+import { Annotate } from '../annotation/Annotate';
 
 export interface ProfileIndicatorRowProps {
   item: ProfileIndicatorItem;
   units: Unit[];
   footnotes?: Footnote[];
+  isHighlighted?: boolean;
 }
 
 /**
@@ -15,7 +17,12 @@ export interface ProfileIndicatorRowProps {
  * Wyświetla nazwę wskaźnika wraz z odnośnikami przypisów (sup), mały wykres sparkline,
  * sformatowaną wartość z jednostką, rok oraz miejsce w kraju.
  */
-export function ProfileIndicatorRow({ item, units, footnotes }: ProfileIndicatorRowProps) {
+export function ProfileIndicatorRow({
+  item,
+  units,
+  footnotes,
+  isHighlighted = false,
+}: ProfileIndicatorRowProps) {
   const { indicator, value, year, rankNational, totalNational, series } = item;
 
   const formattedVal = formatValue(value, indicator.unit);
@@ -43,8 +50,13 @@ export function ProfileIndicatorRow({ item, units, footnotes }: ProfileIndicator
 
   const hasRank = value !== null && rankNational !== null && totalNational > 0;
 
+  const rankText = hasRank ? `${rankNational}. miejsce wśród ${totalNational}` : null;
+
   return (
-    <div className="py-3 border-b border-linia last:border-b-0 space-y-1">
+    <div
+      className="py-3 border-b border-linia last:border-b-0 space-y-1"
+      data-highlight={isHighlighted ? 'true' : undefined}
+    >
       <div className="flex justify-between items-center gap-2">
         <span className="text-sm font-normal text-tusz break-words min-w-0 flex-1">
           {indicator.name}
@@ -72,12 +84,16 @@ export function ProfileIndicatorRow({ item, units, footnotes }: ProfileIndicator
 
       <div className="flex flex-wrap items-center gap-x-2 text-xs text-olowek font-mono">
         {year !== null && <span>{year}</span>}
-        {hasRank && (
+        {hasRank && rankText && (
           <>
             {year !== null && <span>•</span>}
-            <span>
-              {rankNational}. miejsce wśród {totalNational}
-            </span>
+            {isHighlighted ? (
+              <Annotate type="highlight" show={true}>
+                <span>{rankText}</span>
+              </Annotate>
+            ) : (
+              <span>{rankText}</span>
+            )}
           </>
         )}
       </div>
