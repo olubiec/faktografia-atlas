@@ -49,7 +49,7 @@ Opus przy planowaniu każdej fali bierze stąd co najmniej 1 punkt albo pisze, d
 | `trackSearch` nie jest wywoływane w wyszukiwarce | przegląd #131 | średni | 10 |
 | Mediana wieku to stan „na styczeń” (lata do 2026) – legenda i profil muszą to mówić | sprawdzenie danych #135 | średni | 9 (CC13.T: `howToRead`) |
 | `getTooltip` w warstwach nic nie robi | przegląd #133 | wysoki | 9 (CC13.B: dymek) |
-| Niestabilny test e2e w CI (ok. 1 na 3 przebiegi) | fala P | wysoki | 9 (Sonnet: nazwa z adnotacji → poprawka) |
+| Niestabilny test e2e w CI (ok. 1 na 3 przebiegi): `tests/e2e/interactive.spec.ts` „axe accessibility check in light and dark themes” (adnotacja #158) – prawdopodobnie axe uruchamiany w trakcie animacji zmiany motywu | fala P | wysoki | 9 (Sonnet w CC13.A pkt 5: czekać na koniec przejścia motywu / wyłączyć animacje w teście) |
 | Adres strony (Vercel) nieznany w repo | 20.10 | wysoki | Ty: podaj adres; Sonnet wpisuje do README i OPERACJE §4 |
 | Zbędna gałąź `jules-feat/cc5.4b-localities-map-…` | fala 6 | niski | Ty: Branches → kosz |
 | `STAN_PROJEKTU.md` nieaktualny | koniec fali 8 | średni | 9 (Sonnet na końcu fali) |
