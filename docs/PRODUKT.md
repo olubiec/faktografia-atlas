@@ -18,6 +18,7 @@ Strona po falach 1–8 przechodziła wszystkie testy, ale jako produkt nie dzia�
 | Nie da się zobaczyć wskaźnika jako zestawienia miejsc | Brak rankingu i brak „pokaż na mapie” w profilu | Funkcji nie było w planie, choć jest na makiecie 03 |
 | Wykresy nieczytelne, przypisy sklejone („ludności¹³”, „powiatu powiat”) | Brak lat i skali; numery przypisów bez separatora; nazwa jednostki już zawiera „powiat” | Testy sprawdzały obecność, nie czytelność |
 | Brak objaśnień wskaźników | — | Nie było w planie |
+| „Wałcz” dwa razy w powiecie wałeckim z różną ludnością | To dwie gminy: miejska (miasto) i wiejska (wokół miasta); 143 takie pary w Polsce. Strona pokazuje samą nazwę | Nikt nie sprawdził nazw na prawdziwych danych |
 
 **Wniosek:** małe zadania z zielonymi testami nie składają się same w dobry produkt. Od teraz: (1) budujemy po ekranie, nie po kawałku; (2) ekran składa i ogląda Sonnet przed scaleniem; (3) szybkość i wygląd mają mierzalne progi; (4) makiety są warunkiem odbioru, nie inspiracją.
 
@@ -63,7 +64,7 @@ Osoba ciekawa swojej okolicy (mieszkaniec, dziennikarz, uczeń, samorządowiec),
 ## 4. Profil miejsca (komputer) – makieta 03
 
 - Panel po prawej **obok mapy** (440 px), mapa się zwęża, **nic nie jest nałożone na mapę**. Zamknięcie: ×, Escape; mapa wraca do pełnej szerokości bez zmiany przybliżenia.
-- Nagłówek: „Województwo małopolskie” (bez powtórzeń typu „powiat powiat”), TERYT.
+- Nagłówek: „Województwo małopolskie”, „Gmina miejska Wałcz” (bez powtórzeń typu „powiat powiat”), TERYT. **Wszędzie, gdzie widać nazwę gminy, widać jej rodzaj**: „Wałcz (miasto)”, „Wałcz (gmina wiejska)”.
 - Zakładki: **Przegląd** · **Powiaty (22)** / **Gminy (n)** (lista jednostek niższego poziomu z wartością bieżącego wskaźnika) · **Porównaj** (fala 10; do tego czasu zakładka nieaktywna z napisem „wkrótce”).
 - **Przegląd** (od góry):
   1. bieżący wskaźnik: nazwa, rok, **duża liczba**, miejsce w rankingu (jedno zakreślenie wg STYL.md §7);

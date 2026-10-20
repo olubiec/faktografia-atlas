@@ -13,7 +13,7 @@ Fale 1–8b i P są scalone (#1–#157). Zasady pracy po zmianie: `docs/OPERACJE
 
 **Nowy podział pracy w fali 9:** Jules robi tylko **osobne klocki** (nowe pliki, logika, komponenty na danych syntetycznych). **Ekran składa Sonnet** (zadania CC13.A–M) w swojej sesji, oglądając działającą stronę (PRODUKT.md §8). Jules nie dotyka `AtlasMap.tsx`, `Home.tsx`, `ProfileSheet*.tsx`, hooków mapy.
 
-Tory fali 9 (rozłączne pliki): **D2** dane profili, **E** objaśnienia, **W** wykres, **U** ranking, **S** wyszukiwarka, **P** przypisy, **M** ekran (tylko Sonnet).
+Tory fali 9 (rozłączne pliki): **D2** dane profili, **E** objaśnienia, **W** wykres, **U** ranking, **S** wyszukiwarka (okno wyszukiwania), **P** przypisy, **N** nazwy jednostek, **M** ekran (tylko Sonnet).
 
 | Fala | Zadanie | Kto | Tor | Rusza, gdy | Kto sprawdza PR |
 |---|---|---|---|---|---|
@@ -23,6 +23,7 @@ Tory fali 9 (rozłączne pliki): **D2** dane profili, **E** objaśnienia, **W** 
 | 9 | CC13.4 – ranking jednostek + słupki (RankingBars) | J | U | teraz | Haiku |
 | 9 | CC13.5a – wyszukiwarka zamyka się krzyżykiem | J | S | teraz | Haiku |
 | 9 | CC13.5b – przypisy: separator i „powiat powiat” | J | P | teraz | Haiku |
+| 9 | CC13.6 – nazwy gmin z rodzajem („Wałcz (miasto)” / „Wałcz (gmina wiejska)”) | J | N | teraz | Haiku |
 | 9 | CC13.A – szybkość: dane poza kodem, profil z jednego pliku, progi w CI | C (Sonnet) | M | od razu (część profilu po CC13.1) | Sonnet + zrzuty |
 | 9 | CC13.B – ekran główny wg makiety 02 (panel wskaźnika, kolory na wejściu, dymek, najwyżej/najniżej) | C (Sonnet) | M | CC13.A, CC13.4 scalone | Sonnet + zrzuty + Ty |
 | 9 | CC13.C – profil obok mapy wg makiety 03 (zakładki, ranking, rozwijane wskaźniki, „Pokaż na mapie”) | C (Sonnet) | M | CC13.B, CC13.2, CC13.3, CC13.5b scalone | Sonnet + zrzuty + Ty |
@@ -784,6 +785,34 @@ Warunki odbioru:
 Poza zakresem: nowy układ profilu (CC13.C).
 ```
 
+### CC13.6 – Nazwy gmin z rodzajem · K · tor N · fala 9
+
+```markdown
+Zadanie: CC13.6 – nazwy gmin z rodzajem, żeby gminy o tej samej nazwie się nie myliły
+
+Wymaga na main: src/core/units/units.ts#levelOf, src/view/map/Breadcrumbs.tsx#Breadcrumbs, src/view/search/SearchDialog.tsx#SearchDialog
+
+Kontekst: w Polsce 143 pary gmin mają tę samą nazwę w jednym powiecie, np. „Wałcz” (TERYT 3217011, gmina miejska – samo miasto) i „Wałcz” (3217052, gmina wiejska – tereny wokół miasta). W `public/data/units.json` obie mają `name: "Wałcz"`, więc w wyszukiwarce, okruszkach i profilu wyglądają jak duplikat z różnymi liczbami. Rodzaj gminy jest w ostatniej cyfrze 7-cyfrowego TERYT: 1 – gmina miejska, 2 – gmina wiejska, 3 – gmina miejsko-wiejska. Nazwy powiatów mają już słowo „powiat”, województw – nie mają słowa „województwo”.
+
+Cel dla użytkownika: wszędzie, gdzie widać nazwę gminy, widać też jej rodzaj: „Wałcz (miasto)”, „Wałcz (gmina wiejska)”, „Zakopane (miasto)”, „Krynica-Zdrój (gmina miejsko-wiejska)”.
+
+Zakres (tylko te pliki):
+- `src/core/units/label.ts` (nowy): `gminaKind(teryt)` → `'miasto' | 'gmina wiejska' | 'gmina miejsko-wiejska' | null`; `unitLabel(unit, { short? })` → nazwa do wyświetlenia (gminy z rodzajem w nawiasie; `short: true` – bez nawiasu, gdy w tym samym powiecie nie ma drugiej gminy o tej nazwie); `unitTitle(unit)` → nagłówek profilu: „Gmina miejska Wałcz”, „Gmina wiejska Wałcz”, „Powiat wałecki”, „Województwo zachodniopomorskie”
+- `src/view/search/SearchDialog.tsx` (tylko: wyświetlana nazwa wyników jednostek przez `unitLabel`)
+- `src/view/map/Breadcrumbs.tsx` (tylko: nazwa przez `unitLabel`)
+- `tests/unit/unit-label.test.ts` (nowy)
+- `docs/sessions/CC13.6.md`
+
+Warunki odbioru:
+1. Na danych z `public/data/units.json`: żadne dwie gminy w tym samym powiecie nie mają tej samej etykiety `unitLabel` (test na wszystkich 2479 gminach).
+2. Wałcz 3217011 → „Wałcz (miasto)”, 3217052 → „Wałcz (gmina wiejska)”; `unitTitle` jak w Zakresie; powiat i województwo bez zmian w `unitLabel`.
+3. Wyszukiwarka: „wałcz” pokazuje dwa wyniki z różnymi etykietami (test DOM albo e2e).
+4. Okruszki pokazują etykietę z rodzajem; istniejące testy przechodzą bez zmian (jeśli któryś sprawdza dokładną nazwę gminy w okruszkach lub wynikach – napisz w PR i zatrzymaj się).
+5. Bez zmian /design i zrzutów.
+
+Poza zakresem: profil, panel mapy, ranking (Sonnet użyje `unitLabel`/`unitTitle` w CC13.B–C), dane `units.json`.
+```
+
 ## 7. Zadania Sonneta – fala 9 (składanie ekranu; nie dla Julesa)
 
 Każde: jedna gałąź, jeden PR, **przed scaleniem** Sonnet uruchamia stronę (`pnpm build && pnpm exec vite preview`, Playwright z przeglądarką z `/opt/pw-browsers`), przechodzi ścieżkę z PRODUKT.md §3–§5 na 1440×900 i 390×844, ogląda zrzuty i porównuje z makietą; w PR opisuje różnice. Testy e2e piszą się na `window.__atlas` i DOM (AGENTS.md).
@@ -794,8 +823,8 @@ Każde: jedna gałąź, jeden PR, **przed scaleniem** Sonnet uruchamia stronę (
   3. `public/data/values/*.json` przepisane bez wcięć (jednorazowo skryptem albo „Fetch data” z `refresh=true`); „Fetch data” po pobraniu uruchamia też `build-profiles.mjs` i dołącza `public/data/profiles/` do PR.
   4. `tests/e2e/perf-budget.spec.ts`: na wejściu brak żądań `values/*` poza wskaźnikiem domyślnym i brak `profiles/*`; wybór jednostki = dokładnie 1 żądanie `profiles/*`; żaden plik JS > 2,5 MB przed kompresją; zmiana wskaźnika = najwyżej 1 żądanie.
   5. Nazwa niestabilnego testu e2e z adnotacji (od #155) → poprawka albo zgłoszenie.
-- **CC13.B – ekran główny wg makiety 02 i PRODUKT.md §3** (tor M): układ (bez dużego nagłówka obok mapy; panel ≈ 400 px po lewej, mapa resztą szerokości), domyślny wskaźnik gęstość zaludnienia + poziom województwa, `IndicatorPicker` pod nazwą wskaźnika, przełącznik poziomu, `Legend`/`buildLegend` z opisem słownym, `YearSlider`, „Najwyżej / najniżej” (`rankUnits`/`topBottom` + `RankingBars`), dymek po najechaniu (zwykły tekst, „Otwórz profil”), (?) z `IndicatorInfo`; okruszki na mapie zamiast listy powiatów nachodzącej na mapę. Test `tests/e2e/main-screen.spec.ts`: na wejściu `__atlas.choropleth.indicatorId === 'density'`; zmiana wskaźnika i roku zmienia `?i=`/`?y=`; najechanie pokazuje dymek; brak nachodzenia (prostokąty panelu, mapy i nagłówka się nie przecinają). Zrzuty /design odświeżone etykietą.
-- **CC13.C – profil obok mapy wg makiety 03 i PRODUKT.md §4** (tor M): panel 440 px w układzie (mapa się zwęża, nic na mapie), zakładki Przegląd / Powiaty|Gminy / Porównaj (nieaktywna, „wkrótce”), bieżący wskaźnik z dużą liczbą i jednym zakreśleniem, `RankingBars` jednostek tego poziomu, grupy wskaźników jako rozwijane wiersze (`TrendChart` + `IndicatorInfo variant="inline"` + „Pokaż na mapie”), „Kopiuj link”. Test `tests/e2e/profile-panel.spec.ts`: otwarcie nie zmienia przybliżenia; „Pokaż na mapie” zmienia `__atlas.choropleth.indicatorId`; zamknięcie przywraca pełną szerokość; brak nachodzenia.
+- **CC13.B – ekran główny wg makiety 02 i PRODUKT.md §3** (tor M): układ (bez dużego nagłówka obok mapy; panel ≈ 400 px po lewej, mapa resztą szerokości), domyślny wskaźnik gęstość zaludnienia + poziom województwa, `IndicatorPicker` pod nazwą wskaźnika, przełącznik poziomu, `Legend`/`buildLegend` z opisem słownym, `YearSlider`, „Najwyżej / najniżej” (`rankUnits`/`topBottom` + `RankingBars`), dymek po najechaniu (zwykły tekst, „Otwórz profil”), (?) z `IndicatorInfo`; okruszki na mapie zamiast listy powiatów nachodzącej na mapę; wszystkie nazwy przez `unitLabel` (CC13.6). Test `tests/e2e/main-screen.spec.ts`: na wejściu `__atlas.choropleth.indicatorId === 'density'`; zmiana wskaźnika i roku zmienia `?i=`/`?y=`; najechanie pokazuje dymek; brak nachodzenia (prostokąty panelu, mapy i nagłówka się nie przecinają). Zrzuty /design odświeżone etykietą.
+- **CC13.C – profil obok mapy wg makiety 03 i PRODUKT.md §4** (tor M): panel 440 px w układzie (mapa się zwęża, nic na mapie), zakładki Przegląd / Powiaty|Gminy / Porównaj (nieaktywna, „wkrótce”), bieżący wskaźnik z dużą liczbą i jednym zakreśleniem, `RankingBars` jednostek tego poziomu, grupy wskaźników jako rozwijane wiersze (`TrendChart` + `IndicatorInfo variant="inline"` + „Pokaż na mapie”), „Kopiuj link”; nagłówek przez `unitTitle`, nazwy w rankingu przez `unitLabel` (CC13.6). Test `tests/e2e/profile-panel.spec.ts`: otwarcie nie zmienia przybliżenia; „Pokaż na mapie” zmienia `__atlas.choropleth.indicatorId`; zamknięcie przywraca pełną szerokość; brak nachodzenia.
 - **CC13.M – telefon wg makiety 04 i PRODUKT.md §5** (tor M): pasek wskaźnika na dole, arkusz z panelem wskaźnika, profil 40% wysokości z przeciąganiem; test 390×844 (brak poziomego przewijania, pola ≥ 44 px, arkusze się nie nakładają).
 - **CC13.T – treść objaśnień** (tor E): polecenie dla Gemini z OPERACJE §7 dla 20 wskaźników → Sonnet otwiera każde źródło, poprawia, pilnuje limitów i uczciwych porównań (np. bezrobocie rejestrowane ≠ BAEL) → **właściciel akceptuje** listę w PR (tabela: wskaźnik → `short`) → `public/data/explanations.json`.
 - **Na koniec fali (Sonnet):** `scripts/gates/fala-9.sh` przechodzi, `STAN_PROJEKTU.md` zaktualizowany, tabela pomiaru (OPERACJE §11), prośba do właściciela o test z OPERACJE §4.
