@@ -40,6 +40,18 @@ if [ -n "$REQ" ] && [ "$REQ" != "nic" ]; then
   done
 fi
 
+# Bramka fali: zadanie fali 9 wymaga bramki 8b, fali 10 – bramki 9 (komendy w scripts/gates/, zasady w docs/FALE.md §1)
+WAVE="$(git -C "$ROOT" show origin/main:docs/FALE.md | sed -n "s/^| *\([0-9A-Za-z]*\) *| *$(printf '%s' "$ID" | sed 's/[.]/\\./g') .*/\1/p" | head -n1)"
+case "$WAVE" in
+  9)  GATE=fala-8b.sh ;;
+  10) GATE=fala-9.sh ;;
+  *)  GATE="" ;;
+esac
+if [ -n "$GATE" ]; then
+  [ -f "$ROOT/scripts/gates/$GATE" ] || die "brak scripts/gates/$GATE (zsynchronizuj main: OPERACJE.md §3 krok 1)"
+  GERR="$(bash "$ROOT/scripts/gates/$GATE" 2>&1 >/dev/null)" || die "zadanie $ID (fala $WAVE) czeka na bramkę – ${GERR#STOP: }"
+fi
+
 # Duplikat: otwarte issue albo PR z tym samym ID w tytule
 DUP="$(gh api "repos/$REPO/issues?state=open&per_page=100" --jq ".[] | select(.title | startswith(\"$ID \")) | .number" | head -n1)"
 [ -z "$DUP" ] || die "zadanie $ID już jest otwarte (#$DUP)"
