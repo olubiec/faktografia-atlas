@@ -12,6 +12,15 @@ export interface Footnote {
 export function formatParentFootnoteText(fromParentTeryt: string, units: Unit[]): string {
   const parentUnit = units.find((u) => u.teryt === fromParentTeryt);
   if (parentUnit) {
+    const name = parentUnit.name;
+    if (
+      name.startsWith('powiat ') ||
+      name.startsWith('gmina ') ||
+      name.startsWith('miasto ') ||
+      name.startsWith('województwo ')
+    ) {
+      return `dane dla: ${name}`;
+    }
     const levelWord =
       parentUnit.level === 'pow'
         ? 'powiatu'
@@ -20,7 +29,7 @@ export function formatParentFootnoteText(fromParentTeryt: string, units: Unit[])
           : parentUnit.level === 'gmi'
             ? 'gminy'
             : 'jednostki';
-    return `dane dla ${levelWord} ${parentUnit.name}`;
+    return `dane dla ${levelWord} ${name}`;
   }
   return `dane dla ${fromParentTeryt}`;
 }
