@@ -73,6 +73,8 @@ git push poza skryptami; zamykania PR; zmiany workflowów. Każdy STOP, którego
 
 Haiku można wołać, kiedy chcesz („Haiku, krok z §3”). Jedno wywołanie = jeden obieg, bez pętli.
 
+**Jak uruchomić obieg bez `/model`:** nowa sesja Claude Code w katalogu repo i polecenie „Użyj podagenta `obieg`” (definicja: `.claude/agents/obieg.md`, model Haiku, treść = ramka wyżej). Przegląd PR: „Użyj podagenta `recenzent` dla PR #N” (`.claude/agents/recenzent.md`, model Sonnet; przy SCAL nadaje etykietę `sprawdzone`). Jeśli Twoja wersja Claude Code nie wczytuje podagentów, wklej treść pliku do nowej sesji.
+
 ---
 
 ## 4. Ty sam: jak sprawdzić, czy coś jest gotowe (aplikacja GitHub na telefonie)
@@ -176,3 +178,22 @@ Nie dawaj Gemini: sekretów (klucz BDL), decyzji o scalaniu, pisania kodu do rep
 2. **Scalasz sam** zielone PR z kolumną „Haiku”, według listy z §4 (bez Claude'a).
 3. **Wysyłasz sam:** issue → tytuł = pierwsza linia promptu z `FALE.md`, treść = prompt + wspólny blok z PROMPTY.md §5, etykieta `jules`. Przed wysłaniem otwórz na GitHubie pliki z linii `Wymaga na main:` – muszą istnieć.
 4. **Tryb awaryjny bez Claude'a:** PROMPTY.md §9 (Gemini jako Architekt zastępczy; tylko zadania K).
+
+
+---
+
+## 11. Pomiar fali (wypełnia Sonnet na końcu każdej fali, wpis do `STAN_PROJEKTU.md`)
+
+Bez liczb nie wiemy, czy ten system oszczędza limity. Na początku i na końcu fali wpisz wynik `/usage` (Claude Code) i uzupełnij:
+
+| Pole | Wartość |
+|---|---|
+| Fala, daty | |
+| `/usage` start → koniec (Opus / Sonnet / Haiku) | |
+| Zadania Julesa wysłane / sesje Julesa zużyte | |
+| PR scalone / czerwone CI / rerun / odświeżenia zrzutów | |
+| Wizyty Sonneta: planowane / nieplanowane (powód każdej nieplanowanej) | |
+| Liczba `STOP` i przyczyny | |
+| Błąd powtórzony 2× → zadanie reguły w CI (numer) | |
+
+Cel po dwóch falach: ≤ 1 nieplanowana wizyta Sonneta na falę, 0 PR scalonych bez kontroli zakresu, 0 fal ruszonych przy niespełnionej bramce.
