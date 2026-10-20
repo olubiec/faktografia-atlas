@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Odświeża zrzuty wzorcowe /design na gałęzi PR (workflow "Update snapshots"; to samo robi etykieta `aktualizuj-zrzuty`).
+# Odświeża zrzuty wzorcowe /design na gałęzi PR (workflow "Update snapshots"), potem uruchamia CI.
 # Tylko gdy padł krok "E2E tests" w PR, który celowo zmienia /design. Użycie: scripts/ops/snapshots.sh 107
 source "$(dirname "$0")/lib.sh"
 PR="${1:?numer PR}"
@@ -13,10 +13,7 @@ for _ in $(seq 1 22); do
   [ "$RID" != "$BEFORE" ] || continue
   if [ "$RST" = "completed" ]; then
     [ "$RCON" = "success" ] || die "Update snapshots zakończył się: $RCON – eskalacja"
-    echo "Zrzuty odświeżone na $BR (workflow sam uruchomił CI)."
-    sleep 20
-    [ -n "$(ci_state "$(pr_field "$PR" .head.sha)")" ] || exec "$(dirname "$0")/kick-ci.sh" "$PR"
-    echo "Teraz: scripts/ops/wait-ci.sh $PR"; exit 0
+    echo "Zrzuty odświeżone na $BR."; exec "$(dirname "$0")/kick-ci.sh" "$PR"
   fi
 done
 die "Update snapshots trwa za długo – sprawdź później w Actions"

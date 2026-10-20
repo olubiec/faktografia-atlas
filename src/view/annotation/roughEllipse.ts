@@ -1,7 +1,6 @@
 // Helper do rysowania owalu roughjs wokół prostokąta (np. wybranej jednostki na mapie).
 
 import rough from 'roughjs';
-import tokensJson from '../../../config/tokens.json';
 
 export interface BBox {
   x: number;
@@ -24,7 +23,7 @@ function getKorektaColor(): string {
       .trim();
     if (computed) return computed;
   }
-  return tokensJson.color.light.korekta;
+  return '#E3242B';
 }
 
 export function roughEllipse(

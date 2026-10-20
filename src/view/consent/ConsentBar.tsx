@@ -37,14 +37,8 @@ export function ConsentBar({ storage }: ConsentBarProps) {
       aria-label="Zgoda na analitykę"
       className="fixed bottom-0 inset-x-0 z-40 bg-arkusz text-tusz border-t border-linia p-4 flex flex-col sm:flex-row items-center justify-between gap-4 motion-reduce:transition-none transition-all duration-200"
     >
-      <p className="text-sm text-tusz font-normal m-0 text-center sm:text-left flex items-center gap-1 flex-wrap justify-center sm:justify-start">
-        <span>Czy możemy liczyć anonimowo, czego szukasz?</span>
-        <a
-          href="/prywatnosc"
-          className="underline hover:text-olowek focus:outline-none focus:ring-2 focus:ring-tusz inline-flex items-center min-h-[44px] min-w-[44px] justify-center text-sm font-medium"
-        >
-          Więcej
-        </a>
+      <p className="text-sm text-tusz font-normal m-0 text-center sm:text-left">
+        Czy możemy liczyć anonimowo, czego szukasz?
       </p>
       <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center sm:justify-end">
         <button
