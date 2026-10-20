@@ -24,6 +24,8 @@ import { useMapSelection } from './hooks/useMapSelection';
 import { useMapViewState } from './hooks/useMapViewState';
 import { useMapColors } from './hooks/useMapColors';
 import { useChoropleth } from './hooks/useChoropleth';
+import { useProfile } from './hooks/useProfile';
+import { ProfilePortal } from './ProfilePortal';
 
 registerLayerFactory(localitiesLayerFactory);
 registerLayerFactory(choroplethLayerFactory);
@@ -76,6 +78,7 @@ export function AtlasMap() {
   } = useMapViewState(drillState.bbox);
 
   const choroplethData = useChoropleth(drillState, unitsData as Unit[]);
+  const { profile, isOpen: profileOpen, closeProfile } = useProfile(selectedTeryt, unitsData as Unit[]);
 
   const extendedDrillState = useMemo(() => {
     return {
@@ -110,8 +113,9 @@ export function AtlasMap() {
             classes: choroplethData.classes,
           }
         : null,
+      profileOpen,
     };
-  }, [isReady, layers, drillState.selected, currentViewState, theme, choroplethData]);
+  }, [isReady, layers, drillState.selected, currentViewState, theme, choroplethData, profileOpen]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -183,6 +187,13 @@ export function AtlasMap() {
       >
         <DeckGLOverlay layers={layers} />
       </Map>
+
+      <ProfilePortal
+        profile={profile}
+        units={unitsData as Unit[]}
+        isOpen={profileOpen}
+        onClose={closeProfile}
+      />
     </div>
   );
 }

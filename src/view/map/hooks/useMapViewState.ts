@@ -10,6 +10,9 @@ export function useMapViewState(drillBbox?: [number, number, number, number] | n
   const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [localities, setLocalities] = useState<Locality[]>([]);
   const localityTargetRef = useRef<ViewState | null>(null);
+  // Dla którego obszaru widok został już dopasowany. Sama zmiana rozmiaru kontenera (np. otwarcie
+  // arkusza profilu obok mapy) nie może resetować przybliżenia ani przesunięcia ustawionego przez użytkownika.
+  const fittedKeyRef = useRef<string | null>(null);
 
   const bounds = useMemo(() => countryBounds(unitsData as Unit[]), []);
   const limits = useMemo(() => mapLimits(bounds), [bounds]);
@@ -40,13 +43,16 @@ export function useMapViewState(drillBbox?: [number, number, number, number] | n
       const { clientWidth, clientHeight } = containerRef.current;
       if (clientWidth > 0 && clientHeight > 0) {
         setDimensions({ width: clientWidth, height: clientHeight });
+        const key = JSON.stringify(drillBbox ?? null);
         if (localityTargetRef.current) {
           setCurrentViewState(localityTargetRef.current);
           localityTargetRef.current = null;
-        } else {
+          fittedKeyRef.current = key;
+        } else if (fittedKeyRef.current !== key) {
           const activeBbox = drillBbox ?? bounds;
           const init = initialViewState(activeBbox, clientWidth, clientHeight);
           setCurrentViewState(init);
+          fittedKeyRef.current = key;
         }
       }
     };
