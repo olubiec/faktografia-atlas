@@ -50,7 +50,9 @@ export function ProfileIndicatorRow({
 
   const hasRank = value !== null && rankNational !== null && totalNational > 0;
 
-  const content = (
+  const rankText = hasRank ? `${rankNational}. miejsce wśród ${totalNational}` : null;
+
+  return (
     <div
       className="py-3 border-b border-linia last:border-b-0 space-y-1"
       data-highlight={isHighlighted ? 'true' : undefined}
@@ -82,25 +84,19 @@ export function ProfileIndicatorRow({
 
       <div className="flex flex-wrap items-center gap-x-2 text-xs text-olowek font-mono">
         {year !== null && <span>{year}</span>}
-        {hasRank && (
+        {hasRank && rankText && (
           <>
             {year !== null && <span>•</span>}
-            <span>
-              {rankNational}. miejsce wśród {totalNational}
-            </span>
+            {isHighlighted ? (
+              <Annotate type="highlight" show={true}>
+                <span>{rankText}</span>
+              </Annotate>
+            ) : (
+              <span>{rankText}</span>
+            )}
           </>
         )}
       </div>
     </div>
   );
-
-  if (isHighlighted) {
-    return (
-      <Annotate type="highlight" show={true} as="div">
-        {content}
-      </Annotate>
-    );
-  }
-
-  return content;
 }
