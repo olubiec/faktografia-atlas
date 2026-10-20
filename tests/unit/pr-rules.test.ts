@@ -35,6 +35,18 @@ describe('pr-rules', () => {
       expect(findTaskId(input)).toBe('CC8.3b');
     });
 
+    it('keeps hyphenated parts of the ID (CC8.2a-2)', () => {
+      expect(
+        findTaskId({
+          title: 'feat(map): render choropleth',
+          body: 'Fixes #126',
+          linkedIssue: { number: 126, title: 'CC8.2a-2 – Warstwa kartogramu na mapie', body: '' }
+        })
+      ).toBe('CC8.2a-2');
+      expect(findTaskId({ title: 'feat(map): warstwa (CC8.2a-1)', body: '', linkedIssue: null })).toBe('CC8.2a-1');
+      expect(findTaskId({ title: 'x', body: 'Zadanie: CC8.2a-2 – opis', linkedIssue: null })).toBe('CC8.2a-2');
+    });
+
     it('returns null when no task ID is present', () => {
       const input = {
         title: 'docs: update readme',

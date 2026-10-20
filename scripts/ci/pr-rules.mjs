@@ -14,17 +14,17 @@ export function findTaskId(input) {
 
   const fixesRegex = /\b(?:Fixes|Closes|Resolves|Zamyka)\s+#\d+\b/i;
   if (input.body && fixesRegex.test(input.body) && input.linkedIssue?.title) {
-    const match = input.linkedIssue.title.match(/\bCC\d+(?:\.[a-zA-Z0-9]+)*\b/i);
+    const match = input.linkedIssue.title.match(/\bCC\d+(?:\.[a-zA-Z0-9-]+)*\b/i);
     if (match) return match[0];
   }
 
   if (input.body) {
-    const taskLineMatch = input.body.match(/Zadanie:\s*(CC\d+(?:\.[a-zA-Z0-9]+)*)/i);
+    const taskLineMatch = input.body.match(/Zadanie:\s*(CC\d+(?:\.[a-zA-Z0-9-]+)*)/i);
     if (taskLineMatch) return taskLineMatch[1];
   }
 
   if (input.title) {
-    const titleMatch = input.title.match(/\bCC\d+(?:\.[a-zA-Z0-9]+)*\b/i);
+    const titleMatch = input.title.match(/\bCC\d+(?:\.[a-zA-Z0-9-]+)*\b/i);
     if (titleMatch) return titleMatch[0];
   }
 
