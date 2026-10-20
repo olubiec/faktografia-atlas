@@ -129,6 +129,10 @@ Wynik napisz jednym zdaniem w czacie („fala 8 OK” albo „profil zasłania m
 | Jules zmienił zrzuty wzorcowe sam | łamie AGENTS.md | `merge.sh` tylko ostrzega; CI zielone = OK | — |
 | scalenie starej gałęzi cofnęło pliki | brak świeżego pobrania | nie dotyczy: `merge.sh` sprawdza na świeżo | przywrócenie |
 | „Update snapshots” kończy się kodem 128 | git w kontenerze | → Sonnet (naprawione w #110) | — |
+| `verify` czerwone, krok E2E, PR nie dotyka aplikacji (tylko docs, scripts, .github), po `rerun.sh` zielone | niestabilny test e2e w CI (zdarza się ok. co trzeciego przebiegu; od 20.10 adnotacje pokazują nazwę testu) | raz `rerun.sh`; jeśli znów czerwone, `git merge origin/main` w PR (świeży przebieg) i dopiero potem Sonnet | Sonnet: gdy nazwa testu powtarza się, zadanie naprawy testu |
+| `merge.sh`: „usuwa pliki z main” w PR Julesa, choć zadanie niczego nie usuwa | Jules zrobił ostatni commit z nieaktualnej kopii roboczej (#153 kasował 23 pliki) | NIE scalaj; → Sonnet | Sonnet: przywraca pliki z `origin/main` (`git checkout origin/main -- <plik>` dla każdego spoza Zakresu), commit, `wait-ci.sh`, dopiero `merge.sh` |
+| sprawdzenie `zasady-pr` czerwone | brak ID zadania (`Fixes #N`), plik poza Zakresem, plik zapalny bez etykiety `sprawdzone` albo nowa zależność bez `nowa-zaleznosc` (komunikat mówi, co) | brak ID / poza zakresem: napisz w PR, żeby Jules poprawił; zapalny → Sonnet | Sonnet: po przeglądzie etykieta `sprawdzone` (znika po nowym commicie) |
+| „Fetch data” (nocny) zgłasza issue „Pobieranie danych … nie powiodło się” | API BDL, limit czasu, kontrola liczb | → Sonnet | Sonnet: przyczyna z kroku, który padł (podsumowanie przebiegu); ręcznie **Run workflow** dokończy pobieranie |
 | `gh` zwraca 403 „not permitted through this proxy” | ograniczenie środowiska (GraphQL, usuwanie gałęzi) | nie powtarzaj; w raport | Ty klikasz w GitHubie |
 
 ---
