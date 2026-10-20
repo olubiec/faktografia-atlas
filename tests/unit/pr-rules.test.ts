@@ -79,6 +79,20 @@ Zakres (tylko te pliki):
       ]);
     });
 
+    it('ignores the word "zakres" inside the Kontekst paragraph', () => {
+      const body = [
+        'Kontekst: dziś zakres PR sprawdza tylko lokalny `scripts/ops/merge.sh`.',
+        '',
+        'Zakres (tylko te pliki):',
+        '- `scripts/ci/pr-rules.mjs` (nowy): `findTaskId(input)`',
+        '- `tests/unit/pr-rules.test.ts` (nowy)',
+        '',
+        'Warunki odbioru:',
+        '1. coś w `src/inne.ts`'
+      ].join('\n');
+      expect(parseScope(body)).toEqual(['scripts/ci/pr-rules.mjs', 'tests/unit/pr-rules.test.ts']);
+    });
+
     it('handles directory paths ending with /', () => {
       const issueBody = `
 Zakres:

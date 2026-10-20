@@ -1,0 +1,22 @@
+# Pliki zapalne: PR, który je zmienia, dostaje czerwone sprawdzenie `zasady-pr`, dopóki nie ma etykiety `sprawdzone`.
+# Etykietę nadaje Sonnet (albo właściciel) po przeglądzie; znika przy każdym nowym commicie w PR.
+# Wzorce: ** = dowolne katalogi, * = fragment nazwy, ścieżka z / na końcu = cały katalog.
+.github/**
+.claude/**
+scripts/ops/**
+scripts/ci/**
+scripts/gates/**
+scripts/data/**
+src/view/map/AtlasMap.tsx
+src/view/map/hooks/**
+src/core/consent/**
+src/view/consent/**
+config/**
+public/data/**
+.oxlintrc.json
+playwright.config.ts
+vitest.config.ts
+vite.config.ts
+vercel.json
+AGENTS.md
+.gitleaks.toml

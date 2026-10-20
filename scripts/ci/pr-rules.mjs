@@ -37,7 +37,8 @@ export function findTaskId(input) {
 export function parseScope(issueBody) {
   if (!issueBody || typeof issueBody !== 'string') return [];
 
-  const zakresIndex = issueBody.search(/\bZakres\b/i);
+  // Nagłówek sekcji: linia zaczynająca się od „Zakres” (nie słowo „zakres” w środku zdania w opisie kontekstu).
+  const zakresIndex = issueBody.search(/^[ \t]*(?:#{1,6}[ \t]*)?(?:\*\*)?Zakres\b/m);
   if (zakresIndex === -1) return [];
 
   const afterZakres = issueBody.slice(zakresIndex);

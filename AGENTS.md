@@ -21,7 +21,10 @@ Plan: docs/MASTER_PLAN.md. Styl: docs/STYL.md + config/tokens.json. Stan: STAN_P
 - Jedna gałąź od aktualnego `main`. Aktualizacja do main: TYLKO `git merge origin/main`. Bez rebase, bez zakładania gałęzi od nowa, bez `--force`.
 - Przed każdym pushem `git diff --name-status --diff-filter=D origin/main...HEAD` musi być puste: nie usuwasz niczego, co jest na main (chyba że zadanie wprost to nakazuje).
 - Zmieniasz tylko pliki z „Zakresu” zadania.
-- Wzorce zrzutów (`*-snapshots/`) powstają wyłącznie w CI (workflow „Update snapshots” uruchamiany przez właściciela), nie generuj ich u siebie. W PR napisz, że trzeba je odświeżyć.
+- Wzorce zrzutów (`*-snapshots/`) powstają wyłącznie w CI (workflow „Update snapshots”, uruchamiany etykietą `aktualizuj-zrzuty` na PR), nie generuj ich ani nie edytuj u siebie. W PR napisz, że trzeba je odświeżyć.
+- Pierwsza linia opisu PR: `Fixes #<numer zgłoszenia zadania>`, druga: `Zadanie: CCx.y`. Czerwone sprawdzenie `zasady-pr` czytaj dosłownie: komunikat mówi, co poprawić (brak ID, plik poza zakresem, plik zapalny bez przeglądu, nowa zależność).
+- Pliki z `.github/zapalne.txt` zmieniaj tylko, gdy zadanie wprost tego wymaga; taki PR przejdzie dopiero po przeglądzie Sonneta (etykieta `sprawdzone`).
+- Ostatni commit przed oddaniem musi zawierać aktualne pliki z `main`: zrób `git merge origin/main` i sprawdź, że `git diff --name-status --diff-filter=D origin/main...HEAD` jest puste (commit z nieaktualnej kopii roboczej kasuje cudze pliki).
 
 ## Zawsze
 - Stos: Vite + React + TypeScript strict, pnpm. Biblioteki z docs/MASTER_PLAN.md §6.
@@ -40,7 +43,7 @@ Plan: docs/MASTER_PLAN.md. Styl: docs/STYL.md + config/tokens.json. Stan: STAN_P
 - Po `shadcn add` zamień wszystkie ikony lucide na iconoir-react (Icon z src/view/ui) i usuń klasy shadow-*, rounded-*, backdrop-blur.
 
 ## Najpierw zapytaj (napisz w PR i zatrzymaj się)
-- Nowa zależność spoza docs/MASTER_PLAN.md §6. Zmiana package.json lub pnpm-lock.yaml.
+- Nowa zależność spoza docs/MASTER_PLAN.md §6. Zmiana package.json lub pnpm-lock.yaml (nowy pakiet wymaga etykiety `nowa-zaleznosc` i uzasadnienia w PR).
 - Zmiana config/tokens.json, docs/STYL.md, docs/MASTER_PLAN.md, .github/, istniejących testów
   lub wzorców zrzutów — chyba że zadanie wprost tego wymaga.
 - Warunek odbioru niejasny lub sprzeczny.
