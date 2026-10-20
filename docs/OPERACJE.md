@@ -5,17 +5,31 @@ Cel: drogie modele **myślą raz, na zapas**; tani model i skrypty **wykonują**
 
 ---
 
+## 0. Korekta po teście właściciela (20.10.2026, obowiązuje przed resztą pliku)
+
+Strona miała zielone testy, a jako produkt nie działała (szczegóły: `docs/PRODUKT.md` §1). Zmiany w sposobie pracy:
+
+1. **Ekran składa Sonnet, nie Jules.** Jules dostaje tylko osobne klocki (nowe pliki, logika, komponenty na danych syntetycznych) i nie dotyka plików ekranu (`Home.tsx`, `AtlasMap.tsx`, `ProfileSheet*.tsx`, hooki mapy). Integrację robi Sonnet w swojej sesji.
+2. **Oglądamy działającą stronę przed scaleniem.** Każdy PR zmieniający wygląd: Sonnet uruchamia stronę, przechodzi ścieżkę z PRODUKT.md §3–§5 na 1440×900 i 390×844, porównuje z makietą `docs/design/02–05`, w PR wypisuje różnice. Zielone CI to za mało.
+3. **Makieta jest warunkiem odbioru.** „Zgodne z makietą” sprawdza Sonnet na zrzutach, a Ty na swoim ekranie (§4).
+4. **Szybkość ma progi w CI** (PRODUKT.md §7, test `perf-budget.spec.ts`). Prompt, który każe pobierać „wszystko naraz”, jest błędny.
+5. **Najpierw decyzja produktowa, potem prompty.** Opus nie pisze promptów na funkcję, dopóki w PRODUKT.md nie ma jej opisu z perspektywy użytkownika (co widzi, co klika). Nowa funkcja bez opisu → pytanie do Ciebie.
+6. **Treści dla ludzi** (objaśnienia, ciekawostki): research Gemini (§7) → Sonnet sprawdza każde źródło → **Ty akceptujesz** przed publikacją.
+7. **Twój test po każdej fali** jest częścią bramki (§4). Bez niego kolejna fala nie startuje, nawet gdy skrypt bramki przechodzi.
+
+---
+
 ## 1. Role
 
 | Kto | Do czego | Czego NIE robi | Koszt |
 |---|---|---|---|
 | **Opus** | Raz na 2–3 fale: plan, interfejsy (nazwy plików i eksportów), prompty w `docs/FALE.md`, audyt końca fali, decyzje architektury | Rutyny: statusów, wysyłania zadań, scalania zielonych PR | wysoki, rzadko |
-| **Sonnet** | Zadania C (workflowy w `.github/`, naprawy CI), przegląd PR oznaczonych „Sonnet” w `FALE.md` §1, każdy `STOP` ze skryptów, konflikty, 2 nieudane rundy, sprawdzenie liczb w danych | Planowania wielu fal | średni |
+| **Sonnet** | Składanie ekranów (zadania C w `FALE.md` §7) z oglądaniem strony, zadania C (workflowy w `.github/`, naprawy CI), przegląd PR oznaczonych „Sonnet”, każdy `STOP`, konflikty, 2 nieudane rundy, sprawdzenie liczb i treści | Planowania wielu fal | średni |
 | **Haiku** | Obsługa kolejki według §3: `status.sh`, wysyłka zadań `new-task.sh`, czekanie `wait-ci.sh`, scalanie `merge.sh` PR oznaczonych „Haiku”, krótki raport | Pisania kodu, promptów i workflowów, rozwiązywania konfliktów, decyzji „czy zakres OK”, drugiego ponownego uruchomienia CI | niski |
-| **Jules** | Zadania K (kod + testy) z issue z etykietą `jules` | Sieci, sekretów, `.github/` | w planie (do 15 sesji) |
+| **Jules** | Zadania K: osobne klocki (nowe pliki, logika, komponenty) z testami, z issue z etykietą `jules` | Sieci, sekretów, `.github/`, plików ekranu (§0 pkt 1) | w planie (do 15 sesji) |
 | **GitHub Actions** | Zadania S: pobieranie danych z GUS i PRNG na gałęzie `data/...` | — | darmowe |
 | **Gemini (czat)** | Research i druga opinia, §7 | Zmian w repo, decyzji, sekretów | darmowy |
-| **Ty** | Klikasz „Run workflow”, sprawdzasz bramki fal na telefonie (§4), uruchamiasz Jules, gdy nie ruszy sam, zatwierdzasz decyzje | Nie musisz czytać kodu | — |
+| **Ty** | Test po każdej fali na komputerze i telefonie (§4), akceptacja treści objaśnień i decyzji produktowych, „Run workflow”, ustawienia repo | Nie musisz czytać kodu | — |
 
 **Zmiana modelu: nowa sesja, nie `/model` w długiej rozmowie.** Każdy model ma osobną pamięć podręczną (cache), więc `/model` w długim wątku wczytuje całą historię od nowa, a zmiana modelu w środku rozmowy pogarsza trzymanie się poleceń. Haiku: nowa sesja → wklej polecenie z §3. Sonnet: nowa sesja → wklej zamknięte zlecenie (co, który PR, gdzie zasady). Opus: nowa sesja na planowanie, start od `FALE.md`, `OPERACJE.md` i ostatniego raportu. Długi wątek tylko wtedy, gdy potrzebny jest jego kontekst.
 
@@ -90,11 +104,18 @@ Haiku można wołać, kiedy chcesz („Haiku, krok z §3”). Jedno wywołanie =
 
 **Czy Jules pracuje?** *Issues* → zadanie z etykietą `jules`: po kilku minutach komentarz Julesa. Po 1 h bez PR – zajrzyj w Jules; po 90 min przerwij (PROMPTY.md §2.4). „Failed to create a task” → usuń etykietę `jules` i dodaj ponownie.
 
-**Bramki fal (Twoje testy na telefonie, podgląd Vercel z PR albo strona główna):**
-- po fali 7: nic nowego do zobaczenia – sprawdź tylko, że mapa i wyszukiwarka działają jak wcześniej;
-- po fali 8: wejdź na stronę z dopiskiem `/?i=unemployment-rate` → mapa w kolorach; kliknij gminę → arkusz profilu od dołu; przesuń go palcem;
-- po fali 9: panel „Wskaźnik”, zmiana roku, legenda; wyślij komuś link i sprawdź, że otwiera ten sam widok.
-Wynik napisz jednym zdaniem w czacie („fala 8 OK” albo „profil zasłania mapę na iPhonie”).
+**Gdzie oglądać stronę:** adres produkcyjny z Vercel (vercel.com → projekt → „Visit”; po podaniu go Claude'owi wpisze go tutaj: `ADRES: <do uzupełnienia>`). Podgląd zmian z PR: link „Visit Preview” w PR (jeśli Vercel jest podpięty do repo). W aplikacji GitHub adresu nie ma.
+
+**Test ekranu głównego (po fali 9; ok. 5 min, komputer i telefon):**
+1. Wejście na stronę: mapa **od razu w kolorach** (gęstość zaludnienia), po lewej panel z nazwą wskaźnika, legendą i rokiem; nic na nic nie nachodzi; strona nie zacina się przy przewijaniu i przybliżaniu.
+2. Kliknij nazwę wskaźnika → wybierz „Stopa bezrobocia” → mapa zmienia kolory, legenda się zmienia. Przesuń suwak roku → kolory się zmieniają.
+3. Najedź na województwo (na telefonie: dotknij) → dymek z wartością i miejscem w rankingu → „Otwórz profil”.
+4. Profil: po prawej (telefon: od dołu), mapa się zwęża, ale nie jest zasłonięta; widać dużą liczbę, ranking słupkowy, listę wskaźników. Kliknij dowolny wskaźnik → rozwija się wykres lat i objaśnienie; „Pokaż na mapie” → mapa w tym wskaźniku.
+5. (?) przy wskaźniku → krótka definicja, „Polska i świat”, ciekawostka ze źródłem.
+6. Wyszukiwarka: Ctrl+K albo pole → wpisz „Zakopane” → wybierz; potem otwórz jeszcze raz i zamknij krzyżykiem – ma się zamknąć.
+7. Skopiuj adres i otwórz w nowej karcie – ten sam widok.
+
+Wynik napisz jednym zdaniem albo punktami („fala 9 OK” / „pkt 4: ranking pusty dla gmin”). Zrzut ekranu pomaga.
 
 ---
 
@@ -146,6 +167,7 @@ Gemini (czat) jest darmowy i dobry w szukaniu w sieci. Wynik zawsze **ze źród�
 | Nowy wskaźnik / wątpliwość co do zmiennej GUS | „Szukam w Banku Danych Lokalnych GUS (bdl.stat.gov.pl) zmiennej: <opis>. Podaj id zmiennej (var-id), nazwę, jednostkę, poziomy (gmina/powiat), lata. Tylko z oficjalnych stron GUS, z linkami.” |
 | Biblioteka w zadaniu (np. `react-modal-sheet`, deck.gl `FillStyleExtension`, `@observablehq/plot`) | „Podaj aktualne API <biblioteka> w wersji <wersja z package.json>: główne komponenty/opcje i krótki przykład. Tylko z dokumentacji lub repozytorium projektu, z linkami.” |
 | Teksty dla ludzi (prywatność, „o projekcie”) | „Napisz prostym językiem (poziom B1) tekst o <temat> dla strony z mapą danych GUS. Fakty: <lista>. Bez prawniczych formułek, max 200 słów.” |
+| **Objaśnienia wskaźników (CC13.T)** – po jednym wskaźniku albo po 5 naraz | „Dla wskaźnika GUS »<nazwa z config/indicators.json>« (<jednostka>, opis: <description>) przygotuj: 1) definicję prostym językiem, max 160 znaków; 2) jak czytać i na co uważać przy porównywaniu gmin, max 240 znaków; 3) Polska na tle UE lub świata: jedna liczba z rokiem i źródłem (Eurostat, OECD, Bank Światowy, ONZ) – jeśli definicja różni się od GUS (np. bezrobocie rejestrowane vs BAEL), napisz to wprost; max 240 znaków; 4) jedna ciekawostka ze świata lub z Polski, max 200 znaków, ze źródłem; 5) link do oficjalnej definicji GUS. Każdy punkt z linkiem do źródła pierwotnego. Nie zgaduj liczb – jeśli nie ma źródła, napisz »brak źródła«.” |
 | Druga opinia o wyglądzie | zrzut ekranu + treść `docs/STYL.md` + „Wypisz maks. 5 niezgodności zrzutu ze stylem, każdą z punktem STYL.md.” |
 | Licencje i atrybucje (OSM, PRNG, BDL) | „Jakie warunki licencji i jaka dokładna atrybucja dla <źródło> na publicznej stronie? Z linkiem do oficjalnego tekstu licencji.” |
 
