@@ -49,7 +49,9 @@ export function ProfilePortal({ profile, units, isOpen, onClose }: ProfilePortal
   const content = isMobile ? (
     <ProfileSheetMobile profile={profile} units={units} isOpen={isOpen} onClose={onClose} />
   ) : (
-    <ProfileSheet profile={profile} units={units} onClose={onClose} />
+    <div className="md:absolute md:right-6 md:top-20 z-20 w-full max-w-[440px]">
+      <ProfileSheet profile={profile} units={units} onClose={onClose} />
+    </div>
   );
 
   return createPortal(content, container);
