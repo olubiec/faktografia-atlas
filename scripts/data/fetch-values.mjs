@@ -33,6 +33,7 @@ export async function fetchWithRetry(url, clientId, options = {}) {
     sleepFn = (ms) => new Promise((r) => setTimeout(r, ms)),
     intervalMs = 2000,
     maxAttempts = 5,
+    timeoutMs = 30000,
     stats = null,
   } = options;
 
@@ -41,12 +42,29 @@ export async function fetchWithRetry(url, clientId, options = {}) {
     if (stats) stats.requests++;
 
     let res;
+    const signal = AbortSignal.timeout(timeoutMs);
     try {
       res = await fetchFn(url, {
         headers: { 'X-ClientId': clientId, Accept: 'application/json' },
+        signal,
       });
     } catch (err) {
+      const isTimeout =
+        signal.aborted ||
+        err?.name === 'TimeoutError' ||
+        err?.name === 'AbortError' ||
+        String(err?.message ?? '').toLowerCase().includes('timeout') ||
+        String(err?.message ?? '').toLowerCase().includes('abort');
+
       if (attempt === maxAttempts) {
+        if (isTimeout) {
+          throw new Error(
+            redactSecret(
+              `Przekroczono limit czasu zapytania (${timeoutMs} ms, próby: ${maxAttempts}): ${url}`,
+              clientId
+            )
+          );
+        }
         throw new Error(redactSecret(`Brak odpowiedzi z ${url}: ${err.message}`, clientId));
       }
       await sleepFn(5000 * attempt);
@@ -86,6 +104,7 @@ export async function fetchIndicatorValues(indicator, units, clientId, options =
     sleepFn = (ms) => new Promise((r) => setTimeout(r, ms)),
     intervalMs = 2000,
     maxAttempts = 5,
+    timeoutMs = 30000,
     offlineFixture = false,
     recordedDir = null,
     stats = { requests: 0 },
@@ -121,6 +140,7 @@ export async function fetchIndicatorValues(indicator, units, clientId, options =
           sleepFn,
           intervalMs,
           maxAttempts,
+          timeoutMs,
           stats,
         });
 
@@ -222,7 +242,7 @@ async function main() {
       stats,
     });
 
-    const text = JSON.stringify(result, null, 2) + '\n';
+    const text = JSON.stringify(result) + '\n';
     assertNoSecret(text, clientId);
 
     // Zapis pliku dopiero po pomyślnym pobraniu wszystkich stron dla wskaźnika
