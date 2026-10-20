@@ -1,11 +1,10 @@
 name: Fetch data
 
-# Tylko ręcznie (Actions → Fetch data → Run workflow; NIE „Re-run”, bo ten używa starej wersji).
-# Pobiera z API BDL (GUS) wartości wskaźników z config/indicators.json (wszystkie lata, województwa,
-# powiaty i gminy dla wskaźników z minLevel gmi) do public/data/values/<id>.json na osobną gałąź
-# (domyślnie data/values), nigdy do main. Dane trafiają do main przez PR (otwiera go Claude po sprawdzeniu liczb).
-# Pobieranie jest wznawialne: gotowe pliki są pomijane (--skip-existing), więc jeśli krok nie zdąży,
-# uruchom workflow jeszcze raz.
+# Pobiera z API BDL (GUS) wartości wskaźników z config/indicators.json do public/data/values/<id>.json.
+# Uruchamia się: (1) ręcznie (Run workflow, NIE Re-run), (2) nocą, (3) po zmianie skryptu pobierania lub config/indicators.json na main.
+# Dane NIGDY nie trafiają prosto na main: workflow zapisuje je na osobną gałąź i sam otwiera PR, ale tylko
+# gdy przeszły test kontraktu i liczby kontrolne oraz zmieniło się coś poza znacznikami czasu.
+# Ręczne uruchomienie jest wznawialne: gotowe pliki są pomijane (--skip-existing), więc jeśli krok nie zdąży, uruchom jeszcze raz.
 on:
   workflow_dispatch:
     inputs:
@@ -21,9 +20,19 @@ on:
         description: 'Pobierz od nowa także wskaźniki, które już mają plik (true/false)'
         required: false
         default: 'false'
+  schedule:
+    - cron: '10 1 * * *' # ok. 03:10 czasu polskiego latem, 02:10 zimą
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/data/fetch-values.mjs'
+      - 'config/indicators.json'
 
 permissions:
   contents: write
+  pull-requests: write
+  actions: write
+  issues: write
 
 concurrency:
   group: fetch-data
@@ -32,11 +41,14 @@ concurrency:
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 170
     env:
-      BRANCH: ${{ github.event.inputs.branch }}
+      GH_TOKEN: ${{ github.token }}
+      BRANCH: ${{ github.event.inputs.branch || 'data/nightly' }}
       ONLY: ${{ github.event.inputs.only }}
-      REFRESH: ${{ github.event.inputs.refresh }}
+      # ręcznie: wg pola; noc i zmiana skryptu: zawsze od nowa
+      REFRESH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.refresh || 'true' }}
+      MANUAL: ${{ github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Odmów zapisu do main
         run: |
@@ -54,7 +66,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+          if [ "$MANUAL" != "true" ]; then
+            # noc i zmiana skryptu: gałąź robocza zawsze startuje od aktualnego main (nie ma konfliktów ze starymi danymi)
+            git checkout -B "$BRANCH" origin/main
+          elif git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
             git fetch origin "$BRANCH"
             git checkout -B "$BRANCH" "origin/$BRANCH"
             git merge --no-edit origin/main
@@ -62,9 +77,12 @@ jobs:
             git checkout -b "$BRANCH"
           fi
 
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
           node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
 
       - name: Sprawdź sekret
         env:
@@ -75,9 +93,9 @@ jobs:
             exit 1
           fi
 
-      # Skrypt używa tylko wbudowanych modułów Node, instalacja paczek nie jest potrzebna.
       # Krok ma własny limit (135 min), żeby kolejne kroki (zapis częściowych wyników) zdążyły się wykonać.
       - name: Pobierz wartości z BDL
+        id: fetch
         timeout-minutes: 135
         shell: bash
         env:
@@ -87,7 +105,7 @@ jobs:
           if [ "$REFRESH" != "true" ]; then ARGS="--skip-existing"; fi
           if [ -n "$ONLY" ]; then ARGS="$ARGS --only=$ONLY"; fi
           if ! node scripts/data/fetch-values.mjs $ARGS 2>&1 | tee "$RUNNER_TEMP/data-report.txt"; then
-            echo "::error::Pobieranie danych nie powiodło się. PRZYCZYNA: $(grep -m2 -E '^Error|HTTP|Brak' "$RUNNER_TEMP/data-report.txt" | tr '\n' ' ' | cut -c1-600)"
+            echo "::error::Pobieranie danych nie powiodło się. PRZYCZYNA: $(grep -m2 -E '^Error|HTTP|Brak|limit czasu' "$RUNNER_TEMP/data-report.txt" | tr '\n' ' ' | cut -c1-600)"
             exit 1
           fi
 
@@ -100,7 +118,7 @@ jobs:
           {
             echo "### Wartości wskaźników: ${DONE}/${TOTAL}"
             echo
-            if [ "$DONE" = "$TOTAL" ]; then echo "Komplet. Można otwierać PR z gałęzi \`$BRANCH\`."; else echo "Brakuje $((TOTAL-DONE)). Uruchom workflow jeszcze raz (**Run workflow**, nie Re-run)."; fi
+            if [ "$DONE" = "$TOTAL" ]; then echo "Komplet."; else echo "Brakuje $((TOTAL-DONE)). Uruchom workflow jeszcze raz (**Run workflow**, nie Re-run)."; fi
             echo
             echo '```'
             tail -n 60 "$RUNNER_TEMP/data-report.txt" 2>/dev/null
@@ -108,17 +126,64 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
           echo "Wskaźniki z plikiem: ${DONE}/${TOTAL}"
 
-      - name: Zatwierdź i wypchnij tylko public/data/values/ (także częściowe)
-        if: always()
+      # Ręcznie: zapis także częściowych wyników (wznowienie). Noc i zmiana skryptu: tylko po pełnym sukcesie pobierania.
+      - name: Test kontraktu i liczby kontrolne
+        id: checks
+        if: steps.fetch.outcome == 'success'
+        shell: bash
+        run: |
+          node scripts/data/nightly-checks.mjs control
+          pnpm exec vitest run tests/unit/data-contract.test.ts
+
+      - name: Odrzuć zmiany tylko w znacznikach czasu
+        id: noise
+        if: steps.checks.outcome == 'success' && env.MANUAL != 'true'
+        run: node scripts/data/nightly-checks.mjs revert-noise
+
+      - name: Zatwierdź i wypchnij tylko public/data/values/
+        id: push
+        if: always() && (env.MANUAL == 'true' || steps.checks.outcome == 'success')
         shell: bash
         run: |
           git add public/data/values/
           if git diff --staged --quiet; then
             echo "Brak zmian w danych."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "data: wartości wskaźników BDL (public/data/values)"
-            if ! git push origin "HEAD:refs/heads/$BRANCH" 2>&1 | tee "$RUNNER_TEMP/push.log"; then
+            FORCE=""; [ "$MANUAL" = "true" ] || FORCE="--force"
+            if ! git push $FORCE origin "HEAD:refs/heads/$BRANCH" 2>&1 | tee "$RUNNER_TEMP/push.log"; then
               echo "::error::git push na gałąź $BRANCH nie powiódł się: $(tail -n 4 "$RUNNER_TEMP/push.log" | tr '\n' ' ' | cut -c1-600)"
               exit 1
             fi
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Commity robota nie uruchamiają CI same z siebie, dlatego CI uruchamiamy ręcznie na gałęzi.
+      - name: Otwórz PR i uruchom CI
+        if: steps.push.outputs.changed == 'true' && steps.checks.outcome == 'success'
+        shell: bash
+        run: |
+          N="$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&head=${GITHUB_REPOSITORY_OWNER}:${BRANCH}" --jq '.[0].number // empty')"
+          if [ -z "$N" ]; then
+            LISTA="$(tr '\n' ' ' < "$RUNNER_TEMP/zmienione-wskazniki.txt" 2>/dev/null || true)"
+            BODY="Zakres: public/data/values/*.json (z workflow „Fetch data”, przebieg $GITHUB_RUN_ID).
+
+          Test kontraktu i liczby kontrolne (16 województw, ≥ 2470 gmin, suma ludności 36–39 mln) przeszły. Zmienione wskaźniki: ${LISTA:-wszystkie}.
+          Przed scaleniem sprawdź kilka liczb z bdl.stat.gov.pl (Polska, małopolskie, Zakopane)."
+            N="$(gh api -X POST "repos/$GITHUB_REPOSITORY/pulls" -f title="data: aktualizacja wartości wskaźników BDL" -f head="$BRANCH" -f base=main -f body="$BODY" --jq .number)" \
+              || { echo "::warning::Nie udało się otworzyć PR (Settings → Actions → General → zaznacz „Allow GitHub Actions to create and approve pull requests”). Gałąź $BRANCH jest wypchnięta, PR otwórz ręcznie."; exit 0; }
+          fi
+          echo "PR #$N" >> "$GITHUB_STEP_SUMMARY"
+          gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/dispatches" -f ref="$BRANCH" \
+            || echo "::warning::Nie udało się uruchomić CI na $BRANCH (uruchom scripts/ops/kick-ci.sh)."
+
+      - name: Zgłoszenie błędu nocnego pobierania
+        if: failure() && github.event_name != 'workflow_dispatch'
+        shell: bash
+        run: |
+          T="Pobieranie danych (Fetch data) nie powiodło się"
+          if [ -z "$(gh api "repos/$GITHUB_REPOSITORY/issues?state=open&per_page=100" --jq ".[] | select(.title==\"$T\") | .number" | head -n1)" ]; then
+            gh api -X POST "repos/$GITHUB_REPOSITORY/issues" -f title="$T" \
+              -f body="Przebieg: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID (zdarzenie: $GITHUB_EVENT_NAME). Przyczyna jest w kroku, który zakończył się błędem. Poprawka: Sonnet." >/dev/null
           fi
