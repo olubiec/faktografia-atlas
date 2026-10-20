@@ -96,7 +96,7 @@ export function ProfileIndicatorRow({
 
   if (isHighlighted) {
     return (
-      <Annotate type="highlight" show={true}>
+      <Annotate type="highlight" show={true} as="div">
         {content}
       </Annotate>
     );
