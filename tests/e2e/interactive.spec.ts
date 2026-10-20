@@ -5,6 +5,8 @@ test.describe('Interactive Components Page (CC2.2)', () => {
   test('axe accessibility check in light and dark themes', async ({ page }) => {
     // Light theme check
     await page.goto('/__test/interactive');
+    // Bez przejść i animacji: axe nie może mierzyć kontrastu w połowie zmiany motywu (niestabilny test, #158)
+    await page.addStyleTag({ content: '*, *::before, *::after { transition: none !important; animation: none !important; }' });
     await page.evaluate(() => {
       document.documentElement.classList.remove('dark');
       document.documentElement.setAttribute('data-theme', 'light');
