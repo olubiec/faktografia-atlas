@@ -1,18 +1,33 @@
 name: Update snapshots
 
+# Zrzuty wzorcowe /design powstają TYLKO tutaj (obraz Playwright jak w CI), na gałęzi PR.
+# Uruchomienie: etykieta `aktualizuj-zrzuty` na PR albo ręcznie (Run workflow z nazwą gałęzi PR).
+# Odmowa dla main. Po commicie workflow zdejmuje etykietę i uruchamia CI przez workflow_dispatch
+# (commity robota same CI nie uruchamiają). Bez automatycznego scalania: różnice ogląda właściciel.
 on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch name to commit snapshots to'
+        description: 'Gałąź PR, na którą zapisać zrzuty (nie main)'
         required: true
-        default: 'main'
+  pull_request:
+    types: [labeled]
 
 permissions:
   contents: write
+  actions: write
+  pull-requests: write
+
+concurrency:
+  group: update-snapshots-${{ github.event.pull_request.number || github.event.inputs.branch }}
+  cancel-in-progress: false
 
 jobs:
   update-snapshots:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.label.name == 'aktualizuj-zrzuty' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.64.1-jammy
@@ -20,10 +35,21 @@ jobs:
     env:
       HOME: /root
       CI: true
+      BRANCH: ${{ github.event.pull_request.head.ref || github.event.inputs.branch }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      GH_TOKEN: ${{ github.token }}
     steps:
+      - name: Odmów dla main
+        shell: bash
+        run: |
+          if [ -z "$BRANCH" ] || [ "$BRANCH" = "main" ]; then
+            echo "::error::Zrzuty zapisujemy tylko na gałęzi PR, nigdy na main."
+            exit 1
+          fi
+
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ github.event.pull_request.head.ref || github.event.inputs.branch }}
 
       - uses: pnpm/action-setup@v6
 
@@ -41,15 +67,37 @@ jobs:
       - name: Update Playwright snapshots
         run: pnpm exec playwright test tests/e2e/design.spec.ts --update-snapshots
 
-      - name: Commit and push snapshots
+      - name: Zapisz zrzuty na gałęzi PR
+        id: commit
+        shell: bash
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add tests/e2e/design.spec.ts-snapshots/
           if git diff --staged --quiet; then
-            echo "No snapshot changes to commit."
+            echo "Brak zmian w zrzutach."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
-            git commit -m "chore: update design snapshots"
-            git push origin HEAD:${{ github.event.inputs.branch }}
+            git diff --staged --name-only > "$RUNNER_TEMP/zmienione.txt"
+            git commit -m "chore: aktualizacja zrzutów /design (workflow Update snapshots)"
+            git push origin "HEAD:refs/heads/$BRANCH"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Zdejmij etykietę i uruchom CI na gałęzi
+        if: always()
+        shell: bash
+        run: |
+          if [ -n "$PR_NUMBER" ]; then
+            gh api -X DELETE "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels/aktualizuj-zrzuty" >/dev/null 2>&1 || true
+          fi
+          if [ "${{ steps.commit.outputs.changed }}" = "true" ]; then
+            # starsze gałęzie bez workflow_dispatch w ci.yml: wtedy CI trzeba uruchomić scripts/ops/kick-ci.sh
+            gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/dispatches" -f ref="$BRANCH" \
+              || echo "::warning::Nie udało się uruchomić CI na $BRANCH (gałąź bez workflow_dispatch). Uruchom scripts/ops/kick-ci.sh."
+            if [ -n "$PR_NUMBER" ]; then
+              gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
+                -f body="Zrzuty /design odświeżone w CI (obraz Playwright). Zmienione pliki: $(tr '\n' ' ' < "$RUNNER_TEMP/zmienione.txt"). Obejrzyj różnice w zakładce Files changed; scalenie ręczne." >/dev/null
+            fi
           fi
