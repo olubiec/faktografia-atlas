@@ -11,20 +11,20 @@ Tor = grupa katalogów (PROMPTY.md §4.1). Fale 7 i 8a są scalone (#118–#134)
 
 | Fala | Zadanie | Kto | Tor | Rusza, gdy | Kto sprawdza PR |
 |---|---|---|---|---|---|
-| 8b | dane: PR #135 z `data/values` | S + Sonnet | D | liczby sprawdzone z BDL | Sonnet |
-| 8b | CC7.2b – profil po kliknięciu w mapę | J | M | teraz | Sonnet (plik zapalny) |
-| 8b | CC6.5b – test kontraktu danych | J | D | #135 scalony | Haiku |
-| 8b | CC7.4c – zakreślenie w profilu | J | P | teraz | Haiku |
-| 8b | CC11.2 – strona /prywatnosc | J | Z | teraz | Haiku |
-| 8b | CC12.1 – test: kolory tylko z tokenów | J | T | teraz | Sonnet (konfiguracja testów) |
-| 8b | CC12.2 – logika reguł PR (ID, zakres, zapalne, zależności) | J | Q | teraz | Sonnet (skrypt kontrolny) |
-| 8b | CC12.3 – limit czasu zapytań BDL, zwarte pliki, raport danych | J | D2 | #135 scalony | Sonnet (dane) |
-| P | CC12.R – reguły gałęzi `main` | C (Sonnet) + Ty | — | repo publiczne | — |
-| P | CC12.2w – workflow „Zasady PR”, `.github/zapalne.txt`, szablon PR, dopiski AGENTS.md | C (Sonnet) | G | CC12.2 scalone | Sonnet |
-| P | CC12.Z – zrzuty na etykietę, CI uruchamiane przez robota | C (Sonnet) | G | teraz | Sonnet |
-| P | CC12.D – „Fetch data” sam: po zmianie skryptu i nocą, sam otwiera PR (zastępuje CC6.5a) | C (Sonnet) | G | CC6.5b i CC12.3 scalone | Sonnet |
-| P | CC12.B – bramki fal jako komendy w `new-task.sh` | C (Sonnet) | O | teraz | Sonnet |
-| P | CC12.O – obieg w osobnej sesji / podagent, pomiar limitów | C (Sonnet) | O | teraz | Sonnet |
+| 8b | dane: PR #135 z `data/values` | S + Sonnet | D | ZROBIONE 20.10 (#135) | — |
+| 8b | ~~CC7.2b – profil po kliknięciu w mapę~~ ZROBIONE #153 | J | M | teraz | Sonnet (plik zapalny) |
+| 8b | ~~CC6.5b – test kontraktu danych~~ ZROBIONE #150 | J | D | #135 scalony | Haiku |
+| 8b | ~~CC7.4c – zakreślenie w profilu~~ ZROBIONE #147 | J | P | teraz | Haiku |
+| 8b | ~~CC11.2 – strona /prywatnosc~~ ZROBIONE #151 | J | Z | teraz | Haiku |
+| 8b | ~~CC12.1 – test: kolory tylko z tokenów~~ ZROBIONE #152 | J | T | teraz | Sonnet (konfiguracja testów) |
+| 8b | ~~CC12.2 – logika reguł PR (ID, zakres, zapalne, zależności)~~ ZROBIONE #149 | J | Q | teraz | Sonnet (skrypt kontrolny) |
+| 8b | ~~CC12.3 – limit czasu zapytań BDL, zwarte pliki, raport danych~~ ZROBIONE #148 | J | D2 | #135 scalony | Sonnet (dane) |
+| P | CC12.R – reguły gałęzi `main` (+ `zasady-pr` jako wymagane po fali obserwacji) | C (Sonnet) + Ty | — | **repo publiczne (czeka na Ciebie)** | — |
+| P | ~~CC12.2w – workflow „Zasady PR”, `.github/zapalne.txt`, szablon PR, dopiski AGENTS.md~~ ZROBIONE #154 | C (Sonnet) | G | CC12.2 scalone | Sonnet |
+| P | ~~CC12.Z – zrzuty na etykietę, CI uruchamiane przez robota~~ ZROBIONE #144 | C (Sonnet) | G | teraz | Sonnet |
+| P | ~~CC12.D – „Fetch data” sam: po zmianie skryptu i nocą, sam otwiera PR (zastępuje CC6.5a)~~ ZROBIONE #156 | C (Sonnet) | G | CC6.5b i CC12.3 scalone | Sonnet |
+| P | ~~CC12.B – bramki fal jako komendy w `new-task.sh`~~ ZROBIONE #145 | C (Sonnet) | O | teraz | Sonnet |
+| P | ~~CC12.O – obieg w osobnej sesji / podagent, pomiar limitów~~ ZROBIONE #146 | C (Sonnet) | O | teraz | Sonnet |
 | 9 | CC8.W – legenda, wybór wskaźnika i roku na mapie | J | M | CC7.2b scalone + bramka fali 8b | Sonnet |
 | 9 | CC4.4 – blady podkład przy dużym zbliżeniu | J | M | CC8.W scalone | Sonnet |
 | 10 | CC9.1b, CC8.4, CC8.5a/b, CC10.x + co najmniej 1 punkt z „Dług” | Opus pisze prompty | — | koniec fali 9 | — |
@@ -34,7 +34,7 @@ Tor **G** = `.github/`, tor **O** = `scripts/ops/`, `.claude/`, `docs/OPERACJE.m
 
 ### Bramki fal (komendy; wynik 0 = przechodzi)
 
-Do czasu CC12.B uruchamia je Sonnet ręcznie i wkleja wynik do raportu. Po CC12.B robi to `new-task.sh` przed wysłaniem pierwszego zadania kolejnej fali i zwraca `STOP`, jeśli bramka nie przechodzi. Model nigdy nie „odhacza” bramki słowami.
+Bramki uruchamia `new-task.sh` (CC12.B, od 20.10) przed pierwszym zadaniem kolejnej fali i zwraca `STOP`, jeśli bramka nie przechodzi; ręcznie: `scripts/gates/fala-8b.sh`, `scripts/gates/fala-9.sh`. Model nigdy nie „odhacza” bramki słowami.
 
 - **Bramka fali 8b** (przed falą 9):
   `test "$(git ls-tree --name-only origin/main public/data/values/ | grep -c '\.json$')" -eq 20 && git cat-file -e origin/main:src/view/map/ProfilePortal.tsx && git cat-file -e origin/main:tests/unit/data-contract.test.ts`
