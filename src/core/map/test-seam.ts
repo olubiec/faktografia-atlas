@@ -18,6 +18,7 @@ export type AtlasState = {
   };
   theme: 'light' | 'dark';
   choropleth: ChoroplethSeamState;
+  profileOpen: boolean;
 };
 
 export type WindowWithAtlas = {
@@ -56,6 +57,7 @@ export function installAtlasSeam(
         viewState: { ...state.viewState },
         theme: state.theme,
         choropleth: state.choropleth ? { ...state.choropleth } : null,
+        profileOpen: state.profileOpen,
       });
     },
     set(_value: AtlasState) {
