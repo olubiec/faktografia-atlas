@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useId, useCallback } from 'react';
 import { annotate } from 'rough-notation';
 import type { RoughAnnotation, RoughAnnotationType } from 'rough-notation/lib/model';
 import { useAnnotationManager } from './useAnnotationManager';
+import { cn } from '../../lib/utils';
 
 export interface AnnotateProps {
   type: RoughAnnotationType;
@@ -30,13 +31,14 @@ export const Annotate: React.FC<AnnotateProps> = ({
   className,
   as: Component = 'span',
 }) => {
-  const elementRef = useRef<HTMLElement | null>(null);
+  const containerRef = useRef<HTMLElement | null>(null);
+  const targetRef = useRef<HTMLSpanElement | null>(null);
   const annotationRef = useRef<RoughAnnotation | null>(null);
   const manager = useAnnotationManager();
   const id = useId();
 
   const createAndShowAnnotation = useCallback(() => {
-    if (!elementRef.current) return;
+    if (!targetRef.current) return;
 
     if (annotationRef.current) {
       annotationRef.current.remove();
@@ -47,7 +49,7 @@ export const Annotate: React.FC<AnnotateProps> = ({
     const isReducedMotion = typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const annotation = annotate(elementRef.current, {
+    const annotation = annotate(targetRef.current, {
       type,
       color,
       strokeWidth: 2.5,
@@ -58,7 +60,12 @@ export const Annotate: React.FC<AnnotateProps> = ({
     });
 
     annotationRef.current = annotation;
-    annotation.show();
+    // Ważne: requestAnimationFrame gwarantuje, że przeglądarka dokonała już wyliczeń layoutu (przetłoczenia/modal)
+    requestAnimationFrame(() => {
+      if (annotationRef.current) {
+        annotationRef.current.show();
+      }
+    });
   }, [type]);
 
   const hideAnnotation = useCallback(() => {
@@ -87,6 +94,29 @@ export const Annotate: React.FC<AnnotateProps> = ({
       hideAnnotation();
     }
   }, [show, id, manager, createAndShowAnnotation, hideAnnotation]);
+
+  // Reakcja na zmianę rozmiaru elementu lub kontenera (ResizeObserver)
+  useEffect(() => {
+    if (!show || typeof window === 'undefined') return;
+
+    const target = targetRef.current;
+    if (!target) return;
+
+    const observer = new ResizeObserver(() => {
+      if (annotationRef.current && manager.getActiveId() === id) {
+        annotationRef.current.show();
+      }
+    });
+
+    observer.observe(target);
+    if (containerRef.current && containerRef.current !== target) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [show, id, manager]);
 
   // Przerysowanie przy zmianie motywu (MutationObserver na HTML data-theme)
   useEffect(() => {
@@ -123,8 +153,13 @@ export const Annotate: React.FC<AnnotateProps> = ({
   }, []);
 
   return (
-    <Component ref={elementRef} className={className}>
-      {children}
+    <Component
+      ref={containerRef}
+      className={cn('relative inline-block', className)}
+    >
+      <span ref={targetRef} className="inline-block">
+        {children}
+      </span>
     </Component>
   );
 };
