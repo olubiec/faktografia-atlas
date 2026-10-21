@@ -1,0 +1,54 @@
+name: Autopilot
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  push:
+    branches: [main]
+  issues:
+    types: [closed, reopened, labeled, unlabeled]
+  workflow_run:
+    workflows: ["CI", "Zgody"]
+    types: [completed]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: autopilot
+  cancel-in-progress: false
+
+jobs:
+  autopilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      AUTOPILOT: ${{ vars.AUTOPILOT }}
+      LIMIT: ${{ vars.AUTOPILOT_LIMIT }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Zadania, Jules, auto-scalanie, CI na main
+        run: python3 scripts/autopilot/zadania.py
+
+      - name: Tablica i KONTEKST.md
+        run: python3 scripts/autopilot/stan.py
+
+      - name: Opublikuj KONTEKST.md na gałęzi kontekst (tylko przy zmianie)
+        run: |
+          git fetch -q origin kontekst 2>/dev/null || true
+          if git show origin/kontekst:KONTEKST.md > /tmp/stary.md 2>/dev/null && cmp -s /tmp/stary.md out/KONTEKST.md; then
+            echo "KONTEKST bez zmian"; exit 0
+          fi
+          cd out
+          git init -q && git checkout -q -b kontekst && git add KONTEKST.md
+          git -c user.name=autopilot -c user.email=autopilot@users.noreply.github.com commit -qm "kontekst ${GITHUB_SHA::7}"
+          git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${GH_REPO}.git" kontekst

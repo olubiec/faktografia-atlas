@@ -93,9 +93,9 @@ jobs:
             gh api -X DELETE "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels/aktualizuj-zrzuty" >/dev/null 2>&1 || true
           fi
           if [ "${{ steps.commit.outputs.changed }}" = "true" ]; then
-            # starsze gałęzie bez workflow_dispatch w ci.yml: wtedy CI trzeba uruchomić scripts/ops/kick-ci.sh
+            # starsze gałęzie bez workflow_dispatch w ci.yml: wtedy CI trzeba uruchomić ręcznie (Actions → CI → Run workflow)
             gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/dispatches" -f ref="$BRANCH" \
-              || echo "::warning::Nie udało się uruchomić CI na $BRANCH (gałąź bez workflow_dispatch). Uruchom scripts/ops/kick-ci.sh."
+              || echo "::warning::Nie udało się uruchomić CI na $BRANCH (gałąź bez workflow_dispatch). Uruchom CI ręcznie: Actions → CI → Run workflow na tej gałęzi."
             if [ -n "$PR_NUMBER" ]; then
               gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
                 -f body="Zrzuty /design odświeżone w CI (obraz Playwright). Zmienione pliki: $(tr '\n' ' ' < "$RUNNER_TEMP/zmienione.txt"). Obejrzyj różnice w zakładce Files changed; scalenie ręczne." >/dev/null

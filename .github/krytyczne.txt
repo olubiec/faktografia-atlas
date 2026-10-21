@@ -1,0 +1,19 @@
+# .github/krytyczne.txt – wzorce plików wymagających Audytora („sprawdzone”).
+# Gwiazdka * pasuje też do „/” (np. .github/* obejmuje całe .github).
+# Lista jest brana z main – PR nie może jej sobie skrócić.
+.github/*
+scripts/autopilot/*
+AGENTS.md
+CLAUDE.md
+.claude/*
+vercel.json
+.gitleaks.toml
+.oxlintrc.json
+vite.config.ts
+vitest.config.ts
+playwright.config.ts
+src/view/map/AtlasMap.tsx
+src/core/consent/*
+src/view/consent/*
+scripts/data/*
+config/*

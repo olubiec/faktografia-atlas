@@ -1,12 +1,13 @@
-Fixes #<numer zgłoszenia zadania>
-Zadanie: CCx.y
+Closes #
 
-## Co zmienia się dla właściciela
-<prosto, po polsku>
+## Co zmieniło się dla użytkownika (1–3 zdania, prosto)
 
-## Warunki odbioru → dowód (test / zrzut)
-| Warunek | Test |
-|---|---|
+## Warunki odbioru → testy
+- [ ] warunek → nazwa testu
 
-## Pliki poza zakresem
-brak
+## Czego nie zrobiono i dlaczego
+
+## Nowe zależności: brak / nazwa + link do npm
+
+---
+_Przy zmianach w interfejsie: lista kontrolna z docs/STYL.md §12._

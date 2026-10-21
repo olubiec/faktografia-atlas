@@ -181,7 +181,7 @@ jobs:
           fi
           echo "PR #$N" >> "$GITHUB_STEP_SUMMARY"
           gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/dispatches" -f ref="$BRANCH" \
-            || echo "::warning::Nie udało się uruchomić CI na $BRANCH (uruchom scripts/ops/kick-ci.sh)."
+            || echo "::warning::Nie udało się uruchomić CI na $BRANCH (uruchom CI ręcznie: Actions → CI → Run workflow na tej gałęzi)."
 
       - name: Zgłoszenie błędu nocnego pobierania
         if: failure() && github.event_name != 'workflow_dispatch'

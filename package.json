@@ -24,7 +24,6 @@
     "test": "vitest run tests/unit",
     "test:e2e": "playwright test",
     "shots": "node scripts/shots.mjs",
-    "handoff": "node scripts/handoff.mjs",
     "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e && pnpm shots",
     "preview": "vite preview"
   },

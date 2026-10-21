@@ -1,0 +1,10 @@
+language: pl-PL
+reviews:
+  profile: chill
+  high_level_summary: true
+  path_instructions:
+    - path: "**/*"
+      instructions: >-
+        Zgłaszaj przede wszystkim: błędy zmieniające działanie, problemy bezpieczeństwa,
+        brak testu dla warunku odbioru z powiązanego Issue, zmiany poza zakresem zadania.
+        Uwagi o stylu ogranicz do minimum.

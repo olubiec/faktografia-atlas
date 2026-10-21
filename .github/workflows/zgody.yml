@@ -1,0 +1,61 @@
+name: Zgody
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: zgody-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  zgody:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Pliki krytyczne i nowe zależności
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          AKCJA: ${{ github.event.action }}
+          AUTOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          set -euo pipefail
+          pliki=$(gh pr diff "$PR" --name-only)
+          etykiety=$(gh pr view "$PR" --json labels -q '.labels[].name')
+          ma() { printf '%s\n' "$etykiety" | grep -qx "$1"; }
+          # nowy commit po audycie unieważnia werdykt
+          if [ "$AKCJA" = "synchronize" ] && ma sprawdzone; then
+            gh pr edit "$PR" --remove-label sprawdzone
+            etykiety=$(printf '%s\n' "$etykiety" | grep -vx sprawdzone || true)
+            echo "Nowy commit po audycie – zdjęto etykietę 'sprawdzone'."
+          fi
+          # lista krytycznych zawsze z main – PR nie może jej sobie skrócić
+          wzory=$(gh api "repos/$GH_REPO/contents/.github/krytyczne.txt?ref=main" \
+                    -H "Accept: application/vnd.github.raw" || true)
+          kryt=""
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            while IFS= read -r w; do
+              w=${w%$'\r'}
+              case "$w" in ''|'#'*) continue ;; esac
+              if [[ "$f" == $w ]]; then kryt="$kryt $f"; break; fi
+            done <<< "$wzory"
+          done <<< "$pliki"
+          zal=$(printf '%s\n' "$pliki" | grep -E '(^|/)(pnpm-lock\.yaml|package-lock\.json|yarn\.lock|requirements[^/]*\.txt|poetry\.lock|uv\.lock)$' || true)
+          blad=0
+          if [ -n "$kryt" ] && ! ma sprawdzone; then
+            echo "::error::Pliki krytyczne:$kryt – potrzebny werdykt Audytora (etykieta 'sprawdzone')."
+            blad=1
+          fi
+          if [ -n "$zal" ] && [ "$AUTOR" != "dependabot[bot]" ] && ! ma nowa-zaleznosc; then
+            echo "::error::Zmiana zależności ($(echo $zal)) – potrzebna zgoda właściciela (etykieta 'nowa-zaleznosc')."
+            blad=1
+          fi
+          [ "$blad" = 0 ] && echo "Zgody: OK"
+          exit $blad

@@ -1,0 +1,3 @@
+# pnpm-workspace.yaml – nie instaluj wersji opublikowanych w ostatnich 3 dniach
+# (paczki „zmyślone” przez AI i zarejestrowane przez atakujących, świeżo przejęte paczki)
+minimumReleaseAge: 4320   # minuty; pnpm ≥ 10.16 (projekt: pnpm 10.30.3 z packageManager)
