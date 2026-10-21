@@ -117,9 +117,9 @@ export function IndicatorPickerContent({
   let flatItemCounter = 0;
 
   return (
-    <div className={cn('flex flex-col w-full', className)}>
+    <div className={cn('flex flex-col w-full h-full max-h-full min-h-0', className)}>
       {/* Pole wyszukiwania */}
-      <div className="p-3 border-b border-linia bg-arkusz sticky top-0 z-10 flex items-center gap-2">
+      <div className="p-3 border-b border-linia bg-arkusz sticky top-0 z-10 flex items-center gap-2 shrink-0">
         <Icon icon={Search} size={20} aria-hidden={true} className="text-olowek flex-shrink-0" />
         <input
           type="search"
@@ -137,7 +137,7 @@ export function IndicatorPickerContent({
       <div
         role="listbox"
         aria-label="Lista wskaźników"
-        className="flex-1 overflow-y-auto p-1 divide-y divide-linia/20"
+        className="flex-1 overflow-y-auto p-1 divide-y divide-linia/20 min-h-0"
       >
         {filteredIndicators.length === 0 ? (
           <div role="status" className="p-6 text-center text-olowek text-sm">
@@ -162,6 +162,11 @@ export function IndicatorPickerContent({
                     aria-selected={isSelected ? 'true' : 'false'}
                     onClick={() => onSelect(item.id)}
                     onMouseEnter={() => setActiveIndex?.(currentIndex)}
+                    ref={(node) => {
+                      if (isActive && node) {
+                        node.scrollIntoView({ block: 'nearest' });
+                      }
+                    }}
                     className={cn(
                       'flex items-center justify-between gap-3 w-full px-3 py-2.5 min-h-[44px] text-left cursor-pointer rounded-none border-0 transition-colors',
                       isSelected ? 'bg-linia/30 text-tusz font-semibold' : 'text-tusz hover:bg-linia/15',
@@ -274,7 +279,9 @@ export function IndicatorPicker({
 
       <PopoverContent
         align="start"
-        className="w-80 sm:w-96 p-0 bg-arkusz text-tusz border border-linia rounded-none shadow-none z-50 flex flex-col max-h-[80vh] overflow-hidden"
+        collisionPadding={8}
+        aria-label="Wybór wskaźnika"
+        className="w-80 sm:w-96 p-0 bg-arkusz text-tusz border border-linia rounded-none shadow-none z-50 flex flex-col max-h-[var(--radix-popover-content-available-height)] sm:max-h-[min(80vh,var(--radix-popover-content-available-height))] overflow-hidden"
       >
         <IndicatorPickerContent
           indicators={indicators}

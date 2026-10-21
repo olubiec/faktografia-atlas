@@ -66,7 +66,7 @@ export function IndicatorPanel({ view, choropleth, ranking, index, selectedTeryt
   return (
     <aside
       aria-label="Panel wskaźnika"
-      className="w-full md:w-[400px] md:shrink-0 bg-arkusz text-tusz border-b md:border-b-0 md:border-r border-linia overflow-y-auto max-h-[45vh] md:max-h-none"
+      className="w-full md:w-[400px] md:shrink-0 bg-arkusz text-tusz border-b md:border-b-0 md:border-r border-linia overflow-y-auto max-h-[45vh] md:max-h-full md:h-full"
     >
       <div className="p-4 md:p-6 flex flex-col gap-5">
         <h2 className="sr-only">Panel wskaźnika</h2>
