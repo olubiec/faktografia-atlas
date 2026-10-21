@@ -394,7 +394,7 @@ export class BdlDiscoverer {
     const lines = [
       '# Raport odkrywania wskaźników GUS BDL (CC6.3)',
       '',
-      'Raport proponuje kandydatów na zmienne BDL dla 20 wskaźników z `docs/MASTER_PLAN.md §4.2`.',
+      'Raport proponuje kandydatów na zmienne BDL dla 20 wskaźników z `config/indicators.json`.',
       'Wszystkie metadane, liczby, jednostki i przykładowe wartości pochodzą z odpowiedzi API GUS BDL zarchiwizowanych w `tests/fixtures/bdl/discover-cache.json` oraz `tests/fixtures/bdl/recorded/`.',
       '',
       '---',

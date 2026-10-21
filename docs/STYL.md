@@ -1,6 +1,6 @@
 # STYL — Faktografia „Kalka i korekta”
 
-Wersja 1, 17.10.2026. Ten plik zastępuje dawną sekcję designu („Rocznik, który ożył”) w docs/MASTER_PLAN.md.
+Wersja 1, 17.10.2026. Jedyne źródło prawdy o wyglądzie (dawny koncept „Rocznik, który ożył” jest anulowany).
 Wartości liczbowe (kolory, rozmiary, czasy) są w `config/tokens.json`. W kodzie używaj wyłącznie tokenów,
 nigdy wpisanych na sztywno kolorów ani rozmiarów.
 
@@ -119,8 +119,12 @@ Zasady:
 - Jedna scena na wejście (raz na sesję): kontur Polski rysuje się tuszem w 1,2 s (animacja `stroke-dashoffset`
   na nakładce SVG), potem regiony wypełniają się kolorem (300 ms), na koniec długopis zakreśla wybrane miejsce.
 - Potem ruch tylko odpowiada na działania: zmiana wskaźnika lub roku przelewa kolory w 300 ms,
-  lot kamery do jednostki 800 ms, arkusz wysuwa się w 300 ms.
-- Krzywa: `cubic-bezier(0.2, 0, 0, 1)`. Żadnych sprężyn, odbić ani animacji wjazdu każdego elementu.
+  arkusz wysuwa się w 300 ms.
+- Wejście w głąb mapy (decyzja właściciela 21.10.2026, PRODUKT §5a): kamera płynnie podjeżdża do jednostki w 600 ms
+  (powrót 400 ms), a jednostki niższego poziomu wypełniają się kolorem **kafelek po kafelku**, od środka na zewnątrz
+  (każdy kafelek ≥ 150 ms, cała fala ≤ 900 ms); reszta kraju zostaje wyblakła. Bez animacji przy otwarciu linku.
+- Krzywa: `cubic-bezier(0.2, 0, 0, 1)`. Żadnych sprężyn, odbić ani animacji wjazdu każdego elementu panelu
+  (wyjątek: kafelki mapy przy wejściu w głąb).
 - `prefers-reduced-motion`: wszystko pojawia się od razu, zakreślenia bez animacji.
 
 ## 9. Ikony
