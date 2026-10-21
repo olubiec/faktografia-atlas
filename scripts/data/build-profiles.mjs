@@ -87,104 +87,6 @@ export function buildProfileShards(indicators, valuesById, units) {
   }
   const shards = {};
 
-  const wojLevelUnits = units.filter((u) => u.level === 'woj');
-
-  // Pre-obliczanie profili dla 16 województw (dla porównań ogólnokrajowych w każdym szardzie)
-  const voivodeshipProfiles = {};
-  for (const wojUnit of wojLevelUnits) {
-    const profileItems = [];
-    for (const indicator of indicators) {
-      const indValues = valuesById[indicator.id];
-      const years = indValues?.years ?? [];
-      const effectiveUnitValues = indValues?.values?.[wojUnit.teryt];
-      const series = years.map((_, i) => effectiveUnitValues?.[i] ?? null);
-
-      if (!indValues || !indValues.years || indValues.years.length === 0) {
-        profileItems.push({
-          indicatorId: indicator.id,
-          year: null,
-          value: null,
-          rankNational: null,
-          rankVoivodeship: null,
-          totalNational: 0,
-          totalVoivodeship: 0,
-          neutral: indicator.higherIsBetter === null,
-          years,
-          series,
-        });
-        continue;
-      }
-
-      let yearIdx = -1;
-      for (let i = indValues.years.length - 1; i >= 0; i--) {
-        const val = indValues.values?.[wojUnit.teryt]?.[i];
-        if (val !== undefined && val !== null) {
-          yearIdx = i;
-          break;
-        }
-      }
-
-      if (yearIdx === -1) {
-        profileItems.push({
-          indicatorId: indicator.id,
-          year: null,
-          value: null,
-          rankNational: null,
-          rankVoivodeship: null,
-          totalNational: 0,
-          totalVoivodeship: 0,
-          neutral: indicator.higherIsBetter === null,
-          years,
-          series,
-        });
-        continue;
-      }
-
-      const year = indValues.years[yearIdx];
-      const value = indValues.values[wojUnit.teryt][yearIdx];
-      const key = `${indicator.id}:${yearIdx}`;
-      const indexed = indexByIndicatorYearLevel.get(key);
-      const nationalValues = indexed?.nationalByLevel.woj ?? [];
-
-      let rankNational = null;
-      if (value !== null) {
-        if (indicator.higherIsBetter === false) {
-          let betterNat = 0;
-          for (let i = 0; i < nationalValues.length; i++) {
-            if (nationalValues[i] < value) betterNat++;
-            else break;
-          }
-          rankNational = 1 + betterNat;
-        } else {
-          let betterNat = 0;
-          for (let i = nationalValues.length - 1; i >= 0; i--) {
-            if (nationalValues[i] > value) betterNat++;
-            else break;
-          }
-          rankNational = 1 + betterNat;
-        }
-      }
-
-      profileItems.push({
-        indicatorId: indicator.id,
-        year,
-        value,
-        rankNational,
-        rankVoivodeship: rankNational,
-        totalNational: nationalValues.length,
-        totalVoivodeship: nationalValues.length,
-        neutral: indicator.higherIsBetter === null,
-        years,
-        series,
-      });
-    }
-
-    voivodeshipProfiles[wojUnit.teryt] = profileItems.map((item) => {
-      const { years: _y, ...rest } = item;
-      return rest;
-    });
-  }
-
   for (const [wojTeryt, wojUnits] of unitsByWoj.entries()) {
     const shardUnits = {};
 
@@ -324,7 +226,6 @@ export function buildProfileShards(indicators, valuesById, units) {
       generatedAt,
       years: yearsByIndicator,
       units: shardUnits,
-      voivodeships: voivodeshipProfiles,
     };
   }
 
