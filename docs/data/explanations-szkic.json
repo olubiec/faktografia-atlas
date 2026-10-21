@@ -1,0 +1,165 @@
+{
+ "version": 1,
+ "items": [
+  {
+   "indicatorId": "population",
+   "short": "Ilu ludzi mieszka w tym miejscu, według stanu na koniec roku.",
+   "howToRead": "To liczba mieszkańców, nie turystów ani osób dojeżdżających do pracy. Do porównań miejsc różnej wielkości lepsza jest gęstość zaludnienia.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "density",
+   "short": "Ilu mieszkańców przypada średnio na jeden kilometr kwadratowy.",
+   "howToRead": "Wysoka wartość to miasto, niska to wieś albo tereny z lasami i polami. Przykład: 50 os./km² to około 50 osób na kwadracie o boku 1 km, czyli rzadka zabudowa.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "natural-increase",
+   "short": "Różnica między liczbą urodzeń a liczbą zgonów w ciągu roku, na każde 1000 mieszkańców.",
+   "howToRead": "Wynik dodatni: rodzi się więcej osób, niż umiera. Ujemny: odwrotnie. Przykład: −5 na 1000 to o 5 osób mniej na każde 1000 mieszkańców. Przeprowadzek tu nie liczymy.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "migration-balance",
+   "short": "Ile osób więcej wprowadziło się niż wyprowadziło w ciągu roku, na każde 1000 mieszkańców.",
+   "howToRead": "Plus: ludzie się tu przeprowadzają, minus: wyjeżdżają. Dane pochodzą ze zgłoszeń zameldowania i wymeldowania. Przykład: −0,9 na 1000 to prawie 1 osoba mniej na tysiąc mieszkańców.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "share-65plus",
+   "short": "Jaka część mieszkańców ma co najmniej 65 lat.",
+   "howToRead": "Im wyższy udział, tym starsza społeczność. Przykład: 24% to prawie co czwarty mieszkaniec. Wysokie wartości często oznaczają większe potrzeby opieki i ochrony zdrowia.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "median-age",
+   "short": "Wiek, który dzieli mieszkańców na pół: połowa jest młodsza, a połowa starsza.",
+   "howToRead": "Lepiej opisuje wiek mieszkańców niż średnia, bo mniej zależy od skrajnych przypadków. Przykład: 43 lata oznaczają, że połowa mieszkańców ma mniej niż 43 lata.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "unemployment-rate",
+   "short": "Jaka część osób zawodowo czynnych jest zarejestrowana w urzędzie pracy jako bezrobotna.",
+   "howToRead": "To dane z rejestrów urzędów pracy, a nie z badania ankietowego. Osoby bez pracy, które się nie rejestrują, tu się nie liczą, więc wynik różni się od danych z badań, którymi posługuje się Unia Europejska.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "unemployed-share-working-age",
+   "short": "Jaka część osób w wieku produkcyjnym jest zarejestrowana w urzędzie pracy jako bezrobotna.",
+   "howToRead": "Wiek produkcyjny to 18–59 lat dla kobiet i 18–64 dla mężczyzn. Liczone od wszystkich osób w tym wieku, także uczących się, więc wynik jest niższy niż stopa bezrobocia.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "avg-wage",
+   "short": "Ile średnio zarabia się miesięcznie na etacie, w złotych brutto, czyli przed odjęciem podatków i składek.",
+   "howToRead": "Bardzo wysokie pensje podnoszą średnią. Wynik nie obejmuje firm zatrudniających do 9 osób. To dane dla całego powiatu, nie dla jednej gminy.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "income-per-capita",
+   "short": "Ile pieniędzy wpłynęło do budżetu gminy w ciągu roku, w przeliczeniu na jednego mieszkańca.",
+   "howToRead": "To nie są zarobki mieszkańców. Gmina dostaje pieniądze z podatków, od państwa i z dotacji, także unijnych. Wysoka kwota może oznaczać bogatą gminę albo jednorazową dotację.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "spending-per-capita",
+   "short": "Ile gmina wydała w ciągu roku, w przeliczeniu na jednego mieszkańca.",
+   "howToRead": "Wydatki obejmują m.in. szkoły, drogi, komunikację i urząd. Wyższa kwota nie zawsze znaczy lepiej: może wynikać z jednej dużej inwestycji w danym roku.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "regon-per-10k",
+   "short": "Ile firm i działalności wpisanych do rejestru REGON przypada na 10 tysięcy mieszkańców.",
+   "howToRead": "REGON to państwowy rejestr firm, także jednoosobowych. Wpisana firma nie zawsze prowadzi działalność. Przykład: 1000 na 10 tys. to jedna firma na 10 mieszkańców.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "dwellings-per-1000",
+   "short": "Ile nowych mieszkań ukończono i oddano do użytku w ciągu roku, na 1000 mieszkańców.",
+   "howToRead": "To mieszkania ukończone w danym roku, a nie te dopiero w budowie. Wynik nie mówi, ile mieszkań jest w okolicy w ogóle. Przykład: 5 na 1000 to 5 nowych mieszkań na tysiąc mieszkańców.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "dwelling-area-per-person",
+   "short": "Ile metrów kwadratowych mieszkania przypada średnio na jedną osobę.",
+   "howToRead": "Wyższa wartość to więcej miejsca dla mieszkańców, ale nic nie mówi o jakości mieszkań. Przykład: 28 m² na osobę to np. mieszkanie 56 m² dla dwóch osób.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "forest-cover",
+   "short": "Jaka część powierzchni jest pokryta lasem.",
+   "howToRead": "Przykład: 37% to ponad jedna trzecia terenu pod lasem. Wynik nie mówi, czy lasy są dostępne dla spacerowiczów, bo część należy do prywatnych właścicieli.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "sewerage-share",
+   "short": "Jaka część mieszkańców jest podłączona do sieci kanalizacyjnej.",
+   "howToRead": "Pozostali korzystają zwykle ze zbiorników na nieczystości (szamb) albo z przydomowych oczyszczalni. Niska wartość często oznacza tereny wiejskie lub rozproszoną zabudowę.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "preschool-3-6",
+   "short": "Jaka część dzieci w wieku 3–6 lat chodzi do przedszkola lub oddziału przedszkolnego.",
+   "howToRead": "Wysoka wartość oznacza, że niemal wszystkie dzieci w tym wieku mają miejsce w przedszkolu. Wynik zależy zarówno od liczby miejsc, jak i od tego, czy rodzice posyłają dzieci do przedszkola.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "library-readers-per-1000",
+   "short": "Ilu mieszkańców na każde 1000 jest zarejestrowanymi czytelnikami bibliotek publicznych.",
+   "howToRead": "Liczą się biblioteki publiczne i ich filie; szkolne i naukowe nie. Przykład: 150 na 1000 to około co siódmy mieszkaniec.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "tourist-nights-per-1000",
+   "short": "Ile nocy turyści spędzili w obiektach noclegowych, w przeliczeniu na 1000 mieszkańców.",
+   "howToRead": "Wysoka wartość to miejsce turystyczne, np. nad morzem albo w górach. Liczą się obiekty zgłaszane do GUS; część małych obiektów i prywatnych wynajmów może się tu nie znaleźć.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  },
+  {
+   "indicatorId": "cars-per-1000",
+   "short": "Ile samochodów osobowych jest zarejestrowanych na każde 1000 mieszkańców.",
+   "howToRead": "Liczy samochody zarejestrowane w powiecie, a nie to, jak często mieszkańcy jeżdżą. Firmy leasingowe rejestrujące flotę w jednym mieście zawyżają wynik w niektórych miastach.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+  }
+ ]
+}

@@ -15,6 +15,10 @@ Na podstawie plików w repo (commit 6fc0490); pełny przegląd działania – au
 Scalić paczkę S14 (PR z docs/zadania/S14.md, docs/PLAN.md, docs/STAN.md), ustawić AUTOPILOT=on (limit 2) – dalej Autopilot i Jules; Ty: Tablica i podglądy Vercel.
 
 ## Znane problemy
+- Zakreślenie nie podąża za tekstem przy przewijaniu profilu → S14.7. Nie da się oddalić mapy do całej Polski → S14.8 (21.10, ogląd właściciela).
+- Profil gminy pokazuje „Gmina” zamiast „Gmina miejska Szczecin” → S14.3 (unitTitle). Dane „samo miasto” w gminach miejsko-wiejskich – ZWIAD w S15.
+- Lista wyboru wskaźnika i panel nie przewijają się na telefonie → S14.9. Malutkie wykresy w profilu nieczytelne → S14.2 (klik = pełny wykres) i S14.10 (zmiana w latach). Brak prostych objaśnień wskaźników → S16 (szkic tekstów gotowy: docs/data/explanations-szkic.json).
+- Brak przejść/animacji przy zmianie wskaźnika → S18. Czas ładowania do zmierzenia → S15.
 - Ekran główny nie był oglądany przez właściciela po fali 9 (CC13) – lista do obejrzenia w czacie PLAN S14; zauważone błędy → S15.
 - Zakładka „Porównaj” będzie nieaktywna („wkrótce”) do S16.
 
@@ -27,6 +31,8 @@ Scalić paczkę S14 (PR z docs/zadania/S14.md, docs/PLAN.md, docs/STAN.md), usta
 - Klucz PostHog – przed statystykami wyszukiwań.
 
 ## Decyzje (najnowsze na górze, 1 linia, z kim/gdzie podjęta)
+- 21.10.2026 · Do S14 dodane S14.9 i S14.10; objaśnienia wskaźników awansowane do S16 z gotowym szkicem tekstów (właściciel, czat Claude)
+- 21.10.2026 · Do S14 dodane S14.7 i S14.8 (niezależne błędy z oglądu); plan: S15 poprawki i pomiary, S16 objaśnienia, S17 porównanie, S18 ruch i SEO (właściciel, czat Claude)
 - 21.10.2026 · S14 = profil miejsca wg makiety 03; porównanie przesunięte na S16, objaśnienia na S15 (właściciel, czat Claude TRYB: PLAN – S14)
 - 21.10.2026 · Poprzedni STAN.md (fale 1–3, CC0–CC6.1) był nieaktualny – zastąpiony tym plikiem; historia fal w docs/archiwum/ (Claude, PLAN S14)
 - 21.10.2026 · Przejście na WORKFLOW v3 (PR #177)
