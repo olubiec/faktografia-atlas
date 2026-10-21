@@ -79,7 +79,12 @@ export function buildProfileShards(indicators, valuesById, units) {
     yearsByIndicator[indicator.id] = indValues?.years ?? [];
   }
 
-  const generatedAt = new Date().toISOString();
+  // Znacznik czasu pochodzi z danych (najnowsze fetchedAt), nie z zegara: te same dane dają identyczny plik,
+  // więc nocne pobieranie nie tworzy fałszywych zmian.
+  let generatedAt = '1970-01-01T00:00:00.000Z';
+  for (const v of Object.values(valuesById)) {
+    if (typeof v?.fetchedAt === 'string' && v.fetchedAt > generatedAt) generatedAt = v.fetchedAt;
+  }
   const shards = {};
 
   for (const [wojTeryt, wojUnits] of unitsByWoj.entries()) {

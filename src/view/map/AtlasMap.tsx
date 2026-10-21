@@ -6,12 +6,12 @@ import type { StyleSpecification } from 'maplibre-gl';
 import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-import unitsData from '../../../public/data/units.json';
-import adminTopo from '../../../public/geo/admin.topo.json';
 import tokensJson from '../../../config/tokens.json';
 
 import { installAtlasSeam, type AtlasState } from '@/core/map/test-seam';
 import { buildIndex } from '@/core/units/units';
+import { loadUnits, loadAdminTopo } from '@/core/data/load-atlas-data';
+import { countryBounds } from '@/core/map/view';
 import { createMapLayers, registerLayerFactory, parseCssColor } from './layers';
 import { localitiesLayerFactory } from './layers/localities';
 import { choroplethLayerFactory } from './layers/choropleth';
@@ -44,9 +44,43 @@ function DeckGLOverlay(props: MapboxOverlayProps) {
 
 const defaultKalka = parseCssColor(tokensJson.color.light.kalka);
 
+type AtlasData = { units: Unit[]; adminTopo: any };
+
+/**
+ * Lista jednostek i granice to osobne pliki (public/data, public/geo), pobierane przy starcie mapy
+ * i trzymane w pamięci przeglądarki. Dzięki temu nie są wklejone do kodu (PRODUKT.md §7).
+ */
 export function AtlasMap() {
+  const [data, setData] = useState<AtlasData | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([loadUnits(), loadAdminTopo()])
+      .then(([units, adminTopo]) => {
+        if (!cancelled) setData({ units, adminTopo });
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (data) return <AtlasMapReady units={data.units} adminTopo={data.adminTopo} />;
+
+  return (
+    <div className="w-full h-full relative flex items-center justify-center text-olowek text-sm" aria-label="Mapa Polski" role="status">
+      {failed ? 'Nie udało się wczytać mapy. Odśwież stronę.' : 'Wczytuję mapę…'}
+    </div>
+  );
+}
+
+function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) {
   const [isReady, setIsReady] = useState(false);
-  const unitIndex = useMemo(() => buildIndex(unitsData as Unit[]), []);
+  const unitIndex = useMemo(() => buildIndex(units), [units]);
+  const bounds = useMemo(() => countryBounds(units), [units]);
 
   const { colors, theme } = useMapColors();
 
@@ -75,10 +109,10 @@ export function AtlasMap() {
     localityTargetRef,
     updateViewStateForBbox,
     handleKeyDown,
-  } = useMapViewState(drillState.bbox);
+  } = useMapViewState(drillState.bbox, bounds);
 
-  const choroplethData = useChoropleth(drillState, unitsData as Unit[]);
-  const { profile, isOpen: profileOpen, closeProfile } = useProfile(selectedTeryt, unitsData as Unit[]);
+  const choroplethData = useChoropleth(drillState, units);
+  const { profile, isOpen: profileOpen, closeProfile } = useProfile(selectedTeryt, units);
 
   const extendedDrillState = useMemo(() => {
     return {
@@ -96,7 +130,7 @@ export function AtlasMap() {
       currentViewState,
       localities
     );
-  }, [colors, extendedDrillState, selectUnit, currentViewState, localities]);
+  }, [adminTopo, colors, extendedDrillState, selectUnit, currentViewState, localities]);
 
   const getState = useCallback((): AtlasState => {
     return {
@@ -190,7 +224,7 @@ export function AtlasMap() {
 
       <ProfilePortal
         profile={profile}
-        units={unitsData as Unit[]}
+        units={units}
         isOpen={profileOpen}
         onClose={closeProfile}
       />

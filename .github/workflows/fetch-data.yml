@@ -140,12 +140,17 @@ jobs:
         if: steps.checks.outcome == 'success' && env.MANUAL != 'true'
         run: node scripts/data/nightly-checks.mjs revert-noise
 
-      - name: Zatwierdź i wypchnij tylko public/data/values/
+      - name: Zbuduj pliki profili z nowych wartości
+        id: profiles
+        if: steps.checks.outcome == 'success'
+        run: node scripts/data/build-profiles.mjs
+
+      - name: Zatwierdź i wypchnij public/data/values/ i public/data/profiles/
         id: push
         if: always() && (env.MANUAL == 'true' || steps.checks.outcome == 'success')
         shell: bash
         run: |
-          git add public/data/values/
+          git add public/data/values/ public/data/profiles/
           if git diff --staged --quiet; then
             echo "Brak zmian w danych."
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -167,7 +172,7 @@ jobs:
           N="$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&head=${GITHUB_REPOSITORY_OWNER}:${BRANCH}" --jq '.[0].number // empty')"
           if [ -z "$N" ]; then
             LISTA="$(tr '\n' ' ' < "$RUNNER_TEMP/zmienione-wskazniki.txt" 2>/dev/null || true)"
-            BODY="Zakres: public/data/values/*.json (z workflow „Fetch data”, przebieg $GITHUB_RUN_ID).
+            BODY="Zakres: public/data/values/*.json i public/data/profiles/*.json (z workflow „Fetch data”, przebieg $GITHUB_RUN_ID).
 
           Test kontraktu i liczby kontrolne (16 województw, ≥ 2470 gmin, suma ludności 36–39 mln) przeszły. Zmienione wskaźniki: ${LISTA:-wszystkie}.
           Przed scaleniem sprawdź kilka liczb z bdl.stat.gov.pl (Polska, małopolskie, Zakopane)."

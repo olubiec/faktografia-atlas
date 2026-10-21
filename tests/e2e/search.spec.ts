@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 
 test.describe('Search Command Dialog (CC5.2)', () => {
-  test('lista jednostek nie jest pobierana przed otwarciem okna, a po otwarciu dokładnie raz', async ({ page }) => {
+  test('lista jednostek jest pobierana raz i wspólnie przez mapę i wyszukiwarkę', async ({ page }) => {
     const unitsRequests: string[] = [];
     page.on('request', (req) => {
       if (req.url().includes('/data/units.json')) unitsRequests.push(req.url());
@@ -10,7 +10,8 @@ test.describe('Search Command Dialog (CC5.2)', () => {
 
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    expect(unitsRequests).toHaveLength(0);
+    // Mapa pobiera listę jednostek przy starcie (osobny plik, nie część kodu); wyszukiwarka używa tej samej pamięci.
+    expect(unitsRequests).toHaveLength(1);
 
     await page.keyboard.press('Control+k');
     const searchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
