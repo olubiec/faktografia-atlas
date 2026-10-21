@@ -57,28 +57,32 @@ test.describe('Choropleth Map (CC8.2a-2)', () => {
     expect(atlasState.layers).toContain('choropleth-layer');
   });
 
-  test('without ?i= parameter choropleth is null and no choropleth-layer exists', async ({ page }) => {
+  test('without ?i= parameter the map is colored with the default indicator (density, voivodeships)', async ({ page }) => {
     await page.goto('/?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
+    await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 
     const atlasState = await page.evaluate(() => (window as any).__atlas);
-    expect(atlasState.choropleth).toBeNull();
-    expect(atlasState.layers).not.toContain('choropleth-layer');
+    expect(atlasState.choropleth.indicatorId).toBe('density');
+    expect(atlasState.choropleth.level).toBe('woj');
+    expect(atlasState.layers).toContain('choropleth-layer');
   });
 
-  test('404 missing values file behaves as without ?i= with no console errors', async ({ page }) => {
-    const consoleErrors: string[] = [];
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        consoleErrors.push(msg.text());
-      }
-    });
+  test('unknown ?i= falls back to the default indicator', async ({ page }) => {
+    await page.goto('/?e2e&i=non-existent-indicator');
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
+    await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 
-    await page.route('**/data/values/non-existent-indicator.json', async (route) => {
+    const atlasState = await page.evaluate(() => (window as any).__atlas);
+    expect(atlasState.choropleth.indicatorId).toBe('density');
+  });
+
+  test('404 missing values file leaves the map uncolored', async ({ page }) => {
+    await page.route('**/data/values/density.json', async (route) => {
       await route.fulfill({ status: 404, body: 'Not found' });
     });
 
-    await page.goto('/?e2e&i=non-existent-indicator');
+    await page.goto('/?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForTimeout(300);
 

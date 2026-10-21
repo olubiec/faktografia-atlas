@@ -78,7 +78,7 @@ test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
 
     // Click on a sub-unit
     await powButton.click();
-    await page.waitForTimeout(200);
+    await page.waitForFunction(() => (window as any).__atlas?.selected === '0201');
 
     let atlasState = await page.evaluate(() => (window as any).__atlas);
     expect(atlasState.selected).toBe('0201');
@@ -90,13 +90,13 @@ test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
     const powButton2 = page.locator('ul[aria-label="Jednostki podrzędne"]').locator('button', { hasText: 'powiat bolesławiecki' });
     await powButton2.focus();
     await page.keyboard.press('Enter');
-    await page.waitForTimeout(200);
+    await page.waitForFunction(() => (window as any).__atlas?.selected === '0201');
 
     atlasState = await page.evaluate(() => (window as any).__atlas);
     expect(atlasState.selected).toBe('0201');
   });
 
-  test('focus order follows breadcrumbs -> Back button -> sub-unit list -> map', async ({ page }) => {
+  test('focus order follows breadcrumbs -> Back button -> map (sub-unit list is in the indicator panel)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?u=02&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
@@ -109,26 +109,17 @@ test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
     const focusedBack = await page.evaluate(() => document.activeElement?.textContent?.trim());
     expect(focusedBack).toContain('Wróć');
 
-    // Tab -> First item in sub-unit list
+    // Tab -> map
     await page.keyboard.press('Tab');
-    const focusedSubUnit = await page.evaluate(() => document.activeElement?.tagName.toLowerCase());
-    expect(focusedSubUnit).toBe('button');
-    const isInsideUnitList = await page.evaluate(() => {
-      return !!document.activeElement?.closest('ul[aria-label="Jednostki podrzędne"]');
-    });
-    expect(isInsideUnitList).toBe(true);
-
-    // Tab through sub-unit list items to reach map
-    const subUnitButtons = page.locator('ul[aria-label="Jednostki podrzędne"] button');
-    const count = await subUnitButtons.count();
-    await subUnitButtons.nth(count - 1).focus();
-    await page.keyboard.press('Tab');
-
     const isInsideMap = await page.evaluate(() => {
       const active = document.activeElement;
       return !!active?.closest('[aria-label="Mapa Polski"]');
     });
     expect(isInsideMap).toBe(true);
+
+    // Lista jednostek podrzędnych jest w panelu wskaźnika (przed mapą w kolejności tabulatora) i działa z klawiatury.
+    const subUnitButtons = page.locator('aside ul[aria-label="Jednostki podrzędne"] button');
+    expect(await subUnitButtons.count()).toBeGreaterThan(0);
   });
 
   test('axe accessibility audit passes on voivodeship view', async ({ page }) => {

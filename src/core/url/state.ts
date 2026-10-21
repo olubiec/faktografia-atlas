@@ -7,6 +7,7 @@ export type UrlState = {
   i?: string | null;
   y?: number | null;
   c?: string | null;
+  l?: 'woj' | 'pow' | 'gmi' | null;
 };
 
 const VALID_INDICATOR_IDS = new Set(indicators.map((ind) => ind.id));
@@ -44,6 +45,11 @@ export function readUrlState(search: string, index?: UnitIndex): UrlState {
     }
   }
 
+  const lParam = params.get('l');
+  if (lParam === 'woj' || lParam === 'pow' || lParam === 'gmi') {
+    result.l = lParam;
+  }
+
   return result;
 }
 
@@ -75,6 +81,14 @@ export function writeUrlState(state: UrlState): void {
       url.searchParams.set('y', String(state.y));
     } else {
       url.searchParams.delete('y');
+    }
+  }
+
+  if ('l' in state) {
+    if (state.l) {
+      url.searchParams.set('l', state.l);
+    } else {
+      url.searchParams.delete('l');
     }
   }
 

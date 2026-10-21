@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Search Dialog Close and Focus behavior (CC13.5a)', () => {
-  test('klik w pole otwarcia -> okno otwarte; klik w krzyżyk -> zamknięte i nadal zamknięte po 1 s, fokus na polu', async ({ page }) => {
+  test('klik w przycisk wyszukiwania -> okno otwarte; klik w krzyżyk -> zamknięte i nadal zamknięte po 1 s, fokus wraca na przycisk wyszukiwania', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    const homeSearchInput = page.locator('#home-search-field');
+    const homeSearchInput = page.getByRole('button', { name: 'Szukaj miejsca' });
     const dialogSearchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
     const closeButton = page.locator('button[aria-label="Zamknij wyszukiwarkę"]');
 
@@ -25,11 +25,11 @@ test.describe('Search Dialog Close and Focus behavior (CC13.5a)', () => {
     await expect(homeSearchInput).toBeFocused();
   });
 
-  test('Escape zamyka okno, pozostaje zamknięte po 1 s, fokus na polu', async ({ page }) => {
+  test('Escape zamyka okno, pozostaje zamknięte po 1 s, fokus wraca na przycisk wyszukiwania', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    const homeSearchInput = page.locator('#home-search-field');
+    const homeSearchInput = page.getByRole('button', { name: 'Szukaj miejsca' });
     const dialogSearchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
 
     await homeSearchInput.click();
@@ -47,11 +47,11 @@ test.describe('Search Dialog Close and Focus behavior (CC13.5a)', () => {
     await expect(homeSearchInput).toBeFocused();
   });
 
-  test('klik w tło (overlay) zamyka okno, pozostaje zamknięte po 1 s, fokus na polu', async ({ page }) => {
+  test('klik w tło (overlay) zamyka okno, pozostaje zamknięte po 1 s, fokus wraca na przycisk wyszukiwania', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    const homeSearchInput = page.locator('#home-search-field');
+    const homeSearchInput = page.getByRole('button', { name: 'Szukaj miejsca' });
     const dialogSearchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
 
     await homeSearchInput.click();
@@ -70,11 +70,11 @@ test.describe('Search Dialog Close and Focus behavior (CC13.5a)', () => {
     await expect(homeSearchInput).toBeFocused();
   });
 
-  test('fokus (Tab) na pole nie otwiera okna; Enter i Spacja na polu otwierają okno', async ({ page }) => {
+  test('fokus na przycisku nie otwiera okna; Enter i Spacja otwierają okno', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    const homeSearchInput = page.locator('#home-search-field');
+    const homeSearchInput = page.getByRole('button', { name: 'Szukaj miejsca' });
     const dialogSearchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
 
     // Ustawienie fokusa na pole
@@ -119,7 +119,7 @@ test.describe('Search Dialog Close and Focus behavior (CC13.5a)', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    const homeSearchInput = page.locator('#home-search-field');
+    const homeSearchInput = page.getByRole('button', { name: 'Szukaj miejsca' });
     const dialogSearchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
     const closeButton = page.locator('button[aria-label="Zamknij wyszukiwarkę"]');
 

@@ -10,6 +10,7 @@ function Slider({
   max = 100,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
+  "aria-valuetext": ariaValueText,
   ...props
 }: React.ComponentProps<typeof SliderPrimitive.Root>) {
   const values = React.useMemo(() => {
@@ -46,6 +47,7 @@ function Slider({
           key={index}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
+          aria-valuetext={ariaValueText}
           className="relative block h-[20px] w-[20px] shrink-0 rounded-none bg-[var(--tusz)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--tusz)] disabled:pointer-events-none disabled:opacity-50 before:absolute before:-inset-3 before:content-['']"
         />
       ))}

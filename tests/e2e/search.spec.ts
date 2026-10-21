@@ -49,7 +49,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
     await expect(searchTrigger).toBeFocused();
   });
 
-  test('opens search modal via clicking header search button or home page input', async ({ page }) => {
+  test('opens search modal via clicking header search button', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
@@ -62,11 +62,6 @@ test.describe('Search Command Dialog (CC5.2)', () => {
 
     await page.keyboard.press('Escape');
     await expect(searchInput).not.toBeVisible();
-
-    // Kliknięcie w pole wyszukiwania na stronie głównej
-    const homeSearchInput = page.locator('#home-search-field');
-    await homeSearchInput.click();
-    await expect(searchInput).toBeVisible();
   });
 
   test('searches for "lodz" and selects Łódź gmina miejska on Enter, updating URL', async ({ page }) => {

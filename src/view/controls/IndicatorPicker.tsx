@@ -256,7 +256,6 @@ export function IndicatorPicker({
       <PopoverTrigger asChild>
         <button
           type="button"
-          aria-label="Wybierz wskaźnik"
           aria-expanded={isOpen}
           className={cn(
             'flex items-center justify-between gap-2 px-4 py-2 min-h-[44px] w-full text-left bg-arkusz text-tusz border border-linia hover:bg-linia/10 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer rounded-none transition-colors',
