@@ -61,7 +61,7 @@ export function RankingBars({
         <h3 className="text-sm font-semibold text-tusz px-1 mb-2">{title}</h3>
       )}
 
-      <div role="list" aria-label={title || 'Ranking jednostek'} className="space-y-0.5">
+      <ul aria-label={title || 'Ranking jednostek'} className="space-y-0.5 list-none p-0 m-0">
         {visibleItems.map((item) => {
           const isSelected = selectedTeryt ? item.teryt === selectedTeryt : false;
           const formattedVal = formatValue(item.value, unit);
@@ -133,31 +133,29 @@ export function RankingBars({
 
           if (onSelect) {
             return (
+              <li key={item.teryt}>
               <button
-                key={item.teryt}
                 type="button"
-                role="listitem"
                 onClick={() => onSelect(item.teryt)}
-                aria-label={ariaLabel}
                 className="flex items-center gap-2 w-full py-2 min-h-[44px] text-left transition-colors cursor-pointer border-0 rounded-none bg-transparent hover:bg-linia/15 focus:outline-none focus:ring-1 focus:ring-tusz px-1"
               >
                 {rowContent}
               </button>
+              </li>
             );
           }
 
           return (
-            <div
+            <li
               key={item.teryt}
-              role="listitem"
               aria-label={ariaLabel}
               className="flex items-center gap-2 w-full py-2 min-h-[44px] text-left px-1"
             >
               {rowContent}
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
 
       {!expanded && isOverflowing && (
         <button

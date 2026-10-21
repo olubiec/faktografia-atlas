@@ -42,10 +42,11 @@ test.describe('Drill Down Map Navigation (CC4.2)', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?u=invalid999&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
+    await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 
     const atlasState = await page.evaluate(() => (window as any).__atlas);
     expect(atlasState.selected).toBeNull();
-    expect(atlasState.layers).toEqual(['woj-layer', 'country-layer']);
+    expect(atlasState.layers).toEqual(['woj-layer', 'country-layer', 'choropleth-layer']);
 
     const backButton = page.locator('button', { hasText: 'Wróć' });
     await expect(backButton).not.toBeVisible();
@@ -74,11 +75,11 @@ test.describe('Drill Down Map Navigation (CC4.2)', () => {
 
     // Step 2: Back from voivodeship (02) to country (null)
     await backButton.click();
-    await page.waitForTimeout(200);
+    await page.waitForFunction(() => (window as any).__atlas?.selected === null);
 
     atlasState = await page.evaluate(() => (window as any).__atlas);
     expect(atlasState.selected).toBeNull();
-    expect(atlasState.layers).toEqual(['woj-layer', 'country-layer']);
+    expect(atlasState.layers).toEqual(['woj-layer', 'country-layer', 'choropleth-layer']);
 
     urlParams = await page.evaluate(() => window.location.search);
     expect(urlParams).not.toContain('u=');

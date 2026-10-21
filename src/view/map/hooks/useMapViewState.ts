@@ -3,6 +3,9 @@ import { initialViewState, mapLimits, type ViewState } from '@/core/map/view';
 import { loadLocalities } from '@/core/search/load-localities';
 import type { Locality } from '@/core/search/types';
 
+// Margines (px) wokół dopasowanego obszaru, żeby mapa nie dotykała krawędzi okna.
+const FIT_PADDING = 48;
+
 type Bbox = [number, number, number, number];
 // Przybliżony obrys Polski; używany tylko, gdy lista jednostek nie jest jeszcze wczytana.
 const POLAND_BBOX: Bbox = [14.12, 49.0, 24.15, 54.84];
@@ -15,6 +18,12 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
   // Dla którego obszaru widok został już dopasowany. Sama zmiana rozmiaru kontenera (np. otwarcie
   // arkusza profilu obok mapy) nie może resetować przybliżenia ani przesunięcia ustawionego przez użytkownika.
   const fittedKeyRef = useRef<string | null>(null);
+  // Czy użytkownik sam przesunął lub przybliżył mapę. Dopóki nie, zmiana rozmiaru kontenera (np. otwarcie
+  // profilu obok mapy) dopasowuje widok ponownie, żeby wybrany obszar nadal mieścił się w całości.
+  const userMovedRef = useRef(false);
+  const markUserMoved = useCallback(() => {
+    userMovedRef.current = true;
+  }, []);
 
   const bounds = countryBbox;
   const limits = useMemo(() => mapLimits(bounds), [bounds]);
@@ -30,7 +39,8 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
       const { width, height } = dimensions;
       if (width > 0 && height > 0) {
         const activeBbox = targetBbox ?? bounds;
-        const newView = initialViewState(activeBbox, width, height);
+        const newView = initialViewState(activeBbox, Math.max(width - FIT_PADDING, 1), Math.max(height - FIT_PADDING, 1));
+        userMovedRef.current = false;
         setCurrentViewState(newView);
       }
     },
@@ -50,9 +60,10 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           setCurrentViewState(localityTargetRef.current);
           localityTargetRef.current = null;
           fittedKeyRef.current = key;
-        } else if (fittedKeyRef.current !== key) {
+          userMovedRef.current = true;
+        } else if (fittedKeyRef.current !== key || !userMovedRef.current) {
           const activeBbox = drillBbox ?? bounds;
-          const init = initialViewState(activeBbox, clientWidth, clientHeight);
+          const init = initialViewState(activeBbox, Math.max(clientWidth - FIT_PADDING, 1), Math.max(clientHeight - FIT_PADDING, 1));
           setCurrentViewState(init);
           fittedKeyRef.current = key;
         }
@@ -74,6 +85,9 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', '+', '=', '-'].includes(e.key)) {
+        userMovedRef.current = true;
+      }
       const panStep = 0.5 / Math.pow(2, currentViewState.zoom - 5);
       const zoomStep = 0.5;
 
@@ -116,6 +130,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     setLocalities,
     localityTargetRef,
     updateViewStateForBbox,
+    markUserMoved,
     handleKeyDown,
   };
 }

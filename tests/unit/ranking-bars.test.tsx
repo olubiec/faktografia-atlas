@@ -46,13 +46,16 @@ describe('<RankingBars /> UI component', () => {
     expect(html).toContain('font-bold');
   });
 
-  test('renders accessible row buttons with aria-label and min 44px touch target', () => {
+  test('renders row buttons named by their visible text (WCAG 2.5.3) and min 44px touch target', () => {
     const html = renderToString(
       <RankingBars items={mockItems.slice(0, 3)} unit="os./km²" onSelect={() => {}} />
     );
 
-    // Check aria-label format: "<nazwa>: <wartość>, <miejsce>. miejsce"
-    expect(html).toContain('aria-label="Województwo 1: 160,0\u00A0os./km², 1. miejsce"');
+    // Nazwa przycisku to jego widoczny tekst: miejsce, nazwa, wartość (bez osobnego aria-label, który by mu przeczył).
+    const button = html.match(/<button[^>]*>/)?.[0] ?? '';
+    expect(button).not.toContain('aria-label');
+    expect(html).toContain('Województwo 1');
+    expect(html).toContain('160,0\u00A0os./km²');
     expect(html).toContain('min-h-[44px]');
   });
 

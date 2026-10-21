@@ -14,6 +14,7 @@ export type MapColors = {
   arkusz: [number, number, number, number];
   tusz: [number, number, number, number];
   ochra?: [number, number, number, number];
+  korekta?: [number, number, number, number];
   olowek?: [number, number, number, number];
 };
 
@@ -25,6 +26,8 @@ export type LayerContext = {
   viewState?: ViewState;
   localities?: Locality[];
   choropleth?: ChoroplethData | null;
+  /** Najechanie na jednostkę (null = kursor poza jednostkami). Współrzędne względem mapy. */
+  onHoverUnit?: (hover: { teryt: string; x: number; y: number; width: number } | null) => void;
 };
 
 export type LayerFactory = {
@@ -75,6 +78,7 @@ export function getMapColorsFromCss(): MapColors | null {
   const arkuszStr = style?.getPropertyValue('--arkusz')?.trim() || tokensJson.color.light.arkusz;
   const tuszStr = style?.getPropertyValue('--tusz')?.trim() || tokensJson.color.light.tusz;
   const ochraStr = style?.getPropertyValue('--ochra')?.trim() || tokensJson.color.light.ochra;
+  const korektaStr = style?.getPropertyValue('--korekta')?.trim() || tokensJson.color.light.korekta;
   const olowekStr = style?.getPropertyValue('--olowek')?.trim() || tokensJson.color.light.olowek;
 
   const kalka = parseCssColor(kalkaStr, 255);
@@ -82,12 +86,13 @@ export function getMapColorsFromCss(): MapColors | null {
   const tusz = parseCssColor(tuszStr, 255);
   const ochra = parseCssColor(ochraStr, 255) ?? undefined;
   const olowek = parseCssColor(olowekStr, 255) ?? undefined;
+  const korekta = parseCssColor(korektaStr, 255) ?? undefined;
 
   if (!kalka || !arkusz || !tusz) {
     return null;
   }
 
-  return { kalka, arkusz, tusz, ochra, olowek };
+  return { kalka, arkusz, tusz, ochra, olowek, korekta };
 }
 
 let cachedFeatures: {

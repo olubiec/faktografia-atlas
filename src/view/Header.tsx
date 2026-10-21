@@ -67,30 +67,6 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    const homeSearchInput = document.getElementById('home-search-field');
-    if (!homeSearchInput) return;
-
-    const handleHomeSearchClick = (e: Event) => {
-      e.preventDefault();
-      changeSearchOpen(true);
-    };
-
-    const handleHomeSearchKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        changeSearchOpen(true);
-      }
-    };
-
-    homeSearchInput.addEventListener('click', handleHomeSearchClick);
-    homeSearchInput.addEventListener('keydown', handleHomeSearchKeyDown);
-    return () => {
-      homeSearchInput.removeEventListener('click', handleHomeSearchClick);
-      homeSearchInput.removeEventListener('keydown', handleHomeSearchKeyDown);
-    };
-  }, [location.pathname]);
-
-  useEffect(() => {
     if (!mobileMenuOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -136,6 +112,7 @@ export function Header() {
         className="flex items-center gap-2 px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs md:text-sm min-h-[44px] cursor-pointer rounded-none"
       >
         <Icon icon={Search} aria-hidden={true} size={20} />
+        <span className="sm:hidden sr-only">Szukaj miejsca</span>
         <span className="hidden sm:inline text-olowek">Szukaj miejsca...</span>
         <span className="hidden md:inline-block px-1.5 py-0.5 border border-linia bg-kalka text-olowek text-xs font-mono ml-1">
           Ctrl K

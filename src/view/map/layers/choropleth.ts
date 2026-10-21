@@ -58,29 +58,16 @@ export const choroplethLayerFactory: LayerFactory = {
     }
 
     const { wojFeatures, powFeatures, gmiFeatures } = loadGeoData(ctx.topoData);
-    let features: FeatureCollection;
-
-    if (choropleth.level === 'pow') {
-      const activeWojTeryt = ctx.drillState?.activeWojTeryt;
-      if (!activeWojTeryt) return null;
-      features = {
-        type: 'FeatureCollection',
-        features: powFeatures.features.filter((f) =>
-          f.properties?.teryt?.startsWith(activeWojTeryt)
-        ),
-      };
-    } else if (choropleth.level === 'gmi') {
-      const activePowTeryt = ctx.drillState?.activePowTeryt;
-      if (!activePowTeryt) return null;
-      features = {
-        type: 'FeatureCollection',
-        features: gmiFeatures.features.filter((f) =>
-          f.properties?.teryt?.startsWith(activePowTeryt)
-        ),
-      };
-    } else {
-      features = wojFeatures;
-    }
+    // Wybrany poziom (województwa / powiaty / gminy). Bez wybranej jednostki: cały kraj. Po wybraniu jednostki
+    // rysujemy tylko jej województwo, żeby nie budować geometrii tysięcy niewidocznych gmin.
+    const all = choropleth.level === 'pow' ? powFeatures : choropleth.level === 'gmi' ? gmiFeatures : wojFeatures;
+    const scopeWoj = choropleth.level === 'woj' ? null : ctx.drillState?.activeWojTeryt ?? null;
+    const features: FeatureCollection = scopeWoj
+      ? {
+          type: 'FeatureCollection',
+          features: all.features.filter((f) => f.properties?.teryt?.startsWith(scopeWoj)),
+        }
+      : all;
 
     // Kolory klas liczymy raz na warstwę (11 tokenów), a nie osobno dla każdej z tysięcy jednostek.
     const palette = new Map<string, [number, number, number, number]>();
@@ -114,7 +101,13 @@ export const choroplethLayerFactory: LayerFactory = {
           ctx.onSelectUnit(info.object.properties.teryt);
         }
       },
-      getTooltip: ({ object }: any) => (object?.properties?.name ? String(object.properties.name) : null),
+      onHover: (info) => {
+        ctx.onHoverUnit?.(
+          info.object?.properties?.teryt
+            ? { teryt: String(info.object.properties.teryt), x: info.x, y: info.y, width: info.viewport?.width ?? 0 }
+            : null
+        );
+      },
       updateTriggers: {
         getFillColor: [
           choropleth.indicatorId,
@@ -125,6 +118,30 @@ export const choroplethLayerFactory: LayerFactory = {
         ],
         getLineColor: [ctx.colors.kalka],
       },
+    });
+  },
+};
+
+/** Czerwony obrys wybranej jednostki (STYL.md: korekta); nie zasłania koloru wypełnienia. */
+export const selectedOutlineLayerFactory: LayerFactory = {
+  id: 'selected-outline-layer',
+  create: (ctx: LayerContext) => {
+    const teryt = ctx.drillState?.selected;
+    if (!teryt) return null;
+    const { wojFeatures, powFeatures, gmiFeatures } = loadGeoData(ctx.topoData);
+    const pool = teryt.length <= 2 ? wojFeatures : teryt.length <= 4 ? powFeatures : gmiFeatures;
+    const found = pool.features.find((f) => f.properties?.teryt === teryt);
+    if (!found) return null;
+    return new GeoJsonLayer({
+      id: 'selected-outline-layer',
+      data: { type: 'FeatureCollection', features: [found] } as FeatureCollection,
+      filled: false,
+      stroked: true,
+      getLineColor: ctx.colors.korekta ?? ctx.colors.tusz,
+      getLineWidth: 3,
+      lineWidthUnits: 'pixels',
+      pickable: false,
+      updateTriggers: { getLineColor: [ctx.colors.korekta, ctx.colors.tusz], data: [teryt] },
     });
   },
 };

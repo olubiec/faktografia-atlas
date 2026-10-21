@@ -1,11 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
-import type { DrillState } from '@/core/map/drill';
+import { useMemo } from 'react';
 import type { Unit, UnitLevel } from '@/core/units/types';
-import type { IndicatorValues } from '@/core/profile/profile';
 import type { ClassificationScheme, ClassifyResult } from '@/core/map/classes';
-import { loadIndicatorValues } from '@/core/data/load-values';
 import { buildChoropleth } from '@/core/map/choropleth';
-import { readUrlState } from '@/core/url/state';
+import type { MainView } from './useMainView';
 
 export type ChoroplethData = {
   indicatorId: string;
@@ -17,74 +14,23 @@ export type ChoroplethData = {
   classByTeryt: Record<string, ClassifyResult>;
 };
 
+/**
+ * Podział na klasy kolorów dla wskaźnika, roku i poziomu z widoku głównego.
+ * Zwraca null, dopóki plik wartości wskaźnika się nie wczyta.
+ */
 export function useChoropleth(
-  drillState: DrillState,
+  view: Pick<MainView, 'indicator' | 'values' | 'year' | 'level'>,
   units: Unit[]
 ): ChoroplethData | null {
-  const [urlParams, setUrlParams] = useState(() => {
-    if (typeof window === 'undefined') return { i: null, y: null };
-    const state = readUrlState(window.location.search);
-    return { i: state.i ?? null, y: state.y ?? null };
-  });
+  const { indicator, values, year, level } = view;
 
-  useEffect(() => {
-    const handlePopState = () => {
-      if (typeof window === 'undefined') return;
-      const state = readUrlState(window.location.search);
-      setUrlParams({ i: state.i ?? null, y: state.y ?? null });
-    };
+  return useMemo<ChoroplethData | null>(() => {
+    if (!values) return null;
 
-    if (typeof window !== 'undefined') {
-      window.addEventListener('popstate', handlePopState);
-      return () => window.removeEventListener('popstate', handlePopState);
-    }
-  }, []);
-
-  const [values, setValues] = useState<IndicatorValues | null>(null);
-  const [loadedId, setLoadedId] = useState<string | null>(null);
-
-  const indicatorId = urlParams.i;
-  const requestedYear = urlParams.y;
-
-  useEffect(() => {
-    if (!indicatorId) {
-      return;
-    }
-
-    let isCancelled = false;
-    loadIndicatorValues(indicatorId).then((res) => {
-      if (!isCancelled) {
-        setValues(res);
-        setLoadedId(indicatorId);
-      }
-    });
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [indicatorId]);
-
-  const level: UnitLevel = useMemo(() => {
-    if (drillState.activePowTeryt) return 'gmi';
-    if (drillState.activeWojTeryt) return 'pow';
-    return 'woj';
-  }, [drillState.activeWojTeryt, drillState.activePowTeryt]);
-
-  const choroplethData = useMemo<ChoroplethData | null>(() => {
-    if (!indicatorId || loadedId !== indicatorId || !values) {
-      return null;
-    }
-
-    const result = buildChoropleth({
-      values,
-      units,
-      level,
-      year: requestedYear ?? undefined,
-      n: 5,
-    });
+    const result = buildChoropleth({ values, units, level, year: year ?? undefined, n: 5 });
 
     return {
-      indicatorId,
+      indicatorId: indicator.id,
       year: result.year,
       level,
       classes: 5,
@@ -92,7 +38,5 @@ export function useChoropleth(
       breaks: result.breaks,
       classByTeryt: result.classByTeryt,
     };
-  }, [indicatorId, loadedId, values, units, level, requestedYear]);
-
-  return choroplethData;
+  }, [indicator.id, values, units, level, year]);
 }

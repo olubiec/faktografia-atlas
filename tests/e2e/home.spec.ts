@@ -2,37 +2,28 @@ import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 
 test.describe('Home Page', () => {
-  test('loads properly, displays heading and subtitle with correct numbers', async ({ page }) => {
+  test('loads properly, displays title, panel description and map', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveTitle(/Faktografia Atlas/);
 
     const logo = page.locator('img[alt="Faktografia"]');
     await expect(logo).toBeVisible();
 
-    const heading = page.locator('h1', { hasText: 'Mapa Polski z danymi GUS' });
-    await expect(heading).toBeVisible();
-
-    const subtitle = page.locator('main');
-    await expect(subtitle).toContainText('16 województw, 380 powiatów i 2479 gmin. Dane z Banku Danych Lokalnych, aktualizowane co noc.');
+    // Tytuł strony jest w DOM dla czytników ekranu; opis i liczby są w panelu wskaźnika.
+    await expect(page.locator('main h1')).toHaveText('Mapa Polski z danymi GUS');
+    const panel = page.getByRole('complementary', { name: 'Panel wskaźnika' });
+    await expect(panel).toContainText('16 województw, 380 powiatów i 2479 gmin. Dane z Banku Danych Lokalnych GUS.');
+    await expect(page.locator('[aria-label="Mapa Polski"]')).toBeVisible();
   });
 
-  test('na telefonie zakreślenie „2479 gmin” mieści się w jednej linii', async ({ page }) => {
+  test('na telefonie panel i mapa nie wychodzą poza ekran', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
-    const count = page.locator('main span.whitespace-nowrap');
-    const box = await count.boundingBox();
-    const lineHeight = await count.evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
-    expect(box).not.toBeNull();
-    expect(box!.height).toBeLessThan(lineHeight * 1.5);
-  });
-
-  test('pole wyszukiwania mieści cały napis podpowiedzi na telefonie i komputerze', async ({ page }) => {
-    for (const width of [390, 1440]) {
-      await page.setViewportSize({ width, height: 900 });
-      await page.goto('/');
-      const input = page.locator('#home-search-field');
-      const scroll = await input.evaluate((el) => (el as HTMLInputElement).scrollWidth - (el as HTMLInputElement).clientWidth);
-      expect(scroll).toBeLessThanOrEqual(0);
+    for (const sel of ['aside[aria-label="Panel wskaźnika"]', '[aria-label="Mapa Polski"]']) {
+      const box = await page.locator(sel).boundingBox();
+      expect(box).not.toBeNull();
+      expect(box!.x).toBeGreaterThanOrEqual(0);
+      expect(box!.x + box!.width).toBeLessThanOrEqual(390 + 1);
     }
   });
 
@@ -93,11 +84,11 @@ test.describe('Home Page', () => {
     await expect(page).toHaveURL(/\/o-projekcie/);
   });
 
-  test('has exactly one visible annotation on /', async ({ page }) => {
+  test('ma najwyżej jedno ręczne zakreślenie na / (STYL.md §7)', async ({ page }) => {
     await page.goto('/');
     await page.waitForTimeout(700); // Allow rough-notation animation to initialize
     const annotations = page.locator('svg.rough-annotation');
-    await expect(annotations).toHaveCount(1);
+    expect(await annotations.count()).toBeLessThanOrEqual(1);
   });
 
   test('no horizontal scroll at 390px viewport width', async ({ page }) => {
