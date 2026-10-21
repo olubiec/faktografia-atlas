@@ -289,11 +289,13 @@ test.describe('Tune Panel ?tune', () => {
 
   test('axe accessibility scan passes on /design?tune in light and dark mode', async ({ page }) => {
     await page.goto('/design?tune');
+    await page.addStyleTag({ content: '*, *::before, *::after { transition: none !important; animation: none !important; }' });
 
     const lightResults = await new AxeBuilder({ page }).analyze();
     expect(lightResults.violations).toEqual([]);
 
     await page.click('#theme-toggle');
+    await page.waitForFunction(() => document.documentElement.getAttribute('data-theme') === 'dark');
     const darkResults = await new AxeBuilder({ page }).analyze();
     expect(darkResults.violations).toEqual([]);
   });
