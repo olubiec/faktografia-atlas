@@ -3,7 +3,7 @@ import type { ProfileIndicatorItem } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import { formatValue } from '../../core/format/number';
 import { collectFootnotes, formatParentFootnoteText, type Footnote } from '../../core/profile/footnotes';
-import { Sparkline } from './Sparkline';
+import { trend } from '../../core/profile/trend';
 import { Annotate } from '../annotation/Annotate';
 import { TrendChart } from './TrendChart';
 import { loadExplanations, type Explanation } from '../../core/explain/explanations';
@@ -20,8 +20,8 @@ export interface ProfileIndicatorRowProps {
 
 /**
  * Wiersz wskaźnika w arkuszu profilu jednostki.
- * Wyświetla nazwę wskaźnika wraz z odnośnikami przypisów (sup), mały wykres sparkline,
- * sformatowaną wartość z jednostką, rok oraz miejsce w kraju.
+ * Wyświetla nazwę wskaźnika wraz z odnośnikami przypisów (sup), sformatowaną wartość z jednostką,
+ * rok, miejsce w kraju oraz tekst informacji o trendzie zmian w latach.
  *
  * Cały wiersz jest przyciskiem rozwijającym (aria-expanded).
  * Rozwinięty wiersz pokazuje wykres lat (TrendChart), objaśnienie (jeśli jest) i przycisk „Pokaż na mapie”.
@@ -50,6 +50,7 @@ export function ProfileIndicatorRow({
   }, [indicator.id]);
 
   const formattedVal = formatValue(value, indicator.unit);
+  const trendResult = series ? trend(series, indicator.unit) : null;
 
   const effectiveFootnotes = footnotes ?? collectFootnotes([item], units);
   const itemFootnotes: Footnote[] = [];
@@ -102,9 +103,6 @@ export function ProfileIndicatorRow({
               {indicator.name}
             </span>
             <div className="flex items-center gap-2 shrink-0">
-              {series && (
-                <Sparkline series={series} unit={indicator.unit} label={indicator.name} />
-              )}
               <span className="text-sm font-bold font-mono text-tusz tabular-nums">
                 {formattedVal}
               </span>
@@ -129,6 +127,15 @@ export function ProfileIndicatorRow({
                 ) : (
                   <span>{rankText}</span>
                 )}
+              </>
+            )}
+            {trendResult && (
+              <>
+                {(year !== null || (hasRank && rankText)) && <span>•</span>}
+                <span aria-label={trendResult.ariaLabel}>
+                  <span className="sr-only">{trendResult.ariaLabel}</span>
+                  <span aria-hidden="true">{trendResult.text}</span>
+                </span>
               </>
             )}
           </div>
