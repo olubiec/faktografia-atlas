@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "indicatorId": "density",
+      "short": "Ilu ludzi mieszka średnio na 1 km² powierzchni.",
+      "howToRead": "Miasta zawsze wypadają wyżej niż wsie; porównuj miasta z miastami.",
+      "world": {
+        "text": "W Polsce gęstość zaludnienia wynosi średnio 121 osób na km².",
+        "source": "GUS",
+        "url": "https://stat.gov.pl",
+        "year": 2023
+      },
+      "funFact": {
+        "text": "Najmniej gęsto zaludnioną gminą w Polsce jest Lutowiska.",
+        "source": "GUS",
+        "url": "https://stat.gov.pl"
+      },
+      "definitionUrl": "https://stat.gov.pl/pojecia-w-statystyce-publicznej/"
+    },
+    {
+      "indicatorId": "unemployment",
+      "short": "Udział zarejestrowanych bezrobotnych w liczbie ludności w wieku produkcyjnym.",
+      "howToRead": "Niższa wartość oznacza lepszą sytuację na rynku pracy.",
+      "world": null,
+      "funFact": null,
+      "definitionUrl": "https://stat.gov.pl/pojecia-w-statystyce-publicznej/"
+    },
+    {
+      "indicatorId": "invalid-entry",
+      "short": "Ten wpis jest niepoprawny ponieważ ten tekst objaśnienia przekracza dopuszczalną maksymalną długość stu sześćdziesięciu znaków przewidzianą w specyfikacji formatu danych objaśnień wskaźników Faktografii.",
+      "howToRead": "Jak czytać.",
+      "world": null,
+      "funFact": null,
+      "definitionUrl": "http://stat.gov.pl/not-https"
+    }
+  ]
+}
