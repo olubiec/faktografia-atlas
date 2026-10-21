@@ -1,9 +1,20 @@
 # Stan projektu
 
 ## Następny krok
-Domknąć falę 3 (scalić PR #27 i #28 po potwierdzeniu stanu), potem zadanie S14 wg docs/PLAN.md.
+Najpierw wdrożenie WORKFLOW v3 (PR #177), potem domknięcie fali 3, potem sesja S14. Każdy krok ma wykonawcę i sposób:
 
-Aktualizuje Claude przy przeglądzie, nie Jules. Ostatnia aktualizacja: 17.10.2026, po fali 2.
+| # | Krok | Kto | Jak |
+|---|---|---|---|
+| 1 | Dodać zmienne `AUTOPILOT=off`, `AUTOPILOT_LIMIT=2` | Ty | GitHub w przeglądarce → repo → Settings → Secrets and variables → Actions → **Variables** → New repository variable |
+| 2 | Sprawdzić PR #177 (zielone `verify`, `bezpieczenstwo`, `zgody`) i scalić | Ty | Otwórz PR #177 → „Squash and merge” (PR planistyczny/procesowy scalasz sam, WORKFLOW §10.1) |
+| 3 | Ustawić ruleset `main` z wymaganymi sprawdzeniami | Ty | Settings → Rules → Rulesets → New branch ruleset → cel `main` → Require PR, wymagane: `verify`, `bezpieczenstwo`, `zgody`; usunąć stary `zasady-pr` (WORKFLOW §18 p. 11) |
+| 4 | Podłączyć Vercel do repo (podgląd PR) | Ty | vercel.com → Import repo `faktografia-atlas` (ok. 5 min) |
+| 5 | Sprawdzić PR #27 i #28 (fala 3): czy scalone, czy otwarte | Ty (stan), Audytor jeśli otwarte | Ty: GitHub → Pull requests → #27, #28. Jeśli otwarte i dotykają `config/*` (krytyczne): Claude Code `/audyt-pr 27 28` → po werdykcie SCAL Ty scalasz squash |
+| 6 | Przygotować paczkę S14 i wgrać do repo | Architekt (Claude, Opus, nowy czat) → Ty | Claude: `TRYB: PLAN – S14` z linkiem do KONTEKST → plik `docs/zadania/S14.md` → Ty: GitHub → docs/zadania → Add file → Upload files → „Create a new branch… and start a pull request” → scalasz (PR planistyczny) |
+| 7 | Start zadań S14 | Autopilot (automat) | Po scaleniu paczki Autopilot tworzy Issues i daje etykietę `jules` (limit 2). Nic nie robisz |
+| 8 | Kod zadań | Jules | Automat; Jules otwiera PR „Closes #nr” |
+| 9 | Krytyczne PR | Audytor (Claude Code) → Ty | Tablica pokaże `/audyt-pr <nr>` → Ty wklejasz w Claude Code (raz dziennie) → werdykt SCAL → etykieta `sprawdzone` |
+| 10 | Scalanie widocznych PR | Ty | Podgląd Vercel na telefonie → lista WORKFLOW §16.12 → „Squash and merge” |
 
 ## Gotowe (na main)
 
