@@ -10,6 +10,7 @@ export type ViewState = {
 // Typ dla ograniczeń widoku mapy
 export type MapLimits = {
   maxBounds: [number, number, number, number];
+  minZoom: number;
   minZoomOffset: number;
   maxZoom: number;
 };
@@ -82,25 +83,36 @@ export function initialViewState(
 }
 
 /**
- * Zwraca ograniczenia nawigacji po mapie: maxBounds powiększony o 10% z każdej strony,
- * offset minimalnego zoomu oraz maksymalny zoom równy 12.
+ * Zwraca ograniczenia nawigacji po mapie: maxBounds powiększony o 50% z każdej strony,
+ * minimalny zoom dopasowania do kontenera pomniejszony o 0.5 oraz maksymalny zoom równy 12.
  */
-export function mapLimits(bounds: [number, number, number, number]): MapLimits {
+export function mapLimits(
+  bounds: [number, number, number, number],
+  width?: number,
+  height?: number
+): MapLimits {
   const [west, south, east, north] = bounds;
 
   const lonSpan = east - west;
   const latSpan = north - south;
 
   const maxBounds: [number, number, number, number] = [
-    west - 0.1 * lonSpan,
-    south - 0.1 * latSpan,
-    east + 0.1 * lonSpan,
-    north + 0.1 * latSpan,
+    west - 0.5 * lonSpan,
+    south - 0.5 * latSpan,
+    east + 0.5 * lonSpan,
+    north + 0.5 * latSpan,
   ];
+
+  let minZoom = 0;
+  if (width && height && width > 0 && height > 0) {
+    const fitZoom = initialViewState(bounds, width, height).zoom;
+    minZoom = Math.max(0, fitZoom - 0.5);
+  }
 
   return {
     maxBounds,
-    minZoomOffset: -1,
+    minZoom,
+    minZoomOffset: minZoom,
     maxZoom: 12,
   };
 }

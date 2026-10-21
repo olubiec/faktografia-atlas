@@ -111,7 +111,7 @@ describe('Map View Logic (src/core/map/view.ts)', () => {
   });
 
   describe('mapLimits', () => {
-    it('returns maxBounds enlarged by 10% on each side, minZoomOffset -1 and maxZoom 12', () => {
+    it('returns maxBounds enlarged by 50% on each side and maxZoom 12', () => {
       const testBounds: [number, number, number, number] = [14, 49, 24, 55];
       const limits = mapLimits(testBounds);
 
@@ -119,13 +119,29 @@ describe('Map View Logic (src/core/map/view.ts)', () => {
       const latSpan = 55 - 49; // 6
 
       expect(limits.maxBounds).toEqual([
-        14 - 0.1 * lonSpan,
-        49 - 0.1 * latSpan,
-        24 + 0.1 * lonSpan,
-        55 + 0.1 * latSpan,
+        14 - 0.5 * lonSpan,
+        49 - 0.5 * latSpan,
+        24 + 0.5 * lonSpan,
+        55 + 0.5 * latSpan,
       ]);
-      expect(limits.minZoomOffset).toBe(-1);
       expect(limits.maxZoom).toBe(12);
+    });
+
+    it('calculates minZoom <= fit zoom - 0.25 for containers 390x844, 1024x768 and 1440x900 (@S14)', () => {
+      const bounds = countryBounds(units);
+      const containers = [
+        { width: 390, height: 844 },
+        { width: 1024, height: 768 },
+        { width: 1440, height: 900 },
+      ];
+
+      for (const { width, height } of containers) {
+        const fitZoom = initialViewState(bounds, width, height).zoom;
+        const limits = mapLimits(bounds, width, height);
+
+        expect(limits.minZoom).toBeLessThanOrEqual(fitZoom - 0.25);
+        expect(limits.minZoomOffset).toEqual(limits.minZoom);
+      }
     });
   });
 });

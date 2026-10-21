@@ -26,7 +26,10 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
   }, []);
 
   const bounds = countryBbox;
-  const limits = useMemo(() => mapLimits(bounds), [bounds]);
+  const limits = useMemo(
+    () => mapLimits(bounds, dimensions.width, dimensions.height),
+    [bounds, dimensions.width, dimensions.height]
+  );
 
   const [currentViewState, setCurrentViewState] = useState<ViewState>({
     longitude: 19.145,
@@ -113,11 +116,11 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         e.preventDefault();
         setCurrentViewState((prev) => ({
           ...prev,
-          zoom: Math.max(limits.minZoomOffset + prev.zoom, prev.zoom - zoomStep),
+          zoom: Math.max(limits.minZoom, prev.zoom - zoomStep),
         }));
       }
     },
-    [currentViewState.zoom, limits.maxZoom, limits.minZoomOffset]
+    [currentViewState.zoom, limits.maxZoom, limits.minZoom]
   );
 
   return {
