@@ -6,5 +6,5 @@ reviews:
     - path: "**/*"
       instructions: >-
         Zgłaszaj przede wszystkim: błędy zmieniające działanie, problemy bezpieczeństwa,
-        brak testu dla warunku odbioru z powiązanego Issue, zmiany poza zakresem zadania.
+        brak testu dla warunku „Gotowe, gdy” z opisu zadania, zmiany poza zakresem zadania.
         Uwagi o stylu ogranicz do minimum.
