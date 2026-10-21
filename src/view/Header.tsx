@@ -75,11 +75,18 @@ export function Header() {
       changeSearchOpen(true);
     };
 
+    const handleHomeSearchKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        changeSearchOpen(true);
+      }
+    };
+
     homeSearchInput.addEventListener('click', handleHomeSearchClick);
-    homeSearchInput.addEventListener('focus', handleHomeSearchClick);
+    homeSearchInput.addEventListener('keydown', handleHomeSearchKeyDown);
     return () => {
       homeSearchInput.removeEventListener('click', handleHomeSearchClick);
-      homeSearchInput.removeEventListener('focus', handleHomeSearchClick);
+      homeSearchInput.removeEventListener('keydown', handleHomeSearchKeyDown);
     };
   }, [location.pathname]);
 
