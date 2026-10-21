@@ -31,6 +31,8 @@ Scalić paczkę S14 (PR z docs/zadania/S14.md, docs/PLAN.md, docs/STAN.md), usta
 - Klucz PostHog – przed statystykami wyszukiwań.
 
 ## Decyzje (najnowsze na górze, 1 linia, z kim/gdzie podjęta)
+- 21.10.2026 · S16: kontekst „na tle kraju” liczony automatycznie z danych, ręczne objaśnienia opcjonalne i per wskaźnik (właściciel: „odnośniki” = porównania, nocne dodawanie wskaźników musi działać bez ręcznej pracy)
+- 21.10.2026 · Jules reaguje tylko na etykietę `jules` dodaną przez człowieka (test: bot 48 min bez reakcji, człowiek 20 s); poprawka Autopilota w PR #191 (sekret JULES_TOKEN)
 - 21.10.2026 · Do S14 dodane S14.9 i S14.10; objaśnienia wskaźników awansowane do S16 z gotowym szkicem tekstów (właściciel, czat Claude)
 - 21.10.2026 · Do S14 dodane S14.7 i S14.8 (niezależne błędy z oglądu); plan: S15 poprawki i pomiary, S16 objaśnienia, S17 porównanie, S18 ruch i SEO (właściciel, czat Claude)
 - 21.10.2026 · S14 = profil miejsca wg makiety 03; porównanie przesunięte na S16, objaśnienia na S15 (właściciel, czat Claude TRYB: PLAN – S14)
