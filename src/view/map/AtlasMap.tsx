@@ -268,7 +268,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
           mapStyle={mapStyle}
           maxBounds={limits.maxBounds}
           maxZoom={limits.maxZoom}
-          minZoom={limits.minZoomOffset}
+          minZoom={limits.minZoom}
           onLoad={() => setIsReady(true)}
           attributionControl={false}
         >
