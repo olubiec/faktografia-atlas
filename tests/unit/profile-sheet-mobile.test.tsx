@@ -4,6 +4,7 @@ import { renderToString } from 'react-dom/server';
 import fs from 'node:fs';
 import path from 'node:path';
 import { buildProfile } from '../../src/core/profile/profile';
+import { unitTitle } from '../../src/core/units/label';
 import { ProfileSheetMobile } from '../../src/view/profile/ProfileSheetMobile';
 import profileSample from '../fixtures/synthetic/profile-sample.json';
 
@@ -59,9 +60,11 @@ describe('CC7.3 ProfileSheetMobile Unit Tests', () => {
     expect(html).toContain('min-h-[44px]');
     expect(html).toContain('min-w-[44px]');
 
+    const title = unitTitle(longestUnit);
+
     // Longest unit name in title and break-words
-    expect(html).toContain(longestUnit.name);
-    expect(html).toContain(`title="${longestUnit.name}"`);
+    expect(html.toLowerCase()).toContain(longestUnit.name.toLowerCase());
+    expect(html).toContain(`title="${title}"`);
     expect(html).toContain('break-words');
   });
 

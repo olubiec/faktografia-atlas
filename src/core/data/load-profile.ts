@@ -20,10 +20,18 @@ export type ProfileShard = {
   generatedAt: string;
   years?: Record<string, number[]>;
   units: Record<string, ProfileShardItem[]>;
+  voivodeships?: Record<string, ProfileShardItem[]>;
 };
 
 const shardCache = new Map<string, ProfileShard | null>();
 const loadingPromises = new Map<string, Promise<ProfileShard | null>>();
+
+/**
+ * Zwraca pobrany szard z pamięci podręcznej (jeśli został już załadowany).
+ */
+export function getProfileShardFromCache(wojTeryt: string): ProfileShard | null {
+  return shardCache.get(wojTeryt) ?? null;
+}
 
 /**
  * Pobiera plik szardu profilu dla danego województwa /data/profiles/<wojTeryt>.json.

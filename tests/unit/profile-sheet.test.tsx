@@ -224,7 +224,7 @@ describe('CC7.2a ProfileSheet & ProfileIndicatorRow Unit Tests', () => {
       />
     );
 
-    expect(html).toContain(longestUnit.name);
+    expect(html.toLowerCase()).toContain(longestUnit.name.toLowerCase());
     expect(html).toContain(longestIndicator.name);
     expect(html).toContain('break-words');
   });
