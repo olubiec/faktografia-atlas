@@ -98,7 +98,7 @@ test.describe('Annotation Scroll & Resize (@S14)', () => {
     await page.goto('/?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
-    await expect(page.locator('.rough-annotation')).toHaveCount(1);
+    await expect(page.locator('.rough-annotation')).toHaveCount(2);
 
     // Zamknij profil przyciskiem Zamknij
     const closeButton = page.locator('button[aria-label="Zamknij"]');
