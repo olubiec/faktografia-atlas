@@ -1,32 +1,23 @@
-# Produkt: co ma widzieć i robić użytkownik
+# Faktografia Atlas – co budujemy
+**Dla kogo:** osoba ciekawa swojej okolicy (mieszkaniec, dziennikarz, uczeń, samorządowiec), najczęściej z telefonu (§2).
+**Problem:** dane GUS o gminach i powiatach są w tabelach Banku Danych Lokalnych, nie da się ich szybko zobaczyć na mapie ani porównać.
+**Pierwsza wersja ma umieć:** mapa Polski w kolorach wybranego wskaźnika (§3) · profil miejsca z rankingiem i wykresami (§4) · wygodny telefon (§5) · płynne wejście w głąb mapy (§5a) · proste objaśnienia (§6) · porównanie dwóch miejsc · link do każdego widoku.
+**Czego NIE robimy:** kont użytkowników, liczb wpisywanych ręcznie lub przez AI, śledzenia osób, Google Maps, generatora karuzel w tym repo (pełna lista: `docs/TECHNIKA.md` §4).
+**Zarabia:** nie (projekt marki Faktografia; przy komercjalizacji – zmiana hostingu z Vercel Hobby). **Dane osób:** nie – tylko anonimowe statystyki wyszukiwań po zgodzie.
+**Technologia:** Vite + React + TypeScript, MapLibre + deck.gl, dane statyczne z robota GUS (`docs/TECHNIKA.md`). **Hosting:** Vercel (podgląd każdego PR).
+**Gdzie jesteśmy:** `docs/STAN.md` · plan sesji: `docs/PLAN.md` · wygląd: `docs/STYL.md` + makiety `docs/design/`.
 
-> **Co budujemy:** publiczną mapę Polski z danymi GUS dla województw, powiatów i gmin.
-> **Dla kogo:** osoba ciekawa swojej okolicy, najczęściej z telefonu (§2).
-> **Najważniejsze ekrany:** ekran główny z mapą (§3), profil miejsca (§4), telefon (§5).
-> **Jak oceniamy „gotowe”:** właściciel ogląda podgląd Vercel na komputerze i telefonie; progi szybkości §7; definicja „gotowe” §8.
-> **Gdzie jesteśmy i co dalej:** `docs/STAN.md`, `docs/PLAN.md`. Wygląd: `docs/STYL.md` + makiety `docs/design/`.
-
-Wersja 2 · 21.10.2026 (v1: 20.10.2026, po pierwszym teście właściciela na komputerze). Zmiany v2: §5 telefon dokładniej (po oglądzie 21.10), §5a wejście w głąb mapy, §6 ścieżka pliku objaśnień, §8–§9 pod proces v5.
-Ten plik ma pierwszeństwo przed opisami ekranów w `docs/MASTER_PLAN.md`.
+Wersja 2 · 21.10.2026 (v1: 20.10.2026). Zmiany v2: nagłówek wg WORKFLOW v5.1 §10.2, §5 telefon (po oglądzie 21.10), §5a wejście w głąb mapy, §6 ścieżka pliku objaśnień, §8–§9 pod nowy proces.
+Opisy ekranów niżej są wymaganiami – mają pierwszeństwo przed starymi promptami i kodem.
 
 ---
 
-## 1. Co poszło źle (test właściciela 20.10, wieczór)
-
-Strona po falach 1–8 przechodziła wszystkie testy, ale jako produkt nie działała:
-
-| Co widzi właściciel | Przyczyna techniczna | Przyczyna w procesie |
-|---|---|---|
-| Strona zamula i się zacina | Kod mapy (1,1 MB po kompresji) ma wklejone `units.json` i granice; wybór miejsca pobiera naraz 20 plików (14 MB) i przelicza je w przeglądarce | Prompt CC7.2b kazał „wczytać 20 wskaźników równolegle”; nikt nie mierzył szybkości |
-| Mapa cała jasna | Kolory tylko z `?i=` w adresie; brak domyślnego wskaźnika i panelu wyboru | Panel (CC8.W) zaplanowany na koniec; nikt nie zdecydował, co widać na wejściu |
-| Okno profilu zasłania mapę, elementy nachodzą | Duży nagłówek strony obok mapy, arkusz nałożony na mapę | Makiety 02–04 były, ale żaden prompt nie kazał zbudować ekranu jako całości |
-| Krzyżyk w wyszukiwarce nie zamyka | Po zamknięciu fokus wraca do pola na stronie głównej, które przy fokusie znów otwiera okno | Brak testu „zamknij i sprawdź, że zamknięte” na stronie głównej |
-| Nie da się zobaczyć wskaźnika jako zestawienia miejsc | Brak rankingu i brak „pokaż na mapie” w profilu | Funkcji nie było w planie, choć jest na makiecie 03 |
-| Wykresy nieczytelne, przypisy sklejone („ludności¹³”, „powiatu powiat”) | Brak lat i skali; numery przypisów bez separatora; nazwa jednostki już zawiera „powiat” | Testy sprawdzały obecność, nie czytelność |
-| Brak objaśnień wskaźników | — | Nie było w planie |
-| „Wałcz” dwa razy w powiecie wałeckim z różną ludnością | To dwie gminy: miejska (miasto) i wiejska (wokół miasta); 143 takie pary w Polsce. Strona pokazuje samą nazwę | Nikt nie sprawdził nazw na prawdziwych danych |
-
-**Wniosek:** małe zadania z zielonymi testami nie składają się same w dobry produkt. Od teraz: (1) budujemy po ekranie, nie po kawałku; (2) ekran ogląda właściciel na podglądzie (komputer i telefon) przed scaleniem; (3) szybkość i wygląd mają mierzalne progi; (4) makiety są warunkiem odbioru, nie inspiracją.
+## 1. Zasady z pierwszego testu właściciela (20.10.2026)
+Strona przechodziła wszystkie testy, a jako produkt nie działała (zacinała się, mapa bez kolorów, profil zasłaniał mapę, nieczytelne wykresy, „powiat powiat”). Od tego czasu:
+1. Budujemy **ekran jako całość**, nie kawałki – każda sesja kończy się czymś, co da się obejrzeć.
+2. Ekran ogląda **właściciel na podglądzie** (komputer i telefon) przed scaleniem.
+3. Szybkość i wygląd mają **mierzalne progi** (§7) i testy na prawdziwych danych.
+4. Makiety (`docs/design/`) są **warunkiem odbioru**, nie inspiracją.
 
 ---
 

@@ -1,5 +1,5 @@
 # Zasady dla agentów – Faktografia Atlas
-Co budujemy: docs/PRODUKT.md (przy ekranach ma pierwszeństwo) · Gdzie jesteśmy: docs/STAN.md · Wygląd: docs/STYL.md · Katalog paczek i dane: docs/MASTER_PLAN.md
+Co budujemy: docs/PRODUKT.md (przy ekranach ma pierwszeństwo) · Gdzie jesteśmy: docs/STAN.md · Wygląd: docs/STYL.md · Dane, architektura, pakiety: docs/TECHNIKA.md
 
 Publiczna strona z interaktywną mapą Polski (województwo > powiat > gmina > miejscowość) i danymi GUS.
 Właściciel nie czyta kodu: ocenia zachowanie na podglądzie Vercel, często z telefonu.
@@ -17,7 +17,7 @@ Stos: Vite + React + TypeScript (strict), pnpm, Tailwind v4 (tokeny w @theme), V
 - Czerwone testy na GitHubie – popraw sam.
 - Aktualizacja gałęzi: TYLKO `git merge origin/main`. Bez rebase, bez zakładania gałęzi od nowa, bez `--force`.
 - Przed każdym pushem `git diff --name-status --diff-filter=D origin/main...HEAD` musi być puste: nie usuwasz nic, co jest na main (chyba że prompt wprost to nakazuje).
-- Nowy pakiet: napisz w PR nazwę, link do npm i do repozytorium, datę wydania, pobrania tygodniowo i po co. Nie wymyślaj nazw – sprawdź w rejestrze. Pakiet spoza `docs/MASTER_PLAN.md` §6 → opisz w PR i zatrzymaj się na decyzję właściciela.
+- Nowy pakiet: napisz w PR nazwę, link do npm i do repozytorium, datę wydania, pobrania tygodniowo i po co. Nie wymyślaj nazw – sprawdź w rejestrze. Pakiet spoza `docs/TECHNIKA.md` §3 → opisz w PR i zatrzymaj się na decyzję właściciela.
 - Wzorce zrzutów (`*-snapshots/`) powstają wyłącznie w CI przez workflow „Update snapshots” (uruchamia go właściciel). Nie generuj ich u siebie; w PR napisz, że trzeba je odświeżyć.
 - Uwagi CodeRabbit o błędach poprawiasz; z uwagą o stylu możesz się nie zgodzić – napisz dlaczego.
 - Nie edytuj `docs/STAN.md`, `package.json` ani `pnpm-lock.yaml`, chyba że prompt wprost na to pozwala (STAN.md zmienia ostatni prompt sesji).
@@ -32,7 +32,7 @@ Stos: Vite + React + TypeScript (strict), pnpm, Tailwind v4 (tokeny w @theme), V
 
 ## Zasady projektu
 Najpierw zapytaj (napisz w PR i zatrzymaj się):
-- Zmiana `config/tokens.json`, `docs/STYL.md`, `docs/MASTER_PLAN.md` albo istniejących testów i wzorców zrzutów – chyba że prompt wprost tego wymaga.
+- Zmiana `config/tokens.json`, `docs/STYL.md`, `docs/TECHNIKA.md` albo istniejących testów i wzorców zrzutów – chyba że prompt wprost tego wymaga.
 - Zmiana konfiguracji (`vercel.json`, `.gitleaks.toml`, `.oxlintrc.json`, `vite/vitest/playwright.config.ts`), `src/core/consent`, `src/view/consent`, `scripts/data`, `config/*` – jeśli prompt o to nie prosi.
 - Warunek niejasny lub sprzeczny. Zmiana architektury lub struktury danych. Usunięcie funkcji.
 
@@ -43,7 +43,7 @@ Zawsze:
 - Testy na danych z `tests/fixtures` (nagrane prawdziwe odpowiedzi), nigdy z sieci. Testy e2e danej sesji mają w nazwie `@S<n>`.
 - Zrzuty pikselowe (`toHaveScreenshot`) tylko dla elementów DOM i SVG. Mapę WebGL sprawdzasz przez stan wystawiony w `window.__atlas` (tylko w trybie testowym), nie przez piksele.
 - Napisy nie wychodzą poza pola. Animacje wyłączone przy `prefers-reduced-motion`. Pola dotykowe min. 44 px.
-- Repozytoria referencyjne tylko w /tmp/ref; przy zaadaptowanym kodzie komentarz: źródło i licencja.
+- Nie kopiuj kodu z cudzych repozytoriów. Potrzebna rzecz = pakiet albo gotowa usługa, opakowana w jeden plik (adapter).
 - Po `shadcn add` zamień ikony lucide na iconoir-react (Icon z src/view/ui) i usuń klasy shadow-*, rounded-*, backdrop-blur.
 
 Nigdy:

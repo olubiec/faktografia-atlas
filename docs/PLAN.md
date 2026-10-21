@@ -1,24 +1,25 @@
 # Plan – Faktografia Atlas
 Cel produktu: interaktywna mapa Polski z danymi GUS, w której każdy (najczęściej z telefonu) w minutę sprawdzi, jak jego miejsce wypada na tle innych, i wyśle komuś link.
 
-Jak używać tego pliku (WORKFLOW v5):
-- **Planista** (Gemini albo Claude) na początku sesji czyta `docs/STAN.md` i sekcję bieżącej sesji poniżej, sprawdza w kodzie, czy założenia są nadal prawdziwe, i z każdego kroku robi **jeden prompt** w formacie v5 (Zadanie · Pliki · Gotowe, gdy · Nie ruszaj · „Po ludzku”). Kroki są już opisane tak, żeby wystarczyło je przepisać i dopisać nazwy plików.
-- **Ty** wklejasz prompt do Julesa, czekasz na ✅, oglądasz podgląd według linijki „Ty sprawdzasz” i scalasz.
-- Ostatni prompt każdej sesji aktualizuje `docs/STAN.md` i oznacza sesję tu jako zakończoną.
-- Wymagania ekranów: `docs/PRODUKT.md` (ma pierwszeństwo). Wygląd: `docs/STYL.md` i makiety `docs/design/`.
+Jak używać tego pliku (WORKFLOW UNIWERSALNY v5.1):
+- **Sesja** = jeden widoczny efekt (np. „telefon od nowa”). Dzieli się na **fale**: prompty z jednej fali zmieniają rozłączne pliki, więc wklejasz je do Julesa naraz.
+- **Planista** (Gemini albo Claude) na początku każdej fali: `TRYB: FALA` z linkiem do `docs/STAN.md` i do tego pliku. Sprawdza w kodzie, czy założenia są nadal prawdziwe, i z kroków fali robi prompty w formacie v5.1 §9.1 (Przeczytaj najpierw · Zadanie · Pliki · Gotowe, gdy · Nie ruszaj · „Po ludzku”). Następną falę pisze dopiero po bramce poprzedniej.
+- **Bramka fali** = zielone CI na `main` po scaleniu wszystkich PR fali. Widoczne zmiany oglądasz przy scalaniu według linijki „Ty sprawdzasz”.
+- Coś wyszło inaczej → `TRYB: ODŚWIEŻ`. Ostatni prompt sesji aktualizuje `docs/STAN.md` i oznacza sesję tu jako zakończoną.
+- Wymagania ekranów: `docs/PRODUKT.md` (pierwszeństwo). Wygląd: `docs/STYL.md` i makiety `docs/design/`. Dane i pakiety: `docs/TECHNIKA.md`. Nowa biblioteka lub usługa → najpierw `TRYB: WYBÓR`.
 
 Zasady wspólne dla wszystkich sesji:
 - **Komputer nie może się pogorszyć**, gdy poprawiamy telefon, i odwrotnie. Każdy prompt z UI ma warunek: istniejące testy przechodzą bez zmian.
 - Każdy prompt z UI ma w „Gotowe, gdy” rzutnie **390×844** (telefon) i **1440×900** (komputer); dla telefonu dodatkowo **360×740** (mały Android).
 - Najwyżej jedno czerwone zakreślenie na ekranie (STYL §7).
-- Vercel (darmowy) robi najwyżej 100 podglądów dziennie. Nie wrzucaj naraz więcej niż 2–3 promptów, a Jules nie powinien wypychać zmian co chwilę.
+- Vercel (darmowy) robi najwyżej 100 podglądów dziennie, a Jules – 100 zadań dziennie, 15 naraz. Fala to zwykle 1–4 prompty.
 
 ---
 
 ## S14 – Profil miejsca jak makieta 03 (w toku)
 **Po co:** po kliknięciu miejsca na komputerze widać czytelny profil: kto to jest, jak wypada w bieżącym wskaźniku, ranking, lista jednostek niżej, rozwijane wskaźniki.
 **Zrobione:** S14.1 (logika sekcji), S14.2 (rozwijany wiersz), S14.7 (zakreślenie trzyma się tekstu), S14.8 (oddalanie mapy), S14.9 (przewijanie listy wskaźników).
-**Zostało:** PR #198 (S14.10 – tekst zmiany w latach) do scalenia po obejrzeniu, potem prompty z `docs/prompty/S14.md`: S14.3 przegląd (od nowa, PR #199 odrzucony), S14.4 zakładki, S14.6 test całej ścieżki, aktualizacja STAN.
+**Zostało (fale):** 1: PR #198 (S14.10 – tekst zmiany w latach, obejrzeć i scalić) + PROMPT 1 – S14.3 przegląd (od nowa, PR #199 odrzucony) · 2: PROMPT 2 – S14.4 zakładki · 3: PROMPT 3 – S14.6 test całej ścieżki → PROMPT 4 – STAN. Gotowe prompty: `docs/prompty/S14.md`.
 **Przeniesione:** profil na telefonie (dawne S14.5) → S15.3.
 
 **Co zobaczysz na końcu S14 (komputer):** klik w małopolskie → po prawej „Województwo małopolskie”, duża liczba w kółku, „2. miejsce wśród 16 województw”, słupki 16 województw, zakładki Przegląd / Powiaty (22) / Porównaj (wkrótce), wiersze wskaźników z tekstem „↗ +1,2% od 2020”, po kliknięciu wiersza wykres i „Pokaż na mapie”, na dole „Kopiuj link”.
@@ -63,6 +64,8 @@ Zasady wspólne dla wszystkich sesji:
 - **15.5 Test całej ścieżki na telefonie (`@S15`).** 390×844 i 360×740: start → pasek → zmiana wskaźnika → zamknięcie → dotknięcie województwa → dymek → profil 40% → pełna wysokość → zakładka „Powiaty (n)” → klik w powiat → × . W ścieżce: brak poziomego przewijania, najwyżej jedno żądanie `profiles/*` na wybór, zero „undefined/NaN”, test przechodzi 3 razy z rzędu.
 - **15.6 Koniec sesji:** aktualizacja `docs/STAN.md` (jak PROMPT 4 w S14).
 
+**Fale (propozycja, Planista sprawdza kolizje plików):** 1: 15.1 · 2: 15.2 + 15.3 · 3: 15.4 · 4: 15.5 → 15.6.
+
 **Nie robimy w S15:** animacji wejścia w głąb (S16), zmian treści profilu, nowych pakietów.
 
 ---
@@ -105,6 +108,8 @@ Zasady wspólne dla wszystkich sesji:
 - **16.6 Koniec sesji:** STAN.md.
 - (opcjonalnie, jeśli 16.1–16.4 są płynne na telefonie) **Scena wejścia** ze STYL §8: kontur Polski rysuje się raz na wizytę.
 
+**Fale (propozycja):** 1: 16.1 + 16.2 · 2: 16.3 · 3: 16.4 · 4: 16.5 → 16.6 (scena wejścia – osobna fala, jeśli starczy płynności).
+
 **Nie robimy w S16:** 3D, nowych pakietów do animacji (jest `motion`, ale mapa animuje się w deck.gl/MapLibre), animacji każdego elementu panelu.
 
 ---
@@ -124,6 +129,8 @@ Zasady wspólne dla wszystkich sesji:
 - Teksty 20 definicji: szkic `docs/data/explanations-szkic.json` – **Ty akceptujesz** przed wgraniem (Planista daje Ci listę do przeczytania).
 - Ciekawostki tylko ze źródłem z linkiem; research w Gem Research, bez liczb z pamięci modelu.
 
+**Fale (propozycja):** 1: 17.1 + 17.5 + 17.6 · 2: 17.2 + 17.4 · 3: 17.3 (po Twojej akceptacji tekstów) → 17.7.
+
 **Kroki:** 17.1 `context()` + testy · 17.2 blok „Na tle kraju” w rozwiniętym wierszu i panelu · 17.3 wgranie `explanations.json` (po Twojej akceptacji) + test schematu i limitów znaków · 17.4 raport nocny „wskaźniki bez objaśnienia” w `docs/data-report.md` · 17.5 legenda w trybie ciemnym + usunięcie typu `highlight` z profilu · 17.6 ZWIAD (tylko raport, bez kodu): czy BDL podaje dane osobno dla miasta i obszaru wiejskiego gmin miejsko-wiejskich (TERYT z końcówką 4 i 5), dla których wskaźników → decyzja na następną sesję · 17.7 STAN.md.
 
 ---
@@ -138,6 +145,8 @@ Zasady wspólne dla wszystkich sesji:
 4. Na telefonie to samo w arkuszu profilu, kolumny mieszczą się w 360 px.
 
 **Założenia:** porównujemy dowolne dwie jednostki (także różnych poziomów – wtedy dopisek „różne poziomy, porównuj ostrożnie”); dane tylko z już pobranych plików (najwyżej jeden dodatkowy `profiles/*`, jeśli drugie miejsce jest w innym województwie); bez nowych pakietów.
+
+**Fale (propozycja):** 1: 18.1 · 2: 18.2 + 18.4 · 3: 18.3 · 4: 18.5 · 5: 18.6 → 18.7.
 
 **Kroki:** 18.1 logika `compare()` + testy (różnice %, p.p., brak danych) · 18.2 wybór drugiego miejsca i adres `?c=` · 18.3 tabela porównania w zakładce · 18.4 dwa obrysy na mapie · 18.5 telefon · 18.6 test ścieżki `@S18` · 18.7 STAN.md.
 

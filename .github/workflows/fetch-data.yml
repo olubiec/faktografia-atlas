@@ -190,5 +190,5 @@ jobs:
           T="Pobieranie danych (Fetch data) nie powiodło się"
           if [ -z "$(gh api "repos/$GITHUB_REPOSITORY/issues?state=open&per_page=100" --jq ".[] | select(.title==\"$T\") | .number" | head -n1)" ]; then
             gh api -X POST "repos/$GITHUB_REPOSITORY/issues" -f title="$T" \
-              -f body="Przebieg: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID (zdarzenie: $GITHUB_EVENT_NAME). Przyczyna jest w kroku, który zakończył się błędem. Poprawka: Sonnet." >/dev/null
+              -f body="Przebieg: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID (zdarzenie: $GITHUB_EVENT_NAME). Przyczyna jest w kroku, który zakończył się błędem. Co zrobić: wklej ten link Planiście (TRYB: POMOC)." >/dev/null
           fi

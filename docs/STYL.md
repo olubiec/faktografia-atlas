@@ -1,6 +1,6 @@
 # STYL — Faktografia „Kalka i korekta”
 
-Wersja 1, 17.10.2026. Ten plik zastępuje dawną sekcję designu („Rocznik, który ożył”) w docs/MASTER_PLAN.md.
+Wersja 1, 17.10.2026. Jedyne źródło prawdy o wyglądzie (dawny koncept „Rocznik, który ożył” jest anulowany).
 Wartości liczbowe (kolory, rozmiary, czasy) są w `config/tokens.json`. W kodzie używaj wyłącznie tokenów,
 nigdy wpisanych na sztywno kolorów ani rozmiarów.
 
