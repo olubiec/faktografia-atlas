@@ -198,8 +198,7 @@ faktografia-atlas/
 │   ├── App.tsx, main.tsx
 ├── tests/e2e/                Playwright
 ├── docs/                     MASTER_PLAN.md, PLAN.md, prompty/, shots/, data-report.md
-├── legacy/                   tylko odczyt
-├── AGENTS.md, STAN_PROJEKTU.md
+├── AGENTS.md, docs/STAN.md
 ```
 
 ### 5.1 Skrypty obowiązkowe (powstają w CC1)
@@ -212,7 +211,7 @@ faktografia-atlas/
   (1440×900 i 390×844) + dodatkowe widoki zdefiniowane w `scripts/shots.config.json`.
   Historia wyglądu = historia PR. Bez Git LFS.
 - (usunięte w WORKFLOW v3; skrypt `handoff` zlikwidowany, stan czytaj w docs/STAN.md) — dawniej `pnpm handoff` generował `GEMINI_HANDOFF.md`: data, ostatnia sesja ze STAN, drzewo
-  (bez node_modules/dist/.git/legacy), zależności z package.json, lista eksportów z każdego pliku
+  (bez node_modules/dist/.git), zależności z package.json, lista eksportów z każdego pliku
   w src/ (nazwa + sygnatura, przez TypeScript compiler API), wynik ostatniego `vitest run`, lista
   plików w public/data z rozmiarami.
 
