@@ -17,8 +17,15 @@ ETYKIETY = {
 }
 
 
-def gh(*args):
-    r = subprocess.run(["gh", *args], capture_output=True, text=True)
+# Jules reaguje tylko na etykietę `jules` dodaną przez człowieka (sprawdzone 21.10.2026:
+# etykieta od github-actions[bot] była ignorowana). Dlatego tę jedną czynność wykonujemy
+# osobistym tokenem właściciela (sekret JULES_TOKEN). Bez niego wracamy do tokenu Actions.
+JULES_TOKEN = os.environ.get("JULES_TOKEN", "").strip() or None
+
+
+def gh(*args, token=None):
+    env = {**os.environ, "GH_TOKEN": token} if token else None
+    r = subprocess.run(["gh", *args], capture_output=True, text=True, env=env)
     if r.returncode != 0:
         print(f"[gh {' '.join(args[:3])}] {r.stderr.strip()}", file=sys.stderr)
     return r
@@ -90,6 +97,8 @@ def startuj_julesa(zadania, istn):
     if WYLACZONY:
         print("AUTOPILOT=off – nie startuję zadań")
         return
+    if not JULES_TOKEN:
+        print("UWAGA: brak sekretu JULES_TOKEN – etykieta od bota może nie uruchomić Julesa", file=sys.stderr)
     otwarte = [z for z in zadania if istn.get(z["id"], {}).get("otwarte")]
     if not otwarte:
         return
@@ -104,7 +113,8 @@ def startuj_julesa(zadania, istn):
         # zależność bez Issue traktujemy jak otwartą (blokuje)
         if any(istn.get(d, {"otwarte": True})["otwarte"] for d in z["zalezy"]):
             continue
-        if gh("issue", "edit", str(i["nr"]), "--add-label", "jules").returncode == 0:
+        if gh("issue", "edit", str(i["nr"]), "--add-label", "jules",
+              token=JULES_TOKEN).returncode == 0:
             i["etykiety"].add("jules")
             w_toku += 1
             print("Start Julesa:", z["id"], f"#{i['nr']}")

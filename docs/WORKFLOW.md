@@ -228,7 +228,7 @@ Widzi całe repo; `AGENTS.md` czyta automatycznie [D]. Resztę wskazuje linia `P
 
 ## 8. Jules
 
-1. **Start zadania:** etykieta **`jules`** na Issue uruchamia zadanie, jeśli aplikacja Jules ma dostęp do repo [D]. Etykietę daje Autopilot (albo Ty ręcznie). Zadania spoza GitHuba – w aplikacji Jules.
+1. **Start zadania:** etykieta **`jules`** na Issue uruchamia zadanie, jeśli aplikacja Jules ma dostęp do repo [D]. **Sprawdzone 21.10.2026: Jules ignoruje etykietę dodaną przez `github-actions[bot]`; reaguje, gdy dodaje ją człowiek.** Autopilot dodaje więc etykietę osobistym tokenem właściciela (sekret `JULES_TOKEN`, fine-grained: tylko to repo, Issues: Read and write). Etykietę daje Autopilot (albo Ty ręcznie). Zadania spoza GitHuba – w aplikacji Jules.
 2. **Zatwierdzanie planu** [?]: sprawdź na pierwszym zadaniu, czy zadania z Issue czekają na zatwierdzenie planu. Jeśli tak – zatwierdzasz w aplikacji Jules albo włączasz automatyczne zatwierdzanie, jeśli takie ustawienie jest.
 3. **Poprawki:** komentarz w PR zaczynający się od `@jules` z konkretem [?] – sprawdź ustawienie reakcji na komentarze.
 4. **CI Fixer:** Jules sam naprawia czerwone sprawdzenia na swoich PR (od 19.02.2026) [D].

@@ -29,6 +29,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       GH_REPO: ${{ github.repository }}
+      JULES_TOKEN: ${{ secrets.JULES_TOKEN }}
       AUTOPILOT: ${{ vars.AUTOPILOT }}
       LIMIT: ${{ vars.AUTOPILOT_LIMIT }}
     steps:
