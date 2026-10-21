@@ -11,7 +11,7 @@ const AtlasMap = lazy(() => import('./map/AtlasMap'));
 export function Home() {
   return (
     <AnnotationProvider>
-      <div className="h-screen min-h-[640px] flex flex-col bg-kalka text-tusz overflow-hidden relative">
+      <div className="h-screen h-dvh flex flex-col bg-kalka text-tusz overflow-hidden relative">
         <Header />
         <main className="flex-1 min-h-0 flex flex-col">
           <h1 className="sr-only">Mapa Polski z danymi GUS</h1>
