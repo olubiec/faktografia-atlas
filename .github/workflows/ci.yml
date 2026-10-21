@@ -55,7 +55,7 @@ jobs:
           path: playwright-report
           retention-days: 7
 
-  security:
+  bezpieczenstwo:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

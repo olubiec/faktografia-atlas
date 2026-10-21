@@ -1,5 +1,8 @@
 # Stan projektu
 
+## Następny krok
+Domknąć falę 3 (scalić PR #27 i #28 po potwierdzeniu stanu), potem zadanie S14 wg docs/PLAN.md.
+
 Aktualizuje Claude przy przeglądzie, nie Jules. Ostatnia aktualizacja: 17.10.2026, po fali 2.
 
 ## Gotowe (na main)

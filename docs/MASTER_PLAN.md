@@ -187,7 +187,7 @@ faktografia-atlas/
 ├── scripts/
 │   ├── geo/                  build.mjs, localities.mjs
 │   ├── data/                 discover.mjs, fetch.mjs
-│   ├── tokens.mjs, shots.mjs, handoff.mjs
+│   ├── tokens.mjs, shots.mjs
 ├── src/
 │   ├── core/                 bdl/, geo/, scale/, search/, format/
 │   ├── components/ui/        komponenty shadcn/ui przerobione na nasz styl
@@ -214,7 +214,7 @@ faktografia-atlas/
   `desktop-light.jpg`, `desktop-dark.jpg`, `mobile-light.jpg`, `mobile-dark.jpg`
   (1440×900 i 390×844) + dodatkowe widoki zdefiniowane w `scripts/shots.config.json`.
   Historia wyglądu = historia PR. Bez Git LFS.
-- `pnpm handoff` (opcjonalnie, ręcznie; plik nie jest trzymany w repo) generuje `GEMINI_HANDOFF.md`: data, ostatnia sesja ze STAN_PROJEKTU.md, drzewo
+- (usunięte w WORKFLOW v3; skrypt `handoff` zlikwidowany, stan czytaj w docs/STAN.md) — dawniej `pnpm handoff` generował `GEMINI_HANDOFF.md`: data, ostatnia sesja ze STAN, drzewo
   (bez node_modules/dist/.git/legacy), zależności z package.json, lista eksportów z każdego pliku
   w src/ (nazwa + sygnatura, przez TypeScript compiler API), wynik ostatniego `vitest run`, lista
   plików w public/data z rozmiarami.

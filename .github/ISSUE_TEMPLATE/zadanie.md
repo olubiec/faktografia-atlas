@@ -1,18 +1,21 @@
 ---
 name: Zadanie
-about: Szablon zgłoszenia nowego zadania w projekcie Faktografia Atlas
-title: ''
-labels: ''
+about: Zadanie spoza paczki sesji (WORKFLOW v3 §16.5)
+title: 'Sx.y – '
+labels: zadanie
 assignees: ''
-
 ---
 
-## Kontekst
-Opisz kontekst biznesowy lub techniczny zadania.
+Klasa: auto
+Zależy od: —
+Dotyczy: 
+Przeczytaj najpierw: —
 
-## Cel dla użytkownika
-Opisz z punktu widzenia użytkownika końcowego, co ta zmiana daje.
+Cel: <co ma działać – prosto>
 
-## Warunki odbioru
-- [ ] Warunek 1 (z opisem testu lub dowodu)
-- [ ] Warunek 2 (z opisem testu lub dowodu)
+Warunki odbioru:
+- [ ] <sprawdzalny warunek>
+
+Testy: <nazwa testu lub „e2e @Sx …”>
+
+Poza zakresem: <czego nie ruszać>
