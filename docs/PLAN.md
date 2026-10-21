@@ -14,13 +14,15 @@ Po pierwszym oglądzie ekranu głównego przez właściciela (21.10.2026):
 - ZWIAD szybkości: Lighthouse (telefon) na podglądzie, rozmiar kodu i danych na wejściu, czas do pierwszej kolorowej mapy; raport z liczbami i propozycją, co skrócić (progi: docs/PRODUKT.md §7).
 - ZWIAD danych „miasto” osobno od gminy: czy BDL podaje dane dla części miejskiej i wiejskiej gmin miejsko-wiejskich (kody TERYT z końcówką 4 i 5) [niezweryfikowane] i dla których wskaźników; wynik → `TRYB: DECYZJA`, co pokazać w profilu.
 - Zakreślenia wg STYL.md §7: tylko kółko, podkreślenie, nawias, ramka (profil używa dziś typu „highlight” – gruby marker zasłaniający tekst, nie ma go w stylu); najwyżej jedno zakreślenie na ekranie.
-- Odnośniki między miejscami w profilu (do jednostki nadrzędnej, sąsiednich i podobnych) – po doprecyzowaniu przez właściciela, co ma być klikalne.
 - Pozostałe błędy ekranu głównego z oglądu właściciela.
 
-## S16 – Objaśnienia wskaźników po ludzku (szkic, wysoki priorytet)
-- Teksty „co to znaczy”, „jak czytać” (z przykładem liczby) dla 20 wskaźników są gotowe jako szkic: `docs/data/explanations-szkic.json` (Claude). Właściciel czyta i akceptuje lub poprawia (np. REGON, saldo migracji, mieszkania oddane do użytku, lesistość).
-- Zadania Julesa: (1) po akceptacji wgrać do `public/data/explanations.json` + test schematu i limitów znaków; (2) widoczne objaśnienie w profilu i panelu wskaźnika – krótkie zdanie widoczne od razu, a nie tylko za przyciskiem (?); (3) zdanie „po ludzku” o bieżącej wartości w tym miejscu (szablon z `{value}`, np. „W tym miejscu las zajmuje 37% powierzchni”).
-- Później, osobno, z liczbami i źródłami (Gem Research, wymóg PRODUKT §6): pola `world` (Polska na tle UE) i `funFact`.
+## S16 – Objaśnienia i „Na tle kraju” (szkic, wysoki priorytet)
+Wymaganie właściciela (21.10.2026): po kliknięciu wartości widać prostą definicję, **czy to dużo czy mało na tle kraju**, ewentualnie ciekawostkę, i da się przejść do porównań. Nocny robot dorzuca nowe wskaźniki, więc nic nie może wymagać ręcznego tekstu przy każdej liczbie.
+Zasada: **kontekst liczy się sam z danych** (`public/data/values/*.json`), a ręczny tekst jest tylko dodatkiem per wskaźnik.
+- Liczone automatycznie dla bieżącej jednostki, wskaźnika i roku: miejsce, „wyżej niż X% jednostek tego poziomu”, mediana Polski, najmniej–najwięcej, położenie na prostej skali z zaznaczoną medianą; to samo w obrębie województwa. Źródło zawsze: GUS, BDL, rok.
+- Ręczne (opcjonalne, jeden wpis na wskaźnik w `public/data/explanations.json`): prosta definicja (`short`), jak czytać (`howToRead`), ciekawostka ze źródłem (`funFact`), odnośnik do definicji. **Brak wpisu nie psuje nic** – wskaźnik pokazuje sam kontekst; nowy wskaźnik z nocnego robota dostaje kontekst od razu.
+- Teksty definicji dla 20 obecnych wskaźników: szkic `docs/data/explanations-szkic.json` (Claude) – właściciel akceptuje.
+- Zadania (po S14.2): S16.1 czysta logika `context()` + testy; S16.2 blok „Na tle kraju” w rozwiniętym wierszu profilu i w panelu wskaźnika (odnośniki: „Pokaż na mapie”, najwyżej/najniżej – klik wybiera jednostkę, jednostka nadrzędna); S16.3 wgranie `explanations.json` + test schematu i limitów; S16.4 raport nocny „wskaźniki bez objaśnienia” (lista w `docs/data-report.md`); S16.5 ciekawostki ze źródłami (Gem Research → weryfikacja → akceptacja właściciela, bez liczb z pamięci).
 
 ## S17 – Porównanie dwóch miejsc (szkic, PRODUKT fala 10)
 - Zakładka „Porównaj” w profilu i adres `?c=<teryt,teryt>`; wskaźniki obok siebie.
