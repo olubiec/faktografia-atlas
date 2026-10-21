@@ -1,26 +1,23 @@
 # MASTER PLAN — Faktografia Atlas (v3, 2026-10-17: małe zadania i praca równoległa)
 
-Źródło prawdy dla agentów (Jules) i planisty (Claude). Lista zadań i ich kolejność: docs/PLAN.md.
+Plan produktu dla agentów (Jules) i Planisty. Gdzie jesteśmy: docs/STAN.md; lista zadań i ich kolejność: docs/PLAN.md.
 Paczki npm i repozytoria referencyjne poniżej zostały sprawdzone 2026-10-16 (istnieją, licencje OK).
 Zmiany w tym pliku wprowadza tylko właściciel (przez PR przygotowany przez Claude).
 
 ---
 
-## 0. SPOSÓB PRACY (wg raportu o przepływie pracy z 17.10.2026)
+## 0. SPOSÓB PRACY (WORKFLOW v5, 21.10.2026)
 
-- **Zadania są małe:** sesja CCx dzieli się na 2–6 zadań CCx.y. Jedno zadanie = jedno zgłoszenie (issue)
-  na GitHubie = jedna sesja Julesa = jeden PR. Kolejność i równoległość: docs/PLAN.md (fale).
-- **Zgłoszenia pisze Claude** według szablonu .github/ISSUE_TEMPLATE/zadanie.md i dodaje etykietę `jules`,
-  co uruchamia Julesa. Właściciel zatwierdza plan Julesa i scala PR po przeglądzie.
-- **„Gotowe” = testy:** każdy warunek odbioru ma test napisany przed kodem; `pnpm verify` i CI muszą być zielone.
-- **Bramka w CI:** testy, skan sekretów (gitleaks), audyt paczek, Dependabot.
-- **Niezależny przegląd:** Claude sprawdza każdy PR przed scaleniem i robi przegląd końca każdej sesji.
-- **Wygląd:** makiety w docs/design/ (CC1.5) są wzorcem; zadania z UI mają warunek „zgodne z makietą”.
+- **Zadania są małe:** sesja dzieli się na 3–6 promptów dla Julesa; jeden prompt = jeden PR. Kolejność i równoległość podaje Planista na początku sesji; plan sesji: docs/PLAN.md.
+- **Prompty pisze Planista** (Claude albo Gemini). Właściciel wkleja je do Julesa, ogląda podgląd i scala PR. Zasady pracy agenta: AGENTS.md; opis całego procesu: WORKFLOW v5 (wiedza projektu Claude i Gema).
+- **„Gotowe” = testy:** każdy warunek „Gotowe, gdy” ma test napisany przed kodem; CI musi być zielone.
+- **Bramka w CI:** lint, typy, testy, e2e, skan sekretów (gitleaks), audyt paczek, Dependabot. Ryzykowne PR (⚠️) przegląda Claude przed scaleniem (`TRYB: RYZYKO`).
+- **Wygląd:** makiety w docs/design/ są wzorcem; zadania z UI mają warunek „zgodne z makietą”.
   Zrzuty pikselowe tylko dla DOM/SVG; mapę WebGL sprawdzamy przez stan `window.__atlas`.
 - **Dane GUS** pobiera wyłącznie robot w GitHub Actions; strona czyta tylko pliki z public/data.
 - **Gotowce zamiast pisania od zera:** paczki z §6, komponenty shadcn/ui przerobione na nasz styl,
   wzorce z repozytoriów z §7.
-- Poprawki do PR: komentarz „@Jules …” w PR. Konflikt po scaleniu innego PR: „@Jules zaktualizuj gałąź do main”.
+- Poprawki do PR: komentarz do Julesa w PR. Konflikt po scaleniu innego PR: aktualizacja gałęzi tylko przez `git merge origin/main`.
 
 ---
 

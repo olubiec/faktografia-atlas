@@ -1,1 +1,0 @@
-treść w zadaniu Julesa CC1

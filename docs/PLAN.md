@@ -1,7 +1,7 @@
 # Plan – Faktografia Atlas
 Cel produktu: interaktywna mapa Polski z danymi GUS, w której użytkownik szuka i porównuje wskaźniki dla województw, powiatów, gmin i miejscowości.
 
-Format sesji: WORKFLOW v3 §5 i §16.4. Wymagania ekranów: `docs/PRODUKT.md` (pierwszeństwo przed MASTER_PLAN). Stary plan fal 0–13 (47 zadań): `docs/archiwum/PLAN-v3.2.md`.
+Format promptów i przebieg sesji: WORKFLOW v5 (§3, §9.1). Wymagania ekranów: `docs/PRODUKT.md` (pierwszeństwo przed MASTER_PLAN). Stary plan fal 0–13 (47 zadań): `docs/archiwum/PLAN-v3.2.md`.
 
 ## S14 – Profil miejsca jak makieta 03 (w toku)
 Efekt dla użytkownika: po wybraniu miejsca widzi profil z nagłówkiem bez powtórzeń, bieżącym wskaźnikiem (duża liczba + miejsce), rankingiem ze słupkami, zakładkami jednostek podrzędnych, rozwijanymi wskaźnikami (wykres lat, objaśnienie, „Pokaż na mapie”) i „Kopiuj link”; na telefonie to samo w dolnym arkuszu 40% → pełna wysokość.
