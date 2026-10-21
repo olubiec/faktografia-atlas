@@ -40,7 +40,6 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
       await expect(searchInput).toBeInViewport();
 
       // Click last option
-      const lastOptionText = await lastOption.innerText();
       await lastOption.click();
 
       // Popover should close
