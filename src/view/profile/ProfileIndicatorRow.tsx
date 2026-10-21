@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import type { ProfileIndicatorItem } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import { formatValue } from '../../core/format/number';
@@ -60,17 +61,22 @@ export function ProfileIndicatorRow({
       <div className="flex justify-between items-center gap-2">
         <span className="text-sm font-normal text-tusz break-words min-w-0 flex-1">
           {indicator.name}
-          {itemFootnotes.map((fn) => (
-            <sup key={fn.id} className="ml-0.5">
-              <a
-                href={`#footnote-${fn.id}`}
-                title={fn.text}
-                className="text-olowek hover:text-tusz underline focus:outline-none focus:ring-1 focus:ring-tusz"
-              >
-                {fn.id}
-              </a>
+          {itemFootnotes.length > 0 && (
+            <sup className="ml-0.5">
+              {itemFootnotes.map((fn, index) => (
+                <Fragment key={fn.id}>
+                  {index > 0 && ','}
+                  <a
+                    href={`#footnote-${fn.id}`}
+                    title={fn.text}
+                    className="text-olowek hover:text-tusz underline focus:outline-none focus:ring-1 focus:ring-tusz"
+                  >
+                    {fn.id}
+                  </a>
+                </Fragment>
+              ))}
             </sup>
-          ))}
+          )}
         </span>
         <div className="flex items-center gap-2 shrink-0">
           {series && (
