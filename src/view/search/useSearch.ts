@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { buildSearchIndex, search, type SearchIndex, type SearchResult } from '@/core/search';
-import type { Unit } from '@/core/units/types';
+import { loadUnits, UNITS_URL as SHARED_UNITS_URL, resetAtlasDataCache } from '@/core/data/load-atlas-data';
 
 // Lista jednostek jest pobierana z public/data dopiero przy pierwszym otwarciu okna
 // (nie jest importowana do kodu, żeby nie powiększać głównego pakietu).
-export const UNITS_URL = '/data/units.json';
+export const UNITS_URL = SHARED_UNITS_URL;
 
 let cachedIndex: SearchIndex | null = null;
 let loading: Promise<SearchIndex> | null = null;
@@ -12,11 +12,7 @@ let loading: Promise<SearchIndex> | null = null;
 export function loadSearchIndex(fetchImpl: typeof fetch = (...args) => fetch(...args)): Promise<SearchIndex> {
   if (cachedIndex) return Promise.resolve(cachedIndex);
   if (!loading) {
-    loading = fetchImpl(UNITS_URL)
-      .then((res) => {
-        if (!res.ok) throw new Error(`Nie udało się wczytać ${UNITS_URL}: HTTP ${res.status}`);
-        return res.json() as Promise<Unit[]>;
-      })
+    loading = loadUnits(fetchImpl)
       .then((units) => {
         cachedIndex = buildSearchIndex(units);
         return cachedIndex;
@@ -33,6 +29,7 @@ export function loadSearchIndex(fetchImpl: typeof fetch = (...args) => fetch(...
 export function resetSearchIndexCache(): void {
   cachedIndex = null;
   loading = null;
+  resetAtlasDataCache();
 }
 
 export interface UseSearchResult {

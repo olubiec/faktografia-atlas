@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { UnitProfile, IndicatorValues, Indicator } from '@/core/profile/profile';
+import type { UnitProfile, Indicator } from '@/core/profile/profile';
 import type { Unit } from '@/core/units/types';
 import { buildProfile } from '@/core/profile/profile';
-import { loadIndicatorValues } from '@/core/data/load-values';
+import { loadProfileShard, profileFromShard } from '@/core/data/load-profile';
 import indicatorsData from '../../../../config/indicators.json';
 
 const indicators = indicatorsData as Indicator[];
@@ -15,7 +15,7 @@ export interface UseProfileResult {
 
 /**
  * Haczyk do pobierania i przeliczania profilu dla wybranej jednostki.
- * Po pierwszym wyborze jednostki wczytuje dane wszystkich 20 wskaźników równolegle.
+ * Wybór jednostki = jedno żądanie: gotowy plik profili jej województwa (public/data/profiles/<woj>.json).
  */
 export function useProfile(selectedTeryt: string | null, units: Unit[]): UseProfileResult {
   const [closedForTeryt, setClosedForTeryt] = useState<string | null>(null);
@@ -35,25 +35,15 @@ export function useProfile(selectedTeryt: string | null, units: Unit[]): UseProf
 
     let isCancelled = false;
 
-    // Pobranie danych dla wszystkich wskaźników równolegle
-    Promise.all(indicators.map((ind) => loadIndicatorValues(ind.id)))
-      .then((results) => {
+    // Pierwsze dwie cyfry TERYT to kod województwa; plik zawiera profile wszystkich jego jednostek.
+    loadProfileShard(selectedTeryt.slice(0, 2))
+      .then((shard) => {
         if (isCancelled) return;
-
-        const valuesById: Record<string, IndicatorValues> = {};
-        results.forEach((val, idx) => {
-          if (val) {
-            valuesById[indicators[idx].id] = val;
-          }
-        });
-
-        const built = buildProfile(selectedTeryt, indicators, valuesById, units);
-        setProfile(built);
+        setProfile(profileFromShard(selectedTeryt, shard, indicators, units));
       })
       .catch(() => {
         if (isCancelled) return;
-        const emptyBuilt = buildProfile(selectedTeryt, indicators, {}, units);
-        setProfile(emptyBuilt);
+        setProfile(buildProfile(selectedTeryt, indicators, {}, units));
       });
 
     return () => {

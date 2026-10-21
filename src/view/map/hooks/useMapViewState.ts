@@ -1,11 +1,13 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
-import unitsData from '../../../../public/data/units.json';
-import { countryBounds, initialViewState, mapLimits, type ViewState } from '@/core/map/view';
+import { initialViewState, mapLimits, type ViewState } from '@/core/map/view';
 import { loadLocalities } from '@/core/search/load-localities';
 import type { Locality } from '@/core/search/types';
-import type { Unit } from '@/core/units/types';
 
-export function useMapViewState(drillBbox?: [number, number, number, number] | null) {
+type Bbox = [number, number, number, number];
+// Przybliżony obrys Polski; używany tylko, gdy lista jednostek nie jest jeszcze wczytana.
+const POLAND_BBOX: Bbox = [14.12, 49.0, 24.15, 54.84];
+
+export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POLAND_BBOX) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [localities, setLocalities] = useState<Locality[]>([]);
@@ -14,7 +16,7 @@ export function useMapViewState(drillBbox?: [number, number, number, number] | n
   // arkusza profilu obok mapy) nie może resetować przybliżenia ani przesunięcia ustawionego przez użytkownika.
   const fittedKeyRef = useRef<string | null>(null);
 
-  const bounds = useMemo(() => countryBounds(unitsData as Unit[]), []);
+  const bounds = countryBbox;
   const limits = useMemo(() => mapLimits(bounds), [bounds]);
 
   const [currentViewState, setCurrentViewState] = useState<ViewState>({

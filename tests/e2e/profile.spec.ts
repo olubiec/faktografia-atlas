@@ -1,30 +1,6 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Unit Profile Sheet (CC7.2b)', () => {
-  test.beforeEach(async ({ page }) => {
-    // Rejestracja atrap (mocks) danych wskaźników
-    await page.route('**/data/values/*.json', async (route) => {
-      const url = route.request().url();
-      const match = url.match(/\/data\/values\/(.+)\.json$/);
-      const indicatorId = match ? match[1] : 'population';
-
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          indicatorId,
-          years: [2021, 2022],
-          values: {
-            '1217011': [26000, 27000],
-            '1217': [60000, 62000],
-            '12': [3400000, 3420000],
-          },
-          fetchedAt: '2025-01-01T00:00:00Z',
-        }),
-      });
-    });
-  });
-
   test('selecting unit via ?u=1217011 opens profile sheet with Zakopane and sets profileOpen seam', async ({
     page,
   }) => {
@@ -95,7 +71,7 @@ test.describe('Unit Profile Sheet (CC7.2b)', () => {
     await expect(headerDesktop).toBeVisible();
   });
 
-  test('missing value files opens sheet with no-data message and without console errors', async ({
+  test('missing profile file opens sheet with no-data message and without console errors', async ({
     page,
   }) => {
     const appConsoleErrors: string[] = [];
@@ -110,9 +86,8 @@ test.describe('Unit Profile Sheet (CC7.2b)', () => {
       }
     });
 
-    // Anulowanie żądań po pliki wartości (imitacja braku plików / 404)
-    await page.unroute('**/data/values/*.json');
-    await page.route('**/data/values/*.json', async (route) => {
+    // Brak pliku profili województwa (imitacja 404)
+    await page.route('**/data/profiles/*.json', async (route) => {
       await route.fulfill({ status: 404, body: 'Not found' });
     });
 
