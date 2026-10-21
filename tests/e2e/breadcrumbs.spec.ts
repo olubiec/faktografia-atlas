@@ -17,7 +17,7 @@ test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
 
     const currentPageItem = nav.locator('[aria-current="page"]');
     await expect(currentPageItem).toBeVisible();
-    await expect(currentPageItem).toHaveText('Bolesławiec');
+    await expect(currentPageItem).toHaveText('Bolesławiec (miasto)');
   });
 
   test('clicking parent breadcrumbs updates selected unit and ?u= URL parameter', async ({ page }) => {
