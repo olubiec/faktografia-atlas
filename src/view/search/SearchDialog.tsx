@@ -9,6 +9,7 @@ import { searchLocalities, type LocalitySearchResult } from '@/core/search/local
 import { writeUrlState } from '@/core/url/state';
 import type { SearchResult, Locality } from '@/core/search';
 import type { Unit } from '@/core/units/types';
+import { unitLabel } from '@/core/units/label';
 
 export interface SearchDialogProps {
   open: boolean;
@@ -154,24 +155,28 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                   heading={localityResults.length > 0 ? 'Jednostki administracyjne' : undefined}
                   className="[&_[cmdk-group-heading]]:px-4 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-olowek"
                 >
-                  {results.map((item) => (
-                    <Command.Item
-                      key={`unit:${item.teryt}`}
-                      value={`unit:${item.teryt}`}
-                      onSelect={() => handleSelectUnit(item)}
-                      className="flex items-center justify-between px-4 py-3 min-h-[44px] cursor-pointer text-tusz data-[selected=true]:bg-linia/20 data-[selected=true]:text-tusz hover:bg-linia/20 border-b border-linia/30 last:border-b-0 rounded-none"
-                    >
-                      <div className="flex flex-col gap-0.5 min-w-0 pr-2">
-                        <span className="font-[600] text-sm text-tusz truncate">{item.name}</span>
+                  {results.map((item) => {
+                    const unit = unitsMap.get(item.teryt);
+                    const displayName = unit ? unitLabel(unit) : item.name;
+                    return (
+                      <Command.Item
+                        key={`unit:${item.teryt}`}
+                        value={`unit:${item.teryt}`}
+                        onSelect={() => handleSelectUnit(item)}
+                        className="flex items-center justify-between px-4 py-3 min-h-[44px] cursor-pointer text-tusz data-[selected=true]:bg-linia/20 data-[selected=true]:text-tusz hover:bg-linia/20 border-b border-linia/30 last:border-b-0 rounded-none"
+                      >
+                        <div className="flex flex-col gap-0.5 min-w-0 pr-2">
+                          <span className="font-[600] text-sm text-tusz truncate">{displayName}</span>
                         {item.context && (
                           <span className="text-xs text-olowek truncate">{item.context}</span>
                         )}
-                      </div>
-                      <span className="text-xs text-olowek border border-linia px-2 py-0.5 bg-kalka flex-shrink-0 whitespace-nowrap font-mono">
-                        {item.label}
-                      </span>
-                    </Command.Item>
-                  ))}
+                        </div>
+                        <span className="text-xs text-olowek border border-linia px-2 py-0.5 bg-kalka flex-shrink-0 whitespace-nowrap font-mono">
+                          {item.label}
+                        </span>
+                      </Command.Item>
+                    );
+                  })}
                 </Command.Group>
               )}
 

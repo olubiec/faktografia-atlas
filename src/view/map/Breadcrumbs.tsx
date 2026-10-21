@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import type { UnitIndex } from '@/core/units/types';
 import { getBreadcrumbs } from '@/core/map/breadcrumbs';
+import { unitLabel } from '@/core/units/label';
 
 type BreadcrumbsProps = {
   teryt: string | null;
@@ -9,7 +10,18 @@ type BreadcrumbsProps = {
 };
 
 export function Breadcrumbs({ teryt, index, onSelect }: BreadcrumbsProps) {
-  const items = useMemo(() => getBreadcrumbs(teryt, index), [teryt, index]);
+  const items = useMemo(() => {
+    const rawItems = getBreadcrumbs(teryt, index);
+    return rawItems.map((item) => {
+      if (!item.teryt) return item;
+      const unit = index.byTeryt.get(item.teryt);
+      if (!unit) return item;
+      return {
+        ...item,
+        label: unitLabel(unit),
+      };
+    });
+  }, [teryt, index]);
 
   return (
     <nav aria-label="Ścieżka" className="bg-arkusz border border-linia p-1">
