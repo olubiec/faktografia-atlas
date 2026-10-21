@@ -1,7 +1,13 @@
 # Produkt: co ma widzieć i robić użytkownik
 
-Wersja 1 · 20.10.2026 · Opus, po pierwszym teście właściciela na komputerze.
-Ten plik ma pierwszeństwo przed opisami ekranów w `docs/MASTER_PLAN.md` i w starych promptach. Wygląd: makiety `docs/design/02–05` + `docs/STYL.md`.
+> **Co budujemy:** publiczną mapę Polski z danymi GUS dla województw, powiatów i gmin.
+> **Dla kogo:** osoba ciekawa swojej okolicy, najczęściej z telefonu (§2).
+> **Najważniejsze ekrany:** ekran główny z mapą (§3), profil miejsca (§4), telefon (§5).
+> **Jak oceniamy „gotowe”:** właściciel ogląda podgląd Vercel na komputerze i telefonie; progi szybkości §7; definicja „gotowe” §8.
+> **Gdzie jesteśmy i co dalej:** `docs/STAN.md`, `docs/PLAN.md`. Wygląd: `docs/STYL.md` + makiety `docs/design/`.
+
+Wersja 2 · 21.10.2026 (v1: 20.10.2026, po pierwszym teście właściciela na komputerze). Zmiany v2: §5 telefon dokładniej (po oglądzie 21.10), §5a wejście w głąb mapy, §6 ścieżka pliku objaśnień, §8–§9 pod proces v5.
+Ten plik ma pierwszeństwo przed opisami ekranów w `docs/MASTER_PLAN.md`.
 
 ---
 
@@ -20,7 +26,7 @@ Strona po falach 1–8 przechodziła wszystkie testy, ale jako produkt nie dzia�
 | Brak objaśnień wskaźników | — | Nie było w planie |
 | „Wałcz” dwa razy w powiecie wałeckim z różną ludnością | To dwie gminy: miejska (miasto) i wiejska (wokół miasta); 143 takie pary w Polsce. Strona pokazuje samą nazwę | Nikt nie sprawdził nazw na prawdziwych danych |
 
-**Wniosek:** małe zadania z zielonymi testami nie składają się same w dobry produkt. Od teraz: (1) budujemy po ekranie, nie po kawałku; (2) ekran składa i ogląda Sonnet przed scaleniem; (3) szybkość i wygląd mają mierzalne progi; (4) makiety są warunkiem odbioru, nie inspiracją.
+**Wniosek:** małe zadania z zielonymi testami nie składają się same w dobry produkt. Od teraz: (1) budujemy po ekranie, nie po kawałku; (2) ekran ogląda właściciel na podglądzie (komputer i telefon) przed scaleniem; (3) szybkość i wygląd mają mierzalne progi; (4) makiety są warunkiem odbioru, nie inspiracją.
 
 ---
 
@@ -65,22 +71,38 @@ Osoba ciekawa swojej okolicy (mieszkaniec, dziennikarz, uczeń, samorządowiec),
 
 - Panel po prawej **obok mapy** (440 px), mapa się zwęża, **nic nie jest nałożone na mapę**. Zamknięcie: ×, Escape; mapa wraca do pełnej szerokości bez zmiany przybliżenia.
 - Nagłówek: „Województwo małopolskie”, „Gmina miejska Wałcz” (bez powtórzeń typu „powiat powiat”), TERYT. **Wszędzie, gdzie widać nazwę gminy, widać jej rodzaj**: „Wałcz (miasto)”, „Wałcz (gmina wiejska)”.
-- Zakładki: **Przegląd** · **Powiaty (22)** / **Gminy (n)** (lista jednostek niższego poziomu z wartością bieżącego wskaźnika) · **Porównaj** (fala 10; do tego czasu zakładka nieaktywna z napisem „wkrótce”).
+- Zakładki: **Przegląd** · **Powiaty (22)** / **Gminy (n)** (lista jednostek niższego poziomu z wartością bieżącego wskaźnika) · **Porównaj** (S18; do tego czasu zakładka nieaktywna z napisem „wkrótce”).
 - **Przegląd** (od góry):
   1. bieżący wskaźnik: nazwa, rok, **duża liczba**, miejsce w rankingu (jedno zakreślenie wg STYL.md §7);
   2. **ranking wszystkich jednostek tego poziomu** w województwie / kraju jako poziome słupki, wybrana jednostka wyróżniona (makieta 03); długie listy: 10 + „pokaż wszystkie”;
   3. **pozostałe wskaźniki** w grupach (Ludność, Praca, Pieniądze, Mieszkania, Środowisko, Życie, Transport), każdy jako wiersz: nazwa, wartość, miejsce. **Klik w wiersz rozwija go:** czytelny wykres lat (oś lat, min/max, wartość po najechaniu), objaśnienie (§6), przycisk **„Pokaż na mapie”** (ustawia ten wskaźnik na mapie i w panelu).
-- Na dole: „Kopiuj link”, źródło. „Porównaj z innym miejscem” – fala 10.
+- Na dole: „Kopiuj link”, źródło. „Porównaj z innym miejscem” – S18.
 
 ## 5. Telefon (< 768 px) – makieta 04
 
-- Mapa na cały ekran pod nagłówkiem (logo + lupa). Na dole pasek **„Gęstość zaludnienia ▾ · 2025”**: dotknięcie wysuwa arkusz z wyborem wskaźnika, poziomem, legendą, rokiem, rankingiem.
-- Profil: dolny arkusz na 40% wysokości (przeciągany w górę do pełnej wysokości), treść jak w §4.
-- Pola dotykowe ≥ 44 px, brak poziomego przewijania przy 390 px.
+Ogląd właściciela 21.10.2026: telefon nie nadaje się do użytku (panel wskaźnika nad mapą zajmuje pół ekranu, mapa to pasek, profil zasłania resztę, okruszki i „Wróć” leżą na mapie, pasek zgody zakrywa dół). Wymagania:
+
+- **Nagłówek** ≤ 56 px: logo, lupa, menu. „Motyw”, „O projekcie”, „Skąd są dane” – w menu.
+- **Mapa na cały ekran** pod nagłówkiem (≥ 75% wysokości okna), od razu w kolorach. Wysokość przez `dvh`, dolne elementy z odstępem `safe-area`.
+- **Dolny pasek wskaźnika** „Gęstość zaludnienia ▾ · 2025” (≥ 48 px). Dotknięcie wysuwa **arkusz wskaźnika**: wybór wskaźnika, poziom, legenda, rok, najwyżej/najniżej. Zamknięcie: przeciągnięcie w dół, ×, dotknięcie mapy.
+- **Dymek** po pierwszym dotknięciu jednostki, nad dolnym paskiem, z przyciskiem „Otwórz profil”; drugie dotknięcie tej samej jednostki otwiera profil.
+- **Profil:** dolny arkusz na 40% wysokości, przeciągany do pełnej wysokości i z powrotem; treść jak w §4. Mapa nad arkuszem pozostaje widoczna i dotykalna, a wybrane miejsce mieści się nad arkuszem.
+- Naraz otwarty najwyżej jeden arkusz.
+- **Okruszki** w jednej linii u góry mapy, „‹” działa jak „Wróć” (bez osobnego przycisku na mapie).
+- **Pasek zgody** ≤ 15% wysokości okna, znika po wyborze.
+- Pola dotykowe ≥ 44 px, brak poziomego przewijania przy 360 i 390 px. Tablet (≥ 768 px) = układ komputera.
+
+## 5a. Wejście w głąb mapy (komputer i telefon)
+
+- Wybór województwa / powiatu (klik, ranking, wyszukiwarka): kamera **płynnie** podjeżdża do jednostki (ok. 600 ms), bez skoku. Gest użytkownika przerywa ruch.
+- Jednostki niższego poziomu pojawiają się **kafelek po kafelku**, od środka na zewnątrz; cała fala < 1 s niezależnie od liczby jednostek.
+- Reszta Polski nie znika – zostaje wyblakła jako tło.
+- „Wróć” i okruszki: ruch odwrotny, szybszy (ok. 400 ms). Zmiana wskaźnika / roku: kolory przelewają się w 300 ms.
+- Otwarcie linku z `?u=` i zmiana rozmiaru okna – bez animacji. `prefers-reduced-motion` – wszystko od razu.
 
 ## 6. Objaśnienia wskaźników
 
-Dla każdego z 20 wskaźników plik `config/explanations.json`:
+Dla każdego wskaźnika (opcjonalnie) wpis w pliku `public/data/explanations.json`. Niezależnie od wpisu blok „Na tle kraju” liczy się sam z danych (miejsce, mediana Polski, najmniej–najwięcej; szczegóły: `docs/PLAN.md`, S17).
 
 | Pole | Treść | Limit |
 |---|---|---|
@@ -90,7 +112,7 @@ Dla każdego z 20 wskaźników plik `config/explanations.json`:
 | `funFact` | jedna ciekawostka ze świata albo z Polski | 200 znaków + `source`, `url` |
 | `definitionUrl` | oficjalna definicja GUS (pojęcia w statystyce publicznej / opis zmiennej BDL) | link |
 
-Zasady: każda liczba i ciekawostka ma źródło z linkiem; research robi Gemini (OPERACJE §7), weryfikuje Sonnet (otwiera każde źródło), **akceptuje właściciel** przed publikacją. Brak wpisu = brak przycisku (?), strona działa dalej.
+Zasady: każda liczba i ciekawostka ma źródło z linkiem; research robi Gem Research, Planista sprawdza każde źródło, **akceptuje właściciel** przed publikacją. Brak wpisu = brak przycisku (?), strona działa dalej.
 
 ## 7. Szybkość (progi sprawdzane testem w CI)
 
@@ -101,17 +123,15 @@ Zasady: każda liczba i ciekawostka ma źródło z linkiem; research robi Gemini
 | Wybór miejsca | **dokładnie jedno** żądanie danych profilu (`public/data/profiles/<województwo>.json`) |
 | Zmiana wskaźnika | jedno żądanie `values/<id>.json` (jeśli nie było w pamięci) |
 | Pliki danych | bez wcięć (`JSON.stringify` bez spacji) |
-| Odczuwalnie (mierzy Sonnet na nagraniu/w przeglądarce, wpis w PR) | mapa w kolorach ≤ 3 s na zwykłym laptopie; otwarcie profilu bez widocznego zacięcia |
+| Odczuwalnie (właściciel na podglądzie, także na telefonie) | mapa w kolorach ≤ 3 s na zwykłym laptopie; otwarcie profilu bez widocznego zacięcia |
 
 ## 8. Definicja „gotowe” dla zadań z UI (dodatkowo do AGENTS.md)
 
 1. Zgodne z makietą (02–05) na 1440×900 i 390×844; różnice wypisane w PR.
 2. Działa **na prawdziwych danych** z `public/data` (nie tylko na danych syntetycznych w teście).
-3. Sonnet przed scaleniem uruchamia stronę, przechodzi ścieżkę z §3–§5 i dołącza w PR opis z 2 zrzutami (komputer, telefon) obejrzanymi przez siebie.
+3. Właściciel przed scaleniem ogląda podgląd Vercel na komputerze i telefonie według linijki „Ty sprawdzasz” z `docs/PLAN.md`; Jules w sekcji „Po ludzku” pisze, co sprawdzić.
 4. Progi z §7 przechodzą.
 
-## 9. Kolejność (szczegóły i prompty: `docs/FALE.md`)
+## 9. Kolejność
 
-- **Fala 9 – „działa i wygląda jak makieta”:** szybkość, ekran główny (§3), profil obok mapy z rankingiem i rozwijanymi wskaźnikami (§4), telefon (§5), poprawki błędów, objaśnienia (§6).
-- **Fala 10:** porównanie dwóch miejsc (zakładka Porównaj), blady podkład przy dużym zbliżeniu, kreskowanie „brak danych”, tryb ciemny mapy (makieta 05), scena wejścia, statystyki wyszukiwania.
-- Później: wersja angielska, karuzele (osobne repo).
+Sesje i ich kolejność: `docs/PLAN.md` (S14 profil, S15 telefon, S16 wejście w głąb, S17 objaśnienia, S18 porównanie, potem „Później”).

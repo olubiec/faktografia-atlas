@@ -197,7 +197,7 @@ faktografia-atlas/
 │   ├── styles/               tokens.css, global.css
 │   ├── App.tsx, main.tsx
 ├── tests/e2e/                Playwright
-├── docs/                     MASTER_PLAN.md, sessions/, shots/, data-report.md
+├── docs/                     MASTER_PLAN.md, PLAN.md, prompty/, shots/, data-report.md
 ├── legacy/                   tylko odczyt
 ├── AGENTS.md, STAN_PROJEKTU.md
 ```

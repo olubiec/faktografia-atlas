@@ -54,3 +54,5 @@ Nigdy:
 
 ## Błędy powtarzalne (dopisywane po sesjach)
 - Jules wysyłał PR-y, które usuwały pliki z main (budowa gałęzi od nowa) → tylko `git merge origin/main` + kontrola `--diff-filter=D` (zasada wyżej).
+- Profil czytał adres po swojemu (własny `popstate`) i wybierał jednostkę sztucznym zdarzeniem → stan wskaźnika, roku i wybranej jednostki bierzesz z `useMainView` / `useMapSelection` (przekazany propsami z `AtlasMap`), nie tworzysz drugiego.
+- Zmieniano istniejące testy, żeby przeszły (np. „1 zakreślenie” → „2”) → istniejącego testu nie zmieniasz; jeśli przeszkadza, opisz w PR i zatrzymaj się.
