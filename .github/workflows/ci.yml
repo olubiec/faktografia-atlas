@@ -1,6 +1,6 @@
 name: CI
 
-# Wzór: WORKFLOW UNIWERSALNY v5.1, §10.5 (dopasowany do Faktografii: e2e to `pnpm test:e2e`,
+# Wzór: WORKFLOW UNIWERSALNY v5.3, §10.5 (dopasowany do Faktografii: e2e to `pnpm test:e2e`,
 # przeglądarka z obrazu Playwright, konfiguracja skanu sekretów w .gitleaks.toml).
 on:
   pull_request:

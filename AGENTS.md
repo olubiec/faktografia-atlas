@@ -1,5 +1,5 @@
 # Zasady dla agentów – Faktografia Atlas
-Co budujemy: docs/PRODUKT.md (przy ekranach ma pierwszeństwo) · Gdzie jesteśmy: docs/STAN.md · Wygląd: docs/STYL.md · Dane, architektura, pakiety: docs/TECHNIKA.md
+Co budujemy: docs/PRODUKT.md (przy ekranach ma pierwszeństwo) · Gdzie jesteśmy: docs/STAN.md · Wygląd: docs/STYL.md · Warstwy, dane, plan fal: docs/ARCHITEKTURA.md · Elementy z zewnątrz i licencje: docs/ELEMENTY.md
 
 Publiczna strona z interaktywną mapą Polski (województwo > powiat > gmina > miejscowość) i danymi GUS.
 Właściciel nie czyta kodu: ocenia zachowanie na podglądzie Vercel, często z telefonu.
@@ -17,10 +17,10 @@ Stos: Vite + React + TypeScript (strict), pnpm, Tailwind v4 (tokeny w @theme), V
 - Czerwone testy na GitHubie – popraw sam.
 - Aktualizacja gałęzi: TYLKO `git merge origin/main`. Bez rebase, bez zakładania gałęzi od nowa, bez `--force`.
 - Przed każdym pushem `git diff --name-status --diff-filter=D origin/main...HEAD` musi być puste: nie usuwasz nic, co jest na main (chyba że prompt wprost to nakazuje).
-- Nowy pakiet: napisz w PR nazwę, link do npm i do repozytorium, datę wydania, pobrania tygodniowo i po co. Nie wymyślaj nazw – sprawdź w rejestrze. Pakiet spoza `docs/TECHNIKA.md` §3 → opisz w PR i zatrzymaj się na decyzję właściciela.
+- Nowy pakiet: napisz w PR nazwę, link do npm i do repozytorium, datę wydania, pobrania tygodniowo i po co. Nie wymyślaj nazw – sprawdź w rejestrze. Każdy element z zewnątrz (pakiet, zasób, usługa) = wpis w `docs/ELEMENTY.md` (źródło, wersja, licencja) w tym samym PR; element spoza ELEMENTY.md bez decyzji w prompcie → opisz w PR i zatrzymaj się. Bez sprawdzonej licencji nic nie wchodzi.
 - Wzorce zrzutów (`*-snapshots/`) powstają wyłącznie w CI przez workflow „Update snapshots” (uruchamia go właściciel). Nie generuj ich u siebie; w PR napisz, że trzeba je odświeżyć.
 - Uwagi CodeRabbit o błędach poprawiasz; z uwagą o stylu możesz się nie zgodzić – napisz dlaczego.
-- Nie edytuj `docs/STAN.md`, `package.json` ani `pnpm-lock.yaml`, chyba że prompt wprost na to pozwala (STAN.md zmienia ostatni prompt sesji).
+- Nie edytuj `docs/STAN.md`, `package.json` ani `pnpm-lock.yaml`, chyba że prompt wprost na to pozwala (STAN.md zmienia ostatni prompt fali).
 - Opis PR zawsze z sekcją „Po ludzku” (dla osoby, która nie programuje): co zrobiłeś · co sprawdzić na podglądzie · czego nie zrobiłeś i dlaczego.
 
 ## Nigdy
@@ -32,7 +32,7 @@ Stos: Vite + React + TypeScript (strict), pnpm, Tailwind v4 (tokeny w @theme), V
 
 ## Zasady projektu
 Najpierw zapytaj (napisz w PR i zatrzymaj się):
-- Zmiana `config/tokens.json`, `docs/STYL.md`, `docs/TECHNIKA.md` albo istniejących testów i wzorców zrzutów – chyba że prompt wprost tego wymaga.
+- Zmiana `config/tokens.json`, `docs/STYL.md`, `docs/ARCHITEKTURA.md` §1–§4 albo istniejących testów i wzorców zrzutów – chyba że prompt wprost tego wymaga.
 - Zmiana konfiguracji (`vercel.json`, `.gitleaks.toml`, `.oxlintrc.json`, `vite/vitest/playwright.config.ts`), `src/core/consent`, `src/view/consent`, `scripts/data`, `config/*` – jeśli prompt o to nie prosi.
 - Warunek niejasny lub sprzeczny. Zmiana architektury lub struktury danych. Usunięcie funkcji.
 

@@ -1,12 +1,104 @@
-# Plan – Faktografia Atlas
-Cel produktu: interaktywna mapa Polski z danymi GUS, w której każdy (najczęściej z telefonu) w minutę sprawdzi, jak jego miejsce wypada na tle innych, i wyśle komuś link.
+# Architektura – warstwy, podzespoły, dane, plan fal
+Wg WORKFLOW v5.3 §3c. Jedno źródło prawdy o tym, **z czego** zbudowana jest strona i **w jakiej kolejności** ją rozbudowujemy.
+Co ma widzieć użytkownik: `docs/PRODUKT.md` · gdzie jesteśmy teraz: `docs/STAN.md` · elementy z zewnątrz i licencje: `docs/ELEMENTY.md` · wygląd: `docs/STYL.md`.
+Zmiany: Jules na prośbę Planisty (`TRYB: WARSTWY` dla §1–§2, `TRYB: FALA` korzysta z §5).
 
-Jak używać tego pliku (WORKFLOW UNIWERSALNY v5.1):
-- **Sesja** = jeden widoczny efekt (np. „telefon od nowa”). Dzieli się na **fale**: prompty z jednej fali zmieniają rozłączne pliki, więc wklejasz je do Julesa naraz.
-- **Planista** (Gemini albo Claude) na początku każdej fali: `TRYB: FALA` z linkiem do `docs/STAN.md` i do tego pliku. Sprawdza w kodzie, czy założenia są nadal prawdziwe, i z kroków fali robi prompty w formacie v5.1 §9.1 (Przeczytaj najpierw · Zadanie · Pliki · Gotowe, gdy · Nie ruszaj · „Po ludzku”). Następną falę pisze dopiero po bramce poprzedniej.
-- **Bramka fali** = zielone CI na `main` po scaleniu wszystkich PR fali. Widoczne zmiany oglądasz przy scalaniu według linijki „Ty sprawdzasz”.
-- Coś wyszło inaczej → `TRYB: ODŚWIEŻ`. Ostatni prompt sesji aktualizuje `docs/STAN.md` i oznacza sesję tu jako zakończoną.
-- Wymagania ekranów: `docs/PRODUKT.md` (pierwszeństwo). Wygląd: `docs/STYL.md` i makiety `docs/design/`. Dane i pakiety: `docs/TECHNIKA.md`. Nowa biblioteka lub usługa → najpierw `TRYB: WYBÓR`.
+---
+
+## 1. Warstwy i podzespoły (stan 22.10.2026)
+Baza: **od zera** (bez cudzej bazy, `docs/BAZA.md` nie dotyczy). Projekt jest w warstwie **W2 – funkcje**; W3 (szlif) zaczyna się w S16.
+
+| Warstwa | Podzespół | Co robi (po ludzku) | Gdzie w kodzie | Stan |
+|---|---|---|---|---|
+| W0 | Fundament | szkielet Vite/React, CI (`testy`, `bezpieczenstwo`), tokeny stylu, rejestr elementów | `package.json`, `.github/workflows/ci.yml`, `config/tokens.json`, `docs/ELEMENTY.md` | gotowe |
+| W1 | Dane | robot GUS, pliki wartości i profili, ich ładowanie z pamięcią podręczną | `scripts/data/`, `public/data/`, `src/core/data/` | gotowe |
+| W1 | Jednostki i adres | lista jednostek, nazwy („Gmina miejska Wałcz”), stan w adresie `?u= ?i= ?y= ?l=` | `src/core/units/`, `src/core/url/state.ts` | gotowe |
+| W1 | Mapa | MapLibre + deck.gl, warstwy kolorów i obrysu, widok i limity przybliżenia | `src/view/map/`, `src/core/map/` | gotowe; ruch kamery i kafelki → S16 |
+| W1 | Ranking i profil (logika) | miejsca w rankingu, sekcje profilu, trend w latach | `src/core/ranking/`, `src/core/profile/` | gotowe (trend – PR #198) |
+| W1 | Komponenty UI | przyciski, zakładki, arkusze, zakreślenia, ikony, wykresy | `src/components/ui/`, `src/view/ui/`, `src/view/annotation/` | gotowe |
+| W1 | Zgoda i statystyki | zgoda, PostHog po zgodzie | `src/core/consent/`, `src/view/consent/` | gotowe (klucz – później) |
+| W2 | Ekran główny | panel wskaźnika, legenda, rok, najwyżej/najniżej, dymek | `src/view/main/`, `AtlasMap.tsx` | gotowe na komputerze; telefon → S15 |
+| W2 | Profil miejsca | nagłówek, przegląd, ranking, zakładki, wiersze wskaźników | `src/view/profile/` | w toku – S14 |
+| W2 | Telefon | układ < 768 px, arkusze, pasek wskaźnika | `Home.tsx`, `AtlasMap.tsx`, `ProfilePortal.tsx`, `ProfileSheetMobile.tsx` | S15 |
+| W2 | Objaśnienia i „Na tle kraju” | kontekst liczony z danych, opcjonalne teksty | `src/core/explain/` + nowy `context` | S17 |
+| W2 | Porównanie | dwa miejsca obok siebie, `?c=` | nowe | S18 |
+| W3 | Ruch | płynne wejście w głąb, kafelki, przelewanie kolorów, scena wejścia | `useMapViewState`, warstwa choropleth | S16 |
+| W3 | Szlif | dostępność, szybkość, teksty, tryb ciemny mapy | całość | S16–„Później” |
+
+## 2. Zależności i pliki-węzły
+- **Zależności:** Profil (W2) ← Ranking i profil (W1) ← Dane (W1). Telefon (W2) ← Profil (S14). Ruch (W3) ← Mapa (W1) i Telefon (S15). Objaśnienia (W2) ← Dane. Porównanie (W2) ← Profil + Wyszukiwarka.
+- **Pliki-węzły** (dotyka ich wiele zadań – w jednej fali najwyżej jedno zadanie na węzeł):
+  `src/view/map/AtlasMap.tsx` (składa ekran i przekazuje stan) · `src/view/profile/ProfileSheet.tsx` (`ProfileBody`) · `src/view/Home.tsx` · `src/view/map/hooks/useMapViewState.ts` · `src/view/map/layers/choropleth.ts` · `src/core/url/state.ts` · `config/tokens.json` · `config/indicators.json` · `package.json` / `pnpm-lock.yaml`.
+- **Jak je omijać:** nowa funkcja dostaje własny plik (np. `ProfileOverview.tsx`, `ProfileChildren.tsx`, `MobileIndicatorBar.tsx`, `src/core/map/reveal.ts`), a podpięcie do węzła to osobny, krótki krok. Gdy fala ma kilka nowych modułów do jednego węzła – najpierw zadanie przygotowawcze (puste miejsca podpięcia), potem moduły równolegle, na końcu podpięcie (v5.3 §3c).
+
+---
+
+## 3. Dane
+
+### 3.1 GUS BDL (jedyne źródło liczb)
+- API `https://bdl.stat.gov.pl/api/v1`, nagłówek `X-ClientId` z sekretu `BDL_CLIENT_ID` (tylko w GitHub Actions), `format=json`, `lang=pl`, `page-size=100`.
+- Limity z kluczem: 10/s, 500/15 min, 5000/12 h. Klient: kolejka `p-throttle` (8/s) + ponawianie przy 429 i 5xx (wykładniczo, maks. 5 prób).
+- Pobieramy całe poziomy naraz: `data/by-variable/{varId}?unit-level=N&year=…` – nigdy jednostka po jednostce.
+- Licencja danych CC BY 4.0. Przy każdej liczbie: „Źródło: GUS, Bank Danych Lokalnych, <rok>”.
+- **Strona nigdy nie woła API GUS.** Dane pobiera robot do `public/data`.
+
+### 3.2 Roboty danych (GitHub Actions)
+| Workflow | Kiedy | Co robi |
+|---|---|---|
+| `fetch-data.yml` | co noc ok. 3:10 (cron `10 1 * * *`) i ręcznie | `pnpm data:fetch` → `public/data/values/*.json`, test kontraktu, przebudowa `public/data/profiles/*.json`; PR z gałęzi `data/nightly` tylko gdy dane się zmieniły; przy błędzie zgłoszenie |
+| `fetch-localities.yml` | ręcznie (raz na jakiś czas) | `public/data/localities.json` z rejestru PRNG |
+| `bdl-record.yml` | ręcznie | nagrania odpowiedzi BDL do `tests/fixtures/bdl/recorded/` (dane do testów) |
+| `update-snapshots.yml` | ręcznie przez właściciela (etykieta `aktualizuj-zrzuty` na PR) | odświeża wzorce zrzutów Playwright na gałęzi PR |
+
+### 3.3 Wskaźniki
+- Katalog: `config/indicators.json` (20 wskaźników; pola: `id`, `bdlVarId`, `name`, `unit`, `description`, `group`, `higherIsBetter`, `minLevel`).
+- Wskaźnik z poziomu wyższego niż jednostka → w profilu dopisek „dane dla powiatu X”. Wynagrodzenia: przypis „bez firm do 9 pracowników”. Samochody: „rejestracje flot leasingowych zawyżają niektóre miasta”.
+- Domyślny wskaźnik ekranu głównego: gęstość zaludnienia (`DEFAULT_INDICATOR_ID` w `src/core/map/main-view.ts`).
+
+### 3.4 Geometria i miejscowości
+- Granice: `public/geo/admin.topo.json` (TopoJSON ≤ 3 MB, warstwy woj/pow/gmi, właściwości `{teryt, name}`), budowane ręcznie `pnpm geo` (źródło: repo waszkiewiczja/GeoJSON-Polska-Wojewodztwa-Powiaty-Gminy, public domain; uproszczenie mapshaper – tylko narzędzie budowania).
+- Miejscowości: TERYT SIMC + współrzędne z GUGiK PRNG, skrypt `pnpm localities`. Brak punktu → centroid gminy i `approx: true`.
+
+### 3.5 Kontrakty plików
+```ts
+// public/data/units.json – lista jednostek
+type Unit = { teryt: string; bdlId: string | null; name: string;
+  level: "woj" | "pow" | "gmi"; parent: string | null;
+  bbox: [number, number, number, number]; centroid: [number, number] };
+
+// public/data/values/<indicatorId>.json – wartości jednego wskaźnika dla wszystkich jednostek
+type IndicatorValues = { indicatorId: string; years: number[];
+  values: Record<string /* teryt */, (number | null)[]>; fetchedAt: string; report?: unknown };
+
+// public/data/profiles/<teryt województwa>.json – gotowe profile jednostek jednego województwa
+// (typ ProfileShard w src/core/data/load-profile.ts; budowane przez scripts/data/build-profiles.mjs)
+
+// public/data/localities.json
+type Locality = { simc: string; name: string; gminaTeryt: string;
+  lon: number; lat: number; approx?: boolean };
+
+// public/data/explanations.json – (S17) opcjonalne objaśnienia, jeden wpis na wskaźnik
+// { [indicatorId]: { short, howToRead, definitionUrl, funFact?, source?, url? } }
+```
+Pliki danych bez wcięć. Progi pobierania (ile plików w jakiej sytuacji): `docs/PRODUKT.md` §7.
+
+---
+
+## 4. Architektura (jak to jest zbudowane)
+- **Stos:** Vite + React + TypeScript (strict), pnpm, statyczne SPA na Vercel (podgląd każdego PR).
+- **Podział:** `src/core` – czysta logika bez DOM (Vitest); `src/view` – React. `src/components/ui` – komponenty shadcn/ui przerobione na nasz styl.
+- **Stan w adresie:** `?u=<teryt>&i=<wskaźnik>&y=<rok>&l=<poziom>` (później `&c=<teryt,teryt>`), czytany i zapisywany przez `src/core/url/state.ts`. Na ekranie jedno źródło stanu: `useMainView` (wskaźnik, rok, poziom, wartości) i `useMapSelection` (wybrana jednostka) w `AtlasMap` – inne komponenty dostają je propsami.
+- **Mapa:** MapLibre (`react-map-gl/maplibre`) + deck.gl (`MapboxOverlay`), bez podkładu ulic – sama kalka z granicami. Testy mapy przez stan `window.__atlas` (tylko w trybie testowym, `src/core/map/test-seam.ts`), nie przez piksele.
+- **Style:** Tailwind v4 (`@theme`), tokeny `config/tokens.json` → `scripts/tokens.mjs` → `src/styles/tokens.css`. Zero wartości wpisanych na sztywno (test `no-hardcoded-colors`).
+- **Zrzuty:** `pnpm shots` zapisuje `docs/shots/*.jpg` (1440×900 i 390×844, widoki z `scripts/shots.config.json`); wzorce testów wizualnych tylko przez workflow „Update snapshots”.
+- **Analityka:** PostHog (region EU) ładowany dopiero po zgodzie; klucz projektu publiczny z założenia.
+
+## 5. Plan: sesje → fale (orientacyjny)
+Jak używać (WORKFLOW v5.3):
+- **Sesja** = jeden widoczny efekt. Dzieli się na **fale**: prompty z jednej fali zmieniają rozłączne pliki (także węzły z §2), więc wklejasz je do Julesa naraz.
+- **Planista** na początku każdej fali: `TRYB: FALA` z linkami do `docs/STAN.md`, tego pliku i `docs/ELEMENTY.md`. Sprawdza w kodzie, czy założenia są nadal prawdziwe, i z kroków fali robi prompty wg v5.3 §9.1. Następną falę pisze dopiero po bramce poprzedniej.
+- **Bramka fali** = zielone CI na `main` po scaleniu wszystkich PR fali (przy W2 dodatkowo Twoja ocena na podglądzie wg „Ty sprawdzasz”). **Ostatni prompt każdej fali** aktualizuje `docs/STAN.md`.
+- Coś wyszło inaczej → `TRYB: ODŚWIEŻ`. Nowa biblioteka/usługa/zasób → `TRYB: WYBÓR` (szerokie badanie: `TRYB: RESEARCH` + obowiązkowo `TRYB: WERYFIKACJA`) i wpis w `docs/ELEMENTY.md`.
 
 Zasady wspólne dla wszystkich sesji:
 - **Komputer nie może się pogorszyć**, gdy poprawiamy telefon, i odwrotnie. Każdy prompt z UI ma warunek: istniejące testy przechodzą bez zmian.
@@ -16,17 +108,17 @@ Zasady wspólne dla wszystkich sesji:
 
 ---
 
-## S14 – Profil miejsca jak makieta 03 (w toku)
+### S14 – Profil miejsca jak makieta 03 (w toku)
 **Po co:** po kliknięciu miejsca na komputerze widać czytelny profil: kto to jest, jak wypada w bieżącym wskaźniku, ranking, lista jednostek niżej, rozwijane wskaźniki.
 **Zrobione:** S14.1 (logika sekcji), S14.2 (rozwijany wiersz), S14.7 (zakreślenie trzyma się tekstu), S14.8 (oddalanie mapy), S14.9 (przewijanie listy wskaźników).
-**Zostało (fale):** 1: PR #198 (S14.10 – tekst zmiany w latach, obejrzeć i scalić) + PROMPT 1 – S14.3 przegląd (od nowa, PR #199 odrzucony) · 2: PROMPT 2 – S14.4 zakładki · 3: PROMPT 3 – S14.6 test całej ścieżki → PROMPT 4 – STAN. Gotowe prompty: `docs/prompty/S14.md`.
+**Zostało (fale):** 1: PR #198 (S14.10 – tekst zmiany w latach, obejrzeć i scalić) + PROMPT 1 – S14.3 przegląd (od nowa, PR #199 odrzucony) · 2: PROMPT 2 – S14.4 zakładki + PROMPT 5 – usunięcie nieużywanych pakietów · 3: PROMPT 3 – S14.6 test całej ścieżki. Po każdej fali PROMPT S (STAN.md). Gotowe prompty i tabela kolizji: `docs/prompty/S14.md`.
 **Przeniesione:** profil na telefonie (dawne S14.5) → S15.3.
 
 **Co zobaczysz na końcu S14 (komputer):** klik w małopolskie → po prawej „Województwo małopolskie”, duża liczba w kółku, „2. miejsce wśród 16 województw”, słupki 16 województw, zakładki Przegląd / Powiaty (22) / Porównaj (wkrótce), wiersze wskaźników z tekstem „↗ +1,2% od 2020”, po kliknięciu wiersza wykres i „Pokaż na mapie”, na dole „Kopiuj link”.
 
 ---
 
-## S15 – Telefon od nowa (następna)
+### S15 – Telefon od nowa (następna)
 **Po co:** dziś na telefonie strony nie da się używać: panel wskaźnika zajmuje pół ekranu nad mapą, mapa to wąski pasek, profil zasłania resztę, okruszki i „Wróć” leżą na mapie, pasek zgody zakrywa dół. Robimy ekran telefonu według makiety 04 i `PRODUKT.md` §5.
 
 **Co zobaczysz na końcu (na swoim telefonie, podgląd Vercel):**
@@ -70,7 +162,7 @@ Zasady wspólne dla wszystkich sesji:
 
 ---
 
-## S16 – Mapa: płynne wejście w głąb, „kafelek po kafelku”
+### S16 – Mapa: płynne wejście w głąb, „kafelek po kafelku”
 **Po co:** dziś po wybraniu województwa lub powiatu mapa **przeskakuje** do nowego przybliżenia, a reszta Polski znika. Wygląda to jak błąd, a nie jak przejście. Chcemy, żeby wejście w głąb było krótką, ładną animacją: kamera płynnie podjeżdża, a jednostki niższego poziomu **pojawiają się po kolei, kafelek po kafelku**.
 
 **Co zobaczysz na końcu:**
@@ -110,11 +202,11 @@ Zasady wspólne dla wszystkich sesji:
 
 **Fale (propozycja):** 1: 16.1 + 16.2 · 2: 16.3 · 3: 16.4 · 4: 16.5 → 16.6 (scena wejścia – osobna fala, jeśli starczy płynności).
 
-**Nie robimy w S16:** 3D, nowych pakietów do animacji (jest `motion`, ale mapa animuje się w deck.gl/MapLibre), animacji każdego elementu panelu.
+**Nie robimy w S16:** 3D, nowych pakietów do animacji (mapa animuje się w deck.gl/MapLibre), animacji każdego elementu panelu.
 
 ---
 
-## S17 – Objaśnienia i „Na tle kraju” (+ drobne poprawki rozumienia danych)
+### S17 – Objaśnienia i „Na tle kraju” (+ drobne poprawki rozumienia danych)
 **Po co:** po kliknięciu wartości użytkownik ma zrozumieć, co znaczy liczba i czy to dużo, czy mało. Nocny robot dorzuca nowe wskaźniki, więc nic nie może wymagać ręcznego tekstu przy każdej liczbie.
 
 **Co zobaczysz na końcu:**
@@ -135,7 +227,7 @@ Zasady wspólne dla wszystkich sesji:
 
 ---
 
-## S18 – Porównanie dwóch miejsc
+### S18 – Porównanie dwóch miejsc
 **Po co:** „Jak moja gmina wypada obok sąsiedniej?” – najczęstsze pytanie po zobaczeniu profilu. Zakładka „Porównaj” przestaje być „wkrótce”.
 
 **Co zobaczysz na końcu:**
@@ -152,8 +244,13 @@ Zasady wspólne dla wszystkich sesji:
 
 ---
 
-## Później (kolejność do ustalenia po S18)
+### Później (kolejność do ustalenia po S18)
 - Podstrony gmin pod wyszukiwarki (SEO) – decyzja po pomiarach z S16.
 - Blady podkład OpenFreeMap przy dużym zbliżeniu; kreskowanie „brak danych”; tryb ciemny mapy (makieta 05).
 - Statystyki wyszukiwań po zgodzie (klucz PostHog).
 - Tryb 3D „Arkusze”; wersja angielska. Generator karuzel – osobne prywatne repo.
+
+---
+
+## 6. Czego nie robimy (nigdy)
+Konta użytkowników · wołanie API GUS z przeglądarki · liczby wpisane ręcznie albo przez AI · śledzenie osób (IP, fingerprint) · Google Maps jako mapa główna · pobieranie całego BDL · generator karuzel w tym repo (osobne, prywatne repo).

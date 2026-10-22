@@ -7,7 +7,7 @@ const REPORT_PATH = path.resolve('docs/data-report.md');
 const FIXTURE_PATH = path.resolve('tests/fixtures/bdl/discover-cache.json');
 
 describe('BdlDiscoverer & docs/data-report.md (CC6.3)', () => {
-  it('lista INDICATORS zawiera dokładnie 20 wskaźników z MASTER_PLAN.md §4.2', () => {
+  it('lista INDICATORS zawiera dokładnie 20 wskaźników z config/indicators.json', () => {
     expect(INDICATORS).toHaveLength(20);
 
     const names = INDICATORS.map((i) => i.name);
