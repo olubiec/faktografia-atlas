@@ -32,7 +32,7 @@ Stos: Vite + React + TypeScript (strict), pnpm, Tailwind v4 (tokeny w @theme), V
 
 ## Zasady projektu
 Najpierw zapytaj (napisz w PR i zatrzymaj się):
-- Zmiana `config/tokens.json`, `docs/STYL.md`, `docs/ARCHITEKTURA.md` §1–§4 albo istniejących testów i wzorców zrzutów – chyba że prompt wprost tego wymaga.
+- Zmiana `config/tokens.json`, `docs/STYL.md`, `docs/ARCHITEKTURA.md` (poza zmianami, o które prosi prompt) albo istniejących testów i wzorców zrzutów – chyba że prompt wprost tego wymaga.
 - Zmiana konfiguracji (`vercel.json`, `.gitleaks.toml`, `.oxlintrc.json`, `vite/vitest/playwright.config.ts`), `src/core/consent`, `src/view/consent`, `scripts/data`, `config/*` – jeśli prompt o to nie prosi.
 - Warunek niejasny lub sprzeczny. Zmiana architektury lub struktury danych. Usunięcie funkcji.
 

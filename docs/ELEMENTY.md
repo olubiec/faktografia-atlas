@@ -26,7 +26,7 @@ Kodu z cudzych repozytoriów nie kopiujemy (poziom E tylko z licencją i atrybuc
 | posthog-js | pakiet | https://www.npmjs.com/package/posthog-js | 1.438.12 | Apache-2.0 AND MIT | statystyki po zgodzie (region EU) | nie | 2026-10-16 |
 | @fontsource/atkinson-hyperlegible-next, -mono | zasób (czcionka) | https://fontsource.org | 5.3.0 | OFL-1.1 | kroje strony | licencja w paczce | 2026-10-16 |
 
-## Pakiety nieużywane – do usunięcia (dług, prompt w S14 fala 2)
+## Pakiety nieużywane – do usunięcia (zadanie W0.1, fala F1)
 | Element | Wersja | Licencja | Powód |
 |---|---|---|---|
 | nuqs | 2.10.2 | MIT | stan adresu robi `src/core/url/state.ts` |
