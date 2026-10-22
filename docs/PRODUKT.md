@@ -2,12 +2,12 @@
 **Dla kogo:** osoba ciekawa swojej okolicy (mieszkaniec, dziennikarz, uczeń, samorządowiec), najczęściej z telefonu (§2).
 **Problem:** dane GUS o gminach i powiatach są w tabelach Banku Danych Lokalnych, nie da się ich szybko zobaczyć na mapie ani porównać.
 **Pierwsza wersja ma umieć:** mapa Polski w kolorach wybranego wskaźnika (§3) · profil miejsca z rankingiem i wykresami (§4) · wygodny telefon (§5) · płynne wejście w głąb mapy (§5a) · proste objaśnienia (§6) · porównanie dwóch miejsc · link do każdego widoku.
-**Czego NIE robimy:** kont użytkowników, liczb wpisywanych ręcznie lub przez AI, śledzenia osób, Google Maps, generatora karuzel w tym repo (pełna lista: `docs/TECHNIKA.md` §4).
+**Czego NIE robimy:** kont użytkowników, liczb wpisywanych ręcznie lub przez AI, śledzenia osób, Google Maps, generatora karuzel w tym repo (pełna lista: `docs/ARCHITEKTURA.md` §6).
 **Zarabia:** nie (projekt marki Faktografia; przy komercjalizacji – zmiana hostingu z Vercel Hobby). **Dane osób:** nie – tylko anonimowe statystyki wyszukiwań po zgodzie.
-**Technologia:** Vite + React + TypeScript, MapLibre + deck.gl, dane statyczne z robota GUS (`docs/TECHNIKA.md`). **Hosting:** Vercel (podgląd każdego PR).
-**Gdzie jesteśmy:** `docs/STAN.md` · plan sesji: `docs/PLAN.md` · wygląd: `docs/STYL.md` + makiety `docs/design/`.
+**Technologia:** Vite + React + TypeScript, MapLibre + deck.gl, dane statyczne z robota GUS (`docs/ARCHITEKTURA.md`, elementy: `docs/ELEMENTY.md`). **Hosting:** Vercel (podgląd każdego PR).
+**Gdzie jesteśmy:** `docs/STAN.md` · warstwy i plan fal: `docs/ARCHITEKTURA.md` · wygląd: `docs/STYL.md` + makiety `docs/design/`.
 
-Wersja 2 · 21.10.2026 (v1: 20.10.2026). Zmiany v2: nagłówek wg WORKFLOW v5.1 §10.2, §5 telefon (po oglądzie 21.10), §5a wejście w głąb mapy, §6 ścieżka pliku objaśnień, §8–§9 pod nowy proces.
+Wersja 2 · 21.10.2026 (v1: 20.10.2026). Zmiany v2: nagłówek wg WORKFLOW v5.3 §10.2, §5 telefon (po oglądzie 21.10), §5a wejście w głąb mapy, §6 ścieżka pliku objaśnień, §8–§9 pod nowy proces.
 Opisy ekranów niżej są wymaganiami – mają pierwszeństwo przed starymi promptami i kodem.
 
 ---
@@ -93,7 +93,7 @@ Ogląd właściciela 21.10.2026: telefon nie nadaje się do użytku (panel wska�
 
 ## 6. Objaśnienia wskaźników
 
-Dla każdego wskaźnika (opcjonalnie) wpis w pliku `public/data/explanations.json`. Niezależnie od wpisu blok „Na tle kraju” liczy się sam z danych (miejsce, mediana Polski, najmniej–najwięcej; szczegóły: `docs/PLAN.md`, S17).
+Dla każdego wskaźnika (opcjonalnie) wpis w pliku `public/data/explanations.json`. Niezależnie od wpisu blok „Na tle kraju” liczy się sam z danych (miejsce, mediana Polski, najmniej–najwięcej; szczegóły: `docs/ARCHITEKTURA.md` §5, S17).
 
 | Pole | Treść | Limit |
 |---|---|---|
@@ -120,9 +120,9 @@ Zasady: każda liczba i ciekawostka ma źródło z linkiem; research robi Gem Re
 
 1. Zgodne z makietą (02–05) na 1440×900 i 390×844; różnice wypisane w PR.
 2. Działa **na prawdziwych danych** z `public/data` (nie tylko na danych syntetycznych w teście).
-3. Właściciel przed scaleniem ogląda podgląd Vercel na komputerze i telefonie według linijki „Ty sprawdzasz” z `docs/PLAN.md`; Jules w sekcji „Po ludzku” pisze, co sprawdzić.
+3. Właściciel przed scaleniem ogląda podgląd Vercel na komputerze i telefonie według linijki „Ty sprawdzasz” z `docs/ARCHITEKTURA.md` §5; Jules w sekcji „Po ludzku” pisze, co sprawdzić.
 4. Progi z §7 przechodzą.
 
 ## 9. Kolejność
 
-Sesje i ich kolejność: `docs/PLAN.md` (S14 profil, S15 telefon, S16 wejście w głąb, S17 objaśnienia, S18 porównanie, potem „Później”).
+Sesje, fale i ich kolejność: `docs/ARCHITEKTURA.md` §5 (S14 profil, S15 telefon, S16 wejście w głąb, S17 objaśnienia, S18 porównanie, potem „Później”).
