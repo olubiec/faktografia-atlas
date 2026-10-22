@@ -14,9 +14,9 @@ Na końcu: na komputerze klik w miejsce → nagłówek bez powtórzeń, duża li
 
 ## Bieżąca warstwa W2 (funkcje) i fala F1 · bramka: zielone CI na main + ocena na podglądzie
 - F1 (teraz, naraz): W1.1 PR #198 (obejrzeć i scalić) · W2.1 przegląd profilu · W0.1 nieużywane pakiety · W1.2 wykrywanie telefonu.
-- Następne: F2 (W2.2 zakładki · W1.3 arkusz dolny · W1.4 kamera · W1.5 kafelki) · F3 (W2.3 test ścieżki · W3.1 sprzątanie zakreśleń · W1.6 kontekst · W1.7 porównanie).
+- Następne: F3 (W2.3 test ścieżki · W3.1 sprzątanie zakreśleń · W1.6 kontekst · W1.7 porównanie) · F4 (W2.4 układ telefonu · W2.10 pasek zgody · W1.8 adres ?c=).
 - Ostatni prompt każdej fali: aktualizacja tego pliku (treść daje Planista po bramce).
-- Zamknięte fale: – (nowy proces od 21.10.2026; S14.1, S14.2, S14.7–S14.9 scalone wcześniej starym procesem).
+- Zamknięte fale: F1, F2 (nowy proces od 21.10.2026; S14.1, S14.2, S14.7–S14.9 scalone wcześniej starym procesem).
 
 ## Plan następnych sesji (1 linia każda; zadania i fale w docs/ARCHITEKTURA.md §3–§4)
 - S15 (F4–F7) – Telefon od nowa: mapa na cały ekran, pasek i arkusz wskaźnika, profil w arkuszu 40% → 100%, okruszki, dymek, zgoda; legenda ciemna i plik objaśnień.
@@ -37,7 +37,8 @@ Na końcu: na komputerze klik w miejsce → nagłówek bez powtórzeń, duża li
 - Klucz PostHog · plan · niski · „Później”.
 
 ## Pomiar fal (1 linia na falę: prompty · poprawki · Twoje minuty · model i limit)
-- (pierwszy wpis po bramce fali 1)
+- F1: zrobione (PR #198, W2.1, W0.1, W1.2)
+- F2: zamknięta (W2.2, W1.3, W1.4, W1.5 kafelki gotowe)
 
 ## Decyzje (najnowsze na górze, 1 linia, kto)
 - 22.10.2026 · Plan przebudowany wg v5.3: wszystkie zadania wg warstw (33 dla Julesa) i 14 fal F1–F14 z tabelą kolizji w ARCHITEKTURA.md; prompty pisze właściciel innym narzędziem z zadań §3, dlatego docs/prompty/ usunięty; logika W1 dla S15–S18 robiona wcześniej, równolegle z profilem (Ty, czat Claude)
