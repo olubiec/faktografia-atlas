@@ -12,11 +12,11 @@ Na podstawie kodu na main (commit 095b2bb). Sprawdzone przez właściciela na pr
 ## Sesja teraz: S14 – Profil miejsca jak makieta 03 (fale F1–F3)
 Na końcu: na komputerze klik w miejsce → nagłówek bez powtórzeń, duża liczba w kółku z miejscem w rankingu, słupki rankingu, zakładki Przegląd / Powiaty / Gminy, „Kopiuj link”. Zadania i „Ty sprawdzasz”: `docs/ARCHITEKTURA.md` §3; fale i tabela kolizji: §4.
 
-## Bieżąca warstwa W2 (funkcje) i fala F1 · bramka: zielone CI na main + ocena na podglądzie
-- F1 (teraz, naraz): W1.1 PR #198 (obejrzeć i scalić) · W2.1 przegląd profilu · W0.1 nieużywane pakiety · W1.2 wykrywanie telefonu.
-- Następne: F2 (W2.2 zakładki · W1.3 arkusz dolny · W1.4 kamera · W1.5 kafelki) · F3 (W2.3 test ścieżki · W3.1 sprzątanie zakreśleń · W1.6 kontekst · W1.7 porównanie).
+## Bieżąca warstwa W2 (funkcje) i fala F5 · bramka: zielone CI na main + ocena na podglądzie
+- F5 (teraz, naraz): W2.5 arkusz wskaźnika · W2.6 profil w arkuszu · W2.8 okruszki.
+- Następne: F6 (W2.7 mapa nad arkuszem · W2.9 dymek na telefonie) · F7 (W2.11 test ścieżki telefonu · W2.13 legenda ciemna · W1.9 plik objaśnień · W1.10 raport bez objaśnień).
 - Ostatni prompt każdej fali: aktualizacja tego pliku (treść daje Planista po bramce).
-- Zamknięte fale: – (nowy proces od 21.10.2026; S14.1, S14.2, S14.7–S14.9 scalone wcześniej starym procesem).
+- Zamknięte fale: F4 (W1.8 adres `?c=` - wyczyszczone), – (nowy proces od 21.10.2026; S14.1, S14.2, S14.7–S14.9 scalone wcześniej starym procesem).
 
 ## Plan następnych sesji (1 linia każda; zadania i fale w docs/ARCHITEKTURA.md §3–§4)
 - S15 (F4–F7) – Telefon od nowa: mapa na cały ekran, pasek i arkusz wskaźnika, profil w arkuszu 40% → 100%, okruszki, dymek, zgoda; legenda ciemna i plik objaśnień.
