@@ -14,7 +14,7 @@ Na końcu: na komputerze klik w miejsce → nagłówek bez powtórzeń, duża li
 
 ## Bieżąca warstwa W2 (funkcje) i fala F1 · bramka: zielone CI na main + ocena na podglądzie
 - F1 (teraz, naraz): W1.1 PR #198 (obejrzeć i scalić) · W2.1 przegląd profilu · W0.1 nieużywane pakiety · W1.2 wykrywanie telefonu.
-- Następne: F2 (W2.2 zakładki · W1.3 arkusz dolny · W1.4 kamera · W1.5 kafelki) · F3 (W2.3 test ścieżki · W3.1 sprzątanie zakreśleń · W1.6 kontekst · W1.7 porównanie).
+- Następne: F2 (W2.2 zakładki · W1.3 arkusz dolny · W1.4 kamera · W1.5 kafelki) · F3 (W2.3 test ścieżki · W3.1 sprzątanie zakreśleń · W1.6 kontekst (zrobione) · W1.7 porównanie).
 - Ostatni prompt każdej fali: aktualizacja tego pliku (treść daje Planista po bramce).
 - Zamknięte fale: – (nowy proces od 21.10.2026; S14.1, S14.2, S14.7–S14.9 scalone wcześniej starym procesem).
 
