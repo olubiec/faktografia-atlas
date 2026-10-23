@@ -19,12 +19,16 @@ test.describe('Home Page', () => {
   test('na telefonie panel i mapa nie wychodzą poza ekran', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
-    for (const sel of ['aside[aria-label="Panel wskaźnika"]', '[aria-label="Mapa Polski"]']) {
-      const box = await page.locator(sel).boundingBox();
-      expect(box).not.toBeNull();
-      expect(box!.x).toBeGreaterThanOrEqual(0);
-      expect(box!.x + box!.width).toBeLessThanOrEqual(390 + 1);
-    }
+
+    // Zgodnie z W2.4 na telefonie panel jest całkowicie ukryty, testujemy tylko mapę
+    await expect(page.locator('aside[aria-label="Panel wskaźnika"]')).toBeHidden();
+
+    // Oczekujemy, że mapa pojawi się
+    await expect(page.locator('[aria-label="Mapa Polski"]')).toBeVisible({ timeout: 10000 });
+    const mapBox = await page.locator('[aria-label="Mapa Polski"]').boundingBox();
+    expect(mapBox).not.toBeNull();
+    expect(mapBox!.x).toBeGreaterThanOrEqual(0);
+    expect(mapBox!.x + mapBox!.width).toBeLessThanOrEqual(390 + 1);
   });
 
   test('logo switches in light/dark mode and ?logo=znak replaces logo with mark', async ({ page }) => {
