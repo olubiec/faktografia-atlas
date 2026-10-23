@@ -13,6 +13,7 @@ Na podstawie kodu na main (commit 095b2bb). Sprawdzone przez właściciela na pr
 Na końcu: na komputerze klik w miejsce → nagłówek bez powtórzeń, duża liczba w kółku z miejscem w rankingu, słupki rankingu, zakładki Przegląd / Powiaty / Gminy, „Kopiuj link”. Zadania i „Ty sprawdzasz”: `docs/ARCHITEKTURA.md` §3; fale i tabela kolizji: §4.
 
 ## Bieżąca warstwa W2 (funkcje) i fala F1 · bramka: zielone CI na main + ocena na podglądzie
+- Zrobione w tej fali (F5): W2.6
 - F1 (teraz, naraz): W1.1 PR #198 (obejrzeć i scalić) · W2.1 przegląd profilu · W0.1 nieużywane pakiety · W1.2 wykrywanie telefonu.
 - Następne: F2 (W2.2 zakładki · W1.3 arkusz dolny · W1.4 kamera · W1.5 kafelki) · F3 (W2.3 test ścieżki · W3.1 sprzątanie zakreśleń · W1.6 kontekst · W1.7 porównanie).
 - Ostatni prompt każdej fali: aktualizacja tego pliku (treść daje Planista po bramce).

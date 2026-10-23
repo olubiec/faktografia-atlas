@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { UnitProfile } from '@/core/profile/profile';
 import type { Unit } from '@/core/units/types';
 import { ProfileSheet } from '@/view/profile/ProfileSheet';
 import { ProfileSheetMobile } from '@/view/profile/ProfileSheetMobile';
-import tokensJson from '../../../config/tokens.json';
+import { useIsMobile } from '@/view/hooks/useIsMobile';
 
 export interface ProfilePortalProps {
   profile: UnitProfile | null;
@@ -13,29 +12,13 @@ export interface ProfilePortalProps {
   onClose: () => void;
 }
 
-const TABLET_BREAKPOINT = tokensJson.breakpoints.tablet; // 768 px
-
 /**
  * Komponent portalujący arkusz profilu do kontenera [data-slot="side"].
  * Automatycznie przełącza pomiędzy wersją na komputer (ProfileSheet)
  * a wersją na telefon (ProfileSheetMobile) w zależności od szerokości ekranu (< 768 px).
  */
 export function ProfilePortal({ profile, units, isOpen, onClose }: ProfilePortalProps) {
-  const [isMobile, setIsMobile] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    return window.innerWidth < TABLET_BREAKPOINT;
-  });
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < TABLET_BREAKPOINT);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const isMobile = useIsMobile();
 
   if (typeof document === 'undefined' || !isOpen || !profile) {
     return null;
