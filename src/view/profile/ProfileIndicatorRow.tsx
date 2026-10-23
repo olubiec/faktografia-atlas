@@ -4,7 +4,6 @@ import type { Unit } from '../../core/units/types';
 import { formatValue } from '../../core/format/number';
 import { collectFootnotes, formatParentFootnoteText, type Footnote } from '../../core/profile/footnotes';
 import { trend } from '../../core/profile/trend';
-import { Annotate } from '../annotation/Annotate';
 import { TrendChart } from './TrendChart';
 import { loadExplanations, type Explanation } from '../../core/explain/explanations';
 import { writeUrlState } from '../../core/url/state';
@@ -15,7 +14,6 @@ export interface ProfileIndicatorRowProps {
   item: ProfileIndicatorItem;
   units: Unit[];
   footnotes?: Footnote[];
-  isHighlighted?: boolean;
 }
 
 /**
@@ -30,7 +28,6 @@ export function ProfileIndicatorRow({
   item,
   units,
   footnotes,
-  isHighlighted = false,
 }: ProfileIndicatorRowProps) {
   const { indicator, value, year, rankNational, totalNational, series } = item;
 
@@ -87,10 +84,7 @@ export function ProfileIndicatorRow({
   };
 
   return (
-    <div
-      className="py-3 border-b border-linia last:border-b-0 space-y-2"
-      data-highlight={isHighlighted ? 'true' : undefined}
-    >
+    <div className="py-3 border-b border-linia last:border-b-0 space-y-2">
       <div className="flex items-start justify-between gap-2 min-h-[44px]">
         <button
           type="button"
@@ -120,13 +114,7 @@ export function ProfileIndicatorRow({
             {hasRank && rankText && (
               <>
                 {year !== null && <span>•</span>}
-                {isHighlighted ? (
-                  <Annotate type="highlight" show={true}>
-                    <span>{rankText}</span>
-                  </Annotate>
-                ) : (
-                  <span>{rankText}</span>
-                )}
+                <span>{rankText}</span>
               </>
             )}
             {trendResult && (

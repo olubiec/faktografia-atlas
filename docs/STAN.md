@@ -27,7 +27,7 @@ Na końcu: na komputerze klik w miejsce → nagłówek bez powtórzeń, duża li
 ## Znane problemy / dług (co · skąd · priorytet · w której fali)
 - Telefon nieużywalny · ogląd 21.10 · wysoki · F4–F7.
 - Wejście w głąb to skok, reszta Polski znika · uwaga właściciela 21.10 · wysoki · F8 (W3.2, W3.3).
-- Zakreślenie typu „highlight” zasłania tekst w profilu · zrzut 21.10 · średni · F1 (W2.1 wyłącza), F3 (W3.1 usuwa kod).
+- W3.1 wykonane (22.10.2026) · usunięto stary kod zakreśleń typu `highlight` (pliki, testy, użycia).
 - 5 nieużywanych pakietów (nuqs, motion, tw-animate-css, d3-array, d3-scale) · rejestr ELEMENTY 22.10 · niski · F1 (W0.1).
 - Brak prostych objaśnień wskaźników · test 20.10 · średni · F7 (W1.9 – po Twojej akceptacji tekstów), F11 (W2.12).
 - Legenda w trybie ciemnym mówi „ciemniej znaczy więcej” odwrotnie do kolorów · ogląd 21.10 · średni · F7 (W2.13).
