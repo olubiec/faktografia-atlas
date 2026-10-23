@@ -1,0 +1,6 @@
+fix: W2.4 mobile layout prep fixes
+
+- Restored IndicatorPanel conditionally for desktop, fixing mobile tests
+- Fixed useIsMobile to prevent oxlint errors and hydration mismatch
+- Restored Breadcrumbs onBack prop
+- Restored older E2E tests to original state per instruction

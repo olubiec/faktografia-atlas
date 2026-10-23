@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router';
 import { Menu, Search, Xmark } from 'iconoir-react';
 import { Sheet } from '@/view/ui/Sheet';
 import { Icon } from '@/view/ui/Icon';
+import { useIsMobile } from '@/view/hooks/useIsMobile';
 const SearchDialog = lazy(() => import('@/view/search/SearchDialog').then((m) => ({ default: m.SearchDialog })));
 
 type Theme = 'light' | 'dark' | 'system';
@@ -19,6 +20,7 @@ function getSystemIsDark(): boolean {
 }
 
 export function Header() {
+  const isMobile = useIsMobile();
   const [theme, setTheme] = useState<Theme>(() => {
     try {
       const saved = localStorage.getItem('faktografia-theme') as Theme | null;
@@ -96,7 +98,7 @@ export function Header() {
   }
 
   return (
-    <header className="h-[72px] flex justify-between items-center px-4 md:px-8 border-b border-linia bg-kalka text-tusz relative z-20">
+    <header className="h-[56px] md:h-[72px] flex justify-between items-center px-4 md:px-8 border-b border-linia bg-kalka text-tusz relative z-20">
       <Link to={`/${location.search}`} className="flex items-center min-h-[44px]">
         <img
           src={logoSrc}
@@ -120,7 +122,7 @@ export function Header() {
       </button>
 
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex items-center gap-6 text-sm font-[500]">
+      {!isMobile && (<nav className="hidden md:flex items-center gap-6 text-sm font-[500]">
         <Link
           to={`/o-projekcie${location.search}`}
           className="hover:underline transition-colors py-2"
@@ -139,10 +141,10 @@ export function Header() {
         >
           Motyw: {themeText}
         </button>
-      </nav>
+      </nav>)}
 
       {/* Mobile Controls */}
-      <div className="flex md:hidden items-center gap-2">
+      {isMobile && (<div className="flex md:hidden items-center gap-2">
         <button
           onClick={cycleTheme}
           className="min-w-[44px] min-h-[44px] px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs flex items-center justify-center cursor-pointer rounded-none"
@@ -157,7 +159,7 @@ export function Header() {
         >
           <Icon icon={mobileMenuOpen ? Xmark : Menu} aria-hidden={true} size={20} />
         </button>
-      </div>
+      </div>)}
 
       {/* Mobile Menu Sheet */}
       {mobileMenuOpen && (

@@ -28,6 +28,8 @@ import { useMainView } from './hooks/useMainView';
 import { rankUnits } from '@/core/ranking/ranking';
 import { effectiveLevel, levelRequiresDeselect } from '@/core/map/main-view';
 import { IndicatorPanel } from '@/view/main/IndicatorPanel';
+import { MobileIndicatorBar } from '@/view/main/MobileIndicatorBar';
+import { useIsMobile } from '@/view/hooks/useIsMobile';
 import { UnitTooltip } from '@/view/main/UnitTooltip';
 import { useProfile } from './hooks/useProfile';
 import { ProfilePortal } from './ProfilePortal';
@@ -85,6 +87,7 @@ export function AtlasMap() {
 }
 
 function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) {
+  const isMobile = useIsMobile();
   const [isReady, setIsReady] = useState(false);
   const unitIndex = useMemo(() => buildIndex(units), [units]);
   const bounds = useMemo(() => countryBounds(units), [units]);
@@ -219,7 +222,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
 
   return (
     <div className="flex flex-col md:flex-row w-full h-full min-h-0">
-      <IndicatorPanel
+      {!isMobile && (<IndicatorPanel
         view={view}
         choropleth={choroplethData}
         ranking={ranking}
@@ -233,7 +236,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
             <UnitList selectedTeryt={selectedTeryt} index={unitIndex} onSelect={selectUnit} />
           </div>
         )}
-      </IndicatorPanel>
+      </IndicatorPanel>)}
 
       <div
         ref={containerRef}
@@ -245,12 +248,12 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       >
         <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 max-w-[280px] sm:max-w-[360px] pointer-events-none">
           <div className="pointer-events-auto">
-            <Breadcrumbs teryt={selectedTeryt} index={unitIndex} onSelect={selectBreadcrumb} />
+            <Breadcrumbs teryt={selectedTeryt} index={unitIndex} onSelect={selectBreadcrumb} onBack={isMobile ? goBack : undefined} />
           </div>
 
           {selectedTeryt !== null && (
             <div className="relative pointer-events-auto h-11 -mt-4 -ml-4">
-              <BackButton onClick={goBack} visible={true} />
+              {!isMobile && (<BackButton onClick={goBack} visible={true} />)}
             </div>
           )}
         </div>
@@ -294,6 +297,19 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       <div data-slot="side" className="empty:hidden md:w-[440px] md:shrink-0 border-t md:border-t-0 md:border-l border-linia bg-arkusz overflow-y-auto max-h-[45vh] md:max-h-none" />
 
       <ProfilePortal profile={profile} units={units} isOpen={profileOpen} onClose={closeProfile} />
+
+      {isMobile && (
+        <div className="md:hidden z-10 w-full absolute bottom-0 left-0 right-0 pointer-events-auto">
+          <MobileIndicatorBar view={view}>
+            {selectedTeryt !== null && (
+              <div className="flex flex-col gap-1.5">
+                <span className="text-sm font-semibold">Jednostki w: {selectedName}</span>
+                <UnitList selectedTeryt={selectedTeryt} index={unitIndex} onSelect={selectUnit} />
+              </div>
+            )}
+          </MobileIndicatorBar>
+        </div>
+      )}
     </div>
   );
 }
