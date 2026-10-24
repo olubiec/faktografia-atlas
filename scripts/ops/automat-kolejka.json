@@ -2,10 +2,9 @@
   "version": 1,
   "settings": {
     "repo": "olubiec/faktografia-atlas",
-    "pilot": "W1.2",
-    "maxParallel": 4,
-    "maxStartsPerRun": 4,
-    "maxMergesPerRun": 3,
+    "maxParallel": 8,
+    "maxStartsPerRun": 8,
+    "maxMergesPerRun": 6,
     "maxFixAttempts": 2,
     "maxPrsPerTask": 3,
     "waveLookahead": 1,
@@ -221,43 +220,10 @@
       "snapshots": true
     },
     {
-      "id": "W2.2",
-      "title": "Zakładki profilu",
-      "checkpoint": "K1",
-      "wave": 2,
-      "dependsOn": [
-        "W2.1"
-      ],
-      "files": [
-        {
-          "path": "src/view/profile/ProfileSheet.tsx",
-          "mode": "partial",
-          "maxLines": 120
-        },
-        {
-          "path": "src/view/profile/ProfileChildren.tsx",
-          "mode": "new"
-        },
-        {
-          "path": "tests/e2e/profile-tabs.spec.ts",
-          "mode": "new"
-        }
-      ],
-      "testsAppend": [],
-      "testsChange": [],
-      "allowFixme": [],
-      "deletions": [],
-      "packages": {
-        "remove": [],
-        "add": []
-      },
-      "snapshots": true
-    },
-    {
       "id": "W1.12",
       "title": "Formaty kart i dane CSV: logika",
       "checkpoint": "K1",
-      "wave": 2,
+      "wave": 1,
       "dependsOn": [],
       "files": [
         {
@@ -291,7 +257,7 @@
       "id": "W1.13",
       "title": "Mapa jako rysunek SVG: logika",
       "checkpoint": "K1",
-      "wave": 2,
+      "wave": 1,
       "dependsOn": [],
       "files": [
         {
@@ -322,17 +288,116 @@
       "snapshots": false
     },
     {
-      "id": "W2.3",
-      "title": "Test całej ścieżki profilu na komputerze",
+      "id": "W2.13",
+      "title": "Legenda w trybie ciemnym",
+      "checkpoint": "K2",
+      "wave": 1,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/core/legend/legend.ts",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/legend/Legend.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/main/IndicatorPanel.tsx",
+          "mode": "partial",
+          "maxLines": 20
+        }
+      ],
+      "testsAppend": [
+        "tests/unit/legend.test.ts"
+      ],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W1.10",
+      "title": "Raport „wskaźniki bez objaśnienia”",
+      "checkpoint": "K2",
+      "wave": 1,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "scripts/data/nightly-checks.mjs",
+          "mode": "change"
+        }
+      ],
+      "testsAppend": [
+        "tests/unit/nightly-checks.test.ts"
+      ],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W3.3",
+      "title": "Kafelki po kolei i wyblakła reszta kraju",
+      "checkpoint": "K3",
+      "wave": 1,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/view/map/layers/choropleth.ts",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/map/hooks/useChoropleth.ts",
+          "mode": "change"
+        },
+        {
+          "path": "src/core/map/test-seam.ts",
+          "mode": "change"
+        },
+        {
+          "path": "tests/e2e/reveal.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.2",
+      "title": "Zakładki profilu",
       "checkpoint": "K1",
-      "wave": 3,
+      "wave": 2,
       "dependsOn": [
-        "W2.1",
-        "W2.2"
+        "W2.1"
       ],
       "files": [
         {
-          "path": "tests/e2e/s14-profile.spec.ts",
+          "path": "src/view/profile/ProfileSheet.tsx",
+          "mode": "partial",
+          "maxLines": 120
+        },
+        {
+          "path": "src/view/profile/ProfileChildren.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "tests/e2e/profile-tabs.spec.ts",
           "mode": "new"
         }
       ],
@@ -350,7 +415,7 @@
       "id": "W3.1",
       "title": "Sprzątanie zakreśleń w profilu",
       "checkpoint": "K1",
-      "wave": 3,
+      "wave": 2,
       "dependsOn": [
         "W2.1"
       ],
@@ -377,7 +442,7 @@
       "id": "W1.14",
       "title": "Układ kart: logika",
       "checkpoint": "K1",
-      "wave": 3,
+      "wave": 2,
       "dependsOn": [
         "W1.12",
         "W1.13"
@@ -410,7 +475,7 @@
       "id": "W2.4",
       "title": "Telefon: układ i miejsca podpięcia",
       "checkpoint": "K2",
-      "wave": 4,
+      "wave": 2,
       "dependsOn": [
         "W1.2"
       ],
@@ -458,10 +523,63 @@
       "snapshots": true
     },
     {
+      "id": "W3.4",
+      "title": "Przelewanie kolorów",
+      "checkpoint": "K3",
+      "wave": 2,
+      "dependsOn": [
+        "W3.3"
+      ],
+      "files": [
+        {
+          "path": "src/view/map/layers/choropleth.ts",
+          "mode": "change"
+        },
+        {
+          "path": "tests/e2e/color-transition.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.3",
+      "title": "Test całej ścieżki profilu na komputerze",
+      "checkpoint": "K1",
+      "wave": 3,
+      "dependsOn": [
+        "W2.1",
+        "W2.2"
+      ],
+      "files": [
+        {
+          "path": "tests/e2e/s14-profile.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
       "id": "W2.18",
       "title": "Pobierz i udostępnij: okno, podgląd, PNG, CSV",
       "checkpoint": "K2",
-      "wave": 4,
+      "wave": 3,
       "dependsOn": [
         "W1.14"
       ],
@@ -494,7 +612,7 @@
       "id": "W2.5",
       "title": "Telefon: arkusz wskaźnika",
       "checkpoint": "K2",
-      "wave": 5,
+      "wave": 3,
       "dependsOn": [
         "W2.4"
       ],
@@ -529,7 +647,7 @@
       "id": "W2.6",
       "title": "Telefon: profil w arkuszu 40% → 100%",
       "checkpoint": "K2",
-      "wave": 5,
+      "wave": 3,
       "dependsOn": [
         "W1.2",
         "W2.2"
@@ -562,7 +680,7 @@
       "id": "W2.8",
       "title": "Telefon: okruszki w jednej linii",
       "checkpoint": "K2",
-      "wave": 5,
+      "wave": 3,
       "dependsOn": [
         "W2.4"
       ],
@@ -591,10 +709,76 @@
       "snapshots": true
     },
     {
+      "id": "W2.9",
+      "title": "Telefon: dymek po pierwszym dotknięciu",
+      "checkpoint": "K2",
+      "wave": 3,
+      "dependsOn": [
+        "W2.4"
+      ],
+      "files": [
+        {
+          "path": "src/view/map/AtlasMap.tsx",
+          "mode": "partial",
+          "maxLines": 80
+        },
+        {
+          "path": "src/view/main/UnitTooltip.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "tests/e2e/mobile-tooltip.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.14",
+      "title": "Porównanie: wybór drugiego miejsca",
+      "checkpoint": "K3",
+      "wave": 3,
+      "dependsOn": [
+        "W2.2"
+      ],
+      "files": [
+        {
+          "path": "src/view/profile/ProfileCompare.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/profile/ProfileSheet.tsx",
+          "mode": "partial",
+          "maxLines": 60
+        },
+        {
+          "path": "tests/e2e/compare-pick.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
       "id": "W2.7",
       "title": "Telefon: mapa pokazuje miejsce nad arkuszem",
       "checkpoint": "K2",
-      "wave": 6,
+      "wave": 4,
       "dependsOn": [
         "W2.6"
       ],
@@ -629,43 +813,10 @@
       "snapshots": true
     },
     {
-      "id": "W2.9",
-      "title": "Telefon: dymek po pierwszym dotknięciu",
-      "checkpoint": "K2",
-      "wave": 6,
-      "dependsOn": [
-        "W2.4"
-      ],
-      "files": [
-        {
-          "path": "src/view/map/AtlasMap.tsx",
-          "mode": "partial",
-          "maxLines": 80
-        },
-        {
-          "path": "src/view/main/UnitTooltip.tsx",
-          "mode": "change"
-        },
-        {
-          "path": "tests/e2e/mobile-tooltip.spec.ts",
-          "mode": "new"
-        }
-      ],
-      "testsAppend": [],
-      "testsChange": [],
-      "allowFixme": [],
-      "deletions": [],
-      "packages": {
-        "remove": [],
-        "add": []
-      },
-      "snapshots": true
-    },
-    {
       "id": "W2.20",
       "title": "Udostępnianie z profilu",
       "checkpoint": "K2",
-      "wave": 6,
+      "wave": 4,
       "dependsOn": [
         "W2.18",
         "W2.1"
@@ -692,163 +843,10 @@
       "snapshots": true
     },
     {
-      "id": "W2.11",
-      "title": "Test całej ścieżki na telefonie",
-      "checkpoint": "K2",
-      "wave": 7,
-      "dependsOn": [
-        "W2.4",
-        "W2.5",
-        "W2.6",
-        "W2.7",
-        "W2.8",
-        "W2.9"
-      ],
-      "files": [
-        {
-          "path": "tests/e2e/s15-mobile.spec.ts",
-          "mode": "new"
-        }
-      ],
-      "testsAppend": [],
-      "testsChange": [],
-      "allowFixme": [],
-      "deletions": [],
-      "packages": {
-        "remove": [],
-        "add": []
-      },
-      "snapshots": true
-    },
-    {
-      "id": "W2.13",
-      "title": "Legenda w trybie ciemnym",
-      "checkpoint": "K2",
-      "wave": 7,
-      "dependsOn": [],
-      "files": [
-        {
-          "path": "src/core/legend/legend.ts",
-          "mode": "change"
-        },
-        {
-          "path": "src/view/legend/Legend.tsx",
-          "mode": "change"
-        },
-        {
-          "path": "src/view/main/IndicatorPanel.tsx",
-          "mode": "partial",
-          "maxLines": 20
-        }
-      ],
-      "testsAppend": [
-        "tests/unit/legend.test.ts"
-      ],
-      "testsChange": [],
-      "allowFixme": [],
-      "deletions": [],
-      "packages": {
-        "remove": [],
-        "add": []
-      },
-      "snapshots": true
-    },
-    {
-      "id": "W1.10",
-      "title": "Raport „wskaźniki bez objaśnienia”",
-      "checkpoint": "K2",
-      "wave": 7,
-      "dependsOn": [],
-      "files": [
-        {
-          "path": "scripts/data/nightly-checks.mjs",
-          "mode": "change"
-        }
-      ],
-      "testsAppend": [
-        "tests/unit/nightly-checks.test.ts"
-      ],
-      "testsChange": [],
-      "allowFixme": [],
-      "deletions": [],
-      "packages": {
-        "remove": [],
-        "add": []
-      },
-      "snapshots": false
-    },
-    {
-      "id": "W3.2",
-      "title": "Płynna kamera przy wejściu w głąb",
-      "checkpoint": "K3",
-      "wave": 8,
-      "dependsOn": [
-        "W2.7"
-      ],
-      "files": [
-        {
-          "path": "src/view/map/hooks/useMapViewState.ts",
-          "mode": "change"
-        },
-        {
-          "path": "src/view/map/AtlasMap.tsx",
-          "mode": "partial",
-          "maxLines": 40
-        },
-        {
-          "path": "tests/e2e/camera.spec.ts",
-          "mode": "new"
-        }
-      ],
-      "testsAppend": [],
-      "testsChange": [],
-      "allowFixme": [],
-      "deletions": [],
-      "packages": {
-        "remove": [],
-        "add": []
-      },
-      "snapshots": true
-    },
-    {
-      "id": "W3.3",
-      "title": "Kafelki po kolei i wyblakła reszta kraju",
-      "checkpoint": "K3",
-      "wave": 8,
-      "dependsOn": [],
-      "files": [
-        {
-          "path": "src/view/map/layers/choropleth.ts",
-          "mode": "change"
-        },
-        {
-          "path": "src/view/map/hooks/useChoropleth.ts",
-          "mode": "change"
-        },
-        {
-          "path": "src/core/map/test-seam.ts",
-          "mode": "change"
-        },
-        {
-          "path": "tests/e2e/reveal.spec.ts",
-          "mode": "new"
-        }
-      ],
-      "testsAppend": [],
-      "testsChange": [],
-      "allowFixme": [],
-      "deletions": [],
-      "packages": {
-        "remove": [],
-        "add": []
-      },
-      "snapshots": true
-    },
-    {
       "id": "W2.19",
       "title": "Udostępnianie z panelu wskaźnika",
       "checkpoint": "K3",
-      "wave": 8,
+      "wave": 4,
       "dependsOn": [
         "W2.18",
         "W2.5"
@@ -879,20 +877,117 @@
       "snapshots": true
     },
     {
-      "id": "W3.4",
-      "title": "Przelewanie kolorów",
+      "id": "W2.15",
+      "title": "Porównanie: tabela obok siebie",
       "checkpoint": "K3",
-      "wave": 9,
+      "wave": 4,
       "dependsOn": [
-        "W3.3"
+        "W2.14"
       ],
+      "files": [
+        {
+          "path": "src/view/profile/ProfileCompareTable.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/profile/ProfileCompare.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "tests/e2e/compare-table.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.16",
+      "title": "Porównanie: dwa obrysy na mapie",
+      "checkpoint": "K3",
+      "wave": 4,
+      "dependsOn": [],
       "files": [
         {
           "path": "src/view/map/layers/choropleth.ts",
           "mode": "change"
         },
         {
-          "path": "tests/e2e/color-transition.spec.ts",
+          "path": "src/view/map/AtlasMap.tsx",
+          "mode": "partial",
+          "maxLines": 30
+        },
+        {
+          "path": "tests/e2e/compare-map.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.11",
+      "title": "Test całej ścieżki na telefonie",
+      "checkpoint": "K2",
+      "wave": 5,
+      "dependsOn": [
+        "W2.4",
+        "W2.5",
+        "W2.6",
+        "W2.7",
+        "W2.8",
+        "W2.9"
+      ],
+      "files": [
+        {
+          "path": "tests/e2e/s15-mobile.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W3.2",
+      "title": "Płynna kamera przy wejściu w głąb",
+      "checkpoint": "K3",
+      "wave": 5,
+      "dependsOn": [
+        "W2.7"
+      ],
+      "files": [
+        {
+          "path": "src/view/map/hooks/useMapViewState.ts",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/map/AtlasMap.tsx",
+          "mode": "partial",
+          "maxLines": 40
+        },
+        {
+          "path": "tests/e2e/camera.spec.ts",
           "mode": "new"
         }
       ],
@@ -910,7 +1005,7 @@
       "id": "W2.12",
       "title": "„Na tle kraju” w profilu i panelu",
       "checkpoint": "K3",
-      "wave": 9,
+      "wave": 5,
       "dependsOn": [],
       "files": [
         {
@@ -943,132 +1038,10 @@
       "snapshots": true
     },
     {
-      "id": "W2.14",
-      "title": "Porównanie: wybór drugiego miejsca",
-      "checkpoint": "K3",
-      "wave": 9,
-      "dependsOn": [
-        "W2.2"
-      ],
-      "files": [
-        {
-          "path": "src/view/profile/ProfileCompare.tsx",
-          "mode": "new"
-        },
-        {
-          "path": "src/view/profile/ProfileSheet.tsx",
-          "mode": "partial",
-          "maxLines": 60
-        },
-        {
-          "path": "tests/e2e/compare-pick.spec.ts",
-          "mode": "new"
-        }
-      ],
-      "testsAppend": [],
-      "testsChange": [],
-      "allowFixme": [],
-      "deletions": [],
-      "packages": {
-        "remove": [],
-        "add": []
-      },
-      "snapshots": true
-    },
-    {
-      "id": "W3.6",
-      "title": "Pomiar szybkości i płynności",
-      "checkpoint": "K3",
-      "wave": 10,
-      "dependsOn": [
-        "W3.2",
-        "W3.3",
-        "W3.4"
-      ],
-      "files": [
-        {
-          "path": "tests/e2e/s16-motion.spec.ts",
-          "mode": "new"
-        }
-      ],
-      "testsAppend": [],
-      "testsChange": [],
-      "allowFixme": [],
-      "deletions": [],
-      "packages": {
-        "remove": [],
-        "add": []
-      },
-      "snapshots": true
-    },
-    {
-      "id": "W2.15",
-      "title": "Porównanie: tabela obok siebie",
-      "checkpoint": "K3",
-      "wave": 10,
-      "dependsOn": [
-        "W2.14"
-      ],
-      "files": [
-        {
-          "path": "src/view/profile/ProfileCompareTable.tsx",
-          "mode": "new"
-        },
-        {
-          "path": "src/view/profile/ProfileCompare.tsx",
-          "mode": "change"
-        },
-        {
-          "path": "tests/e2e/compare-table.spec.ts",
-          "mode": "new"
-        }
-      ],
-      "testsAppend": [],
-      "testsChange": [],
-      "allowFixme": [],
-      "deletions": [],
-      "packages": {
-        "remove": [],
-        "add": []
-      },
-      "snapshots": true
-    },
-    {
-      "id": "W2.16",
-      "title": "Porównanie: dwa obrysy na mapie",
-      "checkpoint": "K3",
-      "wave": 10,
-      "dependsOn": [],
-      "files": [
-        {
-          "path": "src/view/map/layers/choropleth.ts",
-          "mode": "change"
-        },
-        {
-          "path": "src/view/map/AtlasMap.tsx",
-          "mode": "partial",
-          "maxLines": 30
-        },
-        {
-          "path": "tests/e2e/compare-map.spec.ts",
-          "mode": "new"
-        }
-      ],
-      "testsAppend": [],
-      "testsChange": [],
-      "allowFixme": [],
-      "deletions": [],
-      "packages": {
-        "remove": [],
-        "add": []
-      },
-      "snapshots": true
-    },
-    {
       "id": "W2.17",
       "title": "Porównanie na telefonie + test ścieżki",
       "checkpoint": "K4",
-      "wave": 11,
+      "wave": 5,
       "dependsOn": [
         "W2.14",
         "W2.15",
@@ -1099,7 +1072,7 @@
       "id": "W2.22",
       "title": "Porównanie: dwie mapki",
       "checkpoint": "K4",
-      "wave": 11,
+      "wave": 5,
       "dependsOn": [
         "W1.13",
         "W2.14"
@@ -1130,10 +1103,36 @@
       "snapshots": true
     },
     {
+      "id": "W3.6",
+      "title": "Pomiar szybkości i płynności",
+      "checkpoint": "K3",
+      "wave": 6,
+      "dependsOn": [
+        "W3.2",
+        "W3.3",
+        "W3.4"
+      ],
+      "files": [
+        {
+          "path": "tests/e2e/s16-motion.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
       "id": "W2.21",
       "title": "Udostępnianie porównania",
       "checkpoint": "K5",
-      "wave": 12,
+      "wave": 6,
       "dependsOn": [
         "W2.18",
         "W2.15",
@@ -1164,7 +1163,7 @@
       "id": "W2.23",
       "title": "Test całej ścieżki „Pobierz i udostępnij”",
       "checkpoint": "K5",
-      "wave": 13,
+      "wave": 7,
       "dependsOn": [
         "W2.19",
         "W2.20",

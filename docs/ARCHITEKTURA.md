@@ -1,7 +1,7 @@
 # Architektura – warstwy, zadania, fale
 Wg WORKFLOW UNIWERSALNY v5.3 §3c (`TRYB: WARSTWY`) i §3a (`TRYB: FALA`). Jedno źródło prawdy o tym, **z czego** zbudowana jest strona, **jakie zadania zostały** i **w jakich falach** je robimy.
 Co ma widzieć użytkownik: `docs/PRODUKT.md` · gdzie jesteśmy: `docs/STAN.md` · elementy z zewnątrz i licencje: `docs/ELEMENTY.md` · wygląd: `docs/STYL.md`.
-Plan przebudowany 22.10.2026, **v3 24.10.2026**: pomysły właściciela (porównanie z dwiema mapkami, pobieranie i udostępnianie – S19), fale przeliczone od stanu `main` (F1′–F13), prowadzenie przez automat (`docs/AUTOMAT.md`). **Plan fal (§4) jest orientacyjny:** prompty do fali N pisze się dopiero po bramce fali N−1. Jeśli coś wyjdzie inaczej → `TRYB: ODŚWIEŻ`, a Planista poprawia kolejne fale tutaj.
+Plan przebudowany 22.10.2026, **v3 24.10.2026**: pomysły właściciela (porównanie z dwiema mapkami, pobieranie i udostępnianie – S19), fale przeliczone od stanu `main`, **v4 24.10.2026: 7 fal F1–F7 zamiast 13** (F1–F7), prowadzenie przez automat (`docs/AUTOMAT.md`). **Plan fal (§4) jest orientacyjny:** prompty do fali N pisze się dopiero po bramce fali N−1. Jeśli coś wyjdzie inaczej → `TRYB: ODŚWIEŻ`, a Planista poprawia kolejne fale tutaj.
 
 **Jak z tego korzystać:**
 - Prompt dla Julesa = **jedno zadanie z §3** (format v5.3 §9.1). Linie „Pliki”, „Gotowe, gdy”, „Nie ruszaj” przepisujesz z zadania; „Przeczytaj najpierw” zawsze zawiera `docs/PRODUKT.md` (sekcja ekranu) i tę sekcję zadania.
@@ -60,7 +60,7 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 
 ### W0 – Fundament
 
-#### W0.1 – Usunięcie nieużywanych pakietów · fala F1′
+#### W0.1 – Usunięcie nieużywanych pakietów · fala F1
 - **Po ludzku:** mniej zbędnych bibliotek = mniej ryzyka i szybsza instalacja.
 - **Pliki:** `package.json`, `pnpm-lock.yaml`, `docs/ELEMENTY.md` (wolno je zmienić).
 - **Zadanie:** sprawdź grepem w `src/`, `scripts/`, `tests/` i CSS, że `nuqs`, `motion`, `tw-animate-css`, `d3-array`, `d3-scale` nie są importowane; usuń je `pnpm remove` (razem z `@types/d3-array`, `@types/d3-scale`); w `docs/ELEMENTY.md` skreśl wpisy z datą. Pakiet jednak używany → zostaw i napisz w PR gdzie.
@@ -74,7 +74,7 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Stan:** PR gotowy, testy zielone. Bez promptu – tylko obejrzeć i scalić.
 - **Ty sprawdzasz:** profil powiatu → w zwiniętym wierszu „Ludność ogółem” tekst typu „↗ +1,2% od 2020”, przy wskaźniku w % – „p.p.”; po kliknięciu wiersza pełny wykres.
 
-#### W1.2 – Wykrywanie telefonu w jednym miejscu · fala F1′
+#### W1.2 – Wykrywanie telefonu w jednym miejscu · fala F1
 - **Po ludzku:** jedno źródło odpowiedzi „czy to telefon”, żeby wszystkie części strony przełączały się tak samo.
 - **Pliki:** `src/view/hooks/useIsMobile.ts` (nowy), `tests/unit/use-is-mobile.test.tsx` (nowy).
 - **Zadanie:** hook `useIsMobile()` oparty na `window.matchMedia('(max-width: <tablet−1>px)')`, próg z `config/tokens.json` `breakpoints.tablet` (768); reaguje na zmianę rozmiaru; bez `window` (SSR/test) zwraca `false`.
@@ -132,7 +132,7 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Gotowe, gdy:** test schematu: każdy klucz to istniejący `id` z `config/indicators.json`; `short` ≤ 160, `howToRead` ≤ 240, `funFact` ≤ 200 znaków; `funFact` zawsze ze `source` i `url`; plik bez wcięć.
 - **Ty sprawdzasz:** w profilu rozwinięty wiersz „Gęstość zaludnienia” pokazuje prostą definicję i link „Definicja GUS”.
 
-#### W1.10 – Raport „wskaźniki bez objaśnienia” · fala F7
+#### W1.10 – Raport „wskaźniki bez objaśnienia” · fala F1
 - **Pliki:** `scripts/data/nightly-checks.mjs` (wolno zmienić w tym zadaniu), `tests/unit/nightly-checks.test.ts` (dopisanie przypadków).
 - **Zadanie:** nocne sprawdzenia dopisują do raportu listę wskaźników z `config/indicators.json`, które nie mają wpisu w `public/data/explanations.json` (brak pliku = wszystkie).
 - **Gotowe, gdy:** testy: plik brak / pełny / częściowy → poprawna lista; brak wpisów nie jest błędem (robot nie staje).
@@ -143,7 +143,7 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Pytanie:** czy BDL podaje dane dla części miejskiej i wiejskiej gmin miejsko-wiejskich (TERYT z końcówką 4 i 5) i dla których z 20 wskaźników.
 - **Wynik:** 1 linia w „Decyzjach” w STAN.md + ewentualne nowe zadanie w §3 (W1/W2) dodane przez Planistę.
 
-#### W1.12 – Formaty kart i dane CSV: logika (S19) · fala F2′
+#### W1.12 – Formaty kart i dane CSV: logika (S19) · fala F1
 - **Po ludzku:** rozmiary obrazków pod Instagram, X i komentarze oraz zamiana tabelek na plik CSV, który otwiera się wprost w polskim Excelu.
 - **Przeczytaj najpierw:** `docs/PRODUKT.md` §4b, `src/core/format/number.ts`.
 - **Pliki:** `src/core/share/formats.ts` (nowy), `src/core/share/csv.ts` (nowy), `tests/unit/share-formats.test.ts` (nowy), `tests/unit/share-csv.test.ts` (nowy).
@@ -156,7 +156,7 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Ty sprawdzasz:** ✅.
 - **Nie ruszaj:** `src/core/format/number.ts` (tylko używasz), `src/view/`.
 
-#### W1.13 – Mapa jako rysunek SVG: logika (S18–S19) · fala F2′
+#### W1.13 – Mapa jako rysunek SVG: logika (S18–S19) · fala F1
 - **Po ludzku:** z granic, które strona już ma w pamięci, liczymy rysunek mapy do obrazka i do małych mapek porównania – bez drugiej mapy WebGL.
 - **Pliki:** `src/core/share/projection.ts` (nowy), `src/core/share/map-shapes.ts` (nowy), `tests/unit/share-map-shapes.test.ts` (nowy), `tests/fixtures/geo/malopolskie.topo.json` (nowy – wycinek województwa 12 z powiatami i gminami z `public/geo/admin.topo.json`; jak wycięty – w PR).
 - **Zadanie:** `fitProjection(bbox, box, padding)` – Web Mercator (jak mapa) dopasowany do prostokąta z zachowaniem proporcji; `mapShapes(features, { box, classOf, selected })` → `{ shapes: { teryt, d, fill: 0–4 | 'noData', selected }[], outline: d }`; `d` = ścieżka SVG ze współrzędnymi zaokrąglonymi do 0,1; jednostka bez wartości → `'noData'`. Bez DOM i bez nowych pakietów (geometria przez istniejący `topojson-client`).
@@ -164,7 +164,7 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Ty sprawdzasz:** ✅.
 - **Nie ruszaj:** `src/view/map/`, `public/geo/`.
 
-#### W1.14 – Układ kart: logika (S19) · fala F3′
+#### W1.14 – Układ kart: logika (S19) · fala F2
 - **Po ludzku:** gdzie na obrazku stoją tytuł, mapa, legenda, liczby, logo i źródło – tak, żeby w żadnym formacie nic nie wychodziło poza pole.
 - **Przeczytaj najpierw:** `docs/PRODUKT.md` §4b, `docs/STYL.md` §2–§4, §7, §10.
 - **Pliki:** `src/core/share/card.ts` (nowy), `src/core/share/text-fit.ts` (nowy), `tests/unit/share-card.test.ts` (nowy).
@@ -175,7 +175,7 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 
 ### W2 – Funkcje
 
-#### W2.1 – Przegląd profilu: nagłówek, duża liczba, ranking, „Kopiuj link” (S14.3) · fala F1′
+#### W2.1 – Przegląd profilu: nagłówek, duża liczba, ranking, „Kopiuj link” (S14.3) · fala F1
 - **Po ludzku:** górna część profilu wygląda jak makieta 03.
 - **Przeczytaj najpierw:** `docs/PRODUKT.md` §4, `docs/STYL.md` §7, `docs/design/03-profil-komputer.png`, `src/core/profile/sections.ts`, `src/core/ranking/ranking.ts`, `src/view/map/hooks/useMainView.ts`.
 - **Pliki:** `src/view/profile/ProfileOverview.tsx` (nowy), `src/view/profile/ProfileSheet.tsx` (tylko `ProfileBody` i propsy), `src/view/profile/ProfileSheetMobile.tsx` (tylko przekazanie propsów), `src/view/map/ProfilePortal.tsx`, `src/view/map/AtlasMap.tsx` (tylko linia `<ProfilePortal …>`), `tests/e2e/profile-overview.spec.ts` (nowy).
@@ -189,19 +189,19 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Ty sprawdzasz:** klik w małopolskie → „Województwo małopolskie”, duża liczba w kółku, „2. miejsce wśród 16 województw”, słupki 16 województw; klik w inne województwo w rankingu przełącza profil i mapę; zmiana wskaźnika od razu zmienia liczbę i słupki; „Kopiuj link”; tylko jedno zakreślenie.
 - **Nie ruszaj:** `RankingBars.tsx`, `ranking.ts`, `sections.ts`, `load-profile.ts`, istniejących testów (przeszkadza → opisz w PR i stop), zrzutów; zakładek (W2.2); telefonu.
 
-#### W2.2 – Zakładki profilu: Przegląd · Powiaty/Gminy (n) · Porównaj (S14.4) · fala F2′
+#### W2.2 – Zakładki profilu: Przegląd · Powiaty/Gminy (n) · Porównaj (S14.4) · fala F2
 - **Pliki:** `src/view/profile/ProfileSheet.tsx` (tylko `ProfileBody`), `src/view/profile/ProfileChildren.tsx` (nowy), `tests/e2e/profile-tabs.spec.ts` (nowy).
 - **Zadanie:** zakładki z `src/components/ui/tabs.tsx`: „Przegląd” (domyślna) · „Powiaty (n)” / „Gminy (n)” (`childUnits`; wiersze: `unitLabel`, wartość bieżącego wskaźnika z rokiem z tych samych `values`, malejąco, „brak danych” na końcu, klik = `onSelectUnit`; dla gminy brak tej zakładki) · „Porównaj” wyłączona z dopiskiem „wkrótce” (włączy ją W2.14). Zmiana jednostki → powrót na „Przegląd”.
 - **Gotowe, gdy (`@S14`):** małopolskie → „Powiaty (n)” z prawdziwą liczbą, „Porównaj” wyłączona z „wkrótce”; lista posortowana, braki na końcu; klik w powiat → `?u=`, „Powiat …”, zakładka „Przegląd”, etykieta „Gminy (m)”; gmina bez zakładki listy; klawiatura (strzałki, Enter), role tablist/tab/tabpanel; przełączanie = zero żądań `/data/*`.
 - **Ty sprawdzasz:** małopolskie → zakładki, „Powiaty (22)” z listą od największej; klik w powiat otwiera jego profil.
 - **Nie ruszaj:** `ProfileOverview.tsx`, `ProfileIndicatorRow.tsx`, `ProfileSheetMobile.tsx`, `tabs.tsx`.
 
-#### W2.3 – Test całej ścieżki profilu na komputerze (S14.6) · fala F3′
+#### W2.3 – Test całej ścieżki profilu na komputerze (S14.6) · fala F3
 - **Pliki:** `tests/e2e/s14-profile.spec.ts` (nowy). Kodu strony nie zmieniasz; błąd strony → opisz w PR i stop.
 - **Gotowe, gdy:** „@S14 profil – komputer” (1440×900): `/` → wyszukiwarka „małopolskie” → nagłówek → przegląd z liczbą i rankingiem 16 → rozwinięcie „Stopa bezrobocia rejestrowanego” → „Pokaż na mapie” zmienia `?i=` i `window.__atlas` → „Powiaty (n)” → klik w pierwszy → „Powiat …”, zakładka „Przegląd”; każdy wybór jednostki = 1 żądanie `profiles/*`, zmiana wskaźnika ≤ 1 `values/*`, zakładki i rozwijanie = 0; brak „powiat powiat”, „undefined”, „NaN”; bez `waitForTimeout`; 3× z rzędu (`--repeat-each=3`).
 - **Ty sprawdzasz:** ✅ i zdanie w PR „przeszedł 3 razy”.
 
-#### W2.4 – Telefon: układ – cienki nagłówek, mapa na cały ekran, miejsca podpięcia (S15, przygotowanie) · fala F4
+#### W2.4 – Telefon: układ – cienki nagłówek, mapa na cały ekran, miejsca podpięcia (S15, przygotowanie) · fala F2
 - **Po ludzku:** na telefonie mapa zajmuje prawie cały ekran; przygotowujemy miejsca, w które kolejne zadania wstawią pasek wskaźnika i okruszki.
 - **Pliki:** `src/view/Header.tsx`, `src/view/Home.tsx`, `src/view/map/AtlasMap.tsx`, `src/view/main/MobileIndicatorBar.tsx` (nowy – na razie sam pasek z nazwą wskaźnika i rokiem, bez arkusza), `src/view/map/Breadcrumbs.tsx` (tylko nowy opcjonalny prop `onBack`), `tests/e2e/mobile-layout.spec.ts` (nowy), `tests/e2e/home.spec.ts` i `tests/e2e/picker-scroll.spec.ts` (tylko zmiany opisane niżej).
 - **Zadanie:** na `useIsMobile()`: nagłówek ≤ 56 px (logo, lupa, menu; „Motyw”, „O projekcie”, „Skąd są dane” w menu); `IndicatorPanel` nie jest renderowany nad mapą; mapa wypełnia resztę (`dvh`); na dole `MobileIndicatorBar` (≥ 48 px, `safe-area`); `AtlasMap` przekazuje do paska `view` i treść panelu (children) – W2.5 zrobi z tego arkusz; na telefonie nie renderuj osobnego `BackButton`, przekaż `onBack={goBack}` do `Breadcrumbs`. Komputer bez zmian.
@@ -213,34 +213,34 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
   Żadnych innych zmian w istniejących testach. Pada inny stary test → opisz w PR i stop.
 - **Nie ruszaj:** `ProfilePortal.tsx`, `ProfileSheetMobile.tsx`, `ConsentBar.tsx`, `IndicatorPanel.tsx`.
 
-#### W2.5 – Telefon: arkusz wskaźnika · fala F5
+#### W2.5 – Telefon: arkusz wskaźnika · fala F3
 - **Pliki:** `src/view/main/MobileIndicatorBar.tsx`, `src/view/main/IndicatorPanel.tsx` (tylko wariant wyglądu „w arkuszu”), `tests/e2e/mobile-indicator-sheet.spec.ts` (nowy), `tests/e2e/picker-scroll.spec.ts` (tylko zdjęcie `fixme` z W2.4).
 - **Zadanie:** dotknięcie paska otwiera `BottomSheet` (do ~85% wysokości) z treścią panelu (wybór wskaźnika, poziom, legenda, rok, najwyżej/najniżej); przewija się w środku, pole szukania wskaźnika zostaje widoczne; zmiana wskaźnika przekolorowuje mapę i zmienia `?i=`, arkusz zostaje otwarty; zamykanie: ×, przeciągnięcie w dół, dotknięcie mapy. Naraz najwyżej jeden arkusz (otwarcie profilu zamyka arkusz wskaźnika – zdarzenie/prop, bez zmian w `AtlasMap`).
 - **Gotowe, gdy (`@S15`):** dotknięcie paska → arkusz; inny wskaźnik → `?i=` i `window.__atlas`; trzy sposoby zamknięcia (3 testy); ostatnią pozycję „najwyżej/najniżej” da się przewinąć i kliknąć; w `tests/e2e/picker-scroll.spec.ts` usunięte oba `test.fixme` z W2.4, a przypadki 390 px najpierw dotykają paska, potem sprawdzają to samo co wcześniej (jedyna dozwolona zmiana istniejącego testu).
 - **Ty sprawdzasz:** dotknięcie paska wysuwa arkusz z wyborem wskaźnika, poziomem, legendą, rokiem i rankingiem; zamyka się przeciągnięciem w dół, × i dotknięciem mapy.
 - **Nie ruszaj:** `AtlasMap.tsx`, `BottomSheet.tsx`.
 
-#### W2.6 – Telefon: profil w arkuszu 40% → 100% · fala F5
+#### W2.6 – Telefon: profil w arkuszu 40% → 100% · fala F3
 - **Pliki:** `src/view/map/ProfilePortal.tsx`, `src/view/profile/ProfileSheetMobile.tsx`, `tests/e2e/profile-mobile.spec.ts` (nowy).
 - **Zadanie:** najpierw ustal i opisz w PR, dlaczego dziś profil na telefonie trafia do kolumny pod mapą (`data-slot="side"`, `max-h-[45vh]`) zamiast pływać nad mapą; potem: `ProfilePortal` używa `useIsMobile()`; `ProfileSheetMobile` na `BottomSheet` (punkty 40% i 100%, tryb „bez tła”, treść `ProfileBody` bez zmian).
 - **Gotowe, gdy (`@S15`):** po wyborze jednostki arkusz ma 35–45% okna; uchwyt w górę → ≥ 90%, widać zakładki; × zamyka, `?u=` znika, przybliżenie mapy bez zmian (`window.__atlas`); mapa nad arkuszem reaguje na dotyk.
 - **Ty sprawdzasz:** wybór miejsca → profil od dołu na ~40% ekranu, nad nim mapa; przeciągnięcie w górę – cały ekran, w dół – 40%, dalej w dół lub × – zamyka.
 - **Nie ruszaj:** `ProfileSheet.tsx`, `AtlasMap.tsx`, `useMapViewState.ts`.
 
-#### W2.7 – Telefon: mapa pokazuje wybrane miejsce nad arkuszem · fala F6
+#### W2.7 – Telefon: mapa pokazuje wybrane miejsce nad arkuszem · fala F4
 - **Pliki:** `src/view/map/sheetInset.ts` (nowy – mały wspólny stan „ile ekranu zasłania arkusz”), `src/view/profile/ProfileSheetMobile.tsx` (zgłasza wysokość), `src/view/map/hooks/useMapViewState.ts` (dolny margines dopasowania = wysokość arkusza), `tests/e2e/profile-mobile-inset.spec.ts` (nowy).
 - **Gotowe, gdy (`@S15`):** po wyborze powiatu na 390×844 bbox jednostki (z `window.__atlas`) mieści się nad górną krawędzią arkusza 40%; po zamknięciu arkusza widok nie skacze; komputer bez zmian.
 - **Ty sprawdzasz:** wybrane miejsce widać nad profilem, nie chowa się pod nim.
 - **Nie ruszaj:** `AtlasMap.tsx`, `ProfilePortal.tsx`.
 
-#### W2.8 – Telefon: okruszki w jednej linii z „‹” · fala F5
+#### W2.8 – Telefon: okruszki w jednej linii z „‹” · fala F3
 - **Pliki:** `src/view/map/Breadcrumbs.tsx`, `src/view/map/BackButton.tsx` (jeśli zostaje nieużywany na telefonie – bez zmian), `tests/e2e/mobile-breadcrumbs.spec.ts` (nowy).
 - **Zadanie:** na telefonie okruszki to jedna linia „‹ Polska / małopolskie” (długie nazwy skracane z końca środkowych elementów); „‹” = `onBack`.
 - **Gotowe, gdy (`@S15`):** wysokość ≤ 48 px przy „powiat kędzierzyńsko-kozielski”; „‹” wraca poziom wyżej; klik w „Polska” wraca do kraju; komputer bez zmian.
 - **Ty sprawdzasz:** u góry mapy krótka linia okruszków, strzałka „‹” cofa.
 - **Nie ruszaj:** `AtlasMap.tsx`.
 
-#### W2.9 – Telefon: dymek po pierwszym dotknięciu · fala F6
+#### W2.9 – Telefon: dymek po pierwszym dotknięciu · fala F3
 - **Pliki:** `src/view/map/AtlasMap.tsx` (obsługa dotknięcia), `src/view/main/UnitTooltip.tsx`, `tests/e2e/mobile-tooltip.spec.ts` (nowy).
 - **Zadanie:** na telefonie pierwsze dotknięcie jednostki pokazuje dymek nad dolnym paskiem (nazwa, wartość, miejsce, przycisk „Otwórz profil” ≥ 44 px); drugie dotknięcie tej samej jednostki albo przycisk otwiera profil; dotknięcie pustego miejsca chowa dymek. Komputer bez zmian (najechanie).
 - **Gotowe, gdy (`@S15`):** 1. dotknięcie → dymek, `?u=` bez zmian; 2. → profil; dymek mieści się w ekranie dla jednostki przy lewej i prawej krawędzi; zwykły tekst (bez HTML).
@@ -253,47 +253,47 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Ty sprawdzasz:** pasek zgody nie zasłania mapy, najwyżej 2 linijki.
 - **Nie ruszaj:** `src/core/consent/`.
 
-#### W2.11 – Test całej ścieżki na telefonie (S15) · fala F7
+#### W2.11 – Test całej ścieżki na telefonie (S15) · fala F5
 - **Pliki:** `tests/e2e/s15-mobile.spec.ts` (nowy). Kodu nie zmieniasz.
 - **Gotowe, gdy:** 390×844 i 360×740: start → pasek → zmiana wskaźnika → zamknięcie → dotknięcie województwa → dymek → profil 40% → pełna wysokość → „Powiaty (n)” → klik w powiat → ×; w całej ścieżce brak poziomego przewijania, 1 żądanie `profiles/*` na wybór, brak „undefined/NaN”; 3× z rzędu.
 - **Ty sprawdzasz:** ✅; na swoim telefonie przejdź tę samą ścieżkę.
 
-#### W2.12 – „Na tle kraju” w profilu i panelu (S17) · fala F9
+#### W2.12 – „Na tle kraju” w profilu i panelu (S17) · fala F5
 - **Pliki:** `src/view/explain/ContextBlock.tsx` (nowy), `src/view/profile/ProfileIndicatorRow.tsx` (wstawienie bloku w rozwiniętym wierszu), `src/view/main/IndicatorPanel.tsx` (wstawienie bloku dla wybranej jednostki), `tests/e2e/context-block.spec.ts` (nowy).
 - **Zadanie:** blok z `context()`: miejsce, „wyżej niż X% powiatów”, mediana Polski, najmniej–najwięcej, pozioma skala z kropką „tu jesteś” i kreską „mediana”; to samo w województwie (dla powiatów i gmin); pod spodem definicja z `explanations.json`, jeśli jest; „najwyżej/najniżej” w bloku klikalne (`onSelectUnit`). Źródło: „GUS, BDL, <rok>”.
 - **Gotowe, gdy (`@S17`):** powiat → tekst „wyżej niż … % powiatów” z liczbą zgodną z `context()`; wskaźnik bez objaśnienia → sam blok, bez błędów; klik w „najwyżej” wybiera tę jednostkę; zero nowych żądań poza `explanations.json` (raz).
 - **Ty sprawdzasz:** rozwinięty wiersz w profilu: czy to dużo czy mało, mediana Polski, skala z kropką.
 - **Nie ruszaj:** `ProfileSheet.tsx`, `AtlasMap.tsx`.
 
-#### W2.13 – Legenda w trybie ciemnym (S17) · fala F7
+#### W2.13 – Legenda w trybie ciemnym (S17) · fala F1
 - **Pliki:** `src/core/legend/legend.ts`, `src/view/legend/Legend.tsx`, `src/view/main/IndicatorPanel.tsx` (tylko zdanie opisu legendy), `tests/unit/legend.test.ts` (dopisanie przypadków).
 - **Zadanie:** legenda ma podpis kierunku „mniej → więcej”; zdanie „Ciemniej znaczy więcej” zależy od motywu (w ciemnym jest odwrotnie) albo jest zastąpione neutralnym.
 - **Gotowe, gdy:** testy: w motywie ciemnym żaden opis nie mówi „ciemniej znaczy więcej”; w obu motywach jest „mniej → więcej”.
 - **Ty sprawdzasz:** przełącz motyw na ciemny – legenda mówi „mniej → więcej”, opis się zgadza z kolorami.
 
-#### W2.14 – Porównanie: wybór drugiego miejsca (S18) · fala F9
+#### W2.14 – Porównanie: wybór drugiego miejsca (S18) · fala F3
 - **Pliki:** `src/view/profile/ProfileCompare.tsx` (nowy), `src/view/profile/ProfileSheet.tsx` (włączenie zakładki „Porównaj” i przycisku „Porównaj z innym miejscem”), `tests/e2e/compare-pick.spec.ts` (nowy).
 - **Zadanie:** w zakładce pole wyszukiwania (istniejący mechanizm wyszukiwarki, bez nowego indeksu); wybór ustawia `?c=<bieżący>,<wybrany>` (W1.8); „×” przy drugim miejscu czyści `?c=`.
 - **Gotowe, gdy (`@S18`):** wybór „Kraków” w profilu małopolskiego → `?c=12,1261`; odświeżenie strony przywraca porównanie; najwyżej 1 dodatkowe żądanie `profiles/*` (drugie województwo).
 - **Ty sprawdzasz:** zakładka „Porównaj” działa, wpisujesz drugie miejsce.
 
-#### W2.15 – Porównanie: tabela obok siebie (S18) · fala F10
+#### W2.15 – Porównanie: tabela obok siebie (S18) · fala F4
 - **Pliki:** `src/view/profile/ProfileCompareTable.tsx` (nowy), `src/view/profile/ProfileCompare.tsx` (wstawienie tabeli), `tests/e2e/compare-table.spec.ts` (nowy).
 - **Zadanie:** wiersz na wskaźnik: wartości obu miejsc, miejsca w rankingu, `diffText` z `compare()`; kolor neutralny (bez zieleni/czerwieni); przy różnych poziomach dopisek „różne poziomy – porównuj ostrożnie”.
 - **Gotowe, gdy (`@S18`):** liczba wierszy = liczba wskaźników z danymi w obu profilach; teksty różnic zgodne z `compare()`; zero dodatkowych żądań.
 - **Ty sprawdzasz:** dwie kolumny i słowne „wyżej o …” w każdym wierszu.
 
-#### W2.16 – Porównanie: dwa obrysy na mapie (S18) · fala F10
+#### W2.16 – Porównanie: dwa obrysy na mapie (S18) · fala F4
 - **Pliki:** `src/view/map/layers/choropleth.ts` (warstwa obrysu dla dwóch jednostek), `src/view/map/AtlasMap.tsx` (przekazanie `c` z adresu), `tests/e2e/compare-map.spec.ts` (nowy).
 - **Gotowe, gdy (`@S18`):** przy `?c=` `window.__atlas` pokazuje dwie obrysowane jednostki; bez `?c=` jak dotąd jedna; `drill.spec.ts`, `map.spec.ts` bez zmian.
 - **Ty sprawdzasz:** oba porównywane miejsca obrysowane na mapie.
 
-#### W2.17 – Porównanie na telefonie + test ścieżki (S18) · fala F11
+#### W2.17 – Porównanie na telefonie + test ścieżki (S18) · fala F5
 - **Pliki:** `src/view/profile/ProfileCompareTable.tsx` (układ < 768 px), `tests/e2e/s18-compare.spec.ts` (nowy).
 - **Gotowe, gdy:** na 360×740 tabela mieści się bez poziomego przewijania; „@S18” ścieżka komputer i telefon: profil → Porównaj → wybór → tabela → dwa obrysy → „Kopiuj link” zawiera `c=`; 3× z rzędu.
 - **Ty sprawdzasz:** porównanie na telefonie, link otwiera to samo porównanie.
 
-#### W2.18 – Pobierz i udostępnij: okno, podgląd, PNG, CSV (S19) · fala F4
+#### W2.18 – Pobierz i udostępnij: okno, podgląd, PNG, CSV (S19) · fala F3
 - **Po ludzku:** okno z podglądem karty, wyborem formatu i przyciskami „Pobierz obraz”, „Udostępnij”, „Pobierz dane” – na razie dostępne na stronie testowej; przyciski na stronie dochodzą w W2.19–W2.21.
 - **Przeczytaj najpierw:** `docs/PRODUKT.md` §4b, `docs/STYL.md`.
 - **Pliki:** `src/view/share/CardSvg.tsx`, `src/view/share/render-png.ts`, `src/view/share/share-file.ts` (jedyny plik z `navigator.share` i pobieraniem), `src/view/share/ShareDialog.tsx`, `src/view/share/LazyShareDialog.tsx` (`React.lazy` – kod okna w osobnym pliku JS) (wszystkie nowe), `src/view/test/UiTestPage.tsx` (dodanie przykładu), `tests/e2e/share-dialog.spec.ts` (nowy).
@@ -302,28 +302,28 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Ty sprawdzasz:** ✅ (widoczne dopiero po W2.19).
 - **Nie ruszaj:** `IndicatorPanel.tsx`, `src/view/profile/`, `AtlasMap.tsx`, `src/core/share/`.
 
-#### W2.19 – Przycisk w panelu wskaźnika: karta mapy i rankingu (S19) · fala F8
+#### W2.19 – Przycisk w panelu wskaźnika: karta mapy i rankingu (S19) · fala F4
 - **Pliki:** `src/view/main/IndicatorPanel.tsx` (przycisk i otwarcie okna), `src/view/share/useShareData.ts` (nowy – zbiera dane kart: wskaźnik, rok, poziom, obszar, wartości, wybrana jednostka), `tests/e2e/share-map.spec.ts` (nowy).
 - **Zadanie:** przycisk „Pobierz i udostępnij” pod „najwyżej/najniżej” (na telefonie w arkuszu wskaźnika); karty „Mapa” i „Ranking” dla bieżącego widoku (po wejściu w województwo – to województwo); CSV bieżącego wskaźnika dla jednostek widoku; „Udostępnij zestaw” = mapa + ranking (+ profil, gdy wybrane miejsce).
 - **Gotowe, gdy (`@S19`):** `?i=<wskaźnik>&l=pow` → karta mapy ma tytuł z nazwą wskaźnika, rokiem i „powiaty”; CSV ma tyle wierszy danych, ile powiatów; po wejściu w małopolskie – 22 kształty w scenie mapy (stan w `data-*` podglądu) i CSV z 22 wierszami; zero nowych żądań danych; telefon 390×844: przycisk w arkuszu, okno pełnoekranowe.
 - **Ty sprawdzasz:** w panelu „Pobierz i udostępnij” → podgląd mapy z legendą; pobierz post na Instagram i CSV, otwórz CSV w Excelu.
 - **Nie ruszaj:** `AtlasMap.tsx`, `src/view/share/ShareDialog.tsx` (tylko używasz).
 
-#### W2.20 – Przycisk w profilu: karta profilu (S19) · fala F6
+#### W2.20 – Przycisk w profilu: karta profilu (S19) · fala F4
 - **Pliki:** `src/view/profile/ProfileOverview.tsx` (przycisk obok „Kopiuj link”), `tests/e2e/share-profile.spec.ts` (nowy).
 - **Zadanie:** „Pobierz i udostępnij” w stopce przeglądu profilu; karta „Profil” (nazwa, duża liczba, miejsce, 5 wskaźników) i „Ranking”; CSV całego profilu.
 - **Gotowe, gdy (`@S19`):** profil powiatu 3217 → karta z „Powiat wałecki” i liczbą równą tej w przeglądzie; CSV z wierszem na każdy wskaźnik profilu; zero nowych żądań; „Kopiuj link” działa jak przed zmianą.
 - **Ty sprawdzasz:** profil → „Pobierz i udostępnij” → karta profilu wygląda czysto w 4 formatach.
 - **Nie ruszaj:** `ProfileSheet.tsx`, `ProfileSheetMobile.tsx`, `src/view/share/` (tylko używasz).
 
-#### W2.21 – Przycisk w porównaniu: karta porównania (S19) · fala F12
+#### W2.21 – Przycisk w porównaniu: karta porównania (S19) · fala F6
 - **Pliki:** `src/view/profile/ProfileCompare.tsx` (przycisk), `tests/e2e/share-compare.spec.ts` (nowy).
 - **Zadanie:** „Pobierz i udostępnij” w zakładce „Porównaj”; karta „Porównanie” (dwa miejsca, dwie mapki z W1.13, do 8 wierszy ze słowną różnicą z `compare()`); CSV tabeli porównania.
 - **Gotowe, gdy (`@S19`):** `?u=12&c=12,24` → karta z nazwami obu województw i dwiema mapkami; teksty różnic zgodne z tabelą; CSV z wierszem na wskaźnik; zero nowych żądań.
 - **Ty sprawdzasz:** porównanie → pobierz kwadrat do komentarza.
 - **Nie ruszaj:** `ProfileCompareTable.tsx`, `CompareMaps.tsx` (tylko używasz).
 
-#### W2.22 – Porównanie: dwie mapki nad tabelą (S18) · fala F11
+#### W2.22 – Porównanie: dwie mapki nad tabelą (S18) · fala F5
 - **Po ludzku:** pomysł właściciela „dwie mapy” – nad tabelą porównania dwie małe mapki, każda z województwem w kolorach i obrysowanym miejscem.
 - **Pliki:** `src/view/profile/CompareMaps.tsx` (nowy), `src/view/profile/ProfileCompare.tsx` (wstawienie nad tabelą), `tests/e2e/compare-maps.spec.ts` (nowy).
 - **Zadanie:** dwa rysunki SVG z `mapShapes()` (W1.13) – obszar = województwo danego miejsca (województwo → cała Polska z województwami), kolory bieżącego wskaźnika i roku, obrys `korekta` wokół miejsca, podpis nazwy; obok siebie na komputerze, jedna pod drugą na < 768 px; klik w mapkę = wybór tego miejsca.
@@ -331,33 +331,33 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Ty sprawdzasz:** porównanie dwóch powiatów → dwie mapki z zaznaczonymi miejscami.
 - **Nie ruszaj:** `ProfileCompareTable.tsx`, `choropleth.ts`, `src/core/share/`.
 
-#### W2.23 – Test całej ścieżki „Pobierz i udostępnij” (S19) · fala F13
+#### W2.23 – Test całej ścieżki „Pobierz i udostępnij” (S19) · fala F7
 - **Pliki:** `tests/e2e/s19-share.spec.ts` (nowy). Kodu nie zmieniasz; błąd strony → opisz w PR i stop.
 - **Gotowe, gdy:** komputer i 390×844: mapa → okno → 4 formaty → PNG o dokładnych wymiarach; profil → karta profilu → CSV; porównanie → karta porównania; w całej ścieżce zero żądań danych po otwarciu okna, brak „undefined/NaN” w podglądzie; 3× z rzędu.
 - **Ty sprawdzasz:** na telefonie „Udostępnij” otwiera systemowe okno; wrzuć jedną kartę na Instagram (podgląd, nie musisz publikować).
 
 ### W3 – Szlif
 
-#### W3.1 – Sprzątanie zakreśleń w profilu · fala F3′
+#### W3.1 – Sprzątanie zakreśleń w profilu · fala F2
 - **Pliki:** `src/view/profile/ProfileIndicatorRow.tsx` (usunięcie nieużywanej ścieżki zakreślenia `highlight`), `src/core/profile/highlight.ts` i `tests/unit/highlight.test.ts` (usunięcie, jeśli po W2.1 nic ich nie używa – sprawdź grepem; prompt na to pozwala).
 - **Gotowe, gdy:** w kodzie nie ma zakreśleń typu `highlight`; pozostałe testy zakreśleń przechodzą bez zmian.
 - **Ty sprawdzasz:** w profilu nie ma grubego czerwonego markera zasłaniającego tekst.
 
-#### W3.2 – Płynna kamera przy wejściu w głąb (S16) · fala F8
+#### W3.2 – Płynna kamera przy wejściu w głąb (S16) · fala F5
 - **Pliki:** `src/view/map/hooks/useMapViewState.ts`, `src/view/map/AtlasMap.tsx` (przekazanie parametrów przejścia do mapy), `tests/e2e/camera.spec.ts` (nowy).
 - **Zadanie:** zamiast natychmiastowego `setCurrentViewState` – przejście z `cameraTransition()` (wejście 600 ms, powrót 400 ms); wejście z linku i zmiana rozmiaru – bez animacji; gest użytkownika przerywa ruch; uwzględnia margines arkusza z W2.7.
 - **Gotowe, gdy (`@S16`):** po kliknięciu województwa `window.__atlas.zoom` przyjmuje ≥ 3 wartości pośrednie, końcowy widok = dopasowanie do bbox; przeciągnięcie w trakcie zatrzymuje animację; `?u=12` z linku → od razu widok końcowy; `drill.spec.ts`, `map.spec.ts`, `map-zoom-out.spec.ts` bez zmian.
 - **Ty sprawdzasz:** klik w województwo – kamera płynnie podjeżdża (~0,6 s), bez skoku; „Wróć” – szybciej odjeżdża; przeciągnięcie w trakcie przejmuje sterowanie.
 - **Nie ruszaj:** `layers/choropleth.ts`.
 
-#### W3.3 – Kafelki po kolei i wyblakła reszta kraju (S16) · fala F8
+#### W3.3 – Kafelki po kolei i wyblakła reszta kraju (S16) · fala F1
 - **Pliki:** `src/view/map/layers/choropleth.ts`, `src/view/map/hooks/useChoropleth.ts`, `src/core/map/test-seam.ts` (stan `reveal: { running, progress }`), `tests/e2e/reveal.spec.ts` (nowy).
 - **Zadanie:** przy wejściu w głąb jednostki niższego poziomu pojawiają się wg `revealPlan()` (podpowiedź: `DataFilterExtension` z `@deck.gl/extensions` – numer kolejności jako `getFilterValue`, animowany tylko `filterRange` / `filterSoftRange`; nie sprawdzi się → opisz w PR alternatywę przed zrobieniem); reszta kraju nadal rysowana, wyblakła (kolor/krycie z tokenów), bez interakcji; wejście z linku – od razu całość.
 - **Gotowe, gdy (`@S16`):** w trakcie wejścia `window.__atlas.reveal.progress` rośnie 0 → 1 w ≤ 1 s; pierwszy widoczny = najbliższy środka; po wejściu w małopolskie jednostki spoza województwa są rysowane i nie reagują na najechanie; `prefers-reduced-motion` → progress od razu 1.
 - **Ty sprawdzasz:** powiaty wypełniają się kolorem po kolei od środka; reszta Polski blednie, nie znika.
 - **Nie ruszaj:** `useMapViewState.ts`, `AtlasMap.tsx`.
 
-#### W3.4 – Przelewanie kolorów przy zmianie wskaźnika, roku, poziomu (S16) · fala F9
+#### W3.4 – Przelewanie kolorów przy zmianie wskaźnika, roku, poziomu (S16) · fala F2
 - **Pliki:** `src/view/map/layers/choropleth.ts` (przejście koloru wypełnienia 300 ms – `motion.base`), `tests/e2e/color-transition.spec.ts` (nowy).
 - **Gotowe, gdy (`@S16`):** po zmianie wskaźnika `window.__atlas` raportuje trwające przejście, po ≤ 400 ms – nowe kolory; reduced motion → od razu.
 - **Ty sprawdzasz:** zmiana wskaźnika lub roku – kolory łagodnie przechodzą.
@@ -370,7 +370,7 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Gotowe, gdy:** pierwsze wejście → scena trwa ≤ 2 s, drugie w tej samej sesji → brak; klik w trakcie działa.
 - **Ty sprawdzasz:** pierwsze wejście – kontur Polski rysuje się tuszem.
 
-#### W3.6 – Pomiar szybkości i płynności + test ścieżki (S16) · fala F10
+#### W3.6 – Pomiar szybkości i płynności + test ścieżki (S16) · fala F6
 - **Pliki:** `tests/e2e/s16-motion.spec.ts` (nowy), raport w opisie PR. Kodu nie zmieniasz.
 - **Gotowe, gdy:** ścieżka z animacjami (wejście, powrót, zmiana wskaźnika) przechodzi 3×; progi żądań z `PRODUKT.md` §7 bez zmian; w PR: czas do kolorowej mapy i rozmiar JS na wejściu vs przed S16 (wzrost ≤ 5%).
 - **Ty sprawdzasz:** na swoim telefonie animacje bez szarpania; jeśli szarpie → `TRYB: POMOC`.
@@ -386,21 +386,26 @@ Zrobione wcześniej (poza kolejnością): W1.1, W1.3–W1.8, W2.10.
 
 | Fala | Sesja | Zadania naraz | Dotykają | Po fali |
 |---|---|---|---|---|
-| **F1′** | S14 | W0.1 pakiety · W1.2 `useIsMobile` · W2.1 przegląd profilu | W0.1: **`package.json`**, **`pnpm-lock.yaml`**, `ELEMENTY.md` · W1.2: `useIsMobile.ts` · W2.1: `ProfileOverview.tsx`, **`ProfileSheet.tsx`**, **`ProfileSheetMobile.tsx`**, **`ProfilePortal.tsx`**, **`AtlasMap.tsx`** | |
-| **F2′** | S14 | W2.2 zakładki · W1.12 formaty i CSV · W1.13 mapa SVG | W2.2: **`ProfileSheet.tsx`**, `ProfileChildren.tsx` · W1.12: `share/formats.ts`, `share/csv.ts` · W1.13: `share/projection.ts`, `share/map-shapes.ts`, `fixtures/geo/` | |
-| **F3′** | S14 | W2.3 test ścieżki · W3.1 sprzątanie zakreśleń · W1.14 układ kart | W2.3: `s14-profile.spec.ts` · W3.1: **`ProfileIndicatorRow.tsx`**, `highlight.ts` · W1.14: `share/card.ts`, `share/text-fit.ts` | **punkt kontrolny S14** (profil na komputerze) |
-| **F4** | S15 | W2.4 układ telefonu · W2.18 okno udostępniania | W2.4: `Header.tsx`, **`Home.tsx`**, **`AtlasMap.tsx`**, `MobileIndicatorBar.tsx`, `Breadcrumbs.tsx`, `home.spec.ts`, `picker-scroll.spec.ts` · W2.18: `src/view/share/*`, `UiTestPage.tsx` | |
-| **F5** | S15 | W2.5 arkusz wskaźnika · W2.6 profil w arkuszu · W2.8 okruszki | W2.5: `MobileIndicatorBar.tsx`, **`IndicatorPanel.tsx`**, `picker-scroll.spec.ts` · W2.6: **`ProfilePortal.tsx`**, **`ProfileSheetMobile.tsx`** · W2.8: `Breadcrumbs.tsx`, `BackButton.tsx` | |
-| **F6** | S15 | W2.7 mapa nad arkuszem · W2.9 dymek · W2.20 udostępnianie z profilu | W2.7: `sheetInset.ts`, **`ProfileSheetMobile.tsx`**, **`useMapViewState.ts`** · W2.9: **`AtlasMap.tsx`**, `UnitTooltip.tsx` · W2.20: **`ProfileOverview.tsx`** | |
-| **F7** | S15 | W2.11 test telefonu · W2.13 legenda ciemna · W1.10 raport objaśnień | W2.11: `s15-mobile.spec.ts` · W2.13: `legend.ts`, `Legend.tsx`, **`IndicatorPanel.tsx`** · W1.10: `nightly-checks.mjs` | **punkt kontrolny S15** (telefon) |
-| **F8** | S16 | W3.2 kamera · W3.3 kafelki · W2.19 udostępnianie z panelu | W3.2: **`useMapViewState.ts`**, **`AtlasMap.tsx`** · W3.3: **`choropleth.ts`**, `useChoropleth.ts`, **`test-seam.ts`** · W2.19: **`IndicatorPanel.tsx`**, `useShareData.ts` | W3.3 o niepewnym wyniku – problem z techniką → automat staje (`wymaga-decyzji`) |
-| **F9** | S16–S18 | W3.4 przelewanie kolorów · W2.12 „Na tle kraju” · W2.14 wybór drugiego miejsca | W3.4: **`choropleth.ts`** · W2.12: `ContextBlock.tsx`, **`ProfileIndicatorRow.tsx`**, **`IndicatorPanel.tsx`** · W2.14: `ProfileCompare.tsx`, **`ProfileSheet.tsx`** | |
-| **F10** | S16–S18 | W3.6 pomiar ruchu · W2.15 tabela porównania · W2.16 dwa obrysy | W3.6: `s16-motion.spec.ts` · W2.15: `ProfileCompareTable.tsx`, **`ProfileCompare.tsx`** · W2.16: **`choropleth.ts`**, **`AtlasMap.tsx`** | **punkt kontrolny S16 + S17** (ruch, „Na tle kraju”) |
-| **F11** | S18 | W2.17 porównanie na telefonie + test · W2.22 dwie mapki | W2.17: `ProfileCompareTable.tsx`, `s18-compare.spec.ts` · W2.22: `CompareMaps.tsx`, **`ProfileCompare.tsx`** | **punkt kontrolny S18** (porównanie) |
-| **F12** | S19 | W2.21 udostępnianie porównania | **`ProfileCompare.tsx`** | |
-| **F13** | S19 | W2.23 test ścieżki udostępniania | `s19-share.spec.ts` | **koniec projektu** (punkt kontrolny S19 + raport końcowy) |
+| **F1** | S14 · S16–S17 · S15 | W2.1 Przegląd profilu: nagłówek, duża liczba, ranking, „Kopiuj link” · W1.2 Wykrywanie telefonu w jednym miejscu · W1.12 Formaty kart i dane CSV: logika · W1.13 Mapa jako rysunek SVG: logika · W3.3 Kafelki po kolei i wyblakła reszta kraju · W0.1 Usunięcie nieużywanych pakietów · W2.13 Legenda w trybie ciemnym · W1.10 Raport „wskaźniki bez objaśnienia” | W2.1: **`ProfileOverview.tsx`**, **`ProfileSheet.tsx`**, **`ProfileSheetMobile.tsx`**, **`ProfilePortal.tsx`**, **`AtlasMap.tsx`**, `profile-overview.spec.ts` · W1.2: `useIsMobile.ts`, `use-is-mobile.test.tsx` · W1.12: `formats.ts`, `csv.ts`, `share-formats.test.ts`, `share-csv.test.ts` · W1.13: `projection.ts`, `map-shapes.ts`, `share-map-shapes.test.ts`, `geo` · W3.3: **`choropleth.ts`**, `useChoropleth.ts`, **`test-seam.ts`**, `reveal.spec.ts` · W0.1: **`package.json`**, **`pnpm-lock.yaml`**, `ELEMENTY.md` · W2.13: `legend.ts`, `Legend.tsx`, **`IndicatorPanel.tsx`**, `legend.test.ts` · W1.10: `nightly-checks.mjs`, `nightly-checks.test.ts` | <br>W3.3 o niepewnym wyniku – problem z techniką → `wymaga-decyzji` |
+| **F2** | S14 · S15 · S16–S17 | W2.2 Zakładki profilu: Przegląd · W1.14 Układ kart: logika · W2.4 Telefon: układ – cienki nagłówek, mapa na cały ekran, miejsca podpięcia · W3.4 Przelewanie kolorów przy zmianie wskaźnika, roku, poziomu · W3.1 Sprzątanie zakreśleń w profilu | W2.2: **`ProfileSheet.tsx`**, `ProfileChildren.tsx`, `profile-tabs.spec.ts` · W1.14: `card.ts`, `text-fit.ts`, `share-card.test.ts` · W2.4: `Header.tsx`, **`Home.tsx`**, **`AtlasMap.tsx`**, `MobileIndicatorBar.tsx`, `Breadcrumbs.tsx`, `mobile-layout.spec.ts`, `home.spec.ts`, `picker-scroll.spec.ts` · W3.4: **`choropleth.ts`**, `color-transition.spec.ts` · W3.1: **`ProfileIndicatorRow.tsx`**, `highlight.ts`, `highlight.test.ts` |  |
+| **F3** | S15 · S16–S17 · S14 | W2.6 Telefon: profil w arkuszu 40% → 100% · W2.14 Porównanie: wybór drugiego miejsca · W2.18 Pobierz i udostępnij: okno, podgląd, PNG, CSV · W2.5 Telefon: arkusz wskaźnika · W2.8 Telefon: okruszki w jednej linii z „‹” · W2.9 Telefon: dymek po pierwszym dotknięciu · W2.3 Test całej ścieżki profilu na komputerze | W2.6: **`ProfilePortal.tsx`**, **`ProfileSheetMobile.tsx`**, `profile-mobile.spec.ts` · W2.14: **`ProfileCompare.tsx`**, **`ProfileSheet.tsx`**, `compare-pick.spec.ts` · W2.18: `share`, `UiTestPage.tsx`, `share-dialog.spec.ts` · W2.5: `MobileIndicatorBar.tsx`, **`IndicatorPanel.tsx`**, `mobile-indicator-sheet.spec.ts`, `picker-scroll.spec.ts` · W2.8: `Breadcrumbs.tsx`, `BackButton.tsx`, `mobile-breadcrumbs.spec.ts` · W2.9: **`AtlasMap.tsx`**, `UnitTooltip.tsx`, `mobile-tooltip.spec.ts` · W2.3: `s14-profile.spec.ts` | **punkt kontrolny K1** (S14 – profil na komputerze) |
+| **F4** | S15 · S16–S17 | W2.7 Telefon: mapa pokazuje wybrane miejsce nad arkuszem · W2.15 Porównanie: tabela obok siebie · W2.20 Przycisk w profilu: karta profilu · W2.19 Przycisk w panelu wskaźnika: karta mapy i rankingu · W2.16 Porównanie: dwa obrysy na mapie | W2.7: `sheetInset.ts`, **`ProfileSheetMobile.tsx`**, **`useMapViewState.ts`**, `profile-mobile-inset.spec.ts` · W2.15: `ProfileCompareTable.tsx`, **`ProfileCompare.tsx`**, `compare-table.spec.ts` · W2.20: **`ProfileOverview.tsx`**, `share-profile.spec.ts` · W2.19: **`IndicatorPanel.tsx`**, `useShareData.ts`, `share-map.spec.ts` · W2.16: **`choropleth.ts`**, **`AtlasMap.tsx`**, `compare-map.spec.ts` |  |
+| **F5** | S18 · S16–S17 · S15 | W2.22 Porównanie: dwie mapki nad tabelą · W3.2 Płynna kamera przy wejściu w głąb · W2.11 Test całej ścieżki na telefonie · W2.12 „Na tle kraju” w profilu i panelu · W2.17 Porównanie na telefonie + test ścieżki | W2.22: `CompareMaps.tsx`, **`ProfileCompare.tsx`**, `compare-maps.spec.ts` · W3.2: **`useMapViewState.ts`**, **`AtlasMap.tsx`**, `camera.spec.ts` · W2.11: `s15-mobile.spec.ts` · W2.12: `ContextBlock.tsx`, **`ProfileIndicatorRow.tsx`**, **`IndicatorPanel.tsx`**, `context-block.spec.ts` · W2.17: `ProfileCompareTable.tsx`, `s18-compare.spec.ts` | **punkt kontrolny K2** (S15 – telefon) + **punkt kontrolny K4** (S18 – porównanie dwóch miejsc) |
+| **F6** | S19 · S16–S17 | W2.21 Przycisk w porównaniu: karta porównania · W3.6 Pomiar szybkości i płynności + test ścieżki | W2.21: **`ProfileCompare.tsx`**, `share-compare.spec.ts` · W3.6: `s16-motion.spec.ts` | **punkt kontrolny K3** (S16 + S17 – ruch na mapie i „Na tle kraju”) |
+| **F7** | S19 | W2.23 Test całej ścieżki „Pobierz i udostępnij” | W2.23: `s19-share.spec.ts` | **punkt kontrolny K5** (S19 – pobierz i udostępnij (koniec projektu)) · **koniec projektu** (raport końcowy) |
 
-**Podsumowanie:** 13 fal, 33 zadania dla Julesa. Poza automatem: W1.9 (teksty objaśnień – Twoja akceptacja), W1.11 (zwiad Deep Research), W3.5 i reszta „Później”.
+**Podsumowanie:** 7 fal, 33 zadań dla Julesa, do 8 naraz (v4: fale przeliczone na maksymalną równoległość – zależności i rozłączność plików nadal pilnuje test). Poza automatem: W1.9, W1.11, W3.5 i „Później” – kiedy do nich wracamy, mówi tabela niżej.
+
+### Poza falami – kiedy do czego wracamy (nie zapomnieć)
+| Co | Kto | Kiedy | Co z tego wychodzi |
+|---|---|---|---|
+| **W1.11 zwiad „miasto / obszar wiejski”** (Deep Research → weryfikacja) | Ty w Gemini + Claude | **od razu, równolegle z F1** (prompt: `docs/research/W1.11-prompt.md`) | decyzja w STAN.md; ewentualne nowe zadanie W1/W2 po K3 |
+| **W1.9 teksty objaśnień wskaźników** | Ty akceptujesz teksty, potem Jules | przed F5 (W2.12 działa też bez tekstów, ale z nimi jest pełna) | plik objaśnień + bloki „Na tle kraju” z treścią |
+| **Podgląd paska zgód z #213 na telefonie** | Ty | przy pierwszym wolnym podglądzie | scalony lub poprawka |
+| **Ocena na telefonie** | Ty | na każdym punkcie kontrolnym (K1–K5) | poprawki idą jako nowe zadania |
+| **W3.5 scena wejścia „kreślenie”** | Planista rozpisze | po K3, tylko jeśli ruch W3.2/W3.3 jest płynny | zadanie w nowej fali albo zostaje w „Później” |
+| **Reszta „Później”** (SEO podstron gmin, dwie pełne mapy, tryb ciemny mapy, klucz PostHog, wersja angielska…) | Planista | po K5 – wspólny przegląd i wybór kolejnej sesji | nowy plan fal |
+| **Naprawiacz** (mocniejszy model raz dziennie) | Ty tworzysz | po F2, jeśli pojawią się zadania `wymaga-naprawy` | prompt w `docs/AUTOMAT.md` §6 |
 
 ---
 

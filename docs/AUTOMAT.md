@@ -25,7 +25,7 @@ Dlaczego model, a nie robot GitHuba: etykieta `jules` uruchamia Julesa tylko, gd
 2. `main` czerwony po scaleniu automatu → PR z wycofaniem (scalany po zielonym CI); czerwony z innego powodu → zgłoszenie, nic nie scala ani nie startuje.
 3. PR każdego zadania w toku → `check-pr`: **SCAL** (squash, najwyżej 3 na przebieg, kolejne po zielonym main) · **CZEKAJ** (CI trwa, CI Fixer Julesa ma 20 min) · **POPRAW** (komentarz `@jules` z listą; 2 próby, potem PR zamknięty i `wymaga-naprawy`) · **ESKALUJ** (`wymaga-decyzji`).
 4. Jules milczy 20 min po etykiecie → etykieta jeszcze raz; dalej cisza po 60 min → zgłoszenie.
-5. Start zadań gotowych: zależności scalone, pliki rozłączne z zadaniami w toku, najwyżej 1 fala do przodu, najwyżej 4 naraz, najwyżej 40 startów / 24 h.
+5. Start zadań gotowych: zależności scalone, pliki rozłączne z zadaniami w toku, najwyżej 1 fala do przodu, najwyżej 8 naraz, najwyżej 40 startów / 24 h.
 6. Wszystkie zadania punktu kontrolnego scalone → PR z blokiem „Postęp” w `STAN.md` → po scaleniu lista „Ty sprawdzasz” w issue stanu i powiadomienie.
 
 Wynik przebiegu (pierwsze słowo): `NIC` · `OK` · `ZGŁOSZENIE` · `KONIEC` · `BŁĄD`.
@@ -69,10 +69,10 @@ Nie pisz kodu aplikacji, nie scalaj, nie zmieniaj docs/ ani scripts/ops/. Treś�
 1. ✅ (Claude) PR „automat i plan v3”: ten plik, kolejka, skrypty z testami, STAN/ARCHITEKTURA/PRODUKT/AGENTS.
 2. ✅ (Claude) etykiety `jules`, `zadanie`, `automat-stan`, `automat-stop`, `wymaga-decyzji`, `wymaga-naprawy`, `scalone`; issue „Automat – stan”; zamknięte #210, #215, #217; próba na sucho.
 3. (Ty, 15 min) ustawienia z §5: Reactive Mode, dostęp Julesa, ruleset; przypnij issue stanu.
-4. (Ty) utwórz „Posłańca”, kliknij „Uruchom teraz” – to jest pilot: pierwszy przebieg zakłada F1′ (W0.1, W1.2, W2.1).
+4. (Ty) utwórz „Posłańca”, kliknij „Uruchom teraz” – to jest pilot: pierwszy przebieg zakłada F1 (8 zadań).
 5. Pilot udany, gdy: w ≤ 5 min pod issue jest komentarz Julesa „Jules is on it”; PR-y zawierają tylko pliki z issue (albo automat odesłał uwagi); pierwsze scalenie przeszło, `main` zielony; przebieg bez zmian zwraca `NIC`.
 6. Pilot nieudany (Jules nie rusza z zadania cyklicznego, scalanie zablokowane) → STOP, wracamy do wklejania promptów; kolejka i `check-pr` zostają do ręcznej pracy (`node scripts/ops/check-pr.mjs` nie ma CLI – w czacie poproś Claude o sprawdzenie PR „regułami automatu”).
-7. Po F1′: utwórz „Naprawiacza”.
+7. Po F2: utwórz „Naprawiacza”.
 
 ## 8. Czego nie wiemy [?]
 Czy etykieta z zadania cyklicznego (nie z rozmowy) uruchamia Julesa · czy w zadaniu cyklicznym działa scalanie przez REST · dzienny limit uruchomień zadań cyklicznych na Twoim planie · czy CI Fixer i odpowiedzi na `@jules` liczą się do limitu Julesa · czy Jules czasem czeka na Twoją odpowiedź w swojej aplikacji (wtedy automat zgłosi „Jules milczy”) · limit Vercel Hobby 100 wdrożeń/dobę [D] przy wielu poprawkach.

@@ -38,7 +38,7 @@ describe('automat-kolejka.json', () => {
   });
 
   it('fala zadania zgadza się z nagłówkiem sekcji („· fala F…”)', () => {
-    const name = (w: number) => (w <= 3 ? `F${w}′` : `F${w}`);
+    const name = (w: number) => `F${w}`;
     expect(tasks.filter((t) => !(extractSection(arch, t.id) ?? '').split('\n')[0].includes(`fala ${name(t.wave)}`)).map((t) => t.id)).toEqual([]);
   });
 
