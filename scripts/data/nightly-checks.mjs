@@ -8,6 +8,28 @@ import { fileURLToPath } from 'node:url';
 
 const VOLATILE = new Set(['fetchedAt', 'report']);
 
+/**
+ * Znajduje wskaźniki z config/indicators.json, które nie mają objaśnienia w public/data/explanations.json.
+ * Zwraca listę ID brakujących wskaźników (brak pliku/null = wszystkie wskaźniki).
+ */
+export function findMissingExplanations(indicators, explanations) {
+  const allIds = (indicators ?? []).map((i) => (typeof i === 'string' ? i : i?.id)).filter(Boolean);
+  if (!explanations) {
+    return allIds;
+  }
+
+  let existing = new Set();
+  if (explanations instanceof Map || explanations instanceof Set) {
+    existing = explanations;
+  } else if (Array.isArray(explanations)) {
+    existing = new Set(explanations.map((item) => (typeof item === 'string' ? item : item?.indicatorId ?? item?.id)).filter(Boolean));
+  } else if (Array.isArray(explanations?.items)) {
+    existing = new Set(explanations.items.map((item) => (typeof item === 'string' ? item : item?.indicatorId ?? item?.id)).filter(Boolean));
+  }
+
+  return allIds.filter((id) => !existing.has(id));
+}
+
 /** Czy dane (poza polami fetchedAt i report) różnią się między dwiema wersjami pliku wartości. */
 export function substantiveChange(a, b) {
   const strip = (o) => JSON.stringify(Object.fromEntries(Object.entries(o ?? {}).filter(([k]) => !VOLATILE.has(k))));
@@ -53,6 +75,25 @@ function main() {
       process.exit(1);
     }
     console.log('Liczby kontrolne: OK.');
+
+    let explanations = null;
+    try {
+      explanations = readJson(path.join(root, 'public/data/explanations.json'));
+    } catch {
+      // plik może nie istnieć
+    }
+    let indicators = [];
+    try {
+      indicators = readJson(path.join(root, 'config/indicators.json'));
+    } catch {
+      // plik może nie istnieć
+    }
+    const missing = findMissingExplanations(indicators, explanations);
+    if (missing.length) {
+      console.log(`Wskaźniki bez objaśnienia (${missing.length}): ${missing.join(', ')}`);
+    } else {
+      console.log('Wszystkie wskaźniki posiadają objaśnienia.');
+    }
     return;
   }
 
