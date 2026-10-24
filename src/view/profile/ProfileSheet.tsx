@@ -1,19 +1,24 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { UnitProfile, ProfileIndicatorItem } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
+import type { MainView } from '../map/hooks/useMainView';
 import { collectFootnotes } from '../../core/profile/footnotes';
 import { pickHighlight } from '../../core/profile/highlight';
+import { unitTitle } from '../../core/units/label';
 import { Footnotes } from './Footnotes';
 import { Sheet } from '../ui/Sheet';
 import { Icon } from '../ui/Icon';
+import { ProfileOverview } from './ProfileOverview';
 import { ProfileIndicatorRow } from './ProfileIndicatorRow';
 import { formatSource } from '../../core/format/number';
-import { Xmark } from 'iconoir-react';
+import { Xmark, Link } from 'iconoir-react';
 import { cn } from '../../lib/utils';
 
 export interface ProfileSheetProps {
   profile: UnitProfile;
   units: Unit[];
+  view?: MainView;
+  onSelectUnit?: (teryt: string) => void;
   onClose: () => void;
   className?: string;
 }
@@ -21,38 +26,38 @@ export interface ProfileSheetProps {
 export interface ProfileBodyProps {
   profile: UnitProfile;
   units: Unit[];
+  view?: MainView;
+  onSelectUnit?: (teryt: string) => void;
   onClose?: () => void;
   showCloseButton?: boolean;
 }
 
-function getLevelLabel(level?: string | null): string {
-  switch (level) {
-    case 'woj':
-      return 'Województwo';
-    case 'pow':
-      return 'Powiat';
-    case 'gmi':
-      return 'Gmina';
-    default:
-      return 'Jednostka';
-  }
-}
-
 /**
- * Treść profilu jednostki (nagłówek, lista wskaźników lub komunikat o braku danych, przypisy i źródło).
+ * Treść profilu jednostki (nagłówek, przegląd bieżącego wskaźnika z rankingiem, lista pozostałych wskaźników, przypisy i źródło).
  * Współdzielona między wersją na komputer (ProfileSheet) a wersją na telefon (ProfileSheetMobile).
  */
 export function ProfileBody({
   profile,
   units,
+  view,
+  onSelectUnit,
   onClose,
   showCloseButton = true,
 }: ProfileBodyProps) {
-  const unitName = profile.unit ? profile.unit.name : `TERYT ${profile.teryt}`;
-  const levelLabel = profile.unit ? getLevelLabel(profile.unit.level) : 'Jednostka';
+  const [copied, setCopied] = useState(false);
+
+  const unitTitleText = profile.unit ? unitTitle(profile.unit) : `TERYT ${profile.teryt}`;
+
+  // Gdy brak `view` (np. w testach jednostkowych), wyznaczamy zakreślenie dla wskaźnika z najlepszym wynikiem
+  const highlightedIndicatorId = !view ? pickHighlight(profile.indicators) : null;
+
+  // Pozostałe wskaźniki bez bieżącego aktywnego (gdy jest view)
+  const otherIndicators = view
+    ? profile.indicators.filter((item) => item.indicatorId !== view.indicator.id)
+    : profile.indicators;
 
   // Grupowanie wskaźników z zachowaniem kolejności wystąpienia
-  const groupedIndicators = profile.indicators.reduce<Record<string, ProfileIndicatorItem[]>>(
+  const groupedIndicators = otherIndicators.reduce<Record<string, ProfileIndicatorItem[]>>(
     (acc, item) => {
       const group = item.indicator.group || 'Inne';
       if (!acc[group]) {
@@ -73,8 +78,14 @@ export function ProfileBody({
   // Zbieranie skonsolidowanej listy numerowanych przypisów dla profilu
   const footnotes = collectFootnotes(profile.indicators, units);
 
-  // Wyznaczenie zakreślenia dla wskaźnika z najlepszym wynikiem w województwie
-  const highlightedIndicatorId = pickHighlight(profile.indicators);
+  const handleCopyLink = () => {
+    if (typeof window !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -83,12 +94,12 @@ export function ProfileBody({
         <div className="min-w-0 flex-1 space-y-1">
           <h2
             className="text-2xl font-bold tracking-tight break-words text-tusz"
-            title={unitName}
+            title={profile.unit?.name ?? unitTitleText}
           >
-            {unitName}
+            {unitTitleText}
           </h2>
           <p className="text-xs text-olowek font-mono">
-            {`${levelLabel} • TERYT ${profile.teryt}`}
+            {`TERYT ${profile.teryt}`}
           </p>
         </div>
         {showCloseButton && onClose && (
@@ -103,8 +114,18 @@ export function ProfileBody({
         )}
       </div>
 
-      {/* Lista wskaźników lub komunikat o braku danych */}
-      {profile.indicators.length === 0 ? (
+      {/* Sekcja Przeglądu (bieżący wskaźnik i ranking) */}
+      {view && onSelectUnit && (
+        <ProfileOverview
+          profile={profile}
+          units={units}
+          view={view}
+          onSelectUnit={onSelectUnit}
+        />
+      )}
+
+      {/* Lista pozostałych wskaźników lub komunikat o braku danych */}
+      {otherIndicators.length === 0 && !view ? (
         <p className="py-6 text-sm text-olowek text-center">
           Brak danych profilu dla tej jednostki.
         </p>
@@ -122,7 +143,7 @@ export function ProfileBody({
                     item={item}
                     units={units}
                     footnotes={footnotes}
-                    isHighlighted={item.indicatorId === highlightedIndicatorId}
+                    isHighlighted={!view && item.indicatorId === highlightedIndicatorId}
                   />
                 ))}
               </div>
@@ -131,8 +152,22 @@ export function ProfileBody({
         </div>
       )}
 
-      {/* Stopka z przypisami i źródłem */}
-      <footer className="pt-4 border-t border-linia text-xs text-olowek space-y-1">
+      {/* Stopka z przyciskiem Kopiuj link, przypisami i źródłem */}
+      <footer className="pt-4 border-t border-linia text-xs text-olowek space-y-3">
+        <div>
+          <button
+            type="button"
+            onClick={handleCopyLink}
+            className="min-h-[44px] min-w-[44px] px-4 py-2 bg-arkusz border border-linia hover:bg-linia/15 focus:outline-none focus:ring-2 focus:ring-tusz text-xs font-semibold text-tusz cursor-pointer transition-colors flex items-center justify-center gap-2"
+          >
+            <Icon icon={Link} size={16} aria-hidden={true} />
+            <span>{copied ? 'Skopiowano' : 'Kopiuj link'}</span>
+          </button>
+          <div aria-live="polite" className="sr-only">
+            {copied ? 'Skopiowano link do schowka' : ''}
+          </div>
+        </div>
+
         <Footnotes footnotes={footnotes} />
         <p>{formatSource(latestYear)}</p>
       </footer>
@@ -142,10 +177,17 @@ export function ProfileBody({
 
 /**
  * Komponent arkusza profilu jednostki (wersja na komputer, 440 px).
- * Prezentuje nagłówek jednostki, przycisk zamknięcia oraz wskaźniki
- * pogrupowane według kategorii ze skonsolidowaną listą przypisów i źródłem danych.
+ * Prezentuje nagłówek jednostki, przycisk zamknięcia, przegląd bieżącego wskaźnika
+ * oraz pozostałe wskaźniki pogrupowane według kategorii.
  */
-export function ProfileSheet({ profile, units, onClose, className }: ProfileSheetProps) {
+export function ProfileSheet({
+  profile,
+  units,
+  view,
+  onSelectUnit,
+  onClose,
+  className,
+}: ProfileSheetProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -158,7 +200,13 @@ export function ProfileSheet({ profile, units, onClose, className }: ProfileShee
 
   return (
     <Sheet className={cn('w-full max-w-[440px]', className)}>
-      <ProfileBody profile={profile} units={units} onClose={onClose} />
+      <ProfileBody
+        profile={profile}
+        units={units}
+        view={view}
+        onSelectUnit={onSelectUnit}
+        onClose={onClose}
+      />
     </Sheet>
   );
 }
