@@ -106,7 +106,7 @@ describe('CC7.4c Profile Ranking Highlight Tests', () => {
   });
 
   describe('Profile DOM rendering with highlight', () => {
-    it('renders exactly one highlight/annotation in profile when valid ranked indicator exists', () => {
+    it('renders no highlight annotations in profile indicator rows even when ranked indicators exist', () => {
       const items = [
         makeItem('1', 'Wskaźnik 1', 5, 10),
         makeItem('2', 'Wskaźnik 2', 1, 5),
@@ -127,9 +127,7 @@ describe('CC7.4c Profile Ranking Highlight Tests', () => {
         )
       );
 
-      expect(html).toContain('data-highlight="true"');
-      const count = (html.match(/data-highlight="true"/g) || []).length;
-      expect(count).toBe(1);
+      expect(html).not.toContain('data-highlight="true"');
     });
 
     it('renders no highlights in profile when no ranked indicators exist', () => {
