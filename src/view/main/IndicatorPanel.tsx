@@ -96,7 +96,7 @@ export function IndicatorPanel({ view, choropleth, ranking, index, selectedTeryt
             <p className="text-xs text-olowek">
               {choropleth.scheme === 'diverging'
                 ? 'Kolory pokazują, czy wartość jest poniżej, czy powyżej zera.'
-                : 'Pięć grup o podobnej liczbie jednostek. Ciemniej znaczy więcej.'}
+                : 'Pięć grup o podobnej liczbie jednostek.'}
             </p>
           </div>
         )}

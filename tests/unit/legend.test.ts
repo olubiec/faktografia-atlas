@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildLegend } from '../../src/core/legend/legend';
+import { buildLegend, LEGEND_DIRECTION_LABEL } from '../../src/core/legend/legend';
+import fs from 'node:fs';
+import path from 'node:path';
 
 describe('buildLegend pure function', () => {
   it('generates n + 1 classes + no-data for n breaks with sequential scheme', () => {
@@ -116,5 +118,23 @@ describe('buildLegend pure function', () => {
       to: null,
       label: 'Brak pomiaru',
     });
+  });
+
+  it('[S17] exports direction label LEGEND_DIRECTION_LABEL as "mniej → więcej"', () => {
+    expect(LEGEND_DIRECTION_LABEL).toBe('mniej → więcej');
+  });
+
+  it('[S17] does not contain "ciemniej znaczy więcej" in legend descriptions', () => {
+    const indicatorPanelContent = fs.readFileSync(
+      path.resolve(__dirname, '../../src/view/main/IndicatorPanel.tsx'),
+      'utf-8'
+    );
+    const legendContent = fs.readFileSync(
+      path.resolve(__dirname, '../../src/view/legend/Legend.tsx'),
+      'utf-8'
+    );
+
+    expect(indicatorPanelContent.toLowerCase()).not.toContain('ciemniej znaczy więcej');
+    expect(legendContent.toLowerCase()).not.toContain('ciemniej znaczy więcej');
   });
 });
