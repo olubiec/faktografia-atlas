@@ -57,7 +57,7 @@ jobs:
       # Pobrane strony PRNG (253 tys. obiektów, ok. 1700 stron) zostają w cache między uruchomieniami:
       # gdy uruchomienie skończy się przed czasem albo na błędzie, następne wznawia od brakujących stron.
       - name: Przywróć pobrane strony PRNG
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: ~/prng-pages
           key: prng-pages-${{ github.run_id }}
@@ -84,7 +84,7 @@ jobs:
 
       - name: Zapisz pobrane strony PRNG
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ~/prng-pages
           key: prng-pages-${{ github.run_id }}
