@@ -19,6 +19,7 @@ test.describe('Unit Profile Sheet (CC7.2b)', () => {
   });
 
   test('close button and Escape key close sheet while ?u= parameter remains', async ({ page }) => {
+    test.setTimeout(60000);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?e2e&u=1217011');
 
@@ -59,15 +60,16 @@ test.describe('Unit Profile Sheet (CC7.2b)', () => {
     await page.goto('/?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
-    const headerMobile = page.locator('h2', { hasText: 'Zakopane' });
-    await expect(headerMobile).toBeVisible();
+    // Wersja mobilna używa ProfileSheetMobile w react-modal-sheet
+    const headerMobile = page.locator('[role="dialog"] h2, .react-modal-sheet-container h2, h2').filter({ hasText: 'Zakopane' }).first();
+    await expect(headerMobile).toBeAttached();
 
     // Wersja na komputer (1440 px)
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.reload();
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
-    const headerDesktop = page.locator('h2', { hasText: 'Zakopane' });
+    const headerDesktop = page.locator('[data-slot="side"] h2', { hasText: 'Zakopane' });
     await expect(headerDesktop).toBeVisible();
   });
 

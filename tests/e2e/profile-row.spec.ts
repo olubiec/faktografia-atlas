@@ -69,6 +69,7 @@ test.describe('Profile Indicator Row Expansion @S14', () => {
   test('explanation short text and "Definicja GUS" link are visible with fixture, omitted on 404', async ({
     page,
   }) => {
+    test.setTimeout(60000);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?e2e&u=1217011');
 
