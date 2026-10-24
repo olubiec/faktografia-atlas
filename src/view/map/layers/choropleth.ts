@@ -96,8 +96,16 @@ export const choroplethLayerFactory: LayerFactory = {
     const totalDuration = tokensJson.motion.revealTotal ?? 900;
     const elapsed = progress * totalDuration;
 
+    const isReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const transitionDuration = isReduced ? 0 : tokensJson.motion.base ?? 300;
+
     return new GeoJsonLayer({
       id: 'choropleth-layer',
+      transitions: {
+        getFillColor: transitionDuration,
+      },
       data: features,
       filled: true,
       stroked: true,
