@@ -13,7 +13,7 @@ export interface LegendProps {
  * Spełnia wymagania dostępności (role="list", role="listitem", etykiety tekstowe)
  * oraz stylistyki projektu (tło arkusz, ramka 1 px linia, brak hexów).
  */
-export function Legend({ items, title, className = '', showDirection = true }: LegendProps) {
+export function Legend({ items, title, className = '', showDirection = false }: LegendProps) {
   return (
     <div
       className={`bg-arkusz border border-linia p-3 sm:p-4 text-tusz max-w-xs ${className}`.trim()}

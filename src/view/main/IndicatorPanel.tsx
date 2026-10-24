@@ -92,7 +92,7 @@ export function IndicatorPanel({ view, choropleth, ranking, index, selectedTeryt
         {choropleth && (
           <div className="flex flex-col gap-1.5">
             <span className="text-sm font-semibold">Legenda</span>
-            <Legend items={legend} className="border-0 p-0 max-w-none" />
+            <Legend items={legend} showDirection={true} className="border-0 p-0 max-w-none" />
             <p className="text-xs text-olowek">
               {choropleth.scheme === 'diverging'
                 ? 'Kolory pokazują, czy wartość jest poniżej, czy powyżej zera.'
