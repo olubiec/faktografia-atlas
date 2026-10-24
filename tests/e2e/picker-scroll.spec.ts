@@ -11,14 +11,14 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
     test(`@S14 indicator picker fits in viewport and scrolls internally to select last indicator on ${name}`, async ({ page }) => {
       if (width === 390) {
         await page.goto('/?i=population-density&y=2023');
-        await expect(page.locator('button', { hasText: 'Wskaźnik' })).toBeHidden();
+        await expect(page.getByRole('button', { name: /Wskaźnik/i })).toBeHidden();
         return;
       }
       await page.setViewportSize({ width, height });
       await page.goto('/');
 
       // Open indicator picker button
-      const triggerButton = page.locator('button', { hasText: 'Wskaźnik' }).first();
+      const triggerButton = page.getByRole('button', { name: /Wskaźnik/i }).first();
       await expect(triggerButton).toBeVisible();
       await triggerButton.click();
 
@@ -74,7 +74,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
     await page.setViewportSize({ width: 1440, height: 600 });
     await page.goto('/');
 
-    const triggerButton = page.locator('button', { hasText: 'Wskaźnik' }).first();
+    const triggerButton = page.getByRole('button', { name: /Wskaźnik/i }).first();
     await triggerButton.click();
 
     const listbox = page.getByRole('listbox', { name: 'Lista wskaźników' });
@@ -94,7 +94,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
     test('check scroll and touch targets', async ({ page }) => {
       await page.goto('/?i=population-density&y=2023');
 
-      const bottomBar = page.locator('button', { hasText: 'Gęstość zaludnienia' });
+      const bottomBar = page.getByRole('button', { name: /Gęstość zaludnienia/i }).first();
       await expect(bottomBar).toBeVisible();
       const box = await bottomBar.boundingBox();
       expect(box).not.toBeNull();
@@ -109,7 +109,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
 
-    const triggerButton = page.locator('button', { hasText: 'Wskaźnik' }).first();
+    const triggerButton = page.getByRole('button', { name: /Wskaźnik/i }).first();
     await triggerButton.click();
     await expect(page.getByRole('listbox', { name: 'Lista wskaźników' })).toBeVisible();
 
