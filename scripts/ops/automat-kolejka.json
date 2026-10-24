@@ -217,7 +217,8 @@
         "tests/e2e/breadcrumbs.spec.ts",
         "tests/e2e/design.spec.ts",
         "tests/e2e/profile-row.spec.ts",
-        "tests/e2e/profile-trend.spec.ts"
+        "tests/e2e/profile-trend.spec.ts",
+        "tests/e2e/profile.spec.ts"
       ],
       "allowFixme": [],
       "deletions": [],
