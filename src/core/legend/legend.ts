@@ -8,6 +8,8 @@ export interface LegendItem {
   label: string;
 }
 
+export const LEGEND_DIRECTION_LABEL = 'mniej → więcej';
+
 export interface BuildLegendOptions {
   breaks: number[];
   scheme: ClassificationScheme;

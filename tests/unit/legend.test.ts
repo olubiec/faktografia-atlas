@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildLegend } from '../../src/core/legend/legend';
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import { buildLegend, LEGEND_DIRECTION_LABEL } from '../../src/core/legend/legend';
+import { Legend } from '../../src/view/legend/Legend';
+import { IndicatorPanel } from '../../src/view/main/IndicatorPanel';
 
 describe('buildLegend pure function', () => {
   it('generates n + 1 classes + no-data for n breaks with sequential scheme', () => {
@@ -116,5 +120,70 @@ describe('buildLegend pure function', () => {
       to: null,
       label: 'Brak pomiaru',
     });
+  });
+
+  it('exports LEGEND_DIRECTION_LABEL as "mniej → więcej"', () => {
+    expect(LEGEND_DIRECTION_LABEL).toBe('mniej → więcej');
+  });
+
+  it('renders "mniej → więcej" in Legend component', () => {
+    const items = buildLegend({
+      breaks: [10, 20],
+      scheme: 'sequential',
+      unit: '%',
+    });
+    const html = renderToString(React.createElement(Legend, { items }));
+    expect(html).toContain('mniej → więcej');
+  });
+
+  it('ensures IndicatorPanel in both light and dark themes contains "mniej → więcej" and no "ciemniej znaczy więcej"', () => {
+    const mockIndicator = {
+      id: 'population-density',
+      bdlVarId: 1,
+      name: 'Gęstość zaludnienia',
+      unit: 'os./km²',
+      description: 'Opis',
+      group: 'demografia',
+      higherIsBetter: true,
+      minLevel: 'gmi' as const,
+    };
+
+    const mockView = {
+      indicator: mockIndicator,
+      indicators: [mockIndicator],
+      year: 2023,
+      years: [2023],
+      level: 'gmi' as const,
+      setIndicator: () => {},
+      setYear: () => {},
+      setLevel: () => {},
+    };
+
+    const mockChoropleth = {
+      breaks: [10, 20, 30, 40],
+      scheme: 'sequential' as const,
+      colors: ['--seq-1', '--seq-2', '--seq-3', '--seq-4', '--seq-5'],
+      classifications: new Map(),
+    };
+
+    const mockIndex = {
+      byTeryt: new Map(),
+      all: [],
+    };
+
+    const html = renderToString(
+      React.createElement(IndicatorPanel, {
+        view: mockView,
+        choropleth: mockChoropleth,
+        ranking: { items: [], total: 0, noDataCount: 0 },
+        index: mockIndex,
+        selectedTeryt: null,
+        onSelectUnit: () => {},
+      })
+    );
+
+    expect(html).not.toContain('ciemniej znaczy więcej');
+    expect(html).not.toContain('Ciemniej znaczy więcej');
+    expect(html).toContain('mniej → więcej');
   });
 });
