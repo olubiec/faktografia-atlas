@@ -124,7 +124,7 @@ export function ProfileOverview({
 
   return (
     <div className="space-y-4 pb-4 border-b border-linia">
-      <style>{`span.text-korekta { color: #B8141C !important; }`}</style>
+      <style>{`span.text-korekta { color: var(--korekta-tekst) !important; }`}</style>
       {/* Nazwa wskaźnika, przycisk rozwijania i rok */}
       <div className="space-y-1">
         <button
