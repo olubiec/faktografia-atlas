@@ -4,6 +4,7 @@ import type { Unit } from '../../core/units/types';
 import type { MainView } from '../map/hooks/useMainView';
 import { unitTitle } from '../../core/units/label';
 import { collectFootnotes } from '../../core/profile/footnotes';
+import { pickHighlight } from '../../core/profile/highlight';
 import { Footnotes } from './Footnotes';
 import { Sheet } from '../ui/Sheet';
 import { Icon } from '../ui/Icon';
@@ -46,6 +47,7 @@ export function ProfileBody({
   const [copied, setCopied] = useState(false);
 
   const title = profile.unit ? unitTitle(profile.unit) : `TERYT ${profile.teryt}`;
+  const tooltipTitle = profile.unit ? profile.unit.name : title;
 
   // Grupowanie pozostałych wskaźników (z wyłączeniem aktywnego wskaźnika z Przeglądu)
   const remainingIndicators = profile.indicators.filter(
@@ -73,6 +75,8 @@ export function ProfileBody({
   // Zbieranie skonsolidowanej listy numerowanych przypisów dla profilu
   const footnotes = collectFootnotes(profile.indicators, units);
 
+  const highlightedIndicatorId = !view ? pickHighlight(profile.indicators) : null;
+
   const handleCopyLink = () => {
     if (typeof window !== 'undefined') {
       navigator.clipboard.writeText(window.location.href).catch(() => {});
@@ -88,7 +92,7 @@ export function ProfileBody({
         <div className="min-w-0 flex-1 space-y-1">
           <h2
             className="text-2xl font-bold tracking-tight break-words text-tusz"
-            title={title}
+            title={tooltipTitle}
           >
             {title}
           </h2>
@@ -137,7 +141,7 @@ export function ProfileBody({
                     item={item}
                     units={units}
                     footnotes={footnotes}
-                    isHighlighted={false}
+                    isHighlighted={item.indicatorId === highlightedIndicatorId}
                   />
                 ))}
               </div>
