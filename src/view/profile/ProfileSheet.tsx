@@ -3,6 +3,7 @@ import type { UnitProfile, ProfileIndicatorItem } from '../../core/profile/profi
 import type { Unit } from '../../core/units/types';
 import type { MainView } from '../map/hooks/useMainView';
 import { collectFootnotes } from '../../core/profile/footnotes';
+import { pickHighlight } from '../../core/profile/highlight';
 import { unitTitle } from '../../core/units/label';
 import { Footnotes } from './Footnotes';
 import { Sheet } from '../ui/Sheet';
@@ -45,6 +46,7 @@ export function ProfileBody({
   showCloseButton = true,
 }: ProfileBodyProps) {
   const headerTitle = profile.unit ? unitTitle(profile.unit) : `TERYT ${profile.teryt}`;
+  const rawUnitName = profile.unit ? profile.unit.name : headerTitle;
   const [copied, setCopied] = useState(false);
 
   const handleCopyLink = () => {
@@ -84,6 +86,9 @@ export function ProfileBody({
   // Zbieranie skonsolidowanej listy numerowanych przypisów dla profilu
   const footnotes = collectFootnotes(profile.indicators, units);
 
+  // Wyznaczenie zakreślenia wyłącznie w starym trybie (gdy view nie jest przekazany)
+  const highlightedIndicatorId = !view ? pickHighlight(profile.indicators) : null;
+
   return (
     <div className="space-y-4">
       {/* Nagłówek */}
@@ -91,7 +96,7 @@ export function ProfileBody({
         <div className="min-w-0 flex-1 space-y-1">
           <h2
             className="text-2xl font-bold tracking-tight break-words text-tusz"
-            title={headerTitle}
+            title={rawUnitName}
           >
             {headerTitle}
           </h2>
@@ -140,6 +145,7 @@ export function ProfileBody({
                     item={item}
                     units={units}
                     footnotes={footnotes}
+                    isHighlighted={item.indicatorId === highlightedIndicatorId}
                   />
                 ))}
               </div>
