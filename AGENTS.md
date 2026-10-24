@@ -21,6 +21,7 @@ Stos: Vite + React + TypeScript (strict), pnpm, Tailwind v4 (tokeny w @theme), V
 - Wzorce zrzutów (`*-snapshots/`) powstają wyłącznie w CI przez workflow „Update snapshots” (uruchamia go właściciel). Nie generuj ich u siebie; w PR napisz, że trzeba je odświeżyć.
 - Uwagi CodeRabbit o błędach poprawiasz; z uwagą o stylu możesz się nie zgodzić – napisz dlaczego.
 - Nie edytuj `docs/STAN.md`, `package.json` ani `pnpm-lock.yaml`, chyba że prompt wprost na to pozwala (STAN.md zmienia ostatni prompt fali).
+- Zadanie z issue automatu (`docs/AUTOMAT.md`): wykonujesz dokładnie zadanie `Wx.y` z `docs/ARCHITEKTURA.md` §3; tytuł PR zaczyna się od `Wx.y –`, opis zawiera `Closes #<nr issue>`. Uwagi automatu w komentarzach PR traktujesz jak uwagi CodeRabbit o błędach.
 - Opis PR zawsze z sekcją „Po ludzku” (dla osoby, która nie programuje): co zrobiłeś · co sprawdzić na podglądzie · czego nie zrobiłeś i dlaczego.
 
 ## Nigdy
@@ -50,7 +51,7 @@ Nigdy:
 - Zmian w plikach ekranu (`src/view/Home.tsx`, `src/view/map/AtlasMap.tsx`, `src/view/profile/ProfileSheet*.tsx`, `src/view/map/hooks/*`), jeśli prompt wprost ich nie wymienia.
 - Importowania plików danych (`public/data/*.json`, `public/geo/*.json`) do kodu strony ani pobierania wielu plików danych naraz, gdy wystarczy jeden (progi: docs/PRODUKT.md §7).
 - Wywołań API GUS z kodu strony. Dane GUS pobiera wyłącznie robot w GitHub Actions do `public/data`.
-- Kodu generatora karuzel w tym repo (powstanie osobno, prywatnie).
+- Kodu generatora serii slajdów pod konta Faktografii (osobne, prywatne repo). Pojedyncze karty i CSV do pobrania dla użytkowników są w planie (S19: `src/core/share`, `src/view/share`).
 
 ## Błędy powtarzalne (dopisywane po sesjach)
 - Jules wysyłał PR-y, które usuwały pliki z main (budowa gałęzi od nowa) → tylko `git merge origin/main` + kontrola `--diff-filter=D` (zasada wyżej).

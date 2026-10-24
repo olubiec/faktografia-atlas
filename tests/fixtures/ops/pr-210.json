@@ -1,0 +1,232 @@
+{
+  "nagrano": "2026-10-24",
+  "zrodlo": "GET /repos/olubiec/faktografia-atlas/pulls/210 (+ files, commits, check-runs)",
+  "pr": {
+    "number": 210,
+    "state": "open",
+    "draft": false,
+    "merged": false,
+    "title": "W3.1 – Sprzątanie zakreśleń w profilu",
+    "body": "### Po ludzku\n- Usunąłem stary kod zakreśleń (`highlight`) z wiersza wskaźnika w profilu jednostki (`ProfileIndicatorRow.tsx` i `ProfileSheet.tsx`). Czerwony marker zasłaniający tekst już się nie pojawi.\n- Usunąłem nieużywany plik `src/core/profile/highlight.ts` oraz odpowiadające mu testy z `tests/unit/highlight.test.ts`. \n- Usunąłem stare testy e2e sprawdzające to zakreślenie z `tests/e2e/annotation-scroll.spec.ts`.\n- Zaktualizowałem `docs/STAN.md` – oznaczyłem W3.1 jako wykonane i wykreśliłem zasłaniające zakreślenie z listy znanych problemów.\n- **Co sprawdzić:** Otwórz profil jakiejś jednostki (np. Zakopanego) i upewnij się, że żadne wiersze wskaźników nie są na czerwono zakreślone.\n- **Czego nie robiłem:** Nie zmieniałem widoku Przeglądu (`ProfileOverview.tsx`) ani samego silnika adnotacji `Annotate.tsx` (są wykorzystywane w nowych widokach profilu).\n\n### Zmiany w kodzie\n1. Edycja `src/view/profile/ProfileIndicatorRow.tsx` (usunięcie importu, atrybutów i warunków renderowania).\n2. Edycja `src/view/profile/ProfileSheet.tsx` (usunięcie logiki dobierającej `highlightedIndicatorId`).\n3. Usunięcie `tests/unit/highlight.test.ts` oraz `src/core/profile/highlight.ts`.\n4. Usunięcie `tests/e2e/annotation-scroll.spec.ts`.\n5. Edycja `docs/STAN.md`.\n\n---\n*PR created automatically by Jules for task [16315601187454976697](https://jules.google.com/task/16315601187454976697) started by @olubiec*",
+    "mergeable": false,
+    "mergeable_state": "dirty",
+    "additions": 3,
+    "deletions": 330,
+    "base": {
+      "ref": "main"
+    },
+    "head": {
+      "ref": "w3-1-cleanup-highlight-16315601187454976697",
+      "sha": "c83b5601cfd404085ffbe334f6595c19fb493432",
+      "repo": {
+        "full_name": "olubiec/faktografia-atlas"
+      }
+    }
+  },
+  "files": [
+    {
+      "filename": "docs/STAN.md",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "patch": "@@ -27,7 +27,7 @@ Na końcu: na komputerze klik w miejsce → nagłówek bez powtórzeń, duża li\n ## Znane problemy / dług (co · skąd · priorytet · w której fali)\n - Telefon nieużywalny · ogląd 21.10 · wysoki · F4–F7.\n - Wejście w głąb to skok, reszta Polski znika · uwaga właściciela 21.10 · wysoki · F8 (W3.2, W3.3).\n-- Zakreślenie typu „highlight” zasłania tekst w profilu · zrzut 21.10 · średni · F1 (W2.1 wyłącza), F3 (W3.1 usuwa kod).\n+- W3.1 wykonane (22.10.2026) · usunięto stary kod zakreśleń typu `highlight` (pliki, testy, użycia).\n - 5 nieużywanych pakietów (nuqs, motion, tw-animate-css, d3-array, d3-scale) · rejestr ELEMENTY 22.10 · niski · F1 (W0.1).\n - Brak prostych objaśnień wskaźników · test 20.10 · średni · F7 (W1.9 – po Twojej akceptacji tekstów), F11 (W2.12).\n - Legenda w trybie ciemnym mówi „ciemniej znaczy więcej” odwrotnie do kolorów · ogląd 21.10 · średni · F7 (W2.13).",
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/shots/annotation-box-dark.png",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 0,
+      "patch": null,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/shots/annotation-box-light.png",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 0,
+      "patch": null,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/shots/annotation-bracket-dark.png",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 0,
+      "patch": null,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/shots/annotation-bracket-light.png",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 0,
+      "patch": null,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/shots/annotation-circle-dark.png",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 0,
+      "patch": null,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/shots/annotation-circle-light.png",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 0,
+      "patch": null,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/shots/annotation-underline-dark.png",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 0,
+      "patch": null,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/shots/annotation-underline-light.png",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 0,
+      "patch": null,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/shots/interactive-desktop-dark.jpg",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 0,
+      "patch": null,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/shots/interactive-desktop-light.jpg",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 0,
+      "patch": null,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/shots/interactive-mobile-dark.jpg",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 0,
+      "patch": null,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/shots/interactive-mobile-light.jpg",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 0,
+      "patch": null,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/shots/mobile-dark.jpg",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 0,
+      "patch": null,
+      "previous_filename": null
+    },
+    {
+      "filename": "src/core/profile/highlight.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 42,
+      "patch": "@@ -1,42 +0,0 @@\n-import type { ProfileIndicatorItem } from './profile';\n-\n-/**\n- * Wybiera identyfikator wskaźnika w profilu jednostki, w którym jednostka wypada najlepiej\n- * w województwie (najmniejszy rankVoivodeship).\n- *\n- * Zasady:\n- * - Wskaźniki neutralne (neutral === true) są ignorowane.\n- * - Wybierany jest wskaźnik z najmniejszym rankVoivodeship (równym co najmniej 1).\n- * - Remisy rankVoivodeship są rozstrzygane na korzyść mniejszego rankNational.\n- * - Dalsze remisy rozstrzygane są na korzyść kolejności wystąpienia na liście (pierwszy z kolei).\n- * - Jeśli brak wskaźników spełniających warunki (np. brak rankingów woj.), zwraca null.\n- */\n-export function pickHighlight(items: ProfileIndicatorItem[]): string | null {\n-  let bestItem: ProfileIndicatorItem | null = null;\n-\n-  for (const item of items) {\n-    if (item.neutral || item.rankVoivodeship === null) {\n-      continue;\n-    }\n-\n-    if (!bestItem) {\n-      bestItem = item;\n-      continue;\n-    }\n-\n-    // Porównanie rankVoivodeship (im mniejsze, tym lepsze miejsce)\n-    if (item.rankVoivodeship < bestItem.rankVoivodeship!) {\n-      bestItem = item;\n-    } else if (item.rankVoivodeship === bestItem.rankVoivodeship!) {\n-      // Remis w województwie -> porównujemy rankNational\n-      const currentNat = item.rankNational ?? Number.POSITIVE_INFINITY;\n-      const bestNat = bestItem.rankNational ?? Number.POSITIVE_INFINITY;\n-\n-      if (currentNat < bestNat) {\n-        bestItem = item;\n-      }\n-    }\n-  }\n-\n-  return bestItem ? bestItem.indicatorId : null;\n-}",
+      "previous_filename": null
+    },
+    {
+      "filename": "src/view/profile/ProfileIndicatorRow.tsx",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 14,
+      "patch": "@@ -4,7 +4,6 @@ import type { Unit } from '../../core/units/types';\n import { formatValue } from '../../core/format/number';\n import { collectFootnotes, formatParentFootnoteText, type Footnote } from '../../core/profile/footnotes';\n import { trend } from '../../core/profile/trend';\n-import { Annotate } from '../annotation/Annotate';\n import { TrendChart } from './TrendChart';\n import { loadExplanations, type Explanation } from '../../core/explain/explanations';\n import { writeUrlState } from '../../core/url/state';\n@@ -15,7 +14,6 @@ export interface ProfileIndicatorRowProps {\n   item: ProfileIndicatorItem;\n   units: Unit[];\n   footnotes?: Footnote[];\n-  isHighlighted?: boolean;\n }\n \n /**\n@@ -30,7 +28,6 @@ export function ProfileIndicatorRow({\n   item,\n   units,\n   footnotes,\n-  isHighlighted = false,\n }: ProfileIndicatorRowProps) {\n   const { indicator, value, year, rankNational, totalNational, series } = item;\n \n@@ -87,10 +84,7 @@ export function ProfileIndicatorRow({\n   };\n \n   return (\n-    <div\n-      className=\"py-3 border-b border-linia last:border-b-0 space-y-2\"\n-      data-highlight={isHighlighted ? 'true' : undefined}\n-    >\n+    <div className=\"py-3 border-b border-linia last:border-b-0 space-y-2\">\n       <div className=\"flex items-start justify-between gap-2 min-h-[44px]\">\n         <button\n           type=\"button\"\n@@ -120,13 +114,7 @@ export function ProfileIndicatorRow({\n             {hasRank && rankText && (\n               <>\n                 {year !== null && <span>•</span>}\n-                {isHighlighted ? (\n-                  <Annotate type=\"highlight\" show={true}>\n-                    <span>{rankText}</span>\n-                  </Annotate>\n-                ) : (\n-                  <span>{rankText}</span>\n-                )}\n+                <span>{rankText}</span>\n               </>\n             )}\n             {trendResult && (",
+      "previous_filename": null
+    },
+    {
+      "filename": "src/view/profile/ProfileSheet.tsx",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 5,
+      "patch": "@@ -2,7 +2,6 @@ import { useEffect } from 'react';\n import type { UnitProfile, ProfileIndicatorItem } from '../../core/profile/profile';\n import type { Unit } from '../../core/units/types';\n import { collectFootnotes } from '../../core/profile/footnotes';\n-import { pickHighlight } from '../../core/profile/highlight';\n import { Footnotes } from './Footnotes';\n import { Sheet } from '../ui/Sheet';\n import { Icon } from '../ui/Icon';\n@@ -73,9 +72,6 @@ export function ProfileBody({\n   // Zbieranie skonsolidowanej listy numerowanych przypisów dla profilu\n   const footnotes = collectFootnotes(profile.indicators, units);\n \n-  // Wyznaczenie zakreślenia dla wskaźnika z najlepszym wynikiem w województwie\n-  const highlightedIndicatorId = pickHighlight(profile.indicators);\n-\n   return (\n     <div className=\"space-y-4\">\n       {/* Nagłówek */}\n@@ -122,7 +118,6 @@ export function ProfileBody({\n                     item={item}\n                     units={units}\n                     footnotes={footnotes}\n-                    isHighlighted={item.indicatorId === highlightedIndicatorId}\n                   />\n                 ))}\n               </div>",
+      "previous_filename": null
+    },
+    {
+      "filename": "tests/e2e/annotation-scroll.spec.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 110,
+      "patch": "@@ -1,110 +0,0 @@\n-import { test, expect } from '@playwright/test';\n-\n-test.describe('Annotation Scroll & Resize (@S14)', () => {\n-  test('@S14 annotation stays attached to text when sheet container scrolls 200px', async ({ page }) => {\n-    await page.setViewportSize({ width: 1440, height: 900 });\n-    await page.goto('/?e2e&u=1217011');\n-\n-    await page.waitForFunction(() => (window as any).__atlas?.ready === true);\n-    await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);\n-\n-    // Znajdź wiersz z data-highlight=\"true\"\n-    const highlightedRow = page.locator('[data-highlight=\"true\"]');\n-    await expect(highlightedRow).toBeVisible();\n-\n-    // Wewnątrz tego wiersza znajduje się zakreślenie .rough-annotation\n-    const annotationSvg = highlightedRow.locator('.rough-annotation');\n-    await expect(annotationSvg).toBeVisible();\n-\n-    // Kontener profilu na desktopie [data-slot=\"side\"]\n-    const scrollContainer = page.locator('[data-slot=\"side\"]');\n-    await expect(scrollContainer).toBeVisible();\n-\n-    // Element tekstu zakreślonego\n-    const textElement = highlightedRow.locator('span').filter({ hasText: 'miejsce' }).first();\n-\n-    const textBoxBefore = await textElement.boundingBox();\n-    const svgBoxBefore = await annotationSvg.boundingBox();\n-\n-    expect(textBoxBefore).not.toBeNull();\n-    expect(svgBoxBefore).not.toBeNull();\n-\n-    // Przewiń kontener o 200 px w dół\n-    await scrollContainer.evaluate((el) => {\n-      el.scrollTop += 200;\n-    });\n-\n-    await page.waitForTimeout(100);\n-\n-    const textBoxAfter = await textElement.boundingBox();\n-    const svgBoxAfter = await annotationSvg.boundingBox();\n-\n-    expect(textBoxAfter).not.toBeNull();\n-    expect(svgBoxAfter).not.toBeNull();\n-\n-    // Przesunięcie pionowe tekstu i zakreślenia po przewinięciu o 200px\n-    const textDeltaY = textBoxBefore!.y - textBoxAfter!.y;\n-    const svgDeltaY = svgBoxBefore!.y - svgBoxAfter!.y;\n-\n-    // Różnica położenia względem tekstu ≤ 2 px\n-    expect(Math.abs(textDeltaY - svgDeltaY)).toBeLessThanOrEqual(2);\n-  });\n-\n-  test('@S14 annotation adjusts when window resizes from 1440 to 390 width', async ({ page }) => {\n-    await page.setViewportSize({ width: 1440, height: 900 });\n-    await page.goto('/?e2e&u=1217011');\n-\n-    await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);\n-\n-    const highlightedRow = page.locator('[data-highlight=\"true\"]');\n-    await expect(highlightedRow).toBeVisible();\n-\n-    // Zmiana szerokości okna z 1440 na 390 px\n-    await page.setViewportSize({ width: 390, height: 844 });\n-    await page.waitForTimeout(300);\n-\n-    const mobileHighlightedRow = page.locator('[data-highlight=\"true\"]');\n-    await expect(mobileHighlightedRow).toBeVisible();\n-    await mobileHighlightedRow.scrollIntoViewIfNeeded();\n-\n-    const annotationPath = mobileHighlightedRow.locator('.rough-annotation path').first();\n-    await expect(annotationPath).toBeVisible();\n-\n-    const textElement = mobileHighlightedRow.locator('span').filter({ hasText: 'miejsce' }).first();\n-    const textBox = await textElement.boundingBox();\n-    const pathBox = await annotationPath.boundingBox();\n-\n-    expect(textBox).not.toBeNull();\n-    expect(pathBox).not.toBeNull();\n-\n-    // Środek zakreślenia (ścieżki SVG) leży w prostokącie tekstu powiększonym o padding (10 px)\n-    const svgCenterX = pathBox!.x + pathBox!.width / 2;\n-    const svgCenterY = pathBox!.y + pathBox!.height / 2;\n-\n-    const padding = 10;\n-    const paddedMinX = textBox!.x - padding;\n-    const paddedMaxX = textBox!.x + textBox!.width + padding;\n-    const paddedMinY = textBox!.y - padding;\n-    const paddedMaxY = textBox!.y + textBox!.height + padding;\n-\n-    expect(svgCenterX).toBeGreaterThanOrEqual(paddedMinX);\n-    expect(svgCenterX).toBeLessThanOrEqual(paddedMaxX);\n-    expect(svgCenterY).toBeGreaterThanOrEqual(paddedMinY);\n-    expect(svgCenterY).toBeLessThanOrEqual(paddedMaxY);\n-  });\n-\n-  test('@S14 no annotation remains in DOM after closing profile sheet', async ({ page }) => {\n-    await page.setViewportSize({ width: 1440, height: 900 });\n-    await page.goto('/?e2e&u=1217011');\n-\n-    await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);\n-    await expect(page.locator('.rough-annotation')).toHaveCount(1);\n-\n-    // Zamknij profil przyciskiem Zamknij\n-    const closeButton = page.locator('button[aria-label=\"Zamknij\"]');\n-    await closeButton.click();\n-\n-    await page.waitForFunction(() => (window as any).__atlas?.profileOpen === false);\n-    await expect(page.locator('.rough-annotation')).toHaveCount(0);\n-  });\n-});",
+      "previous_filename": null
+    },
+    {
+      "filename": "tests/unit/highlight.test.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 158,
+      "patch": "@@ -1,158 +0,0 @@\n-import { describe, it, expect } from 'vitest';\n-import React from 'react';\n-import { renderToString } from 'react-dom/server';\n-import { pickHighlight } from '../../src/core/profile/highlight';\n-import { ProfileBody } from '../../src/view/profile/ProfileSheet';\n-import { AnnotationProvider } from '../../src/view/annotation/AnnotationProvider';\n-import type { ProfileIndicatorItem, UnitProfile } from '../../src/core/profile/profile';\n-import type { Unit } from '../../src/core/units/types';\n-\n-describe('CC7.4c Profile Ranking Highlight Tests', () => {\n-  const sampleUnits: Unit[] = [\n-    {\n-      teryt: '0201000',\n-      bdlId: '1',\n-      name: 'bolesławiecki',\n-      level: 'pow',\n-      parent: '0200000',\n-      bbox: [0, 0, 0, 0],\n-      centroid: [0, 0],\n-    },\n-  ];\n-\n-  const makeItem = (\n-    id: string,\n-    name: string,\n-    rankVoivodeship: number | null,\n-    rankNational: number | null,\n-    neutral = false\n-  ): ProfileIndicatorItem => ({\n-    indicatorId: id,\n-    indicator: {\n-      id,\n-      bdlVarId: 100,\n-      name,\n-      unit: 'zł',\n-      description: 'Opis',\n-      group: 'Gospodarka',\n-      higherIsBetter: neutral ? null : true,\n-      minLevel: 'gmi',\n-    },\n-    year: 2023,\n-    value: 5000,\n-    rankNational,\n-    rankVoivodeship,\n-    totalNational: 380,\n-    totalVoivodeship: 30,\n-    neutral,\n-    series: [],\n-  });\n-\n-  describe('pickHighlight logic', () => {\n-    it('returns null for empty indicator list', () => {\n-      expect(pickHighlight([])).toBeNull();\n-    });\n-\n-    it('returns null when no indicators have rankVoivodeship', () => {\n-      const items = [\n-        makeItem('1', 'Wskaźnik 1', null, null),\n-        makeItem('2', 'Wskaźnik 2', null, 5),\n-      ];\n-      expect(pickHighlight(items)).toBeNull();\n-    });\n-\n-    it('ignores neutral indicators even if they have rankVoivodeship', () => {\n-      const items = [\n-        makeItem('1', 'Neutralny', 1, 1, true),\n-        makeItem('2', 'Zwykły', 3, 10, false),\n-      ];\n-      expect(pickHighlight(items)).toBe('2');\n-    });\n-\n-    it('returns null if all ranked indicators are neutral', () => {\n-      const items = [\n-        makeItem('1', 'Neutralny 1', 1, 1, true),\n-        makeItem('2', 'Neutralny 2', 2, 2, true),\n-      ];\n-      expect(pickHighlight(items)).toBeNull();\n-    });\n-\n-    it('selects indicator with the best (smallest) rankVoivodeship', () => {\n-      const items = [\n-        makeItem('1', 'Wskaźnik 1', 5, 10),\n-        makeItem('2', 'Wskaźnik 2', 1, 50),\n-        makeItem('3', 'Wskaźnik 3', 3, 2),\n-      ];\n-      expect(pickHighlight(items)).toBe('2');\n-    });\n-\n-    it('resolves rankVoivodeship tie by smaller rankNational', () => {\n-      const items = [\n-        makeItem('1', 'Wskaźnik 1', 2, 15),\n-        makeItem('2', 'Wskaźnik 2', 2, 5),\n-        makeItem('3', 'Wskaźnik 3', 2, 20),\n-      ];\n-      expect(pickHighlight(items)).toBe('2');\n-    });\n-\n-    it('resolves full tie (rankVoivodeship and rankNational) by original array order', () => {\n-      const items = [\n-        makeItem('1', 'Wskaźnik 1', 2, 5),\n-        makeItem('2', 'Wskaźnik 2', 2, 5),\n-        makeItem('3', 'Wskaźnik 3', 2, 5),\n-      ];\n-      expect(pickHighlight(items)).toBe('1');\n-    });\n-  });\n-\n-  describe('Profile DOM rendering with highlight', () => {\n-    it('renders exactly one highlight/annotation in profile when valid ranked indicator exists', () => {\n-      const items = [\n-        makeItem('1', 'Wskaźnik 1', 5, 10),\n-        makeItem('2', 'Wskaźnik 2', 1, 5),\n-        makeItem('3', 'Wskaźnik 3', 3, 15),\n-      ];\n-\n-      const profile: UnitProfile = {\n-        teryt: '0201000',\n-        unit: sampleUnits[0],\n-        indicators: items,\n-      };\n-\n-      const html = renderToString(\n-        React.createElement(\n-          AnnotationProvider,\n-          null,\n-          React.createElement(ProfileBody, { profile, units: sampleUnits })\n-        )\n-      );\n-\n-      expect(html).toContain('data-highlight=\"true\"');\n-      const count = (html.match(/data-highlight=\"true\"/g) || []).length;\n-      expect(count).toBe(1);\n-    });\n-\n-    it('renders no highlights in profile when no ranked indicators exist', () => {\n-      const items = [\n-        makeItem('1', 'Neutralny', 1, 1, true),\n-        makeItem('2', 'Brak rankingu', null, null),\n-      ];\n-\n-      const profile: UnitProfile = {\n-        teryt: '0201000',\n-        unit: sampleUnits[0],\n-        indicators: items,\n-      };\n-\n-      const html = renderToString(\n-        React.createElement(\n-          AnnotationProvider,\n-          null,\n-          React.createElement(ProfileBody, { profile, units: sampleUnits })\n-        )\n-      );\n-\n-      expect(html).not.toContain('data-highlight=\"true\"');\n-    });\n-  });\n-});",
+      "previous_filename": null
+    }
+  ],
+  "commits": [
+    {
+      "sha": "996405b84e66dbf74f50a514e9ec17eb797834b7",
+      "author": {
+        "login": "google-labs-jules[bot]"
+      },
+      "committer": {
+        "login": "google-labs-jules[bot]"
+      },
+      "commit": {
+        "author": {
+          "date": "2026-10-23T00:12:30Z"
+        }
+      }
+    },
+    {
+      "sha": "c83b5601cfd404085ffbe334f6595c19fb493432",
+      "author": {
+        "login": "google-labs-jules[bot]"
+      },
+      "committer": {
+        "login": "google-labs-jules[bot]"
+      },
+      "commit": {
+        "author": {
+          "date": "2026-10-24T09:25:25Z"
+        }
+      }
+    }
+  ],
+  "checkRuns": [
+    {
+      "name": "CodeQL",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Vercel Preview Comments",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Analyze (actions)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Analyze (javascript-typescript)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ]
+}

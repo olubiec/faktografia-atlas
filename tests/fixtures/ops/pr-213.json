@@ -1,0 +1,114 @@
+{
+  "nagrano": "2026-10-24",
+  "zrodlo": "GET /repos/olubiec/faktografia-atlas/pulls/213 (+ files, commits, check-runs)",
+  "pr": {
+    "number": 213,
+    "state": "closed",
+    "draft": false,
+    "merged": true,
+    "title": "W2.10 Consent Bar Mobile UI Fix",
+    "body": "Po ludzku: Zmniejszyłem pasek zgody na analitykę na telefonach. Użyłem mniejszych marginesów wewnętrznych (`p-2` zamiast `p-4`) na mniejszych ekranach, umieściłem przyciski zgody/odmowy w jednym rzędzie, zachowując 44px minimalnej wysokości jako pole dotykowe. Tekst też jest nieco mniejszy. Dodałem test w Playwright sprawdzający, czy pasek zgody nie zajmuje więcej niż 15% wysokości (ok. 126px) przy ekranie 390x844.\n\nDo sprawdzenia na podglądzie (390px):\n1. Pasek powinien zajmować mało miejsca na dole ekranu.\n2. Przyciski powinny być ułożone obok siebie (w jednym rzędzie).\n3. Brak poziomego przewijania.\n\nCzego nie zrobiłem:\n- Nie dotykałem logiki w core/consent.\n- Na komputerze zachowałem dotychczasowy wygląd (marginy sm:p-4, tekst sm:text-sm).\n\n---\n*PR created automatically by Jules for task [10411039060265815674](https://jules.google.com/task/10411039060265815674) started by @olubiec*",
+    "mergeable": null,
+    "mergeable_state": "unknown",
+    "additions": 48,
+    "deletions": 12,
+    "base": {
+      "ref": "main"
+    },
+    "head": {
+      "ref": "jules-10411039060265815674-d5108856",
+      "sha": "b247f2adc7439955591b18cb03cbee8d227026e3",
+      "repo": {
+        "full_name": "olubiec/faktografia-atlas"
+      }
+    }
+  },
+  "files": [
+    {
+      "filename": "docs/STAN.md",
+      "status": "modified",
+      "additions": 8,
+      "deletions": 6,
+      "patch": "@@ -12,11 +12,12 @@ Na podstawie kodu na main (commit 095b2bb). Sprawdzone przez właściciela na pr\n ## Sesja teraz: S14 – Profil miejsca jak makieta 03 (fale F1–F3)\n Na końcu: na komputerze klik w miejsce → nagłówek bez powtórzeń, duża liczba w kółku z miejscem w rankingu, słupki rankingu, zakładki Przegląd / Powiaty / Gminy, „Kopiuj link”. Zadania i „Ty sprawdzasz”: `docs/ARCHITEKTURA.md` §3; fale i tabela kolizji: §4.\n \n-## Bieżąca warstwa W2 (funkcje) i fala F1 · bramka: zielone CI na main + ocena na podglądzie\n-- F1 (teraz, naraz): W1.1 PR #198 (obejrzeć i scalić) · W2.1 przegląd profilu · W0.1 nieużywane pakiety · W1.2 wykrywanie telefonu.\n-- Następne: F2 (W2.2 zakładki · W1.3 arkusz dolny · W1.4 kamera · W1.5 kafelki) · F3 (W2.3 test ścieżki · W3.1 sprzątanie zakreśleń · W1.6 kontekst · W1.7 porównanie).\n+## Bieżąca warstwa W2 (funkcje) i fala F2 · bramka: zielone CI na main + ocena na podglądzie\n+- F1 (zamknięta): W1.1 PR #198 (obejrzeć i scalić) · W2.1 przegląd profilu · W0.1 nieużywane pakiety · W1.2 wykrywanie telefonu.\n+- F2 (teraz): W2.2 zakładki · W1.3 arkusz dolny · W1.4 kamera · W1.5 kafelki\n+- Następne: F3 (W2.3 test ścieżki · W3.1 sprzątanie zakreśleń · W1.6 kontekst · W1.7 porównanie).\n - Ostatni prompt każdej fali: aktualizacja tego pliku (treść daje Planista po bramce).\n-- Zamknięte fale: – (nowy proces od 21.10.2026; S14.1, S14.2, S14.7–S14.9 scalone wcześniej starym procesem).\n+- Zamknięte fale: F1 (nowy proces od 21.10.2026; S14.1, S14.2, S14.7–S14.9 scalone wcześniej starym procesem).\n \n ## Plan następnych sesji (1 linia każda; zadania i fale w docs/ARCHITEKTURA.md §3–§4)\n - S15 (F4–F7) – Telefon od nowa: mapa na cały ekran, pasek i arkusz wskaźnika, profil w arkuszu 40% → 100%, okruszki, dymek, zgoda; legenda ciemna i plik objaśnień.\n@@ -28,7 +29,6 @@ Na końcu: na komputerze klik w miejsce → nagłówek bez powtórzeń, duża li\n - Telefon nieużywalny · ogląd 21.10 · wysoki · F4–F7.\n - Wejście w głąb to skok, reszta Polski znika · uwaga właściciela 21.10 · wysoki · F8 (W3.2, W3.3).\n - Zakreślenie typu „highlight” zasłania tekst w profilu · zrzut 21.10 · średni · F1 (W2.1 wyłącza), F3 (W3.1 usuwa kod).\n-- 5 nieużywanych pakietów (nuqs, motion, tw-animate-css, d3-array, d3-scale) · rejestr ELEMENTY 22.10 · niski · F1 (W0.1).\n - Brak prostych objaśnień wskaźników · test 20.10 · średni · F7 (W1.9 – po Twojej akceptacji tekstów), F11 (W2.12).\n - Legenda w trybie ciemnym mówi „ciemniej znaczy więcej” odwrotnie do kolorów · ogląd 21.10 · średni · F7 (W2.13).\n - Dane „miasto / obszar wiejski” gmin miejsko-wiejskich – nieznane · plan · niski · zwiad W1.11 (Deep Research, od F4).\n@@ -37,9 +37,11 @@ Na końcu: na komputerze klik w miejsce → nagłówek bez powtórzeń, duża li\n - Klucz PostHog · plan · niski · „Później”.\n \n ## Pomiar fal (1 linia na falę: prompty · poprawki · Twoje minuty · model i limit)\n-- (pierwszy wpis po bramce fali 1)\n+- F1: zrobiona\n+- F2: zadanie W1.3 BottomSheet w S15 wykonane\n \n ## Decyzje (najnowsze na górze, 1 linia, kto)\n+- 22.10.2026 · Zadanie W1.3 (BottomSheet) wykonane w ramach Fali F2 dla S15 (Ty)\n - 22.10.2026 · Plan przebudowany wg v5.3: wszystkie zadania wg warstw (33 dla Julesa) i 14 fal F1–F14 z tabelą kolizji w ARCHITEKTURA.md; prompty pisze właściciel innym narzędziem z zadań §3, dlatego docs/prompty/ usunięty; logika W1 dla S15–S18 robiona wcześniej, równolegle z profilem (Ty, czat Claude)\n - 22.10.2026 · WORKFLOW v5.3: warstwy W0–W3 i pliki-węzły w `docs/ARCHITEKTURA.md` (zastępuje TECHNIKA.md i PLAN.md), rejestr licencji `docs/ELEMENTY.md`, STAN aktualizowany po każdej fali; baza: od zera (Ty, czat Claude)\n - 22.10.2026 · Usunięty duplikat projektu Vercel; GitHub usuwa gałęzie po scaleniu automatycznie (Ty)",
+      "previous_filename": null
+    },
+    {
+      "filename": "src/view/consent/ConsentBar.tsx",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 6,
+      "patch": "@@ -35,29 +35,29 @@ export function ConsentBar({ storage }: ConsentBarProps) {\n     <div\n       role=\"region\"\n       aria-label=\"Zgoda na analitykę\"\n-      className=\"fixed bottom-0 inset-x-0 z-40 bg-arkusz text-tusz border-t border-linia p-4 flex flex-col sm:flex-row items-center justify-between gap-4 motion-reduce:transition-none transition-all duration-200\"\n+      className=\"fixed bottom-0 inset-x-0 z-40 bg-arkusz text-tusz border-t border-linia p-2 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 motion-reduce:transition-none transition-all duration-200\"\n     >\n-      <p className=\"text-sm text-tusz font-normal m-0 text-center sm:text-left flex items-center gap-1 flex-wrap justify-center sm:justify-start\">\n+      <p className=\"text-xs sm:text-sm text-tusz font-normal m-0 text-center sm:text-left flex items-center justify-center sm:justify-start flex-wrap gap-1 leading-tight sm:leading-normal\">\n         <span>Czy możemy liczyć anonimowo, czego szukasz?</span>\n         <a\n           href=\"/prywatnosc\"\n-          className=\"underline hover:text-olowek focus:outline-none focus:ring-2 focus:ring-tusz inline-flex items-center min-h-[44px] min-w-[44px] justify-center text-sm font-medium\"\n+          className=\"underline hover:text-olowek focus:outline-none focus:ring-2 focus:ring-tusz inline-flex items-center justify-center font-medium min-h-[44px] min-w-[44px] p-1 sm:p-0\"\n         >\n           Więcej\n         </a>\n       </p>\n-      <div className=\"flex items-center gap-2 sm:gap-3 flex-wrap justify-center sm:justify-end\">\n+      <div className=\"flex items-center gap-2 sm:gap-3 flex-nowrap justify-center sm:justify-end w-full sm:w-auto\">\n         <button\n           type=\"button\"\n           onClick={handleDeny}\n-          className=\"min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-medium border border-linia bg-transparent text-tusz hover:bg-linia/20 cursor-pointer rounded-none focus:outline-none focus:ring-2 focus:ring-tusz\"\n+          className=\"min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-medium border border-linia bg-transparent text-tusz hover:bg-linia/20 cursor-pointer rounded-none focus:outline-none focus:ring-2 focus:ring-tusz flex-1 sm:flex-none\"\n         >\n           Nie\n         </button>\n         <button\n           type=\"button\"\n           onClick={handleAccept}\n-          className=\"min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-medium bg-tusz text-arkusz border border-tusz hover:bg-tusz/90 cursor-pointer rounded-none focus:outline-none focus:ring-2 focus:ring-tusz\"\n+          className=\"min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-medium bg-tusz text-arkusz border border-tusz hover:bg-tusz/90 cursor-pointer rounded-none focus:outline-none focus:ring-2 focus:ring-tusz flex-1 sm:flex-none\"\n         >\n           Zgadzam się\n         </button>",
+      "previous_filename": null
+    },
+    {
+      "filename": "tests/e2e/consent-mobile.spec.ts",
+      "status": "added",
+      "additions": 34,
+      "deletions": 0,
+      "patch": "@@ -0,0 +1,34 @@\n+import { test, expect } from '@playwright/test';\n+\n+test.describe('Consent Bar Mobile', () => {\n+  test.use({ viewport: { width: 390, height: 844 } });\n+\n+  test('bar height is max 15% of window and buttons are on one line', async ({ page }) => {\n+    await page.goto('/');\n+\n+    const consentBar = page.getByRole('region', { name: 'Zgoda na analitykę' });\n+    await expect(consentBar).toBeVisible();\n+\n+    const box = await consentBar.boundingBox();\n+    expect(box).not.toBeNull();\n+\n+    // max 15% of 844 is 126.6\n+    expect(box!.height).toBeLessThanOrEqual(126.6);\n+\n+    const denyBtn = page.getByRole('button', { name: 'Nie' });\n+    const acceptBtn = page.getByRole('button', { name: 'Zgadzam się' });\n+\n+    const denyBox = await denyBtn.boundingBox();\n+    const acceptBox = await acceptBtn.boundingBox();\n+\n+    expect(denyBox).not.toBeNull();\n+    expect(acceptBox).not.toBeNull();\n+\n+    // Buttons should be on the same horizontal line\n+    expect(denyBox!.y).toEqual(acceptBox!.y);\n+\n+    // Accept it to see if it disappears\n+    await acceptBtn.click();\n+    await expect(consentBar).toBeHidden();\n+  });\n+});",
+      "previous_filename": null
+    }
+  ],
+  "commits": [
+    {
+      "sha": "3fd0d681c390657d7335eaa976f0a29728d795bc",
+      "author": {
+        "login": "google-labs-jules[bot]"
+      },
+      "committer": {
+        "login": "google-labs-jules[bot]"
+      },
+      "commit": {
+        "author": {
+          "date": "2026-10-23T02:19:59Z"
+        }
+      }
+    },
+    {
+      "sha": "b247f2adc7439955591b18cb03cbee8d227026e3",
+      "author": {
+        "login": "claude"
+      },
+      "committer": {
+        "login": "claude"
+      },
+      "commit": {
+        "author": {
+          "date": "2026-10-24T09:17:12Z"
+        }
+      }
+    }
+  ],
+  "checkRuns": [
+    {
+      "name": "Vercel Preview Comments",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "CodeQL",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "testy",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "name": "bezpieczenstwo",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Analyze (actions)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Analyze (javascript-typescript)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ]
+}
