@@ -12,26 +12,31 @@ Na podstawie kodu na main (commit 095b2bb). Sprawdzone przez właściciela na pr
 ## Sesja teraz: prowadzi automat (S14 → S19)
 Od 24.10.2026 fale prowadzi automat (`docs/AUTOMAT.md`): zakłada issue z zadaniem, uruchamia Julesa etykietą `jules`, sprawdza PR (`scripts/ops/check-pr.mjs`), scala, wycofuje, a na każdym punkcie kontrolnym (K1–K5) aktualizuje blok niżej i wysyła Ci listę „Ty sprawdzasz”. Kolejność i pliki zadań: `scripts/ops/automat-kolejka.json` = `docs/ARCHITEKTURA.md` §3–§4 (test pilnuje zgodności).
 - **Zrobione na main przed automatem:** W1.1 (#198) · W1.3 (#207) · W1.4 (#219) · W1.5 (#209) · W1.6 (#211) · W1.7 (#212) · W1.8 (#214) · W2.10 (#213, Ty obejrzyj na telefonie).
-- **Punkty kontrolne:** K1 S14 profil (F1′–F3′) · K2 S15 telefon (F4–F7) · K3 S16+S17 ruch i „Na tle kraju” (F8–F10) · K4 S18 porównanie (F11) · K5 S19 pobierz i udostępnij (F12–F13) = koniec.
+- **Punkty kontrolne:** K1 S14 profil (po F3) · K2 S15 telefon (po F5) · K3 S16+S17 ruch i „Na tle kraju” (po F6) · K4 S18 porównanie (po F5) · K5 S19 pobierz i udostępnij (po F7) = koniec. Fale F1–F7 (v4, do 8 zadań naraz).
 - **Poza automatem:** W1.9 (teksty objaśnień – Twoja akceptacja), W1.11 (Deep Research), W3.5 i „Później”.
 
 ### Postęp (pisze automat – nie edytuj ręcznie)
 <!-- automat:start -->
-Automat jeszcze nie ruszył. Pierwsza fala: F1′ (W0.1, W1.2, W2.1).
+Automat jeszcze nie ruszył. Pierwsza fala: F1 (W2.1, W1.2, W1.12, W1.13, W3.3, W0.1, W2.13, W1.10).
 <!-- automat:end -->
 
 ## Plan (1 linia na sesję; zadania i fale w docs/ARCHITEKTURA.md §3–§4)
-- S14 (F1′–F3′) – profil na komputerze; logika kart do pobrania.
+- S14 (F1–F3) – profil na komputerze; logika kart do pobrania.
 - S15 (F4–F7) – telefon od nowa; okno „Pobierz i udostępnij”, karta profilu; legenda ciemna.
 - S16 + S17 (F8–F10) – płynna kamera, kafelki, przelewanie kolorów, pomiar; „Na tle kraju”; początek porównania; udostępnianie z panelu.
 - S18 (F11) – porównanie: tabela, dwa obrysy, dwie mapki, telefon.
-- S19 (F12–F13) – udostępnianie porównania i test całej ścieżki.
+- S19 (F6–F7) – udostępnianie porównania i test całej ścieżki.
+
+## Przypomnienia (poza automatem – pełna tabela: ARCHITEKTURA §4)
+- **Teraz:** Deep Research W1.11 (`docs/research/W1.11-prompt.md`) · podgląd paska zgód #213 na telefonie.
+- **Przed F5:** akceptacja tekstów objaśnień (W1.9).
+- **Na każdym K1–K5:** Twoja ocena na telefonie. **Po K3:** decyzja o W3.5. **Po K5:** przegląd „Później”.
 
 ## Znane problemy / dług (co · skąd · priorytet · w której fali)
 - Telefon nieużywalny · ogląd 21.10 · wysoki · F4–F7.
 - `main` bez ochrony (brak reguł) · przegląd 24.10 · wysoki · przed pilotem automatu (Ty: ruleset).
 - Wejście w głąb to skok, reszta Polski znika · uwaga właściciela 21.10 · wysoki · F8 (W3.2, W3.3).
-- Zakreślenie typu „highlight” zasłania tekst w profilu · zrzut 21.10 · średni · F1′ (W2.1 wyłącza), F3′ (W3.1 usuwa kod).
+- Zakreślenie typu „highlight” zasłania tekst w profilu · zrzut 21.10 · średni · F1 (W2.1 wyłącza), F2 (W3.1 usuwa kod).
 - Brak prostych objaśnień wskaźników · test 20.10 · średni · W1.9 po Twojej akceptacji tekstów (poza automatem), F9 (W2.12).
 - Legenda w trybie ciemnym mówi „ciemniej znaczy więcej” odwrotnie do kolorów · ogląd 21.10 · średni · F7 (W2.13).
 - Dane „miasto / obszar wiejski” gmin miejsko-wiejskich – nieznane · plan · niski · zwiad W1.11 (Deep Research, poza automatem).

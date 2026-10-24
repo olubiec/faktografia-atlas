@@ -10,11 +10,10 @@ const issue = (number: number, id: string, state = 'open', labels: string[] = ['
 const ids = (tasks: { id: string }[]) => tasks.map((t) => t.id);
 
 describe('readyToStart – fale liczone na bieżąco', () => {
-  it('na starcie: F1′ (W0.1, W1.2, W2.1) i niezależne zadania F2′ (W1.12), najwyżej 4', () => {
+  it('na starcie: cała fala F1 (8 zadań bez zależności), bez zadań czekających na W2.1', () => {
     const st = taskStatuses(queue, [], emptyMemory());
     const ready = ids(readyToStart(queue, st));
-    expect(ready.slice(0, 3)).toEqual(['W0.1', 'W1.2', 'W2.1']);
-    expect(ready).toHaveLength(4);
+    expect([...ready].sort()).toEqual(['W0.1', 'W1.10', 'W1.12', 'W1.13', 'W1.2', 'W2.1', 'W2.13', 'W3.3']);
     expect(ready).not.toContain('W2.2'); // czeka na W2.1
   });
 
@@ -25,7 +24,7 @@ describe('readyToStart – fale liczone na bieżąco', () => {
     const ready = ids(readyToStart(queue, st));
     expect(ready).toContain('W2.2');
     expect(ready).not.toContain('W0.1');
-    expect(ready.length).toBeLessThanOrEqual(3);
+    expect(ready.length).toBeLessThanOrEqual(queue.settings.maxParallel - 1);
   });
 
   it('nie startuje dwóch zadań z tym samym plikiem naraz', () => {
