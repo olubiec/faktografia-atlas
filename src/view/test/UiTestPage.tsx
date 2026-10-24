@@ -1,4 +1,4 @@
-import React from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -7,12 +7,13 @@ import { Sheet } from "@/view/ui/Sheet"
 import { Icon } from "@/view/ui/Icon"
 import { Menu, Check, Search } from "iconoir-react"
 import { BottomSheet } from "@/view/ui/BottomSheet"
-import { useState } from "react"
+import { LazyShareDialog } from "@/view/share/LazyShareDialog"
 
 export function UiTestPage() {
-  const [theme, setTheme] = React.useState<"light" | "dark">("light")
+  const [theme, setTheme] = useState<"light" | "dark">("light")
   const [sheetOpen, setSheetOpen] = useState(false)
   const [noBgSheetOpen, setNoBgSheetOpen] = useState(false)
+  const [shareDialogOpen, setShareDialogOpen] = useState(false)
   const [counter, setCounter] = useState(0)
 
   const toggleTheme = () => {
@@ -25,16 +26,71 @@ export function UiTestPage() {
     }
   }
 
+  const shareData = {
+    map: {
+      indicator: { name: "Gęstość zaludnienia", unit: "os./km²", year: 2025 },
+      year: 2025,
+      unitName: "Województwo małopolskie",
+    },
+    ranking: {
+      indicator: { name: "Gęstość zaludnienia", unit: "os./km²" },
+      year: 2025,
+      items: [
+        { teryt: "14", name: "mazowieckie", value: 153.2, rank: 1 },
+        { teryt: "12", name: "małopolskie", value: 225.8, rank: 2, selected: true },
+        { teryt: "24", name: "śląskie", value: 360.1, rank: 3 },
+      ],
+    },
+    profile: {
+      unitName: "Województwo małopolskie",
+      teryt: "12",
+      indicatorName: "Gęstość zaludnienia",
+      unit: "os./km²",
+      year: 2025,
+      bigNumber: "225,8",
+      rankText: "2. miejsce w Polsce",
+      indicators: [
+        { name: "Gęstość zaludnienia", value: "225,8", unit: "os./km²", rankText: "2. miejsce" },
+        { name: "Stopa bezrobocia", value: "4,5", unit: "%", rankText: "5. miejsce" },
+      ],
+    },
+    compare: {
+      indicatorName: "Gęstość zaludnienia",
+      year: 2025,
+      unitA: { name: "małopolskie", teryt: "12" },
+      unitB: { name: "mazowieckie", teryt: "14" },
+      rows: [
+        {
+          indicatorName: "Gęstość zaludnienia",
+          valA: "225,8 os./km²",
+          valB: "153,2 os./km²",
+          diffText: "wyżej o 72,6 os./km²",
+        },
+      ],
+    },
+    csvContent: "\uFEFFTERYT;Nazwa;Wartość;Rok;Źródło\r\n12;małopolskie;225,8;2025;GUS, Bank Danych Lokalnych (CC BY 4.0)\r\n",
+    csvFileName: "faktografia-gestosc-zaludnienia-2025.csv",
+  }
+
   return (
-    <main className="min-h-screen p-8 bg-kalka text-tusz font-sans transition-colors">
-      <div className="max-w-4xl mx-auto flex flex-col gap-8">
-        <header className="flex justify-between items-center border-b border-linia pb-4">
-          <h1 className="text-2xl font-bold">Strona testowa komponentów UI (CC2.1)</h1>
+    <main className="min-h-screen p-4 sm:p-8 bg-kalka text-tusz font-sans transition-colors overflow-x-hidden max-w-full">
+      <div className="max-w-4xl mx-auto flex flex-col gap-8 max-w-full">
+        <header className="flex justify-between items-center border-b border-linia pb-4 flex-wrap gap-2">
+          <h1 className="text-xl sm:text-2xl font-bold">Strona testowa komponentów UI (CC2.1)</h1>
           <Button variant="secondary" onClick={toggleTheme} id="theme-toggle">
             Tryb: {theme === "light" ? "Jasny" : "Ciemny"}
           </Button>
         </header>
 
+        {/* Sekcja ShareDialog */}
+        <section className="flex flex-col gap-4 relative z-10" aria-labelledby="share-section-title">
+          <h2 id="share-section-title" className="text-xl font-semibold">Pobierz i udostępnij (W2.18 / S19)</h2>
+          <div className="flex gap-4">
+            <Button variant="primary" id="open-share-dialog" onClick={() => setShareDialogOpen(true)}>
+              Otwórz okno Pobierz i udostępnij
+            </Button>
+          </div>
+        </section>
 
         {/* Sekcja BottomSheet */}
         <section className="flex flex-col gap-4 relative z-10" aria-labelledby="bottom-sheet-section-title">
@@ -60,7 +116,7 @@ export function UiTestPage() {
           </div>
         </section>
 
-{/* Sekcja Button */}
+        {/* Sekcja Button */}
         <section className="flex flex-col gap-4" aria-labelledby="btn-section-title">
           <h2 id="btn-section-title" className="text-xl font-semibold">Przyciski (Button)</h2>
           <div className="flex flex-wrap gap-4 items-center">
@@ -136,7 +192,14 @@ export function UiTestPage() {
         <h3 className="text-lg font-bold">Arkusz bez tła</h3>
         <p className="mt-4 text-olowek">Możesz klikać w mapę/elementy z tyłu.</p>
       </BottomSheet>
-</main>
+
+      <LazyShareDialog
+        isOpen={shareDialogOpen}
+        onClose={() => setShareDialogOpen(false)}
+        defaultKind="map"
+        data={shareData}
+      />
+    </main>
   )
 }
 
