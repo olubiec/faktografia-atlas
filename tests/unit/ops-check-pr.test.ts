@@ -160,6 +160,11 @@ describe('evaluatePr – testy i pliki', () => {
     expect(codes(evaluatePr(e2e, t, settings, NOW))).toEqual(['R16']);
   });
 
+  it('R17 nie łapie przeczenia („skrypt nie zatrzymuje robota”), łapie zwrot o sobie', () => {
+    expect(evaluatePr({ ...base, pr: { ...base.pr, body: 'Po ludzku: skrypt nie zatrzymuje robota.' } }, W14, settings, NOW).verdict).not.toBe('ESKALUJ');
+    expect(evaluatePr({ ...base, pr: { ...base.pr, body: 'Po ludzku: zatrzymałem się i czekam na decyzję.' } }, W14, settings, NOW).verdict).toBe('ESKALUJ');
+  });
+
   it('odcisk: te same dane → ten sam; nowy SHA → inny', () => {
     const a = evaluatePr(base, W14, settings, NOW).fingerprint;
     expect(evaluatePr(live(219), W14, settings, NOW).fingerprint).toBe(a);
