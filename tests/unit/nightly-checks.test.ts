@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { checkControlNumbers, substantiveChange } from '../../scripts/data/nightly-checks.mjs';
+import { findMissingExplanations } from '../../scripts/data/nightly-checks.mjs';
 
 const wojUnits = Array.from({ length: 16 }, (_, i) => ({ teryt: String(i * 2 + 2).padStart(2, '0'), level: 'woj' }));
 const gmiUnits = Array.from({ length: 2479 }, (_, i) => ({ teryt: `g${i}`, level: 'gmi' }));
@@ -45,5 +46,30 @@ describe('checkControlNumbers', () => {
     const p = population(2_340_000);
     delete (p.values as Record<string, number[]>)[wojUnits[0].teryt];
     expect(checkControlNumbers(p, units).join(' ')).toMatch(/15 z 16/);
+  });
+});
+
+describe('findMissingExplanations', () => {
+  const indicators = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+
+  it('zwraca wszystkie wskaźniki przy braku pliku / null / undefined', () => {
+    expect(findMissingExplanations(indicators, null)).toEqual(['a', 'b', 'c']);
+    expect(findMissingExplanations(indicators, undefined)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('zwraca pustą listę gdy wszystkie wskaźniki mają objaśnienie', () => {
+    const explanations = {
+      version: 1,
+      items: [{ indicatorId: 'a' }, { indicatorId: 'b' }, { indicatorId: 'c' }],
+    };
+    expect(findMissingExplanations(indicators, explanations)).toEqual([]);
+  });
+
+  it('zwraca tylko brakujące wskaźniki w przypadku częściowych objaśnień', () => {
+    const explanations = {
+      version: 1,
+      items: [{ indicatorId: 'a' }],
+    };
+    expect(findMissingExplanations(indicators, explanations)).toEqual(['b', 'c']);
   });
 });
