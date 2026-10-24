@@ -7,7 +7,7 @@ import type { RankedResult } from '@/core/ranking/ranking';
 import { topBottom } from '@/core/ranking/ranking';
 import type { UnitIndex } from '@/core/units/types';
 import { unitLabel } from '@/core/units/label';
-import { buildLegend } from '@/core/legend/legend';
+import { buildLegend, LEGEND_DIRECTION_LABEL } from '@/core/legend/legend';
 import { LEVEL_LABELS } from '@/core/map/main-view';
 import { UNIT_COUNTS } from '@/core/units/counts';
 import { IndicatorPicker } from '@/view/controls/IndicatorPicker';
@@ -91,7 +91,10 @@ export function IndicatorPanel({ view, choropleth, ranking, index, selectedTeryt
 
         {choropleth && (
           <div className="flex flex-col gap-1.5">
-            <span className="text-sm font-semibold">Legenda</span>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-sm font-semibold">Legenda</span>
+              <span className="text-xs text-olowek font-medium">{LEGEND_DIRECTION_LABEL}</span>
+            </div>
             <Legend items={legend} className="border-0 p-0 max-w-none" />
             <p className="text-xs text-olowek">
               {choropleth.scheme === 'diverging'
