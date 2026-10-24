@@ -26,13 +26,13 @@ Kodu z cudzych repozytoriów nie kopiujemy (poziom E tylko z licencją i atrybuc
 | posthog-js | pakiet | https://www.npmjs.com/package/posthog-js | 1.438.12 | Apache-2.0 AND MIT | statystyki po zgodzie (region EU) | nie | 2026-10-16 |
 | @fontsource/atkinson-hyperlegible-next, -mono | zasób (czcionka) | https://fontsource.org | 5.3.0 | OFL-1.1 | kroje strony | licencja w paczce | 2026-10-16 |
 
-## Pakiety nieużywane – do usunięcia (zadanie W0.1, fala F1)
-| Element | Wersja | Licencja | Powód |
+## Pakiety nieużywane – usunięte (zadanie W0.1, fala F1, 2026-10-24)
+| Element | Wersja | Licencja | Powód / Data usunięcia |
 |---|---|---|---|
-| nuqs | 2.10.2 | MIT | stan adresu robi `src/core/url/state.ts` |
-| motion | 14.3.0 | MIT | brak importów; animacje mapy idą przez deck.gl/MapLibre |
-| tw-animate-css | 1.4.0 | MIT | brak importów |
-| d3-array, d3-scale | 3.2.4 / 4.0.2 | ISC | brak importów (Plot ma własne) |
+| ~~nuqs~~ | 2.10.2 | MIT | stan adresu robi `src/core/url/state.ts` (usunięty 2026-10-24) |
+| ~~motion~~ | 14.3.0 | MIT | brak importów; animacje mapy idą przez deck.gl/MapLibre (usunięty 2026-10-24) |
+| ~~tw-animate-css~~ | 1.4.0 | MIT | brak importów (usunięty 2026-10-24) |
+| ~~d3-array, d3-scale~~ | 3.2.4 / 4.0.2 | ISC | brak importów (Plot ma własne) (usunięty 2026-10-24) |
 
 ## Narzędzia (tylko budowanie i testy, nie trafiają na stronę)
 | Element | Typ | Wersja | Licencja | Do czego |

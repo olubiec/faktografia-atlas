@@ -8,14 +8,14 @@ test('package.json zawiera wszystkie wymagane zależności (CC1.2)', () => {
   const deps = { ...packageJson.dependencies, ...packageJson.devDependencies };
 
   const requiredDeps = [
-    'nuqs', 'maplibre-gl', 'react-map-gl', '@deck.gl/core', '@deck.gl/layers',
+    'maplibre-gl', 'react-map-gl', '@deck.gl/core', '@deck.gl/layers',
     '@deck.gl/mapbox', '@deck.gl/extensions', 'topojson-client', 'cmdk',
-    'minisearch', 'motion', '@observablehq/plot', 'd3-scale', 'd3-array',
+    'minisearch', '@observablehq/plot',
     'react-modal-sheet', 'zod', 'p-throttle', 'posthog-js', 'rough-notation',
     'roughjs', 'iconoir-react', 'tweakpane', '@axe-core/playwright',
     'mapshaper', 'topojson-server', '@types/topojson-client',
-    '@types/d3-scale', '@types/d3-array', '@types/geojson',
-    'radix-ui', 'class-variance-authority', 'clsx', 'tailwind-merge', 'tw-animate-css'
+    '@types/geojson',
+    'radix-ui', 'class-variance-authority', 'clsx', 'tailwind-merge'
   ];
 
   requiredDeps.forEach(dep => {
