@@ -37,6 +37,34 @@ export function checkControlNumbers(population, units) {
   return errors;
 }
 
+/**
+ * Zwraca listę ID wskaźników z indicators, które nie mają objaśnienia w explanations.
+ * Brak pliku objaśnień (null/undefined) → zwraca wszystkie ID.
+ */
+export function findMissingExplanations(indicators, explanations) {
+  if (!Array.isArray(indicators)) return [];
+  const allIds = indicators.map((ind) => (typeof ind === 'string' ? ind : ind?.id)).filter(Boolean);
+  if (!explanations) return allIds;
+
+  const explainedSet = new Set();
+  if (Array.isArray(explanations.items)) {
+    for (const item of explanations.items) {
+      if (item && item.indicatorId) explainedSet.add(item.indicatorId);
+    }
+  } else if (Array.isArray(explanations)) {
+    for (const item of explanations) {
+      const id = typeof item === 'string' ? item : (item?.indicatorId || item?.id);
+      if (id) explainedSet.add(id);
+    }
+  } else if (typeof explanations === 'object') {
+    for (const key of Object.keys(explanations)) {
+      explainedSet.add(key);
+    }
+  }
+
+  return allIds.filter((id) => !explainedSet.has(id));
+}
+
 function readJson(file) {
   return JSON.parse(readFileSync(file, 'utf8'));
 }
@@ -53,6 +81,26 @@ function main() {
       process.exit(1);
     }
     console.log('Liczby kontrolne: OK.');
+
+    let indicators = [];
+    let explanations = null;
+    try {
+      indicators = readJson(path.join(root, 'config/indicators.json'));
+    } catch {
+      // brak pliku
+    }
+    try {
+      explanations = readJson(path.join(root, 'public/data/explanations.json'));
+    } catch {
+      // brak pliku objaśnień
+    }
+
+    const missing = findMissingExplanations(indicators, explanations);
+    if (missing.length > 0) {
+      console.log(`Wskaźniki bez objaśnienia (${missing.length}/${indicators.length}): ${missing.join(', ')}`);
+    } else {
+      console.log('Wszystkie wskaźniki mają objaśnienia.');
+    }
     return;
   }
 
