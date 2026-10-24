@@ -58,6 +58,26 @@ describe('URL State Module (CC4.R)', () => {
       expect(state2.i).toBe('avg-wage');
       expect(state2.y).toBeUndefined();
     });
+
+    it('odczytuje poprawną parę TERYT z parametru c (W1.8)', () => {
+      const state = readUrlState('?c=02,04', index);
+      expect(state.c).toBe('02,04');
+    });
+
+    it('ignoruje jeden TERYT w parametrze c (W1.8)', () => {
+      const state = readUrlState('?c=02', index);
+      expect(state.c).toBeUndefined();
+    });
+
+    it('ignoruje trzy TERYT-y w parametrze c (W1.8)', () => {
+      const state = readUrlState('?c=02,04,06', index);
+      expect(state.c).toBeUndefined();
+    });
+
+    it('ignoruje nieistniejący TERYT w parametrze c (W1.8)', () => {
+      const state = readUrlState('?c=02,9999999', index);
+      expect(state.c).toBeUndefined();
+    });
   });
 
   describe('writeUrlState', () => {
@@ -127,6 +147,38 @@ describe('URL State Module (CC4.R)', () => {
       } as any;
 
       writeUrlState({ i: undefined, y: undefined });
+
+      expect(replaceStateSpy).toHaveBeenCalledWith(
+        null,
+        '',
+        'http://localhost/?u=02&e2e=1'
+      );
+    });
+
+    it('zapisuje parametr c do URL (W1.8)', () => {
+      const replaceStateSpy = vi.fn<(data: any, unused: string, url?: string | URL | null) => void>();
+      global.window = {
+        location: new URL('http://localhost/?u=02&e2e=1'),
+        history: { replaceState: replaceStateSpy },
+      } as any;
+
+      writeUrlState({ c: '02,04' });
+
+      expect(replaceStateSpy).toHaveBeenCalledWith(
+        null,
+        '',
+        'http://localhost/?u=02&e2e=1&c=02%2C04'
+      );
+    });
+
+    it('usuwa parametr c z URL gdy przekazane null (W1.8)', () => {
+      const replaceStateSpy = vi.fn<(data: any, unused: string, url?: string | URL | null) => void>();
+      global.window = {
+        location: new URL('http://localhost/?u=02&c=02,04&e2e=1'),
+        history: { replaceState: replaceStateSpy },
+      } as any;
+
+      writeUrlState({ c: null });
 
       expect(replaceStateSpy).toHaveBeenCalledWith(
         null,
