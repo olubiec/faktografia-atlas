@@ -1,6 +1,8 @@
 import { classColorToken, type ClassificationScheme } from '../map/classes';
 import { formatValue } from '../format/number';
 
+export const LEGEND_DIRECTION_LABEL = 'mniej → więcej';
+
 export interface LegendItem {
   token: string;
   from: number | null;
