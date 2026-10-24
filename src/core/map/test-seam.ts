@@ -1,4 +1,5 @@
 import type { UnitLevel } from '../units/types';
+import { getRevealState } from '@/view/map/hooks/useChoropleth';
 
 export type ChoroplethSeamState = {
   indicatorId: string;
@@ -6,6 +7,11 @@ export type ChoroplethSeamState = {
   level: UnitLevel;
   classes: number;
 } | null;
+
+export type RevealSeamState = {
+  running: boolean;
+  progress: number;
+};
 
 export type AtlasState = {
   ready: boolean;
@@ -19,6 +25,7 @@ export type AtlasState = {
   theme: 'light' | 'dark';
   choropleth: ChoroplethSeamState;
   profileOpen: boolean;
+  reveal?: RevealSeamState;
 };
 
 export type WindowWithAtlas = {
@@ -58,6 +65,7 @@ export function installAtlasSeam(
         theme: state.theme,
         choropleth: state.choropleth ? { ...state.choropleth } : null,
         profileOpen: state.profileOpen,
+        reveal: typeof getRevealState === 'function' ? { ...getRevealState() } : { running: false, progress: 1 },
       });
     },
     set(_value: AtlasState) {
