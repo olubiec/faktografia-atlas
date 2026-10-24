@@ -8,20 +8,17 @@ test.describe('Annotation Scroll & Resize (@S14)', () => {
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
-    // Znajdź wiersz z data-highlight="true"
-    const highlightedRow = page.locator('[data-highlight="true"]');
-    await expect(highlightedRow).toBeVisible();
-
-    // Wewnątrz tego wiersza znajduje się zakreślenie .rough-annotation
-    const annotationSvg = highlightedRow.locator('.rough-annotation');
+    // Znajdź zakreślenie .rough-annotation w przeglądzie profilu
+    const annotationSvg = page.locator('.rough-annotation');
     await expect(annotationSvg).toBeVisible();
 
     // Kontener profilu na desktopie [data-slot="side"]
     const scrollContainer = page.locator('[data-slot="side"]');
     await expect(scrollContainer).toBeVisible();
 
-    // Element tekstu zakreślonego
-    const textElement = highlightedRow.locator('span').filter({ hasText: 'miejsce' }).first();
+    // Element tekstu zakreślonego (duża liczba)
+    const textElement = page.locator('span.text-3xl');
+    await expect(textElement).toBeVisible();
 
     const textBoxBefore = await textElement.boundingBox();
     const svgBoxBefore = await annotationSvg.boundingBox();
@@ -56,30 +53,27 @@ test.describe('Annotation Scroll & Resize (@S14)', () => {
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
-    const highlightedRow = page.locator('[data-highlight="true"]');
-    await expect(highlightedRow).toBeVisible();
+    const annotationSvg = page.locator('.rough-annotation');
+    await expect(annotationSvg).toBeVisible();
 
     // Zmiana szerokości okna z 1440 na 390 px
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(500);
 
-    const mobileHighlightedRow = page.locator('[data-highlight="true"]');
-    await expect(mobileHighlightedRow).toBeVisible();
-    await mobileHighlightedRow.scrollIntoViewIfNeeded();
+    const mobileAnnotationSvg = page.locator('.rough-annotation');
+    await mobileAnnotationSvg.scrollIntoViewIfNeeded();
+    await expect(mobileAnnotationSvg).toBeVisible();
 
-    const annotationPath = mobileHighlightedRow.locator('.rough-annotation path').first();
-    await expect(annotationPath).toBeVisible();
-
-    const textElement = mobileHighlightedRow.locator('span').filter({ hasText: 'miejsce' }).first();
+    const textElement = page.locator('span.text-3xl');
     const textBox = await textElement.boundingBox();
-    const pathBox = await annotationPath.boundingBox();
+    const svgBox = await mobileAnnotationSvg.boundingBox();
 
     expect(textBox).not.toBeNull();
-    expect(pathBox).not.toBeNull();
+    expect(svgBox).not.toBeNull();
 
-    // Środek zakreślenia (ścieżki SVG) leży w prostokącie tekstu powiększonym o padding (10 px)
-    const svgCenterX = pathBox!.x + pathBox!.width / 2;
-    const svgCenterY = pathBox!.y + pathBox!.height / 2;
+    // Środek zakreślenia (SVG) leży w prostokącie tekstu powiększonym o padding (10 px)
+    const svgCenterX = svgBox!.x + svgBox!.width / 2;
+    const svgCenterY = svgBox!.y + svgBox!.height / 2;
 
     const padding = 10;
     const paddedMinX = textBox!.x - padding;

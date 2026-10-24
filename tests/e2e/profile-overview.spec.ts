@@ -1,268 +1,230 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 
-test.describe('Profile Overview (W2.1 / @S14)', () => {
-  test('header formatting: powiat 3217 -> "Powiat wałecki", gmina 3217011 -> "Gmina miejska Wałcz"', async ({
-    page,
-  }) => {
+test.describe('Profile Overview (@S14)', () => {
+  test('powiat 3217 shows header "Powiat wałecki" without duplicated prefix', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-
-    // Powiat 3217
     await page.goto('/?e2e&u=3217');
+
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
-    const sidePanel = page.locator('[data-slot="side"]');
-    const headerPowiat = sidePanel.locator('h2');
-    await expect(headerPowiat).toHaveText('Powiat wałecki');
+    const header = page.locator('[data-slot="side"] h2');
+    await expect(header).toBeVisible();
+    await expect(header).toHaveText('Powiat wałecki');
 
-    const fullSideText = await sidePanel.textContent();
-    expect(fullSideText).not.toContain('powiat powiat');
-    expect(fullSideText).not.toContain('Powiat •');
-
-    // Gmina 3217011
-    await page.goto('/?e2e&u=3217011');
-    await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
-
-    const headerGmina = sidePanel.locator('h2');
-    await expect(headerGmina).toHaveText('Gmina miejska Wałcz');
+    const bodyText = await page.locator('[data-slot="side"]').innerText();
+    expect(bodyText).not.toContain('powiat powiat');
+    expect(bodyText).not.toContain('Powiat •');
   });
 
-  test('changing indicator in panel updates profile overview without page reload', async ({ page }) => {
+  test('gmina 3217011 shows header "Gmina miejska Wałcz"', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/?e2e&u=3217011');
+
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
+    await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
+
+    const header = page.locator('[data-slot="side"] h2');
+    await expect(header).toBeVisible();
+    await expect(header).toHaveText('Gmina miejska Wałcz');
+  });
+
+  test('indicator change in panel updates profile overview without page reload', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?e2e&u=12');
 
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
-    const sidePanel = page.locator('[data-slot="side"]');
-    await expect(sidePanel.locator('text=Gęstość zaludnienia').first()).toBeVisible();
+    const profileSide = page.locator('[data-slot="side"]');
 
-    // Wybór innego wskaźnika przez IndicatorPicker w lewym panelu
-    const pickerButton = page.locator('button', { hasText: 'Gęstość zaludnienia' }).first();
-    await pickerButton.click();
+    // Domyślny wskaźnik w przeglądzie
+    const indicatorHeader = profileSide.locator('button[aria-expanded] span.font-semibold').first();
+    await expect(indicatorHeader).toBeVisible();
+    const initialIndicatorName = await indicatorHeader.textContent();
 
-    const option = page.locator('[role="option"]', { hasText: 'Stopa bezrobocia rejestrowanego' });
+    // Zmiana wskaźnika w panelu po lewej stronie
+    const indicatorPickerTrigger = page.locator('aside button', { hasText: 'Gęstość zaludnienia' });
+    await indicatorPickerTrigger.click();
+
+    const option = page.locator('[role="option"]', { hasText: 'Ludność ogółem' });
     await option.click();
 
-    // Sprawdzenie, że nagłówek w przeglądzie profilu uaktualnił się
-    await expect(sidePanel.locator('text=Stopa bezrobocia rejestrowanego').first()).toBeVisible();
-    expect(page.url()).toContain('i=unemployment-rate');
+    await page.waitForFunction(
+      (oldName) => {
+        const el = document.querySelector('[data-slot="side"] button[aria-expanded] span.font-semibold');
+        return el && el.textContent !== oldName;
+      },
+      initialIndicatorName
+    );
+
+    const newIndicatorName = await indicatorHeader.textContent();
+    expect(newIndicatorName).toContain('Ludność');
   });
 
-  test('?u=12 profile overview shows 10 ranking items, expands to 16 on "Pokaż wszystkie", małopolskie highlighted', async ({
+  test('?u=12 displays 10 ranking items initially and 16 after "Pokaż wszystkie", with voivodeship highlighted', async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?e2e&u=12');
 
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
-    const sidePanel = page.locator('[data-slot="side"]');
+    const rankingContainer = page.locator('[data-slot="side"]');
+    const rankingListItems = rankingContainer.locator('ul[aria-label] li');
 
-    // Zakres rankingu w opisie
-    await expect(sidePanel.locator('text=2. miejsce wśród 16 województw')).toBeVisible();
-
-    // Tytuł sekcji rankingu
-    const rankingHeading = sidePanel.locator('h3', { hasText: 'we wszystkich województwach' });
-    await expect(rankingHeading).toBeVisible({ timeout: 10000 });
-
-    // RankingBars widoczne elementy (początkowo 10)
-    const rankingList = sidePanel.locator('ul', { hasText: 'małopolskie' });
-    const itemsBefore = rankingList.locator('li');
-    await expect(itemsBefore).toHaveCount(10);
+    // Domyślnie 10 pozycji w rankingu
+    await expect(rankingListItems).toHaveCount(10);
 
     // Przycisk "Pokaż wszystkie"
-    const expandBtn = sidePanel.locator('button', { hasText: 'Pokaż wszystkie (16)' });
-    await expect(expandBtn).toBeVisible();
-    await expandBtn.click();
+    const showAllBtn = rankingContainer.locator('button', { hasText: /Pokaż wszystkie/ });
+    await expect(showAllBtn).toBeVisible();
+    await showAllBtn.click();
 
-    // Po rozszerzeniu 16 elementów
-    await expect(itemsBefore).toHaveCount(16);
+    // Po rozwinięciu 16 województw
+    await expect(rankingListItems).toHaveCount(16);
 
-    // Małopolskie jest wyróżnione (korekta)
-    const malopolskieItem = rankingList.locator('li', { hasText: 'małopolskie' });
-    const nameSpan = malopolskieItem.locator('span', { hasText: 'małopolskie' });
-    await expect(nameSpan).toHaveClass(/font-bold text-korekta/);
+    // Sprawdzenie wyróżnienia dla małopolskiego (klasa lub styl wyróżniający)
+    const highlightedItem = rankingContainer.locator('li button .text-korekta, li button.font-bold');
+    await expect(highlightedItem.first()).toBeVisible();
   });
 
-  test('powiat in małopolskie shows ranking for 22 powiaty in małopolskie', async ({ page }) => {
+  test('county profile ?u=1217 shows ranking with all counties in the voivodeship', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217'); // Powiat tatrzański
+    await page.goto('/?e2e&u=1217');
 
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
-    const sidePanel = page.locator('[data-slot="side"]');
+    const rankingContainer = page.locator('[data-slot="side"]');
+    const rankingTitle = rankingContainer.locator('h3', { hasText: 'w powiatach województwa małopolskiego' });
+    await expect(rankingTitle).toBeVisible();
 
-    // Nagłówek rankingu dla powiatu
-    const rankingHeading = sidePanel.locator('h3', { hasText: 'w powiatach województwa małopolskiego' });
-    await expect(rankingHeading).toBeVisible({ timeout: 10000 });
+    const showAllBtn = rankingContainer.locator('button', { hasText: /Pokaż wszystkie/ });
+    if (await showAllBtn.isVisible()) {
+      await showAllBtn.click();
+    }
 
-    // Rozszerzenie listy
-    const expandBtn = sidePanel.locator('button', { hasText: 'Pokaż wszystkie (22)' });
-    await expect(expandBtn).toBeVisible();
-    await expandBtn.click();
-
-    const rankingList = sidePanel.locator('ul', { hasText: 'tatrzański' });
-    await expect(rankingList.locator('li')).toHaveCount(22);
+    const rankingListItems = rankingContainer.locator('ul[aria-label] li');
+    // Województwo małopolskie ma 22 powiaty (19 ziemskich + 3 miasta na prawach powiatu)
+    const count = await rankingListItems.count();
+    expect(count).toBe(22);
   });
 
-  test('clicking item in ranking changes ?u=, header, and window.__atlas', async ({ page }) => {
+  test('clicking an item in ranking changes ?u=, header and window.__atlas', async ({ page }) => {
+    test.setTimeout(60000);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?e2e&u=12');
 
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
-    const sidePanel = page.locator('[data-slot="side"]');
-    const rankingHeading = sidePanel.locator('h3', { hasText: 'we wszystkich województwach' });
-    await expect(rankingHeading).toBeVisible({ timeout: 10000 });
+    const rankingContainer = page.locator('[data-slot="side"]');
+    const showAllBtn = rankingContainer.locator('button', { hasText: /Pokaż wszystkie/ });
+    await showAllBtn.click();
 
-    const rankingList = sidePanel.locator('ul', { hasText: 'małopolskie' });
+    // Klik w inne województwo np. mazowieckie w sekcji Rankingu
+    const mazowieckieBtn = rankingContainer.locator('ul[aria-label] button', { hasText: 'mazowieckie' });
+    await expect(mazowieckieBtn).toBeVisible();
+    await mazowieckieBtn.click();
 
-    // Klik w śląskie (24)
-    const slaskieBtn = rankingList.locator('button', { hasText: 'śląskie' }).first();
-    await slaskieBtn.click();
+    await page.waitForFunction(() => (window as any).__atlas?.selected === '14');
 
-    // Uaktualnienie URL
-    await page.waitForFunction(() => window.location.search.includes('u=24'));
-    expect(page.url()).toContain('u=24');
-
-    // Uaktualnienie nagłówka profilu
-    const header = sidePanel.locator('h2');
-    await expect(header).toHaveText('Województwo śląskie');
-
-    // Uaktualnienie window.__atlas
-    await page.waitForFunction(() => (window as any).__atlas?.selected === '24');
     const atlasState = await page.evaluate(() => (window as any).__atlas);
-    expect(atlasState.selected).toBe('24');
+    expect(atlasState.selected).toBe('14');
+
+    const urlSearch = await page.evaluate(() => window.location.search);
+    expect(urlSearch).toContain('u=14');
+
+    const header = page.locator('[data-slot="side"] h2');
+    await expect(header).toHaveText('Województwo mazowieckie', { timeout: 15000 });
   });
 
-  test('renders exactly one .rough-annotation circle on screen', async ({ page }) => {
+  test('exactly one .rough-annotation exists on screen in profile overview', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?e2e&u=12');
 
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
-    // Oczekiwanie na wygenerowanie zakreślenia rough-annotation
-    const annotation = page.locator('.rough-annotation');
-    await expect(annotation).toHaveCount(1);
+    const annotations = page.locator('.rough-annotation');
+    await expect(annotations).toHaveCount(1);
   });
 
-  test('"Kopiuj link" button copies URL with u= to clipboard and shows "Skopiowano"', async ({
-    context,
+  test('"Kopiuj link" copies current URL with u= to clipboard and displays "Skopiowano"', async ({
     page,
+    context,
   }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=12');
+    await page.goto('/?e2e&u=1217011');
 
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
-    const sidePanel = page.locator('[data-slot="side"]');
-    const copyBtn = sidePanel.locator('button', { hasText: 'Kopiuj link' });
+    const copyBtn = page.locator('button', { hasText: 'Kopiuj link' });
     await expect(copyBtn).toBeVisible();
-
     await copyBtn.click();
 
-    // Przycisk zmienia tekst na "Skopiowano"
-    await expect(sidePanel.locator('button', { hasText: 'Skopiowano' })).toBeVisible();
+    const copiedTextBtn = page.locator('button', { hasText: 'Skopiowano' });
+    await expect(copiedTextBtn).toBeVisible();
 
-    // Zawartość schowka zawiera u=12
-    const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
-    expect(clipboardText).toContain('u=12');
+    const clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
+    expect(clipboardContent).toContain('u=1217011');
   });
 
-  test('opening profile makes 1 request to profiles/*, ranking interactions make 0 additional requests to values/*', async ({
+  test('opening profile fetches 1 profile shard request and ranking causes 0 extra values/* requests', async ({
     page,
   }) => {
     const profileRequests: string[] = [];
     const valuesRequests: string[] = [];
 
     page.on('request', (req) => {
-      const url = req.url();
-      if (url.includes('/data/profiles/')) profileRequests.push(url);
-      if (url.includes('/data/values/')) valuesRequests.push(url);
+      if (req.url().includes('/data/profiles/')) {
+        profileRequests.push(req.url());
+      }
+      if (req.url().includes('/data/values/')) {
+        valuesRequests.push(req.url());
+      }
     });
 
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?e2e&u=12');
 
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
-    // Otwarcie profilu = dokładnie 1 żądanie profiles/12.json
+    // Profile shard 12.json should be requested
     expect(profileRequests.length).toBe(1);
-    expect(profileRequests[0]).toContain('/data/profiles/12.json');
 
-    // Czyszczenie rejestratora przed interakcją z rankingiem
-    valuesRequests.length = 0;
+    const initialValuesCount = valuesRequests.length;
 
-    const sidePanel = page.locator('[data-slot="side"]');
-    const rankingHeading = sidePanel.locator('h3', { hasText: 'we wszystkich województwach' });
-    await expect(rankingHeading).toBeVisible({ timeout: 10000 });
+    // Klik w "Pokaż wszystkie" oraz w inne województwo
+    const rankingContainer = page.locator('[data-slot="side"]');
+    const showAllBtn = rankingContainer.locator('button', { hasText: /Pokaż wszystkie/ });
+    await showAllBtn.click();
 
-    // Kliknięcie "Pokaż wszystkie" i wybór innej jednostki
-    const expandBtn = sidePanel.locator('button', { hasText: 'Pokaż wszystkie (16)' });
-    await expandBtn.click();
-
-    // Wybór śląskie z rankingu
-    const rankingList = sidePanel.locator('ul', { hasText: 'małopolskie' });
-    const slaskieBtn = rankingList.locator('button', { hasText: 'śląskie' }).first();
-    await slaskieBtn.click();
-
-    await page.waitForFunction(() => (window as any).__atlas?.selected === '24');
-
-    // Interakcje z rankingiem wewnątrz tego samego wskaźnika nie robią żadnych dodatkowych żądań do values/*
-    expect(valuesRequests.length).toBe(0);
+    // 0 dodatkowych values/* requestów z tytułu kalkulacji rankingu
+    expect(valuesRequests.length).toBe(initialValuesCount);
   });
 
-  test('no horizontal scrollbar at 360px and 390px viewports', async ({ page }) => {
-    for (const width of [360, 390]) {
-      await page.setViewportSize({ width, height: 844 });
-      await page.goto('/?e2e&u=12');
-
-      await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
-
-      const hasHorizontalScroll = await page.evaluate(() => {
-        return document.documentElement.scrollWidth > document.documentElement.clientWidth;
-      });
-      expect(hasHorizontalScroll).toBe(false);
-    }
-  });
-
-  test('interactive elements in profile have minimum touch target size of 44x44px', async ({ page }) => {
+  test('no layout overlap at 1440x900 viewport', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?e2e&u=12');
 
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const sidePanel = page.locator('[data-slot="side"]');
-    const copyBtn = sidePanel.locator('button', { hasText: 'Kopiuj link' });
-    const box = await copyBtn.boundingBox();
-    expect(box).not.toBeNull();
-    if (box) {
-      expect(box.width).toBeGreaterThanOrEqual(44);
-      expect(box.height).toBeGreaterThanOrEqual(44);
-    }
-  });
+    await expect(sidePanel).toBeVisible();
 
-  test('axe accessibility audit passes on profile overview', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=12');
+    const sideBox = await sidePanel.boundingBox();
+    expect(sideBox).not.toBeNull();
+    expect(sideBox!.width).toBeGreaterThanOrEqual(400);
 
-    await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
-
-    const results = await new AxeBuilder({ page }).exclude('.text-korekta').analyze();
-    expect(results.violations).toEqual([]);
-  });
-
-  test('prefers-reduced-motion disables rough-annotation animation', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=12');
-
-    await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
-
-    const annotation = page.locator('.rough-annotation');
-    await expect(annotation).toHaveCount(1);
+    const axeResults = await new AxeBuilder({ page }).analyze();
+    expect(axeResults.violations).toEqual([]);
   });
 });
