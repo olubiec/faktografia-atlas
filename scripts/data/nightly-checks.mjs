@@ -15,6 +15,18 @@ export function substantiveChange(a, b) {
 }
 
 /**
+ * Zwraca listę ID wskaźników z config/indicators.json, które nie mają wpisu w explanations.json.
+ * Gdy explanations jest null/undefined (np. brak pliku) – zwraca wszystkie ID.
+ */
+export function findMissingExplanations(indicators, explanations) {
+  if (!Array.isArray(indicators)) return [];
+  const expMap = explanations && typeof explanations === 'object' ? explanations : {};
+  return indicators
+    .map((ind) => (typeof ind === 'string' ? ind : ind?.id))
+    .filter((id) => Boolean(id) && !Object.prototype.hasOwnProperty.call(expMap, id));
+}
+
+/**
  * Liczby kontrolne: 16 województw, ≥ 2470 gmin, suma ludności województw w ostatnim roku 36–39 mln.
  * Zwraca listę błędów (pusta = w porządku).
  */
@@ -53,6 +65,20 @@ function main() {
       process.exit(1);
     }
     console.log('Liczby kontrolne: OK.');
+
+    const indicators = readJson(path.join(root, 'config/indicators.json'));
+    let explanations = null;
+    try {
+      explanations = readJson(path.join(root, 'public/data/explanations.json'));
+    } catch {
+      // brak pliku objaśnień = trakowany jako brak wpisów dla wszystkich
+    }
+    const missing = findMissingExplanations(indicators, explanations);
+    if (missing.length > 0) {
+      console.log(`Wskaźniki bez objaśnienia (${missing.length}): ${missing.join(', ')}`);
+    } else {
+      console.log('Wszystkie wskaźniki mają objaśnienia.');
+    }
     return;
   }
 

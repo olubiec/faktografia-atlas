@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { checkControlNumbers, substantiveChange } from '../../scripts/data/nightly-checks.mjs';
+import { checkControlNumbers, findMissingExplanations, substantiveChange } from '../../scripts/data/nightly-checks.mjs';
 
 const wojUnits = Array.from({ length: 16 }, (_, i) => ({ teryt: String(i * 2 + 2).padStart(2, '0'), level: 'woj' }));
 const gmiUnits = Array.from({ length: 2479 }, (_, i) => ({ teryt: `g${i}`, level: 'gmi' }));
@@ -23,6 +23,31 @@ describe('substantiveChange', () => {
     expect(substantiveChange(a, { years: [1], values: { a: [2] } })).toBe(true);
     expect(substantiveChange(a, { years: [1, 2], values: { a: [1, 1] } })).toBe(true);
     expect(substantiveChange(a, { years: [1], values: { a: [1], b: [3] } })).toBe(true);
+  });
+});
+
+describe('findMissingExplanations', () => {
+  const indicators = [{ id: 'population' }, { id: 'density' }, { id: 'avg-wage' }];
+
+  it('zwraca wszystkie ID, gdy plik objaśnień nie istnieje (null / undefined)', () => {
+    expect(findMissingExplanations(indicators, null)).toEqual(['population', 'density', 'avg-wage']);
+    expect(findMissingExplanations(indicators, undefined)).toEqual(['population', 'density', 'avg-wage']);
+  });
+
+  it('zwraca pustą tablicę, gdy wszystkie wskaźniki mają objaśnienia', () => {
+    const explanations = {
+      population: { short: 'Opis ludności' },
+      density: { short: 'Opis gęstości' },
+      'avg-wage': { short: 'Opis płacy' },
+    };
+    expect(findMissingExplanations(indicators, explanations)).toEqual([]);
+  });
+
+  it('zwraca listę brakujących wskaźników, gdy plik objaśnień jest częściowy', () => {
+    const explanations = {
+      population: { short: 'Opis ludności' },
+    };
+    expect(findMissingExplanations(indicators, explanations)).toEqual(['density', 'avg-wage']);
   });
 });
 
