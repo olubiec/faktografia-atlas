@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import type { UnitProfile } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import type { MainView } from '../map/hooks/useMainView';
@@ -8,6 +8,11 @@ import { formatValue } from '../../core/format/number';
 import { unitLabel } from '../../core/units/label';
 import { Annotate } from '../annotation/Annotate';
 import { RankingBars } from '../ranking/RankingBars';
+import { TrendChart } from './TrendChart';
+import { loadExplanations, type Explanation } from '../../core/explain/explanations';
+import { writeUrlState } from '../../core/url/state';
+import { Icon } from '../ui/Icon';
+import { NavArrowDown, NavArrowUp } from 'iconoir-react';
 
 export interface ProfileOverviewProps {
   profile: UnitProfile;
@@ -19,7 +24,7 @@ export interface ProfileOverviewProps {
 /**
  * Sekcja przeglądu profilu jednostki dla bieżącego wskaźnika.
  * Wyświetla nazwę wskaźnika, rok, dużą liczbę w czerwonym kółku (rough-notation),
- * opisaną pozycję w rankingu oraz ranking ze słupkami (RankingBars).
+ * opisaną pozycję w rankingu, zwijane detale (wykres lat, objaśnienie) oraz ranking ze słupkami (RankingBars).
  */
 export function ProfileOverview({
   profile,
@@ -27,6 +32,21 @@ export function ProfileOverview({
   view,
   onSelectUnit,
 }: ProfileOverviewProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [explanation, setExplanation] = useState<Explanation | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    loadExplanations().then((map) => {
+      if (active) {
+        setExplanation(map.get(view.indicator.id) ?? null);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [view.indicator.id]);
+
   const currentItem = useMemo(() => {
     return (
       profile.indicators.find((item) => item.indicatorId === view.indicator.id) ??
@@ -96,14 +116,38 @@ export function ProfileOverview({
     });
   }, [ranking, units]);
 
+  const handleShowOnMap = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    writeUrlState({ i: view.indicator.id });
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
   return (
     <div className="space-y-4 pb-4 border-b border-linia">
-      {/* Nazwa wskaźnika i rok */}
+      <style>{`span.text-korekta { color: #B8141C !important; }`}</style>
+      {/* Nazwa wskaźnika, przycisk rozwijania i rok */}
       <div className="space-y-1">
-        <div className="flex items-center justify-between text-xs text-olowek font-mono">
-          <span className="font-semibold">{view.indicator.name}</span>
-          {view.year !== null && <span>{view.year}</span>}
-        </div>
+        <button
+          type="button"
+          aria-expanded={isExpanded}
+          onClick={() => setIsExpanded((prev) => !prev)}
+          className="w-full text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-tusz p-1 -m-1 hover:bg-linia/10 transition-colors"
+        >
+          <div className="flex items-center justify-between text-xs text-olowek font-mono">
+            <span className="font-semibold text-tusz min-w-0 flex-1 truncate pr-2">
+              {view.indicator.name}
+            </span>
+            <div className="flex items-center gap-2 shrink-0">
+              {view.year !== null && <span>{view.year}</span>}
+              <Icon
+                icon={isExpanded ? NavArrowUp : NavArrowDown}
+                size={18}
+                aria-hidden={true}
+                className="text-olowek"
+              />
+            </div>
+          </div>
+        </button>
 
         {/* Duża liczba z zakreśleniem kółkiem i pozycja w rankingu */}
         <div className="flex flex-col items-start gap-2 pt-1">
@@ -120,6 +164,52 @@ export function ProfileOverview({
           )}
         </div>
       </div>
+
+      {/* Rozwinięcie ze szczegółami wskaźnika (wykres lat, objaśnienia, przycisk Pokaż na mapie) */}
+      {isExpanded && (
+        <div className="pt-2 space-y-3">
+          {currentItem?.series && currentItem.series.length >= 2 && (
+            <TrendChart
+              series={currentItem.series}
+              unit={view.indicator.unit}
+              label={view.indicator.name}
+            />
+          )}
+
+          {explanation && (
+            <div className="bg-arkusz border border-linia p-3 space-y-2 text-xs">
+              <div>
+                <span className="font-semibold text-tusz block mb-0.5">Co to jest</span>
+                <p className="text-olowek leading-relaxed">{explanation.short}</p>
+              </div>
+              <div>
+                <span className="font-semibold text-tusz block mb-0.5">Jak czytać</span>
+                <p className="text-olowek leading-relaxed">{explanation.howToRead}</p>
+              </div>
+              <div>
+                <a
+                  href={explanation.definitionUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-tusz underline hover:text-olowek focus:outline-none focus:ring-2 focus:ring-tusz font-medium"
+                >
+                  Definicja GUS
+                </a>
+              </div>
+            </div>
+          )}
+
+          <div className="pt-1">
+            <button
+              type="button"
+              onClick={handleShowOnMap}
+              className="min-h-[44px] min-w-[44px] px-4 py-2 bg-arkusz border border-linia hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz text-xs font-semibold text-tusz cursor-pointer transition-colors"
+            >
+              Pokaż na mapie
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Tabela rankingowa */}
       <div className="pt-2">
