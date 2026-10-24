@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Sheet } from 'react-modal-sheet';
 import type { UnitProfile } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
+import type { MainView } from '../map/hooks/useMainView';
 import { ProfileBody } from './ProfileSheet';
 import { cn } from '../../lib/utils';
 
@@ -13,6 +14,8 @@ export interface ProfileSheetMobileProps {
   initialSnap?: number;
   snapPoints?: number[];
   className?: string;
+  view?: MainView;
+  selectUnit?: (teryt: string) => void;
 }
 
 /**
@@ -28,6 +31,8 @@ export function ProfileSheetMobile({
   initialSnap = 2,
   snapPoints = [0, 0.18, 0.5, 1],
   className,
+  view,
+  selectUnit,
 }: ProfileSheetMobileProps) {
   useEffect(() => {
     if (!isOpen) return;
@@ -64,7 +69,13 @@ export function ProfileSheetMobile({
           <div className="w-12 h-1 bg-olowek/40 rounded-none" />
         </Sheet.Header>
         <Sheet.Content unstyled className="p-4 overflow-y-auto">
-          <ProfileBody profile={profile} units={units} onClose={onClose} />
+          <ProfileBody
+            profile={profile}
+            units={units}
+            onClose={onClose}
+            view={view}
+            selectUnit={selectUnit}
+          />
         </Sheet.Content>
       </Sheet.Container>
       <Sheet.Backdrop unstyled className="bg-tusz/20" style={{ opacity: 1 }} aria-label="Zamknij arkusz" onClick={onClose} />

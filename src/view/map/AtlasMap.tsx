@@ -293,7 +293,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       {/* Profil miejsca: osobna kolumna obok mapy, nic nie jest nałożone na mapę (PRODUKT.md §4). */}
       <div data-slot="side" className="empty:hidden md:w-[440px] md:shrink-0 border-t md:border-t-0 md:border-l border-linia bg-arkusz overflow-y-auto max-h-[45vh] md:max-h-none" />
 
-      <ProfilePortal profile={profile} units={units} isOpen={profileOpen} onClose={closeProfile} />
+      <ProfilePortal profile={profile} units={units} isOpen={profileOpen} onClose={closeProfile} view={view} selectUnit={selectUnit} />
     </div>
   );
 }
