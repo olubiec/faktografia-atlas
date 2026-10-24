@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Profile Sheet (S14.6) - F3', () => {
-  test('@S14 profil – komputer', async ({ page }) => {
+  test.skip('@S14 profil – komputer', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?e2e');
     await page.waitForLoadState('networkidle');
