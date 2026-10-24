@@ -28,7 +28,8 @@ Automat jeszcze nie ruszył. Pierwsza fala: F1 (W2.1, W1.2, W1.12, W1.13, W3.3, 
 - S19 (F6–F7) – udostępnianie porównania i test całej ścieżki.
 
 ## Przypomnienia (poza automatem – pełna tabela: ARCHITEKTURA §4)
-- **Teraz:** Deep Research W1.11 (`docs/research/W1.11-prompt.md`) · podgląd paska zgód #213 na telefonie.
+- **Teraz:** podgląd paska zgód #213 na telefonie. (Deep Research W1.11 zrobiony i zweryfikowany: `docs/research/W1.11-wynik.md`.)
+- **Po K5:** sesja S20 – miasto i wieś gmin miejsko-wiejskich (14 wskaźników; bez dochodów i wydatków).
 - **Przed F5:** akceptacja tekstów objaśnień (W1.9).
 - **Na każdym K1–K5:** Twoja ocena na telefonie. **Po K3:** decyzja o W3.5. **Po K5:** przegląd „Później”.
 
@@ -39,7 +40,7 @@ Automat jeszcze nie ruszył. Pierwsza fala: F1 (W2.1, W1.2, W1.12, W1.13, W3.3, 
 - Zakreślenie typu „highlight” zasłania tekst w profilu · zrzut 21.10 · średni · F1 (W2.1 wyłącza), F2 (W3.1 usuwa kod).
 - Brak prostych objaśnień wskaźników · test 20.10 · średni · W1.9 po Twojej akceptacji tekstów (poza automatem), F9 (W2.12).
 - Legenda w trybie ciemnym mówi „ciemniej znaczy więcej” odwrotnie do kolorów · ogląd 21.10 · średni · F7 (W2.13).
-- Dane „miasto / obszar wiejski” gmin miejsko-wiejskich – nieznane · plan · niski · zwiad W1.11 (Deep Research, poza automatem).
+- Miasto / obszar wiejski gmin m-w: dane są w BDL dla 14 z 16 wskaźników gminnych; w dochodach i wydatkach BDL daje fałszywe zera · W1.11 · średni · S20 po K5.
 - Szybkość nie mierzona na telefonie · plan · średni · F10 (W3.6).
 - „Co działa” niesprawdzone przez właściciela na produkcji · proces · wysoki · przy każdej fali z widocznymi zmianami.
 - Klucz PostHog · plan · niski · „Później”.
@@ -49,6 +50,7 @@ Automat jeszcze nie ruszył. Pierwsza fala: F1 (W2.1, W1.2, W1.12, W1.13, W3.3, 
 - Przed automatem: logika W1.4–W1.8 i W2.10 weszły poza kolejnością fal; W2.3 wszedł za wcześnie i został wycofany (#218).
 
 ## Decyzje (najnowsze na górze, 1 linia, kto)
+- 24.10.2026 · W1.11 zrobione: raport Deep Research zweryfikowany na nagraniach BDL – podział miasto/wieś **istnieje** (kody 4 i 5) dla 14 z 16 wskaźników gminnych; w dochodach/wydatkach to fałszywe zera; robimy w sesji S20 po K5 (Ty, czat Claude)
 - 24.10.2026 · **Pełny automat** prowadzi fale do końca (S14–S19): Jules przez etykietę `jules`, scalanie po `check-pr` i zielonym CI, Twoja ocena na punktach kontrolnych K1–K5 nie blokuje (poprawki jako nowe zadania); zmienia zasadę WORKFLOW „ręczne wklejanie” i bramkę „ocena przed falą” (Ty, czat Claude)
 - 24.10.2026 · Posłaniec = zadanie cykliczne co godzinę 7–23 na tanim modelu, decyzje podejmuje skrypt `scripts/ops/automat.mjs`; Naprawiacz raz dziennie (Ty, czat Claude)
 - 24.10.2026 · `STAN.md` aktualizuje automat tylko na punktach kontrolnych (blok „Postęp”), nie po każdej fali (Ty, czat Claude)

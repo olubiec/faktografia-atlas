@@ -138,7 +138,7 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Gotowe, gdy:** testy: plik brak / pełny / częściowy → poprawna lista; brak wpisów nie jest błędem (robot nie staje).
 - **Ty sprawdzasz:** ✅.
 
-#### W1.11 – Zwiad: dane „miasto / obszar wiejski” gmin miejsko-wiejskich · poza Julesem (dowolnie od F4)
+#### W1.11 – Zwiad: dane „miasto / obszar wiejski” gmin miejsko-wiejskich · zrobione 24.10.2026 (wynik: `docs/research/W1.11-wynik.md`)
 - **Kto:** Ty + Gemini Deep Research (`TRYB: RESEARCH`, rodzaj [C]) → `TRYB: WERYFIKACJA` w Claude.
 - **Pytanie:** czy BDL podaje dane dla części miejskiej i wiejskiej gmin miejsko-wiejskich (TERYT z końcówką 4 i 5) i dla których z 20 wskaźników.
 - **Wynik:** 1 linia w „Decyzjach” w STAN.md + ewentualne nowe zadanie w §3 (W1/W2) dodane przez Planistę.
@@ -399,12 +399,13 @@ Zrobione wcześniej (poza kolejnością): W1.1, W1.3–W1.8, W2.10.
 ### Poza falami – kiedy do czego wracamy (nie zapomnieć)
 | Co | Kto | Kiedy | Co z tego wychodzi |
 |---|---|---|---|
-| **W1.11 zwiad „miasto / obszar wiejski”** (Deep Research → weryfikacja) | Ty w Gemini + Claude | **od razu, równolegle z F1** (prompt: `docs/research/W1.11-prompt.md`) | decyzja w STAN.md; ewentualne nowe zadanie W1/W2 po K3 |
+| ~~W1.11 zwiad „miasto / obszar wiejski”~~ | zrobione 24.10 | wynik: `docs/research/W1.11-wynik.md` | **S20** po K5: miasto i wieś osobno dla 14 wskaźników (bez dochodów i wydatków – tam w BDL jest zero) |
 | **W1.9 teksty objaśnień wskaźników** | Ty akceptujesz teksty, potem Jules | przed F5 (W2.12 działa też bez tekstów, ale z nimi jest pełna) | plik objaśnień + bloki „Na tle kraju” z treścią |
 | **Podgląd paska zgód z #213 na telefonie** | Ty | przy pierwszym wolnym podglądzie | scalony lub poprawka |
 | **Ocena na telefonie** | Ty | na każdym punkcie kontrolnym (K1–K5) | poprawki idą jako nowe zadania |
 | **W3.5 scena wejścia „kreślenie”** | Planista rozpisze | po K3, tylko jeśli ruch W3.2/W3.3 jest płynny | zadanie w nowej fali albo zostaje w „Później” |
 | **Reszta „Później”** (SEO podstron gmin, dwie pełne mapy, tryb ciemny mapy, klucz PostHog, wersja angielska…) | Planista | po K5 – wspólny przegląd i wybór kolejnej sesji | nowy plan fal |
+| **S20 – plan zadań** (miasto/wieś gmin m-w) | Planista + Ty (`TRYB: DECYZJA` o wyglądzie) | po K5, przed pierwszym zadaniem sprawdzić progi PRODUKT §7 i zakres lat bezrobocia robotem `bdl-record.yml` | nowe zadania W1/W2 w §3 |
 | **Naprawiacz** (mocniejszy model raz dziennie) | Ty tworzysz | po F2, jeśli pojawią się zadania `wymaga-naprawy` | prompt w `docs/AUTOMAT.md` §6 |
 
 ---
@@ -473,3 +474,23 @@ Pliki danych bez wcięć. Progi pobierania (ile plików w jakiej sytuacji): `doc
 
 ## 7. Czego nie robimy (nigdy)
 Konta użytkowników · wołanie API GUS z przeglądarki · liczby wpisane ręcznie albo przez AI · śledzenie osób (IP, fingerprint) · Google Maps jako mapa główna · pobieranie całego BDL · generator serii slajdów pod konta Faktografii w tym repo (osobne, prywatne repo; pojedyncze karty dla użytkowników – tak, S19).
+
+
+### 4a. Kto czym szuka i sprawdza (narzędzia – żeby planować research i podzespoły)
+| Do czego | Narzędzie | Ograniczenia |
+|---|---|---|
+| Szeroki research (bazy, pakiety, zasoby, wzorce, licencje) | Gemini Deep Research (`TRYB: RESEARCH`, workflow §8.18) | raport to wsparcie; **zawsze** weryfikacja (§8.19) |
+| Weryfikacja raportu | Claude (czat/sesja repo): liczby sprawdza na nagraniach w `tests/fixtures`, linki przez WebSearch | strony GUS (bdl.stat.gov.pl) i część stron spoza listy nie otwierają się z sesji; oficjalne PDF z api.stat.gov.pl – tak |
+| Pytania do prawdziwego API GUS | robot w GitHub Actions (`bdl-record.yml`, `fetch-data.yml`; klucz w Secrets) | z sesji Claude API GUS nie jest dostępne; wynik wraca jako PR z nagraniami |
+| Pakiet/usługa (poziomy B–D workflow §3b) | `TRYB: WYBÓR` (Gem Research); sprawdzenie nazwy w rejestrze npm | wpis w `docs/ELEMENTY.md` w tym samym PR |
+| Kod, testy, PR | Jules (etykieta `jules`), kontrola `scripts/ops/check-pr.mjs` | tylko pliki z listy zadania |
+| Ocena wyglądu | Ty na podglądzie Vercel (telefon); Gemini Argon na zrzutach | WebGL nie jest sprawdzane pikselami |
+
+**Kolejka researchu i podzespołów (kto, kiedy):**
+| # | Temat | Tryb | Kiedy |
+|---|---|---|---|
+| R1 | Miasto/wieś gmin m-w | zrobione (wynik wyżej) | – |
+| R2 | Blady podkład mapy przy dużym zbliżeniu (OpenFreeMap) | `TRYB: WYBÓR` + licencja | po K3, jeśli ruch jest płynny |
+| R3 | Podstrony gmin pod wyszukiwarki (SEO) | `TRYB: RESEARCH` [C] + `TRYB: DECYZJA` | po K5 |
+| R4 | Dwie pełne mapy obok siebie (dwa wskaźniki/lata) | `TRYB: DECYZJA` (koszt wydajności na telefonie) | po K5 |
+| R5 | Tryb ciemny mapy, kreskowanie „brak danych” | `TRYB: WYBÓR`/projekt | po K5 |
