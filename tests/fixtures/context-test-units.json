@@ -1,0 +1,9 @@
+[
+  { "teryt": "12", "level": "woj", "parent": null },
+  { "teryt": "14", "level": "woj", "parent": null },
+  { "teryt": "1201000", "level": "pow", "parent": "12" },
+  { "teryt": "1202000", "level": "pow", "parent": "12" },
+  { "teryt": "1203000", "level": "pow", "parent": "12" },
+  { "teryt": "1401000", "level": "pow", "parent": "14" },
+  { "teryt": "1402000", "level": "pow", "parent": "14" }
+]

@@ -6,9 +6,14 @@ import { SearchField } from "@/view/ui/SearchField"
 import { Sheet } from "@/view/ui/Sheet"
 import { Icon } from "@/view/ui/Icon"
 import { Menu, Check, Search } from "iconoir-react"
+import { BottomSheet } from "@/view/ui/BottomSheet"
+import { useState } from "react"
 
 export function UiTestPage() {
   const [theme, setTheme] = React.useState<"light" | "dark">("light")
+  const [sheetOpen, setSheetOpen] = useState(false)
+  const [noBgSheetOpen, setNoBgSheetOpen] = useState(false)
+  const [counter, setCounter] = useState(0)
 
   const toggleTheme = () => {
     const nextTheme = theme === "light" ? "dark" : "light"
@@ -30,7 +35,32 @@ export function UiTestPage() {
           </Button>
         </header>
 
-        {/* Sekcja Button */}
+
+        {/* Sekcja BottomSheet */}
+        <section className="flex flex-col gap-4 relative z-10" aria-labelledby="bottom-sheet-section-title">
+          <h2 id="bottom-sheet-section-title" className="text-xl font-semibold">BottomSheet (Dolny arkusz)</h2>
+          <div className="flex gap-4">
+            <Button variant="primary" onClick={() => setSheetOpen(true)}>
+              Otwórz dolny arkusz
+            </Button>
+            <Button variant="secondary" onClick={() => setNoBgSheetOpen(true)}>
+              Otwórz arkusz bez tła
+            </Button>
+          </div>
+
+          <div className="mt-4 p-4 border border-linia bg-arkusz relative z-10">
+            <p>Kliknij ten przycisk, by sprawdzić działanie trybu bez tła:</p>
+            <button
+              id="bg-click-button"
+              className="mt-2 px-4 py-2 bg-tusz text-kalka cursor-pointer pointer-events-auto"
+              onClick={() => setCounter(c => c + 1)}
+            >
+              Kliknięto w tło: <span id="bg-click-counter">{counter}</span>
+            </button>
+          </div>
+        </section>
+
+{/* Sekcja Button */}
         <section className="flex flex-col gap-4" aria-labelledby="btn-section-title">
           <h2 id="btn-section-title" className="text-xl font-semibold">Przyciski (Button)</h2>
           <div className="flex flex-wrap gap-4 items-center">
@@ -82,7 +112,31 @@ export function UiTestPage() {
           </div>
         </section>
       </div>
-    </main>
+
+      <BottomSheet
+        isOpen={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        title="Testowy arkusz dolny"
+        snapPoints={[1, 0.4, 0]}
+        initialSnap={1}
+      >
+        <h3 className="text-lg font-bold">Witaj w arkuszu</h3>
+        <p className="mt-4 text-olowek">Złap uchwyt by przesunąć.</p>
+        <p className="mt-2">Ten arkusz ma tło, kliknięcie poza zamknie go.</p>
+      </BottomSheet>
+
+      <BottomSheet
+        isOpen={noBgSheetOpen}
+        onClose={() => setNoBgSheetOpen(false)}
+        title="Arkusz bez tła"
+        snapPoints={[1, 0.4, 0]}
+        initialSnap={1}
+        noBackdrop={true}
+      >
+        <h3 className="text-lg font-bold">Arkusz bez tła</h3>
+        <p className="mt-4 text-olowek">Możesz klikać w mapę/elementy z tyłu.</p>
+      </BottomSheet>
+</main>
   )
 }
 

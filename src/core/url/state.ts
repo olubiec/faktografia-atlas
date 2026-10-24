@@ -45,6 +45,21 @@ export function readUrlState(search: string, index?: UnitIndex): UrlState {
     }
   }
 
+  const cParam = params.get('c');
+  if (cParam) {
+    const parts = cParam.split(',');
+    if (parts.length === 2) {
+      const [c1, c2] = parts;
+      if (index) {
+        if (getUnit(index, c1) && getUnit(index, c2)) {
+          result.c = cParam;
+        }
+      } else {
+        result.c = cParam;
+      }
+    }
+  }
+
   const lParam = params.get('l');
   if (lParam === 'woj' || lParam === 'pow' || lParam === 'gmi') {
     result.l = lParam;
@@ -81,6 +96,14 @@ export function writeUrlState(state: UrlState): void {
       url.searchParams.set('y', String(state.y));
     } else {
       url.searchParams.delete('y');
+    }
+  }
+
+  if ('c' in state) {
+    if (state.c) {
+      url.searchParams.set('c', state.c);
+    } else {
+      url.searchParams.delete('c');
     }
   }
 
