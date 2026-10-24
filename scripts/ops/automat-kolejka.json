@@ -1,0 +1,1191 @@
+{
+  "version": 1,
+  "settings": {
+    "repo": "olubiec/faktografia-atlas",
+    "pilot": "W1.2",
+    "maxParallel": 4,
+    "maxStartsPerRun": 4,
+    "maxMergesPerRun": 3,
+    "maxFixAttempts": 2,
+    "maxPrsPerTask": 3,
+    "waveLookahead": 1,
+    "julesRelabelMin": 20,
+    "julesEscalateMin": 60,
+    "ciQuietMin": 20,
+    "maxPrLines": 2000,
+    "lockMin": 50,
+    "maxStartsPer24h": 40,
+    "staleHours": 24,
+    "requiredChecks": [
+      "testy",
+      "bezpieczenstwo",
+      "Analyze (javascript-typescript)",
+      "Analyze (actions)"
+    ],
+    "commitAuthors": [
+      "google-labs-jules[bot]",
+      "claude"
+    ],
+    "neverTouch": [
+      ".github/**",
+      "scripts/ops/**",
+      "docs/STAN.md",
+      "docs/AUTOMAT.md",
+      "AGENTS.md",
+      "CLAUDE.md"
+    ],
+    "forbidden": [
+      "docs/ARCHITEKTURA.md",
+      "docs/STYL.md",
+      "docs/PRODUKT.md",
+      "docs/WORKFLOW.md",
+      "package.json",
+      "pnpm-lock.yaml",
+      "config/**",
+      "scripts/data/**",
+      "src/core/consent/**",
+      "src/view/consent/**",
+      "vercel.json",
+      ".gitleaks.toml",
+      ".oxlintrc.json",
+      "vite.config.ts",
+      "vitest.config.ts",
+      "playwright.config.ts",
+      "tsconfig*.json",
+      "public/data/**",
+      "public/geo/**",
+      "public/brand/**",
+      "docs/shots/**",
+      "**/*-snapshots/**",
+      "docs/ELEMENTY.md"
+    ],
+    "scratchFiles": [
+      "**/*.txt",
+      "**/*.diff",
+      "**/*.patch",
+      "**/*.log",
+      "**/*.orig",
+      "**/*.rej",
+      "**/commit_message*",
+      "**/pr_description*",
+      "*.cjs",
+      "*.mjs",
+      "*.sh",
+      "*.py",
+      "*.md"
+    ],
+    "architecture": "docs/ARCHITEKTURA.md",
+    "footer": "scripts/ops/dopisek.md",
+    "statePath": "docs/STAN.md"
+  },
+  "doneBefore": [
+    "W1.1",
+    "W1.3",
+    "W1.4",
+    "W1.5",
+    "W1.6",
+    "W1.7",
+    "W1.8",
+    "W2.10"
+  ],
+  "checkpoints": [
+    {
+      "id": "K1",
+      "name": "S14 – profil na komputerze"
+    },
+    {
+      "id": "K2",
+      "name": "S15 – telefon"
+    },
+    {
+      "id": "K3",
+      "name": "S16 + S17 – ruch na mapie i „Na tle kraju”"
+    },
+    {
+      "id": "K4",
+      "name": "S18 – porównanie dwóch miejsc"
+    },
+    {
+      "id": "K5",
+      "name": "S19 – pobierz i udostępnij (koniec projektu)"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "W0.1",
+      "title": "Usunięcie nieużywanych pakietów",
+      "checkpoint": "K1",
+      "wave": 1,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "package.json",
+          "mode": "change"
+        },
+        {
+          "path": "pnpm-lock.yaml",
+          "mode": "change"
+        },
+        {
+          "path": "docs/ELEMENTY.md",
+          "mode": "change"
+        }
+      ],
+      "packages": {
+        "remove": [
+          "nuqs",
+          "motion",
+          "tw-animate-css",
+          "d3-array",
+          "d3-scale",
+          "@types/d3-array",
+          "@types/d3-scale"
+        ],
+        "add": []
+      },
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "snapshots": false
+    },
+    {
+      "id": "W1.2",
+      "title": "Wykrywanie telefonu w jednym miejscu",
+      "checkpoint": "K1",
+      "wave": 1,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/view/hooks/useIsMobile.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/use-is-mobile.test.tsx",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.1",
+      "title": "Przegląd profilu",
+      "checkpoint": "K1",
+      "wave": 1,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/view/profile/ProfileOverview.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/profile/ProfileSheet.tsx",
+          "mode": "partial",
+          "maxLines": 150
+        },
+        {
+          "path": "src/view/profile/ProfileSheetMobile.tsx",
+          "mode": "partial",
+          "maxLines": 40
+        },
+        {
+          "path": "src/view/map/ProfilePortal.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/map/AtlasMap.tsx",
+          "mode": "partial",
+          "maxLines": 15
+        },
+        {
+          "path": "tests/e2e/profile-overview.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.2",
+      "title": "Zakładki profilu",
+      "checkpoint": "K1",
+      "wave": 2,
+      "dependsOn": [
+        "W2.1"
+      ],
+      "files": [
+        {
+          "path": "src/view/profile/ProfileSheet.tsx",
+          "mode": "partial",
+          "maxLines": 120
+        },
+        {
+          "path": "src/view/profile/ProfileChildren.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "tests/e2e/profile-tabs.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W1.12",
+      "title": "Formaty kart i dane CSV: logika",
+      "checkpoint": "K1",
+      "wave": 2,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/core/share/formats.ts",
+          "mode": "new"
+        },
+        {
+          "path": "src/core/share/csv.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/share-formats.test.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/share-csv.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W1.13",
+      "title": "Mapa jako rysunek SVG: logika",
+      "checkpoint": "K1",
+      "wave": 2,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/core/share/projection.ts",
+          "mode": "new"
+        },
+        {
+          "path": "src/core/share/map-shapes.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/share-map-shapes.test.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/fixtures/geo/**",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.3",
+      "title": "Test całej ścieżki profilu na komputerze",
+      "checkpoint": "K1",
+      "wave": 3,
+      "dependsOn": [
+        "W2.1",
+        "W2.2"
+      ],
+      "files": [
+        {
+          "path": "tests/e2e/s14-profile.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W3.1",
+      "title": "Sprzątanie zakreśleń w profilu",
+      "checkpoint": "K1",
+      "wave": 3,
+      "dependsOn": [
+        "W2.1"
+      ],
+      "files": [
+        {
+          "path": "src/view/profile/ProfileIndicatorRow.tsx",
+          "mode": "change"
+        }
+      ],
+      "deletions": [
+        "src/core/profile/highlight.ts",
+        "tests/unit/highlight.test.ts"
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W1.14",
+      "title": "Układ kart: logika",
+      "checkpoint": "K1",
+      "wave": 3,
+      "dependsOn": [
+        "W1.12",
+        "W1.13"
+      ],
+      "files": [
+        {
+          "path": "src/core/share/card.ts",
+          "mode": "new"
+        },
+        {
+          "path": "src/core/share/text-fit.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/share-card.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.4",
+      "title": "Telefon: układ i miejsca podpięcia",
+      "checkpoint": "K2",
+      "wave": 4,
+      "dependsOn": [
+        "W1.2"
+      ],
+      "files": [
+        {
+          "path": "src/view/Header.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/Home.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/map/AtlasMap.tsx",
+          "mode": "partial",
+          "maxLines": 80
+        },
+        {
+          "path": "src/view/main/MobileIndicatorBar.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/map/Breadcrumbs.tsx",
+          "mode": "partial",
+          "maxLines": 30
+        },
+        {
+          "path": "tests/e2e/mobile-layout.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsChange": [
+        "tests/e2e/home.spec.ts",
+        "tests/e2e/picker-scroll.spec.ts"
+      ],
+      "allowFixme": [
+        "tests/e2e/picker-scroll.spec.ts"
+      ],
+      "testsAppend": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.18",
+      "title": "Pobierz i udostępnij: okno, podgląd, PNG, CSV",
+      "checkpoint": "K2",
+      "wave": 4,
+      "dependsOn": [
+        "W1.14"
+      ],
+      "files": [
+        {
+          "path": "src/view/share/**",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/test/UiTestPage.tsx",
+          "mode": "partial",
+          "maxLines": 80
+        },
+        {
+          "path": "tests/e2e/share-dialog.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.5",
+      "title": "Telefon: arkusz wskaźnika",
+      "checkpoint": "K2",
+      "wave": 5,
+      "dependsOn": [
+        "W2.4"
+      ],
+      "files": [
+        {
+          "path": "src/view/main/MobileIndicatorBar.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/main/IndicatorPanel.tsx",
+          "mode": "partial",
+          "maxLines": 60
+        },
+        {
+          "path": "tests/e2e/mobile-indicator-sheet.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsChange": [
+        "tests/e2e/picker-scroll.spec.ts"
+      ],
+      "testsAppend": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.6",
+      "title": "Telefon: profil w arkuszu 40% → 100%",
+      "checkpoint": "K2",
+      "wave": 5,
+      "dependsOn": [
+        "W1.2",
+        "W2.2"
+      ],
+      "files": [
+        {
+          "path": "src/view/map/ProfilePortal.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/profile/ProfileSheetMobile.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "tests/e2e/profile-mobile.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.8",
+      "title": "Telefon: okruszki w jednej linii",
+      "checkpoint": "K2",
+      "wave": 5,
+      "dependsOn": [
+        "W2.4"
+      ],
+      "files": [
+        {
+          "path": "src/view/map/Breadcrumbs.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/map/BackButton.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "tests/e2e/mobile-breadcrumbs.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.7",
+      "title": "Telefon: mapa pokazuje miejsce nad arkuszem",
+      "checkpoint": "K2",
+      "wave": 6,
+      "dependsOn": [
+        "W2.6"
+      ],
+      "files": [
+        {
+          "path": "src/view/map/sheetInset.ts",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/profile/ProfileSheetMobile.tsx",
+          "mode": "partial",
+          "maxLines": 40
+        },
+        {
+          "path": "src/view/map/hooks/useMapViewState.ts",
+          "mode": "partial",
+          "maxLines": 60
+        },
+        {
+          "path": "tests/e2e/profile-mobile-inset.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.9",
+      "title": "Telefon: dymek po pierwszym dotknięciu",
+      "checkpoint": "K2",
+      "wave": 6,
+      "dependsOn": [
+        "W2.4"
+      ],
+      "files": [
+        {
+          "path": "src/view/map/AtlasMap.tsx",
+          "mode": "partial",
+          "maxLines": 80
+        },
+        {
+          "path": "src/view/main/UnitTooltip.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "tests/e2e/mobile-tooltip.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.20",
+      "title": "Udostępnianie z profilu",
+      "checkpoint": "K2",
+      "wave": 6,
+      "dependsOn": [
+        "W2.18",
+        "W2.1"
+      ],
+      "files": [
+        {
+          "path": "src/view/profile/ProfileOverview.tsx",
+          "mode": "partial",
+          "maxLines": 60
+        },
+        {
+          "path": "tests/e2e/share-profile.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.11",
+      "title": "Test całej ścieżki na telefonie",
+      "checkpoint": "K2",
+      "wave": 7,
+      "dependsOn": [
+        "W2.4",
+        "W2.5",
+        "W2.6",
+        "W2.7",
+        "W2.8",
+        "W2.9"
+      ],
+      "files": [
+        {
+          "path": "tests/e2e/s15-mobile.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.13",
+      "title": "Legenda w trybie ciemnym",
+      "checkpoint": "K2",
+      "wave": 7,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/core/legend/legend.ts",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/legend/Legend.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/main/IndicatorPanel.tsx",
+          "mode": "partial",
+          "maxLines": 20
+        }
+      ],
+      "testsAppend": [
+        "tests/unit/legend.test.ts"
+      ],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W1.10",
+      "title": "Raport „wskaźniki bez objaśnienia”",
+      "checkpoint": "K2",
+      "wave": 7,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "scripts/data/nightly-checks.mjs",
+          "mode": "change"
+        }
+      ],
+      "testsAppend": [
+        "tests/unit/nightly-checks.test.ts"
+      ],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W3.2",
+      "title": "Płynna kamera przy wejściu w głąb",
+      "checkpoint": "K3",
+      "wave": 8,
+      "dependsOn": [
+        "W2.7"
+      ],
+      "files": [
+        {
+          "path": "src/view/map/hooks/useMapViewState.ts",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/map/AtlasMap.tsx",
+          "mode": "partial",
+          "maxLines": 40
+        },
+        {
+          "path": "tests/e2e/camera.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W3.3",
+      "title": "Kafelki po kolei i wyblakła reszta kraju",
+      "checkpoint": "K3",
+      "wave": 8,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/view/map/layers/choropleth.ts",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/map/hooks/useChoropleth.ts",
+          "mode": "change"
+        },
+        {
+          "path": "src/core/map/test-seam.ts",
+          "mode": "change"
+        },
+        {
+          "path": "tests/e2e/reveal.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.19",
+      "title": "Udostępnianie z panelu wskaźnika",
+      "checkpoint": "K3",
+      "wave": 8,
+      "dependsOn": [
+        "W2.18",
+        "W2.5"
+      ],
+      "files": [
+        {
+          "path": "src/view/main/IndicatorPanel.tsx",
+          "mode": "partial",
+          "maxLines": 40
+        },
+        {
+          "path": "src/view/share/useShareData.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/e2e/share-map.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W3.4",
+      "title": "Przelewanie kolorów",
+      "checkpoint": "K3",
+      "wave": 9,
+      "dependsOn": [
+        "W3.3"
+      ],
+      "files": [
+        {
+          "path": "src/view/map/layers/choropleth.ts",
+          "mode": "change"
+        },
+        {
+          "path": "tests/e2e/color-transition.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.12",
+      "title": "„Na tle kraju” w profilu i panelu",
+      "checkpoint": "K3",
+      "wave": 9,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/view/explain/ContextBlock.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/profile/ProfileIndicatorRow.tsx",
+          "mode": "partial",
+          "maxLines": 40
+        },
+        {
+          "path": "src/view/main/IndicatorPanel.tsx",
+          "mode": "partial",
+          "maxLines": 40
+        },
+        {
+          "path": "tests/e2e/context-block.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.14",
+      "title": "Porównanie: wybór drugiego miejsca",
+      "checkpoint": "K3",
+      "wave": 9,
+      "dependsOn": [
+        "W2.2"
+      ],
+      "files": [
+        {
+          "path": "src/view/profile/ProfileCompare.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/profile/ProfileSheet.tsx",
+          "mode": "partial",
+          "maxLines": 60
+        },
+        {
+          "path": "tests/e2e/compare-pick.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W3.6",
+      "title": "Pomiar szybkości i płynności",
+      "checkpoint": "K3",
+      "wave": 10,
+      "dependsOn": [
+        "W3.2",
+        "W3.3",
+        "W3.4"
+      ],
+      "files": [
+        {
+          "path": "tests/e2e/s16-motion.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.15",
+      "title": "Porównanie: tabela obok siebie",
+      "checkpoint": "K3",
+      "wave": 10,
+      "dependsOn": [
+        "W2.14"
+      ],
+      "files": [
+        {
+          "path": "src/view/profile/ProfileCompareTable.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/profile/ProfileCompare.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "tests/e2e/compare-table.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.16",
+      "title": "Porównanie: dwa obrysy na mapie",
+      "checkpoint": "K3",
+      "wave": 10,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/view/map/layers/choropleth.ts",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/map/AtlasMap.tsx",
+          "mode": "partial",
+          "maxLines": 30
+        },
+        {
+          "path": "tests/e2e/compare-map.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.17",
+      "title": "Porównanie na telefonie + test ścieżki",
+      "checkpoint": "K4",
+      "wave": 11,
+      "dependsOn": [
+        "W2.14",
+        "W2.15",
+        "W2.16",
+        "W2.6"
+      ],
+      "files": [
+        {
+          "path": "src/view/profile/ProfileCompareTable.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "tests/e2e/s18-compare.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.22",
+      "title": "Porównanie: dwie mapki",
+      "checkpoint": "K4",
+      "wave": 11,
+      "dependsOn": [
+        "W1.13",
+        "W2.14"
+      ],
+      "files": [
+        {
+          "path": "src/view/profile/CompareMaps.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/profile/ProfileCompare.tsx",
+          "mode": "partial",
+          "maxLines": 20
+        },
+        {
+          "path": "tests/e2e/compare-maps.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.21",
+      "title": "Udostępnianie porównania",
+      "checkpoint": "K5",
+      "wave": 12,
+      "dependsOn": [
+        "W2.18",
+        "W2.15",
+        "W2.22"
+      ],
+      "files": [
+        {
+          "path": "src/view/profile/ProfileCompare.tsx",
+          "mode": "partial",
+          "maxLines": 40
+        },
+        {
+          "path": "tests/e2e/share-compare.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.23",
+      "title": "Test całej ścieżki „Pobierz i udostępnij”",
+      "checkpoint": "K5",
+      "wave": 13,
+      "dependsOn": [
+        "W2.19",
+        "W2.20",
+        "W2.21",
+        "W2.22"
+      ],
+      "files": [
+        {
+          "path": "tests/e2e/s19-share.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    }
+  ]
+}

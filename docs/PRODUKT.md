@@ -1,13 +1,13 @@
 # Faktografia Atlas – co budujemy
 **Dla kogo:** osoba ciekawa swojej okolicy (mieszkaniec, dziennikarz, uczeń, samorządowiec), najczęściej z telefonu (§2).
 **Problem:** dane GUS o gminach i powiatach są w tabelach Banku Danych Lokalnych, nie da się ich szybko zobaczyć na mapie ani porównać.
-**Pierwsza wersja ma umieć:** mapa Polski w kolorach wybranego wskaźnika (§3) · profil miejsca z rankingiem i wykresami (§4) · wygodny telefon (§5) · płynne wejście w głąb mapy (§5a) · proste objaśnienia (§6) · porównanie dwóch miejsc · link do każdego widoku.
-**Czego NIE robimy:** kont użytkowników, liczb wpisywanych ręcznie lub przez AI, śledzenia osób, Google Maps, generatora karuzel w tym repo (pełna lista: `docs/ARCHITEKTURA.md` §7).
+**Pierwsza wersja ma umieć:** mapa Polski w kolorach wybranego wskaźnika (§3) · profil miejsca z rankingiem i wykresami (§4) · wygodny telefon (§5) · płynne wejście w głąb mapy (§5a) · proste objaśnienia (§6) · porównanie dwóch miejsc (§4a) · link do każdego widoku · **pobieranie i udostępnianie** kart z mapą, rankingiem, profilem i porównaniem oraz danych w CSV (§4b).
+**Czego NIE robimy:** kont użytkowników, liczb wpisywanych ręcznie lub przez AI, śledzenia osób, Google Maps, generatora serii slajdów pod konta Faktografii w tym repo – pojedyncze karty do pobrania dla każdego robimy (§4b) (pełna lista: `docs/ARCHITEKTURA.md` §7).
 **Zarabia:** nie (projekt marki Faktografia; przy komercjalizacji – zmiana hostingu z Vercel Hobby). **Dane osób:** nie – tylko anonimowe statystyki wyszukiwań po zgodzie.
 **Technologia:** Vite + React + TypeScript, MapLibre + deck.gl, dane statyczne z robota GUS (`docs/ARCHITEKTURA.md`, elementy: `docs/ELEMENTY.md`). **Hosting:** Vercel (podgląd każdego PR).
 **Gdzie jesteśmy:** `docs/STAN.md` · warstwy i plan fal: `docs/ARCHITEKTURA.md` · wygląd: `docs/STYL.md` + makiety `docs/design/`.
 
-Wersja 2 · 21.10.2026 (v1: 20.10.2026). Zmiany v2: nagłówek wg WORKFLOW v5.3 §10.2, §5 telefon (po oglądzie 21.10), §5a wejście w głąb mapy, §6 ścieżka pliku objaśnień, §8–§9 pod nowy proces.
+Wersja 3 · 24.10.2026 (v2: 21.10.2026, v1: 20.10.2026). Zmiany v3: §4a porównanie (dwie mapy pomocnicze), §4b pobieranie i udostępnianie (pomysły właściciela 24.10). Zmiany v2: Zmiany v2: nagłówek wg WORKFLOW v5.3 §10.2, §5 telefon (po oglądzie 21.10), §5a wejście w głąb mapy, §6 ścieżka pliku objaśnień, §8–§9 pod nowy proces.
 Opisy ekranów niżej są wymaganiami – mają pierwszeństwo przed starymi promptami i kodem.
 
 ---
@@ -67,7 +67,36 @@ Osoba ciekawa swojej okolicy (mieszkaniec, dziennikarz, uczeń, samorządowiec),
   1. bieżący wskaźnik: nazwa, rok, **duża liczba**, miejsce w rankingu (jedno zakreślenie wg STYL.md §7);
   2. **ranking wszystkich jednostek tego poziomu** w województwie / kraju jako poziome słupki, wybrana jednostka wyróżniona (makieta 03); długie listy: 10 + „pokaż wszystkie”;
   3. **pozostałe wskaźniki** w grupach (Ludność, Praca, Pieniądze, Mieszkania, Środowisko, Życie, Transport), każdy jako wiersz: nazwa, wartość, miejsce. **Klik w wiersz rozwija go:** czytelny wykres lat (oś lat, min/max, wartość po najechaniu), objaśnienie (§6), przycisk **„Pokaż na mapie”** (ustawia ten wskaźnik na mapie i w panelu).
-- Na dole: „Kopiuj link”, źródło. „Porównaj z innym miejscem” – S18.
+- Na dole: „Kopiuj link”, „Pobierz i udostępnij” (S19, §4b), źródło. „Porównaj z innym miejscem” – S18.
+
+## 4a. Porównanie dwóch miejsc (S18)
+
+Pomysł właściciela 24.10.2026: „zestawianie ze sobą różnych powiatów – dwie mapy albo okno z danymi obu”. Robimy oba, w tanim wariancie:
+- **Okno z danymi obu:** zakładka „Porównaj” w profilu – tabela: wiersz na wskaźnik, wartości obu miejsc, miejsca w rankingu, słowna różnica („wyżej o 1,2 p.p.”). Kolory neutralne (bez zieleni i czerwieni).
+- **Dwie mapy:** nad tabelą dwie małe mapki (rysunek SVG, nie druga mapa WebGL): każda pokazuje województwo z danym miejscem w kolorach bieżącego wskaźnika i obrysem w kolorze `korekta`. Na dużej mapie oba miejsca obrysowane.
+- Link `?c=<teryt>,<teryt>` otwiera to samo porównanie. Dowolne dwa miejsca, także różnych poziomów (wtedy dopisek „różne poziomy – porównuj ostrożnie”).
+- Poza pierwszą wersją („Później”): dwie pełne, ruchome mapy obok siebie (np. dwa wskaźniki albo dwa lata), więcej niż dwa miejsca.
+
+## 4b. Pobierz i udostępnij (S19)
+
+Pomysł właściciela 24.10.2026: każdy może pobrać dane, tabelki, mapy z legendą i porównania, żeby je udostępniać i używać – w formatach pod komentarze, Instagram i X. To publiczna wersja tego, co miało być w karuzelach.
+
+- **Przycisk „Pobierz i udostępnij”** w panelu wskaźnika (mapa, ranking), w stopce profilu (profil) i w zakładce „Porównaj” (porównanie). Otwiera okno z podglądem.
+- **Karty (obrazy PNG):**
+  | Karta | Co na niej jest |
+  |---|---|
+  | Mapa | tytuł (wskaźnik, rok, poziom, obszar), mapa w kolorach z legendą 5 klas i „brak danych”, wybrane miejsce obrysowane |
+  | Ranking | 10 najwyżej i 10 najniżej (albo całość, gdy ≤ 20) jako słupki, wybrane miejsce wyróżnione |
+  | Profil | nazwa miejsca, duża liczba z miejscem w rankingu (jedno kółko korekty), 5 wybranych wskaźników |
+  | Porównanie | dwa miejsca, dwie małe mapki, 5–8 wierszy porównania ze słowną różnicą |
+  Każda karta ma logo z `public/brand/`, linijkę „Źródło: GUS, Bank Danych Lokalnych, <rok>” i adres strony – bez wyjątku (licencja danych CC BY 4.0).
+- **Formaty:** Post 4:5 – 1080×1350 (Instagram, Facebook, Threads) · Kwadrat 1:1 – 1080×1080 (komentarze, X, Facebook) · Story 9:16 – 1080×1920 (treść w środkowym pasie 1080×1610) · Poziomy 16:9 – 1600×900 (X, LinkedIn, strony). Motyw jasny albo ciemny.
+- **Zestaw:** „Udostępnij zestaw” wysyła naraz kartę mapy i rankingu (oraz profilu, gdy wybrane jest miejsce) – na telefonie przez systemowe okno udostępniania (Instagram robi z tego karuzelę), na komputerze pobiera kolejne pliki.
+- **Dane (CSV):** to, co widać – bieżący wskaźnik dla wszystkich jednostek poziomu (lub obszaru), cały profil miejsca albo tabela porównania. Kodowanie UTF-8, separator „;”, przecinek dziesiętny (otwiera się wprost w polskim Excelu), kolumny z rokiem i źródłem.
+- **Na telefonie** przycisk „Udostępnij” otwiera systemowe okno (Instagram, X, komunikatory), jeśli przeglądarka to umie; inaczej „Pobierz”.
+- **Prawa:** w oknie zdanie „Możesz używać i udostępniać, podając źródło: Faktografia Atlas, dane GUS”. Karty i CSV na licencji CC BY 4.0.
+- **Zasady techniczne:** zero nowych pobrań danych (karty powstają z tego, co już jest w pamięci strony), zero nowych pakietów (SVG i `canvas` przeglądarki, istniejące `roughjs` do kółka korekty), napisy nie wychodzą poza pola także dla najdłuższych nazw („Powiat kędzierzyńsko-kozielski”), działa offline po wczytaniu strony; kod okna i rysowania ładowany dopiero po kliknięciu (osobny plik JS – nie powiększa wejścia, §7).
+- **Poza zakresem:** generator serii slajdów pod konta Faktografii (osobne prywatne repo – może korzystać z tych samych kart), wideo, GIF, XLSX.
 
 ## 5. Telefon (< 768 px) – makieta 04
 
@@ -125,4 +154,4 @@ Zasady: każda liczba i ciekawostka ma źródło z linkiem; research robi Gem Re
 
 ## 9. Kolejność
 
-Zadania wg warstw: `docs/ARCHITEKTURA.md` §3; fale i ich kolejność: §4 (S14 profil, S15 telefon, S16 wejście w głąb, S17 objaśnienia, S18 porównanie, potem „Później”).
+Zadania wg warstw: `docs/ARCHITEKTURA.md` §3; fale i ich kolejność: §4 (S14 profil, S15 telefon, S16 wejście w głąb, S17 objaśnienia, S18 porównanie, S19 pobierz i udostępnij, potem „Później”). Prowadzi je automat (`docs/AUTOMAT.md`).
