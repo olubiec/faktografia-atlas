@@ -1,4 +1,5 @@
 import type { LegendItem } from '../../core/legend/legend';
+import { LEGEND_DIRECTION_LABEL } from '../../core/legend/legend';
 
 export interface LegendProps {
   items: LegendItem[];
@@ -17,11 +18,16 @@ export function Legend({ items, title, className = '' }: LegendProps) {
     <div
       className={`bg-arkusz border border-linia p-3 sm:p-4 text-tusz max-w-xs ${className}`.trim()}
     >
-      {title && (
-        <h4 className="text-xs font-bold text-olowek uppercase tracking-wider mb-2.5 truncate">
-          {title}
-        </h4>
-      )}
+      {title ? (
+        <div className="flex items-center justify-between gap-2 mb-2.5">
+          <h4 className="text-xs font-bold text-olowek uppercase tracking-wider truncate">
+            {title}
+          </h4>
+          <span className="text-xs text-olowek font-medium shrink-0">
+            {LEGEND_DIRECTION_LABEL}
+          </span>
+        </div>
+      ) : null}
       <ul role="list" className="space-y-1.5">
         {items.map((item, index) => (
           <li
