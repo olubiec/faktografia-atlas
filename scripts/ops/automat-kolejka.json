@@ -143,7 +143,9 @@
         "add": []
       },
       "testsAppend": [],
-      "testsChange": [],
+      "testsChange": [
+        "tests/unit/dependencies.test.ts"
+      ],
       "allowFixme": [],
       "deletions": [],
       "snapshots": false
@@ -210,7 +212,13 @@
         }
       ],
       "testsAppend": [],
-      "testsChange": [],
+      "testsChange": [
+        "tests/e2e/annotation-scroll.spec.ts",
+        "tests/e2e/breadcrumbs.spec.ts",
+        "tests/e2e/design.spec.ts",
+        "tests/e2e/profile-row.spec.ts",
+        "tests/e2e/profile-trend.spec.ts"
+      ],
       "allowFixme": [],
       "deletions": [],
       "packages": {
