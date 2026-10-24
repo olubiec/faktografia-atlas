@@ -8,7 +8,8 @@ const FAILED = new Set(['failure', 'timed_out', 'cancelled', 'action_required', 
 const WEAKEN_TEST = /\.(skip|only|fixme)\s*\(|@ts-ignore|@ts-expect-error|oxlint-disable|eslint-disable/;
 const BARE_RETURN = /^\s*return\s*;?\s*$/;
 const UNSAFE_SRC = /dangerouslySetInnerHTML|@ts-ignore|oxlint-disable|eslint-disable/;
-const STOP_SIGNAL = /zatrzymuj|przeszkadza istniej|stopping|i am blocked|nie mog[eę] wykona/i;
+// Tylko zwroty, w których Jules mówi o sobie (nie „skrypt nie zatrzymuje robota”).
+const STOP_SIGNAL = /zatrzyma(ł|l)em się|zatrzymuj(ę|e) się|przeszkadza istniej|stopping|i am blocked|nie mog[eę] wykona/i;
 const DEP_LINE = /^([+-])\s+"(@?[^"]+)":\s*"[^"]*",?\s*$/;
 
 /** Ścieżki dozwolone w zadaniu (wzorce). */
