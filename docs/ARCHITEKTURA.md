@@ -61,6 +61,7 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 ### W0 – Fundament
 
 #### W0.1 – Usunięcie nieużywanych pakietów · fala F1
+- **Zgoda właściciela (24.10.2026):** wolno zmienić wyłącznie `tests/unit/dependencies.test.ts` – usunąć z listy wymaganych pakietów te, które zadanie usuwa (`nuqs`, `motion`, `tw-animate-css`, `d3-array`, `d3-scale`, `@types/d3-array`, `@types/d3-scale`). Żaden inny test nie.
 - **Po ludzku:** mniej zbędnych bibliotek = mniej ryzyka i szybsza instalacja.
 - **Pliki:** `package.json`, `pnpm-lock.yaml`, `docs/ELEMENTY.md` (wolno je zmienić).
 - **Zadanie:** sprawdź grepem w `src/`, `scripts/`, `tests/` i CSS, że `nuqs`, `motion`, `tw-animate-css`, `d3-array`, `d3-scale` nie są importowane; usuń je `pnpm remove` (razem z `@types/d3-array`, `@types/d3-scale`); w `docs/ELEMENTY.md` skreśl wpisy z datą. Pakiet jednak używany → zostaw i napisz w PR gdzie.
@@ -187,7 +188,8 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
   5. Lista pozostałych wskaźników nie powtarza bieżącego. Stopka: „Kopiuj link” (bieżący adres; „Skopiowano” ok. 2 s, ogłaszane przez `aria-live="polite"`), pod nim przypisy i źródło.
 - **Gotowe, gdy (e2e `@S14`):** powiat 3217 → „Powiat wałecki”, nigdzie „powiat powiat” ani „Powiat •”; gmina 3217011 → „Gmina miejska Wałcz”; zmiana wskaźnika w panelu zmienia przegląd bez przeładowania; `?u=12` → 10 pozycji, po „Pokaż wszystkie” 16, małopolskie wyróżnione, posortowane; powiat małopolski → tyle pozycji, ile powiatów `12xx`; klik w ranking zmienia `?u=`, nagłówek i `window.__atlas`; dokładnie jeden `.rough-annotation`; „Kopiuj link” → schowek zawiera `u=`; otwarcie profilu = jedno żądanie `profiles/*`, ranking = zero dodatkowych `values/*`; na 1440×900 nic nie zachodzi na siebie.
 - **Ty sprawdzasz:** klik w małopolskie → „Województwo małopolskie”, duża liczba w kółku, „2. miejsce wśród 16 województw”, słupki 16 województw; klik w inne województwo w rankingu przełącza profil i mapę; zmiana wskaźnika od razu zmienia liczbę i słupki; „Kopiuj link”; tylko jedno zakreślenie.
-- **Nie ruszaj:** `RankingBars.tsx`, `ranking.ts`, `sections.ts`, `load-profile.ts`, istniejących testów (przeszkadza → opisz w PR i stop), zrzutów; zakładek (W2.2); telefonu.
+- **Zgoda właściciela (24.10.2026):** wolno zmienić istniejące testy e2e, bo nowy nagłówek i „Kopiuj link” zmieniają ich stare oczekiwania: `tests/e2e/annotation-scroll.spec.ts`, `tests/e2e/breadcrumbs.spec.ts`, `tests/e2e/design.spec.ts` (zrzut – sam obraz odświeża właściciel etykietą `aktualizuj-zrzuty`), `tests/e2e/profile-row.spec.ts`, `tests/e2e/profile-trend.spec.ts`. Zmieniać tylko oczekiwania dotyczące nagłówka, rankingu i zakreślenia; nie osłabiać asercji ani nie pomijać testów.
+- **Nie ruszaj:** `RankingBars.tsx`, `ranking.ts`, `sections.ts`, `load-profile.ts`, pozostałych testów, zrzutów (poza etykietą); zakładek (W2.2); telefonu.
 
 #### W2.2 – Zakładki profilu: Przegląd · Powiaty/Gminy (n) · Porównaj (S14.4) · fala F2
 - **Pliki:** `src/view/profile/ProfileSheet.tsx` (tylko `ProfileBody`), `src/view/profile/ProfileChildren.tsx` (nowy), `tests/e2e/profile-tabs.spec.ts` (nowy).
