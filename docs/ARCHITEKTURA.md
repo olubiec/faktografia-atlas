@@ -69,6 +69,15 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Ty sprawdzasz:** ✅ w PR; strona bez zmian.
 - **Nie ruszaj:** kodu w `src/`, innych pakietów.
 
+#### W0.2 – Usunięcie nieużywanego `@observablehq/plot` · fala F8
+- **Zgoda właściciela (25.10.2026):** wolno zmienić wyłącznie `tests/unit/dependencies.test.ts` – usunąć `@observablehq/plot` z listy wymaganych pakietów. Żaden inny test nie.
+- **Po ludzku:** wpis w `ELEMENTY.md` mówi, że wykresy w profilu używają Plot, a nic go nie importuje (`TrendChart` rysuje SVG ręcznie). Usuwamy pakiet (1,5 MB w `node_modules`, zależy od całego `d3`) i prostujemy rejestr.
+- **Pliki:** `package.json`, `pnpm-lock.yaml`, `docs/ELEMENTY.md` (wolno je zmienić), `tests/unit/dependencies.test.ts` (tylko lista pakietów).
+- **Zadanie:** sprawdź grepem w `src/`, `scripts/`, `tests/`, CSS, że `@observablehq/plot` nie jest importowany; `pnpm remove @observablehq/plot`; w `docs/ELEMENTY.md` skreśl wiersz z datą i powodem „brak importów” (wzór: wiersz `d3-array, d3-scale`). Pakiet jednak używany → zostaw i opisz w PR.
+- **Gotowe, gdy:** `pnpm install --frozen-lockfile` i pełny zestaw testów przechodzą; w `package.json` nie ma `@observablehq/plot`; w PR rozmiar katalogu `dist` przed i po.
+- **Ty sprawdzasz:** ✅ w PR; strona bez zmian.
+- **Nie ruszaj:** kodu w `src/`, innych pakietów.
+
 ### W1 – Podzespoły
 
 #### W1.1 – Trend w latach zamiast malutkiego wykresu (PR #198, S14.10) · zrobione (#198)
@@ -338,6 +347,27 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Gotowe, gdy:** komputer i 390×844: mapa → okno → 4 formaty → PNG o dokładnych wymiarach; profil → karta profilu → CSV; porównanie → karta porównania; w całej ścieżce zero żądań danych po otwarciu okna, brak „undefined/NaN” w podglądzie; 3× z rzędu.
 - **Ty sprawdzasz:** na telefonie „Udostępnij” otwiera systemowe okno; wrzuć jedną kartę na Instagram (podgląd, nie musisz publikować).
 
+#### W2.24 – Wspólny układ podstron i stopka (S22) · fala F8
+- **Po ludzku:** „O projekcie”, „Skąd są dane”, „Prywatność” i strona 404 mają ten sam układ: nagłówek, treść, stopka ze źródłem i licencją.
+- **Przeczytaj najpierw:** `docs/STYL.md`, `docs/design/01-start-komputer.png` (stopka: „Źródło: GUS, Bank Danych Lokalnych. Licencja CC BY 4.0. Granice jednostek: domena publiczna.”), `src/view/pages/About.tsx`, `Sources.tsx`, `Privacy.tsx`, `src/view/NotFound.tsx`, `docs/INSPIRACJE.md` (wzorzec układu: shadcn/ui blocks, tylko pomysł).
+- **Pliki:** `src/view/layout/SiteLayout.tsx` (nowy), `src/view/layout/SiteFooter.tsx` (nowy), `src/view/pages/About.tsx`, `src/view/pages/Sources.tsx`, `src/view/pages/Privacy.tsx`, `src/view/NotFound.tsx`, `tests/unit/layout.test.tsx` (nowy), `tests/e2e/pages.spec.ts` (nowy).
+- **Zadanie:**
+  1. `SiteLayout`: istniejący `Header` + `<main id="main">` (szerokość treści z tokenów) + `SiteFooter`; pierwszy w kolejności tabulatora odnośnik „Przejdź do treści”.
+  2. `SiteFooter`: źródło danych i licencja, odnośniki do `/zrodla`, `/o-projekcie`, `/prywatnosc`, odnośnik do repozytorium kodu, rok. Bez zakreślenia.
+  3. Cztery strony przepisz na `SiteLayout`; treść bez zmian poza dwiema poprawkami: **Sources** – odnośnik do pełnej licencji https://creativecommons.org/licenses/by/4.0/legalcode.pl i data ostatniego pobrania danych czytana z istniejącego pola w `public/data` (brak takiego pola → nie wymyślaj, opisz w PR i pomiń datę); **Privacy** – tekst zgodny z faktami (analityka PostHog tylko po zgodzie, motyw w `localStorage`); **nie pisz**, że serwis nie używa żadnych narzędzi śledzących ani ciasteczek.
+- **Gotowe, gdy (`@S22`):** na `/o-projekcie`, `/zrodla`, `/prywatnosc` i nieistniejącej ścieżce są `header`, `main#main` i `footer` z odnośnikami do trzech podstron; stopka ma odnośnik do licencji CC BY 4.0; na 390 px żaden napis nie wychodzi poza pole, pola dotykowe ≥ 44 px; axe bez naruszeń na czterech stronach; `no-hardcoded-colors` przechodzi.
+- **Ty sprawdzasz:** na telefonie wszystkie cztery strony wyglądają spójnie, stopka ma źródło i licencję, „Prywatność” zgadza się z tym, co widzisz w pasku zgody.
+- **Nie ruszaj:** `Home.tsx`, `App.tsx`, `AtlasMap.tsx`, istniejących testów i zrzutów.
+
+#### W2.25 – Strona główna wg makiety 01 (S22) · fala F9
+- **Po ludzku:** po wejściu widać nagłówek „Mapa Polski z danymi GUS”, wyszukiwarkę, zakładki wskaźników i mapę – jak na makiecie 01.
+- **Przeczytaj najpierw:** `docs/design/01-start-komputer.png`, `docs/PRODUKT.md` §3, §7, §8, `docs/STYL.md`, `src/view/Home.tsx`, `src/view/main/*`, `tests/e2e/home.spec.ts`, `tests/e2e/main-screen.spec.ts` (istniejące – nie zmieniać).
+- **Pliki:** `src/view/Home.tsx` (wymieniony wprost), `src/view/home/HomeHero.tsx` (nowy), `src/view/home/IndicatorTabs.tsx` (nowy), `tests/unit/home-hero.test.tsx` (nowy), `tests/e2e/home-hero.spec.ts` (nowy).
+- **Zadanie:** `Home.tsx` składa układ: komputer (≥ 1024 px) – lewa kolumna z `h1`, zdaniem z liczbami, polem „Szukaj miejsca” (istniejące `SearchField`, skrót Ctrl K), podpisem „albo kliknij region na mapie” i zakładkami „Pokaż na mapie”, prawa kolumna – istniejąca `AtlasMap`; telefon – to samo w jednej kolumnie, mapa niżej. Zakładki wskaźników biorą stan z `useMainView` (**nie tworzysz drugiego stanu wskaźnika**). Stopka: `SiteFooter` z W2.24. Liczby „16 województw, 380 powiatów i N gmin” liczone z `public/data/units.json` (nie wpisywane; makieta ma 2479, obowiązuje liczba z danych). Jedno zakreślenie, pod liczbą gmin. `AtlasMap` ładowana przez `React.lazy` z `Suspense` i polem zastępczym o stałej wysokości (bez skoku układu).
+- **Gotowe, gdy (`@S22`):** 1440×900: `h1`, pole wyszukiwania i mapa widoczne bez przewijania; 390×844: `h1` i pole wyszukiwania widoczne bez przewijania, mapa niżej o wysokości ≥ 60% ekranu; liczba gmin w zdaniu = liczba gmin w `units.json` (test na danych z `tests/fixtures`); klik w zakładkę zmienia wskaźnik w `window.__atlas` i `?i=` tak jak dotąd – `home.spec.ts` i `main-screen.spec.ts` przechodzą bez zmian; żądania danych na wejściu zgodne z PRODUKT §7 (granice, lista jednostek, jeden plik wskaźnika, żadnego `profiles/*`); reduced motion – bez animacji wejścia; axe czysty.
+- **Ty sprawdzasz:** porównaj z makietą 01 na komputerze i na telefonie; mapa nadal w kolorach w ≤ 3 s.
+- **Nie ruszaj:** `AtlasMap.tsx`, `ProfileSheet*.tsx`, `src/view/map/hooks/*`, istniejących testów.
+
 ### W3 – Szlif
 
 #### W3.1 – Sprzątanie zakreśleń w profilu · fala F2
@@ -377,6 +407,39 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Gotowe, gdy:** ścieżka z animacjami (wejście, powrót, zmiana wskaźnika) przechodzi 3×; progi żądań z `PRODUKT.md` §7 bez zmian; w PR: czas do kolorowej mapy i rozmiar JS na wejściu vs przed S16 (wzrost ≤ 5%).
 - **Ty sprawdzasz:** na swoim telefonie animacje bez szarpania; jeśli szarpie → `TRYB: POMOC`.
 
+#### W3.7 – Metadane, udostępnianie linków, robots i sitemap (S22) · fala F9
+- **Po ludzku:** po wklejeniu linku do strony w komunikator widać tytuł i opis; wyszukiwarki dostają mapę strony. Bez nowych pakietów.
+- **Przeczytaj najpierw:** `index.html`, `vercel.json` (tylko czytasz), `package.json` (skrypt `build`). **Prerender z React Router 8 odpada** – to tryb framework, a mamy `BrowserRouter` (https://reactrouter.com/8.2.0/how-to/pre-rendering.md). React 19 sam przenosi `<title>` i `<meta>` do `<head>` (https://react.dev/reference/react-dom/components/title), ale boty komunikatorów nie wykonują JS, więc potrzebny jest gotowy HTML. `vite-plugin-sitemap` nie wolno (brak licencji w npm).
+- **Pliki:** `index.html`, `src/core/seo/pages.ts` (nowy), `src/view/seo/PageMeta.tsx` (nowy), `scripts/build/prerender-pages.mjs` (nowy), `scripts/build/write-sitemap.mjs` (nowy), `public/robots.txt` (nowy), `package.json` (tylko `scripts.build`), `src/view/pages/About.tsx`, `src/view/pages/Sources.tsx`, `src/view/pages/Privacy.tsx`, `src/view/NotFound.tsx` (tylko dodanie `<PageMeta …>`), `tests/unit/seo-pages.test.ts` (nowy), `tests/unit/prerender-pages.test.ts` (nowy).
+- **Zadanie:**
+  1. `index.html`: `description`, `og:title`, `og:description`, `og:type`, `og:locale=pl_PL`, `twitter:card=summary`; `og:url` z `VITE_SITE_URL` tylko jeśli ustawiona. Obrazka `og:image` **nie** dodajesz (potrzebna grafika od właściciela w `public/brand/` – napisz w PR).
+  2. `src/core/seo/pages.ts`: jedno źródło prawdy – tablica `{ path, title, description }` dla `/o-projekcie`, `/zrodla`, `/prywatnosc`; używają jej `PageMeta` i skrypt budowania.
+  3. `PageMeta` renderuje `<title>` i `<meta name="description">`; podpięte w czterech stronach z W2.24 (`NotFound` z `noindex`).
+  4. `scripts/build/prerender-pages.mjs` (Node, bez pakietów): po `vite build` kopiuje `dist/index.html` do `dist/<path>/index.html` dla stron z `pages.ts`, podmieniając `<title>`, `description`, `og:*`. Vercel serwuje istniejące pliki przed regułą `rewrites`, więc boty dostają gotowy HTML.
+  5. `scripts/build/write-sitemap.mjs`: `dist/sitemap.xml` (adresy z `pages.ts` oraz `/`), `public/robots.txt` (`Sitemap:` i zakaz `/__test/`, `/design`).
+  6. `package.json`: tylko skrypt `build` (dopisz wywołanie obu skryptów po `vite build`). Zero nowych zależności.
+- **Gotowe, gdy:** test jednostkowy: po `pnpm build` istnieje `dist/o-projekcie/index.html` z właściwym `<title>` i `og:title` oraz z `<script type="module">` (aplikacja się uruchamia); `dist/sitemap.xml` zawiera dokładnie adresy z `pages.ts` i `/`, bez `/__test/*` i `/design`; `robots.txt` wskazuje sitemap; e2e (`@S22`): wejście bezpośrednio na `/zrodla` ładuje stronę (nie 404) z właściwym tytułem.
+- **Ty sprawdzasz:** wklej link strony z podglądu do komunikatora – widać tytuł i opis; `/sitemap.xml` i `/robots.txt` się otwierają.
+- **Nie ruszaj:** `vercel.json`, `.github/workflows/`, `Home.tsx`.
+
+#### W3.8 – Mapa nie zostaje pusta po utracie kontekstu WebGL (S22) · fala F8
+- **Po ludzku:** jeśli telefon „zgubi” grafikę mapy, użytkownik zobaczy komunikat i przycisk „Wczytaj mapę ponownie” zamiast pustego pola.
+- **Przeczytaj najpierw:** `src/view/map/AtlasMap.tsx`, `src/core/map/test-seam.ts`; zdarzenia `webglcontextlost` i `webglcontextrestored` kanwy: https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
+- **Pliki:** `src/view/map/AtlasMap.tsx` (wymieniony wprost; tylko podpięcie nasłuchu i nakładki), `src/view/map/MapContextLostNotice.tsx` (nowy), `src/core/map/test-seam.ts` (tylko pole `contextLost`), `tests/e2e/context-lost.spec.ts` (nowy).
+- **Zadanie:** na kanwie mapy (`map.getCanvas()`) nasłuchuj; przy `webglcontextlost` wywołaj `preventDefault()` (pozwala przeglądarce przywrócić kontekst) i pokaż nakładkę z komunikatem (tokeny koloru, bez cienia) i przyciskiem „Wczytaj mapę ponownie”; przy `webglcontextrestored` ukryj nakładkę i odśwież warstwy; przycisk wymusza ponowne zamontowanie mapy. W `window.__atlas` dodaj `contextLost: boolean`.
+- **Gotowe, gdy (`@S22`):** test Playwright wywołuje `gl.getExtension('WEBGL_lose_context').loseContext()` → pojawia się komunikat i `__atlas.contextLost === true`; `restoreContext()` → komunikat znika, mapa ma kolory; przycisk przywraca mapę; pozostałe e2e map bez zmian. Brak rozszerzenia `WEBGL_lose_context` w CI → test pomijany z komentarzem środowiskowym.
+- **Ty sprawdzasz:** zwykłe użycie mapy bez zmian.
+- **Nie ruszaj:** `src/view/map/hooks/*`, `layers/*`, `Home.tsx`.
+
+#### W3.9 – Rozbicie `TrendChart.tsx` bez zmiany zachowania (S22) · fala F8
+- **Po ludzku:** wykres lat w profilu wygląda i działa tak samo; kod podzielony na małe pliki (zasada: do ok. 200 linii).
+- **Przeczytaj najpierw:** `src/view/profile/TrendChart.tsx`, istniejące testy wykresu (`grep -l TrendChart tests`), `src/core/profile/trend.ts`. Decyzja 25.10.2026: **rysowanie zostaje własne** (Plot odpada – `docs/research/weryfikacja-raportow-v2.md` §3).
+- **Pliki:** `src/view/profile/TrendChart.tsx`, `src/view/profile/TrendAxis.tsx` (nowy), `src/view/profile/TrendPoints.tsx` (nowy), `src/view/profile/TrendStatus.tsx` (nowy), `src/core/profile/trend-geometry.ts` (nowy), `tests/unit/trend-geometry.test.ts` (nowy).
+- **Zadanie:** czysta geometria (skale, ścieżki, siatka) do `trend-geometry.ts`; z komponentu wydziel oś, punkty i pasek statusu (`aria-live`). Zachowanie, atrybuty ARIA, klasy i zrzuty bez zmian.
+- **Gotowe, gdy:** wszystkie istniejące testy i zrzuty przechodzą **bez zmian**; każdy z plików ≤ 200 linii; test geometrii pokrywa: brak danych, jeden punkt, luki w latach, wartości ujemne.
+- **Ty sprawdzasz:** profil: wykres identyczny, najechanie i dotknięcie roku działa.
+- **Nie ruszaj:** `ProfileSheet*.tsx`, `ProfileIndicatorRow.tsx`, `@observablehq/plot`.
+
 ### Później (bez fal; Planista dopisze zadania, gdy przyjdzie kolej)
 Scena wejścia „kreślenie” (W3.5 – po Twojej ocenie S16) · dwie pełne, ruchome mapy obok siebie (np. dwa wskaźniki lub dwa lata) i porównanie więcej niż dwóch miejsc · podstrony gmin pod wyszukiwarki (SEO; decyzja po W3.6) · blady podkład OpenFreeMap przy dużym zbliżeniu (nowy element → `TRYB: WYBÓR`, wpis w ELEMENTY) · kreskowanie „brak danych” · tryb ciemny mapy (makieta 05) · statystyki wyszukiwań po zgodzie (klucz PostHog) · tryb 3D „Arkusze” · wersja angielska.
 
@@ -395,8 +458,10 @@ Zrobione wcześniej (poza kolejnością): W1.1, W1.3–W1.8, W2.10.
 | **F5** | S18 · S16–S17 · S15 | W2.22 Porównanie: dwie mapki nad tabelą · W3.2 Płynna kamera przy wejściu w głąb · W2.11 Test całej ścieżki na telefonie · W2.12 „Na tle kraju” w profilu i panelu · W2.17 Porównanie na telefonie + test ścieżki | W2.22: `CompareMaps.tsx`, **`ProfileCompare.tsx`**, `compare-maps.spec.ts` · W3.2: **`useMapViewState.ts`**, **`AtlasMap.tsx`**, `camera.spec.ts` · W2.11: `s15-mobile.spec.ts` · W2.12: `ContextBlock.tsx`, **`ProfileIndicatorRow.tsx`**, **`IndicatorPanel.tsx`**, `context-block.spec.ts` · W2.17: `ProfileCompareTable.tsx`, `s18-compare.spec.ts` | **punkt kontrolny K2** (S15 – telefon) + **punkt kontrolny K4** (S18 – porównanie dwóch miejsc) |
 | **F6** | S19 · S16–S17 | W2.21 Przycisk w porównaniu: karta porównania · W3.6 Pomiar szybkości i płynności + test ścieżki | W2.21: **`ProfileCompare.tsx`**, `share-compare.spec.ts` · W3.6: `s16-motion.spec.ts` | **punkt kontrolny K3** (S16 + S17 – ruch na mapie i „Na tle kraju”) |
 | **F7** | S19 | W2.23 Test całej ścieżki „Pobierz i udostępnij” | W2.23: `s19-share.spec.ts` | **punkt kontrolny K5** (S19 – pobierz i udostępnij (koniec projektu)) · **koniec projektu** (raport końcowy) |
+| **F8** | S22 | W0.2 Usunięcie `@observablehq/plot` · W2.24 Wspólny układ podstron i stopka · W3.8 Utrata kontekstu WebGL · W3.9 Rozbicie `TrendChart` | W0.2: `package.json`, `pnpm-lock.yaml`, `ELEMENTY.md`, `dependencies.test.ts` · W2.24: `SiteLayout.tsx`, `SiteFooter.tsx`, `About.tsx`, `Sources.tsx`, `Privacy.tsx`, `NotFound.tsx`, `pages.spec.ts` · W3.8: **`AtlasMap.tsx`**, `MapContextLostNotice.tsx`, `test-seam.ts`, `context-lost.spec.ts` · W3.9: `TrendChart.tsx`, `Trend*.tsx`, `trend-geometry.ts` | – |
+| **F9** | S22 | W2.25 Strona główna wg makiety 01 · W3.7 Metadane, robots, sitemap | W2.25: **`Home.tsx`**, `HomeHero.tsx`, `IndicatorTabs.tsx`, `home-hero.spec.ts` · W3.7: `index.html`, `pages.ts`, `PageMeta.tsx`, `scripts/build/*`, `robots.txt`, `package.json`, `About.tsx`, `Sources.tsx`, `Privacy.tsx`, `NotFound.tsx` | **punkt kontrolny K6** (S22 – strona główna, układ podstron, metadane) |
 
-**Podsumowanie:** 7 fal, 33 zadań dla Julesa, do 8 naraz (v4: fale przeliczone na maksymalną równoległość – zależności i rozłączność plików nadal pilnuje test). Poza automatem: W1.9, W1.11, W3.5 i „Później” – kiedy do nich wracamy, mówi tabela niżej.
+**Podsumowanie:** 9 fal, 39 zadań dla Julesa (F8–F9: sesja S22 z 25.10.2026, po raportach R1–R5), do 8 naraz (v4: fale przeliczone na maksymalną równoległość – zależności i rozłączność plików nadal pilnuje test). Poza automatem: W1.9, W1.11, W3.5 i „Później” – kiedy do nich wracamy, mówi tabela niżej.
 
 ### Poza falami – kiedy do czego wracamy (nie zapomnieć)
 | Co | Kto | Kiedy | Co z tego wychodzi |

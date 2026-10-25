@@ -107,6 +107,10 @@
     {
       "id": "K5",
       "name": "S19 – pobierz i udostępnij (koniec projektu)"
+    },
+    {
+      "id": "K6",
+      "name": "S22 – strona główna, układ podstron, metadane"
     }
   ],
   "tasks": [
@@ -1194,6 +1198,285 @@
         "add": []
       },
       "snapshots": true
+    },
+    {
+      "id": "W0.2",
+      "title": "Usunięcie nieużywanego @observablehq/plot",
+      "checkpoint": "K6",
+      "wave": 8,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "package.json",
+          "mode": "change"
+        },
+        {
+          "path": "pnpm-lock.yaml",
+          "mode": "change"
+        },
+        {
+          "path": "docs/ELEMENTY.md",
+          "mode": "change"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [
+        "tests/unit/dependencies.test.ts"
+      ],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [
+          "@observablehq/plot"
+        ],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.24",
+      "title": "Wspólny układ podstron i stopka",
+      "checkpoint": "K6",
+      "wave": 8,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/view/layout/SiteLayout.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/layout/SiteFooter.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/pages/About.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/pages/Sources.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/pages/Privacy.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/NotFound.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "tests/unit/layout.test.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "tests/e2e/pages.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W3.8",
+      "title": "Mapa nie zostaje pusta po utracie kontekstu WebGL",
+      "checkpoint": "K6",
+      "wave": 8,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/view/map/AtlasMap.tsx",
+          "mode": "partial",
+          "maxLines": 40
+        },
+        {
+          "path": "src/view/map/MapContextLostNotice.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/core/map/test-seam.ts",
+          "mode": "partial",
+          "maxLines": 20
+        },
+        {
+          "path": "tests/e2e/context-lost.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W3.9",
+      "title": "Rozbicie TrendChart bez zmiany zachowania",
+      "checkpoint": "K6",
+      "wave": 8,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/view/profile/TrendChart.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/profile/TrendAxis.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/profile/TrendPoints.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/profile/TrendStatus.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/core/profile/trend-geometry.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/trend-geometry.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.25",
+      "title": "Strona główna wg makiety 01",
+      "checkpoint": "K6",
+      "wave": 9,
+      "dependsOn": [
+        "W2.24"
+      ],
+      "files": [
+        {
+          "path": "src/view/Home.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/home/HomeHero.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/home/IndicatorTabs.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/home-hero.test.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "tests/e2e/home-hero.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W3.7",
+      "title": "Metadane, udostępnianie linków, robots i sitemap",
+      "checkpoint": "K6",
+      "wave": 9,
+      "dependsOn": [
+        "W2.24"
+      ],
+      "files": [
+        {
+          "path": "index.html",
+          "mode": "change"
+        },
+        {
+          "path": "src/core/seo/pages.ts",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/seo/PageMeta.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "scripts/build/prerender-pages.mjs",
+          "mode": "new"
+        },
+        {
+          "path": "scripts/build/write-sitemap.mjs",
+          "mode": "new"
+        },
+        {
+          "path": "public/robots.txt",
+          "mode": "new"
+        },
+        {
+          "path": "package.json",
+          "mode": "partial",
+          "maxLines": 6
+        },
+        {
+          "path": "src/view/pages/About.tsx",
+          "mode": "partial",
+          "maxLines": 8
+        },
+        {
+          "path": "src/view/pages/Sources.tsx",
+          "mode": "partial",
+          "maxLines": 8
+        },
+        {
+          "path": "src/view/pages/Privacy.tsx",
+          "mode": "partial",
+          "maxLines": 8
+        },
+        {
+          "path": "src/view/NotFound.tsx",
+          "mode": "partial",
+          "maxLines": 8
+        },
+        {
+          "path": "tests/unit/seo-pages.test.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/prerender-pages.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
     }
   ]
 }

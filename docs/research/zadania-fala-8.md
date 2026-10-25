@@ -1,4 +1,10 @@
 # Rozpiska zadań po raportach R1–R5 (25.10.2026)
+> **Stan 25.10.2026 (decyzje właściciela: „zgodnie z rekomendacjami”):** D1 tak, D2 tak, D3 Tally jako odnośnik, D4 najpierw adapter (R2 później), D5 kamery nie ruszamy, dopóki nie szarpie.
+> **Wprowadzone do planu i kolejki automatu (sesja S22, punkt kontrolny K6):** N6 → **W0.2**, N1 → **W2.24**, N4 → **W3.8**, N5 → **W3.9** (fala F8); N3 → **W2.25**, N2 → **W3.7** (fala F9). Pełne polecenia dla Julesa są w `docs/ARCHITEKTURA.md` §3 (tamte teksty obowiązują, ten plik zostaje jako uzasadnienie).
+> **Jeszcze poza kolejką:** N8–N12 (S21 – biblioteka; czekają na makietę biblioteki, S20 i decyzję o magazynie), N7 (kamera, warunkowe), N9 (R2).
+> **Odłożone na później (decyzja właściciela):** pobieranie grafik z danymi strony oparte na prototypie generatora karuzel albo na lepszej bazie z internetu – prototyp jest lokalnie u właściciela, repo `mapy` jest puste. Dotyczy kart z S19 (`src/core/share`, `src/view/share`), które właściciel ocenia jako słabe.
+> Uwaga: `nuqs` był w `package.json` do W0.1 (usunięty jako nieużywany); w N10 wraca świadomie, do filtrów biblioteki.
+
 Podstawa: `docs/research/weryfikacja-raportow-v2.md`. Zadania N1–N12 to **propozycja**: do `docs/ARCHITEKTURA.md` §3–§4 i `scripts/ops/automat-kolejka.json` wchodzą dopiero po Twoich decyzjach D1–D5 (jeden osobny PR; test `ops-kolejka.test.ts` pilnuje zgodności obu plików). Do tego czasu automat ich nie widzi i niczego nie uruchomi.
 Format promptów: `WORKFLOW` §9.1. Każdy warunek „Gotowe, gdy” = co najmniej jeden test. Przy wszystkich: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e`, brak usuniętych plików z `main`, wzorce zrzutów odświeża właściciel w CI (nie Jules).
 

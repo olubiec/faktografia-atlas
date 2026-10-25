@@ -53,6 +53,7 @@ Automat jeszcze nie ruszył. Pierwsza fala: F1 (W2.1, W1.2, W1.12, W1.13, W3.3, 
 - Przed automatem: logika W1.4–W1.8 i W2.10 weszły poza kolejnością fal; W2.3 wszedł za wcześnie i został wycofany (#218).
 
 ## Decyzje (najnowsze na górze, 1 linia, kto)
+- 25.10.2026 · Decyzje po raportach: strona główna wg makiety 01 – tak; usuwamy nieużywany Plot – tak; „Zamów wskaźnik” jako odnośnik do Tally; magazyn biblioteki najpierw przez adapter, R2 później; kamery nie ruszamy; sesja S22 (W0.2, W2.24, W3.8, W3.9, W2.25, W3.7, punkt kontrolny K6) dopisana do ARCHITEKTURA §3–§4 i kolejki; pobieranie grafik z generatora karuzel odłożone (Ty, czat Claude)
 - 25.10.2026 · Raporty R1–R5 zweryfikowane (`docs/research/weryfikacja-raportow-v2.md`): zero wymian własnych komponentów na pakiety teraz; szablonów nie bierzemy; prerender RR8 odpada (tryb framework); rozpiska N1–N12 w `docs/research/zadania-fala-8.md`, wchodzi do planu po decyzjach D1–D5 (Ty, czat Claude)
 - 25.10.2026 · Research kierujemy na audyt tego, co już zrobione (szablon stron, strona główna, animacje, własne komponenty) i na gotowce pod S20–S21; wzorce z cudzych repozytoriów wolno studiować i przepisać po swojemu tylko z wpisu w `docs/INSPIRACJE.md` (licencja MIT/BSD/ISC/Apache-2.0/CC0); zmiana zasady w `AGENTS.md` (Ty, czat Claude)
 - 24.10.2026 · W1.11 zrobione: raport Deep Research zweryfikowany na nagraniach BDL – podział miasto/wieś **istnieje** (kody 4 i 5) dla 14 z 16 wskaźników gminnych; w dochodach/wydatkach to fałszywe zera; robimy w sesji S20 po K5 (Ty, czat Claude)
