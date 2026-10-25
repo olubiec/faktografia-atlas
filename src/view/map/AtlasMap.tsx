@@ -12,6 +12,7 @@ import { installAtlasSeam, type AtlasState } from '@/core/map/test-seam';
 import { buildIndex } from '@/core/units/units';
 import { loadUnits, loadAdminTopo } from '@/core/data/load-atlas-data';
 import { countryBounds } from '@/core/map/view';
+import { readUrlState } from '@/core/url/state';
 import { createMapLayers, registerLayerFactory, parseCssColor } from './layers';
 import { localitiesLayerFactory } from './layers/localities';
 import { choroplethLayerFactory, selectedOutlineLayerFactory } from './layers/choropleth';
@@ -197,11 +198,13 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
   const { profile, isOpen: profileOpen, closeProfile } = useProfile(selectedTeryt, units);
 
   const extendedDrillState = useMemo(() => {
+    const compareParam = typeof window !== 'undefined' ? readUrlState(window.location.search, unitIndex).c ?? null : null;
     return {
       ...drillState,
       choropleth: choroplethData,
+      c: compareParam,
     };
-  }, [drillState, choroplethData]);
+  }, [drillState, choroplethData, unitIndex]);
 
   const layers = useMemo(() => {
     return createMapLayers(
@@ -216,10 +219,11 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
   }, [adminTopo, colors, extendedDrillState, handleSelectUnit, currentViewState, localities, handleHoverUnit]);
 
   const getState = useCallback((): AtlasState => {
+    const compareParam = typeof window !== 'undefined' ? readUrlState(window.location.search, unitIndex).c ?? null : null;
     return {
       ready: isReady,
       layers: layers.map((layer) => layer.id),
-      selected: drillState.selected,
+      selected: compareParam ?? drillState.selected,
       viewState: currentViewState,
       theme,
       choropleth: choroplethData
@@ -232,7 +236,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
         : null,
       profileOpen,
     };
-  }, [isReady, layers, drillState.selected, currentViewState, theme, choroplethData, profileOpen]);
+  }, [isReady, layers, unitIndex, drillState.selected, currentViewState, theme, choroplethData, profileOpen]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
