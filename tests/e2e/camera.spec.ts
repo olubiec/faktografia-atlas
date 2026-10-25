@@ -11,6 +11,15 @@ test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
     const startZoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
     expect(startZoom).toBeGreaterThan(0);
 
+    // Open search modal via Ctrl+K
+    await page.keyboard.press('Control+k');
+    const searchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
+    await expect(searchInput).toBeVisible();
+
+    await searchInput.fill('małopolskie');
+    const firstResult = page.locator('div[role="dialog"] [cmdk-item]').first();
+    await expect(firstResult).toBeVisible();
+
     // Start background non-blocking continuous rAF recorder in browser
     await page.evaluate(() => {
       (window as any).__zoomHistory = [];
@@ -30,13 +39,8 @@ test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
       requestAnimationFrame(sample);
     });
 
-    // Select voivodeship '12' (Małopolskie) via popstate history event
-    await page.evaluate(() => {
-      const event = new CustomEvent('popstate');
-      window.history.pushState({}, '', '/?u=12&e2e');
-      window.dispatchEvent(event);
-    });
-
+    // Press Enter to select voivodeship
+    await page.keyboard.press('Enter');
     await page.waitForTimeout(1000);
 
     await page.evaluate(() => {
