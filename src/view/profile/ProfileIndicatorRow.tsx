@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect } from 'react';
-import type { ProfileIndicatorItem, IndicatorValues } from '../../core/profile/profile';
+import type { ProfileIndicatorItem } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import { formatValue } from '../../core/format/number';
 import { collectFootnotes, formatParentFootnoteText, type Footnote } from '../../core/profile/footnotes';
