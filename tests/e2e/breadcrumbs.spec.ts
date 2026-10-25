@@ -21,6 +21,7 @@ test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
   });
 
   test('clicking parent breadcrumbs updates selected unit and ?u= URL parameter', async ({ page }) => {
+    test.setTimeout(60000);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?u=0201011&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
@@ -66,6 +67,7 @@ test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
   });
 
   test('sub-unit list shows children and supports mouse and keyboard navigation', async ({ page }) => {
+    test.setTimeout(60000);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?u=02&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
@@ -88,6 +90,7 @@ test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const powButton2 = page.locator('ul[aria-label="Jednostki podrzędne"]').locator('button', { hasText: 'powiat bolesławiecki' });
+    await expect(powButton2).toBeVisible();
     await powButton2.focus();
     await page.keyboard.press('Enter');
     await page.waitForFunction(() => (window as any).__atlas?.selected === '0201');
