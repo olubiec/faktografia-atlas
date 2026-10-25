@@ -115,6 +115,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
   const {
     containerRef,
     currentViewState,
+    currentViewStateRef,
     setCurrentViewState,
     limits,
     localities,
@@ -122,6 +123,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     updateViewStateForBbox,
     markUserMoved,
     handleKeyDown,
+    isAnimatingRef,
   } = useMapViewState(drillState.bbox, bounds);
 
   const mainView = useMainView();
@@ -149,7 +151,6 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
   const rankByTeryt = useMemo(() => Object.fromEntries((ranking?.items ?? []).map((r) => [r.teryt, r])), [ranking]);
 
   const [hover, setHover] = useState<{ teryt: string; x: number; y: number; width: number } | null>(null);
-  const hoverUnit = hover ? unitIndex.byTeryt.get(hover.teryt) ?? null : null;
 
   const [mobileTooltipTeryt, setMobileTooltipTeryt] = useState<string | null>(null);
   const [prevSelectedTeryt, setPrevSelectedTeryt] = useState(selectedTeryt);
@@ -206,17 +207,23 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     };
   }, [drillState, choroplethData, unitIndex]);
 
+  const localitiesZoomThreshold = currentViewState.zoom >= 8.5;
+  const viewStateForLayers = useMemo(
+    () => ({ ...currentViewState, zoom: localitiesZoomThreshold ? 11 : 5 }),
+    [currentViewState, localitiesZoomThreshold]
+  );
+
   const layers = useMemo(() => {
     return createMapLayers(
       adminTopo,
       colors,
       extendedDrillState,
       handleSelectUnit,
-      currentViewState,
+      viewStateForLayers,
       localities,
       handleHoverUnit
     );
-  }, [adminTopo, colors, extendedDrillState, handleSelectUnit, currentViewState, localities, handleHoverUnit]);
+  }, [adminTopo, colors, extendedDrillState, handleSelectUnit, viewStateForLayers, localities, handleHoverUnit]);
 
   const getState = useCallback((): AtlasState => {
     const compareParam = typeof window !== 'undefined' ? readUrlState(window.location.search, unitIndex).c ?? null : null;
@@ -224,7 +231,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       ready: isReady,
       layers: layers.map((layer) => layer.id),
       selected: compareParam ?? drillState.selected,
-      viewState: currentViewState,
+      viewState: currentViewStateRef.current,
       theme,
       choropleth: choroplethData
         ? {
@@ -236,7 +243,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
         : null,
       profileOpen,
     };
-  }, [isReady, layers, unitIndex, drillState.selected, currentViewState, theme, choroplethData, profileOpen]);
+  }, [isReady, layers, unitIndex, drillState.selected, theme, choroplethData, profileOpen, currentViewStateRef]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -264,6 +271,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
   }, [colors]);
 
   const selectedName = selectedTeryt ? unitIndex.byTeryt.get(selectedTeryt)?.name ?? null : null;
+  const hoverUnit = hover ? unitIndex.byTeryt.get(hover.teryt) ?? null : null;
   const hoverRank = hover ? rankByTeryt[hover.teryt] : undefined;
   const hoverValue =
     hover && view.values && view.year != null
@@ -320,9 +328,15 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
           mapLib={maplibregl}
           {...currentViewState}
           onMove={(evt) => {
-            // Zdarzenia bez originalEvent to echo programowej zmiany widoku (np. po zmianie rozmiaru kontenera,
-            // gdy dopasowujemy widok do nowej szerokości); nie nadpisują stanu, który właśnie ustawiliśmy.
             if (!evt.originalEvent) return;
+            const orig = evt.originalEvent as any;
+            const isDragging =
+              orig.type === 'mousemove' || orig.type === 'pointermove'
+                ? orig.buttons > 0
+                : orig.type === 'touchmove';
+
+            if (isAnimatingRef.current && !isDragging) return;
+
             markUserMoved();
             setCurrentViewState(evt.viewState);
           }}
