@@ -127,9 +127,13 @@ describe('LEGEND_DIRECTION_LABEL and dark mode legend description (W2.13)', () =
     expect(LEGEND_DIRECTION_LABEL).toBe('mniej → więcej');
   });
 
-  it('ensures IndicatorPanel description does not contain "ciemniej znaczy więcej"', () => {
+  it('ensures IndicatorPanel and Legend descriptions do not contain "ciemniej znaczy więcej"', () => {
     const indicatorPanelPath = path.resolve(__dirname, '../../src/view/main/IndicatorPanel.tsx');
-    const content = fs.readFileSync(indicatorPanelPath, 'utf-8');
-    expect(content.toLowerCase()).not.toContain('ciemniej znaczy więcej');
+    const indicatorPanelContent = fs.readFileSync(indicatorPanelPath, 'utf-8');
+    expect(indicatorPanelContent.toLowerCase()).not.toContain('ciemniej znaczy więcej');
+
+    const legendViewPath = path.resolve(__dirname, '../../src/view/legend/Legend.tsx');
+    const legendViewContent = fs.readFileSync(legendViewPath, 'utf-8');
+    expect(legendViewContent.toLowerCase()).not.toContain('ciemniej znaczy więcej');
   });
 });
