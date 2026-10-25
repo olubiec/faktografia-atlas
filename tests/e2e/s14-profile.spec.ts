@@ -24,8 +24,11 @@ test.describe('Full Desktop Profile Flow (@S14)', () => {
 
     const initialProfileReqCount = profileRequests.length;
 
-    // 2. Wyszukiwarka „małopolskie”
-    await page.keyboard.press('Control+k');
+    // 2. Wyszukiwarka „małopolskie” (użycie przycisku w nagłówku dla pełnej niezawodności w e2e)
+    const searchTrigger = page.locator('header button', { hasText: 'Szukaj miejsca...' });
+    await expect(searchTrigger).toBeVisible();
+    await searchTrigger.click();
+
     const searchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
     await expect(searchInput).toBeVisible();
     await searchInput.fill('małopolskie');
