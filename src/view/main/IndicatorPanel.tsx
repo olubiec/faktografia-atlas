@@ -16,6 +16,7 @@ import { Legend } from '@/view/legend/Legend';
 import { RankingBars } from '@/view/ranking/RankingBars';
 import { IndicatorInfo } from '@/view/explain/IndicatorInfo';
 import { LevelSwitch } from './LevelSwitch';
+import { ContextBlock } from '@/view/explain/ContextBlock';
 import { useShareData } from '@/view/share/useShareData';
 import { LazyShareDialog } from '@/view/share/LazyShareDialog';
 
@@ -50,6 +51,8 @@ export function IndicatorPanel({ view, choropleth, ranking, index, selectedTeryt
       cancelled = true;
     };
   }, [indicator.id]);
+
+  const allUnits = useMemo(() => Array.from(index.byTeryt.values()), [index]);
 
   const legend = useMemo(
     () => (choropleth ? buildLegend({ breaks: choropleth.breaks, scheme: choropleth.scheme }) : []),
@@ -110,6 +113,19 @@ export function IndicatorPanel({ view, choropleth, ranking, index, selectedTeryt
         )}
 
         {years.length > 0 && year != null && <YearSlider years={years} value={year} onChange={view.setYear} />}
+
+        {selectedTeryt && year != null && (
+          <ContextBlock
+            values={view.values}
+            indicator={indicator}
+            teryt={selectedTeryt}
+            year={year}
+            units={allUnits}
+            explanation={explanation}
+            showExplanation={false}
+            onSelectUnit={onSelectUnit}
+          />
+        )}
 
         {top.length > 0 && (
           <div className="flex flex-col gap-4">
