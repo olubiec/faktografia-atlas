@@ -7,7 +7,6 @@ import { trend } from '../../core/profile/trend';
 import { TrendChart } from './TrendChart';
 import { loadExplanations, type Explanation } from '../../core/explain/explanations';
 import { writeUrlState, readUrlState } from '../../core/url/state';
-import { loadIndicatorValues } from '../../core/data/load-values';
 import { ContextBlock } from '../explain/ContextBlock';
 import { Icon } from '../ui/Icon';
 import { NavArrowDown, NavArrowUp } from 'iconoir-react';
@@ -37,7 +36,6 @@ export function ProfileIndicatorRow({
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [explanation, setExplanation] = useState<Explanation | null>(null);
-  const [indicatorValues, setIndicatorValues] = useState<IndicatorValues | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -50,19 +48,6 @@ export function ProfileIndicatorRow({
       active = false;
     };
   }, [indicator.id]);
-
-  useEffect(() => {
-    if (!isExpanded) return;
-    let active = true;
-    loadIndicatorValues(indicator.id).then((data) => {
-      if (active) {
-        setIndicatorValues(data);
-      }
-    });
-    return () => {
-      active = false;
-    };
-  }, [isExpanded, indicator.id]);
 
   const formattedVal = formatValue(value, indicator.unit);
   const trendResult = series ? trend(series, indicator.unit) : null;
@@ -180,9 +165,9 @@ export function ProfileIndicatorRow({
             <TrendChart series={series} unit={indicator.unit} label={indicator.name} />
           )}
 
-          {indicatorValues && currentTeryt && year !== null ? (
+          {currentTeryt && year !== null ? (
             <ContextBlock
-              values={indicatorValues}
+              item={item}
               indicator={indicator}
               teryt={currentTeryt}
               year={year}

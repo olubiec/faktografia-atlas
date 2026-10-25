@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { IndicatorValues } from '../../core/profile/profile';
+import type { IndicatorValues, ProfileIndicatorItem } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import type { Explanation } from '../../core/explain/explanations';
 import { context } from '../../core/explain/context';
@@ -7,7 +7,8 @@ import { formatValue } from '../../core/format/number';
 import { unitLabel } from '../../core/units/label';
 
 export interface ContextBlockProps {
-  values: IndicatorValues | null;
+  values?: IndicatorValues | null;
+  item?: ProfileIndicatorItem | null;
   indicator: {
     id: string;
     name: string;
@@ -18,6 +19,7 @@ export interface ContextBlockProps {
   year: number;
   units: Unit[];
   explanation?: Explanation | null;
+  showExplanation?: boolean;
   onSelectUnit?: (teryt: string) => void;
 }
 
@@ -29,17 +31,46 @@ const LEVEL_PLURAL: Record<string, string> = {
 
 export function ContextBlock({
   values,
+  item,
   indicator,
   teryt,
   year,
   units,
   explanation,
+  showExplanation = true,
   onSelectUnit,
 }: ContextBlockProps) {
   const contextRes = useMemo(() => {
-    if (!values) return null;
-    return context(values, units, teryt, year, indicator.higherIsBetter);
-  }, [values, units, teryt, year, indicator.higherIsBetter]);
+    if (values) {
+      return context(values, units, teryt, year, indicator.higherIsBetter);
+    }
+    if (item && item.rankNational !== null && item.totalNational > 0) {
+      const rank = item.rankNational;
+      const total = item.totalNational;
+      const percentBelow = Math.round(((total - rank) / total) * 100);
+
+      let sameInVoivodeship: { percentBelow: number; median?: number; min?: number; max?: number } | null = null;
+      if (item.rankVoivodeship !== null && item.totalVoivodeship > 0) {
+        const wojRank = item.rankVoivodeship;
+        const wojTotal = item.totalVoivodeship;
+        sameInVoivodeship = {
+          percentBelow: Math.round(((wojTotal - wojRank) / wojTotal) * 100),
+        };
+      }
+
+      return {
+        rank,
+        total,
+        percentBelow,
+        medianPoland: undefined as unknown as number,
+        min: undefined as unknown as number,
+        max: undefined as unknown as number,
+        position0to1: undefined as unknown as number,
+        sameInVoivodeship,
+      };
+    }
+    return null;
+  }, [values, item, units, teryt, year, indicator.higherIsBetter]);
 
   const targetUnit = useMemo(() => {
     return units.find((u) => u.teryt === teryt) ?? null;
@@ -85,15 +116,19 @@ export function ContextBlock({
   }
 
   const levelPlural = LEVEL_PLURAL[targetUnit.level] ?? 'jednostek';
-  const positionPct = Math.min(100, Math.max(0, contextRes.position0to1 * 100));
+  const hasScale = typeof contextRes.medianPoland === 'number';
+
+  const positionPct = hasScale ? Math.min(100, Math.max(0, contextRes.position0to1 * 100)) : 50;
 
   const medianPos =
-    contextRes.max === contextRes.min
+    hasScale && contextRes.max === contextRes.min
       ? 50
-      : Math.min(
+      : hasScale
+      ? Math.min(
           100,
           Math.max(0, ((contextRes.medianPoland - contextRes.min) / (contextRes.max - contextRes.min)) * 100)
-        );
+        )
+      : 50;
 
   return (
     <div data-slot="context-block" className="bg-arkusz border border-linia p-3.5 space-y-4 text-xs text-tusz max-w-full overflow-hidden">
@@ -110,39 +145,43 @@ export function ContextBlock({
           wyżej niż {contextRes.percentBelow}% {levelPlural}
         </p>
 
-        <p className="text-olowek">
-          Mediana Polski: <span className="font-mono font-medium text-tusz">{formatValue(contextRes.medianPoland, indicator.unit)}</span>
-        </p>
+        {hasScale && (
+          <p className="text-olowek">
+            Mediana Polski: <span className="font-mono font-medium text-tusz">{formatValue(contextRes.medianPoland, indicator.unit)}</span>
+          </p>
+        )}
       </div>
 
-      {/* Skala ze wskazaniami */}
-      <div className="space-y-1.5 pt-1">
-        <div className="flex justify-between items-center text-3xs text-olowek font-mono">
-          <span>najmniej: {formatValue(contextRes.min, indicator.unit)}</span>
-          <span>najwięcej: {formatValue(contextRes.max, indicator.unit)}</span>
-        </div>
+      {/* Skala ze wskazaniami (gdy pełne dane wartości są dostępne) */}
+      {hasScale && (
+        <div className="space-y-1.5 pt-1">
+          <div className="flex justify-between items-center text-3xs text-olowek font-mono">
+            <span>najmniej: {formatValue(contextRes.min, indicator.unit)}</span>
+            <span>najwięcej: {formatValue(contextRes.max, indicator.unit)}</span>
+          </div>
 
-        <div className="relative h-2 bg-linia rounded-full my-2">
-          {/* Kreska mediany */}
-          <div
-            className="absolute top-1/2 -translate-y-1/2 w-0.5 h-3 bg-olowek -translate-x-1/2"
-            style={{ left: `${medianPos}%` }}
-            title={`Mediana: ${formatValue(contextRes.medianPoland, indicator.unit)}`}
-          />
-          {/* Kropka "tu jesteś" */}
-          <div
-            className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-tusz border-2 border-arkusz -translate-x-1/2 shadow-xs"
-            style={{ left: `${positionPct}%` }}
-            title={`Tu jesteś: ${contextRes.rank}. miejsce`}
-          />
-        </div>
+          <div className="relative h-2 bg-linia rounded-full my-2">
+            {/* Kreska mediany */}
+            <div
+              className="absolute top-1/2 -translate-y-1/2 w-0.5 h-3 bg-olowek -translate-x-1/2"
+              style={{ left: `${medianPos}%` }}
+              title={`Mediana: ${formatValue(contextRes.medianPoland, indicator.unit)}`}
+            />
+            {/* Kropka "tu jesteś" */}
+            <div
+              className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-tusz border-2 border-arkusz -translate-x-1/2 shadow-xs"
+              style={{ left: `${positionPct}%` }}
+              title={`Tu jesteś: ${contextRes.rank}. miejsce`}
+            />
+          </div>
 
-        <div className="flex justify-between items-center text-3xs text-olowek font-mono">
-          <span style={{ marginLeft: `${Math.min(80, Math.max(0, medianPos - 10))}%` }}>
-            mediana
-          </span>
+          <div className="flex justify-between items-center text-3xs text-olowek font-mono">
+            <span style={{ marginLeft: `${Math.min(80, Math.max(0, medianPos - 10))}%` }}>
+              mediana
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Kontekst w województwie (dla powiatów i gmin) */}
       {contextRes.sameInVoivodeship && (
@@ -151,9 +190,11 @@ export function ContextBlock({
           <p className="text-tusz">
             wyżej niż {contextRes.sameInVoivodeship.percentBelow}% {levelPlural} w regionie
           </p>
-          <p className="text-olowek">
-            Mediana w regionie: <span className="font-mono font-medium text-tusz">{formatValue(contextRes.sameInVoivodeship.median, indicator.unit)}</span>
-          </p>
+          {typeof contextRes.sameInVoivodeship.median === 'number' && (
+            <p className="text-olowek">
+              Mediana w regionie: <span className="font-mono font-medium text-tusz">{formatValue(contextRes.sameInVoivodeship.median, indicator.unit)}</span>
+            </p>
+          )}
         </div>
       )}
 
@@ -194,7 +235,7 @@ export function ContextBlock({
       )}
 
       {/* Objaśnienie z explanations.json (jeśli jest) */}
-      {explanation && (
+      {explanation && showExplanation && (
         <div className="pt-2 border-t border-linia space-y-2">
           {explanation.short && (
             <div>

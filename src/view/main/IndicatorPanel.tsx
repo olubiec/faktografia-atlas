@@ -122,6 +122,7 @@ export function IndicatorPanel({ view, choropleth, ranking, index, selectedTeryt
             year={year}
             units={allUnits}
             explanation={explanation}
+            showExplanation={false}
             onSelectUnit={onSelectUnit}
           />
         )}
