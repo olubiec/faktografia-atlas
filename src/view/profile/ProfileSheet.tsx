@@ -4,12 +4,15 @@ import type { Unit } from '../../core/units/types';
 import type { MainView } from '../map/hooks/useMainView';
 import { collectFootnotes } from '../../core/profile/footnotes';
 import { pickHighlight } from '../../core/profile/highlight';
+import { childUnits } from '../../core/profile/sections';
 import { unitTitle } from '../../core/units/label';
 import { Footnotes } from './Footnotes';
 import { Sheet } from '../ui/Sheet';
 import { Icon } from '../ui/Icon';
 import { ProfileOverview } from './ProfileOverview';
 import { ProfileIndicatorRow } from './ProfileIndicatorRow';
+import { ProfileChildren } from './ProfileChildren';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs';
 import { formatSource } from '../../core/format/number';
 import { Xmark, Link } from 'iconoir-react';
 import { cn } from '../../lib/utils';
@@ -33,7 +36,7 @@ export interface ProfileBodyProps {
 }
 
 /**
- * Treść profilu jednostki (nagłówek, przegląd bieżącego wskaźnika z rankingiem, lista pozostałych wskaźników, przypisy i źródło).
+ * Treść profilu jednostki (nagłówek, zakładki: Przegląd, Powiaty/Gminy, Porównaj, przypisy i źródło).
  * Współdzielona między wersją na komputer (ProfileSheet) a wersją na telefon (ProfileSheetMobile).
  */
 export function ProfileBody({
@@ -45,7 +48,15 @@ export function ProfileBody({
   showCloseButton = true,
 }: ProfileBodyProps) {
   const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [prevTeryt, setPrevTeryt] = useState<string>(profile.teryt);
 
+  if (profile.teryt !== prevTeryt) {
+    setPrevTeryt(profile.teryt);
+    setActiveTab('overview');
+  }
+
+  const childrenResult = profile.unit ? childUnits(profile.unit, units) : null;
   const unitTitleText = profile.unit ? unitTitle(profile.unit) : `TERYT ${profile.teryt}`;
 
   // Gdy brak `view` (np. w testach jednostkowych), wyznaczamy zakreślenie dla wskaźnika z najlepszym wynikiem
@@ -114,43 +125,77 @@ export function ProfileBody({
         )}
       </div>
 
-      {/* Sekcja Przeglądu (bieżący wskaźnik i ranking) */}
-      {view && onSelectUnit && (
-        <ProfileOverview
-          profile={profile}
-          units={units}
-          view={view}
-          onSelectUnit={onSelectUnit}
-        />
-      )}
+      {/* Zakładki profilu */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="w-full grid grid-cols-3 mb-4">
+          <TabsTrigger value="overview" className="min-h-[44px]">
+            Przegląd
+          </TabsTrigger>
+          {childrenResult && childrenResult.label ? (
+            <TabsTrigger value="children" className="min-h-[44px]">
+              {childrenResult.label}
+            </TabsTrigger>
+          ) : null}
+          <TabsTrigger
+            value="compare"
+            disabled
+            className="min-h-[44px] disabled:opacity-50"
+          >
+            Porównaj <span className="text-xs text-olowek ml-1">(wkrótce)</span>
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Lista pozostałych wskaźników lub komunikat o braku danych */}
-      {otherIndicators.length === 0 && !view ? (
-        <p className="py-6 text-sm text-olowek text-center">
-          Brak danych profilu dla tej jednostki.
-        </p>
-      ) : (
-        <div className="divide-y divide-linia my-2">
-          {Object.entries(groupedIndicators).map(([groupName, items]) => (
-            <div key={groupName} className="pt-4 pb-2 first:pt-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-olowek mb-2">
-                {groupName}
-              </h3>
-              <div>
-                {items.map((item) => (
-                  <ProfileIndicatorRow
-                    key={item.indicatorId}
-                    item={item}
-                    units={units}
-                    footnotes={footnotes}
-                    isHighlighted={!view && item.indicatorId === highlightedIndicatorId}
-                  />
-                ))}
-              </div>
+        <TabsContent value="overview" className="space-y-4 focus-visible:outline-none">
+          {/* Sekcja Przeglądu (bieżący wskaźnik i ranking) */}
+          {view && onSelectUnit && (
+            <ProfileOverview
+              profile={profile}
+              units={units}
+              view={view}
+              onSelectUnit={onSelectUnit}
+            />
+          )}
+
+          {/* Lista pozostałych wskaźników lub komunikat o braku danych */}
+          {otherIndicators.length === 0 && !view ? (
+            <p className="py-6 text-sm text-olowek text-center">
+              Brak danych profilu dla tej jednostki.
+            </p>
+          ) : (
+            <div className="divide-y divide-linia my-2">
+              {Object.entries(groupedIndicators).map(([groupName, items]) => (
+                <div key={groupName} className="pt-4 pb-2 first:pt-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-olowek mb-2">
+                    {groupName}
+                  </h3>
+                  <div>
+                    {items.map((item) => (
+                      <ProfileIndicatorRow
+                        key={item.indicatorId}
+                        item={item}
+                        units={units}
+                        footnotes={footnotes}
+                        isHighlighted={!view && item.indicatorId === highlightedIndicatorId}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          )}
+        </TabsContent>
+
+        {childrenResult && childrenResult.label && (
+          <TabsContent value="children" className="focus-visible:outline-none">
+            <ProfileChildren
+              profile={profile}
+              units={units}
+              view={view}
+              onSelectUnit={onSelectUnit}
+            />
+          </TabsContent>
+        )}
+      </Tabs>
 
       {/* Stopka z przyciskiem Kopiuj link, przypisami i źródłem */}
       <footer className="pt-4 border-t border-linia text-xs text-olowek space-y-3">
