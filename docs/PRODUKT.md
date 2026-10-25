@@ -98,6 +98,23 @@ Pomysł właściciela 24.10.2026: każdy może pobrać dane, tabelki, mapy z leg
 - **Zasady techniczne:** zero nowych pobrań danych (karty powstają z tego, co już jest w pamięci strony), zero nowych pakietów (SVG i `canvas` przeglądarki, istniejące `roughjs` do kółka korekty), napisy nie wychodzą poza pola także dla najdłuższych nazw („Powiat kędzierzyńsko-kozielski”), działa offline po wczytaniu strony; kod okna i rysowania ładowany dopiero po kliknięciu (osobny plik JS – nie powiększa wejścia, §7).
 - **Poza zakresem:** generator serii slajdów pod konta Faktografii (osobne prywatne repo – może korzystać z tych samych kart), wideo, GIF, XLSX.
 
+## 4c. Miasto i obszar wiejski w gminach miejsko-wiejskich (S20)
+
+Decyzja 25.10.2026 (zwiad W1.11: `docs/research/W1.11-wynik.md`). Dotyczy **tylko gmin miejsko-wiejskich** (7-cyfrowy TERYT kończy się na 3). W BDL mają dwie części: **miasto** (kod …4) i **obszar wiejski** (kod …5).
+- W profilu takiej gminy, pod przeglądem: zwijany blok „Miasto i obszar wiejski”. Domyślnie zwinięty; dopiero rozwinięcie pobiera **jeden** plik `public/data/parts/<teryt województwa>.json` (wejście w profil nadal robi dokładnie jedno żądanie – §7).
+- Zawartość: 14 wskaźników z `config/parts.json`; kolumny „Gmina · Miasto · Obszar wiejski” dla najnowszego roku, w którym jest jakakolwiek wartość części; brak wartości → „brak danych”. Telefon: każdy wskaźnik jako karta (trzy liczby pod nazwą), bez poziomego przewijania.
+- **Nie pokazujemy** dochodów i wydatków na mieszkańca (GUS podaje dla części zera = „tylko cała gmina”) ani wskaźników tylko powiatowych. Liczby bierzemy tak, jak podaje BDL (zero zostaje zerem).
+- **Nie robimy** osobnych obrysów miasta i wsi na mapie (nie mamy ich granic) ani koloru części na mapie głównej.
+- Podpis bloku: „Dane GUS (Bank Danych Lokalnych) dla części gminy miejsko-wiejskiej.”
+
+## 4d. Biblioteka GUS (S21)
+
+Decyzja 25.10.2026. Osobna strona na całą bibliotekę wskaźników BDL pobieraną stopniowo przez robota (`docs/research/biblioteka-gus.md`). Ekran główny z mapą i 20 wskaźnikami zostaje taki, jaki jest.
+- **`/biblioteka`** (link „Biblioteka” w nagłówku): licznik („<n> wskaźników GUS, z czego <m> można już przeglądać”), kafelki kategorii (działy GUS) z okruszkami, wyszukiwarka po nazwie (bez względu na polskie znaki i wielkość liter), filtry: poziom (powiaty / gminy), jednostka miary, „tylko już pobrane”; wyniki jako lista po 50 z „Pokaż więcej”. Stan (kategoria, tekst, filtry) w adresie `?k= &q= &l= &p=`.
+- **`/biblioteka/<id>`**: nazwa, kategoria, jednostka, wybór roku i poziomu, ranking „najwyżej / najniżej” (po 10), „Pobierz CSV”, źródło i licencja (GUS, BDL, CC BY 4.0). Wskaźnik jeszcze niepobrany → komunikat i przycisk „Zamów ten wskaźnik” (otwiera zgłoszenie na GitHubie z wypełnionym tekstem – sami niczego nie wysyłamy).
+- **Nie ma w pierwszej wersji** (idzie do „Później”): mapa dla wskaźnika z biblioteki (wymaga zmiany ekranu głównego), porównania, karty PNG, konta, automatyczna kolejka zamówień (zamówienia czytamy ręcznie).
+- Dane: indeks (jeden plik) i wartości (jeden plik na wskaźnik) czytane z jednego adresu, ustawianego w `src/core/library/config.ts` (zmienna `VITE_LIBRARY_BASE`) – dzięki temu zmiana magazynu danych (gałąź w repo → Cloudflare R2) nie dotyka kodu stron.
+
 ## 5. Telefon (< 768 px) – makieta 04
 
 Ogląd właściciela 21.10.2026: telefon nie nadaje się do użytku (panel wskaźnika nad mapą zajmuje pół ekranu, mapa to pasek, profil zasłania resztę, okruszki i „Wróć” leżą na mapie, pasek zgody zakrywa dół). Wymagania:
@@ -142,6 +159,8 @@ Zasady: każda liczba i ciekawostka ma źródło z linkiem; research robi Gem Re
 | Dane pobierane na wejściu | granice + lista jednostek + **jeden** plik wskaźnika domyślnego; żadnego `profiles/*` |
 | Wybór miejsca | **dokładnie jedno** żądanie danych profilu (`public/data/profiles/<województwo>.json`) |
 | Zmiana wskaźnika | jedno żądanie `values/<id>.json` (jeśli nie było w pamięci) |
+| Profil gminy miejsko-wiejskiej | bez dodatkowych żądań; dopiero rozwinięcie „Miasto i obszar wiejski” = jedno żądanie `parts/<województwo>.json` (§4c) |
+| Biblioteka GUS (`/biblioteka`) | wejście = jedno żądanie indeksu; wybór wskaźnika = jedno żądanie wartości; żadnych `values/*` ani `profiles/*` z głównej mapy (§4d) |
 | Pliki danych | bez wcięć (`JSON.stringify` bez spacji) |
 | Odczuwalnie (właściciel na podglądzie, także na telefonie) | mapa w kolorach ≤ 3 s na zwykłym laptopie; otwarcie profilu bez widocznego zacięcia |
 
@@ -154,4 +173,4 @@ Zasady: każda liczba i ciekawostka ma źródło z linkiem; research robi Gem Re
 
 ## 9. Kolejność
 
-Zadania wg warstw: `docs/ARCHITEKTURA.md` §3; fale i ich kolejność: §4 (S14 profil, S15 telefon, S16 wejście w głąb, S17 objaśnienia, S18 porównanie, S19 pobierz i udostępnij, potem „Później”). Prowadzi je automat (`docs/AUTOMAT.md`).
+Zadania wg warstw: `docs/ARCHITEKTURA.md` §3; fale i ich kolejność: §4 (S14 profil, S15 telefon, S16 wejście w głąb, S17 objaśnienia, S18 porównanie, S19 pobierz i udostępnij – zrobione; S20 miasto i wieś, S21 biblioteka GUS – F8–F12; potem „Później”). Od 25.10.2026 fale puszcza Claude, a Ty scalasz (`docs/AUTOMAT.md` §0).
