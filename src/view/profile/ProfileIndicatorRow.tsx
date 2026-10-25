@@ -1,12 +1,14 @@
 import { Fragment, useState, useEffect } from 'react';
-import type { ProfileIndicatorItem } from '../../core/profile/profile';
+import type { ProfileIndicatorItem, IndicatorValues } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import { formatValue } from '../../core/format/number';
 import { collectFootnotes, formatParentFootnoteText, type Footnote } from '../../core/profile/footnotes';
 import { trend } from '../../core/profile/trend';
 import { TrendChart } from './TrendChart';
 import { loadExplanations, type Explanation } from '../../core/explain/explanations';
-import { writeUrlState } from '../../core/url/state';
+import { writeUrlState, readUrlState } from '../../core/url/state';
+import { loadIndicatorValues } from '../../core/data/load-values';
+import { ContextBlock } from '../explain/ContextBlock';
 import { Icon } from '../ui/Icon';
 import { NavArrowDown, NavArrowUp } from 'iconoir-react';
 
@@ -23,7 +25,7 @@ export interface ProfileIndicatorRowProps {
  * rok, miejsce w kraju oraz tekst informacji o trendzie zmian w latach.
  *
  * Cały wiersz jest przyciskiem rozwijającym (aria-expanded).
- * Rozwinięty wiersz pokazuje wykres lat (TrendChart), objaśnienie (jeśli jest) i przycisk „Pokaż na mapie”.
+ * Rozwinięty wiersz pokazuje wykres lat (TrendChart), blok kontekstu (ContextBlock) z objaśnieniem i przycisk „Pokaż na mapie”.
  */
 export function ProfileIndicatorRow({
   item,
@@ -35,6 +37,7 @@ export function ProfileIndicatorRow({
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [explanation, setExplanation] = useState<Explanation | null>(null);
+  const [indicatorValues, setIndicatorValues] = useState<IndicatorValues | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -47,6 +50,19 @@ export function ProfileIndicatorRow({
       active = false;
     };
   }, [indicator.id]);
+
+  useEffect(() => {
+    if (!isExpanded) return;
+    let active = true;
+    loadIndicatorValues(indicator.id).then((data) => {
+      if (active) {
+        setIndicatorValues(data);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [isExpanded, indicator.id]);
 
   const formattedVal = formatValue(value, indicator.unit);
   const trendResult = series ? trend(series, indicator.unit) : null;
@@ -82,6 +98,14 @@ export function ProfileIndicatorRow({
   const handleShowOnMap = (e: React.MouseEvent) => {
     e.stopPropagation();
     writeUrlState({ i: indicator.id });
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
+  const currentTeryt =
+    typeof window !== 'undefined' ? readUrlState(window.location.search).u ?? null : null;
+
+  const handleSelectUnit = (targetTeryt: string) => {
+    writeUrlState({ u: targetTeryt });
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
 
@@ -156,27 +180,39 @@ export function ProfileIndicatorRow({
             <TrendChart series={series} unit={indicator.unit} label={indicator.name} />
           )}
 
-          {explanation && (
-            <div className="bg-arkusz border border-linia p-3 space-y-2 text-xs">
-              <div>
-                <span className="font-semibold text-tusz block mb-0.5">Co to jest</span>
-                <p className="text-olowek leading-relaxed">{explanation.short}</p>
+          {indicatorValues && currentTeryt && year !== null ? (
+            <ContextBlock
+              values={indicatorValues}
+              indicator={indicator}
+              teryt={currentTeryt}
+              year={year}
+              units={units}
+              explanation={explanation}
+              onSelectUnit={handleSelectUnit}
+            />
+          ) : (
+            explanation && (
+              <div className="bg-arkusz border border-linia p-3 space-y-2 text-xs">
+                <div>
+                  <span className="font-semibold text-tusz block mb-0.5">Co to jest</span>
+                  <p className="text-olowek leading-relaxed">{explanation.short}</p>
+                </div>
+                <div>
+                  <span className="font-semibold text-tusz block mb-0.5">Jak czytać</span>
+                  <p className="text-olowek leading-relaxed">{explanation.howToRead}</p>
+                </div>
+                <div>
+                  <a
+                    href={explanation.definitionUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-tusz underline hover:text-olowek focus:outline-none focus:ring-2 focus:ring-tusz font-medium"
+                  >
+                    Definicja GUS
+                  </a>
+                </div>
               </div>
-              <div>
-                <span className="font-semibold text-tusz block mb-0.5">Jak czytać</span>
-                <p className="text-olowek leading-relaxed">{explanation.howToRead}</p>
-              </div>
-              <div>
-                <a
-                  href={explanation.definitionUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-tusz underline hover:text-olowek focus:outline-none focus:ring-2 focus:ring-tusz font-medium"
-                >
-                  Definicja GUS
-                </a>
-              </div>
-            </div>
+            )
           )}
 
           <div className="pt-1">
