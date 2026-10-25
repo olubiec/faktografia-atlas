@@ -2,6 +2,7 @@ import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { initialViewState, mapLimits, type ViewState } from '@/core/map/view';
 import { loadLocalities } from '@/core/search/load-localities';
 import type { Locality } from '@/core/search/types';
+import { useSheetInset } from '@/view/map/sheetInset';
 
 // Margines (px) wokół dopasowanego obszaru, żeby mapa nie dotykała krawędzi okna.
 const FIT_PADDING = 48;
@@ -10,16 +11,58 @@ type Bbox = [number, number, number, number];
 // Przybliżony obrys Polski; używany tylko, gdy lista jednostek nie jest jeszcze wczytana.
 const POLAND_BBOX: Bbox = [14.12, 49.0, 24.15, 54.84];
 
+function mercatorLat(latDeg: number): number {
+  return Math.log(Math.tan(Math.PI / 4 + (latDeg * Math.PI) / 360));
+}
+
+function mercatorLatToDeg(m: number): number {
+  return (360 / Math.PI) * Math.atan(Math.exp(m)) - 90;
+}
+
+/**
+ * Oblicza stan widoku kamery uwzględniając dolny margines (wysokość arkusza w px).
+ * Jeśli dolny arkusz jest widoczny (insetPx > 0), środek dopasowywanego obszaru
+ * zostaje przesunięty w pionie tak, aby mieścił się w widocznej części mapy nad arkuszem.
+ */
+function viewStateWithInset(
+  bounds: Bbox,
+  width: number,
+  height: number,
+  insetPx: number
+): ViewState {
+  if (insetPx <= 0) {
+    return initialViewState(bounds, Math.max(width - FIT_PADDING, 1), Math.max(height - FIT_PADDING, 1));
+  }
+
+  const fitWidth = Math.max(1, width - FIT_PADDING);
+  const fitHeight = Math.max(1, height - insetPx - FIT_PADDING);
+
+  const baseView = initialViewState(bounds, fitWidth, fitHeight);
+
+  const tileSize = 512;
+  const offsetY = insetPx / 2;
+  const mBaseLat = mercatorLat(baseView.latitude);
+  const mShift = (offsetY * 2 * Math.PI) / (tileSize * Math.pow(2, baseView.zoom));
+  const mCamLat = mBaseLat - mShift;
+  const latitude = mercatorLatToDeg(mCamLat);
+
+  return {
+    longitude: baseView.longitude,
+    latitude,
+    zoom: baseView.zoom,
+  };
+}
+
 export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POLAND_BBOX) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const sheetInset = useSheetInset();
   const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [localities, setLocalities] = useState<Locality[]>([]);
   const localityTargetRef = useRef<ViewState | null>(null);
-  // Dla którego obszaru widok został już dopasowany. Sama zmiana rozmiaru kontenera (np. otwarcie
-  // arkusza profilu obok mapy) nie może resetować przybliżenia ani przesunięcia ustawionego przez użytkownika.
+  // Dla którego obszaru i marginesu arkusza widok został już dopasowany. Sama zmiana rozmiaru kontenera
+  // nie może resetować przybliżenia ani przesunięcia ustawionego przez użytkownika.
   const fittedKeyRef = useRef<string | null>(null);
-  // Czy użytkownik sam przesunął lub przybliżył mapę. Dopóki nie, zmiana rozmiaru kontenera (np. otwarcie
-  // profilu obok mapy) dopasowuje widok ponownie, żeby wybrany obszar nadal mieścił się w całości.
+  // Czy użytkownik sam przesunął lub przybliżył mapę.
   const userMovedRef = useRef(false);
   const markUserMoved = useCallback(() => {
     userMovedRef.current = true;
@@ -42,12 +85,12 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
       const { width, height } = dimensions;
       if (width > 0 && height > 0) {
         const activeBbox = targetBbox ?? bounds;
-        const newView = initialViewState(activeBbox, Math.max(width - FIT_PADDING, 1), Math.max(height - FIT_PADDING, 1));
+        const newView = viewStateWithInset(activeBbox, width, height, sheetInset);
         userMovedRef.current = false;
         setCurrentViewState(newView);
       }
     },
-    [bounds, dimensions]
+    [bounds, dimensions, sheetInset]
   );
 
   useEffect(() => {
@@ -58,7 +101,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
       const { clientWidth, clientHeight } = containerRef.current;
       if (clientWidth > 0 && clientHeight > 0) {
         setDimensions({ width: clientWidth, height: clientHeight });
-        const key = JSON.stringify(drillBbox ?? null);
+        const key = JSON.stringify({ bbox: drillBbox ?? null, inset: sheetInset });
         if (localityTargetRef.current) {
           setCurrentViewState(localityTargetRef.current);
           localityTargetRef.current = null;
@@ -66,7 +109,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           userMovedRef.current = true;
         } else if (fittedKeyRef.current !== key || !userMovedRef.current) {
           const activeBbox = drillBbox ?? bounds;
-          const init = initialViewState(activeBbox, Math.max(clientWidth - FIT_PADDING, 1), Math.max(clientHeight - FIT_PADDING, 1));
+          const init = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
           setCurrentViewState(init);
           fittedKeyRef.current = key;
         }
@@ -78,7 +121,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     resizeObserver.observe(containerRef.current);
 
     return () => resizeObserver.disconnect();
-  }, [bounds, drillBbox]);
+  }, [bounds, drillBbox, sheetInset]);
 
   useEffect(() => {
     if (currentViewState.zoom >= 8.5) {
