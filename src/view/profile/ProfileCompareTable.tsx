@@ -66,16 +66,16 @@ export function ProfileCompareTable({
           >
             <thead>
               <tr className="border-b border-linia text-olowek font-medium">
-                <th scope="col" className="py-2 pr-2 font-medium">
+                <th scope="col" className="py-2 pr-1.5 sm:pr-2 font-medium">
                   Wskaźnik
                 </th>
-                <th scope="col" className="py-2 px-2 text-right font-medium">
+                <th scope="col" className="py-2 px-1.5 sm:px-2 text-right font-medium">
                   {unitAName}
                 </th>
-                <th scope="col" className="py-2 px-2 text-right font-medium">
+                <th scope="col" className="py-2 px-1.5 sm:px-2 text-right font-medium">
                   {unitBName}
                 </th>
-                <th scope="col" className="py-2 pl-2 text-right font-medium">
+                <th scope="col" className="py-2 pl-1.5 sm:pl-2 text-right font-medium">
                   Różnica
                 </th>
               </tr>
@@ -105,11 +105,11 @@ export function ProfileCompareTable({
                     data-slot="compare-row"
                     className="align-top"
                   >
-                    <td className="py-3 pr-2 font-medium text-tusz break-words">
+                    <td className="py-2.5 sm:py-3 pr-1.5 sm:pr-2 font-medium text-tusz break-words">
                       {itemA?.indicator.name ?? row.indicatorId}
                     </td>
-                    <td className="py-3 px-2 text-right tabular-nums">
-                      <div className="font-bold font-mono text-tusz">
+                    <td className="py-2.5 sm:py-3 px-1.5 sm:px-2 text-right tabular-nums">
+                      <div className="font-bold font-mono text-tusz text-xs">
                         {formattedA}
                       </div>
                       {rankTextA && (
@@ -118,8 +118,8 @@ export function ProfileCompareTable({
                         </div>
                       )}
                     </td>
-                    <td className="py-3 px-2 text-right tabular-nums">
-                      <div className="font-bold font-mono text-tusz">
+                    <td className="py-2.5 sm:py-3 px-1.5 sm:px-2 text-right tabular-nums">
+                      <div className="font-bold font-mono text-tusz text-xs">
                         {formattedB}
                       </div>
                       {rankTextB && (
@@ -128,7 +128,7 @@ export function ProfileCompareTable({
                         </div>
                       )}
                     </td>
-                    <td className="py-3 pl-2 text-right font-mono text-olowek font-medium break-words">
+                    <td className="py-2.5 sm:py-3 pl-1.5 sm:pl-2 text-right font-mono text-olowek font-medium break-words text-xs">
                       {row.diffText}
                     </td>
                   </tr>
