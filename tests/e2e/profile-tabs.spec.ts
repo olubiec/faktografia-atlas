@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import injectAxe, { checkA11y } from 'axe-playwright';
+import { AxeBuilder } from '@axe-core/playwright';
 
 test.describe('Profile Tabs W2.2 (@S14)', () => {
   test('displays profile tabs correctly for voivodeship and county, omits for gmina (@S14)', async ({
@@ -112,17 +112,8 @@ test.describe('Profile Tabs W2.2 (@S14)', () => {
     await page.goto('/?e2e&u=12');
     await page.waitForSelector('[data-slot="side"]');
 
-    await injectAxe(page);
-    await checkA11y(page, undefined, {
-      detailedReport: true,
-      detailedReportOptions: { html: true },
-      axeOptions: {
-        rules: {
-          // Ignoruj znane błędy deck.gl / canvas jeśli istnieją
-          'color-contrast': { enabled: true },
-        },
-      },
-    });
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(results.violations).toEqual([]);
   });
 
   test('respects prefers-reduced-motion (@S14)', async ({ page }) => {
