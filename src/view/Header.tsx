@@ -96,7 +96,7 @@ export function Header() {
   }
 
   return (
-    <header className="h-[72px] flex justify-between items-center px-4 md:px-8 border-b border-linia bg-kalka text-tusz relative z-20">
+    <header className="h-[56px] md:h-[72px] flex justify-between items-center px-4 md:px-8 border-b border-linia bg-kalka text-tusz relative z-20 shrink-0">
       <Link to={`/${location.search}`} className="flex items-center min-h-[44px]">
         <img
           src={logoSrc}
@@ -105,14 +105,13 @@ export function Header() {
         />
       </Link>
 
-      {/* Header Search Trigger Button */}
+      {/* Desktop Header Search Trigger Button */}
       <button
         type="button"
         onClick={() => changeSearchOpen(true)}
-        className="flex items-center gap-2 px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs md:text-sm min-h-[44px] cursor-pointer rounded-none"
+        className="hidden md:flex items-center gap-2 px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs md:text-sm min-h-[44px] cursor-pointer rounded-none"
       >
         <Icon icon={Search} aria-hidden={true} size={20} />
-        <span className="sm:hidden sr-only">Szukaj miejsca</span>
         <span className="hidden sm:inline text-olowek">Szukaj miejsca...</span>
         <span className="hidden md:inline-block px-1.5 py-0.5 border border-linia bg-kalka text-olowek text-xs font-mono ml-1">
           Ctrl K
@@ -134,6 +133,7 @@ export function Header() {
           Skąd są dane
         </Link>
         <button
+          type="button"
           onClick={cycleTheme}
           className="min-w-[44px] min-h-[44px] px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs flex items-center justify-center cursor-pointer rounded-none"
         >
@@ -141,19 +141,22 @@ export function Header() {
         </button>
       </nav>
 
-      {/* Mobile Controls */}
+      {/* Mobile Controls: Search (lupa) + Menu */}
       <div className="flex md:hidden items-center gap-2">
         <button
-          onClick={cycleTheme}
-          className="min-w-[44px] min-h-[44px] px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs flex items-center justify-center cursor-pointer rounded-none"
+          type="button"
+          onClick={() => changeSearchOpen(true)}
+          aria-label="Szukaj miejsca"
+          className="min-w-[44px] min-h-[44px] border border-linia bg-arkusz flex items-center justify-center text-tusz cursor-pointer rounded-none hover:bg-linia/20 transition-colors"
         >
-          Motyw: {themeText}
+          <Icon icon={Search} aria-hidden={true} size={20} />
         </button>
         <button
+          type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Menu"
           aria-expanded={mobileMenuOpen}
-          className="min-w-[44px] min-h-[44px] border border-linia bg-arkusz flex items-center justify-center text-tusz cursor-pointer rounded-none"
+          className="min-w-[44px] min-h-[44px] border border-linia bg-arkusz flex items-center justify-center text-tusz cursor-pointer rounded-none hover:bg-linia/20 transition-colors"
         >
           <Icon icon={mobileMenuOpen ? Xmark : Menu} aria-hidden={true} size={20} />
         </button>
@@ -161,7 +164,14 @@ export function Header() {
 
       {/* Mobile Menu Sheet */}
       {mobileMenuOpen && (
-        <Sheet className="absolute top-[72px] left-0 right-0 z-30 flex flex-col gap-4 border-t-0 shadow-none md:hidden">
+        <Sheet className="absolute top-[56px] md:top-[72px] left-0 right-0 z-30 flex flex-col gap-4 border-t-0 shadow-none md:hidden">
+          <button
+            type="button"
+            onClick={cycleTheme}
+            className="min-w-[44px] min-h-[44px] px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs flex items-center justify-start cursor-pointer rounded-none text-left"
+          >
+            Motyw: {themeText}
+          </button>
           <Link
             to={`/o-projekcie${location.search}`}
             onClick={() => setMobileMenuOpen(false)}
