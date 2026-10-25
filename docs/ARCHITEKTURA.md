@@ -496,4 +496,4 @@ Konta użytkowników · wołanie API GUS z przeglądarki · liczby wpisane ręcz
 | R3 | Podstrony gmin pod wyszukiwarki (SEO) | `TRYB: RESEARCH` [C] + `TRYB: DECYZJA` | po K5 |
 | R4 | Dwie pełne mapy obok siebie (dwa wskaźniki/lata) | `TRYB: DECYZJA` (koszt wydajności na telefonie) | po K5 |
 | R5 | Tryb ciemny mapy, kreskowanie „brak danych” | `TRYB: WYBÓR`/projekt | po K5 |
-| R6 | Cała biblioteka GUS: magazyn danych, katalog, robot z budżetem limitów (`docs/research/biblioteka-gus.md`) | `TRYB: RESEARCH` [C] + `TRYB: WYBÓR` | po K5, sesja S21 |
+| R6 | Cała biblioteka GUS: magazyn danych, katalog, robot z budżetem limitów (`docs/research/biblioteka-gus.md`) | `TRYB: RESEARCH` [C] + `TRYB: WYBÓR` | robot już działa (patrz niżej); magazyn i strona po K5, sesja S21 |

@@ -1,0 +1,82 @@
+name: Fetch library
+
+# Robot „Biblioteka GUS”: co 12 godzin pobiera kolejną porcję całego BDL (katalog działów i zmiennych, potem wartości
+# na poziomie powiatów i gmin) i zapisuje ją na gałęzi `data/library` (NIGDY na main).
+# Limity API: z kluczem 5000 zapytań / 12 h. Budżet jednego przebiegu = 2500 zapytań (50%), nocny „Fetch data”
+# zużywa ok. 750, więc razem zostaje duży zapas także względem limitu tygodniowego (50 000).
+# Grupa `fetch-data` jest wspólna z nocnym pobieraniem: oba roboty nigdy nie biją w API jednocześnie.
+# Wznawianie: stan w library/state.json; uruchomienie pobiera tylko to, czego jeszcze nie ma.
+on:
+  workflow_dispatch:
+    inputs:
+      budget:
+        description: 'Maks. liczba zapytań do API w tym przebiegu'
+        required: false
+        default: '2500'
+  schedule:
+    - cron: '40 4,16 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-data
+  cancel-in-progress: false
+
+jobs:
+  library:
+    runs-on: ubuntu-latest
+    timeout-minutes: 170
+    env:
+      BRANCH: data/library
+      LIBRARY_BUDGET: ${{ github.event.inputs.budget || '2500' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Przygotuj katalog roboczy z gałęzi data/library (osobna historia, bez kodu strony)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            git fetch --depth 1 origin "$BRANCH"
+            git worktree add -B "$BRANCH" lib-wt "origin/$BRANCH"
+          else
+            git worktree add --detach lib-wt
+            git -C lib-wt checkout --orphan "$BRANCH"
+            git -C lib-wt rm -rf -q .
+          fi
+
+      - name: Sprawdź sekret
+        env:
+          BDL_CLIENT_ID: ${{ secrets.BDL_CLIENT_ID }}
+        run: |
+          [ -n "$BDL_CLIENT_ID" ] || { echo "::error::Brak sekretu BDL_CLIENT_ID."; exit 1; }
+
+      - name: Pobierz porcję danych (w granicach budżetu zapytań)
+        timeout-minutes: 150
+        env:
+          BDL_CLIENT_ID: ${{ secrets.BDL_CLIENT_ID }}
+          LIBRARY_DIR: lib-wt/library
+          LIBRARY_MINUTES: '140'
+        run: node scripts/data/library.mjs 2>&1 | tee "$RUNNER_TEMP/library.txt"
+
+      - name: Podsumowanie
+        if: always()
+        run: |
+          { echo '### Biblioteka GUS'; echo; tail -n 3 "$RUNNER_TEMP/library.txt" 2>/dev/null; echo; du -sh lib-wt/library 2>/dev/null; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Zapisz na gałęzi data/library
+        if: always()
+        working-directory: lib-wt
+        run: |
+          git add -f library/
+          if git diff --staged --quiet; then echo "Brak zmian."; exit 0; fi
+          git commit -m "data: biblioteka GUS – kolejna porcja"
+          git push origin "HEAD:refs/heads/$BRANCH"
