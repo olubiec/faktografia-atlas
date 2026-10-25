@@ -13,6 +13,15 @@ Rejestr repozytoriów, demo i stron, które wolno **studiować jako wzorzec** pr
 ## Rejestr
 | Źródło | Link | Licencja | Sprawdzone (data, commit/wydanie) | Co bierzemy (pomysł, struktura, układ) | Dla zadania/sesji | Status |
 |---|---|---|---|---|---|---|
-| _(pusty – wypełniamy po raportach R1–R5 z `docs/research/plan-badan-v2.md`)_ | | | | | | |
+| MapLibre GL JS – kamera (`fitBounds`, `flyTo`, `AnimationOptions.essential`) | https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/AnimationOptions | BSD-3-Clause (npm `maplibre-gl` 6.16.0) | 25.10.2026, npm + dokumentacja | `padding` jako obiekt (arkusz), `essential:false` ucina ruch przy reduced-motion | N7 (warunkowe) | zweryfikowane |
+| deck.gl – przejścia atrybutów (`transitions`), `DataFilterExtension` | https://deck.gl/docs/developer-guide/animations-and-transitions | MIT (npm `deck.gl` 9.4.0) | 25.10.2026, npm | wzorzec już użyty w W3.3, W3.4 | – | użyte |
+| nuqs | https://www.npmjs.com/package/nuqs | MIT (2.10.2, wydanie 2026-10-08) | 25.10.2026, npm | stan filtrów w adresie (adapter react-router); zgodność z RR 8 sprawdza N10 | N10, N11 | zweryfikowane |
+| @tanstack/react-virtual | https://www.npmjs.com/package/@tanstack/react-virtual | MIT (3.14.22, wydanie 2026-10-22) | 25.10.2026, npm | wirtualizacja długiej listy wskaźników | N11 | zweryfikowane |
+| shadcn/ui blocks | https://ui.shadcn.com/blocks | MIT (npm `shadcn` 4.22.1; plik LICENSE repo do potwierdzenia przez Julesa przed czytaniem kodu) | 25.10.2026, npm | pomysł układu nagłówek–treść–stopka; kod własny | N1 | zweryfikowane |
+| World Bank Open Data, Eurostat Data Browser, BDL, dane.gov.pl, Polska w Liczbach | https://data.worldbank.org · https://ec.europa.eu/eurostat/databrowser/ · https://bdl.stat.gov.pl · https://dane.gov.pl | strony, nie kod | – | tylko inspiracja wyglądu i układu (zasada 6); opisy z raportu R4 niezweryfikowane | N11 | do przejrzenia |
+| launch-ui, shadcnstore, ChatDeck, Shadcnblocks (szablony) | – | niesprawdzona; npm `launch-ui` nie istnieje | 25.10.2026 | – | – | odrzucone (nie do sprawdzenia / Next.js) |
+| modern-cmdk, react-zod-url-state, @turahe/react-rough-notation | npm | MIT | 25.10.2026 | – | – | odrzucone (jeden autor, młode, zysk niepotwierdzony) |
+| vite-plugin-sitemap | npm | brak pola licencji | 25.10.2026 | – | – | odrzucone (brak licencji) |
+| satori (karty OG) | https://www.npmjs.com/package/satori | MPL-2.0 | 25.10.2026, npm | dopiero przy podstronach gmin | „Później” | do przejrzenia |
 
 Statusy: `do przejrzenia` (z raportu, niezweryfikowane) · `zweryfikowane` (wolno użyć jako wzorca) · `użyte` (jest w kodzie; wskaż plik) · `odrzucone` (powód).
