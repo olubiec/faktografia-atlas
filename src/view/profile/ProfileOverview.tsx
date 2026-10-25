@@ -10,9 +10,13 @@ import { Annotate } from '../annotation/Annotate';
 import { RankingBars } from '../ranking/RankingBars';
 import { TrendChart } from './TrendChart';
 import { loadExplanations, type Explanation } from '../../core/explain/explanations';
+import { unitTitle } from '../../core/units/label';
 import { writeUrlState } from '../../core/url/state';
+import { LazyShareDialog } from '../share/LazyShareDialog';
+import type { ShareDialogData } from '../share/ShareDialog';
+import type { ProfileCardData, RankingCardData } from '../../core/share/card';
 import { Icon } from '../ui/Icon';
-import { NavArrowDown, NavArrowUp } from 'iconoir-react';
+import { NavArrowDown, NavArrowUp, Download } from 'iconoir-react';
 
 export interface ProfileOverviewProps {
   profile: UnitProfile;
@@ -116,11 +120,70 @@ export function ProfileOverview({
     });
   }, [ranking, units]);
 
+  const [isShareOpen, setIsShareOpen] = useState(false);
+
   const handleShowOnMap = (e: React.MouseEvent) => {
     e.stopPropagation();
     writeUrlState({ i: view.indicator.id });
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
+
+  const shareData = useMemo<ShareDialogData>(() => {
+    const unitName = profile.unit ? unitTitle(profile.unit) : profile.teryt;
+
+    const otherInds = profile.indicators
+      .filter((item) => item.indicatorId !== view.indicator.id)
+      .slice(0, 5)
+      .map((item) => ({
+        name: item.indicator.name,
+        value: formatValue(item.value, null),
+        unit: item.indicator.unit,
+        rankText: item.rankVoivodeship ? `${item.rankVoivodeship}. miejsce` : undefined,
+      }));
+
+    const profileCard: ProfileCardData = {
+      unitName,
+      teryt: profile.teryt,
+      indicatorName: view.indicator.name,
+      unit: view.indicator.unit,
+      year: view.year ?? 2025,
+      bigNumber: formatValue(currentItem?.value ?? null, null),
+      rankText: rankText ?? undefined,
+      indicators: otherInds,
+    };
+
+    const rankingCard: RankingCardData | undefined = ranking
+      ? {
+          indicator: { name: view.indicator.name, unit: view.indicator.unit },
+          year: view.year ?? 2025,
+          items: rankingItems.map((item) => ({
+            teryt: item.teryt,
+            name: item.name,
+            value: item.value,
+            valueText: formatValue(item.value, view.indicator.unit),
+            rank: item.rank,
+            selected: item.teryt === profile.teryt,
+          })),
+          selectedTeryt: profile.teryt,
+        }
+      : undefined;
+
+    return {
+      profile: profileCard,
+      ranking: rankingCard,
+      unitProfile: profile,
+    };
+  }, [
+    profile,
+    view.indicator.id,
+    view.indicator.name,
+    view.indicator.unit,
+    view.year,
+    currentItem?.value,
+    rankText,
+    ranking,
+    rankingItems,
+  ]);
 
   return (
     <div className="space-y-4 pb-4 border-b border-linia">
@@ -222,6 +285,25 @@ export function ProfileOverview({
           title={rankingTitle}
         />
       </div>
+
+      {/* Przycisk Pobierz i udostępnij */}
+      <div className="pt-2 flex justify-start">
+        <button
+          type="button"
+          onClick={() => setIsShareOpen(true)}
+          className="min-h-[44px] min-w-[44px] px-4 py-2 bg-arkusz border border-linia hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz text-xs font-semibold text-tusz cursor-pointer transition-colors flex items-center gap-2"
+        >
+          <Icon icon={Download} size={16} aria-hidden={true} />
+          <span>Pobierz i udostępnij</span>
+        </button>
+      </div>
+
+      <LazyShareDialog
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        defaultKind="profile"
+        data={shareData}
+      />
     </div>
   );
 }
