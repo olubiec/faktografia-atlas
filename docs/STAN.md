@@ -29,6 +29,7 @@ Automat jeszcze nie ruszył. Pierwsza fala: F1 (W2.1, W1.2, W1.12, W1.13, W3.3, 
 
 ## Przypomnienia (poza automatem – pełna tabela: ARCHITEKTURA §4)
 - **Teraz:** podgląd paska zgód #213 na telefonie. (Deep Research W1.11 zrobiony i zweryfikowany: `docs/research/W1.11-wynik.md`.)
+- **Po K5:** sesja S21 – cała biblioteka GUS (limity i plan: `docs/research/biblioteka-gus.md`; najpierw research magazynu danych).
 - **Po K5:** sesja S20 – miasto i wieś gmin miejsko-wiejskich (14 wskaźników; bez dochodów i wydatków).
 - **Przed F5:** akceptacja tekstów objaśnień (W1.9).
 - **Na każdym K1–K5:** Twoja ocena na telefonie. **Po K3:** decyzja o W3.5. **Po K5:** przegląd „Później”.
