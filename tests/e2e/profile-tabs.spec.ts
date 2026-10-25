@@ -87,7 +87,7 @@ test.describe('Profile Tabs W2.2 (@S14)', () => {
     for (const width of [360, 390]) {
       await page.setViewportSize({ width, height: 800 });
       await page.goto('/?e2e&u=12');
-      await page.waitForSelector('[data-slot="side"]');
+      await page.getByRole('tablist').waitFor();
 
       const scrollWidth = await page.evaluate(
         () => document.documentElement.scrollWidth

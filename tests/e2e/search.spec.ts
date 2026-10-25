@@ -130,7 +130,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    const searchTrigger = page.locator('header button').first();
+    const searchTrigger = page.locator('header button:visible').first();
     await searchTrigger.click();
 
     const dialogContent = page.locator('div[role="dialog"]');

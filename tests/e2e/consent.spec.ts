@@ -91,7 +91,7 @@ test.describe('Consent Bar and PostHog Analytics (CC11.1b)', () => {
     expect(denyBox!.width).toBeGreaterThanOrEqual(44);
 
     // Otwarcie wyszukiwarki – okno dialogowe ma z-50 i nie jest zasłonięte przez pasek zgody
-    const searchTrigger = page.locator('header button').first();
+    const searchTrigger = page.locator('header button:visible').first();
     await searchTrigger.click();
 
     const dialogContent = page.locator('div[role="dialog"]');
