@@ -46,8 +46,9 @@ test.describe('ContextBlock "Na tle kraju" Desktop @S17', () => {
     const percentText = contextBlock.locator('text=/wyżej niż \\d+% powiatów/').first();
     await expect(percentText).toBeVisible();
 
-    const medianText = contextBlock.locator('text=/Mediana Polski:/');
-    await expect(medianText).toBeVisible();
+    // Sprawdzenie obecności mediany w panelu wskaźnika
+    const panelBlock = page.locator('aside[aria-label="Panel wskaźnika"]').locator('[data-slot="context-block"]');
+    await expect(panelBlock.locator('text=/Mediana Polski:/')).toBeVisible();
   });
 
   test('indicator without explanation displays context block without errors', async ({ page }) => {
