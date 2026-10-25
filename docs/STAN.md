@@ -28,6 +28,7 @@ Automat jeszcze nie ruszył. Pierwsza fala: F1 (W2.1, W1.2, W1.12, W1.13, W3.3, 
 - S19 (F6–F7) – udostępnianie porównania i test całej ścieżki.
 
 ## Przypomnienia (poza automatem – pełna tabela: ARCHITEKTURA §4)
+- **Badania v2 (25.10.2026):** audyt zrobionego i gotowce pod kolejne sesje – plan i wyniki audytu: `docs/research/plan-badan-v2.md`, prompty do Gemini: `docs/research/gemini-prompty-v2.md` (R1 szablon i strona główna, R2 animacje, R3 gotowe komponenty zamiast własnych – teraz; R4 filtry i kategorie, R5 magazyn danych – przed S21). Raporty wracają do Claude (`TRYB: WERYFIKACJA`), wzorce trafiają do `docs/INSPIRACJE.md`. Do potwierdzenia przez Ciebie: czy dodajemy stronę główną wg makiety 01 (patrz plan-badan-v2 §3).
 - **Teraz:** podgląd paska zgód #213 na telefonie. (Deep Research W1.11 zrobiony i zweryfikowany: `docs/research/W1.11-wynik.md`.)
 - **Biblioteka GUS – robot działa od 25.10.2026:** workflow `Fetch library` (co 12 h, budżet 2500 zapytań, wspólna kolejka z nocnym pobieraniem) zapisuje katalog działów i wartości na gałęzi `data/library` (nie main, bez PR). Postęp: `library/state.json` na tej gałęzi. Decyzja (Claude, tymczasowa): magazyn = gałąź w repo, dopóki rośnie < ~1 GB; potem R6 (magazyn obiektów).
 - **Po K5:** sesja S21 – strona biblioteki: kategorie i filtry (patrz `docs/research/biblioteka-gus.md`, sekcja „Kategorie i filtry”), wyszukiwarka wskaźników, „zamów wskaźnik”, wybór magazynu (R6).
@@ -52,6 +53,7 @@ Automat jeszcze nie ruszył. Pierwsza fala: F1 (W2.1, W1.2, W1.12, W1.13, W3.3, 
 - Przed automatem: logika W1.4–W1.8 i W2.10 weszły poza kolejnością fal; W2.3 wszedł za wcześnie i został wycofany (#218).
 
 ## Decyzje (najnowsze na górze, 1 linia, kto)
+- 25.10.2026 · Research kierujemy na audyt tego, co już zrobione (szablon stron, strona główna, animacje, własne komponenty) i na gotowce pod S20–S21; wzorce z cudzych repozytoriów wolno studiować i przepisać po swojemu tylko z wpisu w `docs/INSPIRACJE.md` (licencja MIT/BSD/ISC/Apache-2.0/CC0); zmiana zasady w `AGENTS.md` (Ty, czat Claude)
 - 24.10.2026 · W1.11 zrobione: raport Deep Research zweryfikowany na nagraniach BDL – podział miasto/wieś **istnieje** (kody 4 i 5) dla 14 z 16 wskaźników gminnych; w dochodach/wydatkach to fałszywe zera; robimy w sesji S20 po K5 (Ty, czat Claude)
 - 24.10.2026 · **Pełny automat** prowadzi fale do końca (S14–S19): Jules przez etykietę `jules`, scalanie po `check-pr` i zielonym CI, Twoja ocena na punktach kontrolnych K1–K5 nie blokuje (poprawki jako nowe zadania); zmienia zasadę WORKFLOW „ręczne wklejanie” i bramkę „ocena przed falą” (Ty, czat Claude)
 - 24.10.2026 · Posłaniec = zadanie cykliczne co godzinę 7–23 na tanim modelu, decyzje podejmuje skrypt `scripts/ops/automat.mjs`; Naprawiacz raz dziennie (Ty, czat Claude)
