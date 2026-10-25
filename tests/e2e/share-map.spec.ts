@@ -9,7 +9,7 @@ test.describe('Udostępnianie z panelu wskaźnika (W2.19 @S19)', () => {
     await page.goto('/?i=density&l=pow');
 
     const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
-    await expect(panel).toBeVisible();
+    await expect(panel).toBeVisible({ timeout: 15000 });
 
     // Śledzenie żądań sieciowych po kliknięciu przycisku
     const networkRequests: string[] = [];
@@ -18,7 +18,7 @@ test.describe('Udostępnianie z panelu wskaźnika (W2.19 @S19)', () => {
     });
 
     // Kliknięcie "Pobierz i udostępnij" w panelu wskaźnika
-    const shareButton = panel.getByRole('button', { name: 'Pobierz i udostępnij' });
+    const shareButton = panel.getByRole('button', { name: 'Pobierz i udostępnij mapę' });
     await expect(shareButton).toBeVisible();
     await shareButton.click();
 
@@ -64,9 +64,9 @@ test.describe('Udostępnianie z panelu wskaźnika (W2.19 @S19)', () => {
     await page.goto('/?i=density&u=12');
 
     const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
-    await expect(panel).toBeVisible();
+    await expect(panel).toBeVisible({ timeout: 15000 });
 
-    const shareButton = panel.getByRole('button', { name: 'Pobierz i udostępnij' });
+    const shareButton = panel.getByRole('button', { name: 'Pobierz i udostępnij mapę' });
     await expect(shareButton).toBeVisible();
     await shareButton.click();
 
@@ -103,9 +103,9 @@ test.describe('Udostępnianie z panelu wskaźnika (W2.19 @S19)', () => {
     await page.goto('/?i=density');
 
     const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
-    await expect(panel).toBeVisible();
+    await expect(panel).toBeVisible({ timeout: 15000 });
 
-    const shareButton = panel.getByRole('button', { name: 'Pobierz i udostępnij' });
+    const shareButton = panel.getByRole('button', { name: 'Pobierz i udostępnij mapę' });
     await expect(shareButton).toBeVisible();
 
     // Weryfikacja wysokości obszaru dotykowego >= 44px

@@ -123,6 +123,7 @@ export function IndicatorPanel({ view, choropleth, ranking, index, selectedTeryt
         <button
           type="button"
           onClick={() => setIsShareOpen(true)}
+          aria-label="Pobierz i udostępnij mapę"
           className="w-full min-h-[44px] px-4 py-2 text-sm font-semibold text-tusz bg-arkusz border border-linia rounded-lg hover:bg-kalka transition-colors flex items-center justify-center gap-2"
         >
           Pobierz i udostępnij
