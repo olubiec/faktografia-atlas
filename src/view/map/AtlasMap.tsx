@@ -29,6 +29,7 @@ import { rankUnits } from '@/core/ranking/ranking';
 import { effectiveLevel, levelRequiresDeselect } from '@/core/map/main-view';
 import { IndicatorPanel } from '@/view/main/IndicatorPanel';
 import { UnitTooltip } from '@/view/main/UnitTooltip';
+import { useIsMobile } from '@/view/hooks/useIsMobile';
 import { useProfile } from './hooks/useProfile';
 import { ProfilePortal } from './ProfilePortal';
 
@@ -52,6 +53,8 @@ function DeckGLOverlay(props: MapboxOverlayProps) {
 const defaultKalka = parseCssColor(tokensJson.color.light.kalka);
 
 type AtlasData = { units: Unit[]; adminTopo: any };
+
+let lastUnitClickTime = 0;
 
 /**
  * Lista jednostek i granice to osobne pliki (public/data, public/geo), pobierane przy starcie mapy
@@ -85,6 +88,7 @@ export function AtlasMap() {
 }
 
 function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) {
+  const isMobile = useIsMobile();
   const [isReady, setIsReady] = useState(false);
   const unitIndex = useMemo(() => buildIndex(units), [units]);
   const bounds = useMemo(() => countryBounds(units), [units]);
@@ -145,6 +149,51 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
 
   const [hover, setHover] = useState<{ teryt: string; x: number; y: number; width: number } | null>(null);
   const hoverUnit = hover ? unitIndex.byTeryt.get(hover.teryt) ?? null : null;
+
+  const [mobileTooltipTeryt, setMobileTooltipTeryt] = useState<string | null>(null);
+  const [prevSelectedTeryt, setPrevSelectedTeryt] = useState(selectedTeryt);
+  if (selectedTeryt !== prevSelectedTeryt) {
+    setPrevSelectedTeryt(selectedTeryt);
+    setMobileTooltipTeryt(null);
+  }
+
+  const handleSelectUnit = useCallback(
+    (teryt: string) => {
+      lastUnitClickTime = Date.now();
+      if (isMobile) {
+        if (mobileTooltipTeryt === teryt) {
+          selectUnit(teryt);
+          setMobileTooltipTeryt(null);
+        } else {
+          setMobileTooltipTeryt(teryt);
+        }
+      } else {
+        selectUnit(teryt);
+      }
+    },
+    [isMobile, mobileTooltipTeryt, selectUnit]
+  );
+
+  const handleHoverUnit = useCallback(
+    (hoverInfo: { teryt: string; x: number; y: number; width: number } | null) => {
+      if (isMobile) {
+        setHover(null);
+        return;
+      }
+      setHover(hoverInfo);
+    },
+    [isMobile]
+  );
+
+  const handleContainerClick = useCallback(() => {
+    if (Date.now() - lastUnitClickTime < 100) {
+      return;
+    }
+    if (isMobile && mobileTooltipTeryt) {
+      setMobileTooltipTeryt(null);
+    }
+  }, [isMobile, mobileTooltipTeryt]);
+
   const { profile, isOpen: profileOpen, closeProfile } = useProfile(selectedTeryt, units);
 
   const extendedDrillState = useMemo(() => {
@@ -159,12 +208,12 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       adminTopo,
       colors,
       extendedDrillState,
-      selectUnit,
+      handleSelectUnit,
       currentViewState,
       localities,
-      setHover
+      handleHoverUnit
     );
-  }, [adminTopo, colors, extendedDrillState, selectUnit, currentViewState, localities, setHover]);
+  }, [adminTopo, colors, extendedDrillState, handleSelectUnit, currentViewState, localities, handleHoverUnit]);
 
   const getState = useCallback((): AtlasState => {
     return {
@@ -217,6 +266,13 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       ? view.values.values[hover.teryt]?.[view.values.years.indexOf(view.year)] ?? null
       : null;
 
+  const mobileTooltipUnit = mobileTooltipTeryt ? unitIndex.byTeryt.get(mobileTooltipTeryt) ?? null : null;
+  const mobileTooltipRank = mobileTooltipTeryt ? rankByTeryt[mobileTooltipTeryt] : undefined;
+  const mobileTooltipValue =
+    mobileTooltipTeryt && view.values && view.year != null
+      ? view.values.values[mobileTooltipTeryt]?.[view.values.years.indexOf(view.year)] ?? null
+      : null;
+
   return (
     <div className="flex flex-col md:flex-row w-full h-full min-h-0">
       <IndicatorPanel
@@ -240,6 +296,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
         className="flex-1 min-w-0 min-h-[320px] relative overflow-hidden focus:outline-none focus-visible:ring-1 focus-visible:ring-tusz"
         tabIndex={0}
         aria-label="Mapa Polski"
+        onClick={handleContainerClick}
         onKeyDown={handleKeyDown}
         onPointerLeave={() => setHover(null)}
       >
@@ -275,7 +332,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
           <DeckGLOverlay layers={layers} />
         </Map>
 
-        {hover && hoverUnit && (
+        {!isMobile && hover && hoverUnit && (
           <UnitTooltip
             unit={hoverUnit}
             value={hoverValue}
@@ -286,6 +343,22 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
             x={hover.x}
             y={hover.y}
             containerWidth={hover.width}
+          />
+        )}
+
+        {isMobile && mobileTooltipTeryt && mobileTooltipUnit && (
+          <UnitTooltip
+            unit={mobileTooltipUnit}
+            value={mobileTooltipValue}
+            unitName={view.indicator.unit}
+            rank={mobileTooltipRank?.rank ?? null}
+            total={ranking?.items.length ?? 0}
+            levelNoun={view.level === 'woj' ? 'województw' : view.level === 'pow' ? 'powiatów' : 'gmin'}
+            isMobile={true}
+            onOpenProfile={() => {
+              selectUnit(mobileTooltipTeryt);
+              setMobileTooltipTeryt(null);
+            }}
           />
         )}
       </div>
