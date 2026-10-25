@@ -28,3 +28,18 @@
 4. Aktualizacje: tylko gdy GUS dopisze rok (tani test przez listę lat), nie co noc.
 5. Wyszukiwarka wskaźników na stronie z katalogu + „zamów wskaźnik”.
 6. Zapytać GUS (kontakt przy API BDL) o zbiorczy eksport lub wyższe limity – tańsze niż kilka miesięcy pobierania.
+
+## Robot (uruchomiony 25.10.2026)
+- `scripts/data/library.mjs` + `library-lib.mjs`, workflow `.github/workflows/fetch-library.yml` (cron 04:40 i 16:40 UTC, ręcznie z polem „budżet”).
+- Faza 1: katalog – drzewo działów (`/subjects`) i zmienne każdego działu (`/variables?subject-id=`). Faza 2: wartości, najpierw zmienne z danymi gminnymi, potem powiatowymi; zmienne z poziomem < 5 pomijane.
+- Limity: budżet 2500 zapytań na przebieg (50% limitu 12 h z kluczem), tempo 1 zapytanie / 2 s (mieści się w 500 / 15 min), wspólna grupa `fetch-data` z nocnym robotem (nigdy równolegle), 429 → odczekanie i, po wyczerpaniu prób, spokojne zakończenie przebiegu. Jeden klucz, bez omijania limitów.
+- Dane: gałąź `data/library` (osobna historia): `library/catalog.json`, `library/state.json`, `library/values/<id>.json` (lata + wartości po kodzie jednostki). Nie ma ich na main i nie trafiają na stronę, dopóki S21 tego nie zrobi.
+- Niezweryfikowane (sprawdzi pierwszy przebieg): czy `/variables` wymaga `subject-id`, dokładne znaczenie pola `level`, kształt odpowiedzi `/subjects`. Błędy pierwszego przebiegu poprawiamy na podstawie logu.
+
+## Kategorie i filtry (do zrobienia w S21)
+Cel: lista wskaźników na stronie nie może być jedną długą listą (tysiące pozycji).
+- **Kategorie** = działy GUS z `catalog.json` (ścieżka np. „Rynek pracy › Bezrobocie”). Na stronie: najpierw ok. 10–15 głównych działów jako kafelki, po wejściu – podkategorie.
+- **Filtry**: poziom danych (powiaty / gminy), zakres lat, jednostka miary, „tylko ulubione/popularne” (≈ obecne 20 wskaźników z `config/indicators.json` na górze).
+- **Wyszukiwarka** po nazwie wskaźnika (n1–n3) z podpowiedziami; wynik pokazuje kategorię.
+- **Zasada wczytywania**: strona pobiera tylko mały indeks (`index.json`: id, nazwa, dział, poziom, lata), a wartości dopiero po wybraniu wskaźnika (1 plik) – zgodnie z PRODUKT §7.
+- **„Zamów wskaźnik”**: wskaźnika, którego robot jeszcze nie pobrał, użytkownik może zgłosić; zgłoszenie przesuwa go w kolejce priorytetów.
