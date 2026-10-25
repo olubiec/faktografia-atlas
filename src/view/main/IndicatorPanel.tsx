@@ -16,6 +16,8 @@ import { Legend } from '@/view/legend/Legend';
 import { RankingBars } from '@/view/ranking/RankingBars';
 import { IndicatorInfo } from '@/view/explain/IndicatorInfo';
 import { LevelSwitch } from './LevelSwitch';
+import { useShareData } from '@/view/share/useShareData';
+import { LazyShareDialog } from '@/view/share/LazyShareDialog';
 
 export interface IndicatorPanelProps {
   view: MainView;
@@ -35,6 +37,9 @@ export interface IndicatorPanelProps {
 export function IndicatorPanel({ view, choropleth, ranking, index, selectedTeryt, onSelectUnit, children }: IndicatorPanelProps) {
   const { indicator, indicators, year, years, level } = view;
   const [explanation, setExplanation] = useState<Explanation | null>(null);
+  const [isShareOpen, setIsShareOpen] = useState(false);
+
+  const shareData = useShareData({ view, choropleth, ranking, index, selectedTeryt });
 
   useEffect(() => {
     let cancelled = false;
@@ -115,12 +120,23 @@ export function IndicatorPanel({ view, choropleth, ranking, index, selectedTeryt
           </div>
         )}
 
+        <button
+          type="button"
+          onClick={() => setIsShareOpen(true)}
+          aria-label="Pobierz i udostępnij mapę"
+          className="w-full min-h-[44px] px-4 py-2 text-sm font-semibold text-tusz bg-arkusz border border-linia rounded-lg hover:bg-kalka transition-colors flex items-center justify-center gap-2"
+        >
+          Pobierz i udostępnij
+        </button>
+
         {children}
 
         <p className="text-xs text-olowek">
           Źródło: GUS, Bank Danych Lokalnych{year != null ? `, ${year}` : ''}. Licencja CC BY 4.0. Granice jednostek: domena publiczna.
         </p>
       </div>
+
+      <LazyShareDialog isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} data={shareData} defaultKind="map" />
     </aside>
   );
 }
