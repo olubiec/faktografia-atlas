@@ -30,6 +30,8 @@ export function ProfileSheetMobile({
   onClose,
   className,
 }: ProfileSheetMobileProps) {
+  if (!isOpen) return null;
+
   const title = profile.unit ? unitTitle(profile.unit) : `TERYT ${profile.teryt}`;
 
   const handleClose = () => {
