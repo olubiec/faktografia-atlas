@@ -77,7 +77,7 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Ty sprawdzasz:** ✅ w PR; strona bez zmian.
 - **Nie ruszaj:** kodu w `src/`, innych pakietów.
 
-#### W0.2 – Zaostrzenie pnpm: `trustPolicy` · poza falami (po decyzji D1)
+#### W0.2 – Zaostrzenie pnpm: `trustPolicy` · zrobione 26.10.2026 (Claude, razem z PR #359; sprawdzone: `pnpm install --frozen-lockfile` i ponowne rozwiązanie lockfile bez błędów i bez zmian)
 - **Po ludzku:** pnpm odmówi instalacji pakietu, którego nowa wersja ma słabsze zabezpieczenia publikacji niż poprzednia. Dodatkowa ochrona przed podmienionymi pakietami.
 - **Co sprawdzono (R10, 26.10.2026):** pnpm 10.30.3 zna `trustPolicy: no-downgrade`, a `pnpm install --frozen-lockfile` z tym kluczem przechodzi. Akcja `pnpm/action-setup@v6` jest już we wszystkich workflow – tego kroku nie robimy. README akcji: obsługuje pnpm 12 i starsze.
 - **Kroki:** (1) dopisać `trustPolicy: no-downgrade` do `pnpm-workspace.yaml` (obok `minimumReleaseAge`); (2) sprawdzić, że wszystkie workflow używają `--frozen-lockfile`; (3) w `pnpm-workspace.yaml` tylko klucze, które pnpm zna (`pnpm config get` / dokumentacja). Zmiana `packageManager` na 11.28.x albo 12.15.x to **osobna decyzja D1** i osobne zadanie.
@@ -690,6 +690,7 @@ Kolumna „Dotykają” = tabela kolizji: w jednej fali żaden plik się nie pow
 | **Etykieta `zamowienie-wskaznika`** | Claude | przed W2.35 | etykieta w repo |
 | **Magazyn biblioteki: Cloudflare R2** | Ty zakładasz konto i klucze, Claude dopisuje synchronizację | gdy gałąź `data/library` > ~1 GB albo raw.githubusercontent ogranicza ruch (`docs/research/R6-magazyn-wynik.md`) | zmienna `VITE_LIBRARY_BASE` na Vercel; wpis w `ELEMENTY.md` |
 | **Pismo do GUS o zbiorczy eksport BDL** | Ty wysyłasz (formularz GUS), tekst gotowy | kiedy chcesz | `docs/research/biblioteka-bulk-wynik.md` |
+| ~~**Krok `index.json` w workflow „Fetch library”**~~ zrobione 26.10 (PR #359; sprawdzone na prawdziwym katalogu: 63 960 zmiennych, 7,9 MB, 593 KB gzip, ładuje się schematem i wyszukiwarką) | Claude | – | po następnym przebiegu robota na gałęzi `data/library` będzie `index.json` |
 | ~~**Naprawa kontraktu spisu biblioteki**~~ zrobione 26.10 (#350: `index-contract.ts`, test robot → szukanie) | Claude | – | spis z robota (`categories`, `variables`) czyta się w `query.ts`; test robot → szukanie |
 | ~~**Formularz `.github/ISSUE_TEMPLATE/zamowienie-wskaznika.yml` + etykieta**~~ zrobione 26.10 (#351; etykieta `zamowienie-wskaznika` jest w repo) | Claude | – | link „Zamów” otwiera formularz z polami; etykieta w repo |
 | **Test na drugim koncie GitHub** | Ty (5 min) | przed W2.35 | czy zwykła osoba z linkiem z `template=` + polami widzi wypełniony formularz i czy etykieta się ustawia (R8 tego nie rozstrzygnęło) |

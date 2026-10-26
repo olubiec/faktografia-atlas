@@ -1,3 +1,7 @@
 # pnpm-workspace.yaml – nie instaluj wersji opublikowanych w ostatnich 3 dniach
 # (paczki „zmyślone” przez AI i zarejestrowane przez atakujących, świeżo przejęte paczki)
 minimumReleaseAge: 4320   # minuty; pnpm ≥ 10.16 (projekt: pnpm 10.30.3 z packageManager)
+
+# Blokada obniżenia zaufania (pnpm ≥ 10.21): instalacja kończy się błędem, gdy nowsza wersja pakietu
+# jest publikowana z niższym poziomem zaufania niż wcześniejsze (np. bez pochodzenia / bez zaufanego wydawcy).
+trustPolicy: no-downgrade
