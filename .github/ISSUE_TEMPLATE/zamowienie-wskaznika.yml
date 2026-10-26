@@ -1,0 +1,33 @@
+name: Zamówienie wskaźnika z Biblioteki GUS
+description: Prośba o pobranie wskaźnika, którego jeszcze nie mamy w bibliotece.
+title: "Zamówienie wskaźnika: "
+labels: ["zamowienie-wskaznika"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Pola poniżej zwykle wypełniają się same z przycisku „Zamów ten wskaźnik” na stronie. Nie podawaj danych osobowych.
+  - type: input
+    id: id
+    attributes:
+      label: Numer wskaźnika (id w BDL)
+    validations:
+      required: true
+  - type: input
+    id: nazwa
+    attributes:
+      label: Nazwa wskaźnika
+    validations:
+      required: true
+  - type: input
+    id: dzial
+    attributes:
+      label: Dział (ścieżka kategorii)
+  - type: input
+    id: poziom
+    attributes:
+      label: Poziom (powiat lub gmina)
+  - type: textarea
+    id: uwagi
+    attributes:
+      label: Dlaczego ten wskaźnik jest potrzebny (opcjonalnie)
