@@ -1,5 +1,5 @@
 # Zasady dla agentów – Faktografia Atlas
-Co budujemy: docs/PRODUKT.md (przy ekranach ma pierwszeństwo) · Gdzie jesteśmy: docs/STAN.md · Wygląd: docs/STYL.md · Warstwy, dane, plan fal: docs/ARCHITEKTURA.md · Elementy z zewnątrz i licencje: docs/ELEMENTY.md
+Co budujemy: docs/PRODUKT.md (przy ekranach ma pierwszeństwo) · Gdzie jesteśmy: docs/STAN.md · Wygląd: docs/STYL.md · Warstwy, dane, plan fal: docs/ARCHITEKTURA.md · Elementy z zewnątrz i licencje: docs/ELEMENTY.md · Wzorce z cudzych projektów: docs/INSPIRACJE.md
 
 Publiczna strona z interaktywną mapą Polski (województwo > powiat > gmina > miejscowość) i danymi GUS.
 Właściciel nie czyta kodu: ocenia zachowanie na podglądzie Vercel, często z telefonu.
@@ -44,7 +44,7 @@ Zawsze:
 - Testy na danych z `tests/fixtures` (nagrane prawdziwe odpowiedzi), nigdy z sieci. Testy e2e danej sesji mają w nazwie `@S<n>`.
 - Zrzuty pikselowe (`toHaveScreenshot`) tylko dla elementów DOM i SVG. Mapę WebGL sprawdzasz przez stan wystawiony w `window.__atlas` (tylko w trybie testowym), nie przez piksele.
 - Napisy nie wychodzą poza pola. Animacje wyłączone przy `prefers-reduced-motion`. Pola dotykowe min. 44 px.
-- Nie kopiuj kodu z cudzych repozytoriów. Potrzebna rzecz = pakiet albo gotowa usługa, opakowana w jeden plik (adapter).
+- Potrzebna rzecz = najpierw pakiet albo gotowa usługa, opakowana w jeden plik (adapter). Cudzy kod nie jest kopiowany. Repozytorium z wpisem `zweryfikowane` w `docs/INSPIRACJE.md` (licencja MIT/BSD/ISC/Apache-2.0/CC0) wolno czytać jako wzorzec: bierzesz pomysł i strukturę, piszesz własny kod w naszym stylu (tokeny, nazwy, testy). Dłuższy fragment tylko z decyzją w prompcie, nagłówkiem licencji w pliku i wpisem w `ELEMENTY.md`. Repozytorium bez wpisu albo bez wolnej licencji (GPL, AGPL, NC, brak licencji) – nie czytasz go jako wzorca; opisz w PR i zatrzymaj się.
 - Po `shadcn add` zamień ikony lucide na iconoir-react (Icon z src/view/ui) i usuń klasy shadow-*, rounded-*, backdrop-blur.
 
 Nigdy:
