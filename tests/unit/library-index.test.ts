@@ -62,6 +62,74 @@ describe('Indeks biblioteki GUS: budowanie (buildIndex)', () => {
     expect(idx.variables.find((v) => v.id === 104)?.u).toBe(1);
   });
 
+  it('zmienna z n4 z pliku fixture ma w spisie tytuł z czterema członami', async () => {
+    const fixtureData = JSON.parse(
+      await readFile(path.resolve('tests/fixtures/library/variable-60614.json'), 'utf8'),
+    );
+    const customCatalog = {
+      subjects: { P2137: { id: 'P2137', name: 'Ludność wg wieku', parent: null } },
+      variables: {
+        [fixtureData.id]: {
+          id: fixtureData.id,
+          subjectId: fixtureData.subjectId,
+          n1: fixtureData.n1,
+          n2: fixtureData.n2,
+          n3: fixtureData.n3,
+          n4: fixtureData.n4,
+          level: fixtureData.level,
+          unit: fixtureData.measureUnitName,
+        },
+      },
+    };
+    const idx = buildIndex(customCatalog, { done: {} });
+    const v = idx.variables.find((item) => Number(item.id) === 60614);
+    expect(v).toBeDefined();
+    expect(v?.n).toBe('Ludność – w wieku produkcyjnym – wiek mobilny – mężczyźni');
+    expect(v?.n.split(' – ')).toHaveLength(4);
+  });
+
+  it('dwie zmienne różniące się tylko n4 mają różne tytuły', () => {
+    const customCatalog = {
+      subjects: { P2137: { id: 'P2137', name: 'Ludność wg wieku', parent: null } },
+      variables: {
+        60614: { id: 60614, subjectId: 'P2137', n1: 'Ludność', n2: 'w wieku produkcyjnym', n3: 'wiek mobilny', n4: 'mężczyźni', level: 6, unit: 'osoby' },
+        60615: { id: 60615, subjectId: 'P2137', n1: 'Ludność', n2: 'w wieku produkcyjnym', n3: 'wiek mobilny', n4: 'kobiety', level: 6, unit: 'osoby' },
+      },
+    };
+    const idx = buildIndex(customCatalog, { done: {} });
+    const v1 = idx.variables.find((item) => Number(item.id) === 60614);
+    const v2 = idx.variables.find((item) => Number(item.id) === 60615);
+    expect(v1?.n).toBe('Ludność – w wieku produkcyjnym – wiek mobilny – mężczyźni');
+    expect(v2?.n).toBe('Ludność – w wieku produkcyjnym – wiek mobilny – kobiety');
+    expect(v1?.n).not.toBe(v2?.n);
+  });
+
+  it('stary katalog bez n4/n5 nadal się wczytuje (brak = pusty)', () => {
+    const oldCatalog = {
+      subjects: { K1: { id: 'K1', name: 'Ludność', parent: null } },
+      variables: {
+        201: { id: 201, subjectId: 'K1', n1: 'Ludność ogółem', n2: 'miasta', n3: 'ogółem', level: 6, unit: 'osoby' },
+      },
+    };
+    const idx = buildIndex(oldCatalog, { done: {} });
+    expect(idx.variables).toHaveLength(1);
+    expect(idx.variables[0].n).toBe('Ludność ogółem – miasta – ogółem');
+  });
+
+  it('rozmiar spisu dla fixture nie rośnie więcej niż o 15%', () => {
+    const oldIdxSize = JSON.stringify(buildIndex(catalog, state)).length;
+    const catalogWithN4N5 = {
+      ...catalog,
+      variables: {
+        ...catalog.variables,
+        101: { ...catalog.variables[101], n4: 'dodatkowy parametr' },
+        105: { ...catalog.variables[105], n4: 'parametr n4', n5: 'parametr n5' },
+      },
+    };
+    const newIdxSize = JSON.stringify(buildIndex(catalogWithN4N5, state)).length;
+    expect(newIdxSize).toBeLessThanOrEqual(oldIdxSize * 1.15);
+  });
+
   it('daje ten sam deterministyczny wynik przy ponownym budowaniu', () => {
     const res1 = buildIndex(catalog, state);
     const res2 = buildIndex(catalog, state);

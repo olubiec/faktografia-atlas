@@ -3,6 +3,7 @@
 // Użycie: BDL_CLIENT_ID=… LIBRARY_DIR=library LIBRARY_BUDGET=2500 node scripts/data/library.mjs
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { fetchWithRetry } from './fetch-values.mjs';
 import {
   addSubject, compactPages, createBudget, dataUrl, emptyCatalog, emptyState,
@@ -66,10 +67,18 @@ async function crawlCatalog(state, catalog) {
     } else if (parentId) {
       const vpages = await allPages((p) => variablesUrl(parentId, p));
       for (const v of vpages.flatMap((p) => p.results ?? [])) {
-        catalog.variables[v.id] = {
-          id: v.id, subjectId: v.subjectId ?? parentId, n1: v.n1, n2: v.n2, n3: v.n3,
-          level: v.level, unit: v.measureUnitName,
+        const item = {
+          id: v.id,
+          subjectId: v.subjectId ?? parentId,
+          level: v.level,
+          unit: v.measureUnitName,
         };
+        for (const k of ['n1', 'n2', 'n3', 'n4', 'n5']) {
+          if (typeof v[k] === 'string' && v[k].trim().length > 0) {
+            item[k] = v[k];
+          }
+        }
+        catalog.variables[v.id] = item;
       }
     }
     state.pending.shift();
@@ -125,4 +134,8 @@ async function main() {
   }
 }
 
-main();
+export { crawlCatalog, downloadValues, main };
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  main();
+}
