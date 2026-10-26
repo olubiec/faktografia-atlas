@@ -15,11 +15,12 @@ Na podstawie kodu na main (commit d797711, po F7). **Właściciel obejrzał K1�
 Od 25.10.2026 **Ty scalasz, Claude puszcza kolejne** (`docs/AUTOMAT.md` §0, skrypt `scripts/ops/start-tasks.mjs`); automat stoi pod etykietą `automat-stop` na #221. F1–F7 zrobione (33/33, K1–K5 zaakceptowane). Teraz: **S20** miasto i wieś gmin miejsko-wiejskich (PRODUKT §4c) i **S21** biblioteka GUS (PRODUKT §4d) – 24 małe zadania (10 W1 + 14 W2) w falach F8–F12, najwyżej 7 w fali (limit Julesa: 15 naraz).
 - **F8** (6): W1.15 · W1.16 · W1.21 · W1.22 · W1.23 · W1.24 · **F9** (7): W1.17 · W1.18 · W1.19 · W1.20 · W2.27 · W2.34 · W2.35 · **F10** (6): W2.24 · W2.28 · W2.29 · W2.30 · W2.31 · W2.33 · **F11** (3): W2.25 · W2.32 · W2.36 · **F12** (2): W2.26 · W2.37.
 - **Punkty kontrolne:** K6 = S20 (po F12) · K7 = S21 (po F12). Do pierwszego obejrzenia z liczbami: po pierwszym nocnym pobraniu z W1.17 (dla K6).
+- **F8b** (3, po F8, przed F9): W1.25 · W1.26 · W1.27 · **Przed F9:** naprawa kontraktu spisu scalona, formularz `zamowienie-wskaznika.yml` w repo, test na drugim koncie.
 - **Poza kolejką:** W1.9 (teksty objaśnień – Twoja akceptacja), W3.5 i „Później”; kroki Claude w workflow (`.github/`) – ARCHITEKTURA §4 „Poza falami”.
 
 ### Postęp (pisze automat – nie edytuj ręcznie)
 <!-- automat:start -->
-Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza Claude skryptem `scripts/ops/start-tasks.mjs`. F1–F7: zrobione (33/33). F8–F12: 0/24. Pierwsza fala: F8 (W1.15, W1.16, W1.21, W1.22, W1.23, W1.24).
+Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza Claude skryptem `scripts/ops/start-tasks.mjs`. F1–F7: zrobione (33/33). **F8 zamknięta 26.10.2026 (6/6; pliki i 35 testów sprawdzone w kodzie)**. Odłożone z F8: poprawki po researchu → **F8b** (W1.25 pełne nazwy zmiennych, W1.26 wydajność wyszukiwania, W1.27 adres „Zamów”). F9–F12: 0/18. Następna fala: F8b, po scaleniu naprawy kontraktu spisu.
 <!-- automat:end -->
 
 ## Plan (1 linia na sesję; zadania i fale w docs/ARCHITEKTURA.md §3–§4)
@@ -29,7 +30,8 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 - Po K7: przegląd „Później” (SEO, mapa dla wskaźnika z biblioteki, R2, tryb ciemny mapy…) i nowa fala poprawek z Twojej listy.
 
 ## Przypomnienia (pełna tabela: ARCHITEKTURA §4 „Poza falami”)
-- **Ty → Haiku (research):** zlecenia z `docs/research/haiku-zlecenia.md`; **R8 przed F9**, **R7 przed F10**, reszta wg ARCHITEKTURA §4a. Odpowiedzi wklejasz do Claude z `TRYB: WERYFIKACJA`.
+- **Ty → Haiku (research, runda 2):** `docs/research/haiku-zlecenia-runda2.md` (R9.5 przed W1.9; R2.4, R5.4 po K7; R11.4 po koncie Cloudflare). Pierwsza runda zweryfikowana 26.10.
+- **Ty (decyzje D1–D8 z PR „po researchu”):** pnpm 11 czy 12 · lista płaska · PR naprawy kontraktu · naprawa robota n4/n5 · kreski czy szarość · domena R2 · test etykiety na 2. koncie · perf wyszukiwania.
 - **Ty, 2 min:** ruleset na `main` (GitHub → Settings → Rules: wymagane `testy` i `bezpieczenstwo`).
 - **Ty:** lista uwag z oglądu K1–K5 (zrobię z niej małe zadania w nowej fali) · teksty objaśnień do akceptacji (W1.9; przygotuję listę do przeczytania).
 - **Ty, kiedy chcesz:** pismo do GUS o zbiorczy eksport BDL – gotowy tekst (≤ 1000 znaków, limit formularza) w `docs/research/biblioteka-bulk-wynik.md`; sprawdź też w przeglądarce, czy w BDL jest „Pobrane podgrupy” (ZIP z CSV/XLSX) – raport tego nie potwierdził.
@@ -40,7 +42,8 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 ## Znane problemy / dług (co · skąd · priorytet · w której fali)
 - `main` bez ochrony (brak reguł) · przegląd 24.10 · wysoki · Ty: ruleset (przypomnienie wyżej).
 - Uwagi właściciela z oglądu K1–K5 · 25.10 · wysoki · nowa fala poprawek po otrzymaniu listy.
-- Brak prostych objaśnień wskaźników · test 20.10 · średni · W1.9 po Twojej akceptacji tekstów.
+- Brak prostych objaśnień wskaźników · test 20.10 · średni · W1.9 po Twojej akceptacji tekstów (R9.5 dla reszty haseł).
+- Spis biblioteki: zdublowane tytuły (n4/n5) i wolne szukanie na 64 tys. zmiennych · R7 · wysoki · F8b (W1.25, W1.26).
 - Miasto/wieś: w częściach wiejskich 244 gmin „czytelnicy bibliotek” = 0 – nie wiadomo, czy to prawdziwe zero czy brak · W1.11 · niski · pokazujemy jak BDL; sprawdzić po pierwszym pobraniu.
 - Zakres lat bezrobocia w częściach (od 2019?) niesprawdzony · W1.11 · niski · pokaże pierwszy przebieg W1.17.
 - Raw.githubusercontent jako adres danych biblioteki: CORS i limity niesprawdzone z przeglądarki · S21 · średni · e2e używają podmienionych żądań; sprawdzić na podglądzie po F12, w razie problemu – R2.
@@ -51,6 +54,9 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 - Od F8: po każdej fali jedna linia w tej sekcji (zadania · PR-y poprawione · Twoje minuty) – dopisuje Claude przy kolejnej fali.
 
 ## Decyzje (najnowsze na górze, 1 linia, kto)
+- 26.10.2026 · **Po weryfikacji R2, R5, R7–R12** (`docs/research/haiku/`; Claude): R8 – link „Zamów” przez `template=` + pola `id`, bez `labels=` (obcy dostają 404), potrzebny formularz `.yml` i etykieta (W1.27); R7 – lista płaska „dział: wymiary”, ale robot gubi `n4`/`n5` (25% zmiennych ma zdublowane tytuły) → W1.25 i ponowny przegląd katalogu; spis ma 63 960 zmiennych (nie 51 tys.), 593 KB gzip; wyszukiwanie za wolne na tylu zmiennych → W1.26
+- 26.10.2026 · **R9** (Claude): objaśnienia pisane własnymi słowami + `definitionUrl` do hasła GUS (GUS: kopiowanie z podaniem źródła, brak nazwanej licencji; część haseł to cytaty osób trzecich); **R10**: `trustPolicy: no-downgrade` działa na pnpm 10.30.3, akcja `@v6` już jest → W0.2; **R11**: darmowy plan R2 wystarcza, `r2.dev` nie na produkcję (własna domena); **R2**: Positron nie ma warstw rastrowych, `name:pl` zadeklarowane → W3.7; **R5**: kreskowanie `FillStyleExtension` możliwe → W3.8; **R12**: bez zmian w kodzie
+- 26.10.2026 · Kontrakt spisu biblioteki: robot (`categories`, `variables`) ≠ `query.ts` (inne pola) – naprawa schematem zod i adapterem na lokalnej gałęzi `naprawa-kontraktu`, **niewypchniętej** do Twojej zgody (Claude)
 - 26.10.2026 · Research R2, R5, R7–R12 robi Haiku w wąskich zleceniach (jedno pytanie, fakty z linkami); decyzję podejmuje Opus/Sonnet po weryfikacji i Ty (Ty, czat Claude)
 - 25.10.2026 · Raporty R1–R5 zweryfikowane (`docs/research/weryfikacja-raportow-v2.md`): zero wymian własnych komponentów na pakiety teraz; szablonów nie bierzemy; prerender RR8 odpada (tryb framework); rozpiska N1–N12 w `docs/research/zadania-fala-8.md`, wchodzi do planu po decyzjach D1–D5; plan S22 nie wchodzi do ARCHITEKTURA ani kolejki – decyzja właściciela (Ty, czat Claude)
 - 25.10.2026 · Research kierujemy na audyt tego, co już zrobione (szablon stron, strona główna, animacje, własne komponenty) i na gotowce pod S20–S21; wzorce z cudzych repozytoriów wolno studiować i przepisać po swojemu tylko z wpisu w `docs/INSPIRACJE.md` (licencja MIT/BSD/ISC/Apache-2.0/CC0); zmiana zasady w `AGENTS.md` (Ty, czat Claude)
