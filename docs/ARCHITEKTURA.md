@@ -737,6 +737,7 @@ Konta użytkowników · wołanie API GUS z przeglądarki · liczby wpisane ręcz
 | Do czego | Narzędzie | Ograniczenia |
 |---|---|---|
 | Szeroki research (bazy, pakiety, zasoby, wzorce, licencje) | Gemini Deep Research (`TRYB: RESEARCH`, workflow §8.18) | raport to wsparcie; **zawsze** weryfikacja (§8.19) |
+| Wąskie fakty: wersje, licencje, ustawienia, wzorce z innych serwisów | Claude Haiku – zlecenia `docs/research/haiku-zlecenia.md` (jedno pytanie, fakty z linkami) | zbiera, nie decyduje; zawsze weryfikacja (§8.19) przez mocniejszy model |
 | Weryfikacja raportu | Claude (czat/sesja repo): liczby sprawdza na nagraniach w `tests/fixtures`, linki przez WebSearch | strony GUS (bdl.stat.gov.pl) i część stron spoza listy nie otwierają się z sesji; oficjalne PDF z api.stat.gov.pl – tak |
 | Pytania do prawdziwego API GUS | robot w GitHub Actions (`bdl-record.yml`, `fetch-data.yml`; klucz w Secrets) | z sesji Claude API GUS nie jest dostępne; wynik wraca jako PR z nagraniami |
 | Pakiet/usługa (poziomy B–D workflow §3b) | `TRYB: WYBÓR` (Gem Research); sprawdzenie nazwy w rejestrze npm | wpis w `docs/ELEMENTY.md` w tym samym PR |
@@ -747,8 +748,16 @@ Konta użytkowników · wołanie API GUS z przeglądarki · liczby wpisane ręcz
 | # | Temat | Tryb | Kiedy |
 |---|---|---|---|
 | R1 | Miasto/wieś gmin m-w | zrobione (wynik wyżej) | – |
-| R2 | Blady podkład mapy przy dużym zbliżeniu (OpenFreeMap) | `TRYB: WYBÓR` + licencja | po K3, jeśli ruch jest płynny |
+| R2 | Blady podkład mapy przy dużym zbliżeniu (OpenFreeMap) | licencja sprawdzona 26.10 (MIT, bez klucza); pytania R2.1–R2.3 dla Haiku (`docs/research/haiku-zlecenia.md`) | po K7 |
 | R3 | Podstrony gmin pod wyszukiwarki (SEO) | zrobione 25.10: raport zweryfikowany, decyzja **odłożone** (`docs/research/R3-seo-wynik.md`) | wrócić po K7, jeśli chcesz ruchu z wyszukiwarki |
 | R4 | Dwie pełne mapy obok siebie (dwa wskaźniki/lata) | `TRYB: DECYZJA` (koszt wydajności na telefonie) | po K5 |
-| R5 | Tryb ciemny mapy, kreskowanie „brak danych” | `TRYB: WYBÓR`/projekt | po K5 |
+| R5 | Tryb ciemny mapy, kreskowanie „brak danych” | `FillStyleExtension` (już zainstalowany); pytania R5.1–R5.3 dla Haiku | po K7 |
 | R6 | Cała biblioteka GUS: magazyn danych, katalog, robot z budżetem limitów (`docs/research/biblioteka-gus.md`) | zrobione 25.10: magazyn **Cloudflare R2** docelowo, do tego czasu gałąź `data/library` (`docs/research/R6-magazyn-wynik.md`); zbiorczy eksport: pismo do GUS (`docs/research/biblioteka-bulk-wynik.md`) | strona biblioteki: S21 (F8–F12); robot uruchomiony 25.10 |
+| R7 | Jak pokazać wskaźnik BDL, którego nazwa to same wymiary (lista, podpowiedzi, nagłówek) | Haiku R7.1–R7.4 → `TRYB: WERYFIKACJA` | **przed F10** (W2.29, W2.31, W2.33) |
+| R8 | „Zamów ten wskaźnik” przez formularz zgłoszeń GitHuba (pola z linku, etykieta) | Haiku R8.1–R8.3 → weryfikacja | **przed F9** (W2.35, zmiana W1.24) |
+| R9 | Definicje wskaźników z GUS: źródło, API, licencja tekstów | Haiku R9.1–R9.4 → weryfikacja | przed W1.9 |
+| R10 | Przejście na pnpm 11 (`trustPolicy`, akcja CI, 11 czy 12) | Haiku R10.1–R10.3 → weryfikacja | przed nowym zadaniem W0.2 |
+| R11 | Biblioteka na Cloudflare R2: `aws s3 sync`, CORS, cennik | Haiku R11.1–R11.3 → weryfikacja | przed przejściem z gałęzi `data/library` |
+| R12 | Podział kolorów mapy: kwantyle czy naturalne przerwy (`simple-statistics`) | Haiku R12.1–R12.2 → weryfikacja | opcjonalnie, po K7 |
+
+**Zlecenia dla Haiku:** `docs/research/haiku-zlecenia.md` – jedno wąskie pytanie na zlecenie, wspólny nagłówek (fakty z linkami, bez rekomendacji). Decyzję podejmuje Opus/Sonnet i Ty po `TRYB: WERYFIKACJA` (WORKFLOW §8.19).

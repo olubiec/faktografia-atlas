@@ -29,7 +29,7 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 - Po K7: przegląd „Później” (SEO, mapa dla wskaźnika z biblioteki, R2, tryb ciemny mapy…) i nowa fala poprawek z Twojej listy.
 
 ## Przypomnienia (pełna tabela: ARCHITEKTURA §4 „Poza falami”)
-- **Badania v2 (25.10.2026):** audyt zrobionego i gotowce pod kolejne sesje – plan i wyniki audytu: `docs/research/plan-badan-v2.md`, prompty do Gemini: `docs/research/gemini-prompty-v2.md` (R1 szablon i strona główna, R2 animacje, R3 gotowe komponenty zamiast własnych – teraz; R4 filtry i kategorie, R5 magazyn danych – przed S21). Raporty wracają do Claude (`TRYB: WERYFIKACJA`), wzorce trafiają do `docs/INSPIRACJE.md`. Do potwierdzenia przez Ciebie: czy dodajemy stronę główną wg makiety 01 (patrz plan-badan-v2 §3).
+- **Ty → Haiku (research):** zlecenia z `docs/research/haiku-zlecenia.md`; **R8 przed F9**, **R7 przed F10**, reszta wg ARCHITEKTURA §4a. Odpowiedzi wklejasz do Claude z `TRYB: WERYFIKACJA`.
 - **Ty, 2 min:** ruleset na `main` (GitHub → Settings → Rules: wymagane `testy` i `bezpieczenstwo`).
 - **Ty:** lista uwag z oglądu K1–K5 (zrobię z niej małe zadania w nowej fali) · teksty objaśnień do akceptacji (W1.9; przygotuję listę do przeczytania).
 - **Ty, kiedy chcesz:** pismo do GUS o zbiorczy eksport BDL – gotowy tekst (≤ 1000 znaków, limit formularza) w `docs/research/biblioteka-bulk-wynik.md`; sprawdź też w przeglądarce, czy w BDL jest „Pobrane podgrupy” (ZIP z CSV/XLSX) – raport tego nie potwierdził.
@@ -51,8 +51,12 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 - Od F8: po każdej fali jedna linia w tej sekcji (zadania · PR-y poprawione · Twoje minuty) – dopisuje Claude przy kolejnej fali.
 
 ## Decyzje (najnowsze na górze, 1 linia, kto)
+<<<<<<< HEAD
 - 25.10.2026 · Raporty R1–R5 zweryfikowane (`docs/research/weryfikacja-raportow-v2.md`): zero wymian własnych komponentów na pakiety teraz; szablonów nie bierzemy; prerender RR8 odpada (tryb framework); rozpiska N1–N12 w `docs/research/zadania-fala-8.md`, wchodzi do planu po decyzjach D1–D5; plan S22 nie wchodzi do ARCHITEKTURA ani kolejki – decyzja właściciela (Ty, czat Claude)
 - 25.10.2026 · Research kierujemy na audyt tego, co już zrobione (szablon stron, strona główna, animacje, własne komponenty) i na gotowce pod S20–S21; wzorce z cudzych repozytoriów wolno studiować i przepisać po swojemu tylko z wpisu w `docs/INSPIRACJE.md` (licencja MIT/BSD/ISC/Apache-2.0/CC0); zmiana zasady w `AGENTS.md` (Ty, czat Claude)
+=======
+- 26.10.2026 · Research R2, R5, R7–R12 robi Haiku w wąskich zleceniach (jedno pytanie, fakty z linkami); decyzję podejmuje Opus/Sonnet po weryfikacji i Ty (Ty, czat Claude)
+>>>>>>> 5af0a9d (Research dla Haiku: wąskie zlecenia R2, R5, R7–R12 w planie)
 - 25.10.2026 · **Plan S20 + S21** zatwierdzony do realizacji: 24 małe zadania w falach F8–F12, ≤ 7 w fali (Jules lepiej radzi sobie z małymi zadaniami; limit 15 naraz) (Ty, czat Claude)
 - 25.10.2026 · **Ręczna pętla:** Ty scalasz, Claude puszcza kolejne (`start-tasks.mjs`); automat zatrzymany (`automat-stop` na #221); limity w kolejce podniesione do 15 naraz (Ty, czat Claude)
 - 25.10.2026 · K1–K5 zaakceptowane przez właściciela; uwagi do poprawek później, jako małe zadania (Ty)
