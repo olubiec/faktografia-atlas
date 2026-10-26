@@ -27,7 +27,7 @@ test.describe('Udostępnianie z profilu (W2.20 @S19)', () => {
     });
 
     // Find and click "Pobierz i udostępnij" button in profile overview
-    const shareBtn = page.getByRole('button', { name: 'Pobierz i udostępnij' });
+    const shareBtn = page.getByRole('button', { name: 'Pobierz i udostępnij', exact: true });
     await expect(shareBtn).toBeVisible();
     await shareBtn.click();
 
@@ -85,7 +85,7 @@ test.describe('Udostępnianie z profilu (W2.20 @S19)', () => {
       const profileHeading = page.locator('h2', { hasText: 'Powiat wałecki' }).first();
       await expect(profileHeading).toBeAttached();
 
-      const shareBtn = page.getByRole('button', { name: 'Pobierz i udostępnij' });
+      const shareBtn = page.getByRole('button', { name: 'Pobierz i udostępnij', exact: true });
       await expect(shareBtn).toBeVisible();
       await shareBtn.click();
 
