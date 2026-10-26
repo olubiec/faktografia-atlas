@@ -1,5 +1,6 @@
 import type { UnitLevel } from '../units/types';
 import { getRevealState } from '@/view/map/hooks/useChoropleth';
+import { getCameraState, type CameraSeamState } from '@/view/map/hooks/useMapViewState';
 
 export type ChoroplethSeamState = {
   indicatorId: string;
@@ -26,6 +27,7 @@ export type AtlasState = {
   choropleth: ChoroplethSeamState;
   profileOpen: boolean;
   reveal?: RevealSeamState;
+  camera?: CameraSeamState;
 };
 
 export type WindowWithAtlas = {
@@ -66,6 +68,7 @@ export function installAtlasSeam(
         choropleth: state.choropleth ? { ...state.choropleth } : null,
         profileOpen: state.profileOpen,
         reveal: typeof getRevealState === 'function' ? { ...getRevealState() } : { running: false, progress: 1 },
+        camera: typeof getCameraState === 'function' ? { ...getCameraState() } : { animating: false, trace: [] },
       });
     },
     set(_value: AtlasState) {

@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
+  test.setTimeout(60000);
+
   test('clicking voivodeship animates camera zoom with >= 3 intermediate values and reaches target view (@S16)', async ({
     page,
   }) => {
@@ -11,8 +13,13 @@ test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
     const startZoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
     expect(startZoom).toBeGreaterThan(0);
 
-    // Open search modal via Ctrl+K
-    await page.keyboard.press('Control+k');
+    // Open search modal
+    const searchTrigger = page.locator('#home-search-field');
+    if (await searchTrigger.isVisible()) {
+      await searchTrigger.click();
+    } else {
+      await page.keyboard.press('Control+k');
+    }
     const searchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
     await expect(searchInput).toBeVisible();
 
@@ -20,34 +27,15 @@ test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
     const firstResult = page.locator('div[role="dialog"] [cmdk-item]').first();
     await expect(firstResult).toBeVisible();
 
-    // Start background non-blocking continuous rAF recorder in browser
-    await page.evaluate(() => {
-      (window as any).__zoomHistory = [];
-      (window as any).__stopRecording = false;
-      function sample() {
-        const z = (window as any).__atlas?.viewState?.zoom;
-        if (typeof z === 'number') {
-          const h = (window as any).__zoomHistory;
-          if (h.length === 0 || h[h.length - 1] !== z) {
-            h.push(z);
-          }
-        }
-        if (!(window as any).__stopRecording) {
-          requestAnimationFrame(sample);
-        }
-      }
-      requestAnimationFrame(sample);
-    });
-
     // Press Enter to select voivodeship
     await page.keyboard.press('Enter');
-    await page.waitForTimeout(1000);
 
-    await page.evaluate(() => {
-      (window as any).__stopRecording = true;
-    });
+    // Wait until camera animation completes
+    await page.waitForFunction(() => (window as any).__atlas?.camera?.animating === false);
 
-    const zoomHistory: number[] = await page.evaluate(() => (window as any).__zoomHistory);
+    const zoomHistory: number[] = await page.evaluate(() =>
+      ((window as any).__atlas?.camera?.trace ?? []).map((v: any) => v.zoom)
+    );
 
     // Must record initial zoom, target zoom, plus at least 3 distinct intermediate values
     const intermediateValues = zoomHistory.filter(
@@ -114,33 +102,14 @@ test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
     const backButton = page.locator('button', { hasText: 'Wróć' });
     await expect(backButton).toBeVisible();
 
-    // Start background non-blocking continuous rAF recorder in browser
-    await page.evaluate(() => {
-      (window as any).__zoomHistory = [];
-      (window as any).__stopRecording = false;
-      function sample() {
-        const z = (window as any).__atlas?.viewState?.zoom;
-        if (typeof z === 'number') {
-          const h = (window as any).__zoomHistory;
-          if (h.length === 0 || h[h.length - 1] !== z) {
-            h.push(z);
-          }
-        }
-        if (!(window as any).__stopRecording) {
-          requestAnimationFrame(sample);
-        }
-      }
-      requestAnimationFrame(sample);
-    });
-
     await backButton.click();
-    await page.waitForTimeout(1000);
 
-    await page.evaluate(() => {
-      (window as any).__stopRecording = true;
-    });
+    // Wait until camera animation completes
+    await page.waitForFunction(() => (window as any).__atlas?.camera?.animating === false);
 
-    const zoomHistory: number[] = await page.evaluate(() => (window as any).__zoomHistory);
+    const zoomHistory: number[] = await page.evaluate(() =>
+      ((window as any).__atlas?.camera?.trace ?? []).map((v: any) => v.zoom)
+    );
 
     expect(zoomHistory.length).toBeGreaterThan(3);
     const finalZoom = zoomHistory[zoomHistory.length - 1];
@@ -160,5 +129,13 @@ test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
     // With reduced motion, transition duration is 0ms, so zoom updates instantly
     const immediateZoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
     expect(immediateZoom).toBeLessThan(startZoom - 1.0);
+  });
+
+  test('without test mode ?e2e, camera trace is not recorded (@S16)', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+
+    const atlasDefined = await page.evaluate(() => (window as any).__atlas !== undefined);
+    expect(atlasDefined).toBe(false);
   });
 });

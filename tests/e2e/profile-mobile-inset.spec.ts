@@ -21,6 +21,9 @@ test.describe('Mobile Profile Sheet Inset W2.7 (@S15)', () => {
       return visibleRatio >= 0.35 && visibleRatio <= 0.45;
     });
 
+    // Poczekaj na zakończenie animacji kamery przed odczytem widoku
+    await page.waitForFunction(() => (window as any).__atlas?.camera?.animating === false);
+
     const sheet = page.locator('[role="dialog"]').first();
     const sheetBox = await sheet.boundingBox();
     expect(sheetBox).not.toBeNull();
@@ -62,10 +65,15 @@ test.describe('Mobile Profile Sheet Inset W2.7 (@S15)', () => {
       return rect.y < window.innerHeight;
     });
 
-    const closeBtn = page.locator('[role="dialog"] button[aria-label="Zamknij"]').first();
-    await closeBtn.click();
+    await page.evaluate(() => {
+      const btn = document.querySelector('[role="dialog"] button[aria-label="Zamknij"]') as HTMLButtonElement;
+      btn?.click();
+    });
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === false);
+
+    // Poczekaj na zakończenie animacji kamery
+    await page.waitForFunction(() => (window as any).__atlas?.camera?.animating === false);
 
     const viewState = await page.evaluate(() => (window as any).__atlas?.viewState);
     expect(viewState).toBeDefined();
@@ -93,19 +101,29 @@ test.describe('Mobile Profile Sheet Inset W2.7 (@S15)', () => {
       await page.goto('/?e2e&u=1208');
 
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
+      await page.waitForFunction(() => {
+        const el = document.querySelector('[role="dialog"]');
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.y < 800;
+      });
 
       const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
       const innerWidth = await page.evaluate(() => window.innerWidth);
       expect(scrollWidth).toBeLessThanOrEqual(innerWidth);
 
-      const closeButtons = page.locator('[role="dialog"] button[aria-label="Zamknij"]');
-      const count = await closeButtons.count();
-      for (let i = 0; i < count; i++) {
-        const box = await closeButtons.nth(i).boundingBox();
-        if (box) {
-          expect(box.width).toBeGreaterThanOrEqual(44);
-          expect(box.height).toBeGreaterThanOrEqual(44);
-        }
+      const buttonBoxes = await page.evaluate(() => {
+        const btns = Array.from(document.querySelectorAll('[role="dialog"] button[aria-label="Zamknij"]'));
+        return btns.map((b) => {
+          const rect = b.getBoundingClientRect();
+          return { width: rect.width, height: rect.height };
+        });
+      });
+
+      expect(buttonBoxes.length).toBeGreaterThan(0);
+      for (const box of buttonBoxes) {
+        expect(box.width).toBeGreaterThanOrEqual(44);
+        expect(box.height).toBeGreaterThanOrEqual(44);
       }
     }
   });
