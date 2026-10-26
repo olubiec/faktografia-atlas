@@ -1,7 +1,7 @@
 # Architektura – warstwy, zadania, fale
 Wg WORKFLOW UNIWERSALNY v5.3 §3c (`TRYB: WARSTWY`) i §3a (`TRYB: FALA`). Jedno źródło prawdy o tym, **z czego** zbudowana jest strona, **jakie zadania zostały** i **w jakich falach** je robimy.
 Co ma widzieć użytkownik: `docs/PRODUKT.md` · gdzie jesteśmy: `docs/STAN.md` · elementy z zewnątrz i licencje: `docs/ELEMENTY.md` · wygląd: `docs/STYL.md`.
-Plan przebudowany 22.10.2026, **v3 24.10.2026**: pomysły właściciela (porównanie z dwiema mapkami, pobieranie i udostępnianie – S19), fale przeliczone od stanu `main`, **v4 24.10.2026: 7 fal F1–F7 zamiast 13** (F1–F7), prowadzenie przez automat (`docs/AUTOMAT.md`). **Plan fal (§4) jest orientacyjny:** prompty do fali N pisze się dopiero po bramce fali N−1. Jeśli coś wyjdzie inaczej → `TRYB: ODŚWIEŻ`, a Planista poprawia kolejne fale tutaj.
+Plan przebudowany 22.10.2026, **v3 24.10.2026**: pomysły właściciela (porównanie z dwiema mapkami, pobieranie i udostępnianie – S19), fale przeliczone od stanu `main`, **v4 24.10.2026: 7 fal F1–F7 zamiast 13** (F1–F7), prowadzenie przez automat (`docs/AUTOMAT.md`). **v5 25.10.2026:** F1–F7 zrobione (33 zadania scalone, Twoja akceptacja K1–K5 z 25.10); dodane **S20** (miasto i wieś) i **S21** (biblioteka GUS): 24 małe zadania w falach F8–F12; fale puszcza Claude, Ty scalasz. **Plan fal (§4) jest orientacyjny:** prompty do fali N pisze się dopiero po bramce fali N−1. Jeśli coś wyjdzie inaczej → `TRYB: ODŚWIEŻ`, a Planista poprawia kolejne fale tutaj.
 
 **Jak z tego korzystać:**
 - Prompt dla Julesa = **jedno zadanie z §3** (format v5.3 §9.1). Linie „Pliki”, „Gotowe, gdy”, „Nie ruszaj” przepisujesz z zadania; „Przeczytaj najpierw” zawsze zawiera `docs/PRODUKT.md` (sekcja ekranu) i tę sekcję zadania.
@@ -35,7 +35,11 @@ Baza: **od zera** (bez cudzej bazy – `docs/BAZA.md` nie dotyczy). Projekt jest
 | W1 | Karty i dane do pobrania (logika) | formaty obrazków, CSV, mapa jako rysunek SVG, układ kart | `src/core/share/` | W1.12–W1.14 |
 | W2 | Pobierz i udostępnij | okno z podglądem, PNG, CSV, systemowe udostępnianie | `src/view/share/`, przyciski w panelu, profilu i porównaniu | W2.18–W2.21, W2.23 |
 | W3 | Ruch | płynna kamera, kafelki, przelewanie kolorów, scena wejścia | `useMapViewState.ts`, `layers/choropleth.ts`, `useChoropleth.ts` | W3.2–W3.5 |
-| W3 | Szlif | sprzątanie zakreśleń, pomiar szybkości i płynności | całość | W3.1, W3.6 |
+| W3 | Szlif | sprzątanie zakreśleń, pomiar szybkości i płynności | całość | gotowe (W3.1, W3.6) |
+| W1 | Miasto i wieś gmin m-w (dane) | lista 14 wskaźników, wyciąganie części miasto/wieś z odpowiedzi GUS, zapis przy nocnym pobieraniu, pliki na województwa, wczytywanie, wiersze tabeli | `config/parts.json`, `scripts/data/parts.mjs`, `scripts/data/build-parts.mjs`, `src/core/parts/`, `src/core/data/load-parts.ts` | W1.15–W1.20 |
+| W2 | Miasto i wieś (ekran) | zwijany blok w profilu gminy miejsko-wiejskiej | `src/view/profile/ProfileParts.tsx` | W2.24–W2.26 |
+| W1 | Biblioteka GUS (logika i dane) | spis z katalogu robota, wyszukiwanie i filtry, wczytywanie spisu i wartości z jednego adresu, link „zamów wskaźnik” | `scripts/data/library-index.mjs`, `src/core/library/` | W1.21–W1.24 |
+| W2 | Biblioteka GUS (ekran) | strona `/biblioteka`: kategorie, szukanie, filtry, lista; strona wskaźnika z rankingiem, CSV i zamówieniem; odnośnik w nagłówku | `src/view/pages/Library*.tsx`, `src/view/library/` | W2.27–W2.37 |
 
 ## 2. Zależności i pliki-węzły
 **Zależności (→ = „potrzebuje”):**
@@ -46,9 +50,13 @@ Baza: **od zera** (bez cudzej bazy – `docs/BAZA.md` nie dotyczy). Projekt jest
 - Ruch W3.2 → W1.4, W2.7 (kamera musi znać arkusz na telefonie). W3.3 → W1.5. W3.4 → W3.3. W3.5 → W3.2 (opcjonalne). W3.6 → W3.2–W3.4.
 - Sprzątanie W3.1 → W2.1 (przegląd przejął jedyne zakreślenie).
 - Udostępnianie W1.14 → W1.12, W1.13. W2.18 → W1.14. W2.19 → W2.18. W2.20 → W2.18, W2.1. W2.22 → W1.13, W2.14. W2.21 → W2.18, W2.15, W2.22. W2.23 → W2.19–W2.22.
+- Miasto i wieś (S20) W1.15, W1.16 → –. W1.17 → W1.15, W1.16. W1.18 → W1.16. W1.19 → W1.16. W1.20 → W1.15, W1.16. W2.24 → W1.20. W2.25 → W2.24, W1.19. W2.26 → W2.25.
+- Biblioteka (S21) W1.21–W1.24 → – (kształt plików w §5.5, zadania niezależne). W2.27 → W1.22, W1.23. W2.34 → W1.23. W2.35 → W1.24. W2.28–W2.31 → W2.27, W1.22. W2.33 → W1.23, W2.27, W2.34, W2.35. W2.32 → W2.27–W2.31. W2.36 → W2.27. W2.37 → W2.32, W2.33, W2.36.
 
 **Pliki-węzły** (w jednej fali najwyżej jedno zadanie na węzeł; tabela kolizji w każdej fali §4):
 `src/view/map/AtlasMap.tsx` · `src/view/profile/ProfileSheet.tsx` · `src/view/profile/ProfileSheetMobile.tsx` · `src/view/map/ProfilePortal.tsx` · `src/view/Home.tsx` · `src/view/main/IndicatorPanel.tsx` · `src/view/profile/ProfileIndicatorRow.tsx` · `src/view/map/hooks/useMapViewState.ts` · `src/view/map/layers/choropleth.ts` · `src/core/map/test-seam.ts` · `src/core/url/state.ts` · `config/tokens.json` · `package.json` / `pnpm-lock.yaml` · `src/view/profile/ProfileCompare.tsx` (od W2.14) · `src/view/profile/ProfileOverview.tsx` (od W2.1).
+
+**Nowe węzły S21:** `src/App.tsx` (trasy – tylko W2.27 w F9 i W2.33 w F10), `src/view/pages/Library.tsx` (W2.27 w F9, W2.32 w F11), `src/view/pages/LibraryVariable.tsx` (W2.33 w F10). Szkielety czterech komponentów biblioteki (W2.27) są właśnie „miejscami podpięcia”: W2.28–W2.31 wypełniają je równolegle, nie dotykając strony.
 
 **Jak je omijamy:** nowa rzecz dostaje własny plik (np. `ProfileOverview.tsx`, `MobileIndicatorBar.tsx`, `reveal.ts`). Gdy kilka zadań musi się podpiąć do tego samego węzła, pierwsze robi **przygotowanie** (puste miejsca podpięcia), a kolejne wypełniają swoje pliki bez dotykania węzła. Przykład: W2.4 tworzy pusty `MobileIndicatorBar.tsx` i podpina go w `AtlasMap.tsx`, więc W2.5 zmienia już tylko swój plik.
 
@@ -66,15 +74,6 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Pliki:** `package.json`, `pnpm-lock.yaml`, `docs/ELEMENTY.md` (wolno je zmienić).
 - **Zadanie:** sprawdź grepem w `src/`, `scripts/`, `tests/` i CSS, że `nuqs`, `motion`, `tw-animate-css`, `d3-array`, `d3-scale` nie są importowane; usuń je `pnpm remove` (razem z `@types/d3-array`, `@types/d3-scale`); w `docs/ELEMENTY.md` skreśl wpisy z datą. Pakiet jednak używany → zostaw i napisz w PR gdzie.
 - **Gotowe, gdy:** `pnpm install --frozen-lockfile` i pełny zestaw testów przechodzą; usuniętych pakietów nie ma w `package.json` ani w importach.
-- **Ty sprawdzasz:** ✅ w PR; strona bez zmian.
-- **Nie ruszaj:** kodu w `src/`, innych pakietów.
-
-#### W0.2 – Usunięcie nieużywanego `@observablehq/plot` · fala F8
-- **Zgoda właściciela (25.10.2026):** wolno zmienić wyłącznie `tests/unit/dependencies.test.ts` – usunąć `@observablehq/plot` z listy wymaganych pakietów. Żaden inny test nie.
-- **Po ludzku:** wpis w `ELEMENTY.md` mówi, że wykresy w profilu używają Plot, a nic go nie importuje (`TrendChart` rysuje SVG ręcznie). Usuwamy pakiet (1,5 MB w `node_modules`, zależy od całego `d3`) i prostujemy rejestr.
-- **Pliki:** `package.json`, `pnpm-lock.yaml`, `docs/ELEMENTY.md` (wolno je zmienić), `tests/unit/dependencies.test.ts` (tylko lista pakietów).
-- **Zadanie:** sprawdź grepem w `src/`, `scripts/`, `tests/`, CSS, że `@observablehq/plot` nie jest importowany; `pnpm remove @observablehq/plot`; w `docs/ELEMENTY.md` skreśl wiersz z datą i powodem „brak importów” (wzór: wiersz `d3-array, d3-scale`). Pakiet jednak używany → zostaw i opisz w PR.
-- **Gotowe, gdy:** `pnpm install --frozen-lockfile` i pełny zestaw testów przechodzą; w `package.json` nie ma `@observablehq/plot`; w PR rozmiar katalogu `dist` przed i po.
 - **Ty sprawdzasz:** ✅ w PR; strona bez zmian.
 - **Nie ruszaj:** kodu w `src/`, innych pakietów.
 
@@ -347,27 +346,6 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Gotowe, gdy:** komputer i 390×844: mapa → okno → 4 formaty → PNG o dokładnych wymiarach; profil → karta profilu → CSV; porównanie → karta porównania; w całej ścieżce zero żądań danych po otwarciu okna, brak „undefined/NaN” w podglądzie; 3× z rzędu.
 - **Ty sprawdzasz:** na telefonie „Udostępnij” otwiera systemowe okno; wrzuć jedną kartę na Instagram (podgląd, nie musisz publikować).
 
-#### W2.24 – Wspólny układ podstron i stopka (S22) · fala F8
-- **Po ludzku:** „O projekcie”, „Skąd są dane”, „Prywatność” i strona 404 mają ten sam układ: nagłówek, treść, stopka ze źródłem i licencją.
-- **Przeczytaj najpierw:** `docs/STYL.md`, `docs/design/01-start-komputer.png` (stopka: „Źródło: GUS, Bank Danych Lokalnych. Licencja CC BY 4.0. Granice jednostek: domena publiczna.”), `src/view/pages/About.tsx`, `Sources.tsx`, `Privacy.tsx`, `src/view/NotFound.tsx`, `docs/INSPIRACJE.md` (wzorzec układu: shadcn/ui blocks, tylko pomysł).
-- **Pliki:** `src/view/layout/SiteLayout.tsx` (nowy), `src/view/layout/SiteFooter.tsx` (nowy), `src/view/pages/About.tsx`, `src/view/pages/Sources.tsx`, `src/view/pages/Privacy.tsx`, `src/view/NotFound.tsx`, `tests/unit/layout.test.tsx` (nowy), `tests/e2e/pages.spec.ts` (nowy).
-- **Zadanie:**
-  1. `SiteLayout`: istniejący `Header` + `<main id="main">` (szerokość treści z tokenów) + `SiteFooter`; pierwszy w kolejności tabulatora odnośnik „Przejdź do treści”.
-  2. `SiteFooter`: źródło danych i licencja, odnośniki do `/zrodla`, `/o-projekcie`, `/prywatnosc`, odnośnik do repozytorium kodu, rok. Bez zakreślenia.
-  3. Cztery strony przepisz na `SiteLayout`; treść bez zmian poza dwiema poprawkami: **Sources** – odnośnik do pełnej licencji https://creativecommons.org/licenses/by/4.0/legalcode.pl i data ostatniego pobrania danych czytana z istniejącego pola w `public/data` (brak takiego pola → nie wymyślaj, opisz w PR i pomiń datę); **Privacy** – tekst zgodny z faktami (analityka PostHog tylko po zgodzie, motyw w `localStorage`); **nie pisz**, że serwis nie używa żadnych narzędzi śledzących ani ciasteczek.
-- **Gotowe, gdy (`@S22`):** na `/o-projekcie`, `/zrodla`, `/prywatnosc` i nieistniejącej ścieżce są `header`, `main#main` i `footer` z odnośnikami do trzech podstron; stopka ma odnośnik do licencji CC BY 4.0; na 390 px żaden napis nie wychodzi poza pole, pola dotykowe ≥ 44 px; axe bez naruszeń na czterech stronach; `no-hardcoded-colors` przechodzi.
-- **Ty sprawdzasz:** na telefonie wszystkie cztery strony wyglądają spójnie, stopka ma źródło i licencję, „Prywatność” zgadza się z tym, co widzisz w pasku zgody.
-- **Nie ruszaj:** `Home.tsx`, `App.tsx`, `AtlasMap.tsx`, istniejących testów i zrzutów.
-
-#### W2.25 – Strona główna wg makiety 01 (S22) · fala F9
-- **Po ludzku:** po wejściu widać nagłówek „Mapa Polski z danymi GUS”, wyszukiwarkę, zakładki wskaźników i mapę – jak na makiecie 01.
-- **Przeczytaj najpierw:** `docs/design/01-start-komputer.png`, `docs/PRODUKT.md` §3, §7, §8, `docs/STYL.md`, `src/view/Home.tsx`, `src/view/main/*`, `tests/e2e/home.spec.ts`, `tests/e2e/main-screen.spec.ts` (istniejące – nie zmieniać).
-- **Pliki:** `src/view/Home.tsx` (wymieniony wprost), `src/view/home/HomeHero.tsx` (nowy), `src/view/home/IndicatorTabs.tsx` (nowy), `tests/unit/home-hero.test.tsx` (nowy), `tests/e2e/home-hero.spec.ts` (nowy).
-- **Zadanie:** `Home.tsx` składa układ: komputer (≥ 1024 px) – lewa kolumna z `h1`, zdaniem z liczbami, polem „Szukaj miejsca” (istniejące `SearchField`, skrót Ctrl K), podpisem „albo kliknij region na mapie” i zakładkami „Pokaż na mapie”, prawa kolumna – istniejąca `AtlasMap`; telefon – to samo w jednej kolumnie, mapa niżej. Zakładki wskaźników biorą stan z `useMainView` (**nie tworzysz drugiego stanu wskaźnika**). Stopka: `SiteFooter` z W2.24. Liczby „16 województw, 380 powiatów i N gmin” liczone z `public/data/units.json` (nie wpisywane; makieta ma 2479, obowiązuje liczba z danych). Jedno zakreślenie, pod liczbą gmin. `AtlasMap` ładowana przez `React.lazy` z `Suspense` i polem zastępczym o stałej wysokości (bez skoku układu).
-- **Gotowe, gdy (`@S22`):** 1440×900: `h1`, pole wyszukiwania i mapa widoczne bez przewijania; 390×844: `h1` i pole wyszukiwania widoczne bez przewijania, mapa niżej o wysokości ≥ 60% ekranu; liczba gmin w zdaniu = liczba gmin w `units.json` (test na danych z `tests/fixtures`); klik w zakładkę zmienia wskaźnik w `window.__atlas` i `?i=` tak jak dotąd – `home.spec.ts` i `main-screen.spec.ts` przechodzą bez zmian; żądania danych na wejściu zgodne z PRODUKT §7 (granice, lista jednostek, jeden plik wskaźnika, żadnego `profiles/*`); reduced motion – bez animacji wejścia; axe czysty.
-- **Ty sprawdzasz:** porównaj z makietą 01 na komputerze i na telefonie; mapa nadal w kolorach w ≤ 3 s.
-- **Nie ruszaj:** `AtlasMap.tsx`, `ProfileSheet*.tsx`, `src/view/map/hooks/*`, istniejących testów.
-
 ### W3 – Szlif
 
 #### W3.1 – Sprzątanie zakreśleń w profilu · fala F2
@@ -407,47 +385,227 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Gotowe, gdy:** ścieżka z animacjami (wejście, powrót, zmiana wskaźnika) przechodzi 3×; progi żądań z `PRODUKT.md` §7 bez zmian; w PR: czas do kolorowej mapy i rozmiar JS na wejściu vs przed S16 (wzrost ≤ 5%).
 - **Ty sprawdzasz:** na swoim telefonie animacje bez szarpania; jeśli szarpie → `TRYB: POMOC`.
 
-#### W3.7 – Metadane, udostępnianie linków, robots i sitemap (S22) · fala F9
-- **Po ludzku:** po wklejeniu linku do strony w komunikator widać tytuł i opis; wyszukiwarki dostają mapę strony. Bez nowych pakietów.
-- **Przeczytaj najpierw:** `index.html`, `vercel.json` (tylko czytasz), `package.json` (skrypt `build`). **Prerender z React Router 8 odpada** – to tryb framework, a mamy `BrowserRouter` (https://reactrouter.com/8.2.0/how-to/pre-rendering.md). React 19 sam przenosi `<title>` i `<meta>` do `<head>` (https://react.dev/reference/react-dom/components/title), ale boty komunikatorów nie wykonują JS, więc potrzebny jest gotowy HTML. `vite-plugin-sitemap` nie wolno (brak licencji w npm).
-- **Pliki:** `index.html`, `src/core/seo/pages.ts` (nowy), `src/view/seo/PageMeta.tsx` (nowy), `scripts/build/prerender-pages.mjs` (nowy), `scripts/build/write-sitemap.mjs` (nowy), `public/robots.txt` (nowy), `package.json` (tylko `scripts.build`), `src/view/pages/About.tsx`, `src/view/pages/Sources.tsx`, `src/view/pages/Privacy.tsx`, `src/view/NotFound.tsx` (tylko dodanie `<PageMeta …>`), `tests/unit/seo-pages.test.ts` (nowy), `tests/unit/prerender-pages.test.ts` (nowy).
-- **Zadanie:**
-  1. `index.html`: `description`, `og:title`, `og:description`, `og:type`, `og:locale=pl_PL`, `twitter:card=summary`; `og:url` z `VITE_SITE_URL` tylko jeśli ustawiona. Obrazka `og:image` **nie** dodajesz (potrzebna grafika od właściciela w `public/brand/` – napisz w PR).
-  2. `src/core/seo/pages.ts`: jedno źródło prawdy – tablica `{ path, title, description }` dla `/o-projekcie`, `/zrodla`, `/prywatnosc`; używają jej `PageMeta` i skrypt budowania.
-  3. `PageMeta` renderuje `<title>` i `<meta name="description">`; podpięte w czterech stronach z W2.24 (`NotFound` z `noindex`).
-  4. `scripts/build/prerender-pages.mjs` (Node, bez pakietów): po `vite build` kopiuje `dist/index.html` do `dist/<path>/index.html` dla stron z `pages.ts`, podmieniając `<title>`, `description`, `og:*`. Vercel serwuje istniejące pliki przed regułą `rewrites`, więc boty dostają gotowy HTML.
-  5. `scripts/build/write-sitemap.mjs`: `dist/sitemap.xml` (adresy z `pages.ts` oraz `/`), `public/robots.txt` (`Sitemap:` i zakaz `/__test/`, `/design`).
-  6. `package.json`: tylko skrypt `build` (dopisz wywołanie obu skryptów po `vite build`). Zero nowych zależności.
-- **Gotowe, gdy:** test jednostkowy: po `pnpm build` istnieje `dist/o-projekcie/index.html` z właściwym `<title>` i `og:title` oraz z `<script type="module">` (aplikacja się uruchamia); `dist/sitemap.xml` zawiera dokładnie adresy z `pages.ts` i `/`, bez `/__test/*` i `/design`; `robots.txt` wskazuje sitemap; e2e (`@S22`): wejście bezpośrednio na `/zrodla` ładuje stronę (nie 404) z właściwym tytułem.
-- **Ty sprawdzasz:** wklej link strony z podglądu do komunikatora – widać tytuł i opis; `/sitemap.xml` i `/robots.txt` się otwierają.
-- **Nie ruszaj:** `vercel.json`, `.github/workflows/`, `Home.tsx`.
+### S20 i S21 – nowe zadania (plan z 25.10.2026, fale F8–F12)
+Wszystkie zadania małe (1–3 pliki kodu + test), bez nowych pakietów. Decyzje produktowe: `docs/PRODUKT.md` §4c (miasto i wieś) i §4d (biblioteka GUS); kontrakty plików: §5.5. W2: dopisz wspólne „Gotowe, gdy” z początku §3.
 
-#### W3.8 – Mapa nie zostaje pusta po utracie kontekstu WebGL (S22) · fala F8
-- **Po ludzku:** jeśli telefon „zgubi” grafikę mapy, użytkownik zobaczy komunikat i przycisk „Wczytaj mapę ponownie” zamiast pustego pola.
-- **Przeczytaj najpierw:** `src/view/map/AtlasMap.tsx`, `src/core/map/test-seam.ts`; zdarzenia `webglcontextlost` i `webglcontextrestored` kanwy: https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
-- **Pliki:** `src/view/map/AtlasMap.tsx` (wymieniony wprost; tylko podpięcie nasłuchu i nakładki), `src/view/map/MapContextLostNotice.tsx` (nowy), `src/core/map/test-seam.ts` (tylko pole `contextLost`), `tests/e2e/context-lost.spec.ts` (nowy).
-- **Zadanie:** na kanwie mapy (`map.getCanvas()`) nasłuchuj; przy `webglcontextlost` wywołaj `preventDefault()` (pozwala przeglądarce przywrócić kontekst) i pokaż nakładkę z komunikatem (tokeny koloru, bez cienia) i przyciskiem „Wczytaj mapę ponownie”; przy `webglcontextrestored` ukryj nakładkę i odśwież warstwy; przycisk wymusza ponowne zamontowanie mapy. W `window.__atlas` dodaj `contextLost: boolean`.
-- **Gotowe, gdy (`@S22`):** test Playwright wywołuje `gl.getExtension('WEBGL_lose_context').loseContext()` → pojawia się komunikat i `__atlas.contextLost === true`; `restoreContext()` → komunikat znika, mapa ma kolory; przycisk przywraca mapę; pozostałe e2e map bez zmian. Brak rozszerzenia `WEBGL_lose_context` w CI → test pomijany z komentarzem środowiskowym.
-- **Ty sprawdzasz:** zwykłe użycie mapy bez zmian.
-- **Nie ruszaj:** `src/view/map/hooks/*`, `layers/*`, `Home.tsx`.
+#### W1.15 – Lista wskaźników z podziałem na miasto i wieś (S20) · fala F8
+- **Po ludzku:** jeden plik mówi, dla których 14 wskaźników pokazujemy osobno miasto i wieś gminy miejsko-wiejskiej (bez dochodów i wydatków, bo tam GUS daje fałszywe zera).
+- **Przeczytaj najpierw:** `docs/research/W1.11-wynik.md`, `config/indicators.json`.
+- **Pliki:** `config/parts.json` (nowy), `src/core/parts/allowed.ts` (nowy), `tests/unit/parts-allowed.test.ts` (nowy).
+- **Zadanie:** `config/parts.json` = tablica identyfikatorów (bez wcięć): `population`, `density`, `median-age`, `share-65plus`, `natural-increase`, `migration-balance`, `regon-per-10k`, `dwellings-per-1000`, `dwelling-area-per-person`, `sewerage-share`, `forest-cover`, `library-readers-per-1000`, `preschool-3-6`, `unemployed-share-working-age`. `partsIndicatorIds()` i `isPartsIndicator(id)` w `allowed.ts` (import JSON jak w innych plikach `src/core`).
+- **Gotowe, gdy:** testy: dokładnie 14 id, bez duplikatów; każdy istnieje w `config/indicators.json` i ma `minLevel` `gmi`; `income-per-capita` i `spending-per-capita` nie ma na liście; `isPartsIndicator('population')` prawda, `isPartsIndicator('avg-wage')` fałsz; plik bez wcięć.
+- **Ty sprawdzasz:** ✅.
+- **Nie ruszaj:** `config/indicators.json`, `src/view/`.
 
-#### W3.9 – Rozbicie `TrendChart.tsx` bez zmiany zachowania (S22) · fala F8
-- **Po ludzku:** wykres lat w profilu wygląda i działa tak samo; kod podzielony na małe pliki (zasada: do ok. 200 linii).
-- **Przeczytaj najpierw:** `src/view/profile/TrendChart.tsx`, istniejące testy wykresu (`grep -l TrendChart tests`), `src/core/profile/trend.ts`. Decyzja 25.10.2026: **rysowanie zostaje własne** (Plot odpada – `docs/research/weryfikacja-raportow-v2.md` §3).
-- **Pliki:** `src/view/profile/TrendChart.tsx`, `src/view/profile/TrendAxis.tsx` (nowy), `src/view/profile/TrendPoints.tsx` (nowy), `src/view/profile/TrendStatus.tsx` (nowy), `src/core/profile/trend-geometry.ts` (nowy), `tests/unit/trend-geometry.test.ts` (nowy).
-- **Zadanie:** czysta geometria (skale, ścieżki, siatka) do `trend-geometry.ts`; z komponentu wydziel oś, punkty i pasek statusu (`aria-live`). Zachowanie, atrybuty ARIA, klasy i zrzuty bez zmian.
-- **Gotowe, gdy:** wszystkie istniejące testy i zrzuty przechodzą **bez zmian**; każdy z plików ≤ 200 linii; test geometrii pokrywa: brak danych, jeden punkt, luki w latach, wartości ujemne.
-- **Ty sprawdzasz:** profil: wykres identyczny, najechanie i dotknięcie roku działa.
-- **Nie ruszaj:** `ProfileSheet*.tsx`, `ProfileIndicatorRow.tsx`, `@observablehq/plot`.
+#### W1.16 – Części miasto i wieś z odpowiedzi BDL: logika (S20) · fala F8
+- **Po ludzku:** funkcja, która z odpowiedzi GUS wyciąga osobne liczby dla miasta i obszaru wiejskiego (dziś robot je wyrzuca).
+- **Przeczytaj najpierw:** `docs/research/W1.11-wynik.md`, `scripts/data/map-units.mjs` (funkcja `getTerytFromBdlId` – kody 4 i 5 są dziś pomijane), `scripts/data/values.mjs`.
+- **Pliki:** `scripts/data/parts.mjs` (nowy), `tests/unit/parts-build.test.ts` (nowy).
+- **Zadanie:** `toPartsValues(indicator, pages, units, allowedIds)` → `PartsValues` z §5.5 albo `null` (wskaźnik spoza `allowedIds`). Rekord poziomu 6 (`level` 6) o 12-cyfrowym id z końcówką `4` (miasto) lub `5` (obszar wiejski) → klucz 7-cyfrowy `id.slice(2,4) + id.slice(7,12)`; zachowuj tylko części, których gmina-matka (ten sam kod z końcówką `3`) jest w `units.json`; wartości jak w BDL (zero zostaje zerem, brak = `null`); `years` posortowane rosnąco; bez znaczników czasu w wyniku.
+- **Gotowe, gdy:** testy na nagraniach z `tests/fixtures/bdl/recorded/` (np. 72305, 1617169) i `public/data/units.json`: liczba gmin m-w = liczbie z `units.json`; każda ma dokładnie dwie części; ludność: miasto + wieś = gmina; `null` zostaje `null`; zero zostaje zerem; wskaźnik spoza listy → `null`; wynik bez wcięć po serializacji; brak sieci.
+- **Ty sprawdzasz:** ✅.
+- **Nie ruszaj:** `scripts/data/values.mjs`, `scripts/data/map-units.mjs`, `scripts/data/fetch-values.mjs` (tylko czytasz).
+
+#### W1.17 – Nocny robot zapisuje części miasto i wieś (S20) · fala F9
+- **Po ludzku:** przy zwykłym nocnym pobieraniu robot od razu zapisuje też miasto i wieś – bez ani jednego dodatkowego zapytania do GUS.
+- **Przeczytaj najpierw:** `scripts/data/fetch-values.mjs` (`fetchIndicatorValues`, `main`), `scripts/data/parts.mjs` (W1.16), `config/parts.json` (W1.15).
+- **Pliki:** `scripts/data/fetch-values.mjs` (częściowy, do 40 linii), `tests/unit/parts-nightly.test.ts` (nowy).
+- **Zadanie:** do `fetchIndicatorValues` dodaj opcję `onPages(pages)` wołaną raz z wszystkimi pobranymi stronami (zachowanie bez opcji bez zmian). W `main` dla wskaźnika z `config/parts.json` zbuduj `toPartsValues(...)` ze stron i zapisz bez wcięć do `data/parts/<indicatorId>.json` (katalog w korzeniu repo, **nie** w `public/`; tworzony przy zapisie). Przy `--out-dir` zapis obok (`<out-dir>/../parts-src`).
+- **Gotowe, gdy:** istniejące testy `fetch-values*.test.ts` bez zmian; test w trybie nagrań (`offlineFixture`): liczba żądań z `onPages` = bez `onPages`; wskaźnik z listy daje plik z częściami gmin m-w, spoza listy – brak pliku; plik bez wcięć i bez `fetchedAt`.
+- **Ty sprawdzasz:** ✅ (dane pojawią się po pierwszym nocnym przebiegu po scaleniu W1.17 i W1.18).
+- **Nie ruszaj:** `.github/workflows/` (workflow dopisuje Claude po scaleniu), `scripts/data/values.mjs`.
+
+#### W1.18 – Części miasto i wieś w plikach na województwa (S20) · fala F9
+- **Po ludzku:** z czternastu plików (po jednym na wskaźnik) robimy szesnaście małych (po jednym na województwo), żeby profil pobierał jeden plik zamiast czternastu.
+- **Przeczytaj najpierw:** `scripts/data/build-profiles.mjs` (jak składa pliki województw), §5.5 (`PartsShard`).
+- **Pliki:** `scripts/data/build-parts.mjs` (nowy), `tests/unit/parts-shards.test.ts` (nowy).
+- **Zadanie:** `buildPartsShards(partsByIndicator, units)` → mapa `teryt województwa → PartsShard` (§5.5; klucz części = 7 cyfr; województwo z `units.json`); uruchomienie bez argumentów czyta `data/parts/*.json` i zapisuje `public/data/parts/<WW>.json` bez wcięć (województwo bez gmin m-w – brak pliku). Bez znaczników czasu; zapis tylko gdy treść się zmieniła.
+- **Gotowe, gdy:** testy na małych danych w teście (2 województwa, 3 wskaźniki): każda część trafia do pliku swojego województwa; lata osobno dla wskaźnika; brak pliku dla województwa bez części; ponowne uruchomienie nie zmienia plików; wynik bez wcięć.
+- **Ty sprawdzasz:** ✅.
+- **Nie ruszaj:** `scripts/data/build-profiles.mjs`, `public/data/profiles/`.
+
+#### W1.19 – Wczytywanie części miasto i wieś (S20) · fala F9
+- **Po ludzku:** strona umie pobrać plik województwa z miastem i wsią – dopiero wtedy, gdy ktoś rozwinie blok.
+- **Przeczytaj najpierw:** `src/core/data/load-values.ts` (wzorzec: pamięć podręczna, 404 → `null`), §5.5.
+- **Pliki:** `src/core/data/load-parts.ts` (nowy), `tests/unit/load-parts.test.ts` (nowy).
+- **Zadanie:** `loadPartsShard(voivodeship, fetchImpl?)` → `PartsShard | null`: adres `/data/parts/<WW>.json`, pamięć podręczna i wspólne wczytywanie jednego żądania, 404 i zły kształt → `null` (bez wyjątków).
+- **Gotowe, gdy:** testy: dwa wywołania = jedno żądanie; 404 → `null`; zły JSON → `null`; poprawny kształt przechodzi; różne województwa = różne żądania.
+- **Ty sprawdzasz:** ✅.
+- **Nie ruszaj:** `src/core/data/load-values.ts` (tylko wzorzec).
+
+#### W1.20 – Wiersze „Gmina · Miasto · Obszar wiejski”: logika (S20) · fala F9
+- **Po ludzku:** z danych składamy gotowe wiersze tabeli dla jednej gminy miejsko-wiejskiej.
+- **Przeczytaj najpierw:** `src/core/units/label.ts` (`gminaKind`), `src/core/format/number.ts`, `config/parts.json`.
+- **Pliki:** `src/core/parts/rows.ts` (nowy), `tests/unit/parts-rows.test.ts` (nowy).
+- **Zadanie:** `partsRows({ gminaTeryt, shard, values, indicators })` → `{ year: number | null, rows: { indicatorId, name, unit, gmina, city, rural }[] }`; tylko dla gminy z końcówką `3` (inne → `rows: []`); rok = najnowszy, w którym jest wartość miasta lub wsi któregokolwiek wskaźnika; `gmina` z `values` (`IndicatorValues`, ten sam rok); `null` zostaje `null`; kolejność wskaźników jak w `config/parts.json`.
+- **Gotowe, gdy:** testy na małych danych w teście: gmina m-w → 14 wierszy; gmina miejska i wiejska → pusto; miasto + wieś = gmina dla ludności; rok pierwszy z wartością; brak shardu → `rows: []`.
+- **Ty sprawdzasz:** ✅.
+- **Nie ruszaj:** `src/view/`.
+
+#### W2.24 – Blok „Miasto i obszar wiejski”: komponent (S20) · fala F10
+- **Po ludzku:** zwijany blok z tabelą miasto/wieś (na telefonie karty), jeszcze niepodpięty do profilu.
+- **Przeczytaj najpierw:** `docs/PRODUKT.md` §4c, `docs/STYL.md` §2–§4, `src/view/hooks/useIsMobile.ts`.
+- **Pliki:** `src/view/profile/ProfileParts.tsx` (nowy), `tests/unit/profile-parts.test.tsx` (nowy).
+- **Zadanie:** `ProfileParts({ rows, year, onFirstExpand })`: przycisk „Miasto i obszar wiejski” (`aria-expanded`, domyślnie zwinięty); `onFirstExpand` wołane raz przy pierwszym rozwinięciu; komputer: tabela „Wskaźnik · Gmina · Miasto · Obszar wiejski”; telefon (< 768 px): karta na wskaźnik; `null` → „brak danych”; podpis z §4c; kolory, odstępy i rozmiary tylko z tokenów.
+- **Gotowe, gdy (`@S20`):** testy: domyślnie zwinięty; po kliknięciu widać 14 wierszy; `onFirstExpand` dokładnie raz; `null` → „brak danych”; widok telefonu to karty; przycisk ≥ 44 px wysokości; axe bez błędów.
+- **Ty sprawdzasz:** ✅ (widoczne dopiero po W2.25).
+- **Nie ruszaj:** `ProfileSheet*.tsx`, `ProfileOverview.tsx`.
+
+#### W2.25 – Blok „Miasto i obszar wiejski” w profilu gminy (S20) · fala F11
+- **Po ludzku:** w profilu gminy miejsko-wiejskiej pojawia się blok z miastem i wsią.
+- **Przeczytaj najpierw:** `src/view/profile/ProfileOverview.tsx`, `src/view/profile/ProfileParts.tsx` (W2.24), `src/core/data/load-parts.ts` (W1.19), `src/core/parts/rows.ts` (W1.20).
+- **Pliki:** `src/view/profile/ProfileOverview.tsx` (częściowy, do 25 linii), `tests/e2e/profile-parts.spec.ts` (nowy), `tests/fixtures/parts/shard-12.json` (nowy – krótki plik województwa 12 z dwiema gminami m-w z `units.json` i trzema wskaźnikami).
+- **Zadanie:** dla gminy z końcówką `3` pod przeglądem pokaż `ProfileParts`; `onFirstExpand` → `loadPartsShard` (W1.19) → `partsRows` (W1.20); brak pliku (404) → blok z komunikatem „Dane o mieście i wsi pojawią się po najbliższej aktualizacji”; w innych gminach i jednostkach bloku nie ma.
+- **Gotowe, gdy (`@S20`):** test e2e z podmienionym żądaniem `/data/parts/12.json` (fixture): w profilu gminy m-w blok jest zwinięty, otwarcie profilu = 0 żądań do `parts`, rozwinięcie = dokładnie 1, widać liczby miasta i wsi; 404 → komunikat; w profilu gminy miejskiej i powiatu bloku nie ma; telefon 390 px bez poziomego przewijania; istniejące testy bez zmian.
+- **Ty sprawdzasz:** w profilu gminy miejsko-wiejskiej (np. po wyszukaniu „Wałcz”) pod przeglądem jest blok „Miasto i obszar wiejski”; po rozwinięciu widać trzy kolumny (liczby pojawią się po pierwszym nocnym pobraniu).
+- **Nie ruszaj:** `ProfileSheet*.tsx`, `ProfileIndicatorRow.tsx`.
+
+#### W2.26 – Test całej ścieżki „Miasto i wieś” (S20) · fala F12
+- **Po ludzku:** jeden test przechodzi całą ścieżkę: wyszukanie gminy, profil, rozwinięcie bloku.
+- **Pliki:** `tests/e2e/s20-parts.spec.ts` (nowy). Kodu nie zmieniasz.
+- **Gotowe, gdy (`@S20`):** ścieżka (wyszukaj gminę m-w → profil → rozwiń blok, dane z `tests/fixtures/parts/shard-12.json`) przechodzi 3×, na komputerze i 390 px; progi §7: otwarcie profilu bez żądań do `parts`, rozwinięcie jedno.
+- **Ty sprawdzasz:** na telefonie gmina miejsko-wiejska pokazuje blok z kartami (po pierwszym nocnym pobraniu – z liczbami).
+
+#### W1.21 – Indeks biblioteki GUS: budowanie (S21) · fala F8
+- **Po ludzku:** z katalogu zebranego przez robota powstaje mały plik-spis, z którego strona biblioteki zbuduje kategorie i wyszukiwarkę.
+- **Przeczytaj najpierw:** `scripts/data/library-lib.mjs` (kształt `catalog` i `state`), §5.5 (`LibraryIndex`).
+- **Pliki:** `scripts/data/library-index.mjs` (nowy), `tests/unit/library-index.test.ts` (nowy).
+- **Zadanie:** `buildIndex(catalog, state)` → `LibraryIndex` (§5.5): kategorie z `catalog.subjects` (`n` = nazwa, `p` = rodzic albo `null`), zmienne tylko z poziomem ≥ 5 (`level` 6 → 6, inaczej 5), nazwa = niepuste `n1`, `n2`, `n3` złączone przez „ – ”, jednostki w słowniku `units`, `has` = 1 gdy `state.done[id]`; zmienne posortowane po id. Uruchomienie bezpośrednie (`node scripts/data/library-index.mjs`): czyta `${LIBRARY_DIR:-library}/catalog.json` i `state.json`, zapisuje `index.json` bez wcięć.
+- **Gotowe, gdy:** testy na małym katalogu w teście (4 działy w dwóch gałęziach, 6 zmiennych w tym jedna z poziomem 3 i jedna bez `n2`): zmienna z poziomem < 5 pominięta; nazwy złączone bez pustych części; `has` zgodne ze `state`; słownik jednostek bez duplikatów; wynik bez wcięć; ten sam wynik przy ponownym budowaniu.
+- **Ty sprawdzasz:** ✅.
+- **Nie ruszaj:** `scripts/data/library.mjs`, `scripts/data/library-lib.mjs`, `.github/workflows/`.
+
+#### W1.22 – Wyszukiwanie i filtry biblioteki: logika (S21) · fala F8
+- **Po ludzku:** czysta logika: szukanie po nazwie bez względu na polskie znaki, filtrowanie po kategorii, poziomie i jednostce, zliczanie wyników w kategoriach.
+- **Przeczytaj najpierw:** `src/core/search/normalize.ts` (użyj, nie kopiuj), §5.5 (`LibraryIndex`).
+- **Pliki:** `src/core/library/query.ts` (nowy), `tests/unit/library-query.test.ts` (nowy).
+- **Zadanie:** typ `LibraryQuery` `{ cat: string | null; text: string; level: 5 | 6 | null; unit: string | null; onlyReady: boolean }`; `filterVars(index, query)` (kategoria obejmuje podkategorie; tekst: wszystkie słowa muszą wystąpić w nazwie, bez względu na wielkość liter i polskie znaki; wyniki wg trafności: początek nazwy, potem alfabetycznie po nazwie); `childCategories(index, parent)`; `categoryPath(index, id)`; `countByCategory(index, query)` (liczba wyników w każdej kategorii z podkategoriami); `emptyQuery()`.
+- **Gotowe, gdy:** testy na małym indeksie w teście (nie na prawdziwym): „ludnosc” znajduje „Ludność”; kategoria nadrzędna obejmuje zmienne podkategorii; `onlyReady` zostawia `has` = 1; `level` 5 nie zwraca zmiennych tylko gminnych; liczniki kategorii zgodne z wynikami; 20 000 zmiennych filtrowanych w < 100 ms (test wydajności z progiem 500 ms).
+- **Ty sprawdzasz:** ✅.
+- **Nie ruszaj:** `src/core/search/` (tylko używasz), `src/view/`.
+
+#### W1.23 – Wczytywanie biblioteki: indeks i wartości wskaźnika (S21) · fala F8
+- **Po ludzku:** strona umie pobrać spis biblioteki (raz) i wartości jednego wskaźnika (na żądanie), z jednego, łatwo zmienianego adresu.
+- **Przeczytaj najpierw:** `src/core/data/load-values.ts` (wzorzec), §5.5, `docs/research/biblioteka-gus.md`.
+- **Pliki:** `src/core/library/config.ts` (nowy), `src/core/library/load-library.ts` (nowy), `tests/unit/load-library.test.ts` (nowy).
+- **Zadanie:** `config.ts`: `libraryBase()` = `import.meta.env.VITE_LIBRARY_BASE` albo domyślnie `https://raw.githubusercontent.com/olubiec/faktografia-atlas/data/library/library` (bez końcowego `/`). `loadLibraryIndex()` → `LibraryIndex | null` (jedno żądanie `<base>/index.json`, pamięć podręczna); `loadLibraryValues(id)` → `LibraryValues | null` (`<base>/values/<id>.json`, pamięć podręczna, 404 → `null`); `valuesByTeryt(values, level, units)` zamienia klucze (12-znakowe identyfikatory BDL) na TERYT przez `bdlId` z `units.json`, pomijając części gmin i nieznane id.
+- **Gotowe, gdy:** testy z podmienionym `fetch`: dwa wywołania `loadLibraryIndex` = jedno żądanie na adres z `libraryBase()`; 404 → `null`; zły kształt → `null`; `valuesByTeryt` mapuje znane `bdlId` i pomija nieznane; zmiana `VITE_LIBRARY_BASE` zmienia adres; bez żadnego wywołania sieci przy imporcie.
+- **Ty sprawdzasz:** ✅.
+- **Nie ruszaj:** `src/core/data/` (tylko wzorzec), `vercel.json`.
+
+#### W1.24 – „Zamów wskaźnik”: odnośnik do zgłoszenia (S21) · fala F8
+- **Po ludzku:** z wskaźnika, którego jeszcze nie mamy, robimy gotowy link do zgłoszenia na GitHubie – nic nie wysyłamy sami.
+- **Przeczytaj najpierw:** `docs/PRODUKT.md` §4d.
+- **Pliki:** `src/core/library/order.ts` (nowy), `tests/unit/library-order.test.ts` (nowy).
+- **Zadanie:** `orderIssueUrl({ id, name, categoryPath, level })` → adres `https://github.com/olubiec/faktografia-atlas/issues/new` z parametrami `title` („Zamówienie wskaźnika: <nazwa> (<id>)”), `labels` (`zamowienie-wskaznika`), `body` (id, nazwa, ścieżka kategorii, poziom, jedno zdanie prośby; bez danych osobowych); poprawne kodowanie polskich znaków; długość adresu ≤ 1800 znaków (długa nazwa jest skracana z „…”).
+- **Gotowe, gdy:** testy: adres zaczyna się od `https://github.com/olubiec/faktografia-atlas/issues/new?`; po zdekodowaniu tytuł i etykieta zgadzają się; 400-znakowa nazwa mieści adres w 1800 znakach; polskie znaki zachowane; w treści jest id wskaźnika.
+- **Ty sprawdzasz:** ✅.
+- **Nie ruszaj:** `src/view/`.
+
+#### W2.27 – Strona `/biblioteka`: szkielet i miejsca podpięcia (S21) · fala F9
+- **Po ludzku:** pusta strona biblioteki z czterema miejscami na kategorie, wyszukiwarkę, filtry i wyniki – kolejne zadania wypełniają każde miejsce osobno.
+- **Przeczytaj najpierw:** `docs/PRODUKT.md` §4d, §7, `src/App.tsx`, `src/view/pages/` (jak zbudowane są strony „O projekcie” i „Źródła”), `src/core/library/` (W1.22, W1.23).
+- **Pliki:** `src/view/pages/Library.tsx` (nowy), `src/view/library/CategoryTiles.tsx` (nowy, szkielet), `src/view/library/LibrarySearchBar.tsx` (nowy, szkielet), `src/view/library/LibraryFilters.tsx` (nowy, szkielet), `src/view/library/LibraryResults.tsx` (nowy, szkielet), `src/App.tsx` (częściowy, do 6 linii), `tests/e2e/library-page.spec.ts` (nowy), `tests/fixtures/library/index.json` (nowy – spis w kształcie `LibraryIndex`: 3 działy z jednym podziałem, 12 zmiennych, część z `has` = 1).
+- **Zadanie:** trasa `/biblioteka` → `Library`. Strona: nagłówek i licznik z §4d, stany: ładowanie, błąd z „Spróbuj ponownie”, brak spisu („Biblioteka dopiero się buduje – pierwsze wskaźniki pojawią się wkrótce”), gotowe. Stan `LibraryQuery` (W1.22) w `useState` strony, przekazywany czterem szkieletom propsami (`index`, `query`, `onQueryChange`); każdy szkielet renderuje pusty kontener z `data-testid` i sam nic nie liczy.
+- **Gotowe, gdy (`@S21`):** e2e z podmienionym żądaniem spisu (fixture): `/biblioteka` pokazuje licznik zgodny z fixture; 404 spisu → komunikat „dopiero się buduje”; błąd sieci → „Spróbuj ponownie” i ponowienie działa; wejście na stronę = dokładnie 1 żądanie spisu i 0 żądań do `values/` lub `profiles/`; telefon 390 px bez poziomego przewijania; istniejące testy bez zmian.
+- **Ty sprawdzasz:** pod adresem `/biblioteka` strona z nagłówkiem i licznikiem (listy jeszcze puste).
+- **Nie ruszaj:** `AtlasMap.tsx`, `Home.tsx`, `Header.tsx`.
+
+#### W2.28 – Biblioteka: kafelki kategorii i okruszki (S21) · fala F10
+- **Po ludzku:** działy GUS jako kafelki z liczbą wskaźników; po wejściu – podkategorie i ścieżka powrotu.
+- **Przeczytaj najpierw:** `docs/PRODUKT.md` §4d, `src/view/library/CategoryTiles.tsx` (szkielet z W2.27), `src/core/library/query.ts`.
+- **Pliki:** `src/view/library/CategoryTiles.tsx`, `tests/unit/library-categories.test.tsx` (nowy).
+- **Zadanie:** bez wybranej kategorii: kafelki działów głównych z liczbą wyników (`countByCategory`); z wybraną: kafelki podkategorii (albo nic, gdy to liść) i okruszki „Wszystkie › Dział › Podkategoria” jako przyciski; kliknięcie woła `onQueryChange({ ...query, cat })`; „Wszystkie” czyści kategorię.
+- **Gotowe, gdy (`@S21`):** testy komponentu: kafelki głównych działów z liczbami; wejście w dział pokazuje podkategorie i okruszki; „Wszystkie” czyści; liść bez kafelków; przyciski ≥ 44 px; axe bez błędów; kafelki w siatce bez poziomego przewijania przy 360 px.
+- **Ty sprawdzasz:** ✅ (widoczne po W2.32).
+- **Nie ruszaj:** `Library.tsx`, pozostałych plików `src/view/library/`.
+
+#### W2.29 – Biblioteka: wyszukiwarka wskaźników (S21) · fala F10
+- **Po ludzku:** pole „Szukaj wskaźnika” z podpowiedziami.
+- **Przeczytaj najpierw:** `src/view/library/LibrarySearchBar.tsx` (szkielet), `src/core/library/query.ts`, `src/view/search/` (istniejąca wyszukiwarka jednostek – wzorzec dostępności).
+- **Pliki:** `src/view/library/LibrarySearchBar.tsx`, `tests/unit/library-search-bar.test.tsx` (nowy).
+- **Zadanie:** pole z etykietą „Szukaj wskaźnika”, przycisk czyszczenia; wpisywanie woła `onQueryChange({ ...query, text })`; lista do 5 podpowiedzi (nazwa + ścieżka kategorii) jako `listbox` obsługiwany strzałkami; wybór podpowiedzi woła `onPick(id)`; Enter bez wybranej podpowiedzi tylko zatwierdza tekst.
+- **Gotowe, gdy (`@S21`):** testy: wpisanie „ludnosc” pokazuje podpowiedź z „Ludność”; strzałki i Enter wybierają; `onPick` dostaje id; czyszczenie zeruje tekst; pole z etykietą; ≥ 44 px; axe bez błędów.
+- **Ty sprawdzasz:** ✅ (widoczne po W2.32).
+- **Nie ruszaj:** `Library.tsx`, `src/view/search/`.
+
+#### W2.30 – Biblioteka: filtry (S21) · fala F10
+- **Po ludzku:** przełączniki: powiaty/gminy, jednostka miary, „tylko już pobrane”.
+- **Przeczytaj najpierw:** `src/view/library/LibraryFilters.tsx` (szkielet), `src/core/library/query.ts`, `src/view/controls/` (istniejące kontrolki).
+- **Pliki:** `src/view/library/LibraryFilters.tsx`, `tests/unit/library-filters.test.tsx` (nowy).
+- **Zadanie:** trzy kontrolki zmieniające `level`, `unit`, `onlyReady` przez `onQueryChange`; lista jednostek tylko te, które występują w bieżących wynikach; przycisk „Wyczyść filtry”; stan aktywnych filtrów widoczny (nie tylko kolorem).
+- **Gotowe, gdy (`@S21`):** testy: zmiana każdej kontrolki woła `onQueryChange` z właściwym polem; „Wyczyść filtry” zeruje trzy pola, nie dotyka `cat` i `text`; lista jednostek zgodna z wynikami; ≥ 44 px; axe bez błędów.
+- **Ty sprawdzasz:** ✅ (widoczne po W2.32).
+- **Nie ruszaj:** `Library.tsx`, `src/view/controls/` (tylko używasz).
+
+#### W2.31 – Biblioteka: lista wyników (S21) · fala F10
+- **Po ludzku:** lista wskaźników pasujących do wyszukiwania, po 50, z „Pokaż więcej”.
+- **Przeczytaj najpierw:** `src/view/library/LibraryResults.tsx` (szkielet), `src/core/library/query.ts`.
+- **Pliki:** `src/view/library/LibraryResults.tsx`, `tests/unit/library-results.test.tsx` (nowy).
+- **Zadanie:** z `filterVars(index, query)` wyświetl wiersze: nazwa, ścieżka kategorii, jednostka, poziom („powiaty” / „gminy i powiaty”), znacznik „można przeglądać” albo „jeszcze niepobrane” (tekst, nie tylko kolor); wiersz to odnośnik do `/biblioteka/<id>`; pierwsze 50 wyników i przycisk „Pokaż więcej” (+50); brak wyników → „Brak wyników. Spróbuj innego słowa albo zdejmij filtry.”
+- **Gotowe, gdy (`@S21`):** testy z `MemoryRouter`: 120 wyników → 50 widocznych; „Pokaż więcej” → 100; odnośnik prowadzi do `/biblioteka/<id>`; stan „jeszcze niepobrane” z tekstem; brak wyników → komunikat; axe bez błędów; długa nazwa zawija się, bez poziomego przewijania przy 360 px.
+- **Ty sprawdzasz:** ✅ (widoczne po W2.32).
+- **Nie ruszaj:** `Library.tsx`.
+
+#### W2.32 – Biblioteka: złożenie strony i adres (S21) · fala F11
+- **Po ludzku:** kafelki, wyszukiwarka, filtry i wyniki działają razem, a stan jest w adresie (można wkleić link).
+- **Przeczytaj najpierw:** `src/view/pages/Library.tsx` (W2.27), pliki `src/view/library/` (W2.28–W2.31), `src/core/url/state.ts` (wzorzec czytania adresu).
+- **Pliki:** `src/view/pages/Library.tsx`, `tests/e2e/library-search.spec.ts` (nowy).
+- **Zadanie:** stan `LibraryQuery` czytany z adresu i zapisywany do adresu (`?k=` dział, `?q=` tekst, `?l=` poziom 5 lub 6, `?j=` jednostka, `?p=1` tylko pobrane); `onPick(id)` z wyszukiwarki → nawigacja do `/biblioteka/<id>`; zmiana zapytania nie przeładowuje strony; przycisk „wstecz” w przeglądarce wraca do poprzedniego stanu.
+- **Gotowe, gdy (`@S21`):** e2e (spis z fixture): wpisanie „ludnosc” zawęża listę i zapisuje `?q=`; wejście w dział zapisuje `?k=`; wklejenie adresu z `?k=…&q=…` odtwarza ten sam widok; „wstecz” cofa; telefon 390 px bez poziomego przewijania; w całej ścieżce 1 żądanie spisu.
+- **Ty sprawdzasz:** na `/biblioteka` kategorie, szukanie i filtry działają razem; link do wyszukiwania da się skopiować.
+- **Nie ruszaj:** komponentów `src/view/library/` (tylko używasz).
+
+#### W2.33 – Strona wskaźnika `/biblioteka/<id>` (S21) · fala F10
+- **Po ludzku:** po wybraniu wskaźnika widać ranking najwyżej i najniżej, można wybrać rok i poziom, pobrać CSV albo zamówić wskaźnik, którego jeszcze nie ma.
+- **Przeczytaj najpierw:** `docs/PRODUKT.md` §4d, `src/core/ranking/ranking.ts`, `src/view/ranking/RankingBars.tsx`, `src/core/data/load-atlas-data.ts`, `src/view/library/DownloadCsv.tsx` i `OrderButton.tsx` (W2.34, W2.35).
+- **Pliki:** `src/view/pages/LibraryVariable.tsx` (nowy), `src/App.tsx` (częściowy, do 4 linii), `tests/e2e/library-variable.spec.ts` (nowy), `tests/fixtures/library/values-sample.json` (nowy – wartości w kształcie `LibraryValues` dla 3 powiatów i 3 lat z `units.json`).
+- **Zadanie:** trasa `/biblioteka/:id`. Metadane ze spisu (`loadLibraryIndex`), wartości z `loadLibraryValues` + `valuesByTeryt` (W1.23). Wskaźnik z wartościami: nazwa, ścieżka kategorii, jednostka, wybór roku (domyślnie najnowszy) i poziomu (gdy są oba), dwa rankingi (10 najwyżej, 10 najniżej) przez `src/core/ranking` i `RankingBars` z nazwami jednostek, `DownloadCsv`, źródło „GUS, Bank Danych Lokalnych (CC BY 4.0)”. Wskaźnik bez wartości (`has` = 0 lub 404): komunikat „Ten wskaźnik jeszcze nie został pobrany” i `OrderButton`. Nieistniejące id: komunikat i odnośnik do `/biblioteka`.
+- **Gotowe, gdy (`@S21`):** e2e z podmienionymi żądaniami (fixture): strona pokazuje ranking z poprawną kolejnością, zmiana roku zmienia ranking bez nowego żądania, wejście = 1 żądanie spisu + 1 żądanie wartości; wskaźnik niepobrany → komunikat i przycisk „Zamów ten wskaźnik”; nieistniejące id → komunikat; telefon 390 px bez poziomego przewijania; istniejące testy bez zmian.
+- **Ty sprawdzasz:** wybrany z listy wskaźnik pokazuje rankingi; niepobrany – przycisk zamówienia.
+- **Nie ruszaj:** `AtlasMap.tsx`, `src/core/ranking/` (tylko używasz).
+
+#### W2.34 – Biblioteka: przycisk „Pobierz CSV” (S21) · fala F9
+- **Po ludzku:** przycisk, który zamienia ranking wskaźnika w plik CSV otwierający się w polskim Excelu.
+- **Przeczytaj najpierw:** `src/core/share/csv.ts` (`toCsv`, `shareFileName` – użyj), `src/view/share/` (jak robimy pobieranie pliku), `src/core/library/load-library.ts`.
+- **Pliki:** `src/view/library/DownloadCsv.tsx` (nowy), `tests/unit/library-download-csv.test.tsx` (nowy).
+- **Zadanie:** `DownloadCsv({ name, unit, level, year, rows })`, gdzie `rows` to `{ teryt, name, value }[]`; kolumny: TERYT; Nazwa; Poziom; „<nazwa> (<jednostka>)”; Rok; Źródło („GUS, Bank Danych Lokalnych (CC BY 4.0)”); plik tworzony w przeglądarce (Blob), nazwa przez `shareFileName`. Logika tworzenia treści CSV w czystej funkcji w tym samym pliku (eksport do testu).
+- **Gotowe, gdy (`@S21`):** testy: treść zaczyna się od BOM, separator `;`, przecinek dziesiętny, TERYT „02” zostaje „02”, `null` → puste pole; nazwa pliku bez polskich znaków i spacji; kliknięcie tworzy plik; przycisk ≥ 44 px; axe bez błędów.
+- **Ty sprawdzasz:** ✅ (widoczne po W2.33).
+- **Nie ruszaj:** `src/core/share/` (tylko używasz).
+
+#### W2.35 – Biblioteka: przycisk „Zamów ten wskaźnik” (S21) · fala F9
+- **Po ludzku:** przycisk otwierający gotowe zgłoszenie na GitHubie, z jasną informacją, że otwiera zewnętrzną stronę.
+- **Przeczytaj najpierw:** `src/core/library/order.ts` (W1.24), `docs/PRODUKT.md` §4d.
+- **Pliki:** `src/view/library/OrderButton.tsx` (nowy), `tests/unit/library-order-button.test.tsx` (nowy).
+- **Zadanie:** `OrderButton({ variable })` → odnośnik `target="_blank"` `rel="noopener noreferrer"` do `orderIssueUrl`; tekst „Zamów ten wskaźnik”; pod spodem jedno zdanie: „Otworzy się zgłoszenie na GitHubie (wymaga konta). Nic nie wysyłamy bez Twojej zgody.”
+- **Gotowe, gdy (`@S21`):** testy: adres zgodny z `orderIssueUrl`; `rel` i `target` ustawione; tekst informacji widoczny; ≥ 44 px; axe bez błędów.
+- **Ty sprawdzasz:** ✅ (widoczne po W2.33).
+- **Nie ruszaj:** `src/core/library/order.ts` (tylko używasz).
+
+#### W2.36 – Odnośnik „Biblioteka” w nagłówku (S21) · fala F11
+- **Po ludzku:** w nagłówku pojawia się przejście do biblioteki (komputer i telefon).
+- **Przeczytaj najpierw:** `src/view/Header.tsx`, `docs/STYL.md` §2–§4.
+- **Pliki:** `src/view/Header.tsx` (częściowy, do 15 linii), `tests/e2e/header-library.spec.ts` (nowy).
+- **Zadanie:** odnośnik „Biblioteka” do `/biblioteka` obok istniejących odnośników (na telefonie w tym samym miejscu co pozostałe, bez powiększania nagłówka); aktywny stan na `/biblioteka*`.
+- **Gotowe, gdy (`@S21`):** e2e: odnośnik widoczny na `/` i `/biblioteka`; kliknięcie prowadzi do `/biblioteka`; na 390 px nagłówek bez poziomego przewijania i bez zmiany wysokości; pole dotykowe ≥ 44 px; istniejące testy bez zmian (wzorce zrzutów odświeża właściciel przez workflow).
+- **Ty sprawdzasz:** w nagłówku widać „Biblioteka” i działa na telefonie.
+- **Nie ruszaj:** `Home.tsx`, `AtlasMap.tsx`.
+
+#### W2.37 – Test całej ścieżki „Biblioteka GUS” (S21) · fala F12
+- **Po ludzku:** jeden test przechodzi całą ścieżkę: wejście z nagłówka, szukanie, wybór wskaźnika, ranking, CSV, zamówienie.
+- **Pliki:** `tests/e2e/s21-library.spec.ts` (nowy). Kodu nie zmieniasz.
+- **Gotowe, gdy (`@S21`):** ścieżka (nagłówek → `/biblioteka` → szukanie → wskaźnik pobrany: ranking i CSV; wskaźnik niepobrany: przycisk zamówienia; dane z `tests/fixtures/library/`) przechodzi 3×, na komputerze i 390 px; progi §7: wejście = 1 żądanie spisu, wskaźnik = 1 żądanie wartości, zero żądań do `values/*` i `profiles/*` z głównej mapy.
+- **Ty sprawdzasz:** na telefonie: wejście w Bibliotekę, wyszukanie wskaźnika, ranking, „Pobierz CSV”.
 
 ### Później (bez fal; Planista dopisze zadania, gdy przyjdzie kolej)
-Scena wejścia „kreślenie” (W3.5 – po Twojej ocenie S16) · dwie pełne, ruchome mapy obok siebie (np. dwa wskaźniki lub dwa lata) i porównanie więcej niż dwóch miejsc · podstrony gmin pod wyszukiwarki (SEO; decyzja po W3.6) · blady podkład OpenFreeMap przy dużym zbliżeniu (nowy element → `TRYB: WYBÓR`, wpis w ELEMENTY) · kreskowanie „brak danych” · tryb ciemny mapy (makieta 05) · statystyki wyszukiwań po zgodzie (klucz PostHog) · tryb 3D „Arkusze” · wersja angielska.
+Scena wejścia „kreślenie” (W3.5 – po Twojej ocenie S16) · dwie pełne, ruchome mapy obok siebie (np. dwa wskaźniki lub dwa lata) i porównanie więcej niż dwóch miejsc · podstrony gmin pod wyszukiwarki (SEO; decyzja 25.10.2026: odłożone, `docs/research/R3-seo-wynik.md`) · mapa dla wskaźnika z biblioteki (wymaga zmiany ekranu głównego) i karty PNG z biblioteki · automatyczna kolejka zamówień wskaźników (dziś zamówienia czytamy ręcznie) · przejście biblioteki na Cloudflare R2 (decyzja i kroki: `docs/research/R6-magazyn-wynik.md`) · blady podkład OpenFreeMap przy dużym zbliżeniu (nowy element → `TRYB: WYBÓR`, wpis w ELEMENTY) · kreskowanie „brak danych” · tryb ciemny mapy (makieta 05) · statystyki wyszukiwań po zgodzie (klucz PostHog) · tryb 3D „Arkusze” · wersja angielska.
 
 ---
 
-## 4. Plan fal (v3, 24.10.2026 – od stanu `main`)
+## 4. Plan fal (v5, 25.10.2026 – od stanu `main`)
 Kolumna „Dotykają” = tabela kolizji: w jednej fali żaden plik się nie powtarza (węzły z §2 **pogrubione**). Fale prowadzi automat (`docs/AUTOMAT.md`, kolejka: `scripts/ops/automat-kolejka.json` – musi się zgadzać z tą tabelą; test to pilnuje). **Punkt kontrolny** = koniec sesji: automat aktualizuje `STAN.md`, wysyła Ci listę „Ty sprawdzasz” i jedzie dalej.
-Zrobione wcześniej (poza kolejnością): W1.1, W1.3–W1.8, W2.10.
+**F1–F7 zrobione** (wszystkie 33 zadania scalone, K1–K5 zaakceptowane przez właściciela 25.10.2026; uwagi do poprawek właściciel poda osobno). Zrobione wcześniej (poza kolejnością): W1.1, W1.3–W1.8, W2.10. **Od F8: nowe fale S20 i S21** (limit Julesa: 15 zadań naraz; plan trzyma ≤ 7 w fali).
 
 | Fala | Sesja | Zadania naraz | Dotykają | Po fali |
 |---|---|---|---|---|
@@ -457,22 +615,33 @@ Zrobione wcześniej (poza kolejnością): W1.1, W1.3–W1.8, W2.10.
 | **F4** | S15 · S16–S17 | W2.7 Telefon: mapa pokazuje wybrane miejsce nad arkuszem · W2.15 Porównanie: tabela obok siebie · W2.20 Przycisk w profilu: karta profilu · W2.19 Przycisk w panelu wskaźnika: karta mapy i rankingu · W2.16 Porównanie: dwa obrysy na mapie | W2.7: `sheetInset.ts`, **`ProfileSheetMobile.tsx`**, **`useMapViewState.ts`**, `profile-mobile-inset.spec.ts` · W2.15: `ProfileCompareTable.tsx`, **`ProfileCompare.tsx`**, `compare-table.spec.ts` · W2.20: **`ProfileOverview.tsx`**, `share-profile.spec.ts` · W2.19: **`IndicatorPanel.tsx`**, `useShareData.ts`, `share-map.spec.ts` · W2.16: **`choropleth.ts`**, **`AtlasMap.tsx`**, `compare-map.spec.ts` |  |
 | **F5** | S18 · S16–S17 · S15 | W2.22 Porównanie: dwie mapki nad tabelą · W3.2 Płynna kamera przy wejściu w głąb · W2.11 Test całej ścieżki na telefonie · W2.12 „Na tle kraju” w profilu i panelu · W2.17 Porównanie na telefonie + test ścieżki | W2.22: `CompareMaps.tsx`, **`ProfileCompare.tsx`**, `compare-maps.spec.ts` · W3.2: **`useMapViewState.ts`**, **`AtlasMap.tsx`**, `camera.spec.ts` · W2.11: `s15-mobile.spec.ts` · W2.12: `ContextBlock.tsx`, **`ProfileIndicatorRow.tsx`**, **`IndicatorPanel.tsx`**, `context-block.spec.ts` · W2.17: `ProfileCompareTable.tsx`, `s18-compare.spec.ts` | **punkt kontrolny K2** (S15 – telefon) + **punkt kontrolny K4** (S18 – porównanie dwóch miejsc) |
 | **F6** | S19 · S16–S17 | W2.21 Przycisk w porównaniu: karta porównania · W3.6 Pomiar szybkości i płynności + test ścieżki | W2.21: **`ProfileCompare.tsx`**, `share-compare.spec.ts` · W3.6: `s16-motion.spec.ts` | **punkt kontrolny K3** (S16 + S17 – ruch na mapie i „Na tle kraju”) |
-| **F7** | S19 | W2.23 Test całej ścieżki „Pobierz i udostępnij” | W2.23: `s19-share.spec.ts` | **punkt kontrolny K5** (S19 – pobierz i udostępnij (koniec projektu)) · **koniec projektu** (raport końcowy) |
-| **F8** | S22 | W0.2 Usunięcie `@observablehq/plot` · W2.24 Wspólny układ podstron i stopka · W3.8 Utrata kontekstu WebGL · W3.9 Rozbicie `TrendChart` | W0.2: `package.json`, `pnpm-lock.yaml`, `ELEMENTY.md`, `dependencies.test.ts` · W2.24: `SiteLayout.tsx`, `SiteFooter.tsx`, `About.tsx`, `Sources.tsx`, `Privacy.tsx`, `NotFound.tsx`, `pages.spec.ts` · W3.8: **`AtlasMap.tsx`**, `MapContextLostNotice.tsx`, `test-seam.ts`, `context-lost.spec.ts` · W3.9: `TrendChart.tsx`, `Trend*.tsx`, `trend-geometry.ts` | – |
-| **F9** | S22 | W2.25 Strona główna wg makiety 01 · W3.7 Metadane, robots, sitemap | W2.25: **`Home.tsx`**, `HomeHero.tsx`, `IndicatorTabs.tsx`, `home-hero.spec.ts` · W3.7: `index.html`, `pages.ts`, `PageMeta.tsx`, `scripts/build/*`, `robots.txt`, `package.json`, `About.tsx`, `Sources.tsx`, `Privacy.tsx`, `NotFound.tsx` | **punkt kontrolny K6** (S22 – strona główna, układ podstron, metadane) |
+| **F7** | S19 | W2.23 Test całej ścieżki „Pobierz i udostępnij” | W2.23: `s19-share.spec.ts` | **punkt kontrolny K5** (S19 – pobierz i udostępnij; zaakceptowany 25.10.2026) · koniec F1–F7 |
+| **F8** | S20 · S21 | W1.15 Lista wskaźników miasto/wieś · W1.16 Części miasto i wieś z odpowiedzi BDL: logika · W1.21 Indeks biblioteki: budowanie · W1.22 Wyszukiwanie i filtry biblioteki: logika · W1.23 Wczytywanie biblioteki · W1.24 „Zamów wskaźnik”: odnośnik | W1.15: `config/parts.json`, `allowed.ts`, `parts-allowed.test.ts` · W1.16: `parts.mjs`, `parts-build.test.ts` · W1.21: `library-index.mjs`, `library-index.test.ts` · W1.22: `query.ts`, `library-query.test.ts` · W1.23: `config.ts`, `load-library.ts`, `load-library.test.ts` · W1.24: `order.ts`, `library-order.test.ts` | – |
+| **F9** | S20 · S21 | W1.17 Nocny robot zapisuje części · W1.18 Części w plikach na województwa · W1.19 Wczytywanie części · W1.20 Wiersze miasto/wieś: logika · W2.27 Strona `/biblioteka`: szkielet · W2.34 „Pobierz CSV” · W2.35 „Zamów ten wskaźnik” | W1.17: **`fetch-values.mjs`**, `parts-nightly.test.ts` · W1.18: `build-parts.mjs`, `parts-shards.test.ts` · W1.19: `load-parts.ts`, `load-parts.test.ts` · W1.20: `rows.ts`, `parts-rows.test.ts` · W2.27: **`Library.tsx`**, 4 szkielety w `src/view/library/`, **`App.tsx`**, `library-page.spec.ts`, `fixtures/library/index.json` · W2.34: `DownloadCsv.tsx`, `library-download-csv.test.tsx` · W2.35: `OrderButton.tsx`, `library-order-button.test.tsx` | po fali: **Claude dopisuje do workflow „Fetch data” krok części** (poza automatem, `.github/` jest zabronione dla Julesa) |
+| **F10** | S20 · S21 | W2.24 Blok „Miasto i obszar wiejski”: komponent · W2.28 Kafelki kategorii · W2.29 Wyszukiwarka wskaźników · W2.30 Filtry · W2.31 Lista wyników · W2.33 Strona wskaźnika | W2.24: `ProfileParts.tsx`, `profile-parts.test.tsx` · W2.28: `CategoryTiles.tsx`, `library-categories.test.tsx` · W2.29: `LibrarySearchBar.tsx`, `library-search-bar.test.tsx` · W2.30: `LibraryFilters.tsx`, `library-filters.test.tsx` · W2.31: `LibraryResults.tsx`, `library-results.test.tsx` · W2.33: **`LibraryVariable.tsx`**, **`App.tsx`**, `library-variable.spec.ts`, `fixtures/library/values-sample.json` | – |
+| **F11** | S20 · S21 | W2.25 Blok miasto/wieś w profilu gminy · W2.32 Biblioteka: złożenie strony i adres · W2.36 Odnośnik „Biblioteka” w nagłówku | W2.25: **`ProfileOverview.tsx`**, `profile-parts.spec.ts`, `fixtures/parts/shard-12.json` · W2.32: **`Library.tsx`**, `library-search.spec.ts` · W2.36: `Header.tsx`, `header-library.spec.ts` | – |
+| **F12** | S20 · S21 | W2.26 Test całej ścieżki „Miasto i wieś” · W2.37 Test całej ścieżki „Biblioteka GUS” | W2.26: `s20-parts.spec.ts` · W2.37: `s21-library.spec.ts` | **punkt kontrolny K6** (S20 – miasto i wieś) i **K7** (S21 – biblioteka GUS) · **koniec planu** |
 
-**Podsumowanie:** 9 fal, 39 zadań dla Julesa (F8–F9: sesja S22 z 25.10.2026, po raportach R1–R5), do 8 naraz (v4: fale przeliczone na maksymalną równoległość – zależności i rozłączność plików nadal pilnuje test). Poza automatem: W1.9, W1.11, W3.5 i „Później” – kiedy do nich wracamy, mówi tabela niżej.
+**Podsumowanie:** F1–F7 zrobione (33 zadania). F8–F12: 24 nowe zadania (10 W1 + 14 W2), po 2–7 w fali. Poza kolejką zostają: W1.9 (teksty objaśnień – Twoja akceptacja), W3.5 i „Później”; kto co robi poza falami – tabela niżej.
 
 ### Poza falami – kiedy do czego wracamy (nie zapomnieć)
 | Co | Kto | Kiedy | Co z tego wychodzi |
 |---|---|---|---|
-| ~~W1.11 zwiad „miasto / obszar wiejski”~~ | zrobione 24.10 | wynik: `docs/research/W1.11-wynik.md` | **S20** po K5: miasto i wieś osobno dla 14 wskaźników (bez dochodów i wydatków – tam w BDL jest zero) |
-| **W1.9 teksty objaśnień wskaźników** | Ty akceptujesz teksty, potem Jules | przed F5 (W2.12 działa też bez tekstów, ale z nimi jest pełna) | plik objaśnień + bloki „Na tle kraju” z treścią |
+| ~~W1.11 zwiad „miasto / obszar wiejski”~~ | zrobione 24.10 | wynik: `docs/research/W1.11-wynik.md` | **S20** rozpisane na F8–F12 (W1.15–W1.20, W2.24–W2.26): 14 wskaźników, bez dochodów i wydatków |
+| **W1.9 teksty objaśnień wskaźników** | Claude przygotowuje listę do przeczytania, Ty akceptujesz, potem zadanie dla Julesa | po scaleniu planu F8–F12 (W2.12 działa i bez tekstów) | plik objaśnień + bloki „Na tle kraju” z treścią |
 | **Podgląd paska zgód z #213 na telefonie** | Ty | przy pierwszym wolnym podglądzie | scalony lub poprawka |
 | **Ocena na telefonie** | Ty | na każdym punkcie kontrolnym (K1–K5) | poprawki idą jako nowe zadania |
 | **W3.5 scena wejścia „kreślenie”** | Planista rozpisze | po K3, tylko jeśli ruch W3.2/W3.3 jest płynny | zadanie w nowej fali albo zostaje w „Później” |
 | **Reszta „Później”** (SEO podstron gmin, dwie pełne mapy, tryb ciemny mapy, klucz PostHog, wersja angielska…) | Planista | po K5 – wspólny przegląd i wybór kolejnej sesji | nowy plan fal |
-| **S20 – plan zadań** (miasto/wieś gmin m-w) | Planista + Ty (`TRYB: DECYZJA` o wyglądzie) | po K5, przed pierwszym zadaniem sprawdzić progi PRODUKT §7 i zakres lat bezrobocia robotem `bdl-record.yml` | nowe zadania W1/W2 w §3 |
+| ~~S20 – plan zadań~~ | zrobione 25.10 (PRODUKT §4c) | wygląd: zwijany blok w profilu, bez map; zakres lat bezrobocia pokaże pierwsze pobranie | W1.15–W1.20, W2.24–W2.26 |
+| ~~S21 – plan zadań~~ | zrobione 25.10 (PRODUKT §4d) | v1 bez mapy dla wskaźnika z biblioteki | W1.21–W1.24, W2.27–W2.37 |
+| **Workflow „Fetch data”: krok części miasto/wieś** | Claude (pliki `.github/` są zabronione dla Julesa) | po scaleniu W1.17 i W1.18 (po F9) | `build-parts.mjs` po `build-profiles.mjs`; `git add data/parts/ public/data/parts/`; potem jedno ręczne uruchomienie „Fetch data” |
+| **Workflow „Fetch library”: krok indeksu** | Claude | po scaleniu W1.21 (po F8) | `node scripts/data/library-index.mjs` przed zapisem na gałąź `data/library` |
+| **Etykieta `zamowienie-wskaznika`** | Claude | przed W2.35 | etykieta w repo |
+| **Magazyn biblioteki: Cloudflare R2** | Ty zakładasz konto i klucze, Claude dopisuje synchronizację | gdy gałąź `data/library` > ~1 GB albo raw.githubusercontent ogranicza ruch (`docs/research/R6-magazyn-wynik.md`) | zmienna `VITE_LIBRARY_BASE` na Vercel; wpis w `ELEMENTY.md` |
+| **Pismo do GUS o zbiorczy eksport BDL** | Ty wysyłasz (formularz GUS), tekst gotowy | kiedy chcesz | `docs/research/biblioteka-bulk-wynik.md` |
+| **Ruleset na `main`** | Ty (GitHub → Settings → Rules, 2 min: wymagane `testy` i `bezpieczenstwo`) | jak najszybciej | druga blokada niezależna od skryptów |
+| **Uwagi z oglądu K1–K5** | Ty podajesz listę, Claude rozbija na małe zadania | kiedy będziesz gotowy | nowa fala poprawek (F13+) |
 | **Naprawiacz** (mocniejszy model raz dziennie) | Ty tworzysz | po F2, jeśli pojawią się zadania `wymaga-naprawy` | prompt w `docs/AUTOMAT.md` §6 |
 
 ---
@@ -490,6 +659,7 @@ Zrobione wcześniej (poza kolejnością): W1.1, W1.3–W1.8, W2.10.
 | Workflow | Kiedy | Co robi |
 |---|---|---|
 | `fetch-data.yml` | co noc ok. 3:10 (cron `10 1 * * *`) i ręcznie | `pnpm data:fetch` → `public/data/values/*.json`, test kontraktu, przebudowa `public/data/profiles/*.json`; PR z gałęzi `data/nightly` tylko gdy dane się zmieniły; przy błędzie zgłoszenie |
+| `fetch-library.yml` | co 12 h (cron `40 4,16 * * *`) i ręcznie (pole „budżet”) | robot „Biblioteka GUS”: katalog i wartości kolejnych zmiennych BDL na gałąź `data/library` (nie main); budżet 2500 zapytań na przebieg, wspólna kolejka z nocnym pobieraniem; pierwszy przebieg 25.10.2026 |
 | `fetch-localities.yml` | ręcznie (raz na jakiś czas) | `public/data/localities.json` z rejestru PRNG |
 | `bdl-record.yml` | ręcznie | nagrania odpowiedzi BDL do `tests/fixtures/bdl/recorded/` (dane do testów) |
 | `update-snapshots.yml` | ręcznie przez właściciela (etykieta `aktualizuj-zrzuty` na PR) | odświeża wzorce zrzutów Playwright na gałęzi PR |
@@ -521,6 +691,26 @@ type IndicatorValues = { indicatorId: string; years: number[];
 type Locality = { simc: string; name: string; gminaTeryt: string;
   lon: number; lat: number; approx?: boolean };
 
+// data/parts/<indicatorId>.json – (S20, pośredni, poza public/) miasto i obszar wiejski gmin miejsko-wiejskich, jeden wskaźnik
+// (z config/parts.json; zapisuje nocny robot; scripts/data/parts.mjs). Bez znaczników czasu.
+type PartsValues = { indicatorId: string; years: number[];
+  values: Record<string /* teryt części: 7 cyfr, końcówka 4 = miasto, 5 = obszar wiejski; gmina-matka ma końcówkę 3 */, (number | null)[]> };
+
+// public/data/parts/<teryt województwa>.json – (S20) części gmin m-w jednego województwa, 14 wskaźników
+// (scripts/data/build-parts.mjs z data/parts/*.json). Bez znaczników czasu.
+type PartsShard = { voivodeship: string; years: Record<string /* indicatorId */, number[]>;
+  values: Record<string /* teryt części */, Record<string /* indicatorId */, (number | null)[]>> };
+
+// library/index.json – (S21, gałąź data/library, adres z src/core/library/config.ts) spis biblioteki GUS
+// (scripts/data/library-index.mjs z catalog.json + state.json). Zmienne tylko z poziomem 5 lub 6.
+type LibraryIndex = { v: 1; cats: Record<string /* subjectId */, { n: string; p: string | null }>;
+  units: string[]; // słownik jednostek miary
+  vars: [id: number, name: string, catId: string, level: 5 | 6, unitIdx: number, has: 0 | 1][] };
+
+// library/values/<id>.json – (S21, robot scripts/data/library.mjs; już istnieje) wartości jednej zmiennej
+// klucz = 12-znakowy identyfikator jednostki BDL (nie TERYT; mapowanie przez `bdlId` z units.json), wartości po latach z `y`
+type LibraryValues = { v: number; l5?: { y: string[]; d: Record<string, (number | null)[]> }; l6?: { y: string[]; d: Record<string, (number | null)[]> } };
+
 // public/data/explanations.json – (S17) opcjonalne objaśnienia, jeden wpis na wskaźnik
 // { [indicatorId]: { short, howToRead, definitionUrl, funFact?, source?, url? } }
 ```
@@ -540,7 +730,7 @@ Pliki danych bez wcięć. Progi pobierania (ile plików w jakiej sytuacji): `doc
 ---
 
 ## 7. Czego nie robimy (nigdy)
-Konta użytkowników · wołanie API GUS z przeglądarki · liczby wpisane ręcznie albo przez AI · śledzenie osób (IP, fingerprint) · Google Maps jako mapa główna · pobieranie całego BDL · generator serii slajdów pod konta Faktografii w tym repo (osobne, prywatne repo; pojedyncze karty dla użytkowników – tak, S19).
+Konta użytkowników · wołanie API GUS z przeglądarki · liczby wpisane ręcznie albo przez AI · śledzenie osób (IP, fingerprint) · Google Maps jako mapa główna · pobieranie całego BDL naraz lub z przeglądarki (robot „Biblioteka GUS” pobiera stopniowo, z budżetem zapytań – S21) · generator serii slajdów pod konta Faktografii w tym repo (osobne, prywatne repo; pojedyncze karty dla użytkowników – tak, S19).
 
 
 ### 4a. Kto czym szuka i sprawdza (narzędzia – żeby planować research i podzespoły)
@@ -558,7 +748,7 @@ Konta użytkowników · wołanie API GUS z przeglądarki · liczby wpisane ręcz
 |---|---|---|---|
 | R1 | Miasto/wieś gmin m-w | zrobione (wynik wyżej) | – |
 | R2 | Blady podkład mapy przy dużym zbliżeniu (OpenFreeMap) | `TRYB: WYBÓR` + licencja | po K3, jeśli ruch jest płynny |
-| R3 | Podstrony gmin pod wyszukiwarki (SEO) | `TRYB: RESEARCH` [C] + `TRYB: DECYZJA` | po K5 |
+| R3 | Podstrony gmin pod wyszukiwarki (SEO) | zrobione 25.10: raport zweryfikowany, decyzja **odłożone** (`docs/research/R3-seo-wynik.md`) | wrócić po K7, jeśli chcesz ruchu z wyszukiwarki |
 | R4 | Dwie pełne mapy obok siebie (dwa wskaźniki/lata) | `TRYB: DECYZJA` (koszt wydajności na telefonie) | po K5 |
 | R5 | Tryb ciemny mapy, kreskowanie „brak danych” | `TRYB: WYBÓR`/projekt | po K5 |
-| R6 | Cała biblioteka GUS: magazyn danych, katalog, robot z budżetem limitów (`docs/research/biblioteka-gus.md`) | `TRYB: RESEARCH` [C] + `TRYB: WYBÓR` | robot już działa (patrz niżej); magazyn i strona po K5, sesja S21 |
+| R6 | Cała biblioteka GUS: magazyn danych, katalog, robot z budżetem limitów (`docs/research/biblioteka-gus.md`) | zrobione 25.10: magazyn **Cloudflare R2** docelowo, do tego czasu gałąź `data/library` (`docs/research/R6-magazyn-wynik.md`); zbiorczy eksport: pismo do GUS (`docs/research/biblioteka-bulk-wynik.md`) | strona biblioteki: S21 (F8–F12); robot uruchomiony 25.10 |

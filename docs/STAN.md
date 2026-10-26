@@ -1,61 +1,67 @@
-# Stan – 24.10.2026
+# Stan – 25.10.2026
 
 ## Co działa (po ludzku; „sprawdzone przez właściciela: tak/nie”)
-Na podstawie kodu na main (commit 095b2bb). Sprawdzone przez właściciela na produkcji: nie, o ile nie napisano inaczej.
-- Mapa województw, powiatów i gmin z przechodzeniem w głąb, okruszkami i stanem w adresie (`?u=`, `?i=`, `?y=`); da się oddalić do całej Polski. Sprawdzone: nie.
-- Kolory mapy według 20 wskaźników GUS, legenda, suwak lat, panel wskaźnika, przełącznik poziomu, dymek, najwyżej/najniżej; lista wskaźników przewija się. Sprawdzone: nie.
-- Wyszukiwarka jednostek i miejscowości; gminy z rodzajem („Wałcz (miasto)”). Sprawdzone: nie.
-- Profil miejsca na komputerze – częściowo nowy: wiersz wskaźnika rozwija się (wykres lat, objaśnienie, „Pokaż na mapie”), zakreślenie trzyma się tekstu. Brak: nagłówka bez powtórzeń, dużej liczby z rankingiem, zakładek. Sprawdzone: nie.
-- Telefon: **nie nadaje się do użytku** (sprawdzone 21.10: panel nad mapą, mapa jako wąski pasek, profil zasłania resztę).
+Na podstawie kodu na main (commit d797711, po F7). **Właściciel obejrzał K1–K5 na podglądzie 25.10.2026 i zaakceptował; ma uwagi do poprawek (lista przyjdzie osobno, zostaną rozbite na małe zadania).**
+- Mapa województw, powiatów i gmin z przechodzeniem w głąb (płynna kamera, kafelki po kolei, przelewanie kolorów), okruszkami i stanem w adresie (`?u=`, `?i=`, `?y=`, `?l=`, `?c=`); da się oddalić do całej Polski. Sprawdzone: tak (K3).
+- Kolory mapy według 20 wskaźników GUS, legenda (też w trybie ciemnym), suwak lat, panel wskaźnika, przełącznik poziomu, dymek, najwyżej/najniżej, „Na tle kraju”. Sprawdzone: tak (K2, K3).
+- Wyszukiwarka jednostek i miejscowości; gminy z rodzajem („Wałcz (miasto)”).
+- Profil miejsca: przegląd z dużą liczbą i rankingiem, zakładki (Przegląd · Powiaty/Gminy · Porównaj), wiersze wskaźników z wykresem lat. Sprawdzone: tak (K1).
+- Porównanie dwóch miejsc: wybór drugiego miejsca, tabela, dwa obrysy, dwie mapki, `?c=`. Sprawdzone: tak (K4).
+- Pobierz i udostępnij: okno z podglądem, karty PNG w 4 formatach, CSV, systemowe udostępnianie – z panelu wskaźnika, profilu i porównania. Sprawdzone: tak (K5).
+- Telefon przebudowany (S15): cienki nagłówek, mapa na cały ekran, arkusz wskaźnika, profil w arkuszu, okruszki, dymek po pierwszym dotknięciu, mały pasek zgody. Sprawdzone: tak (K2), z uwagami do poprawek.
 - Zgoda na statystyki, strony O projekcie / Prywatność / Źródła, panel `?tune`. Nocny robot danych GUS.
 
-## Sesja teraz: prowadzi automat (S14 → S19)
-Od 24.10.2026 fale prowadzi automat (`docs/AUTOMAT.md`): zakłada issue z zadaniem, uruchamia Julesa etykietą `jules`, sprawdza PR (`scripts/ops/check-pr.mjs`), scala, wycofuje, a na każdym punkcie kontrolnym (K1–K5) aktualizuje blok niżej i wysyła Ci listę „Ty sprawdzasz”. Kolejność i pliki zadań: `scripts/ops/automat-kolejka.json` = `docs/ARCHITEKTURA.md` §3–§4 (test pilnuje zgodności).
-- **Zrobione na main przed automatem:** W1.1 (#198) · W1.3 (#207) · W1.4 (#219) · W1.5 (#209) · W1.6 (#211) · W1.7 (#212) · W1.8 (#214) · W2.10 (#213, Ty obejrzyj na telefonie).
-- **Punkty kontrolne:** K1 S14 profil (po F3) · K2 S15 telefon (po F5) · K3 S16+S17 ruch i „Na tle kraju” (po F6) · K4 S18 porównanie (po F5) · K5 S19 pobierz i udostępnij (po F7) = koniec. Fale F1–F7 (v4, do 8 zadań naraz).
-- **Poza automatem:** W1.9 (teksty objaśnień – Twoja akceptacja), W1.11 (Deep Research), W3.5 i „Później”.
+## Sesja teraz: S20 + S21, ręczna pętla (F8 → F12)
+Od 25.10.2026 **Ty scalasz, Claude puszcza kolejne** (`docs/AUTOMAT.md` §0, skrypt `scripts/ops/start-tasks.mjs`); automat stoi pod etykietą `automat-stop` na #221. F1–F7 zrobione (33/33, K1–K5 zaakceptowane). Teraz: **S20** miasto i wieś gmin miejsko-wiejskich (PRODUKT §4c) i **S21** biblioteka GUS (PRODUKT §4d) – 24 małe zadania (10 W1 + 14 W2) w falach F8–F12, najwyżej 7 w fali (limit Julesa: 15 naraz).
+- **F8** (6): W1.15 · W1.16 · W1.21 · W1.22 · W1.23 · W1.24 · **F9** (7): W1.17 · W1.18 · W1.19 · W1.20 · W2.27 · W2.34 · W2.35 · **F10** (6): W2.24 · W2.28 · W2.29 · W2.30 · W2.31 · W2.33 · **F11** (3): W2.25 · W2.32 · W2.36 · **F12** (2): W2.26 · W2.37.
+- **Punkty kontrolne:** K6 = S20 (po F12) · K7 = S21 (po F12). Do pierwszego obejrzenia z liczbami: po pierwszym nocnym pobraniu z W1.17 (dla K6).
+- **Poza kolejką:** W1.9 (teksty objaśnień – Twoja akceptacja), W3.5 i „Później”; kroki Claude w workflow (`.github/`) – ARCHITEKTURA §4 „Poza falami”.
 
 ### Postęp (pisze automat – nie edytuj ręcznie)
 <!-- automat:start -->
-Automat jeszcze nie ruszył. Pierwsza fala: F1 (W2.1, W1.2, W1.12, W1.13, W3.3, W0.1, W2.13, W1.10).
+Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza Claude skryptem `scripts/ops/start-tasks.mjs`. F1–F7: zrobione (33/33). F8–F12: 0/24. Pierwsza fala: F8 (W1.15, W1.16, W1.21, W1.22, W1.23, W1.24).
 <!-- automat:end -->
 
 ## Plan (1 linia na sesję; zadania i fale w docs/ARCHITEKTURA.md §3–§4)
-- S14 (F1–F3) – profil na komputerze; logika kart do pobrania.
-- S15 (F4–F7) – telefon od nowa; okno „Pobierz i udostępnij”, karta profilu; legenda ciemna.
-- S16 + S17 (F8–F10) – płynna kamera, kafelki, przelewanie kolorów, pomiar; „Na tle kraju”; początek porównania; udostępnianie z panelu.
-- S18 (F11) – porównanie: tabela, dwa obrysy, dwie mapki, telefon.
-- S19 (F6–F7) – udostępnianie porównania i test całej ścieżki.
+- S14–S19 – zrobione (profil, telefon, ruch, „Na tle kraju”, porównanie, pobierz i udostępnij; F1–F7).
+- S20 (F8–F12) – miasto i obszar wiejski w profilu gminy miejsko-wiejskiej (zwijany blok, 14 wskaźników).
+- S21 (F8–F12) – strona „Biblioteka GUS”: kategorie, wyszukiwanie, filtry, wskaźnik z rankingiem i CSV, zamówienie wskaźnika.
+- Po K7: przegląd „Później” (SEO, mapa dla wskaźnika z biblioteki, R2, tryb ciemny mapy…) i nowa fala poprawek z Twojej listy.
 
-## Przypomnienia (poza automatem – pełna tabela: ARCHITEKTURA §4)
+## Przypomnienia (pełna tabela: ARCHITEKTURA §4 „Poza falami”)
 - **Badania v2 (25.10.2026):** audyt zrobionego i gotowce pod kolejne sesje – plan i wyniki audytu: `docs/research/plan-badan-v2.md`, prompty do Gemini: `docs/research/gemini-prompty-v2.md` (R1 szablon i strona główna, R2 animacje, R3 gotowe komponenty zamiast własnych – teraz; R4 filtry i kategorie, R5 magazyn danych – przed S21). Raporty wracają do Claude (`TRYB: WERYFIKACJA`), wzorce trafiają do `docs/INSPIRACJE.md`. Do potwierdzenia przez Ciebie: czy dodajemy stronę główną wg makiety 01 (patrz plan-badan-v2 §3).
-- **Teraz:** podgląd paska zgód #213 na telefonie. (Deep Research W1.11 zrobiony i zweryfikowany: `docs/research/W1.11-wynik.md`.)
-- **Biblioteka GUS – robot działa od 25.10.2026:** workflow `Fetch library` (co 12 h, budżet 2500 zapytań, wspólna kolejka z nocnym pobieraniem) zapisuje katalog działów i wartości na gałęzi `data/library` (nie main, bez PR). Postęp: `library/state.json` na tej gałęzi. Decyzja (Claude, tymczasowa): magazyn = gałąź w repo, dopóki rośnie < ~1 GB; potem R6 (magazyn obiektów).
-- **Po K5:** sesja S21 – strona biblioteki: kategorie i filtry (patrz `docs/research/biblioteka-gus.md`, sekcja „Kategorie i filtry”), wyszukiwarka wskaźników, „zamów wskaźnik”, wybór magazynu (R6).
-- **Po K5:** sesja S20 – miasto i wieś gmin miejsko-wiejskich (14 wskaźników; bez dochodów i wydatków).
-- **Przed F5:** akceptacja tekstów objaśnień (W1.9).
-- **Na każdym K1–K5:** Twoja ocena na telefonie. **Po K3:** decyzja o W3.5. **Po K5:** przegląd „Później”.
+- **Ty, 2 min:** ruleset na `main` (GitHub → Settings → Rules: wymagane `testy` i `bezpieczenstwo`).
+- **Ty:** lista uwag z oglądu K1–K5 (zrobię z niej małe zadania w nowej fali) · teksty objaśnień do akceptacji (W1.9; przygotuję listę do przeczytania).
+- **Ty, kiedy chcesz:** pismo do GUS o zbiorczy eksport BDL – gotowy tekst (≤ 1000 znaków, limit formularza) w `docs/research/biblioteka-bulk-wynik.md`; sprawdź też w przeglądarce, czy w BDL jest „Pobrane podgrupy” (ZIP z CSV/XLSX) – raport tego nie potwierdził.
+- **Claude (po scaleniu F8 i F9):** krok indeksu w workflow „Fetch library”, krok części miasto/wieś w „Fetch data”, etykieta `zamowienie-wskaznika`, jedno ręczne uruchomienie „Fetch data”.
+- **Biblioteka GUS – robot:** workflow `Fetch library` (co 12 h, budżet 2500 zapytań) **do 25.10.2026 nigdy nie biegł** (poprzedni zapis tutaj był błędny). Pierwszy przebieg uruchomiony ręcznie 25.10 ok. 17:42 UTC; dane (`library/catalog.json`, `state.json`, `values/`) pojawią się na gałęzi `data/library` dopiero po jego zakończeniu (do ~170 min). Magazyn: do czasu R2 gałąź w repo (`docs/research/R6-magazyn-wynik.md`).
+- **Przed pierwszym obejrzeniem K7:** po pierwszym pełnym katalogu zmierzyć rozmiar `index.json`; jeśli > ~1 MB po kompresji – dzielimy na pliki działów (osobne zadanie).
 
 ## Znane problemy / dług (co · skąd · priorytet · w której fali)
-- Telefon nieużywalny · ogląd 21.10 · wysoki · F4–F7.
-- `main` bez ochrony (brak reguł) · przegląd 24.10 · wysoki · przed pilotem automatu (Ty: ruleset).
-- Wejście w głąb to skok, reszta Polski znika · uwaga właściciela 21.10 · wysoki · F8 (W3.2, W3.3).
-- Zakreślenie typu „highlight” zasłania tekst w profilu · zrzut 21.10 · średni · F1 (W2.1 wyłącza), F2 (W3.1 usuwa kod).
-- Brak prostych objaśnień wskaźników · test 20.10 · średni · W1.9 po Twojej akceptacji tekstów (poza automatem), F9 (W2.12).
-- Legenda w trybie ciemnym mówi „ciemniej znaczy więcej” odwrotnie do kolorów · ogląd 21.10 · średni · F7 (W2.13).
-- Miasto / obszar wiejski gmin m-w: dane są w BDL dla 14 z 16 wskaźników gminnych; w dochodach i wydatkach BDL daje fałszywe zera · W1.11 · średni · S20 po K5.
-- Szybkość nie mierzona na telefonie · plan · średni · F10 (W3.6).
-- „Co działa” niesprawdzone przez właściciela na produkcji · proces · wysoki · przy każdej fali z widocznymi zmianami.
+- `main` bez ochrony (brak reguł) · przegląd 24.10 · wysoki · Ty: ruleset (przypomnienie wyżej).
+- Uwagi właściciela z oglądu K1–K5 · 25.10 · wysoki · nowa fala poprawek po otrzymaniu listy.
+- Brak prostych objaśnień wskaźników · test 20.10 · średni · W1.9 po Twojej akceptacji tekstów.
+- Miasto/wieś: w częściach wiejskich 244 gmin „czytelnicy bibliotek” = 0 – nie wiadomo, czy to prawdziwe zero czy brak · W1.11 · niski · pokazujemy jak BDL; sprawdzić po pierwszym pobraniu.
+- Zakres lat bezrobocia w częściach (od 2019?) niesprawdzony · W1.11 · niski · pokaże pierwszy przebieg W1.17.
+- Raw.githubusercontent jako adres danych biblioteki: CORS i limity niesprawdzone z przeglądarki · S21 · średni · e2e używają podmienionych żądań; sprawdzić na podglądzie po F12, w razie problemu – R2.
 - Klucz PostHog · plan · niski · „Później”.
 
 ## Pomiar fal
-- Liczy automat w issue stanu (zadania / 24 h, poprawki, PR-y na zadanie, wycofania); podsumowanie trafia do bloku „Postęp” na punktach kontrolnych.
-- Przed automatem: logika W1.4–W1.8 i W2.10 weszły poza kolejnością fal; W2.3 wszedł za wcześnie i został wycofany (#218).
+- F1–F7: 33 zadania; część PR-ów (np. W2.1, W2.13, W1.10, W0.1) wymagała 2–3 prób; W2.21 miał jedną nieudaną próbę Julesa. Dokładne liczby poprawek nie były zbierane po zatrzymaniu automatu (25.10).
+- Od F8: po każdej fali jedna linia w tej sekcji (zadania · PR-y poprawione · Twoje minuty) – dopisuje Claude przy kolejnej fali.
 
 ## Decyzje (najnowsze na górze, 1 linia, kto)
-- 25.10.2026 · Decyzje po raportach: strona główna wg makiety 01 – tak; usuwamy nieużywany Plot – tak; „Zamów wskaźnik” jako odnośnik do Tally; magazyn biblioteki najpierw przez adapter, R2 później; kamery nie ruszamy; sesja S22 (W0.2, W2.24, W3.8, W3.9, W2.25, W3.7, punkt kontrolny K6) dopisana do ARCHITEKTURA §3–§4 i kolejki; pobieranie grafik z generatora karuzel odłożone (Ty, czat Claude)
-- 25.10.2026 · Raporty R1–R5 zweryfikowane (`docs/research/weryfikacja-raportow-v2.md`): zero wymian własnych komponentów na pakiety teraz; szablonów nie bierzemy; prerender RR8 odpada (tryb framework); rozpiska N1–N12 w `docs/research/zadania-fala-8.md`, wchodzi do planu po decyzjach D1–D5 (Ty, czat Claude)
+- 25.10.2026 · Raporty R1–R5 zweryfikowane (`docs/research/weryfikacja-raportow-v2.md`): zero wymian własnych komponentów na pakiety teraz; szablonów nie bierzemy; prerender RR8 odpada (tryb framework); rozpiska N1–N12 w `docs/research/zadania-fala-8.md`, wchodzi do planu po decyzjach D1–D5; plan S22 nie wchodzi do ARCHITEKTURA ani kolejki – decyzja właściciela (Ty, czat Claude)
 - 25.10.2026 · Research kierujemy na audyt tego, co już zrobione (szablon stron, strona główna, animacje, własne komponenty) i na gotowce pod S20–S21; wzorce z cudzych repozytoriów wolno studiować i przepisać po swojemu tylko z wpisu w `docs/INSPIRACJE.md` (licencja MIT/BSD/ISC/Apache-2.0/CC0); zmiana zasady w `AGENTS.md` (Ty, czat Claude)
+- 25.10.2026 · **Plan S20 + S21** zatwierdzony do realizacji: 24 małe zadania w falach F8–F12, ≤ 7 w fali (Jules lepiej radzi sobie z małymi zadaniami; limit 15 naraz) (Ty, czat Claude)
+- 25.10.2026 · **Ręczna pętla:** Ty scalasz, Claude puszcza kolejne (`start-tasks.mjs`); automat zatrzymany (`automat-stop` na #221); limity w kolejce podniesione do 15 naraz (Ty, czat Claude)
+- 25.10.2026 · K1–K5 zaakceptowane przez właściciela; uwagi do poprawek później, jako małe zadania (Ty)
+- 25.10.2026 · **S20: blok w profilu, bez map** – zwijany blok „Miasto i obszar wiejski” (14 wskaźników), jeden dodatkowy plik na województwo ładowany dopiero po rozwinięciu; bez obrysów części gminy i bez dochodów/wydatków (Claude, decyzja produktowa do zmiany na życzenie)
+- 25.10.2026 · **S21 v1 bez mapy dla wskaźnika z biblioteki** – katalog, szukanie, filtry, ranking, CSV, zamówienie; mapa i karty PNG z biblioteki do „Później”; zamówienia = zgłoszenie na GitHubie czytane ręcznie (Claude)
+- 25.10.2026 · **Magazyn biblioteki:** docelowo Cloudflare R2 (raport Deep Research zweryfikowany: cennik potwierdzony drugim źródłem, 10 GB bezpłatnie, egress 0); do czasu przejścia gałąź `data/library` + adres w jednym miejscu (`VITE_LIBRARY_BASE`) – przejście na R2 bez zmian w kodzie stron (Claude, tymczasowa)
+- 25.10.2026 · **SEO podstron gmin odłożone:** raport Deep Research błędnie uznał limit 2048 „routes” na Vercel za blokadę dla 2500 stron statycznych (dokumentacja: liczą się reguły z `vercel.json`, plików wyjściowych nie ograniczono); ryzyko „scaled content abuse” i brak gotowej treści – wrócić po K7 (Claude)
+- 25.10.2026 · **Zbiorczy eksport BDL:** raport zweryfikowany częściowo – liczba „1 mln zapytań” błędna (nasz pomiar: ~38 zapytań na wskaźnik, ok. 1000 wskaźników tygodniowo), ścieżka „Pobrane podgrupy” i adres e-mail sekretariatu niepotwierdzone; formularz GUS i telefon potwierdzone; tekst pisma gotowy (Claude)
+- 25.10.2026 · Ręcznie uruchomiony pierwszy przebieg „Fetch library” (poprzednio workflow nigdy nie biegł mimo wpisu „działa”) (Claude)
 - 24.10.2026 · W1.11 zrobione: raport Deep Research zweryfikowany na nagraniach BDL – podział miasto/wieś **istnieje** (kody 4 i 5) dla 14 z 16 wskaźników gminnych; w dochodach/wydatkach to fałszywe zera; robimy w sesji S20 po K5 (Ty, czat Claude)
 - 24.10.2026 · **Pełny automat** prowadzi fale do końca (S14–S19): Jules przez etykietę `jules`, scalanie po `check-pr` i zielonym CI, Twoja ocena na punktach kontrolnych K1–K5 nie blokuje (poprawki jako nowe zadania); zmienia zasadę WORKFLOW „ręczne wklejanie” i bramkę „ocena przed falą” (Ty, czat Claude)
 - 24.10.2026 · Posłaniec = zadanie cykliczne co godzinę 7–23 na tanim modelu, decyzje podejmuje skrypt `scripts/ops/automat.mjs`; Naprawiacz raz dziennie (Ty, czat Claude)

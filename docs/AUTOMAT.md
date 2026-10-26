@@ -2,6 +2,15 @@
 Wersja 1 · 24.10.2026. Decyzja: `docs/STAN.md` „Decyzje” (pełny automat). Plan zadań: `docs/ARCHITEKTURA.md` §3–§4. Kolejka dla maszyny: `scripts/ops/automat-kolejka.json` (test `ops-kolejka.test.ts` pilnuje zgodności z ARCHITEKTURA).
 Pewność: [D] dokumentacja · [H] historia tego repo · [?] sprawdza pilot.
 
+## 0. Ręczna pętla (od 25.10.2026 – obowiązuje zamiast automatu)
+Automat stoi (etykieta `automat-stop` na #221). Pracujemy tak: **Ty scalasz, Claude puszcza kolejne.**
+1. Claude uruchamia `node scripts/ops/start-tasks.mjs` – pokazuje, które zadania są gotowe (zależności zrobione, brak kolizji plików, wolne miejsca do 15 naraz).
+2. `... --start` zakłada issue z etykietą `zadanie` i nakłada `jules`; Jules otwiera PR.
+3. Ty oglądasz podgląd i scalasz PR-y z zielonym CI. Zrobione = scalony PR, którego tytuł zaczyna się od `Wx.y`.
+4. Piszesz „scalone” → Claude puszcza następną falę. Fale są małe (≤ 7 zadań), bo Jules lepiej radzi sobie z małymi zadaniami.
+- `--status` pokazuje postęp. Skrypt niczego nie scala ani nie zamyka.
+- Reszta dokumentu (§1 i dalej) opisuje automat i zostaje na wypadek jego ponownego włączenia (usuń etykietę `automat-stop`; najpierw zsynchronizuj `doneBefore` w kolejce ze scalonymi zadaniami).
+
 ## 1. Po ludzku
 Co godzinę (7–23) tani model uruchamia **jeden skrypt** – `scripts/ops/automat.mjs`. Skrypt podejmuje wszystkie decyzje według reguł sprawdzonych testami; model tylko go odpala i przekazuje wynik. Jules pisze kod, GitHub testuje, skrypt scala albo odsyła uwagi. Ty dostajesz powiadomienie tylko, gdy trzeba decyzji, i na 5 punktach kontrolnych.
 

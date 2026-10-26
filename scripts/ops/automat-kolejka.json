@@ -2,8 +2,8 @@
   "version": 1,
   "settings": {
     "repo": "olubiec/faktografia-atlas",
-    "maxParallel": 8,
-    "maxStartsPerRun": 8,
+    "maxParallel": 15,
+    "maxStartsPerRun": 15,
     "maxMergesPerRun": 6,
     "maxFixAttempts": 2,
     "maxPrsPerTask": 3,
@@ -13,7 +13,7 @@
     "ciQuietMin": 20,
     "maxPrLines": 2000,
     "lockMin": 50,
-    "maxStartsPer24h": 40,
+    "maxStartsPer24h": 60,
     "staleHours": 24,
     "requiredChecks": [
       "testy",
@@ -106,11 +106,15 @@
     },
     {
       "id": "K5",
-      "name": "S19 – pobierz i udostępnij (koniec projektu)"
+      "name": "S19 – pobierz i udostępnij"
     },
     {
       "id": "K6",
-      "name": "S22 – strona główna, układ podstron, metadane"
+      "name": "S20 – miasto i wieś (gminy miejsko-wiejskie)"
+    },
+    {
+      "id": "K7",
+      "name": "S21 – biblioteka GUS (koniec planu)"
     }
   ],
   "tasks": [
@@ -1200,112 +1204,409 @@
       "snapshots": true
     },
     {
-      "id": "W0.2",
-      "title": "Usunięcie nieużywanego @observablehq/plot",
+      "id": "W1.15",
+      "title": "Lista wskaźników z podziałem na miasto i wieś",
       "checkpoint": "K6",
       "wave": 8,
       "dependsOn": [],
       "files": [
         {
-          "path": "package.json",
-          "mode": "change"
+          "path": "config/parts.json",
+          "mode": "new"
         },
         {
-          "path": "pnpm-lock.yaml",
-          "mode": "change"
+          "path": "src/core/parts/allowed.ts",
+          "mode": "new"
         },
         {
-          "path": "docs/ELEMENTY.md",
-          "mode": "change"
+          "path": "tests/unit/parts-allowed.test.ts",
+          "mode": "new"
         }
       ],
       "testsAppend": [],
-      "testsChange": [
-        "tests/unit/dependencies.test.ts"
-      ],
+      "testsChange": [],
       "allowFixme": [],
       "deletions": [],
       "packages": {
-        "remove": [
-          "@observablehq/plot"
-        ],
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W1.16",
+      "title": "Części miasto i wieś z odpowiedzi BDL: logika",
+      "checkpoint": "K6",
+      "wave": 8,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "scripts/data/parts.mjs",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/parts-build.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W1.21",
+      "title": "Indeks biblioteki GUS: budowanie",
+      "checkpoint": "K7",
+      "wave": 8,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "scripts/data/library-index.mjs",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/library-index.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W1.22",
+      "title": "Wyszukiwanie i filtry biblioteki: logika",
+      "checkpoint": "K7",
+      "wave": 8,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/core/library/query.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/library-query.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W1.23",
+      "title": "Wczytywanie biblioteki: indeks i wartości wskaźnika",
+      "checkpoint": "K7",
+      "wave": 8,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/core/library/config.ts",
+          "mode": "new"
+        },
+        {
+          "path": "src/core/library/load-library.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/load-library.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W1.24",
+      "title": "„Zamów wskaźnik”: odnośnik do zgłoszenia",
+      "checkpoint": "K7",
+      "wave": 8,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/core/library/order.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/library-order.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W1.17",
+      "title": "Nocny robot zapisuje części miasto i wieś",
+      "checkpoint": "K6",
+      "wave": 9,
+      "dependsOn": [
+        "W1.15",
+        "W1.16"
+      ],
+      "files": [
+        {
+          "path": "scripts/data/fetch-values.mjs",
+          "mode": "partial",
+          "maxLines": 40
+        },
+        {
+          "path": "tests/unit/parts-nightly.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W1.18",
+      "title": "Części miasto i wieś w plikach na województwa",
+      "checkpoint": "K6",
+      "wave": 9,
+      "dependsOn": [
+        "W1.16"
+      ],
+      "files": [
+        {
+          "path": "scripts/data/build-parts.mjs",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/parts-shards.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W1.19",
+      "title": "Wczytywanie części miasto i wieś",
+      "checkpoint": "K6",
+      "wave": 9,
+      "dependsOn": [
+        "W1.16"
+      ],
+      "files": [
+        {
+          "path": "src/core/data/load-parts.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/load-parts.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W1.20",
+      "title": "Wiersze „Gmina · Miasto · Obszar wiejski”: logika",
+      "checkpoint": "K6",
+      "wave": 9,
+      "dependsOn": [
+        "W1.15",
+        "W1.16"
+      ],
+      "files": [
+        {
+          "path": "src/core/parts/rows.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/parts-rows.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.27",
+      "title": "Strona /biblioteka: szkielet i miejsca podpięcia",
+      "checkpoint": "K7",
+      "wave": 9,
+      "dependsOn": [
+        "W1.22",
+        "W1.23"
+      ],
+      "files": [
+        {
+          "path": "src/view/pages/Library.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/library/CategoryTiles.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/library/LibrarySearchBar.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/library/LibraryFilters.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/library/LibraryResults.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/App.tsx",
+          "mode": "partial",
+          "maxLines": 6
+        },
+        {
+          "path": "tests/e2e/library-page.spec.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/fixtures/library/index.json",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.34",
+      "title": "Biblioteka: przycisk „Pobierz CSV”",
+      "checkpoint": "K7",
+      "wave": 9,
+      "dependsOn": [
+        "W1.23"
+      ],
+      "files": [
+        {
+          "path": "src/view/library/DownloadCsv.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/library-download-csv.test.tsx",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.35",
+      "title": "Biblioteka: przycisk „Zamów ten wskaźnik”",
+      "checkpoint": "K7",
+      "wave": 9,
+      "dependsOn": [
+        "W1.24"
+      ],
+      "files": [
+        {
+          "path": "src/view/library/OrderButton.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/library-order-button.test.tsx",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
         "add": []
       },
       "snapshots": false
     },
     {
       "id": "W2.24",
-      "title": "Wspólny układ podstron i stopka",
+      "title": "Blok „Miasto i obszar wiejski”: komponent",
       "checkpoint": "K6",
-      "wave": 8,
-      "dependsOn": [],
-      "files": [
-        {
-          "path": "src/view/layout/SiteLayout.tsx",
-          "mode": "new"
-        },
-        {
-          "path": "src/view/layout/SiteFooter.tsx",
-          "mode": "new"
-        },
-        {
-          "path": "src/view/pages/About.tsx",
-          "mode": "change"
-        },
-        {
-          "path": "src/view/pages/Sources.tsx",
-          "mode": "change"
-        },
-        {
-          "path": "src/view/pages/Privacy.tsx",
-          "mode": "change"
-        },
-        {
-          "path": "src/view/NotFound.tsx",
-          "mode": "change"
-        },
-        {
-          "path": "tests/unit/layout.test.tsx",
-          "mode": "new"
-        },
-        {
-          "path": "tests/e2e/pages.spec.ts",
-          "mode": "new"
-        }
+      "wave": 10,
+      "dependsOn": [
+        "W1.20"
       ],
-      "testsAppend": [],
-      "testsChange": [],
-      "allowFixme": [],
-      "deletions": [],
-      "packages": {
-        "remove": [],
-        "add": []
-      },
-      "snapshots": true
-    },
-    {
-      "id": "W3.8",
-      "title": "Mapa nie zostaje pusta po utracie kontekstu WebGL",
-      "checkpoint": "K6",
-      "wave": 8,
-      "dependsOn": [],
       "files": [
         {
-          "path": "src/view/map/AtlasMap.tsx",
-          "mode": "partial",
-          "maxLines": 40
-        },
-        {
-          "path": "src/view/map/MapContextLostNotice.tsx",
+          "path": "src/view/profile/ProfileParts.tsx",
           "mode": "new"
         },
         {
-          "path": "src/core/map/test-seam.ts",
-          "mode": "partial",
-          "maxLines": 20
-        },
-        {
-          "path": "tests/e2e/context-lost.spec.ts",
+          "path": "tests/unit/profile-parts.test.tsx",
           "mode": "new"
         }
       ],
@@ -1320,34 +1621,148 @@
       "snapshots": false
     },
     {
-      "id": "W3.9",
-      "title": "Rozbicie TrendChart bez zmiany zachowania",
-      "checkpoint": "K6",
-      "wave": 8,
-      "dependsOn": [],
+      "id": "W2.28",
+      "title": "Biblioteka: kafelki kategorii i okruszki",
+      "checkpoint": "K7",
+      "wave": 10,
+      "dependsOn": [
+        "W2.27",
+        "W1.22"
+      ],
       "files": [
         {
-          "path": "src/view/profile/TrendChart.tsx",
+          "path": "src/view/library/CategoryTiles.tsx",
           "mode": "change"
         },
         {
-          "path": "src/view/profile/TrendAxis.tsx",
+          "path": "tests/unit/library-categories.test.tsx",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.29",
+      "title": "Biblioteka: wyszukiwarka wskaźników",
+      "checkpoint": "K7",
+      "wave": 10,
+      "dependsOn": [
+        "W2.27",
+        "W1.22"
+      ],
+      "files": [
+        {
+          "path": "src/view/library/LibrarySearchBar.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "tests/unit/library-search-bar.test.tsx",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.30",
+      "title": "Biblioteka: filtry",
+      "checkpoint": "K7",
+      "wave": 10,
+      "dependsOn": [
+        "W2.27",
+        "W1.22"
+      ],
+      "files": [
+        {
+          "path": "src/view/library/LibraryFilters.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "tests/unit/library-filters.test.tsx",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.31",
+      "title": "Biblioteka: lista wyników",
+      "checkpoint": "K7",
+      "wave": 10,
+      "dependsOn": [
+        "W2.27",
+        "W1.22"
+      ],
+      "files": [
+        {
+          "path": "src/view/library/LibraryResults.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "tests/unit/library-results.test.tsx",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.33",
+      "title": "Strona wskaźnika /biblioteka/<id>",
+      "checkpoint": "K7",
+      "wave": 10,
+      "dependsOn": [
+        "W1.23",
+        "W2.27",
+        "W2.34",
+        "W2.35"
+      ],
+      "files": [
+        {
+          "path": "src/view/pages/LibraryVariable.tsx",
           "mode": "new"
         },
         {
-          "path": "src/view/profile/TrendPoints.tsx",
+          "path": "src/App.tsx",
+          "mode": "partial",
+          "maxLines": 4
+        },
+        {
+          "path": "tests/e2e/library-variable.spec.ts",
           "mode": "new"
         },
         {
-          "path": "src/view/profile/TrendStatus.tsx",
-          "mode": "new"
-        },
-        {
-          "path": "src/core/profile/trend-geometry.ts",
-          "mode": "new"
-        },
-        {
-          "path": "tests/unit/trend-geometry.test.ts",
+          "path": "tests/fixtures/library/values-sample.json",
           "mode": "new"
         }
       ],
@@ -1363,31 +1778,25 @@
     },
     {
       "id": "W2.25",
-      "title": "Strona główna wg makiety 01",
+      "title": "Blok „Miasto i obszar wiejski” w profilu gminy",
       "checkpoint": "K6",
-      "wave": 9,
+      "wave": 11,
       "dependsOn": [
-        "W2.24"
+        "W2.24",
+        "W1.19"
       ],
       "files": [
         {
-          "path": "src/view/Home.tsx",
-          "mode": "change"
+          "path": "src/view/profile/ProfileOverview.tsx",
+          "mode": "partial",
+          "maxLines": 25
         },
         {
-          "path": "src/view/home/HomeHero.tsx",
+          "path": "tests/e2e/profile-parts.spec.ts",
           "mode": "new"
         },
         {
-          "path": "src/view/home/IndicatorTabs.tsx",
-          "mode": "new"
-        },
-        {
-          "path": "tests/unit/home-hero.test.tsx",
-          "mode": "new"
-        },
-        {
-          "path": "tests/e2e/home-hero.spec.ts",
+          "path": "tests/fixtures/parts/shard-12.json",
           "mode": "new"
         }
       ],
@@ -1402,69 +1811,103 @@
       "snapshots": true
     },
     {
-      "id": "W3.7",
-      "title": "Metadane, udostępnianie linków, robots i sitemap",
-      "checkpoint": "K6",
-      "wave": 9,
+      "id": "W2.32",
+      "title": "Biblioteka: złożenie strony i adres",
+      "checkpoint": "K7",
+      "wave": 11,
       "dependsOn": [
-        "W2.24"
+        "W2.27",
+        "W2.28",
+        "W2.29",
+        "W2.30",
+        "W2.31"
       ],
       "files": [
         {
-          "path": "index.html",
+          "path": "src/view/pages/Library.tsx",
           "mode": "change"
         },
         {
-          "path": "src/core/seo/pages.ts",
+          "path": "tests/e2e/library-search.spec.ts",
           "mode": "new"
-        },
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.36",
+      "title": "Odnośnik „Biblioteka” w nagłówku",
+      "checkpoint": "K7",
+      "wave": 11,
+      "dependsOn": [
+        "W2.27"
+      ],
+      "files": [
         {
-          "path": "src/view/seo/PageMeta.tsx",
-          "mode": "new"
-        },
-        {
-          "path": "scripts/build/prerender-pages.mjs",
-          "mode": "new"
-        },
-        {
-          "path": "scripts/build/write-sitemap.mjs",
-          "mode": "new"
-        },
-        {
-          "path": "public/robots.txt",
-          "mode": "new"
-        },
-        {
-          "path": "package.json",
+          "path": "src/view/Header.tsx",
           "mode": "partial",
-          "maxLines": 6
+          "maxLines": 15
         },
         {
-          "path": "src/view/pages/About.tsx",
-          "mode": "partial",
-          "maxLines": 8
-        },
-        {
-          "path": "src/view/pages/Sources.tsx",
-          "mode": "partial",
-          "maxLines": 8
-        },
-        {
-          "path": "src/view/pages/Privacy.tsx",
-          "mode": "partial",
-          "maxLines": 8
-        },
-        {
-          "path": "src/view/NotFound.tsx",
-          "mode": "partial",
-          "maxLines": 8
-        },
-        {
-          "path": "tests/unit/seo-pages.test.ts",
+          "path": "tests/e2e/header-library.spec.ts",
           "mode": "new"
-        },
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
+    },
+    {
+      "id": "W2.26",
+      "title": "Test całej ścieżki „Miasto i wieś”",
+      "checkpoint": "K6",
+      "wave": 12,
+      "dependsOn": [
+        "W2.25"
+      ],
+      "files": [
         {
-          "path": "tests/unit/prerender-pages.test.ts",
+          "path": "tests/e2e/s20-parts.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W2.37",
+      "title": "Test całej ścieżki „Biblioteka GUS”",
+      "checkpoint": "K7",
+      "wave": 12,
+      "dependsOn": [
+        "W2.32",
+        "W2.33",
+        "W2.36"
+      ],
+      "files": [
+        {
+          "path": "tests/e2e/s21-library.spec.ts",
           "mode": "new"
         }
       ],
