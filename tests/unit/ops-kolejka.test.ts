@@ -33,7 +33,9 @@ describe('automat-kolejka.json', () => {
   });
 
   it('w jednej fali pliki zadań są rozłączne', () => {
-    const clashes = tasks.flatMap((a) => tasks.filter((b) => a.id < b.id && a.wave === b.wave && filesCollide(a, b)).map((b) => `F${a.wave}: ${a.id} × ${b.id}`));
+    // Zrobione zadania (doneBefore) nie biegną równolegle – nie liczymy ich kolizji z nowymi.
+    const open = tasks.filter((t) => !queue.doneBefore.includes(t.id));
+    const clashes = open.flatMap((a) => open.filter((b) => a.id < b.id && a.wave === b.wave && filesCollide(a, b)).map((b) => `F${a.wave}: ${a.id} × ${b.id}`));
     expect(clashes).toEqual([]);
   });
 
