@@ -11,6 +11,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const sheet = page.locator('[role="dialog"][aria-label="Województwo małopolskie"]');
+    await sheet.waitFor({ state: 'attached' });
     await expect(sheet).toBeVisible();
 
     // Poczekaj na stabilizację wysokości w zakresie 35–45%

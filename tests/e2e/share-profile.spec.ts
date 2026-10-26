@@ -87,6 +87,7 @@ test.describe('Udostępnianie z profilu (W2.20 @S19)', () => {
       await expect(profileHeading).toBeAttached();
 
       const shareBtn = page.getByRole('button', { name: 'Pobierz i udostępnij', exact: true });
+      await shareBtn.scrollIntoViewIfNeeded();
       await expect(shareBtn).toBeVisible();
       await shareBtn.click();
 
