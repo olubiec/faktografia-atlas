@@ -124,11 +124,11 @@ test.describe('Profile Compare Table W2.15 (@S18)', () => {
     page,
   }) => {
     const profileA = createMockProfile('12', 'woj', 'małopolskie', {
-      'population-density': 225.8,
+      'density': 225.8,
       'unemployment-rate': 4.5,
     });
     const profileB = createMockProfile('14', 'woj', 'mazowieckie', {
-      'population-density': 153.2,
+      'density': 153.2,
       'unemployment-rate': 4.1,
     });
 
@@ -153,10 +153,10 @@ test.describe('Profile Compare Table W2.15 (@S18)', () => {
     page,
   }) => {
     const profileA = createMockProfile('12', 'woj', 'małopolskie', {
-      'population-density': 225.8,
+      'density': 225.8,
     });
     const profileB = createMockProfile('1206', 'pow', 'krakowski', {
-      'population-density': 300.1,
+      'density': 300.1,
     });
 
     await renderCompareTableInPage(page, profileA, profileB);
@@ -170,10 +170,10 @@ test.describe('Profile Compare Table W2.15 (@S18)', () => {
     page,
   }) => {
     const profileA = createMockProfile('12', 'woj', 'małopolskie', {
-      'population-density': 225.8,
+      'density': 225.8,
     });
     const profileSameLevelB = createMockProfile('14', 'woj', 'mazowieckie', {
-      'population-density': 153.2,
+      'density': 153.2,
     });
 
     await renderCompareTableInPage(page, profileA, profileSameLevelB);
@@ -195,10 +195,10 @@ test.describe('Profile Compare Table W2.15 (@S18)', () => {
     });
 
     const profileA = createMockProfile('12', 'woj', 'małopolskie', {
-      'population-density': 225.8,
+      'density': 225.8,
     });
     const profileB = createMockProfile('14', 'woj', 'mazowieckie', {
-      'population-density': 153.2,
+      'density': 153.2,
     });
 
     await renderCompareTableInPage(page, profileA, profileB);
@@ -210,11 +210,11 @@ test.describe('Profile Compare Table W2.15 (@S18)', () => {
     page,
   }) => {
     const profileA = createMockProfile('12', 'woj', 'małopolskie', {
-      'population-density': 225.8,
+      'density': 225.8,
       'unemployment-rate': 4.5,
     });
     const profileB = createMockProfile('14', 'woj', 'mazowieckie', {
-      'population-density': 153.2,
+      'density': 153.2,
       'unemployment-rate': 4.1,
     });
 
@@ -232,10 +232,10 @@ test.describe('Profile Compare Table W2.15 (@S18)', () => {
 
   test('passes axe accessibility checks (@S18)', async ({ page }) => {
     const profileA = createMockProfile('12', 'woj', 'małopolskie', {
-      'population-density': 225.8,
+      'density': 225.8,
     });
     const profileB = createMockProfile('14', 'woj', 'mazowieckie', {
-      'population-density': 153.2,
+      'density': 153.2,
     });
 
     await renderCompareTableInPage(page, profileA, profileB);
@@ -249,10 +249,10 @@ test.describe('Profile Compare Table W2.15 (@S18)', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
 
     const _profileA = createMockProfile('12', 'woj', 'małopolskie', {
-      'population-density': 225.8,
+      'density': 225.8,
     });
     const _profileB = createMockProfile('14', 'woj', 'mazowieckie', {
-      'population-density': 153.2,
+      'density': 153.2,
     });
 
     await page.evaluate(() => {
