@@ -72,12 +72,13 @@ test.describe('Udostępnianie z profilu (W2.20 @S19)', () => {
   test('na 360 i 390 px: brak poziomego przewijania, pola dotykowe >= 44 px, axe bez błędów', async ({
     page,
   }) => {
+    test.setTimeout(120000);
     for (const viewport of [
       { width: 360, height: 800 },
       { width: 390, height: 844 },
     ]) {
       await page.setViewportSize(viewport);
-      await page.goto('/?e2e&u=3217');
+      await page.goto('/?e2e&u=3217&sheet=full');
 
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);

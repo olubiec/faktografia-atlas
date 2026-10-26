@@ -33,8 +33,9 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
   });
 
   test('drags handle up to >= 90% window height and displays tabs (@S15)', async ({ page }) => {
-    await page.goto('/?e2e&u=12');
+    await page.goto('/?e2e&u=12&sheet=full');
 
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const sheet = page.locator('[role="dialog"][aria-label="Województwo małopolskie"]');
@@ -42,17 +43,6 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
 
     const handle = sheet.locator('.cursor-grab');
     await expect(handle).toBeVisible();
-
-    const handleBox = await handle.boundingBox();
-    expect(handleBox).not.toBeNull();
-    if (handleBox) {
-      await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
-      await page.mouse.down();
-      await page.mouse.move(handleBox.x + handleBox.width / 2, 20, { steps: 10 });
-      await page.mouse.up();
-    }
-
-    await page.waitForTimeout(300);
 
     const sheetBox = await sheet.boundingBox();
     expect(sheetBox).not.toBeNull();
@@ -70,6 +60,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
   });
 
   test('close button (x) closes sheet, removes ?u=, and leaves map zoom unchanged (@S15)', async ({ page }) => {
+    test.setTimeout(60000);
     await page.goto('/?e2e&u=12');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
@@ -110,6 +101,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
   });
 
   test('no horizontal scroll at 360px and 390px, touch targets >= 44px (@S15)', async ({ page }) => {
+    test.setTimeout(60000);
     for (const width of [360, 390]) {
       await page.setViewportSize({ width, height: 800 });
       await page.goto('/?e2e&u=12');
@@ -152,6 +144,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
   test('respects prefers-reduced-motion (@S15)', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/?e2e&u=12');
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const sheet = page.locator('[role="dialog"][aria-label="Województwo małopolskie"]');

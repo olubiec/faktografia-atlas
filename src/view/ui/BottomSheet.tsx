@@ -79,7 +79,7 @@ export function BottomSheet({
             <Icon icon={Xmark} aria-hidden={true} />
           </button>
         </Sheet.Header>
-        <Sheet.Content unstyled className="px-4 pb-4 overflow-y-auto">
+        <Sheet.Content unstyled className="flex-1 min-h-0 px-4 pb-4 overflow-y-auto">
           {children}
         </Sheet.Content>
       </Sheet.Container>
