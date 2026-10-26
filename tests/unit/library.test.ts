@@ -39,4 +39,39 @@ describe('Biblioteka GUS – robot pobierania', () => {
     lib.addSubject(c, { id: 'G9', name: 'Bezrobocie' }, 'K3');
     expect(c.subjects.G9.path).toEqual(['Rynek pracy', 'Bezrobocie']);
   });
+
+  it('zapisuje n1–n5 dla zmiennej w katalogu z pominięciem pustych członów', () => {
+    const rawVars = [
+      { id: 60614, subjectId: 'P2137', n1: 'Ludność', n2: 'w wieku produkcyjnym', n3: 'wiek mobilny', n4: 'mężczyźni', n5: '', level: 6, measureUnitName: 'osoby' },
+      { id: 60615, subjectId: 'P2137', n1: 'Ludność', n2: 'w wieku produkcyjnym', n3: 'wiek mobilny', n4: 'kobiety', n5: undefined, level: 6, measureUnitName: 'osoby' },
+    ];
+
+    const catalogVars = {};
+    for (const v of rawVars) {
+      const item: Record<string, unknown> = {
+        id: v.id,
+        subjectId: v.subjectId,
+        level: v.level,
+        unit: v.measureUnitName,
+      };
+      for (const k of ['n1', 'n2', 'n3', 'n4', 'n5'] as const) {
+        if (typeof v[k] === 'string' && v[k]!.trim().length > 0) {
+          item[k] = v[k];
+        }
+      }
+      catalogVars[v.id] = item;
+    }
+
+    expect(catalogVars[60614]).toEqual({
+      id: 60614,
+      subjectId: 'P2137',
+      level: 6,
+      unit: 'osoby',
+      n1: 'Ludność',
+      n2: 'w wieku produkcyjnym',
+      n3: 'wiek mobilny',
+      n4: 'mężczyźni',
+    });
+    expect(catalogVars[60614]).not.toHaveProperty('n5');
+  });
 });

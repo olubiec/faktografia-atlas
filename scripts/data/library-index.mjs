@@ -32,7 +32,7 @@ export function buildIndex(catalog, state) {
   filtered.sort((a, b) => Number(a.id) - Number(b.id));
 
   const variables = filtered.map((v) => {
-    const parts = [v.n1, v.n2, v.n3].filter(
+    const parts = [v.n1, v.n2, v.n3, v.n4, v.n5].filter(
       (part) => typeof part === 'string' && part.trim().length > 0,
     );
     const name = parts.join(' – ');
