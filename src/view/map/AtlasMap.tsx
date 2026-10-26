@@ -12,6 +12,7 @@ import { installAtlasSeam, type AtlasState } from '@/core/map/test-seam';
 import { buildIndex } from '@/core/units/units';
 import { loadUnits, loadAdminTopo } from '@/core/data/load-atlas-data';
 import { countryBounds } from '@/core/map/view';
+import { shouldShowLocalitiesLayer } from '@/core/map/localities-layer';
 import { readUrlState } from '@/core/url/state';
 import { createMapLayers, registerLayerFactory, parseCssColor } from './layers';
 import { localitiesLayerFactory } from './layers/localities';
@@ -207,7 +208,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     };
   }, [drillState, choroplethData, unitIndex]);
 
-  const localitiesZoomThreshold = currentViewState.zoom >= 8.5;
+  const localitiesZoomThreshold = shouldShowLocalitiesLayer(currentViewState.zoom);
   const viewStateForLayers = useMemo(
     () => ({ ...currentViewState, zoom: localitiesZoomThreshold ? 11 : 5 }),
     [currentViewState, localitiesZoomThreshold]
