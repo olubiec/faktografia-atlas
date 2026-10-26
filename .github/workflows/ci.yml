@@ -1,4 +1,3 @@
-# Runner przypięty do ubuntu-24.04: od 19.10.2026 etykieta ubuntu-latest przechodzi na Ubuntu 26 (komunikat GitHub Actions); od 26.10 testy e2e na ubuntu-latest zaczęły padać i przekraczać czas bez zmian w kodzie. Zrzuty (update-snapshots) muszą powstawać na tym samym systemie co CI.
 name: CI
 
 # Wzór: WORKFLOW UNIWERSALNY v5.3, §10.5 (dopasowany do Faktografii: e2e to `pnpm test:e2e`,
@@ -14,7 +13,7 @@ permissions:
 
 jobs:
   testy:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     container:
       image: mcr.microsoft.com/playwright:v1.64.1-jammy
@@ -50,7 +49,7 @@ jobs:
           retention-days: 7
 
   bezpieczenstwo:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7

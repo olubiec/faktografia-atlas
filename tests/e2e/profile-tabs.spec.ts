@@ -57,7 +57,8 @@ test.describe('Profile Tabs W2.2 (@S14)', () => {
 
     // 2. Gmina (np. Kraków - TERYT 1261011) - brak zakładki z listą
     await page.goto('/?e2e&u=1261011');
-    await page.waitForSelector('[data-slot="side"]');
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
+    await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     await expect(page.getByRole('tab', { name: 'Przegląd' })).toBeVisible();
     await expect(page.getByRole('tab', { name: /Powiaty|Gminy/ })).toHaveCount(0);
