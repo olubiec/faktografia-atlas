@@ -67,6 +67,18 @@ jobs:
           LIBRARY_MINUTES: '140'
         run: node scripts/data/library.mjs 2>&1 | tee "$RUNNER_TEMP/library.txt"
 
+      - name: Zbuduj spis biblioteki (index.json)
+        if: always()
+        env:
+          LIBRARY_DIR: lib-wt/library
+        run: |
+          if [ -f lib-wt/library/catalog.json ]; then
+            node scripts/data/library-index.mjs
+            ls -l lib-wt/library/index.json
+          else
+            echo "Brak katalogu – spis pominięty."
+          fi
+
       - name: Podsumowanie
         if: always()
         run: |
