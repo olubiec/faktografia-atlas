@@ -86,6 +86,48 @@ function parseCubicBezier(easingStr: string): (t: number) => number {
   };
 }
 
+export type CameraSeamState = {
+  animating: boolean;
+  trace: ViewState[];
+};
+
+let currentCameraSeamState: CameraSeamState = {
+  animating: false,
+  trace: [],
+};
+
+function isTestMode(): boolean {
+  if (typeof window === 'undefined') return false;
+  return new URLSearchParams(window.location.search).has('e2e');
+}
+
+export function getCameraState(): CameraSeamState {
+  if (!isTestMode()) {
+    return { animating: false, trace: [] };
+  }
+  return currentCameraSeamState;
+}
+
+function syncCameraSeam(
+  animating: boolean,
+  action?: { type: 'reset'; view: ViewState } | { type: 'push'; view: ViewState }
+) {
+  if (!isTestMode()) {
+    currentCameraSeamState = { animating: false, trace: [] };
+    return;
+  }
+  let trace = currentCameraSeamState.trace;
+  if (action?.type === 'reset') {
+    trace = [{ ...action.view }];
+  } else if (action?.type === 'push') {
+    trace = [...currentCameraSeamState.trace, { ...action.view }];
+  }
+  currentCameraSeamState = {
+    animating,
+    trace,
+  };
+}
+
 export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POLAND_BBOX) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sheetInset = useSheetInset();
@@ -128,6 +170,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     }
     isAnimatingRef.current = false;
     userMovedRef.current = true;
+    syncCameraSeam(false);
   }, []);
 
   const animateToView = useCallback(
@@ -148,11 +191,14 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         userMovedRef.current = false;
         isAnimatingRef.current = false;
         setCurrentViewState(targetView);
+        syncCameraSeam(false, { type: 'push', view: targetView });
         return;
       }
 
       userMovedRef.current = false;
       isAnimatingRef.current = true;
+      syncCameraSeam(true, { type: 'reset', view: fromView });
+
       let startTime: number | null = null;
       let frameCount = 0;
       const easeFn = parseCubicBezier(easing);
@@ -161,6 +207,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         if (userMovedRef.current) {
           animRef.current = null;
           isAnimatingRef.current = false;
+          syncCameraSeam(false);
           return;
         }
 
@@ -184,12 +231,14 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         };
 
         setCurrentViewState(nextView);
+        syncCameraSeam(!finished, { type: 'push', view: nextView });
 
         if (!finished) {
           animRef.current = requestAnimationFrame(animate);
         } else {
           animRef.current = null;
           isAnimatingRef.current = false;
+          syncCameraSeam(false);
         }
       };
 
@@ -207,7 +256,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         const newView = viewStateWithInset(activeBbox, width, height, sheetInset);
 
         const bboxKey = JSON.stringify(targetBbox ?? null);
-        const key = JSON.stringify({ bbox: targetBbox ?? null, inset: sheetInset });
+        const key = JSON.stringify({ bbox: targetBbox ?? null, inset: Math.round(sheetInset) });
 
         let kind: CameraKind = explicitKind ?? 'in';
         if (!explicitKind) {
@@ -240,7 +289,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
       if (clientWidth > 0 && clientHeight > 0) {
         setDimensions({ width: clientWidth, height: clientHeight });
         const bboxKey = JSON.stringify(drillBbox ?? null);
-        const key = JSON.stringify({ bbox: drillBbox ?? null, inset: sheetInset });
+        const key = JSON.stringify({ bbox: drillBbox ?? null, inset: Math.round(sheetInset) });
 
         if (localityTargetRef.current) {
           if (animRef.current !== null) {
@@ -248,6 +297,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
             animRef.current = null;
           }
           isAnimatingRef.current = false;
+          syncCameraSeam(false);
           setCurrentViewState(localityTargetRef.current);
           localityTargetRef.current = null;
           fittedBboxRef.current = bboxKey;
@@ -262,10 +312,11 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           }
           isAnimatingRef.current = false;
           userMovedRef.current = false;
+          syncCameraSeam(false);
           setCurrentViewState(init);
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
-        } else if (fittedBboxRef.current !== bboxKey) {
+        } else if (fittedKeyRef.current !== key) {
           const activeBbox = drillBbox ?? bounds;
           const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
           let kind: CameraKind = 'in';
@@ -275,8 +326,6 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
           animateToView(targetView, kind);
-        } else {
-          fittedKeyRef.current = key;
         }
       }
     };
