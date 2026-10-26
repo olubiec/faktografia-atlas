@@ -85,7 +85,13 @@
     "W1.6",
     "W1.7",
     "W1.8",
-    "W2.10"
+    "W2.10",
+    "W1.15",
+    "W1.16",
+    "W1.21",
+    "W1.22",
+    "W1.23",
+    "W1.24"
   ],
   "checkpoints": [
     {
@@ -1368,6 +1374,93 @@
       "snapshots": false
     },
     {
+      "id": "W1.25",
+      "title": "Robot biblioteki: pełne nazwy zmiennych (n1–n5)",
+      "checkpoint": "K7",
+      "wave": 8,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "scripts/data/library.mjs",
+          "mode": "change"
+        },
+        {
+          "path": "scripts/data/library-index.mjs",
+          "mode": "change"
+        },
+        {
+          "path": "tests/fixtures/library/variable-60614.json",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [
+        "tests/unit/library.test.ts",
+        "tests/unit/library-index.test.ts"
+      ],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W1.26",
+      "title": "Wyszukiwanie w bibliotece: wydajność na 64 tys. zmiennych",
+      "checkpoint": "K7",
+      "wave": 8,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/core/library/query.ts",
+          "mode": "change"
+        },
+        {
+          "path": "src/core/library/index-contract.ts",
+          "mode": "change"
+        },
+        {
+          "path": "tests/unit/library-query-perf.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W1.27",
+      "title": "„Zamów wskaźnik”: adres przez formularz zgłoszeń",
+      "checkpoint": "K7",
+      "wave": 8,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/core/library/order.ts",
+          "mode": "change"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [
+        "tests/unit/library-order.test.ts"
+      ],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
       "id": "W1.17",
       "title": "Nocny robot zapisuje części miasto i wieś",
       "checkpoint": "K6",
@@ -1570,7 +1663,7 @@
       "checkpoint": "K7",
       "wave": 9,
       "dependsOn": [
-        "W1.24"
+        "W1.27"
       ],
       "files": [
         {
