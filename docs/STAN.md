@@ -1,4 +1,4 @@
-# Stan – 26.10.2026 (wieczór)
+# Stan – 26.10.2026 (noc)
 
 ## Co działa (po ludzku; „sprawdzone przez właściciela: tak/nie”)
 Na podstawie kodu na main (commit 41cdedb, po F8b; `pnpm test`: 93 pliki, 620 testów zielone 26.10). **Właściciel obejrzał K1–K5 na podglądzie 25.10.2026 i zaakceptował; ma uwagi do poprawek (lista przyjdzie osobno, zostaną rozbite na małe zadania).**
@@ -16,12 +16,12 @@ Na podstawie kodu na main (commit 41cdedb, po F8b; `pnpm test`: 93 pliki, 620 te
 Od 25.10.2026 **Ty scalasz, Claude puszcza kolejne** (`docs/AUTOMAT.md` §0, skrypt `scripts/ops/start-tasks.mjs`); automat stoi pod etykietą `automat-stop` na #221. F1–F7 zrobione (33/33, K1–K5 zaakceptowane). Teraz: **S20** miasto i wieś gmin miejsko-wiejskich (PRODUKT §4c) i **S21** biblioteka GUS (PRODUKT §4d) – 24 małe zadania (10 W1 + 14 W2) w falach F8–F12, najwyżej 7 w fali (limit Julesa: 15 naraz).
 - **F8** (6): W1.15 · W1.16 · W1.21 · W1.22 · W1.23 · W1.24 · **F9** (7): W1.17 · W1.18 · W1.19 · W1.20 · W2.27 · W2.34 · W2.35 · **F10** (6): W2.24 · W2.28 · W2.29 · W2.30 · W2.31 · W2.33 · **F11** (3): W2.25 · W2.32 · W2.36 · **F12** (2): W2.26 · W2.37.
 - **Punkty kontrolne:** K6 = S20 (po F12) · K7 = S21 (po F12). Do pierwszego obejrzenia z liczbami: po pierwszym nocnym pobraniu z W1.17 (dla K6).
-- **F8b zamknięta 26.10.2026** (3/3: W1.25 #358 · W1.26 #357 · W1.27 #356); kontrakt spisu (#350) i formularz (#351) scalone. **Teraz:** napraw czerwone CI na `main` (niżej), potem F9. Przed W2.35: test linku na drugim koncie.
+- **F8b zamknięta 26.10.2026** (3/3: W1.25 #358 · W1.26 #357 · W1.27 #356); kontrakt spisu (#350) i formularz (#351) scalone. **CI na `main` znów zielone (po #362 i #363).** **Teraz:** F9. Przed W2.35: test linku na drugim koncie.
 - **Poza kolejką:** W1.9 (teksty objaśnień – Twoja akceptacja), W3.5 i „Później”; kroki Claude w workflow (`.github/`) – ARCHITEKTURA §4 „Poza falami”.
 
 ### Postęp (pisze automat – nie edytuj ręcznie)
 <!-- automat:start -->
-Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza Claude skryptem `scripts/ops/start-tasks.mjs`. F1–F7: zrobione (33/33). **F8 zamknięta 26.10.2026 (6/6)**, **F8b zamknięta 26.10.2026 (3/3: pełne nazwy zmiennych, wydajność wyszukiwania, adres „Zamów”)**. F9–F12: 0/18. **Następna fala: F9**, ale dopiero po zielonym CI na `main` (jest czerwone, patrz „Znane problemy”) i po kroku indeksu w workflow „Fetch library”.
+Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza Claude skryptem `scripts/ops/start-tasks.mjs`. F1–F7: zrobione (33/33). **F8 zamknięta 26.10.2026 (6/6)**, **F8b zamknięta 26.10.2026 (3/3: pełne nazwy zmiennych, wydajność wyszukiwania, adres „Zamów”)**. F9–F12: 0/18. **Następna fala: F9** – CI na `main` zielone, krok indeksu w „Fetch library” dodany (czekamy na pierwszy `index.json` na gałęzi `data/library`).
 <!-- automat:end -->
 
 ## Plan (1 linia na sesję; zadania i fale w docs/ARCHITEKTURA.md §3–§4)
@@ -31,7 +31,7 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 - Po K7: przegląd „Później” (SEO, mapa dla wskaźnika z biblioteki, R2, tryb ciemny mapy…) i nowa fala poprawek z Twojej listy.
 
 ## Przypomnienia (pełna tabela: ARCHITEKTURA §4 „Poza falami”)
-- **Ty → research, runda 2:** `docs/research/haiku-zlecenia-runda2.md` – **żaden wynik jeszcze nie wrócił do repo** (R9.5 przed W1.9; R2.4, R5.4 po K7; R11.4 po koncie Cloudflare). **PR #348 (R12) nadal otwarty:** scal albo zamknij (R12 w planie: bez zmian w kodzie).
+- **Ty → research, runda 2:** `docs/research/haiku-zlecenia-runda2.md` – **żaden wynik jeszcze nie wrócił do repo** (R9.5 przed W1.9; R2.4, R5.4 po K7; R11.4 po koncie Cloudflare). PR #348 (R12) scalony.
 - **Ty:** „Fetch library” po W1.25 uruchomiony ręcznie 26.10 ok. 16:23 UTC (w toku w chwili zapisu) – po zakończeniu sprawdź, że w `library/catalog.json` tytuły z n4/n5 są pełne; test linku „Zamów” na drugim koncie (5 min) przed W2.35.
 - **Ty, 2 min:** ruleset na `main` (GitHub → Settings → Rules: wymagane `testy` i `bezpieczenstwo`).
 - **Ty:** lista uwag z oglądu K1–K5 (zrobię z niej małe zadania w nowej fali) · teksty objaśnień do akceptacji (W1.9; przygotuję listę do przeczytania).
@@ -44,9 +44,9 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 - `main` bez ochrony (brak reguł) · przegląd 24.10 · wysoki · Ty: ruleset (przypomnienie wyżej).
 - Uwagi właściciela z oglądu K1–K5 · 25.10 · wysoki · nowa fala poprawek po otrzymaniu listy.
 - Brak prostych objaśnień wskaźników · test 20.10 · średni · W1.9 po Twojej akceptacji tekstów (R9.5 dla reszty haseł).
-- **CI na `main` czerwone od 26.10 12:10 UTC** (ostatni zielony: a1513f5, 11:55). Nie jest to wina F8b: padają też commity tylko z dokumentami (#346, #347, #351). Zawodzi mobilny test `tests/e2e/share-profile.spec.ts:72` (W2.20: 360/390 px); w tym samym przebiegu 2 niestabilne w `profile-mobile.spec.ts`. **Odtworzone lokalnie 26.10 (3 z 3 razy, także na ostatnim zielonym commicie a1513f5 – kod aplikacji się nie zmienił):** arkusz profilu na telefonie otwiera się na 40% wysokości, jego przewijany obszar sięga poza dolną krawędź ekranu, więc przycisk „Pobierz i udostępnij” leży poza oknem (y ≈ 860 przy ekranie 800) i fizyczne kliknięcie trafia w mapę; zwykła próba obejścia (przewinięcie zawartości, zamknięcie paska zgody, przeciągnięcie uchwytu) w mojej sesji nie zadziałała – w sesji przeglądarka z programowym renderowaniem bywa zbyt wolna, więc nie dałem poprawki, której nie umiem sprawdzić · wysoki · **NAPRAWA main przed F9** (zadanie dla Julesa z tym opisem; fix ma być zielony w CI, nie u mnie).
+- ✅ **CI na `main` naprawione 26.10 (#362, #363).** Przyczyna masowej czerwieni: `ubuntu-latest` przechodzi na Ubuntu 26 – runner przypięty do `ubuntu-24.04` (ci.yml, update-snapshots.yml). Pozostały mobilny test `share-profile.spec.ts:72` naprawiony parametrem `?sheet=full` (arkusz profilu od razu na 100%; test przeciągania uchwytu w `profile-mobile.spec.ts` zastąpiony tym parametrem). Do tego timeout testu e2e w CI 30→60 s i limit zadania `testy` 30→60 min (przebieg trwa ok. 29 min; kilka testów padało na 30 s niestabilnie). Zmianę układu `BottomSheet` z PR Julesa #361 odrzucono (psuła `profile-tabs`). Dług: czas CI blisko 30 min – rozważyć podział e2e na części · średni · przy okazji.
 - Spis biblioteki: zdublowane tytuły (n4/n5) i wolne szukanie · R7 · naprawione w kodzie (W1.25, W1.26, scalone); **potwierdzić na prawdziwych danych** po zakończeniu „Fetch library” (rozmiar `index.json`, czas wyszukiwania).
-- Stare gałęzie na GitHubie (`jules-*`, `feat/*`, `w1-*`, `w2-*`, `plan/po-researchu`, `v5-struktura`) · porządki · niski · usunąć po Twojej zgodzie.
+- Stare gałęzie na GitHubie (`jules-*`, `feat/*`, `w1-*`, `w2-*`, `plan/po-researchu`, `v5-struktura`) · porządki · niski · usunąć po Twojej zgodzie (ja nie mogę – proxy blokuje usuwanie gałęzi). Lista do ręcznego usunięcia: `feat/*`, `jules-*`, `w1-*`, `w2-*`, `w2.*`, `w3-1-*`, `plan/po-researchu`, `v5-struktura`, `haiku/R12.1-R12.2`, `stan-po-research`, `research-haiku`, `ci-ubuntu-24`, `napraw-share-profile-mobile`, `napraw-share-profile-min`, `stan-czyste-ci`. Zostawić: `main`, `data/library`, `data/nightly`.
 - Miasto/wieś: w częściach wiejskich 244 gmin „czytelnicy bibliotek” = 0 – nie wiadomo, czy to prawdziwe zero czy brak · W1.11 · niski · pokazujemy jak BDL; sprawdzić po pierwszym pobraniu.
 - Zakres lat bezrobocia w częściach (od 2019?) niesprawdzony · W1.11 · niski · pokaże pierwszy przebieg W1.17.
 - Raw.githubusercontent jako adres danych biblioteki: CORS i limity niesprawdzone z przeglądarki · S21 · średni · e2e używają podmienionych żądań; sprawdzić na podglądzie po F12, w razie problemu – R2.
@@ -58,6 +58,7 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 - F8: 6 zadań, 6 PR-ów scalonych (#325–#330). F8b: 3 zadania, 3 PR-y scalone (#356–#358), plus 2 PR-y Claude (#350 kontrakt, #351 formularz). Liczby prób Julesa i Twoje minuty nie były zbierane.
 
 ## Decyzje (najnowsze na górze, 1 linia, kto)
+- 26.10.2026 · **CI na `main` zielone**: runner przypięty do ubuntu-24.04 (#362), naprawa share-profile + timeouty (#363); #348 scalony; PR Julesa #361 zamknięty bez scalenia (Claude, na polecenie „doprowadź do czystego”)
 - 26.10.2026 · **F8b zamknięta, plan po researchu w repo** (Claude, ze stanu `main`): scalone #349 (plan), #350 (kontrakt spisu), #351 (formularz zgłoszeń), #352 (kolejka F8b), #356–#358 (W1.27, W1.26, W1.25); `pnpm test` zielony (93 pliki, 620 testów); **CI na `main` czerwone od 12:10 z powodu mobilnego testu share-profile, niezwiązanego z F8b – naprawa przed F9**; „Fetch library” ponownie uruchomiony; runda 2 researchu i PR #348 (R12) niezałatwione
 - 26.10.2026 · **D1–D8 rozstrzygnięte** (Claude, z Twojego polecenia „podejmij wszystkie decyzje”): D1 zostajemy na pnpm 10.30.3, W0.2 tylko `trustPolicy`, zmiana na 11/12 dopiero po F12; D2 lista płaska „Dział – wymiary”; D3 PR kontraktu otwarty (#350); D4 naprawa robota n4/n5 = W1.25 + ponowny „Fetch library”; D5 kreski + osobna pozycja „brak danych” w legendzie (W3.8); D6 konto i domena R2 dopiero gdy `data/library` > ~1 GB; D7 zgoda na zmianę `library-order.test.ts` (tylko W1.27); D8 W1.26 przed F10. Prompty F8b: `docs/prompty/F8b.md`; formularz zgłoszeń: PR #351
 - 26.10.2026 · **Po weryfikacji R2, R5, R7–R12** (`docs/research/haiku/`; Claude): R8 – link „Zamów” przez `template=` + pola `id`, bez `labels=` (obcy dostają 404), potrzebny formularz `.yml` i etykieta (W1.27); R7 – lista płaska „dział: wymiary”, ale robot gubi `n4`/`n5` (25% zmiennych ma zdublowane tytuły) → W1.25 i ponowny przegląd katalogu; spis ma 63 960 zmiennych (nie 51 tys.), 593 KB gzip; wyszukiwanie za wolne na tylu zmiennych → W1.26
