@@ -18,6 +18,7 @@ export type LibraryCategory = {
 export type LibraryVariable = {
   id: string | number;
   name: string;
+  normName?: string;
   cat?: string | null;
   categoryId?: string | null;
   subjectId?: string | null;
@@ -45,31 +46,90 @@ export function emptyQuery(): LibraryQuery {
   };
 }
 
-/** Pomocnicza mapa kategorii z indeksu. */
-function getCategoriesMap(index: LibraryIndex): Map<string, LibraryCategory> {
-  const map = new Map<string, LibraryCategory>();
-  const rawCats = index.categories ?? index.subjects;
-  if (!rawCats) return map;
-  if (Array.isArray(rawCats)) {
-    for (const item of rawCats) {
-      if (item && item.id !== undefined) map.set(String(item.id), item);
-    }
-  } else {
-    for (const [id, item] of Object.entries(rawCats)) {
-      if (item) map.set(String(item.id ?? id), item);
-    }
-  }
-  return map;
-}
+type PreparedIndex = {
+  catsMap: Map<string, LibraryCategory>;
+  vars: LibraryVariable[];
+  ancestorsMap: Map<string, string[]>;
+  subcategoriesMap: Map<string, Set<string>>;
+};
 
-/** Pomocnicza lista zmiennych z indeksu. */
-function getVariablesList(index: LibraryIndex): LibraryVariable[] {
-  const rawVars = index.variables;
-  if (!rawVars) return [];
-  if (Array.isArray(rawVars)) {
-    return rawVars;
+const indexCache = new WeakMap<LibraryIndex, PreparedIndex>();
+
+function getPreparedIndex(index: LibraryIndex): PreparedIndex {
+  let cached = indexCache.get(index);
+  if (cached) return cached;
+
+  const catsMap = new Map<string, LibraryCategory>();
+  const rawCats = index.categories ?? index.subjects;
+  if (rawCats) {
+    if (Array.isArray(rawCats)) {
+      for (let i = 0; i < rawCats.length; i++) {
+        const item = rawCats[i];
+        if (item && item.id !== undefined) catsMap.set(String(item.id), item);
+      }
+    } else {
+      for (const [id, item] of Object.entries(rawCats)) {
+        if (item) catsMap.set(String(item.id ?? id), item);
+      }
+    }
   }
-  return Object.values(rawVars);
+
+  const rawVars = index.variables;
+  let vars: LibraryVariable[] = [];
+  if (rawVars) {
+    if (Array.isArray(rawVars)) {
+      vars = rawVars;
+    } else {
+      vars = Object.values(rawVars);
+    }
+  }
+
+  for (let i = 0; i < vars.length; i++) {
+    const v = vars[i];
+    if (v.normName === undefined) {
+      v.normName = normalize(v.name);
+    }
+  }
+
+  const ancestorsMap = new Map<string, string[]>();
+  const subcategoriesMap = new Map<string, Set<string>>();
+
+  for (const catId of catsMap.keys()) {
+    const ancestors: string[] = [];
+    let currentId: string | null = catId;
+    const visited = new Set<string>();
+
+    while (currentId !== null && catsMap.has(currentId) && !visited.has(currentId)) {
+      visited.add(currentId);
+      ancestors.push(currentId);
+      const catObj: LibraryCategory = catsMap.get(currentId)!;
+      currentId = catObj.parent !== undefined && catObj.parent !== null && catObj.parent !== '' ? String(catObj.parent) : null;
+    }
+
+    ancestorsMap.set(catId, ancestors);
+  }
+
+  for (const [catId, ancestors] of ancestorsMap.entries()) {
+    for (let i = 0; i < ancestors.length; i++) {
+      const ancId = ancestors[i];
+      let subSet = subcategoriesMap.get(ancId);
+      if (!subSet) {
+        subSet = new Set<string>();
+        subcategoriesMap.set(ancId, subSet);
+      }
+      subSet.add(catId);
+    }
+  }
+
+  cached = {
+    catsMap,
+    vars,
+    ancestorsMap,
+    subcategoriesMap,
+  };
+
+  indexCache.set(index, cached);
+  return cached;
 }
 
 /** Pobiera identyfikator kategorii zmiennej. */
@@ -80,11 +140,11 @@ function getVarCategory(v: LibraryVariable): string | null {
 
 /** Zwraca bezpośrednie podkategorie wybranej kategorii nadrzędnej (lub krainowe gdy parent === null). */
 export function childCategories(index: LibraryIndex, parent: string | null): LibraryCategory[] {
-  const catsMap = getCategoriesMap(index);
+  const prepared = getPreparedIndex(index);
   const result: LibraryCategory[] = [];
   const targetParent = parent !== null ? String(parent) : null;
 
-  for (const categoryObj of catsMap.values()) {
+  for (const categoryObj of prepared.catsMap.values()) {
     const catParent = categoryObj.parent !== undefined && categoryObj.parent !== null && categoryObj.parent !== '' ? String(categoryObj.parent) : null;
     if (catParent === targetParent) {
       result.push(categoryObj);
@@ -96,51 +156,19 @@ export function childCategories(index: LibraryIndex, parent: string | null): Lib
 
 /** Zwraca ścieżkę kategorii od korzenia do wskazanej kategorii. */
 export function categoryPath(index: LibraryIndex, id: string): LibraryCategory[] {
-  const catsMap = getCategoriesMap(index);
+  const prepared = getPreparedIndex(index);
   const path: LibraryCategory[] = [];
   let currentId: string | null = String(id);
   const visited = new Set<string>();
 
-  while (currentId !== null && catsMap.has(currentId) && !visited.has(currentId)) {
+  while (currentId !== null && prepared.catsMap.has(currentId) && !visited.has(currentId)) {
     visited.add(currentId);
-    const categoryObj: LibraryCategory = catsMap.get(currentId)!;
+    const categoryObj: LibraryCategory = prepared.catsMap.get(currentId)!;
     path.unshift(categoryObj);
     currentId = categoryObj.parent !== undefined && categoryObj.parent !== null && categoryObj.parent !== '' ? String(categoryObj.parent) : null;
   }
 
   return path;
-}
-
-/** Zwraca zbiornik identyfikatorów kategorii i wszystkich jej podkategorii. */
-function getAllSubcategoryIds(catsMap: Map<string, LibraryCategory>, rootId: string): Set<string> {
-  const subIds = new Set<string>();
-  const childrenMap = new Map<string, string[]>();
-
-  for (const categoryObj of catsMap.values()) {
-    const p = categoryObj.parent !== undefined && categoryObj.parent !== null && categoryObj.parent !== '' ? String(categoryObj.parent) : null;
-    if (p !== null) {
-      if (!childrenMap.has(p)) childrenMap.set(p, []);
-      childrenMap.get(p)!.push(String(categoryObj.id));
-    }
-  }
-
-  const queue = [String(rootId)];
-  subIds.add(String(rootId));
-
-  while (queue.length > 0) {
-    const current = queue.pop()!;
-    const children = childrenMap.get(current);
-    if (children) {
-      for (const childId of children) {
-        if (!subIds.has(childId)) {
-          subIds.add(childId);
-          queue.push(childId);
-        }
-      }
-    }
-  }
-
-  return subIds;
 }
 
 /** Sprawdza, czy zmienna odpowiada wymaganemu poziomowi. */
@@ -163,22 +191,24 @@ function matchesLevel(v: LibraryVariable, requiredLevel: 5 | 6): boolean {
   }
 }
 
-/** Filtruje zmienne wg podanych kryteriów. */
-export function filterVars(index: LibraryIndex, query: LibraryQuery): LibraryVariable[] {
-  const vars = getVariablesList(index);
-  const catsMap = getCategoriesMap(index);
+function filterVarsInternal(index: LibraryIndex, query: LibraryQuery, sortResults: boolean = true): LibraryVariable[] {
+  const prepared = getPreparedIndex(index);
+  const vars = prepared.vars;
 
   let allowedCatIds: Set<string> | null = null;
   if (query.cat !== null && query.cat !== '') {
-    allowedCatIds = getAllSubcategoryIds(catsMap, query.cat);
+    allowedCatIds = prepared.subcategoriesMap.get(String(query.cat)) ?? new Set<string>([String(query.cat)]);
   }
 
   const normQuery = normalize(query.text);
   const queryWords = normQuery.length > 0 ? normQuery.split(' ').filter(Boolean) : [];
+  const numWords = queryWords.length;
 
   const matched: LibraryVariable[] = [];
 
-  for (const v of vars) {
+  for (let i = 0; i < vars.length; i++) {
+    const v = vars[i];
+
     // 1. Kategoria
     if (allowedCatIds !== null) {
       const varCat = getVarCategory(v);
@@ -188,11 +218,11 @@ export function filterVars(index: LibraryIndex, query: LibraryQuery): LibraryVar
     }
 
     // 2. Wyszukiwanie tekstowe
-    if (queryWords.length > 0) {
-      const normName = normalize(v.name);
+    if (numWords > 0) {
+      const normName = v.normName ?? normalize(v.name);
       let matchesText = true;
-      for (const word of queryWords) {
-        if (!normName.includes(word)) {
+      for (let w = 0; w < numWords; w++) {
+        if (!normName.includes(queryWords[w])) {
           matchesText = false;
           break;
         }
@@ -219,45 +249,58 @@ export function filterVars(index: LibraryIndex, query: LibraryQuery): LibraryVar
     matched.push(v);
   }
 
+  if (!sortResults) {
+    return matched;
+  }
+
+  const collator = new Intl.Collator('pl', { sensitivity: 'base' });
+
   // Sortowanie: początek nazwy wg tekstu, potem alfabetycznie po nazwie
-  matched.sort((a, b) => {
-    if (normQuery.length > 0) {
-      const aPrefix = normalize(a.name).startsWith(normQuery);
-      const bPrefix = normalize(b.name).startsWith(normQuery);
+  if (normQuery.length > 0) {
+    matched.sort((a, b) => {
+      const aNorm = a.normName ?? normalize(a.name);
+      const bNorm = b.normName ?? normalize(b.name);
+      const aPrefix = aNorm.startsWith(normQuery);
+      const bPrefix = bNorm.startsWith(normQuery);
       if (aPrefix && !bPrefix) return -1;
       if (!aPrefix && bPrefix) return 1;
-    }
-    return a.name.localeCompare(b.name, 'pl', { sensitivity: 'base' });
-  });
+      return collator.compare(a.name, b.name);
+    });
+  } else {
+    matched.sort((a, b) => collator.compare(a.name, b.name));
+  }
 
   return matched;
 }
 
+/** Filtruje zmienne wg podanych kryteriów. */
+export function filterVars(index: LibraryIndex, query: LibraryQuery): LibraryVariable[] {
+  return filterVarsInternal(index, query, true);
+}
+
 /** Zlicza liczbę wyników pasujących do zapytania (z pominięciem filtra kategorii) w każdej kategorii i jej podkategoriach. */
 export function countByCategory(index: LibraryIndex, query: LibraryQuery): Record<string, number> {
-  const catsMap = getCategoriesMap(index);
+  const prepared = getPreparedIndex(index);
   const counts: Record<string, number> = {};
 
-  for (const catId of catsMap.keys()) {
+  for (const catId of prepared.catsMap.keys()) {
     counts[catId] = 0;
   }
 
-  // Zapytanie bez filtra kategorii
+  // Zapytanie bez filtra kategorii, bez konieczności sortowania
   const queryWithoutCat: LibraryQuery = { ...query, cat: null };
-  const matchingVars = filterVars(index, queryWithoutCat);
+  const matchingVars = filterVarsInternal(index, queryWithoutCat, false);
 
-  for (const v of matchingVars) {
+  for (let i = 0; i < matchingVars.length; i++) {
+    const v = matchingVars[i];
     const varCat = getVarCategory(v);
-    if (varCat !== null && catsMap.has(varCat)) {
-      // Zwiększ licznik dla kategorii oraz jej wszystkich przodków
-      let currentCatId: string | null = varCat;
-      const visited = new Set<string>();
-
-      while (currentCatId !== null && catsMap.has(currentCatId) && !visited.has(currentCatId)) {
-        visited.add(currentCatId);
-        counts[currentCatId] = (counts[currentCatId] ?? 0) + 1;
-        const categoryObj: LibraryCategory = catsMap.get(currentCatId)!;
-        currentCatId = categoryObj.parent !== undefined && categoryObj.parent !== null && categoryObj.parent !== '' ? String(categoryObj.parent) : null;
+    if (varCat !== null) {
+      const ancestors = prepared.ancestorsMap.get(varCat);
+      if (ancestors) {
+        for (let j = 0; j < ancestors.length; j++) {
+          const catId = ancestors[j];
+          counts[catId] = (counts[catId] ?? 0) + 1;
+        }
       }
     }
   }
