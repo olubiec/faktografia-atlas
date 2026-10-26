@@ -20,26 +20,17 @@ export function orderIssueUrl(params: OrderIndicatorParams): string {
   const buildUrl = (currName: string): string => {
     const titleText = `Zamówienie wskaźnika: ${currName} (${idStr})`;
 
-    const bodyLines: string[] = [
-      `Proszę o dodanie wskaźnika do Faktografia Atlas. Zgłoszenie nie zawiera danych osobowych.`,
-      '',
-      `ID wskaźnika: ${idStr}`,
-      `Nazwa: ${currName}`,
-    ];
-
+    const searchParams = new URLSearchParams();
+    searchParams.set('template', 'zamowienie-wskaznika.yml');
+    searchParams.set('title', titleText);
+    searchParams.set('id', idStr);
+    searchParams.set('nazwa', currName);
     if (formattedCategoryPath) {
-      bodyLines.push(`Ścieżka kategorii: ${formattedCategoryPath}`);
+      searchParams.set('dzial', formattedCategoryPath);
     }
     if (formattedLevel) {
-      bodyLines.push(`Poziom: ${formattedLevel}`);
+      searchParams.set('poziom', formattedLevel);
     }
-
-    const bodyText = bodyLines.join('\n');
-
-    const searchParams = new URLSearchParams();
-    searchParams.set('title', titleText);
-    searchParams.set('labels', 'zamowienie-wskaznika');
-    searchParams.set('body', bodyText);
 
     return `https://github.com/olubiec/faktografia-atlas/issues/new?${searchParams.toString()}`;
   };

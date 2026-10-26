@@ -2,17 +2,31 @@ import { describe, expect, it } from 'vitest';
 import { orderIssueUrl } from '../../src/core/library/order';
 
 describe('orderIssueUrl - generator linku zamówienia wskaźnika', () => {
-  it('zwraca adres zaczynający się od https://github.com/olubiec/faktografia-atlas/issues/new?', () => {
+  it('zwraca adres zaczynający się od https://github.com/olubiec/faktografia-atlas/issues/new?template=zamowienie-wskaznika.yml&', () => {
     const url = orderIssueUrl({
       id: 'gmi-unemployment',
       name: 'Stopa bezrobocia',
       categoryPath: ['Praca', 'Bezrobocie'],
       level: 'gmi',
     });
-    expect(url.startsWith('https://github.com/olubiec/faktografia-atlas/issues/new?')).toBe(true);
+    expect(
+      url.startsWith(
+        'https://github.com/olubiec/faktografia-atlas/issues/new?template=zamowienie-wskaznika.yml&'
+      )
+    ).toBe(true);
   });
 
-  it('poprawnie koduje tytuł, etykietę i treść zgłoszenia z polskimi znakami', () => {
+  it('brak parametru labels= w wygenerowanym adresie', () => {
+    const url = orderIssueUrl({
+      id: 'gmi-unemployment',
+      name: 'Stopa bezrobocia',
+      categoryPath: ['Praca', 'Bezrobocie'],
+      level: 'gmi',
+    });
+    expect(url.includes('labels=')).toBe(false);
+  });
+
+  it('poprawnie koduje tytuł i pola formularza zgłoszenia z polskimi znakami', () => {
     const params = {
       id: 12345,
       name: 'Przeciętne wynagrodzenie brutto w złotych (żółć)',
@@ -23,17 +37,17 @@ describe('orderIssueUrl - generator linku zamówienia wskaźnika', () => {
     const urlString = orderIssueUrl(params);
     const parsedUrl = new URL(urlString);
 
+    expect(parsedUrl.searchParams.get('template')).toBe('zamowienie-wskaznika.yml');
     expect(parsedUrl.searchParams.get('title')).toBe(
       'Zamówienie wskaźnika: Przeciętne wynagrodzenie brutto w złotych (żółć) (12345)'
     );
-    expect(parsedUrl.searchParams.get('labels')).toBe('zamowienie-wskaznika');
-
-    const body = parsedUrl.searchParams.get('body') || '';
-    expect(body).toContain('ID wskaźnika: 12345');
-    expect(body).toContain('Nazwa: Przeciętne wynagrodzenie brutto w złotych (żółć)');
-    expect(body).toContain('Ścieżka kategorii: Pieniądze > Wynagrodzenia');
-    expect(body).toContain('Poziom: pow');
-    expect(body).toContain('Proszę o dodanie wskaźnika do Faktografia Atlas. Zgłoszenie nie zawiera danych osobowych.');
+    expect(parsedUrl.searchParams.get('id')).toBe('12345');
+    expect(parsedUrl.searchParams.get('nazwa')).toBe(
+      'Przeciętne wynagrodzenie brutto w złotych (żółć)'
+    );
+    expect(parsedUrl.searchParams.get('dzial')).toBe('Pieniądze > Wynagrodzenia');
+    expect(parsedUrl.searchParams.get('poziom')).toBe('pow');
+    expect(parsedUrl.searchParams.get('labels')).toBeNull();
   });
 
   it('mieści 400-znakową nazwę w limicie 1800 znaków', () => {
@@ -47,7 +61,8 @@ describe('orderIssueUrl - generator linku zamówienia wskaźnika', () => {
 
     expect(url.length).toBeLessThanOrEqual(1800);
     const parsedUrl = new URL(url);
-    expect(parsedUrl.searchParams.get('body')).toContain('long-indicator-id');
+    expect(parsedUrl.searchParams.get('id')).toBe('long-indicator-id');
+    expect(parsedUrl.searchParams.get('nazwa')).toBe(longName);
   });
 
   it('skraca ultra długą nazwę (np. 2000 znaków) tak, aby adres nie przekraczał 1800 znaków', () => {
@@ -66,14 +81,13 @@ describe('orderIssueUrl - generator linku zamówienia wskaźnika', () => {
     expect(title).toContain('ultra-long-id');
   });
 
-  it('zawiera id wskaźnika w treści zgłoszenia', () => {
+  it('zawiera id wskaźnika w polu id formularza zgłoszenia', () => {
     const url = orderIssueUrl({
       id: 'custom-indicator-99',
       name: 'Liczba łóżek szpitalnych',
     });
 
     const parsedUrl = new URL(url);
-    const body = parsedUrl.searchParams.get('body') || '';
-    expect(body).toContain('custom-indicator-99');
+    expect(parsedUrl.searchParams.get('id')).toBe('custom-indicator-99');
   });
 });
