@@ -61,7 +61,7 @@ test.describe('Profile Compare Table W2.15 (@S18)', () => {
           container.id = 'test-compare-container';
           container.style.padding = '16px';
           container.style.maxWidth = '440px';
-          document.body.appendChild(container);
+          (document.querySelector('main') || document.body).appendChild(container);
         }
 
         let html = `<div data-slot="profile-compare" class="w-full">`;
