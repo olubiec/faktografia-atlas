@@ -74,12 +74,17 @@ export function ProfileSheetMobile({
     onClose();
   };
 
+  const isFullSheet =
+    typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).get('sheet') === 'full';
+  const initialSnap = isFullSheet ? 2 : 1;
+
   return (
     <BottomSheet
       isOpen={isOpen}
       onClose={handleClose}
       snapPoints={[0, 0.4, 1]}
-      initialSnap={1}
+      initialSnap={initialSnap}
       noBackdrop
       title={title}
       className={className}
