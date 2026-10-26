@@ -17,7 +17,7 @@ Baza: **od zera** (bez cudzej bazy – `docs/BAZA.md` nie dotyczy). Projekt jest
 
 | Warstwa | Podzespół | Co robi (po ludzku) | Gdzie w kodzie | Stan |
 |---|---|---|---|---|
-| W0 | Fundament | szkielet Vite/React, CI (`testy`, `bezpieczenstwo`), tokeny, rejestr elementów | `package.json`, `.github/workflows/ci.yml`, `config/tokens.json`, `docs/ELEMENTY.md` | gotowe; sprzątanie pakietów – W0.1 |
+| W0 | Fundament | szkielet Vite/React, CI (`testy`, `bezpieczenstwo`), tokeny, rejestr elementów | `package.json`, `.github/workflows/ci.yml`, `config/tokens.json`, `docs/ELEMENTY.md` | gotowe; sprzątanie pakietów – W0.1; zaostrzenie pnpm – W0.2 (poza falami) |
 | W1 | Dane | robot GUS, pliki wartości i profili, ładowanie z pamięcią podręczną | `scripts/data/`, `public/data/`, `src/core/data/` | gotowe; objaśnienia – W1.9, W1.10 |
 | W1 | Jednostki i adres | lista jednostek, nazwy, stan w adresie `?u= ?i= ?y= ?l=` | `src/core/units/`, `src/core/url/state.ts` | gotowe; `?c=` – W1.8 |
 | W1 | Mapa – podstawa | MapLibre + deck.gl, warstwy kolorów i obrysu, limity przybliżenia | `src/view/map/`, `src/core/map/` | gotowe |
@@ -51,7 +51,7 @@ Baza: **od zera** (bez cudzej bazy – `docs/BAZA.md` nie dotyczy). Projekt jest
 - Sprzątanie W3.1 → W2.1 (przegląd przejął jedyne zakreślenie).
 - Udostępnianie W1.14 → W1.12, W1.13. W2.18 → W1.14. W2.19 → W2.18. W2.20 → W2.18, W2.1. W2.22 → W1.13, W2.14. W2.21 → W2.18, W2.15, W2.22. W2.23 → W2.19–W2.22.
 - Miasto i wieś (S20) W1.15, W1.16 → –. W1.17 → W1.15, W1.16. W1.18 → W1.16. W1.19 → W1.16. W1.20 → W1.15, W1.16. W2.24 → W1.20. W2.25 → W2.24, W1.19. W2.26 → W2.25.
-- Biblioteka (S21) W1.21–W1.24 → – (kształt plików w §5.5, zadania niezależne). W2.27 → W1.22, W1.23. W2.34 → W1.23. W2.35 → W1.24. W2.28–W2.31 → W2.27, W1.22. W2.33 → W1.23, W2.27, W2.34, W2.35. W2.32 → W2.27–W2.31. W2.36 → W2.27. W2.37 → W2.32, W2.33, W2.36.
+- Biblioteka (S21) W1.21–W1.24 → – (poprawki po researchu: W1.25 → W1.21; W1.26 → W1.22; W1.27 → W1.24; W2.28–W2.33 → W1.25, W1.26) (kształt plików w §5.5, zadania niezależne). W2.27 → W1.22, W1.23. W2.34 → W1.23. W2.35 → W1.24, W1.27. W2.28–W2.31 → W2.27, W1.22. W2.33 → W1.23, W2.27, W2.34, W2.35. W2.32 → W2.27–W2.31. W2.36 → W2.27. W2.37 → W2.32, W2.33, W2.36.
 
 **Pliki-węzły** (w jednej fali najwyżej jedno zadanie na węzeł; tabela kolizji w każdej fali §4):
 `src/view/map/AtlasMap.tsx` · `src/view/profile/ProfileSheet.tsx` · `src/view/profile/ProfileSheetMobile.tsx` · `src/view/map/ProfilePortal.tsx` · `src/view/Home.tsx` · `src/view/main/IndicatorPanel.tsx` · `src/view/profile/ProfileIndicatorRow.tsx` · `src/view/map/hooks/useMapViewState.ts` · `src/view/map/layers/choropleth.ts` · `src/core/map/test-seam.ts` · `src/core/url/state.ts` · `config/tokens.json` · `package.json` / `pnpm-lock.yaml` · `src/view/profile/ProfileCompare.tsx` (od W2.14) · `src/view/profile/ProfileOverview.tsx` (od W2.1).
@@ -76,6 +76,14 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 - **Gotowe, gdy:** `pnpm install --frozen-lockfile` i pełny zestaw testów przechodzą; usuniętych pakietów nie ma w `package.json` ani w importach.
 - **Ty sprawdzasz:** ✅ w PR; strona bez zmian.
 - **Nie ruszaj:** kodu w `src/`, innych pakietów.
+
+#### W0.2 – Zaostrzenie pnpm: `trustPolicy` · poza falami (po decyzji D1)
+- **Po ludzku:** pnpm odmówi instalacji pakietu, którego nowa wersja ma słabsze zabezpieczenia publikacji niż poprzednia. Dodatkowa ochrona przed podmienionymi pakietami.
+- **Co sprawdzono (R10, 26.10.2026):** pnpm 10.30.3 zna `trustPolicy: no-downgrade`, a `pnpm install --frozen-lockfile` z tym kluczem przechodzi. Akcja `pnpm/action-setup@v6` jest już we wszystkich workflow – tego kroku nie robimy. README akcji: obsługuje pnpm 12 i starsze.
+- **Kroki:** (1) dopisać `trustPolicy: no-downgrade` do `pnpm-workspace.yaml` (obok `minimumReleaseAge`); (2) sprawdzić, że wszystkie workflow używają `--frozen-lockfile`; (3) w `pnpm-workspace.yaml` tylko klucze, które pnpm zna (`pnpm config get` / dokumentacja). Zmiana `packageManager` na 11.28.x albo 12.15.x to **osobna decyzja D1** i osobne zadanie.
+- **Pliki:** `pnpm-workspace.yaml` (+ ewentualnie `package.json` pole `packageManager`, `pnpm-lock.yaml`, `docs/ELEMENTY.md` dopiero po D1).
+- **Gotowe, gdy:** `pnpm install --frozen-lockfile` i pełny zestaw testów przechodzą lokalnie i w CI.
+- **Nie łącz** z falą, która zmienia `package.json` albo `pnpm-lock.yaml`. Pakiety z pominiętymi skryptami budowania (better-sqlite3, core-js, msgpackr-extract) – tylko odnotować w PR.
 
 ### W1 – Podzespoły
 
@@ -136,6 +144,8 @@ Wspólne „Gotowe, gdy” dla zadań W2/W3 (dopisz do każdego promptu): istnie
 #### W1.9 – Plik objaśnień wskaźników · poza automatem (po Twojej akceptacji tekstów)
 - **Decyzja 24.10.2026:** automat tego nie zleca. Wraca jako zadanie, gdy zaakceptujesz teksty; W2.12 działa bez niego.
 - **Warunek:** przed falą akceptujesz teksty ze szkicu `docs/data/explanations-szkic.json` (Planista daje listę do przeczytania; ciekawostki tylko po `TRYB: RESEARCH` + `TRYB: WERYFIKACJA`).
+- **Prawa do tekstów (R9, zweryfikowane 26.10.2026):** GUS pozwala kopiować treści „pod warunkiem podania źródła” (stat.gov.pl/copyright), ale nie podaje nazwanej licencji, a część haseł słownika to cytaty z prac osób trzecich (np. hasło „Gęstość zaludnienia” – Rosset 1975, „Wskaźnik lesistości” – SGGW 1996). Dlatego: **objaśnienia piszemy własnymi słowami** (`short`, `howToRead`), a `definitionUrl` prowadzi do hasła GUS (`https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/<nr>,pojecie.html`). Cytatów z haseł nie kopiujemy.
+- **Numery haseł (sprawdzone):** przyrost naturalny 3956 · gęstość zaludnienia 3915 · stopa bezrobocia rejestrowanego 2390 · saldo migracji na 1000 osób 2259 · lesistość 1706. **Pozostałe ~15 wskaźników:** zlecenie R9.5 (haiku-zlecenia.md).
 - **Pliki:** `public/data/explanations.json` (nowy), `tests/unit/explanations-data.test.ts` (nowy).
 - **Zadanie:** wgrać zaakceptowane wpisy (`short`, `howToRead`, `definitionUrl`, opcjonalnie `funFact` + `source` + `url`).
 - **Gotowe, gdy:** test schematu: każdy klucz to istniejący `id` z `config/indicators.json`; `short` ≤ 160, `howToRead` ≤ 240, `funFact` ≤ 200 znaków; `funFact` zawsze ze `source` i `url`; plik bez wcięć.
@@ -493,13 +503,37 @@ Wszystkie zadania małe (1–3 pliki kodu + test), bez nowych pakietów. Decyzje
 - **Ty sprawdzasz:** ✅.
 - **Nie ruszaj:** `src/core/data/` (tylko wzorzec), `vercel.json`.
 
-#### W1.24 – „Zamów wskaźnik”: odnośnik do zgłoszenia (S21) · fala F8
+#### W1.24 – „Zamów wskaźnik”: odnośnik do zgłoszenia (S21) · fala F8 · zrobione, do poprawki w W1.27
 - **Po ludzku:** z wskaźnika, którego jeszcze nie mamy, robimy gotowy link do zgłoszenia na GitHubie – nic nie wysyłamy sami.
-- **Przeczytaj najpierw:** `docs/PRODUKT.md` §4d.
-- **Pliki:** `src/core/library/order.ts` (nowy), `tests/unit/library-order.test.ts` (nowy).
-- **Zadanie:** `orderIssueUrl({ id, name, categoryPath, level })` → adres `https://github.com/olubiec/faktografia-atlas/issues/new` z parametrami `title` („Zamówienie wskaźnika: <nazwa> (<id>)”), `labels` (`zamowienie-wskaznika`), `body` (id, nazwa, ścieżka kategorii, poziom, jedno zdanie prośby; bez danych osobowych); poprawne kodowanie polskich znaków; długość adresu ≤ 1800 znaków (długa nazwa jest skracana z „…”).
-- **Gotowe, gdy:** testy: adres zaczyna się od `https://github.com/olubiec/faktografia-atlas/issues/new?`; po zdekodowaniu tytuł i etykieta zgadzają się; 400-znakowa nazwa mieści adres w 1800 znakach; polskie znaki zachowane; w treści jest id wskaźnika.
-- **Ty sprawdzasz:** ✅.
+- **Pliki (F8, zrobione):** `src/core/library/order.ts`, `tests/unit/library-order.test.ts`.
+- **Stan:** `order.ts` zbudowany w F8 z parametrami `title`, `labels`, `body`. R8 (zweryfikowane 26.10) pokazało, że `labels=` w adresie działa tylko dla osób z uprawnieniami (inni dostają 404), więc ta wersja jest do poprawki – zob. W1.27.
+
+#### W1.25 – Robot biblioteki: pełne nazwy zmiennych (n1–n5) i tytuły w spisie (S21) · fala F8b
+- **Po ludzku:** dziś robot zapamiętuje tylko trzy z pięciu członów nazwy zmiennej BDL, więc co czwarta zmienna (ok. 15,7 tys. z 64 tys.) wygląda w spisie identycznie jak inna (np. „mężczyźni” i „kobiety” znikają). Naprawa: zapisać wszystkie człony.
+- **Dowód (26.10.2026, prawdziwy katalog):** 172 740 zmiennych, 63 960 na poziomie powiatu lub gminy; w 2 595 grupach (15 753 zmiennych) dział i tytuł są identyczne. BDL zwraca `n1`–`n5` (np. zmienna 60614 ma `n4` = „mężczyźni”); `library.mjs` odczytuje tylko `n1`–`n3`.
+- **Przeczytaj najpierw:** `scripts/data/library.mjs`, `scripts/data/library-index.mjs`, `src/core/library/index-contract.ts` (po scaleniu naprawy kontraktu), `docs/research/haiku/R7.1-R7.4.md`.
+- **Pliki:** `scripts/data/library.mjs`, `scripts/data/library-index.mjs`, `tests/unit/library.test.ts` (dopisanie przypadków), `tests/unit/library-index.test.ts` (dopisanie przypadków), `tests/fixtures/library/` (nagrana odpowiedź z `n4`).
+- **Zadanie:** (1) robot zapisuje `n1`–`n5` (puste pomijane); (2) `buildIndex` składa tytuł z wszystkich niepustych członów (w tej samej kolejności, rozdzielone „ – ” jak dotąd), pole `n` zawiera pełny tytuł; (3) stary katalog bez `n4`/`n5` nadal się wczytuje (brak = pusty).
+- **Gotowe, gdy:** testy: zmienna z `n4` ma w spisie tytuł z czterema członami; dwie zmienne różniące się tylko `n4` mają różne tytuły; stary katalog działa; rozmiar spisu dla fixture nie rośnie więcej niż o 15%.
+- **Ty robisz po scaleniu:** jedno ręczne uruchomienie „Fetch library” (pełny ponowny przegląd katalogu – ok. 2000 zapytań, budżet 2500 na uruchomienie); dopiero wtedy spis ma pełne tytuły. **Przed W2.28–W2.33 (F10).**
+- **Nie ruszaj:** `.github/workflows/`, `src/view/`.
+
+#### W1.26 – Wyszukiwanie w bibliotece: wydajność na 64 tys. zmiennych (S21) · fala F8b
+- **Po ludzku:** wyszukiwanie ma być natychmiastowe także przy prawdziwym spisie (64 tys. zmiennych), nie tylko na przykładzie 20 tys.
+- **Dowód (26.10.2026, pomiar na prawdziwym spisie):** filtr po tekście 170–850 ms, po poziomie ~740 ms, `countByCategory` ~1,6 s (sandbox, telefon będzie wolniejszy). Warunek W1.22 sprawdzał tylko 20 tys.
+- **Pliki:** `src/core/library/query.ts`, `src/core/library/index-contract.ts` (przygotowanie pól pomocniczych w `prepare`), `tests/unit/library-query-perf.test.ts` (nowy). Istniejącego `library-query.test.ts` nie zmieniasz.
+- **Zadanie:** raz przy wczytaniu liczyć znormalizowane nazwy (małe litery, bez polskich znaków) i indeksy kategorii; filtry i `countByCategory` używają ich zamiast liczyć za każdym razem; wynik funkcji bez zmian.
+- **Gotowe, gdy:** wszystkie istniejące testy przechodzą bez zmian; test wydajności na wygenerowanych 64 000 zmiennych: filtr tekstowy, filtr poziomu i `countByCategory` każdy < 100 ms (w CI z zapasem, np. próg 150 ms); wyniki identyczne jak przed zmianą na tych samych danych.
+- **Nie ruszaj:** `src/view/`, `load-library.ts`.
+
+#### W1.27 – „Zamów wskaźnik”: adres przez formularz zgłoszeń (S21) · fala F8b (po zgodzie na zmianę istniejącego testu)
+- **Po ludzku:** przycisk otwiera gotowy formularz zgłoszenia z wypełnionymi polami; bez ryzyka 404 dla zwykłych użytkowników.
+- **Co potwierdziło R8 (26.10.2026, dokumentacja GitHuba):** pola formularza (`id`) wypełnia się parametrami w adresie; dotyczy sprawdzonych pól tekstowych (`input`, `textarea`), pola wyboru i listy rozwijane nie są gwarantowane; `labels=` w adresie wymaga uprawnień (inaczej 404); etykieta z pliku formularza jest dodawana automatycznie, o ile istnieje w repo; zbyt długi adres daje 414 (zmierzone: 8189 znaków → 302, 8199 → 414).
+- **Przeczytaj najpierw:** `src/core/library/order.ts`, `tests/unit/library-order.test.ts`, `.github/ISSUE_TEMPLATE/zamowienie-wskaznika.yml` (Claude dodaje przed tą falą).
+- **Pliki:** `src/core/library/order.ts`, `tests/unit/library-order.test.ts` (**zgoda właściciela potrzebna**: test dziś sprawdza parametr `labels`; zmieniamy go na `template` i pola).
+- **Zadanie:** `orderIssueUrl` buduje `…/issues/new?template=zamowienie-wskaznika.yml&title=…&<id pola>=…` (pola: `id`, `nazwa`, `dzial`, `poziom`; tylko `input`/`textarea`); bez `labels`; długość ≤ 1800 znaków; nazwa skracana z „…”.
+- **Gotowe, gdy:** testy: adres zaczyna się od `…/issues/new?template=zamowienie-wskaznika.yml&`; brak `labels=`; 400-znakowa nazwa mieści się w 1800; polskie znaki zachowane; `id` wskaźnika w polu.
+- **Poza zadaniem (Claude, przed falą):** plik formularza `.github/ISSUE_TEMPLATE/zamowienie-wskaznika.yml` z polami o tych `id` i `labels: ["zamowienie-wskaznika"]` oraz etykieta w repo (Jules nie rusza `.github/`).
 - **Nie ruszaj:** `src/view/`.
 
 #### W2.27 – Strona `/biblioteka`: szkielet i miejsca podpięcia (S21) · fala F9
@@ -576,9 +610,10 @@ Wszystkie zadania małe (1–3 pliki kodu + test), bez nowych pakietów. Decyzje
 
 #### W2.35 – Biblioteka: przycisk „Zamów ten wskaźnik” (S21) · fala F9
 - **Po ludzku:** przycisk otwierający gotowe zgłoszenie na GitHubie, z jasną informacją, że otwiera zewnętrzną stronę.
-- **Przeczytaj najpierw:** `src/core/library/order.ts` (W1.24), `docs/PRODUKT.md` §4d.
+- **Przeczytaj najpierw:** `src/core/library/order.ts` (po poprawce W1.27), `docs/PRODUKT.md` §4d.
+- **Warunek:** W1.27 scalone i formularz `zamowienie-wskaznika.yml` w repo (R8: bez formularza i etykiety link otwiera zwykły pusty formularz).
 - **Pliki:** `src/view/library/OrderButton.tsx` (nowy), `tests/unit/library-order-button.test.tsx` (nowy).
-- **Zadanie:** `OrderButton({ variable })` → odnośnik `target="_blank"` `rel="noopener noreferrer"` do `orderIssueUrl`; tekst „Zamów ten wskaźnik”; pod spodem jedno zdanie: „Otworzy się zgłoszenie na GitHubie (wymaga konta). Nic nie wysyłamy bez Twojej zgody.”
+- **Zadanie:** `OrderButton({ variable })` → odnośnik `target="_blank"` `rel="noopener noreferrer"` do `orderIssueUrl`; tekst „Zamów ten wskaźnik”; pod spodem jedno zdanie: „Otworzy się zgłoszenie na GitHubie (wymaga konta). Nic nie wysyłamy bez Twojej zgody. Zgłoszenie dostanie etykietę dopiero po sprawdzeniu przez nas (osoby bez uprawnień nie mogą jej ustawić).”
 - **Gotowe, gdy (`@S21`):** testy: adres zgodny z `orderIssueUrl`; `rel` i `target` ustawione; tekst informacji widoczny; ≥ 44 px; axe bez błędów.
 - **Ty sprawdzasz:** ✅ (widoczne po W2.33).
 - **Nie ruszaj:** `src/core/library/order.ts` (tylko używasz).
@@ -598,14 +633,28 @@ Wszystkie zadania małe (1–3 pliki kodu + test), bez nowych pakietów. Decyzje
 - **Gotowe, gdy (`@S21`):** ścieżka (nagłówek → `/biblioteka` → szukanie → wskaźnik pobrany: ranking i CSV; wskaźnik niepobrany: przycisk zamówienia; dane z `tests/fixtures/library/`) przechodzi 3×, na komputerze i 390 px; progi §7: wejście = 1 żądanie spisu, wskaźnik = 1 żądanie wartości, zero żądań do `values/*` i `profiles/*` z głównej mapy.
 - **Ty sprawdzasz:** na telefonie: wejście w Bibliotekę, wyszukanie wskaźnika, ranking, „Pobierz CSV”.
 
+#### W3.7 – Spike: ciemny podkład mapy (Positron + tryb ciemny) · poza falami, po K7 (R2)
+- **Po ludzku:** sprawdzamy, czy da się mieć mapę w trybie ciemnym bez płacenia za osobne kafelki.
+- **Co sprawdzono (R2, 26.10.2026):** OpenFreeMap zwraca kafelki wektorowe (TileJSON `https://tiles.openfreemap.org/planet`) z polem `name:pl` zadeklarowanym m.in. w warstwach place, poi, water_name, boundary, mountain_peak (czy każdy obiekt je ma – nie sprawdzono). Styl Positron (`https://tiles.openfreemap.org/styles/positron`) ma 55 warstw: 19 napisów, 26 linii, 9 wypełnień, 1 tło i **0 warstw rastrowych** – więc `raster-saturation`/`raster-opacity` nie mają zastosowania; wyblakłe tło robimy przez krycie warstw wypełnień i linii oraz `visibility`. Etykiety używają `name_en`/`name:latin`/`name`, nie `name:pl`.
+- **Zadanie (spike, jedna fala sama):** w osobnym pliku stylu zmodyfikować Positron: ukryć drogi i napisy (poza wybranymi), przełączyć napisy miejscowości na `name:pl` z awarią do `name`, wersja ciemna z tokenów; test Playwright przez `window.__atlas`.
+- **Gotowe, gdy:** decyzja zapisana w STAN (tak/nie); jeśli tak – osobne zadania.
+- **Pliki:** do rozpisania po K7 (węzły: `AtlasMap.tsx`).
+
+#### W3.8 – Kreskowanie „brak danych” na kartogramie · poza falami, po K7 (R5)
+- **Po ludzku:** jednostki bez danych dostają deseń (kreski) zamiast jednolitej szarości, żeby nie myliły się z „niska wartość”.
+- **Co sprawdzono (R5, 26.10.2026, typy zainstalowanego `@deck.gl/extensions` 9.4.0):** `FillStyleExtension({ proceduralPattern: true })`, `fillPatternMapping`, `getFillPattern`, `getFillPatternScale`, `getFillPatternOffset`, `getFillPatternBackgroundColor`; wzory `hatch`, `cross-hatch`, `dots`. Dziś `src` nie używa `FillStyleExtension`.
+- **Decyzja D5:** kreskowanie, jasna szarość, czy oba (kreski + legenda „brak danych”).
+- **Pliki (orientacyjnie):** **`choropleth.ts`**, `legend.ts`, `Legend.tsx`, test e2e przez `window.__atlas`. Wąskie gardło – osobna fala.
+
 ### Później (bez fal; Planista dopisze zadania, gdy przyjdzie kolej)
+- **Próba R2** (R11, 26.10.2026): gdy zdecydujesz o koncie Cloudflare – robot-test wgrywa 1 plik, sprawdza CORS i kompresję JSON z własnej domeny i mierzy czas. `r2.dev` to adres „nieprodukcyjny” z limitem żądań – na produkcję własna domena (D6). Plan darmowy (Standard): 10 GB, 1 mln zapisów klasy A, 10 mln odczytów klasy B miesięcznie, ruch wychodzący bez opłat.
 Scena wejścia „kreślenie” (W3.5 – po Twojej ocenie S16) · dwie pełne, ruchome mapy obok siebie (np. dwa wskaźniki lub dwa lata) i porównanie więcej niż dwóch miejsc · podstrony gmin pod wyszukiwarki (SEO; decyzja 25.10.2026: odłożone, `docs/research/R3-seo-wynik.md`) · mapa dla wskaźnika z biblioteki (wymaga zmiany ekranu głównego) i karty PNG z biblioteki · automatyczna kolejka zamówień wskaźników (dziś zamówienia czytamy ręcznie) · przejście biblioteki na Cloudflare R2 (decyzja i kroki: `docs/research/R6-magazyn-wynik.md`) · blady podkład OpenFreeMap przy dużym zbliżeniu (nowy element → `TRYB: WYBÓR`, wpis w ELEMENTY) · kreskowanie „brak danych” · tryb ciemny mapy (makieta 05) · statystyki wyszukiwań po zgodzie (klucz PostHog) · tryb 3D „Arkusze” · wersja angielska.
 
 ---
 
 ## 4. Plan fal (v5, 25.10.2026 – od stanu `main`)
 Kolumna „Dotykają” = tabela kolizji: w jednej fali żaden plik się nie powtarza (węzły z §2 **pogrubione**). Fale prowadzi automat (`docs/AUTOMAT.md`, kolejka: `scripts/ops/automat-kolejka.json` – musi się zgadzać z tą tabelą; test to pilnuje). **Punkt kontrolny** = koniec sesji: automat aktualizuje `STAN.md`, wysyła Ci listę „Ty sprawdzasz” i jedzie dalej.
-**F1–F7 zrobione** (wszystkie 33 zadania scalone, K1–K5 zaakceptowane przez właściciela 25.10.2026; uwagi do poprawek właściciel poda osobno). Zrobione wcześniej (poza kolejnością): W1.1, W1.3–W1.8, W2.10. **Od F8: nowe fale S20 i S21** (limit Julesa: 15 zadań naraz; plan trzyma ≤ 7 w fali).
+**F1–F7 zrobione** (wszystkie 33 zadania scalone, K1–K5 zaakceptowane przez właściciela 25.10.2026; uwagi do poprawek właściciel poda osobno). Zrobione wcześniej (poza kolejnością): W1.1, W1.3–W1.8, W2.10. **F8 zamknięta (26.10.2026, 6/6)**, po niej **F8b** (poprawki po researchu R7/R8: W1.25–W1.27). **Od F8: nowe fale S20 i S21** (limit Julesa: 15 zadań naraz; plan trzyma ≤ 7 w fali).
 
 | Fala | Sesja | Zadania naraz | Dotykają | Po fali |
 |---|---|---|---|---|
@@ -617,12 +666,13 @@ Kolumna „Dotykają” = tabela kolizji: w jednej fali żaden plik się nie pow
 | **F6** | S19 · S16–S17 | W2.21 Przycisk w porównaniu: karta porównania · W3.6 Pomiar szybkości i płynności + test ścieżki | W2.21: **`ProfileCompare.tsx`**, `share-compare.spec.ts` · W3.6: `s16-motion.spec.ts` | **punkt kontrolny K3** (S16 + S17 – ruch na mapie i „Na tle kraju”) |
 | **F7** | S19 | W2.23 Test całej ścieżki „Pobierz i udostępnij” | W2.23: `s19-share.spec.ts` | **punkt kontrolny K5** (S19 – pobierz i udostępnij; zaakceptowany 25.10.2026) · koniec F1–F7 |
 | **F8** | S20 · S21 | W1.15 Lista wskaźników miasto/wieś · W1.16 Części miasto i wieś z odpowiedzi BDL: logika · W1.21 Indeks biblioteki: budowanie · W1.22 Wyszukiwanie i filtry biblioteki: logika · W1.23 Wczytywanie biblioteki · W1.24 „Zamów wskaźnik”: odnośnik | W1.15: `config/parts.json`, `allowed.ts`, `parts-allowed.test.ts` · W1.16: `parts.mjs`, `parts-build.test.ts` · W1.21: `library-index.mjs`, `library-index.test.ts` · W1.22: `query.ts`, `library-query.test.ts` · W1.23: `config.ts`, `load-library.ts`, `load-library.test.ts` · W1.24: `order.ts`, `library-order.test.ts` | – |
-| **F9** | S20 · S21 | W1.17 Nocny robot zapisuje części · W1.18 Części w plikach na województwa · W1.19 Wczytywanie części · W1.20 Wiersze miasto/wieś: logika · W2.27 Strona `/biblioteka`: szkielet · W2.34 „Pobierz CSV” · W2.35 „Zamów ten wskaźnik” | W1.17: **`fetch-values.mjs`**, `parts-nightly.test.ts` · W1.18: `build-parts.mjs`, `parts-shards.test.ts` · W1.19: `load-parts.ts`, `load-parts.test.ts` · W1.20: `rows.ts`, `parts-rows.test.ts` · W2.27: **`Library.tsx`**, 4 szkielety w `src/view/library/`, **`App.tsx`**, `library-page.spec.ts`, `fixtures/library/index.json` · W2.34: `DownloadCsv.tsx`, `library-download-csv.test.tsx` · W2.35: `OrderButton.tsx`, `library-order-button.test.tsx` | po fali: **Claude dopisuje do workflow „Fetch data” krok części** (poza automatem, `.github/` jest zabronione dla Julesa) |
+| **F8b** | S21 | W1.25 Robot biblioteki: pełne nazwy n1–n5 · W1.26 Wyszukiwanie: wydajność na 64 tys. zmiennych · W1.27 „Zamów wskaźnik”: adres przez formularz | W1.25: `library.mjs`, `library-index.mjs`, `library.test.ts`, `library-index.test.ts`, `fixtures/library` · W1.26: `query.ts`, `index-contract.ts`, `library-query-perf.test.ts` · W1.27: `order.ts`, `library-order.test.ts` | **po fali:** Ty uruchamiasz „Fetch library” (pełny przegląd). **Przed F8b** (poza automatem): scalona naprawa kontraktu spisu (osobny PR) i formularz `zamowienie-wskaznika.yml` + etykieta (Claude) |
+| **F9** | S20 · S21 | W1.17 Nocny robot zapisuje części · W1.18 Części w plikach na województwa · W1.19 Wczytywanie części · W1.20 Wiersze miasto/wieś: logika · W2.27 Strona `/biblioteka`: szkielet · W2.34 „Pobierz CSV” · W2.35 „Zamów ten wskaźnik” | W1.17: **`fetch-values.mjs`**, `parts-nightly.test.ts` · W1.18: `build-parts.mjs`, `parts-shards.test.ts` · W1.19: `load-parts.ts`, `load-parts.test.ts` · W1.20: `rows.ts`, `parts-rows.test.ts` · W2.27: **`Library.tsx`**, 4 szkielety w `src/view/library/`, **`App.tsx`**, `library-page.spec.ts`, `fixtures/library/index.json` · W2.34: `DownloadCsv.tsx`, `library-download-csv.test.tsx` · W2.35: `OrderButton.tsx`, `library-order-button.test.tsx` | **warunek startu:** F8b zamknięta + naprawa kontraktu scalona; po fali: **Claude dopisuje do workflow „Fetch data” krok części** (poza automatem, `.github/` jest zabronione dla Julesa) |
 | **F10** | S20 · S21 | W2.24 Blok „Miasto i obszar wiejski”: komponent · W2.28 Kafelki kategorii · W2.29 Wyszukiwarka wskaźników · W2.30 Filtry · W2.31 Lista wyników · W2.33 Strona wskaźnika | W2.24: `ProfileParts.tsx`, `profile-parts.test.tsx` · W2.28: `CategoryTiles.tsx`, `library-categories.test.tsx` · W2.29: `LibrarySearchBar.tsx`, `library-search-bar.test.tsx` · W2.30: `LibraryFilters.tsx`, `library-filters.test.tsx` · W2.31: `LibraryResults.tsx`, `library-results.test.tsx` · W2.33: **`LibraryVariable.tsx`**, **`App.tsx`**, `library-variable.spec.ts`, `fixtures/library/values-sample.json` | – |
 | **F11** | S20 · S21 | W2.25 Blok miasto/wieś w profilu gminy · W2.32 Biblioteka: złożenie strony i adres · W2.36 Odnośnik „Biblioteka” w nagłówku | W2.25: **`ProfileOverview.tsx`**, `profile-parts.spec.ts`, `fixtures/parts/shard-12.json` · W2.32: **`Library.tsx`**, `library-search.spec.ts` · W2.36: `Header.tsx`, `header-library.spec.ts` | – |
 | **F12** | S20 · S21 | W2.26 Test całej ścieżki „Miasto i wieś” · W2.37 Test całej ścieżki „Biblioteka GUS” | W2.26: `s20-parts.spec.ts` · W2.37: `s21-library.spec.ts` | **punkt kontrolny K6** (S20 – miasto i wieś) i **K7** (S21 – biblioteka GUS) · **koniec planu** |
 
-**Podsumowanie:** F1–F7 zrobione (33 zadania). F8–F12: 24 nowe zadania (10 W1 + 14 W2), po 2–7 w fali. Poza kolejką zostają: W1.9 (teksty objaśnień – Twoja akceptacja), W3.5 i „Później”; kto co robi poza falami – tabela niżej.
+**Podsumowanie:** F1–F7 zrobione (33 zadania). F8 zamknięta; F8b: 3 zadania poprawkowe; F9–F12: 18 zadań. Poza kolejką zostają: W1.9 (teksty objaśnień – Twoja akceptacja), W3.5 i „Później”; kto co robi poza falami – tabela niżej.
 
 ### Poza falami – kiedy do czego wracamy (nie zapomnieć)
 | Co | Kto | Kiedy | Co z tego wychodzi |
@@ -640,6 +690,14 @@ Kolumna „Dotykają” = tabela kolizji: w jednej fali żaden plik się nie pow
 | **Etykieta `zamowienie-wskaznika`** | Claude | przed W2.35 | etykieta w repo |
 | **Magazyn biblioteki: Cloudflare R2** | Ty zakładasz konto i klucze, Claude dopisuje synchronizację | gdy gałąź `data/library` > ~1 GB albo raw.githubusercontent ogranicza ruch (`docs/research/R6-magazyn-wynik.md`) | zmienna `VITE_LIBRARY_BASE` na Vercel; wpis w `ELEMENTY.md` |
 | **Pismo do GUS o zbiorczy eksport BDL** | Ty wysyłasz (formularz GUS), tekst gotowy | kiedy chcesz | `docs/research/biblioteka-bulk-wynik.md` |
+| **Naprawa kontraktu spisu biblioteki** (schemat zod + adapter robot → wyszukiwanie; gałąź lokalna `naprawa-kontraktu`, nie wypchnięta) | Claude otwiera PR po Twojej zgodzie (D3) | **przed F8b** | spis z robota (`categories`, `variables`) czyta się w `query.ts`; test robot → szukanie |
+| **Formularz `.github/ISSUE_TEMPLATE/zamowienie-wskaznika.yml` + etykieta** | Claude (pliki `.github/` zabronione dla Julesa) | przed W1.27 | link „Zamów” otwiera formularz z polami; etykieta w repo |
+| **Test na drugim koncie GitHub** | Ty (5 min) | przed W2.35 | czy zwykła osoba z linkiem z `template=` + polami widzi wypełniony formularz i czy etykieta się ustawia (R8 tego nie rozstrzygnęło) |
+| **Ponowny przegląd katalogu BDL** („Fetch library”, po W1.25) | Ty uruchamiasz | po F8b | pełne tytuły zmiennych (n1–n5) w spisie |
+| **Zrzuty ekranu BDL (opcjonalnie)** | Ty | gdy będziesz chciał porównać listę z naszą | R7.1: jak bdl.stat.gov.pl pokazuje zmienną |
+| **Konto Cloudflare + zasobnik R2 + klucz + domena** (R11) | Ty zakładasz, Claude dopisuje „próbę R2” | gdy gałąź `data/library` > ~1 GB (D6) | `r2.dev` nie na produkcję: potrzebna własna domena |
+| **W0.2 – `trustPolicy`** (R10) | Claude | po decyzji D1 | `pnpm-workspace.yaml` |
+| **Zlecenia drugiej rundy research** | Ty wklejasz Haiku | R9.5 przed W1.9, reszta po K7 | `docs/research/haiku-zlecenia-runda2.md` |
 | **Ruleset na `main`** | Ty (GitHub → Settings → Rules, 2 min: wymagane `testy` i `bezpieczenstwo`) | jak najszybciej | druga blokada niezależna od skryptów |
 | **Uwagi z oglądu K1–K5** | Ty podajesz listę, Claude rozbija na małe zadania | kiedy będziesz gotowy | nowa fala poprawek (F13+) |
 | **Naprawiacz** (mocniejszy model raz dziennie) | Ty tworzysz | po F2, jeśli pojawią się zadania `wymaga-naprawy` | prompt w `docs/AUTOMAT.md` §6 |
@@ -703,9 +761,12 @@ type PartsShard = { voivodeship: string; years: Record<string /* indicatorId */,
 
 // library/index.json – (S21, gałąź data/library, adres z src/core/library/config.ts) spis biblioteki GUS
 // (scripts/data/library-index.mjs z catalog.json + state.json). Zmienne tylko z poziomem 5 lub 6.
-type LibraryIndex = { v: 1; cats: Record<string /* subjectId */, { n: string; p: string | null }>;
+// Schemat zod: src/core/library/index-contract.ts (LibraryIndexSchema); adapter `prepare` zamienia go na kształt zapytań (query.ts).
+type LibraryIndex = { version: 1;
+  categories: Record<string /* subjectId */, { n: string; p: string | null }>;
   units: string[]; // słownik jednostek miary
-  vars: [id: number, name: string, catId: string, level: 5 | 6, unitIdx: number, has: 0 | 1][] };
+  variables: { id: number; s?: string /* subjectId */; n: string /* człony n1–n5 */; l: 5 | 6; u: number /* indeks w units */; has: 0 | 1 }[] };
+// Tytuł wskaźnika w interfejsie = „<nazwa działu>: <człony n1–n5>” (titleOf).
 
 // library/values/<id>.json – (S21, robot scripts/data/library.mjs; już istnieje) wartości jednej zmiennej
 // klucz = 12-znakowy identyfikator jednostki BDL (nie TERYT; mapowanie przez `bdlId` z units.json), wartości po latach z `y`
@@ -748,16 +809,16 @@ Konta użytkowników · wołanie API GUS z przeglądarki · liczby wpisane ręcz
 | # | Temat | Tryb | Kiedy |
 |---|---|---|---|
 | R1 | Miasto/wieś gmin m-w | zrobione (wynik wyżej) | – |
-| R2 | Blady podkład mapy przy dużym zbliżeniu (OpenFreeMap) | licencja sprawdzona 26.10 (MIT, bez klucza); pytania R2.1–R2.3 dla Haiku (`docs/research/haiku-zlecenia.md`) | po K7 |
+| R2 | Blady podkład mapy przy dużym zbliżeniu (OpenFreeMap) | **zweryfikowane 26.10**: Positron ma 0 warstw rastrowych (blado = krycie wypełnień i linii); `name:pl` zadeklarowane w kafelkach → W3.7 | po K7 |
 | R3 | Podstrony gmin pod wyszukiwarki (SEO) | zrobione 25.10: raport zweryfikowany, decyzja **odłożone** (`docs/research/R3-seo-wynik.md`) | wrócić po K7, jeśli chcesz ruchu z wyszukiwarki |
 | R4 | Dwie pełne mapy obok siebie (dwa wskaźniki/lata) | `TRYB: DECYZJA` (koszt wydajności na telefonie) | po K5 |
-| R5 | Tryb ciemny mapy, kreskowanie „brak danych” | `FillStyleExtension` (już zainstalowany); pytania R5.1–R5.3 dla Haiku | po K7 |
+| R5 | Tryb ciemny mapy, kreskowanie „brak danych” | **zweryfikowane 26.10** (typy `@deck.gl/extensions` 9.4.0): kreskowanie możliwe → W3.8 (D5); tryb ciemny: R5.4 | po K7 |
 | R6 | Cała biblioteka GUS: magazyn danych, katalog, robot z budżetem limitów (`docs/research/biblioteka-gus.md`) | zrobione 25.10: magazyn **Cloudflare R2** docelowo, do tego czasu gałąź `data/library` (`docs/research/R6-magazyn-wynik.md`); zbiorczy eksport: pismo do GUS (`docs/research/biblioteka-bulk-wynik.md`) | strona biblioteki: S21 (F8–F12); robot uruchomiony 25.10 |
-| R7 | Jak pokazać wskaźnik BDL, którego nazwa to same wymiary (lista, podpowiedzi, nagłówek) | Haiku R7.1–R7.4 → `TRYB: WERYFIKACJA` | **przed F10** (W2.29, W2.31, W2.33) |
-| R8 | „Zamów ten wskaźnik” przez formularz zgłoszeń GitHuba (pola z linku, etykieta) | Haiku R8.1–R8.3 → weryfikacja | **przed F9** (W2.35, zmiana W1.24) |
-| R9 | Definicje wskaźników z GUS: źródło, API, licencja tekstów | Haiku R9.1–R9.4 → weryfikacja | przed W1.9 |
-| R10 | Przejście na pnpm 11 (`trustPolicy`, akcja CI, 11 czy 12) | Haiku R10.1–R10.3 → weryfikacja | przed nowym zadaniem W0.2 |
-| R11 | Biblioteka na Cloudflare R2: `aws s3 sync`, CORS, cennik | Haiku R11.1–R11.3 → weryfikacja | przed przejściem z gałęzi `data/library` |
-| R12 | Podział kolorów mapy: kwantyle czy naturalne przerwy (`simple-statistics`) | Haiku R12.1–R12.2 → weryfikacja | opcjonalnie, po K7 |
+| R7 | Jak pokazać wskaźnik BDL, którego nazwa to same wymiary (lista, podpowiedzi, nagłówek) | **zweryfikowane 26.10** (częściowo): API potwierdzone na żywo; wniosek: lista płaska „dział: wymiary” po naprawie robota (W1.25) | **przed F10** – wymaga F8b |
+| R8 | „Zamów ten wskaźnik” przez formularz zgłoszeń GitHuba (pola z linku, etykieta) | **zweryfikowane 26.10** (dokumentacja GitHuba; zachowanie etykiety dla obcych – test na drugim koncie): `template=` + `id`, bez `labels=` → W1.27 | **przed F9** (W2.35) |
+| R9 | Definicje wskaźników z GUS: źródło, API, licencja tekstów | **zweryfikowane 26.10** (5 haseł na żywo): własne słowa + `definitionUrl`; reszta haseł – R9.5 | przed W1.9 |
+| R10 | Przejście na pnpm 11 (`trustPolicy`, akcja CI, 11 czy 12) | **zweryfikowane 26.10**: `trustPolicy` działa na pnpm 10.30.3; akcja `@v6` już jest; 11 czy 12 – D1 | W0.2 po D1 |
+| R11 | Biblioteka na Cloudflare R2: `aws s3 sync`, CORS, cennik | **zweryfikowane 26.10** (cennik: tak; CORS i kompresja: wymaga konta → „próba R2”) | przed przejściem z gałęzi `data/library` |
+| R12 | Podział kolorów mapy: kwantyle czy naturalne przerwy (`simple-statistics`) | **zweryfikowane 26.10** (pakiet: 7.12.1, ISC, bez zależności); bez zmian w kodzie, spike w „Później” (PR #348) | opcjonalnie, po K7 |
 
 **Zlecenia dla Haiku:** `docs/research/haiku-zlecenia.md` – jedno wąskie pytanie na zlecenie, wspólny nagłówek (fakty z linkami, bez rekomendacji). Decyzję podejmuje Opus/Sonnet i Ty po `TRYB: WERYFIKACJA` (WORKFLOW §8.19).
