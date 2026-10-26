@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { normalize } from '../search/normalize';
 import type { LibraryCategory, LibraryIndex as QueryIndex, LibraryVariable } from './query';
 
 // Kontrakt spisu biblioteki (library/index.json) zapisywanego przez robota
@@ -42,14 +43,18 @@ export function prepare(index: RobotLibraryIndex): QueryIndex {
   }
   // W spisie robota `n` to tylko wymiary („kobiety – ogółem”); nazwa wskaźnika to nazwa działu.
   // Tytuł na liście i tekst, po którym szukamy, to „Dział: wymiary”.
-  const variables: LibraryVariable[] = index.variables.map((item) => ({
-    id: item.id,
-    name: titleOf(item.s ? index.categories[item.s]?.n : undefined, item.n),
-    cat: item.s ?? null,
-    level: item.l,
-    unit: index.units[item.u] ?? '',
-    has: item.has,
-  }));
+  const variables: LibraryVariable[] = index.variables.map((item) => {
+    const name = titleOf(item.s ? index.categories[item.s]?.n : undefined, item.n);
+    return {
+      id: item.id,
+      name,
+      normName: normalize(name),
+      cat: item.s ?? null,
+      level: item.l,
+      unit: index.units[item.u] ?? '',
+      has: item.has,
+    };
+  });
   return { categories, variables };
 }
 
