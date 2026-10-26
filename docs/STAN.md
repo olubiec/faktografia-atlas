@@ -20,7 +20,7 @@ Od 25.10.2026 **Ty scalasz, Claude puszcza kolejne** (`docs/AUTOMAT.md` §0, skr
 
 ### Postęp (pisze automat – nie edytuj ręcznie)
 <!-- automat:start -->
-Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza Claude skryptem `scripts/ops/start-tasks.mjs`. F1–F7: zrobione (33/33). **F8 zamknięta 26.10.2026 (6/6; pliki i 35 testów sprawdzone w kodzie)**. Odłożone z F8: poprawki po researchu → **F8b** (W1.25 pełne nazwy zmiennych, W1.26 wydajność wyszukiwania, W1.27 adres „Zamów”). F9–F12: 0/18. Następna fala: F8b, po scaleniu naprawy kontraktu spisu.
+Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza Claude skryptem `scripts/ops/start-tasks.mjs`. F1–F7: zrobione (33/33). **F8 zamknięta 26.10.2026 (6/6; pliki i 35 testów sprawdzone w kodzie)**. Odłożone z F8: poprawki po researchu → **F8b** (W1.25 pełne nazwy zmiennych, W1.26 wydajność wyszukiwania, W1.27 adres „Zamów”). F9–F12: 0/18. Następna fala: F8b (prompty: `docs/prompty/F8b.md`), po scaleniu PR #350 i #351.
 <!-- automat:end -->
 
 ## Plan (1 linia na sesję; zadania i fale w docs/ARCHITEKTURA.md §3–§4)
@@ -31,7 +31,7 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 
 ## Przypomnienia (pełna tabela: ARCHITEKTURA §4 „Poza falami”)
 - **Ty → Haiku (research, runda 2):** `docs/research/haiku-zlecenia-runda2.md` (R9.5 przed W1.9; R2.4, R5.4 po K7; R11.4 po koncie Cloudflare). Pierwsza runda zweryfikowana 26.10.
-- **Ty (decyzje D1–D8 z PR „po researchu”):** pnpm 11 czy 12 · lista płaska · PR naprawy kontraktu · naprawa robota n4/n5 · kreski czy szarość · domena R2 · test etykiety na 2. koncie · perf wyszukiwania.
+- **Ty:** scal PR #350 (kontrakt) i #351 (formularz), wklej 3 prompty z `docs/prompty/F8b.md`, po scaleniu uruchom „Fetch library”; test linku na drugim koncie (5 min) przed W2.35.
 - **Ty, 2 min:** ruleset na `main` (GitHub → Settings → Rules: wymagane `testy` i `bezpieczenstwo`).
 - **Ty:** lista uwag z oglądu K1–K5 (zrobię z niej małe zadania w nowej fali) · teksty objaśnień do akceptacji (W1.9; przygotuję listę do przeczytania).
 - **Ty, kiedy chcesz:** pismo do GUS o zbiorczy eksport BDL – gotowy tekst (≤ 1000 znaków, limit formularza) w `docs/research/biblioteka-bulk-wynik.md`; sprawdź też w przeglądarce, czy w BDL jest „Pobrane podgrupy” (ZIP z CSV/XLSX) – raport tego nie potwierdził.
@@ -54,6 +54,7 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 - Od F8: po każdej fali jedna linia w tej sekcji (zadania · PR-y poprawione · Twoje minuty) – dopisuje Claude przy kolejnej fali.
 
 ## Decyzje (najnowsze na górze, 1 linia, kto)
+- 26.10.2026 · **D1–D8 rozstrzygnięte** (Claude, z Twojego polecenia „podejmij wszystkie decyzje”): D1 zostajemy na pnpm 10.30.3, W0.2 tylko `trustPolicy`, zmiana na 11/12 dopiero po F12; D2 lista płaska „Dział – wymiary”; D3 PR kontraktu otwarty (#350); D4 naprawa robota n4/n5 = W1.25 + ponowny „Fetch library”; D5 kreski + osobna pozycja „brak danych” w legendzie (W3.8); D6 konto i domena R2 dopiero gdy `data/library` > ~1 GB; D7 zgoda na zmianę `library-order.test.ts` (tylko W1.27); D8 W1.26 przed F10. Prompty F8b: `docs/prompty/F8b.md`; formularz zgłoszeń: PR #351
 - 26.10.2026 · **Po weryfikacji R2, R5, R7–R12** (`docs/research/haiku/`; Claude): R8 – link „Zamów” przez `template=` + pola `id`, bez `labels=` (obcy dostają 404), potrzebny formularz `.yml` i etykieta (W1.27); R7 – lista płaska „dział: wymiary”, ale robot gubi `n4`/`n5` (25% zmiennych ma zdublowane tytuły) → W1.25 i ponowny przegląd katalogu; spis ma 63 960 zmiennych (nie 51 tys.), 593 KB gzip; wyszukiwanie za wolne na tylu zmiennych → W1.26
 - 26.10.2026 · **R9** (Claude): objaśnienia pisane własnymi słowami + `definitionUrl` do hasła GUS (GUS: kopiowanie z podaniem źródła, brak nazwanej licencji; część haseł to cytaty osób trzecich); **R10**: `trustPolicy: no-downgrade` działa na pnpm 10.30.3, akcja `@v6` już jest → W0.2; **R11**: darmowy plan R2 wystarcza, `r2.dev` nie na produkcję (własna domena); **R2**: Positron nie ma warstw rastrowych, `name:pl` zadeklarowane → W3.7; **R5**: kreskowanie `FillStyleExtension` możliwe → W3.8; **R12**: bez zmian w kodzie
 - 26.10.2026 · Kontrakt spisu biblioteki: robot (`categories`, `variables`) ≠ `query.ts` (inne pola) – naprawa schematem zod i adapterem na lokalnej gałęzi `naprawa-kontraktu`, **niewypchniętej** do Twojej zgody (Claude)
