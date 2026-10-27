@@ -100,30 +100,32 @@ describe('ProfileParts component (@S20)', () => {
 
   it('wywołuje onFirstExpand dokładnie raz przy pierwszym rozwinięciu', () => {
     const onFirstExpand = vi.fn<() => void>();
-    let capturedOnClick: (() => void) | null = null;
+    const refContainer = { handler: null as (() => void) | null };
 
-    function TestHarness() {
-      const element = <ProfileParts rows={sample14Rows} year={2024} onFirstExpand={onFirstExpand} />;
-      const jsx = (element.type as any)(element.props);
-      capturedOnClick = jsx.props.children[0].props.onClick;
+    function renderWrapper() {
+      const el = <ProfileParts rows={sample14Rows} year={2024} onFirstExpand={onFirstExpand} />;
+      const jsx = (el.type as any)(el.props);
+      refContainer.handler = jsx.props.children[0].props.onClick;
       return jsx;
     }
 
-    renderToString(<TestHarness />);
+    renderToString(React.createElement(renderWrapper));
 
-    expect(capturedOnClick).not.toBeNull();
+    const handleToggle = refContainer.handler;
+
+    expect(handleToggle).not.toBeNull();
     expect(onFirstExpand).not.toHaveBeenCalled();
 
     // 1. Pierwsze kliknięcie w handler wygenerowany przez ProfileParts
-    capturedOnClick!();
+    handleToggle!();
     expect(onFirstExpand).toHaveBeenCalledTimes(1);
 
     // 2. Drugie kliknięcie (zwinięcie)
-    capturedOnClick!();
+    handleToggle!();
     expect(onFirstExpand).toHaveBeenCalledTimes(1);
 
     // 3. Trzecie kliknięcie (ponowne rozwinięcie)
-    capturedOnClick!();
+    handleToggle!();
     expect(onFirstExpand).toHaveBeenCalledTimes(1);
   });
 
