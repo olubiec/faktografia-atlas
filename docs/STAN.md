@@ -31,7 +31,7 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 - Po K7: przegląd „Później” (SEO, mapa dla wskaźnika z biblioteki, R2, tryb ciemny mapy…) i nowa fala poprawek z Twojej listy.
 
 ## Przypomnienia (pełna tabela: ARCHITEKTURA §4 „Poza falami”)
-- **Ty → research, runda 2:** `docs/research/haiku-zlecenia-runda2.md` – **żaden wynik jeszcze nie wrócił do repo** (R9.5 przed W1.9; R2.4, R5.4 po K7; R11.4 po koncie Cloudflare). PR #348 (R12) scalony.
+- **Ty → research, runda 2:** `docs/research/haiku-zlecenia-runda2.md` – **żaden wynik jeszcze nie wrócił do repo** (R9.5 przed W1.9; R2.4, R5.4 po K7; R11.4 po koncie Cloudflare). PR #348 (R12) scalony. **Runda 3 (27.10.2026):** gotowe prompty w `docs/research/haiku-zlecenia-runda3.md` – 4 niezależne grupy do puszczenia naraz: A = runda 2, B = gotowa formatka mobilna (arkusz, układ, wzorce listy z filtrami), C = animacje i zasady ruchu, D = audyt brakujących elementów. Prompty fali F9: `docs/prompty/F9.md`.
 - **Ty:** „Fetch library” po W1.25 uruchomiony ręcznie 26.10 ok. 16:23 UTC (w toku w chwili zapisu) – po zakończeniu sprawdź, że w `library/catalog.json` tytuły z n4/n5 są pełne; test linku „Zamów” na drugim koncie (5 min) przed W2.35.
 - **Ty, 2 min:** ruleset na `main` (GitHub → Settings → Rules: wymagane `testy` i `bezpieczenstwo`).
 - **Ty:** lista uwag z oglądu K1–K5 (zrobię z niej małe zadania w nowej fali) · teksty objaśnień do akceptacji (W1.9; przygotuję listę do przeczytania).
