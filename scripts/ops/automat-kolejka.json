@@ -2013,6 +2013,39 @@
         "add": []
       },
       "snapshots": false
+    },
+    {
+      "id": "W2.38",
+      "title": "Telefon: dolny arkusz – przewijanie w granicach ekranu i przycisk zamiast przeciągania",
+      "checkpoint": "K2",
+      "wave": 10,
+      "dependsOn": [
+        "W2.6"
+      ],
+      "files": [
+        {
+          "path": "src/view/ui/BottomSheet.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/view/profile/ProfileSheetMobile.tsx",
+          "mode": "partial",
+          "maxLines": 30
+        },
+        {
+          "path": "tests/e2e/bottom-sheet-scroll.spec.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": true
     }
   ]
 }
