@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router';
 import { prepareLibraryIndex } from '@/core/library/index-contract';
 import { loadLibraryIndex, resetLibraryCache } from '@/core/library/load-library';
-import { emptyQuery, type LibraryIndex, type LibraryQuery } from '@/core/library/query';
+import { type LibraryIndex, type LibraryQuery } from '@/core/library/query';
 import { Header } from '../Header';
 import { CategoryTiles } from '../library/CategoryTiles';
 import { LibraryFilters } from '../library/LibraryFilters';
@@ -10,8 +11,27 @@ import { LibrarySearchBar } from '../library/LibrarySearchBar';
 
 type PageStatus = 'loading' | 'error' | 'empty' | 'ready';
 
+function parseQueryFromParams(params: URLSearchParams): LibraryQuery {
+  const k = params.get('k');
+  const q = params.get('q');
+  const l = params.get('l');
+  const j = params.get('j');
+  const p = params.get('p');
+
+  return {
+    cat: k && k.trim() !== '' ? k : null,
+    text: q ?? '',
+    level: l === '5' ? 5 : l === '6' ? 6 : null,
+    unit: j && j.trim() !== '' ? j : null,
+    onlyReady: p === '1' || p === 'true',
+  };
+}
+
 export function Library() {
-  const [query, setQuery] = useState<LibraryQuery>(emptyQuery);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const query = useMemo(() => parseQueryFromParams(searchParams), [searchParams]);
   const [status, setStatus] = useState<PageStatus>('loading');
   const [index, setIndex] = useState<LibraryIndex | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -75,6 +95,46 @@ export function Library() {
     setRetryCount((prev) => prev + 1);
   };
 
+  const handleQueryChange = (newQuery: LibraryQuery) => {
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (newQuery.cat) {
+      nextParams.set('k', newQuery.cat);
+    } else {
+      nextParams.delete('k');
+    }
+
+    if (newQuery.text) {
+      nextParams.set('q', newQuery.text);
+    } else {
+      nextParams.delete('q');
+    }
+
+    if (newQuery.level === 5 || newQuery.level === 6) {
+      nextParams.set('l', String(newQuery.level));
+    } else {
+      nextParams.delete('l');
+    }
+
+    if (newQuery.unit) {
+      nextParams.set('j', newQuery.unit);
+    } else {
+      nextParams.delete('j');
+    }
+
+    if (newQuery.onlyReady) {
+      nextParams.set('p', '1');
+    } else {
+      nextParams.delete('p');
+    }
+
+    setSearchParams(nextParams);
+  };
+
+  const handlePick = (id: string | number) => {
+    navigate(`/biblioteka/${id}`);
+  };
+
   const allVars = index
     ? Array.isArray(index.variables)
       ? index.variables
@@ -128,10 +188,15 @@ export function Library() {
 
         {status === 'ready' && index && (
           <div className="space-y-6">
-            <CategoryTiles index={index} query={query} onQueryChange={setQuery} />
-            <LibrarySearchBar index={index} query={query} onQueryChange={setQuery} />
-            <LibraryFilters index={index} query={query} onQueryChange={setQuery} />
-            <LibraryResults index={index} query={query} onQueryChange={setQuery} />
+            <CategoryTiles index={index} query={query} onQueryChange={handleQueryChange} />
+            <LibrarySearchBar
+              index={index}
+              query={query}
+              onQueryChange={handleQueryChange}
+              onPick={handlePick}
+            />
+            <LibraryFilters index={index} query={query} onQueryChange={handleQueryChange} />
+            <LibraryResults index={index} query={query} onQueryChange={handleQueryChange} />
           </div>
         )}
       </main>
