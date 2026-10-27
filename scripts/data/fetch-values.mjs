@@ -2,6 +2,7 @@ import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { dataUrl } from './record-bdl.mjs';
+import { toPartsValues } from './parts.mjs';
 import { nextPageUrl, toIndicatorValues } from './values.mjs';
 
 export function redactSecret(text, secret) {
@@ -108,6 +109,7 @@ export async function fetchIndicatorValues(indicator, units, clientId, options =
     offlineFixture = false,
     recordedDir = null,
     stats = { requests: 0 },
+    onPages = null,
   } = options;
 
   const levels = getLevelsForIndicator(indicator);
@@ -155,6 +157,10 @@ export async function fetchIndicatorValues(indicator, units, clientId, options =
         }
       }
     }
+  }
+
+  if (typeof onPages === 'function') {
+    await onPages(allPages);
   }
 
   return toIndicatorValues(indicator, allPages, units);
@@ -216,9 +222,18 @@ async function main() {
   const outDirArg = process.argv.find((a) => a.startsWith('--out-dir='));
   const outDir = outDirArg ? path.resolve(outDirArg.slice(10)) : path.join(root, 'public/data/values');
 
+  const partsDir = outDirArg
+    ? path.resolve(outDir, '../parts-src')
+    : path.join(root, 'data/parts');
+
   const recordedDir = path.join(root, 'tests/fixtures/bdl/recorded');
 
   const units = JSON.parse(await readFile(unitsPath, 'utf8'));
+  const partsConfigPath = path.join(root, 'config/parts.json');
+  const partsAllowed = (await exists(partsConfigPath))
+    ? JSON.parse(await readFile(partsConfigPath, 'utf8'))
+    : [];
+
   const indicators = JSON.parse(await readFile(indicatorsPath, 'utf8')).filter(
     (i) => !only || only.has(i.id)
   );
@@ -240,6 +255,16 @@ async function main() {
       offlineFixture,
       recordedDir,
       stats,
+      onPages: async (pages) => {
+        const partsData = toPartsValues(ind, pages, units, partsAllowed);
+        if (partsData) {
+          await mkdir(partsDir, { recursive: true });
+          const partsFile = path.join(partsDir, `${ind.id}.json`);
+          const partsText = JSON.stringify(partsData) + '\n';
+          assertNoSecret(partsText, clientId);
+          await writeFile(partsFile, partsText);
+        }
+      },
     });
 
     const text = JSON.stringify(result) + '\n';
