@@ -5,6 +5,7 @@ import { About } from './view/pages/About';
 import { Sources } from './view/pages/Sources';
 import { Privacy } from './view/pages/Privacy';
 import { Library } from './view/pages/Library';
+import { LibraryVariable } from './view/pages/LibraryVariable';
 import { AnnotationTestPage } from './view/test/AnnotationTestPage';
 import UiTestPage from './view/test/UiTestPage';
 import { InteractiveTestPage } from './view/test/InteractiveTestPage';
@@ -21,6 +22,7 @@ export function App() {
         <Route path="/zrodla" element={<Sources />} />
         <Route path="/prywatnosc" element={<Privacy />} />
         <Route path="/biblioteka" element={<Library />} />
+        <Route path="/biblioteka/:id" element={<LibraryVariable />} />
         <Route path="/design" element={<DesignPage />} />
         <Route path="/__test/ui" element={<UiTestPage />} />
         <Route path="/__test/annotation" element={<AnnotationTestPage />} />
