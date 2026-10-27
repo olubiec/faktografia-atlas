@@ -41,6 +41,7 @@ export function Header() {
 
   const searchParams = new URLSearchParams(location.search);
   const isZnakLogo = searchParams.get('logo') === 'znak';
+  const isLibraryActive = location.pathname.startsWith('/biblioteka');
 
   const systemIsDark = useSyncExternalStore(subscribeSystemTheme, getSystemIsDark, () => false);
 
@@ -121,6 +122,15 @@ export function Header() {
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center gap-6 text-sm font-[500]">
         <Link
+          to={`/biblioteka${location.search}`}
+          className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${
+            isLibraryActive ? 'font-bold text-korekta-tekst' : ''
+          }`}
+          aria-current={isLibraryActive ? 'page' : undefined}
+        >
+          Biblioteka
+        </Link>
+        <Link
           to={`/o-projekcie${location.search}`}
           className="hover:underline transition-colors py-2"
         >
@@ -172,6 +182,16 @@ export function Header() {
           >
             Motyw: {themeText}
           </button>
+          <Link
+            to={`/biblioteka${location.search}`}
+            onClick={() => setMobileMenuOpen(false)}
+            className={`text-sm font-[500] py-2 hover:underline min-h-[44px] flex items-center ${
+              isLibraryActive ? 'font-bold text-korekta-tekst' : ''
+            }`}
+            aria-current={isLibraryActive ? 'page' : undefined}
+          >
+            Biblioteka
+          </Link>
           <Link
             to={`/o-projekcie${location.search}`}
             onClick={() => setMobileMenuOpen(false)}
