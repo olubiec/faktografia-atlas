@@ -13,6 +13,9 @@ import { loadExplanations, type Explanation } from '../../core/explain/explanati
 import { unitTitle } from '../../core/units/label';
 import { writeUrlState } from '../../core/url/state';
 import { LazyShareDialog } from '../share/LazyShareDialog';
+import { loadPartsShard, type PartsShard } from '../../core/data/load-parts';
+import { partsRows } from '../../core/parts/rows';
+import { ProfileParts } from './ProfileParts';
 import type { ShareDialogData } from '../share/ShareDialog';
 import type { ProfileCardData, RankingCardData } from '../../core/share/card';
 import { Icon } from '../ui/Icon';
@@ -119,6 +122,35 @@ export function ProfileOverview({
       };
     });
   }, [ranking, units]);
+
+  const isMiejskoWiejska = profile.teryt.length === 7 && profile.teryt.endsWith('3');
+  const [partsShard, setPartsShard] = useState<PartsShard | null>(null);
+  const [isPartsLoaded, setIsPartsLoaded] = useState(false);
+  const [loadedTeryt, setLoadedTeryt] = useState<string | null>(null);
+
+  if (loadedTeryt !== profile.teryt && isPartsLoaded) {
+    setIsPartsLoaded(false);
+    setPartsShard(null);
+    setLoadedTeryt(null);
+  }
+
+  const handlePartsFirstExpand = () => {
+    loadPartsShard(profile.teryt.slice(0, 2)).then((shard) => {
+      setPartsShard(shard);
+      setIsPartsLoaded(true);
+      setLoadedTeryt(profile.teryt);
+    });
+  };
+
+  const partsData = useMemo(() => {
+    if (!isPartsLoaded || !partsShard) return null;
+    return partsRows({
+      gminaTeryt: profile.teryt,
+      shard: partsShard,
+      values: view.values,
+      indicators: profile.indicators.map((item) => item.indicator),
+    });
+  }, [isPartsLoaded, partsShard, profile.teryt, profile.indicators, view.values]);
 
   const [isShareOpen, setIsShareOpen] = useState(false);
 
@@ -285,6 +317,22 @@ export function ProfileOverview({
           title={rankingTitle}
         />
       </div>
+
+      {/* Blok Miasto i obszar wiejski dla gmin miejsko-wiejskich */}
+      {isMiejskoWiejska && (
+        isPartsLoaded && !partsShard ? (
+          <div className="border border-linia bg-arkusz my-4 p-4 text-xs text-olowek">
+            <span className="font-semibold text-tusz block mb-1">Miasto i obszar wiejski</span>
+            Dane o mieście i wsi pojawią się po najbliższej aktualizacji
+          </div>
+        ) : (
+          <ProfileParts
+            rows={partsData?.rows ?? []}
+            year={partsData?.year}
+            onFirstExpand={handlePartsFirstExpand}
+          />
+        )
+      )}
 
       {/* Przycisk Pobierz i udostępnij */}
       <div className="pt-2 flex justify-start">
