@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "categories": {
+    "1": { "n": "Ludność", "p": null },
+    "11": { "n": "Struktura ludności", "p": "1" },
+    "2": { "n": "Rynek pracy", "p": null },
+    "21": { "n": "Zatrudnienie", "p": "2" },
+    "3": { "n": "Mieszkania", "p": null },
+    "31": { "n": "Zasoby mieszkaniowe", "p": "3" }
+  },
+  "units": [
+    "osoba",
+    "lata",
+    "zł",
+    "mieszkanie",
+    "m²",
+    "%"
+  ],
+  "variables": [
+    { "id": "101", "s": "11", "n": "Liczba ludności ogółem", "l": 5, "u": 0, "has": 1 },
+    { "id": "102", "s": "11", "n": "Ludność w wieku produkcyjnym", "l": 6, "u": 0, "has": 1 },
+    { "id": "103", "s": "11", "n": "Ludność w wieku poprodukcyjnym", "l": 5, "u": 0, "has": 0 },
+    { "id": "104", "s": "11", "n": "Mediana wieku", "l": 6, "u": 1, "has": 0 },
+    { "id": "201", "s": "21", "n": "Pracujący ogółem", "l": 5, "u": 0, "has": 1 },
+    { "id": "202", "s": "21", "n": "Bezrobotni zarejestrowani", "l": 6, "u": 0, "has": 1 },
+    { "id": "203", "s": "21", "n": "Stopa bezrobocia", "l": 5, "u": 5, "has": 0 },
+    { "id": "204", "s": "21", "n": "Przeciętne wynagrodzenie", "l": 6, "u": 2, "has": 0 },
+    { "id": "301", "s": "31", "n": "Mieszkania oddane do użytkowania", "l": 5, "u": 3, "has": 1 },
+    { "id": "302", "s": "31", "n": "Przeciętna powierzchnia użytkowa mieszkania", "l": 6, "u": 4, "has": 1 },
+    { "id": "303", "s": "31", "n": "Mieszkania wyposażone w gaz", "l": 5, "u": 5, "has": 0 },
+    { "id": "304", "s": "31", "n": "Zasoby mieszkaniowe ogółem", "l": 6, "u": 3, "has": 0 }
+  ]
+}
