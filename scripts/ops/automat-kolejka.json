@@ -121,6 +121,10 @@
     {
       "id": "K7",
       "name": "S21 – biblioteka GUS (koniec planu)"
+    },
+    {
+      "id": "K8",
+      "name": "S23 – szlif po K7 (kreskowanie „brak danych”, rozbicie wykresu)"
     }
   ],
   "tasks": [
@@ -2046,6 +2050,90 @@
         "add": []
       },
       "snapshots": true
+    },
+    {
+      "id": "W3.8",
+      "title": "Kreskowanie „brak danych” na kartogramie",
+      "checkpoint": "K8",
+      "wave": 14,
+      "dependsOn": [
+        "W3.4"
+      ],
+      "files": [
+        {
+          "path": "src/view/map/layers/no-data-pattern.ts",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/map/layers/choropleth.ts",
+          "mode": "partial",
+          "maxLines": 30
+        },
+        {
+          "path": "src/view/legend/Legend.tsx",
+          "mode": "partial",
+          "maxLines": 25
+        },
+        {
+          "path": "tests/unit/no-data-pattern.test.ts",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/legend-no-data-swatch.test.tsx",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
+    },
+    {
+      "id": "W3.9",
+      "title": "Rozbicie TrendChart bez zmiany zachowania",
+      "checkpoint": "K8",
+      "wave": 14,
+      "dependsOn": [],
+      "files": [
+        {
+          "path": "src/view/profile/TrendChart.tsx",
+          "mode": "change"
+        },
+        {
+          "path": "src/core/profile/trend-geometry.ts",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/profile/TrendAxis.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/profile/TrendPoints.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "src/view/profile/TrendStatus.tsx",
+          "mode": "new"
+        },
+        {
+          "path": "tests/unit/trend-geometry.test.ts",
+          "mode": "new"
+        }
+      ],
+      "testsAppend": [],
+      "testsChange": [],
+      "allowFixme": [],
+      "deletions": [],
+      "packages": {
+        "remove": [],
+        "add": []
+      },
+      "snapshots": false
     }
   ]
 }

@@ -17,7 +17,7 @@ Każde zadanie to plik `tasks/W<fala>-<id>-<nazwa>.md`. Gdy pliki fali trafią n
 2. `node scripts/ops/wave-files.mjs F10` – z kolejki i sekcji ARCHITEKTURA powstają pliki w `tasks/poczekalnia/` (pętla ich nie widzi). Generator odrzuci falę z zależnością w tej samej fali albo kolizją plików. `--list` pokazuje fale.
 3. **Start:** `git mv tasks/poczekalnia/W10-*.md tasks/` (albo od razu `... F10 --launch`), commit, push na `main`. Push `tasks/W*.md` budzi pętlę; CI go ignoruje.
 4. Pętla robi resztę. Kolejne fale możesz wrzucić z góry (`W11`, `W12`): startują po bramce poprzedniej.
-- **Stan kolejki:** wszystkie 61 zadań z `automat-kolejka.json` są scalone (F1–F13). Generator `wave-files.mjs` odtwarza pliki z kolejki – dla wykonanych fal NIE uruchamiaj go ponownie. Nowe fale: najpierw sekcja w `ARCHITEKTURA.md` §3 i wpis w kolejce, potem `wave-files.mjs F<n>`. Indeks: `docs/prompty/README.md`.
+- **Stan kolejki:** 61 zadań z `automat-kolejka.json` scalonych (F1–F13); F14 (W3.8, W3.9) prowadzi pętla. Generator `wave-files.mjs` odtwarza pliki z kolejki – dla wykonanych fal NIE uruchamiaj go ponownie. Nowe fale: najpierw sekcja w `ARCHITEKTURA.md` §3 i wpis w kolejce, potem `wave-files.mjs F<n>`. Indeks: `docs/prompty/README.md`.
 - **Zadania spoza kolejki** (poprawki z oglądu, stabilizacja testów, backlog): plik wg `tasks/SZABLON.md`, nazwa `W<n>-<id>-<nazwa>.md`, `n` = następny wolny numer fali. Przykład: `tasks/poczekalnia/W13-T13*.md` (stabilizacja czterech testów e2e; start po scaleniu #408).
 - **Nazwy:** `W<n>` = numer fali pętli (F10 → `W10`), id bez kropek (`W2.24` → `W224`, `T13.1` → `T131`). Tytuł PR: `[W10-W224]`; tytuł scalenia: `W10-W224: W2.24 – …` (kropkowane id zostaje w tytule).
 

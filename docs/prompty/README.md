@@ -4,6 +4,7 @@ Od 28.10.2026 **zadania dla Julesa to pliki `tasks/W<fala>-<id>-<nazwa>.md`**, a
 
 | Plik | Stan | Co zrobić |
 |---|---|---|
+| `tasks/W14-W38-*`, `tasks/W14-W39-*` (F14: kreskowanie „brak danych”, rozbicie TrendChart) | **w `tasks/` – start pętli po scaleniu na `main`** | nic; postęp: `docs/PROJECT_STATE.md` |
 | F10–F13 (S20, S21, stabilizacja testów) | **wykonane i scalone** (PR #389–#417); pliki usunięte z `tasks/poczekalnia/` | nic |
 | `F8b.md`, `F9.md`, `NAPRAWA-share-profile-mobile.md` | zamknięte, archiwum | nic |
 | `docs/research/*-prompt.md`, `gemini-prompty-v2.md`, `haiku-zlecenia*.md` | prompty do Gemini / Haiku (research, nie dla Julesa) | wklejać w aplikacji Gemini z Deep Research; wynik weryfikuje Claude (WORKFLOW §8.19) |
