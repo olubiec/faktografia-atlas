@@ -130,6 +130,9 @@ function syncCameraSeam(
 
 export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POLAND_BBOX) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const initialUrlUnitRef = useRef<boolean>(
+    typeof window !== 'undefined' && Boolean(new URLSearchParams(window.location.search).get('u'))
+  );
   const sheetInset = useSheetInset();
   const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [localities, setLocalities] = useState<Locality[]>([]);
@@ -320,8 +323,9 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           const activeBbox = drillBbox ?? bounds;
           const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
           let kind: CameraKind = 'in';
-          if (fittedBboxRef.current === "null" && drillBbox !== null) {
+          if (initialUrlUnitRef.current && drillBbox !== null) {
             kind = 'instant';
+            initialUrlUnitRef.current = false;
           } else if (targetView.zoom < currentViewStateRef.current.zoom - 0.05) {
             kind = 'out';
           }

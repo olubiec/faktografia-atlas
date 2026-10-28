@@ -128,8 +128,8 @@ export function Library() {
       nextParams.delete('p');
     }
 
-    const isCategoryChange = newQuery.cat !== query.cat;
-    setSearchParams(nextParams, { replace: !isCategoryChange });
+    const isUpdatingExistingText = newQuery.text !== query.text && query.text !== '';
+    setSearchParams(nextParams, { replace: isUpdatingExistingText });
   };
 
   const handlePick = (id: string | number) => {
