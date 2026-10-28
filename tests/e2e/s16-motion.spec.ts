@@ -44,7 +44,7 @@ test.describe('Speed and Motion Performance Path Test W3.6 (@S16)', () => {
 
       await page.waitForFunction(() => (window as any).__atlas?.selected === null);
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === false);
-      await page.waitForTimeout(500); // Allow camera return transition
+      await page.waitForFunction((z) => (window as any).__atlas.viewState.zoom < z, zoomedInZoom);
 
       const returnedZoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
       expect(returnedZoom).toBeLessThan(zoomedInZoom);
