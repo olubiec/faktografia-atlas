@@ -4,8 +4,7 @@ Od 28.10.2026 **zadania dla Julesa to pliki `tasks/W<fala>-<id>-<nazwa>.md`**, a
 
 | Plik | Stan | Co zrobić |
 |---|---|---|
-| `tasks/poczekalnia/W10-*`, `W11-*`, `W12-*` (F10–F12, S20 i S21) | gotowe do startu po zielonym CI na `main` | `git mv tasks/poczekalnia/W10-*.md tasks/` → commit → push na `main` (fala po fali) |
-| `tasks/poczekalnia/W13-T13*` (stabilizacja czterech testów e2e) | gotowe do startu po scaleniu #408 | jak wyżej |
+| F10–F13 (S20, S21, stabilizacja testów) | **wykonane i scalone** (PR #389–#417); pliki usunięte z `tasks/poczekalnia/` | nic |
 | `F8b.md`, `F9.md`, `NAPRAWA-share-profile-mobile.md` | zamknięte, archiwum | nic |
 | `docs/research/*-prompt.md`, `gemini-prompty-v2.md`, `haiku-zlecenia*.md` | prompty do Gemini / Haiku (research, nie dla Julesa) | wklejać w aplikacji Gemini z Deep Research; wynik weryfikuje Claude (WORKFLOW §8.19) |
 
