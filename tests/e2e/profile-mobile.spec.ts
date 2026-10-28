@@ -89,8 +89,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
     expect(search).not.toContain('u=');
 
     // Weryfikacja niezmienionego poziomu powiększenia mapy
-    const finalZoom = await page.evaluate(() => (window as any).__atlas?.viewState?.zoom);
-    expect(finalZoom).toEqual(initialZoom);
+    await expect.poll(() => page.evaluate(() => (window as any).__atlas?.viewState?.zoom)).toEqual(initialZoom);
   });
 
   test('map above sheet responds to touch/pointer interactions (@S15)', async ({ page }) => {
