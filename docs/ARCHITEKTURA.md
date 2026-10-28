@@ -4,10 +4,10 @@ Co ma widzieć użytkownik: `docs/PRODUKT.md` · gdzie jesteśmy: `docs/STAN.md`
 Plan przebudowany 22.10.2026, **v3 24.10.2026**: pomysły właściciela (porównanie z dwiema mapkami, pobieranie i udostępnianie – S19), fale przeliczone od stanu `main`, **v4 24.10.2026: 7 fal F1–F7 zamiast 13** (F1–F7), prowadzenie przez automat (`docs/AUTOMAT.md`). **v5 25.10.2026:** F1–F7 zrobione (33 zadania scalone, Twoja akceptacja K1–K5 z 25.10); dodane **S20** (miasto i wieś) i **S21** (biblioteka GUS): 24 małe zadania w falach F8–F12; fale puszcza Claude, Ty scalasz. **Plan fal (§4) jest orientacyjny:** prompty do fali N pisze się dopiero po bramce fali N−1. Jeśli coś wyjdzie inaczej → `TRYB: ODŚWIEŻ`, a Planista poprawia kolejne fale tutaj.
 
 **Jak z tego korzystać:**
-- Prompt dla Julesa = **jedno zadanie z §3** (format v5.3 §9.1). Linie „Pliki”, „Gotowe, gdy”, „Nie ruszaj” przepisujesz z zadania; „Przeczytaj najpierw” zawsze zawiera `docs/PRODUKT.md` (sekcja ekranu) i tę sekcję zadania.
-- Fala = zestaw zadań z §4, które idą do Julesa **naraz** (rozłączne pliki, zamknięte zależności).
-- **`docs/STAN.md`** aktualizuje automat na punktach kontrolnych (blok „Postęp” między znacznikami) – nie po każdej fali (decyzja 24.10.2026). Przy ręcznej pracy bez automatu: ostatni prompt fali jak dotąd.
-- **Bramka fali:** zielone CI na `main` po scaleniu wszystkich PR fali. Od 24.10.2026 (automat) Twoja ocena „Ty sprawdzasz” **nie blokuje** fali – oglądasz zbiorczo na końcu każdej sesji (punkty kontrolne w §4); poprawki idą jako nowe zadania.
+- Zadanie dla Julesa = **jedno zadanie z §3 jako plik `tasks/W<fala>-<id>-<nazwa>.md`** (format WORKFLOW §9.1, pętla Jules Loop: `docs/AUTOMAT.md`). Plik generuje `node scripts/ops/wave-files.mjs F<n>` z kolejki i sekcji zadania („Pliki” → „Zmieniaj”, nowe testy → „Wymagane”); „Przeczytaj najpierw” zawsze zawiera `docs/PRODUKT.md` (sekcja ekranu) i tę sekcję zadania. Nowe zadanie = najpierw sekcja w §3 i wpis w kolejce, potem plik.
+- Fala = zestaw zadań z §4, które idą do Julesa **naraz** (rozłączne pliki, zamknięte zależności; zależność w tej samej fali = błąd). Start fali = push jej plików na `main`.
+- **Dziennik zmian** pisze pętla (`docs/PROJECT_STATE.md`); **`docs/STAN.md`** poprawia Claude po fali na jego podstawie (blok „Postęp” poniżej zostaje do ręcznej aktualizacji). Zadania „aktualizacja STAN.md” w falach nie są potrzebne.
+- **Bramka fali:** zielone CI na `main` po scaleniu wszystkich PR fali (pętla sprawdza ją sama). Od 24.10.2026 Twoja ocena „Ty sprawdzasz” **nie blokuje** fali – oglądasz zbiorczo na końcu każdej sesji (punkty kontrolne w §4); poprawki idą jako nowe zadania.
 - **Wyjątki od „istniejących testów nie zmieniasz”** są tylko tam, gdzie zadanie wymienia konkretny plik i test (W2.4, W2.5) – to decyzja właściciela, nie furtka.
 
 ---

@@ -11,7 +11,7 @@ Stos: Vite + React + TypeScript (strict), pnpm, Tailwind v4 (tokeny w @theme), V
 - Szybkie testy jednostkowe: `pnpm test`. Skrót `pnpm verify` robi to samo i dodatkowo zrzuty (`pnpm shots`).
 
 ## Jak pracujesz
-- Jedno zadanie = jeden PR. Zmieniaj tylko pliki z linii „Pliki:” z promptu. Musisz zmienić inny → napisz w PR dlaczego.
+- Jedno zadanie = jeden PR. Zmieniaj tylko pliki z linii „Zmieniaj:” (i „Wymagane:”) zadania; w starszych promptach to „Pliki:”. Musisz zmienić inny → napisz w PR dlaczego i zatrzymaj się.
 - Najpierw testy z warunków „Gotowe, gdy”, potem kod. Każdy warunek = co najmniej jeden test sprawdzający zachowanie (nie tylko „renderuje się”).
   Nie wyłączaj testów, reguł lintera ani typów, żeby przeszło (wyjątek: test pomijany z powodu środowiska – z komentarzem dlaczego).
 - Czerwone testy na GitHubie – popraw sam.
@@ -20,14 +20,14 @@ Stos: Vite + React + TypeScript (strict), pnpm, Tailwind v4 (tokeny w @theme), V
 - Nowy pakiet: napisz w PR nazwę, link do npm i do repozytorium, datę wydania, pobrania tygodniowo i po co. Nie wymyślaj nazw – sprawdź w rejestrze. Każdy element z zewnątrz (pakiet, zasób, usługa) = wpis w `docs/ELEMENTY.md` (źródło, wersja, licencja) w tym samym PR; element spoza ELEMENTY.md bez decyzji w prompcie → opisz w PR i zatrzymaj się. Bez sprawdzonej licencji nic nie wchodzi.
 - Wzorce zrzutów (`*-snapshots/`) powstają wyłącznie w CI przez workflow „Update snapshots” (uruchamia go właściciel). Nie generuj ich u siebie; w PR napisz, że trzeba je odświeżyć.
 - Uwagi CodeRabbit o błędach poprawiasz; z uwagą o stylu możesz się nie zgodzić – napisz dlaczego.
-- Nie edytuj `docs/STAN.md`, `package.json` ani `pnpm-lock.yaml`, chyba że prompt wprost na to pozwala (STAN.md zmienia ostatni prompt fali).
-- Zadanie z issue automatu (`docs/AUTOMAT.md`): wykonujesz dokładnie zadanie `Wx.y` z `docs/ARCHITEKTURA.md` §3; tytuł PR zaczyna się od `Wx.y –`, opis zawiera `Closes #<nr issue>`. Uwagi automatu w komentarzach PR traktujesz jak uwagi CodeRabbit o błędach.
+- Nie edytuj `docs/STAN.md`, `package.json` ani `pnpm-lock.yaml`, chyba że prompt wprost na to pozwala (STAN.md poprawia Claude po fali; dziennik `docs/PROJECT_STATE.md` pisze tylko pętla).
+- Zadania przychodzą z pętli Jules Loop (`docs/AUTOMAT.md`) jako pliki `tasks/W<fala>-<id>-*.md`: wykonujesz dokładnie ten plik; tytuł PR zaczyna się od `[W<fala>-<id>]` (np. `[W10-W224]`), opis ma „Po ludzku”, bez `Closes #`. Pętla sama scala zielony PR, a PR z plikami spoza „Zmieniaj/Wymagane”, bez plików „Wymagane” albo z usuniętymi asercjami odsyła z prośbą o poprawkę (po dwóch próbach czeka na człowieka). Prośby pętli traktujesz jak uwagi CodeRabbit o błędach; poprawiasz w tym samym PR.
 - Opis PR zawsze z sekcją „Po ludzku” (dla osoby, która nie programuje): co zrobiłeś · co sprawdzić na podglądzie · czego nie zrobiłeś i dlaczego.
 
 ## Nigdy
 - Tajnych kluczy i haseł w kodzie, testach, commitach, logach. Zmienne `VITE_*` są publiczne w przeglądarce – dozwolone tylko klucze publiczne z założenia (np. klucz projektu PostHog).
 - Wstawiania danych jako HTML (`dangerouslySetInnerHTML`, HTML w tooltipach deck.gl).
-- Zmian w `.github/workflows/` bez prośby w zadaniu.
+- Zmian w `.github/workflows/` i `scripts/jules-loop/` bez prośby w zadaniu (pętla odrzuca taki PR).
 - Osłabiania testów: `skip`/`only` bez powodu środowiskowego, `@ts-ignore`, `oxlint-disable`, usuwania asercji.
 - Pakietu, którego istnienia nie sprawdziłeś w rejestrze (modele AI wymyślają nazwy pakietów).
 

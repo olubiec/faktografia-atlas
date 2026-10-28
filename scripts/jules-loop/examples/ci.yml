@@ -1,0 +1,26 @@
+# Wzór ogólny (npm). W tym repo działa .github/workflows/ci.yml (pnpm, Playwright); nazwa workflow musi zostać `CI`.
+name: CI   # nazwa musi pasować do `workflows:` w jules-loop.yml
+
+on:
+  pull_request:
+    paths-ignore: ['tasks/**', 'docs/**', '**.md']
+  push:
+    branches: [main]
+    paths-ignore: ['tasks/**', 'docs/**', '**.md']
+  workflow_dispatch:
+
+# Nowy commit w tym samym PR-ze anuluje poprzedni, jeszcze trwający przebieg: mniej zmarnowanych minut.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm test

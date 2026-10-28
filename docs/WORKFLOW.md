@@ -1,5 +1,6 @@
-# WORKFLOW UNIWERSALNY – praca z agentami AI (v5.4)
+# WORKFLOW UNIWERSALNY – praca z agentami AI (v5.5)
 
+> 28.10.2026 · v5.5: **pętla Jules Loop** prowadzi każde zadanie (start fali = push plików `tasks/W<n>-*.md`, kontrola zgodności z zadaniem, CI, scalenie, fala testów, dziennik) – §3d, §9, §10.6. Ręczne wklejanie promptów do Julesa odpada.
 > 22.10.2026 · v5.4: pnpm 11 z blokadami pakietów (§6, §10.5a), Antigravity jako opcja przy komputerze (§2). v5.3: **Gemini Deep Research** jako stałe wsparcie researchu + obowiązkowa weryfikacja (§8.18–8.19). v5.2: **gotowe elementy i bazy** na pierwszym miejscu (§3b), **plan: warstwy → fale** (§3c), rejestr elementów i licencji (§4), nowe tryby BAZA i WARSTWY (§8.15–8.16).
 > Dla dowolnego projektu: strona, aplikacja, gra, skrypt, automatyzacja.
 > Zastępuje wcześniejsze wersje (v1–v4). To **zestaw sprawdzonych zasad i gotowych promptów**, nie sztywny regulamin – bierz, co pasuje do projektu, resztę dodawaj, gdy będzie potrzebna (§12).
@@ -10,10 +11,10 @@
 ## 1. Idea w 5 zdaniach
 
 1. **Planista** (Claude albo Gemini – zamiennie) rozpisuje sesję na małe, gotowe prompty.
-2. **Ty** wklejasz je do **Julesa**, który pisze kod i testy i otwiera PR.
-3. **GitHub** sam uruchamia testy przy każdym PR; czerwone → Jules poprawia.
-4. **Ty** oglądasz efekt na podglądzie i klikasz „Scal”.
-5. **Cała pamięć projektu jest w repo** (`STAN.md`), więc czat, model i narzędzie możesz zmienić w każdej chwili.
+2. **Pętla Jules Loop** (GitHub Actions) wysyła je do **Julesa**, który pisze kod i testy i otwiera PR; Ty tylko pushujesz pliki fali (§3d).
+3. **GitHub** sam uruchamia testy przy każdym PR; czerwone → Jules poprawia, a pętla pilnuje, żeby PR robił tylko to, co zadanie.
+4. **Pętla** scala zielone PR-y; **Ty** oglądasz efekt na podglądzie po fali i na punktach kontrolnych (poprawki idą jako nowe zadania; PR z etykietą `hold` pętla nie scala).
+5. **Cała pamięć projektu jest w repo** (`STAN.md` + dziennik pętli `PROJECT_STATE.md`), więc czat, model i narzędzie możesz zmienić w każdej chwili.
 
 Dwie rzeczy, które robimy niemal zawsze:
 - **Budujemy z gotowych elementów, nie od zera.** Pakiety, shadery, komponenty, zasoby, usługi – a jeśli znajdziemy aplikację lub grę, która działa prawie jak nasza, bierzemy ją **jako bazę** i budujemy na niej całość (§3b). Własny kod piszemy tylko tam, gdzie to nasza unikalna część.
@@ -27,7 +28,8 @@ Każde AI mówi do Ciebie **po ludzku** – to część zasad, nie uprzejmość.
 
 | Kto | Rola | Kiedy |
 |---|---|---|
-| **Ty** | Decydujesz, wklejasz prompty, oglądasz, scalasz | zawsze |
+| **Ty** | Decydujesz, puszczasz fale (push plików zadań), oglądasz na punktach kontrolnych, wstrzymujesz (`hold`) | zawsze |
+| **Jules Loop** (GitHub Actions, bez tokenów AI) | Startuje sesje Julesa, pilnuje zgodności PR z zadaniem, prosi o poprawki, scala po zielonym CI, puszcza testy i następną falę, prowadzi dziennik | każde zadanie |
 | **Planista – Claude** | Plan sesji, prompty, decyzje, ocena ryzyka | gdy masz limit; rzeczy ważne i trudne do odwrócenia |
 | **Planista – Gemini** (3.1 Pro) | To samo co Claude; do tego planowanie fal, kontrola postępu i pytania o kod (import repo) | gdy Claude nie ma limitu; zawsze do kontroli postępu i fal |
 | **Gemini Argon** | „Oko”: ocenia zrzuty ekranu i nagrania | sprawy wyglądu |
@@ -38,7 +40,7 @@ Każde AI mówi do Ciebie **po ludzku** – to część zasad, nie uprzejmość.
 | **CodeRabbit** (opcjonalnie, darmowy w repo publicznym [D]) | Komentuje każdy PR; Jules poprawia uwagi | automatycznie |
 | **Claude Code** (opcjonalnie) | Druga para oczu dla ryzykownych PR, naprawy, których Jules nie umie | rzadko |
 
-**Dlaczego Planista zostaje w aplikacji Gemini/Claude, a nie w Antigravity:** Antigravity działa tylko przy włączonym komputerze (z telefonu da się go jedynie podglądać [P]), nie ma Deep Research ani Gemów, a automatyczne zakładanie zadań dla Julesa zabrałoby Ci kontrolę nad falą. Ręczne wklejenie promptów to minuta na falę – świadomie zostawiamy ten krok.
+**Dlaczego Planista zostaje w aplikacji Gemini/Claude, a nie w Antigravity:** Antigravity działa tylko przy włączonym komputerze (z telefonu da się go jedynie podglądać [P]), nie ma Deep Research ani Gemów, a automatyczne zakładanie zadań dla Julesa zabrałoby Ci kontrolę nad falą. Start fali to jedyny ręczny krok (push plików zadań, §3d) – to Ty decydujesz, kiedy ruszamy; resztę robi pętla.
 
 **Research robi Gemini, weryfikuje ktoś inny.** Gemini Deep Research (3.1 Pro, aplikacja Gemini) jest świetny do zbierania i porównywania szeroko – gotowe bazy, pakiety, shadery, wzorce wyglądu, technologie, licencje, kwestie do podjęcia. Ale to **wsparcie, nie źródło prawdy**: w tym projekcie jego raporty miały błędy (nieistniejące reguły i funkcje, przekręcone nazwy modeli i liczby, błędnie odczytane badania) [R – nasze doświadczenie]. Dlatego raport przechodzi weryfikację (§8.19), zanim cokolwiek z niego trafi do decyzji, `ELEMENTY.md` albo kodu.
 
@@ -51,12 +53,12 @@ Każde AI mówi do Ciebie **po ludzku** – to część zasad, nie uprzejmość.
 0. **Raz na początku projektu:** szukamy bazy i elementów (§3b), układamy warstwy (§3c). Dalej pracujemy falami (§3a).
 1. **Nowy czat u Planisty** → wiadomość startowa (§8.2).
 2. Planista czyta `STAN.md`, mówi prosto, co zrobimy, i daje **3–6 promptów dla Julesa** + kolejność („1 i 2 naraz, 3 po scaleniu 1”).
-3. **Wklejasz prompt do Julesa** (aplikacja → repo → wklej → start). Niezależne prompty możesz puścić równolegle.
+3. **Pushujesz plik zadania do `tasks/`** (§3d) – pętla uruchamia Julesa. Zadania jednej fali idą równolegle.
 4. Jules otwiera PR z sekcją **„Po ludzku”**: co zrobił, co obejrzeć, czego nie zrobił.
-5. **Czekasz na ✅.** ❌ → Jules poprawia sam. Po 2 nieudanych próbach → `TRYB: POMOC` (§8.5).
-6. **Oglądasz podgląd** i scalasz („Squash and merge”). Ryzykowny PR (⚠️) → najpierw `TRYB: RYZYKO` (§8.7).
+5. **Czekasz na ✅.** ❌ → Jules poprawia sam. Po 2 prośbach pętla oznacza PR `needs-human` i pinguje Cię → `TRYB: POMOC` (§8.5).
+6. **Pętla scala** (squash) zielony PR po kontroli zgodności z zadaniem. Ryzykowne zadanie (⚠️): dodaj PR etykietę `hold` i puść `TRYB: RYZYKO` (§8.7); zdjęcie etykiety wznawia.
 7. **Coś poszło inaczej niż w planie?** → `TRYB: ODŚWIEŻ` (§8.4) – Planista poprawia pozostałe prompty. Prompty pisane z góry zakładają, że wcześniejsze wyszły zgodnie z planem [O].
-8. **Ostatni prompt sesji:** Jules aktualizuje `docs/STAN.md`.
+8. **Dziennik prowadzi pętla** (`docs/PROJECT_STATE.md`: każdy scalony PR i zdarzenie). `docs/STAN.md` poprawia Planista po fali, na podstawie dziennika; Jules go nie rusza.
 9. **Kontrola** w Gemini (§8.6) – raz na sesję albo gdy coś niepokoi.
 
 **Dlaczego to działa** [D – Anthropic, best practices]: plan oddzielony od wykonania; każde zadanie w czystym kontekście; każde ma sprawdzalne „Gotowe, gdy” zamienione na test („jeśli nie możesz tego sprawdzić, nie wdrażaj”); równolegle tylko zadania, które nie ruszają tych samych plików [P].
@@ -73,9 +75,9 @@ Każde AI mówi do Ciebie **po ludzku** – to część zasad, nie uprzejmość.
 
 **Jak to wygląda:**
 1. Planista pisze **falę N** na podstawie stanu po fali N−1 (nie z góry na wszystkie fale – plany z góry się starzeją [O]).
-2. Wklejasz wszystkie prompty fali do Julesa **naraz** i czekasz.
+2. Pushujesz wszystkie pliki fali naraz (`tasks/W<n>-*.md`); pętla puszcza je naraz i czeka.
 3. **Bramka fali** = **zielone CI** na `main` po scaleniu wszystkich PR fali (testy GitHuba to jedyny warunek – nie sprawdzasz niczego ręcznie, o ile fala nie zawiera zmian widocznych, które i tak oglądasz przy scalaniu). Czerwone → naprawiasz (§8.5), następnej fali nie piszesz.
-4. Po bramce: Planista pisze falę N+1 i zapisuje w `STAN.md` jedną linię: „Fala N zamknięta: <co weszło>, <co odłożone>”.
+4. Bramkę sprawdza pętla (CI na `main`, w razie braku uruchamia je sama); jeśli pliki następnej fali już leżą w `tasks/`, startuje ona od razu. Po bramce: Planista pisze falę N+1 i zapisuje w `STAN.md` jedną linię: „Fala N zamknięta: <co weszło>, <co odłożone>”.
 
 **Fale a warstwy:** fala bierze zadania z jednej warstwy (§3c), których zależności są już zamknięte. Warstwy ustalają **kolejność dużych kroków**, fale ustalają **co puszczamy naraz**.
 
@@ -179,16 +181,31 @@ Fale pisane są **po kolei**, każda po zielonym CI poprzedniej (§3a). Powyższ
 
 ---
 
+## 3d. Pętla Jules Loop – jak każde zadanie przechodzi przez automat
+
+Pliki: `.github/workflows/jules-loop.yml`, `scripts/jules-loop/orchestrator.mjs` (instalacja i ustawienia: `scripts/jules-loop/README.md`; opis dla projektu: `docs/AUTOMAT.md`). Wymaga `AGENTS.md`, workflow CI o nazwie `CI` i sekretów `JULES_API_KEY` oraz `LOOP_TOKEN`.
+
+**Każde zadanie = plik `tasks/W<n>-<id>-<nazwa>.md`** (format §9.1). `W<n>` to numer fali (w Faktografii F10 → `W10`), `<id>` bez kropek i myślników (`W2.24` → `W224`). Nowy plik fali na `main` budzi pętlę.
+
+Przebieg: **push plików fali** → walidacja (każdy plik ma „Zmieniaj:”, zakresy plików rozłączne; inaczej fala odrzucona bez zużycia sesji) → **sesje Julesa** (równolegle, do limitu) → **strażnik zgodności** (pliki spoza „Zmieniaj/Wymagane”, brak plików „Wymagane”, usunięte asercje → prośba o poprawkę, po 2 próbach `needs-human`) → **CI zielone = scalenie**, czerwone = poprawka przez Julesa → **fala testów** generowana ze zmienionych plików → **CI na `main`** (czerwone → naprawa integracyjna) → wpis do dziennika → **następna fala**.
+
+Pętla pinguje Cię tylko, gdy trzeba człowieka: `needs-human`, czerwony `main` po naprawach, fala odrzucona przed startem, koniec fal. Sterowanie: Actions → Jules Loop → Run workflow (`tick`, `resume`, `skip <ID>`, `skip-wave`, dry-run); zdjęcie etykiety `needs-human` z PR wznawia zadanie; etykieta `hold` wstrzymuje scalenie.
+
+**Zasady pisania zadań dla pętli:** zadanie zależne od innego idzie do **następnej** fali (pętla nie zna zależności w obrębie fali); zakresy „Zmieniaj” w fali się nie nakładają; wspólne pliki w osobnej, wcześniejszej fali; 5–15 zadań na falę (limit Julesa Pro: 15 naraz, 100 na dobę; pętla zostawia zapas).
+
 ## 4. Pliki w repo
 
 | Plik | Co zawiera | Kto zmienia |
 |---|---|---|
 | `AGENTS.md` | Jak pracować: polecenia, zasady, zakazy, zasady projektu. Krótko (ok. 30–80 linii) – za długi plik model ignoruje [D] | Jules na prośbę Planisty |
 | `docs/PRODUKT.md` | Co budujemy: dla kogo, co ma umieć, czego nie robimy. Zmienia się rzadko | Jules na prośbę Planisty |
-| `docs/STAN.md` | Gdzie jesteśmy: co działa, bieżąca warstwa i fala, plan kolejnych, problemy, decyzje. Do ~100 linii | Jules – ostatni prompt fali |
+| `docs/STAN.md` | Gdzie jesteśmy: co działa, bieżąca warstwa i fala, plan kolejnych, problemy, decyzje. Do ~100 linii | Planista po fali (z dziennika pętli) |
+| `docs/PROJECT_STATE.md` | Dziennik pętli: wpis dla każdego scalonego PR i zdarzenia (co, efekt, CI, poprawki). Planista czyta go na początku sesji zamiast pytać o stan | tylko pętla (nie edytuj ręcznie) |
+| `tasks/W<n>-<id>-<nazwa>.md` | Zadania fali dla Julesa (§9.1); push = start fali. Szablon: `tasks/SZABLON.md`, poczekalnia: `tasks/poczekalnia/` (pętla jej nie widzi) | Planista / generator `scripts/ops/wave-files.mjs` |
+| `.github/workflows/jules-loop.yml`, `scripts/jules-loop/` | Pętla Jules Loop (§3d). Jules nie zmienia tych plików – pętla odrzuca taki PR | Planista, ręcznie |
 | `docs/ELEMENTY.md` | **Rejestr gotowych elementów**: nazwa · źródło (link) · wersja lub commit · licencja · do czego · wymagana atrybucja · data wyboru. Dotyczy baz, pakietów, shaderów, zasobów, usług | Jules na prośbę Planisty (przy każdym elemencie) |
 | `docs/BAZA.md` (gdy jest baza) | Jak zbudowana jest baza: struktura, gdzie co leży, jak ją rozbudować, co zmieniliśmy względem oryginału | Jules (Fala 0) |
-| `docs/ARCHITEKTURA.md` | Warstwy i podzespoły, zależności, pliki-węzły, orientacyjny plan fal (§3c) | Jules na prośbę Planisty |
+| `docs/ARCHITEKTURA.md` | Warstwy i podzespoły, zależności, pliki-węzły, orientacyjny plan fal (§3c) | Jules na prośbę Planisty (jako zadanie z pliku) |
 | `docs/STYL.md` (opcjonalnie) | Wygląd: kolory, czcionki, wzorce | jw. |
 | `CLAUDE.md` (opcjonalnie) | Jedna linia `@AGENTS.md` – Claude Code czyta `CLAUDE.md`, nie `AGENTS.md` [D] | raz |
 | `.github/pull_request_template.md` | Szablon PR z „Po ludzku” | raz |
@@ -277,7 +294,7 @@ TRYB: SESJA
 Stan: <link do STAN.md>
 Cel (opcjonalnie): <co chcę mieć na koniec, np. „formularz kontaktowy działa”>
 ```
-Planista odpowiada: 3–5 zdań po ludzku (co zrobimy, co zobaczy użytkownik) → prompty w formacie §9.1 → kolejność → ostatni prompt „Zaktualizuj STAN.md”.
+Planista odpowiada: 3–5 zdań po ludzku (co zrobimy, co zobaczy użytkownik) → pliki zadań w formacie §9.1 (`tasks/W<n>-…`) → kolejność fal. STAN.md poprawia Planista po fali, z dziennika pętli.
 
 ### 8.3 TRYB: START – nowy projekt (Claude, najlepszy model)
 ```text
@@ -391,12 +408,12 @@ TRYB: FALA
 Stan: <link do STAN.md> · Architektura: <link do ARCHITEKTURA.md> · Elementy: <link do ELEMENTY.md>
 Zadania do rozpisania: <lista lub „wg planu w STAN”>
 Zrób falę N:
-1) Prompty dla Julesa w formacie §9.1, tylko takie, które mogą iść naraz.
+1) Pliki zadań `tasks/W<n>-<id>-<nazwa>.md` w formacie §9.1 (każde z liniami „Zmieniaj:” i „Wymagane:”), tylko takie, które mogą iść naraz. Fala startuje pushem plików – nie dawaj mi do wklejania promptów.
 2) Tabela kolizji: prompt × pliki (także pliki-węzły). Jeśli dwa dotykają tego samego pliku – przenieś do fali N+1.
    Bierz zadania z bieżącej warstwy (docs/ARCHITEKTURA.md), których zależności są zamknięte.
 3) Bramka fali N: zielone CI na main po scaleniu wszystkich PR tej fali (dopisz warunek dodatkowy tylko, jeśli jest naprawdę potrzebny).
 4) Co odkładam i dlaczego (maks. 3 punkty).
-5) Ostatni prompt: aktualizacja STAN.md (fala zamknięta, nowa fala, dług, decyzje).
+5) Bez zadania „aktualizacja STAN.md”: dziennik prowadzi pętla (docs/PROJECT_STATE.md); po fali dostaniesz ode mnie propozycję zmian w STAN.md (fala zamknięta, nowa fala, dług, decyzje).
 Nie pisz fali N+1, zanim nie dostaniesz wyniku bramki.
 ```
 
@@ -477,19 +494,21 @@ Minimum: działa na telefonie i komputerze · testy zielone · brak kluczy w kod
 
 ## 9. Prompty dla Julesa
 
-### 9.1 Format podstawowy
+### 9.1 Format podstawowy – plik zadania dla pętli
+Plik `tasks/W<n>-<id>-<nazwa>.md` (jedno zadanie = jeden plik; **nazwa i linie „Zmieniaj/Wymagane” czyta maszyna**, reszta to treść prompta dla Julesa):
 ```text
-PROMPT <nr> – <tytuł>   (po ludzku: <co to da, 1 zdanie>)   [⚠️ jeśli ryzykowne]
+# <ID> – <tytuł>   [⚠️ jeśli ryzykowne]
+Cel: <1 zdanie: zachowanie, nie implementacja>   (po ludzku: <co to da>)
+Zmieniaj: <pliki po przecinku – jedyne, które PR może ruszyć>
+Wymagane: <pliki, które MUSZĄ pojawić się w PR – test, dokument>
+Weryfikacja: <komenda testów i buildu>
 Przeczytaj najpierw: <pliki, np. docs/STYL.md> / —
 Zadanie: <co zrobić, konkretnie>
-Pliki: <które zmienić>
 Gotowe, gdy:
 - <sprawdzalny warunek>   ← każdy warunek = test
-- <…>
 Nie ruszaj: <czego nie zmieniać>
-Uruchom wszystkie testy i popraw błędy, zanim otworzysz PR.
-W opisie PR dodaj sekcję „Po ludzku”: co zrobiłeś, co sprawdzić na podglądzie, czego nie zrobiłeś.
 ```
+Pętla dokleja do prompta zasady (nie zmieniaj asercji, tylko pliki z „Zmieniaj”, opis PR z „Po ludzku”, tytuł PR zaczyna się od `[W<n>-<id>]`); zadanie z planu w `ARCHITEKTURA.md` zamienia na pliki generator: `node scripts/ops/wave-files.mjs F<n>`. Wzór: `tasks/SZABLON.md`. Poniższe odmiany to treść sekcji „Zadanie:”.
 
 ### 9.2 Odmiany
 **Poprawka błędu** – najpierw test, który pokazuje błąd [D – Anthropic]:
@@ -574,8 +593,8 @@ W AGENTS.md w sekcji <nazwa> dodaj/zmień: <treść>. Nic więcej nie zmieniaj.
 ```
 
 ### 9.3 Uwagi praktyczne
-- Kilka promptów naraz – tylko gdy nie zmieniają tych samych plików (Planista to pisze).
-- Poprawka w otwartym PR: komentarz w PR do Julesa albo w aplikacji Jules w tym samym zadaniu – sprawdź, co działa w Twoich ustawieniach [?].
+- Kilka zadań w jednej fali – tylko gdy nie zmieniają tych samych plików (pętla odrzuca falę z nakładającymi się „Zmieniaj”).
+- Poprawkę czerwonego lub niezgodnego PR zleca Julesowi pętla (wiadomość w sesji, potem komentarz `@jules`). Twoja własna uwaga: komentarz `@jules` w PR (Reactive Mode włączony).
 - Jules sam naprawia czerwone testy na swoich PR (CI Fixer, od 02.2026) [D].
 - Limit AI Pro: 100 zadań/dobę, 15 równolegle [D] – w praktyce ogranicza Cię czas na oglądanie, nie limit.
 
@@ -711,6 +730,12 @@ allowBuilds:                   # tylko te pakiety mogą uruchamiać skrypty przy
 Wdrożenie (prompt do Julesa): „Przejdź na pnpm 11: ustaw w package.json pole packageManager na aktualną wersję pnpm 11, dodaj powyższe ustawienia do pnpm-workspace.yaml, przenieś ewentualne onlyBuiltDependencies do allowBuilds. Nie zmieniaj nic poza tym.” Pilna łatka bezpieczeństwa młodsza niż 3 dni → wyjątek `minimumReleaseAgeExclude` z nazwą pakietu, usuń go po 3 dniach.
 
 ---
+
+### 10.6 Jules Loop – pliki i ustawienia
+- `.github/workflows/jules-loop.yml` + `scripts/jules-loop/orchestrator.mjs` (bez zależności, Node 22). Workflow CI musi mieć `name: CI` i wyzwalacze `pull_request`, `push` (main), `workflow_dispatch`; push plików `tasks/**` wyłącz z CI (`paths-ignore`).
+- Sekrety: `JULES_API_KEY` (jules.google.com/settings), `LOOP_TOKEN` (PAT: contents, pull requests, issues, actions, variables – bez niego scalenia nie budzą kolejnych workflowów). Aplikacja Jules zainstalowana na repo. Ruleset na `main` musi pozwalać PAT-owi zapisać dziennik (`docs/PROJECT_STATE.md`) albo wpisy zostaną w issue pętli.
+- Zmienne repo (opcjonalne): `LOOP_MAX_CONCURRENT` (12), `LOOP_DAILY_BUDGET` (80), `LOOP_FIX_GRACE_MIN` (10), `LOOP_TEST_WAVE` (`off` wyłącza falę testów), `LOOP_PLAN_GUARD` (`off` wyłącza strażnika), `LOOP_STATE_FILE`, `LOOP_SCOPE_ALLOW` (lockfile’e dozwolone poza zakresem).
+- `AGENTS.md` ma sekcję o zadaniach z pętli (format, tytuł PR, zakazy); `tasks/SZABLON.md` to wzór pliku zadania.
 
 ## 11. Moduły według typu projektu
 
