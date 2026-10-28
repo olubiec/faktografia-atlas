@@ -106,14 +106,17 @@ test.describe('Strona /biblioteka: szukanie, kategorie, filtry i stan w URL (@S2
 
     const categoryTiles = page.getByTestId('category-tiles');
     await categoryTiles.getByRole('button', { name: /Ludność/i }).click();
+    await expect(page).toHaveURL(/.*[?&]k=1/);
 
     const searchInput = page.locator('#library-search-input');
     await searchInput.fill('ludnosc');
+    await expect(page).toHaveURL(/[?&]q=ludnosc/);
     await page.keyboard.press('Escape');
 
     const filters = page.getByTestId('library-filters');
     const levelPowiaty = filters.getByRole('button', { name: /Powiaty/i });
     await levelPowiaty.click();
+    await expect(page).toHaveURL(/[?&]l=/);
 
     await page.evaluate(() => window.history.back());
     await expect(page).toHaveURL(/.*[?&]k=1/);
