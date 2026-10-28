@@ -54,7 +54,11 @@ export function ProfileParts({
 
       {isExpanded && (
         <div className="px-4 pb-4 border-t border-linia pt-3">
-          {isMobile ? (
+          {rows.length === 0 ? (
+            <div className="py-4 text-center text-olowek text-xs" role="status">
+              Ładowanie...
+            </div>
+          ) : isMobile ? (
             <div className="space-y-3" data-testid="parts-cards">
               {rows.map((row) => (
                 <div

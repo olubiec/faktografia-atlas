@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router';
 import { Menu, Search, Xmark } from 'iconoir-react';
 import { Sheet } from '@/view/ui/Sheet';
 import { Icon } from '@/view/ui/Icon';
+import { loadLibraryIndex } from '@/core/library/load-library';
 const SearchDialog = lazy(() => import('@/view/search/SearchDialog').then((m) => ({ default: m.SearchDialog })));
 
 type Theme = 'light' | 'dark' | 'system';
@@ -123,6 +124,8 @@ export function Header() {
       <nav className="hidden md:flex items-center gap-6 text-sm font-[500]">
         <Link
           to={`/biblioteka${location.search}`}
+          onMouseEnter={() => loadLibraryIndex()}
+          onPointerDown={() => loadLibraryIndex()}
           className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${
             isLibraryActive ? 'font-bold text-korekta-tekst' : ''
           }`}
@@ -184,7 +187,11 @@ export function Header() {
           </button>
           <Link
             to={`/biblioteka${location.search}`}
-            onClick={() => setMobileMenuOpen(false)}
+            onPointerDown={() => loadLibraryIndex()}
+            onClick={() => {
+              loadLibraryIndex();
+              setMobileMenuOpen(false);
+            }}
             className={`text-sm font-[500] py-2 hover:underline min-h-[44px] flex items-center ${
               isLibraryActive ? 'font-bold text-korekta-tekst' : ''
             }`}

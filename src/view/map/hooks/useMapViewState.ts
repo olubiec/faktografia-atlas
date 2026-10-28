@@ -320,7 +320,9 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           const activeBbox = drillBbox ?? bounds;
           const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
           let kind: CameraKind = 'in';
-          if (targetView.zoom < currentViewStateRef.current.zoom - 0.05) {
+          if (fittedBboxRef.current === "null" && drillBbox !== null) {
+            kind = 'instant';
+          } else if (targetView.zoom < currentViewStateRef.current.zoom - 0.05) {
             kind = 'out';
           }
           fittedBboxRef.current = bboxKey;

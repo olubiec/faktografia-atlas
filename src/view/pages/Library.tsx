@@ -128,7 +128,8 @@ export function Library() {
       nextParams.delete('p');
     }
 
-    setSearchParams(nextParams);
+    const isCategoryChange = newQuery.cat !== query.cat;
+    setSearchParams(nextParams, { replace: !isCategoryChange });
   };
 
   const handlePick = (id: string | number) => {
