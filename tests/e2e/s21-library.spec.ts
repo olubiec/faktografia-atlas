@@ -50,6 +50,12 @@ test.describe('Test całej ścieżki „Biblioteka GUS” (@S21)', () => {
 
     // Progi §7: wejście na /biblioteka = dokładnie 1 żądanie spisu index.json
     // i 0 żądań do /data/values/ oraz /data/profiles/ z głównej mapy
+    // Strona zleca żądanie spisu chwilę po zmianie adresu, więc czekamy na warunek
+    // (spis wczytany = widoczny licznik), zamiast liczyć żądania w tej samej chwili.
+    await expect
+      .poll(() => requests.filter((url) => url.includes('index.json')).length)
+      .toBeGreaterThan(0);
+    await expect(page.getByTestId('library-results')).toBeVisible();
     const indexRequestsOnEntry = requests.filter((url) => url.includes('index.json'));
     const mainValuesRequests = requests.filter((url) => url.includes('/data/values/'));
     const mainProfilesRequests = requests.filter((url) => url.includes('/data/profiles/'));
@@ -155,6 +161,12 @@ test.describe('Test całej ścieżki „Biblioteka GUS” (@S21)', () => {
     await expect(page).toHaveURL(/\/biblioteka$/);
 
     // Progi §7: wejście na /biblioteka = 1 żądanie spisu, 0 żądań do głównej mapy
+    // Strona zleca żądanie spisu chwilę po zmianie adresu, więc czekamy na warunek
+    // (spis wczytany = widoczny licznik), zamiast liczyć żądania w tej samej chwili.
+    await expect
+      .poll(() => requests.filter((url) => url.includes('index.json')).length)
+      .toBeGreaterThan(0);
+    await expect(page.getByTestId('library-results')).toBeVisible();
     const indexRequestsOnEntry = requests.filter((url) => url.includes('index.json'));
     const mainValuesRequests = requests.filter((url) => url.includes('/data/values/'));
     const mainProfilesRequests = requests.filter((url) => url.includes('/data/profiles/'));
