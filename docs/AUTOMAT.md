@@ -17,6 +17,7 @@ Każde zadanie to plik `tasks/W<fala>-<id>-<nazwa>.md`. Gdy pliki fali trafią n
 2. `node scripts/ops/wave-files.mjs F10` – z kolejki i sekcji ARCHITEKTURA powstają pliki w `tasks/poczekalnia/` (pętla ich nie widzi). Generator odrzuci falę z zależnością w tej samej fali albo kolizją plików. `--list` pokazuje fale.
 3. **Start:** `git mv tasks/poczekalnia/W10-*.md tasks/` (albo od razu `... F10 --launch`), commit, push na `main`. Push `tasks/W*.md` budzi pętlę; CI go ignoruje.
 4. Pętla robi resztę. Kolejne fale możesz wrzucić z góry (`W11`, `W12`): startują po bramce poprzedniej.
+- **Gotowe pliki:** F10–F12 w `tasks/poczekalnia/` (generator już je zrobił), F13 (4 testy e2e) w `tasks/poczekalnia/W13-T13*`. Indeks: `docs/prompty/README.md`.
 - **Zadania spoza kolejki** (poprawki z oglądu, stabilizacja testów, backlog): plik wg `tasks/SZABLON.md`, nazwa `W<n>-<id>-<nazwa>.md`, `n` = następny wolny numer fali. Przykład: `tasks/poczekalnia/W13-T13*.md` (stabilizacja czterech testów e2e; start po scaleniu #408).
 - **Nazwy:** `W<n>` = numer fali pętli (F10 → `W10`), id bez kropek (`W2.24` → `W224`, `T13.1` → `T131`). Tytuł PR: `[W10-W224]`; tytuł scalenia: `W10-W224: W2.24 – …` (kropkowane id zostaje w tytule).
 
@@ -30,7 +31,7 @@ Budzą ją: push `tasks/W*.md`, zakończony workflow `CI`, cron co 30 min (tylko
 - **Stop:** Actions → Jules Loop → „Disable workflow” (cron wyłącza się sam, gdy nie ma fal). Pojedyncze zadanie: `skip <ID>`; falę: `skip-wave`.
 
 ## 4. Ustawienia (robisz raz)
-1. Secret `JULES_API_KEY` (jules.google.com/settings; klucz nigdy w repo) i `LOOP_TOKEN` (PAT: contents, pull requests, issues, actions, variables).
+1. Secret `JULES_API_KEY` (jules.google.com/settings; klucz nigdy w repo) i `LOOP_TOKEN` (PAT: contents, pull requests, issues, actions, variables). **Bez `JULES_API_KEY` pętla się pomija** (notatka w logu, zero czerwonych przebiegów); samo ustawienie sekretu ją uruchamia.
 2. Aplikacja Jules na repo; w Julesie Reactive Mode włączony (reaguje tylko na `@jules`).
 3. Ruleset na `main`: wymagane `testy` i `bezpieczenstwo`; PAT/właściciel z obejściem, żeby pętla mogła zapisać dziennik (bez tego wpisy czekają w issue pętli i dostajesz ping).
 4. Opcjonalne zmienne: README pętli. Domyślne limity (12 naraz, 80/dobę) zostawiają zapas względem limitów Pro (15/100).

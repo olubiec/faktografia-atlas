@@ -1,3 +1,5 @@
+> **ZAMKNIĘTE (26.10.2026) – archiwum, nie wykonywać.** Problem naprawiony w #363 (`?sheet=full` w testach, timeout e2e). Nie wrzucać do `tasks/`.
+
 # NAPRAWA main – mobilny test „Udostępnianie z profilu” (26.10.2026)
 
 Prompt dla Julesa (etykieta `jules`, jedno zadanie, jeden PR). Powód: CI na `main` czerwone od 26.10 12:10 UTC.
