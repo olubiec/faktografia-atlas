@@ -43,9 +43,8 @@ test.describe('Profile Parts Block (@S20)', () => {
     const partsTable = page.locator('[data-testid="parts-table"]');
     await expect(partsTable).toBeVisible();
 
-    const tableText = (await partsTable.innerText()).replace(/\u00a0/g, ' ');
-    expect(tableText).toContain('16 500');
-    expect(tableText).toContain('20 200');
+    await expect(partsTable).toContainText(/16[\s  ]500/);
+    await expect(partsTable).toContainText(/20[\s  ]200/);
   });
 
   test('404 response on parts shard displays fallback message', async ({ page }) => {
