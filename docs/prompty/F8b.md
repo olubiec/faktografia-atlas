@@ -1,3 +1,5 @@
+> **ZAMKNIĘTE (28.10.2026) – archiwum.** Fala wykonana (PR #356–#358). Nowe zadania piszemy jako pliki `tasks/` dla Jules Loop: `docs/AUTOMAT.md`.
+
 # Fala F8b – prompty dla Julesa (26.10.2026)
 Kolejność: najpierw scal **PR #350** (kontrakt spisu) i **PR #351** (formularz zgłoszeń). Potem wklej wszystkie trzy prompty naraz (pliki rozłączne). Bramka fali: zielone CI na `main` po scaleniu trzech PR. Potem: uruchom ręcznie „Fetch library” (workflow), a Claude pisze F9.
 Kolizje: W1.25 → `scripts/data/library.mjs`, `scripts/data/library-index.mjs`, `tests/unit/library.test.ts`, `tests/unit/library-index.test.ts`, `tests/fixtures/library/*` · W1.26 → `src/core/library/query.ts`, `src/core/library/index-contract.ts`, `tests/unit/library-query-perf.test.ts` · W1.27 → `src/core/library/order.ts`, `tests/unit/library-order.test.ts`. Żaden plik się nie powtarza.

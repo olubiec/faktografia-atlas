@@ -1,4 +1,5 @@
-// Ręczna pętla (od 25.10.2026): „Ty scalasz, Claude puszcza kolejne”. Automat (automat.mjs) stoi pod etykietą `automat-stop`.
+// Zastąpione pętlą Jules Loop (28.10.2026, docs/AUTOMAT.md): nie uruchamiaj równolegle z pętlą (podwójne sesje Julesa).
+// Ręczna pętla (25.10.2026): „Ty scalasz, Claude puszcza kolejne”. Automat (automat.mjs) stoi pod etykietą `automat-stop`.
 // Ten skrypt robi to samo, co krok „starty” automatu, ale bez pamięci automatu: stan bierze z GitHuba
 // (scalone PR-y, których tytuł zaczyna się od `Wx.y`, oraz otwarte issue z etykietą `jules`).
 //

@@ -7,7 +7,14 @@ on:
   pull_request:
   push:
     branches: [main]
+    paths-ignore: ['tasks/**']   # push plików fali (Jules Loop) nie odpala 30-minutowego CI
   workflow_dispatch:
+
+# Nowy commit w tym samym PR anuluje poprzedni, trwający przebieg (na main nic nie anulujemy:
+# pętla czeka na wynik CI po scaleniu fali).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
