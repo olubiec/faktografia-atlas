@@ -3,6 +3,7 @@ import type { FeatureCollection } from 'geojson';
 import type { LayerFactory, LayerContext } from './admin';
 import { loadGeoData, parseCssColor } from './admin';
 import { classColorToken, type ClassifyResult } from '@/core/map/classes';
+import { getNoDataPatternProps } from './no-data-pattern';
 import { readUrlState } from '@/core/url/state';
 import tokensJson from '../../../../config/tokens.json';
 
@@ -91,6 +92,7 @@ export const choroplethLayerFactory: LayerFactory = {
       }
       return color;
     };
+    const lineColor = resolveTokenColor('--linia');
 
     const progress = choropleth.reveal?.progress ?? 1;
     const running = choropleth.reveal?.running ?? false;
@@ -103,6 +105,7 @@ export const choroplethLayerFactory: LayerFactory = {
     const transitionDuration = isReduced ? 0 : tokensJson.motion.base ?? 300;
 
     return new GeoJsonLayer({
+      ...getNoDataPatternProps(choropleth.classByTeryt),
       id: 'choropleth-layer',
       transitions: {
         getFillColor: transitionDuration,
@@ -113,7 +116,7 @@ export const choroplethLayerFactory: LayerFactory = {
       getFillColor: (f: any) => {
         const teryt = f.properties?.teryt;
         const cls = teryt ? choropleth.classByTeryt[teryt] ?? 'no-data' : 'no-data';
-        const fullColor = colorOf(cls);
+        const fullColor = cls === 'no-data' ? lineColor : colorOf(cls);
 
         // Reszta kraju (poza aktywnym zakresem): wyblakły kolor tła
         if (!isInScope(teryt)) {
@@ -162,6 +165,7 @@ export const choroplethLayerFactory: LayerFactory = {
           choropleth.classByTeryt,
           choropleth.reveal?.progress,
           choropleth.reveal?.running,
+          choropleth.classByTeryt,
           activeWojTeryt,
           activePowTeryt,
           ctx.colors,

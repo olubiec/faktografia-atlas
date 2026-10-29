@@ -37,7 +37,7 @@ export function Legend({ items, title, className = '' }: LegendProps) {
           >
             <span
               className="w-4 h-4 border border-linia shrink-0"
-              style={{ backgroundColor: `var(${item.token})` }}
+              style={item.token === '--no-data' ? { background: 'repeating-linear-gradient(45deg, var(--linia) 0, var(--linia) 1px, var(--no-data) 1px, var(--no-data) 5px)' } : { backgroundColor: `var(${item.token})` }}
               aria-hidden="true"
             />
             <span className="truncate text-tusz font-mono font-medium">
