@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { clearConsent } from '@/core/consent/consent';
-import { Header } from '../Header';
+import { SiteLayout } from '../layout/SiteLayout';
+import { PageMeta } from '../layout/PageMeta';
 
 export function Privacy() {
   const [revoked, setRevoked] = useState(false);
@@ -11,9 +12,9 @@ export function Privacy() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-kalka text-tusz">
-      <Header />
-      <main className="flex-grow p-4 md:p-8 pb-24 md:pb-32 max-w-4xl mx-auto w-full">
+    <SiteLayout>
+      <PageMeta title="Prywatność" />
+      <div className="p-4 md:p-8 pb-24 md:pb-32 max-w-4xl mx-auto w-full">
         <article className="max-w-[70ch] space-y-6">
           <h1 className="text-3xl font-[800] leading-[1.05] tracking-[-0.02em]">
             Prywatność
@@ -26,7 +27,7 @@ export function Privacy() {
             <p className="text-sm font-[400] leading-[1.6]">
               Za Twoją dobrowolną zgodą zliczamy wyłącznie anonimowe wyszukiwania fraz i miejsc
               w serwisie. Dzięki temu wiemy, które wskaźniki i regiony są najbardziej interesujące,
-              co pomaga w dalszym rozwoju serwiser.
+              co pomaga w dalszym rozwoju serwisu.
             </p>
           </section>
 
@@ -49,6 +50,20 @@ export function Privacy() {
               adres e-mail), adresów IP ani unikalnych identyfikatorów urządzeń. Nie śledzimy Twojej
               aktywności poza naszym serwisem.
             </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-[700] leading-[1.3]">
+              Pamięć przeglądarki (localStorage)
+            </h2>
+            <p className="text-sm font-[400] leading-[1.6]">
+              Serwis zapisuje w przeglądarce użytkownika wyłącznie dane niezbędne do jego poprawnego
+              działania. Używane klucze to:
+            </p>
+            <ul className="list-disc pl-5 text-sm font-[400] leading-[1.6]">
+              <li><strong>faktografia-theme</strong>: Wybrany przez Ciebie motyw interfejsu (jasny, ciemny lub systemowy).</li>
+              <li><strong>fa-consent-v1</strong>: Twoja decyzja dotycząca zgody na analitykę.</li>
+            </ul>
           </section>
 
           <section className="space-y-3">
@@ -80,7 +95,7 @@ export function Privacy() {
             </div>
           </section>
         </article>
-      </main>
-    </div>
+      </div>
+    </SiteLayout>
   );
 }
