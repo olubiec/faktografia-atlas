@@ -155,6 +155,20 @@ async function isMainCiGreen() {
   return ciRun.status === 'completed' && ciRun.conclusion === 'success';
 }
 
+async function getDoneWaves() {
+  try {
+    const issueData = await gh('GET', 'issues/421');
+    if (issueData && issueData.body) {
+      const m = /<!-- JULES_LOOP_STATE\n([\s\S]*?)\n-->/.exec(issueData.body);
+      if (m) {
+        const state = JSON.parse(m[1]);
+        return state.doneWaves || [];
+      }
+    }
+  } catch {}
+  return [];
+}
+
 async function runLoop() {
   log('Uruchamiam Auto Wave Loop nadzorcy...');
 
@@ -165,8 +179,9 @@ async function runLoop() {
       log(`Ostrzezenie git pull: ${e.message}`);
     }
 
+    const doneWaves = await getDoneWaves();
     const activeWaves = getActiveWaveTasks();
-    const sortedActive = [...activeWaves.keys()].sort((a, b) => a - b);
+    const sortedActive = [...activeWaves.keys()].filter((w) => !doneWaves.includes(w)).sort((a, b) => a - b);
 
     if (sortedActive.length > 0) {
       const currentWave = sortedActive[0];
