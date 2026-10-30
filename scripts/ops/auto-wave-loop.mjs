@@ -7,6 +7,7 @@
 // 6. Dziala w petli, az wszystkie fale (F15, F16, F17) zostana ukonczone.
 
 import { execSync } from 'node:child_process';
+
 import fs from 'node:fs';
 import path from 'node:path';
 
