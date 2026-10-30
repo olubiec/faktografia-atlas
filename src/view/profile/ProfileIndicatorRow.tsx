@@ -124,13 +124,11 @@ export function ProfileIndicatorRow({
             {year !== null && <span>{year}</span>}
             {hasRank && rankText && (
               <>
-                {year !== null && <span>•</span>}
                 <span>{rankText}</span>
               </>
             )}
             {trendResult && (
               <>
-                {(year !== null || (hasRank && rankText)) && <span>•</span>}
                 <span aria-label={trendResult.ariaLabel}>
                   <span className="sr-only">{trendResult.ariaLabel}</span>
                   <span aria-hidden="true">{trendResult.text}</span>
@@ -191,7 +189,7 @@ export function ProfileIndicatorRow({
                     href={explanation.definitionUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-tusz underline hover:text-olowek focus:outline-none focus:ring-2 focus:ring-tusz font-medium"
+                    className="text-tusz underline hover:text-olowek focus:outline-none focus:ring-2 focus:ring-tusz font-medium inline-block min-h-[44px] py-2"
                   >
                     Definicja GUS
                   </a>
