@@ -5,6 +5,8 @@ import type { MainView } from '../map/hooks/useMainView';
 import { CompareMaps } from './CompareMaps';
 import { ProfileCompareTable } from './ProfileCompareTable';
 import { compare } from '../../core/compare/compare';
+import { Button } from '../../components/ui/button';
+import { Search, X } from 'lucide-react';
 import { unitTitle } from '../../core/units/label';
 import { formatValue } from '../../core/format/number';
 import { loadAdminTopo, loadUnits } from '../../core/data/load-atlas-data';
@@ -40,6 +42,13 @@ export function ProfileCompare({
   onSelectUnit,
   className,
 }: ProfileCompareProps) {
+  const clearCompare = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('c');
+    window.history.pushState({}, '', url.toString());
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [topoData, setTopoData] = useState<any>(null);
   const [loadedUnits, setLoadedUnits] = useState<Unit[]>([]);
@@ -203,15 +212,65 @@ export function ProfileCompare({
   if (!profileB) {
     return (
       <div className={className} data-slot="profile-compare">
-        <p className="py-6 text-sm text-olowek text-center">
-          Wybierz drugie miejsce, aby porównać wskaźniki.
-        </p>
+        <div className="py-8 text-center text-[var(--kalka-tekst)]">
+          <Button variant="secondary" onClick={() => {
+             const searchBtn = document.querySelector('[aria-label="Szukaj miejsca"]');
+             if (searchBtn) (searchBtn as HTMLButtonElement).click();
+          }} className="w-full justify-start text-muted-foreground border-dashed h-12">
+            <Search className="mr-2 h-4 w-4" />
+            Porównaj z innym miejscem...
+          </Button>
+
+          <div className="mt-6 text-left">
+            <h3 className="text-sm font-semibold mb-3 text-foreground">Przykładowe miejsca</h3>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="secondary" size="sm" onClick={() => {
+                const url = new URL(window.location.href);
+                url.searchParams.set('c', `${profileA.teryt},1465011`);
+                window.history.pushState({}, '', url.toString());
+                window.dispatchEvent(new PopStateEvent('popstate'));
+              }}>
+                Warszawa
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => {
+                const url = new URL(window.location.href);
+                url.searchParams.set('c', `${profileA.teryt},1261011`);
+                window.history.pushState({}, '', url.toString());
+                window.dispatchEvent(new PopStateEvent('popstate'));
+              }}>
+                Kraków
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className={className} data-slot="profile-compare">
+      <div className="flex items-center gap-2 relative mb-4">
+        <Button
+          variant="secondary"
+          className="w-full justify-start flex-1 text-foreground min-h-[44px]"
+          onClick={() => {
+             const searchBtn = document.querySelector('[aria-label="Szukaj miejsca"]');
+             if (searchBtn) (searchBtn as HTMLButtonElement).click();
+          }}
+        >
+          <Search className="mr-2 h-4 w-4 text-muted-foreground" />
+          {profileB.unit?.name || `TERYT ${profileB.teryt}`}
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={clearCompare}
+          aria-label="Wyczyść porównanie"
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+
       <CompareMaps
         profileA={profileA}
         profileB={profileB}
