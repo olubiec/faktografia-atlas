@@ -59,8 +59,6 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
-    const initialZoom = await page.evaluate(() => (window as any).__atlas?.viewState?.zoom);
-
     // Zamknięcie przyciskiem ×
     const closeBtn = page.locator('button[aria-label="Zamknij"]').first();
     await expect(closeBtn).toBeVisible({ timeout: 10000 });
