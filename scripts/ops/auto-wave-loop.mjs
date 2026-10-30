@@ -189,7 +189,7 @@ function runAgentOnTask(task) {
 
   log(`Uruchamiam agy.exe dla ${task.id}...`);
   try {
-    execSync(`"${AGY_PATH}" --dangerously-skip-permissions --print "${prompt.replace(/"/g, '\\"')}"`, {
+    execSync(`"${AGY_PATH}" --dangerously-skip-permissions --print "${prompt.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`, {
       encoding: 'utf8',
       stdio: 'inherit',
       timeout: 300000,
