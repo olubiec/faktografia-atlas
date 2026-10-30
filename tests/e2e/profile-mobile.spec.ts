@@ -102,7 +102,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
 
       const closeButtons = page.locator('button[aria-label="Zamknij"]');
       const count = await closeButtons.count();
-      // test pass
+      expect(count).toBe(1);
     }
   });
 
