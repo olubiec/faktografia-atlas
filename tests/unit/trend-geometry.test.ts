@@ -9,15 +9,12 @@ import {
 describe('trend-geometry', () => {
   describe('getX', () => {
     it('zwraca srodek szerokosci, gdy minYear == maxYear', () => {
-      expect(getX(2020, 2020, 2020, 50, 100)).toBe(100); // 50 + 100/2
+      expect(getX(2020, 2020, 2020, 50, 100)).toBe(100);
     });
 
     it('interpoluje pozycje X miedzy minYear i maxYear', () => {
-      // rok na starcie
       expect(getX(2020, 2020, 2030, 0, 100)).toBe(0);
-      // rok w polowie
       expect(getX(2025, 2020, 2030, 0, 100)).toBe(50);
-      // rok na koncu
       expect(getX(2030, 2020, 2030, 0, 100)).toBe(100);
     });
 
@@ -28,22 +25,18 @@ describe('trend-geometry', () => {
 
   describe('getY', () => {
     it('zwraca srodek wysokosci, gdy domainMinY == domainMaxY', () => {
-      expect(getY(5, 5, 5, 20, 100)).toBe(70); // 20 + 100/2
+      expect(getY(5, 5, 5, 20, 100)).toBe(70);
     });
 
     it('interpoluje pozycje Y w domenie i odwraca osie (SVG Y rosnie w dol)', () => {
-      // wartosc max - powinna byc na górze (paddingTop)
       expect(getY(20, 10, 20, 10, 100)).toBe(10);
-      // wartosc min - powinna byc na dole (paddingTop + plotHeight)
       expect(getY(10, 10, 20, 10, 100)).toBe(110);
-      // w polowie
       expect(getY(15, 10, 20, 10, 100)).toBe(60);
     });
 
     it('dziala poprawnie z wartosciami ujemnymi', () => {
-      // max = 10, min = -10. Srodek = 0.
       expect(getY(0, -10, 10, 0, 100)).toBe(50);
-      expect(getY(-10, -10, 10, 0, 100)).toBe(100); // na samym dole
+      expect(getY(-10, -10, 10, 0, 100)).toBe(100);
     });
   });
 
@@ -62,12 +55,11 @@ describe('trend-geometry', () => {
       const years = [
         2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
       ];
-      // min = 2010, max = 2020, 4 posrednie: ~2012, ~2014, ~2016, ~2018
       const res = getXAxisYears(years);
       expect(res).toContain(2010);
       expect(res).toContain(2020);
-      expect(res.length).toBeLessThanOrEqual(6); // 2 + do 4
-      expect(res).toEqual([...new Set(res)].sort()); // posortowane i unikalne
+      expect(res.length).toBeLessThanOrEqual(6);
+      expect(res).toEqual([...new Set(res)].sort());
     });
   });
 

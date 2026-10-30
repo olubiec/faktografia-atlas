@@ -1,5 +1,3 @@
-
-
 interface TrendStatusProps {
   liveRegionId: string;
   label: string;

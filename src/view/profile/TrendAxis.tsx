@@ -1,4 +1,3 @@
-
 import { formatValue } from '../../core/format/number';
 
 interface TrendAxisProps {
@@ -28,7 +27,6 @@ export function TrendAxis({
 }: TrendAxisProps) {
   return (
     <>
-      {/* Linie siatki Y dla min i max */}
       <line
         x1={paddingLeft}
         y1={getY(minY)}
@@ -48,7 +46,6 @@ export function TrendAxis({
         strokeWidth={1}
       />
 
-      {/* Etykiety osi Y (min i max) */}
       <text
         x={paddingLeft - 8}
         y={getY(maxY)}
@@ -70,7 +67,6 @@ export function TrendAxis({
         {formatValue(minY, unit)}
       </text>
 
-      {/* Etykiety osi X (lata) */}
       {xAxisYears.map((yr) => (
         <g key={yr} transform={`translate(${getX(yr)}, ${height - 8})`}>
           <text

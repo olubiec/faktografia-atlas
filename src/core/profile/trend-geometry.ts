@@ -32,7 +32,7 @@ export function getXAxisYears(years: number[]): number[] {
   const minYear = years[0];
   const maxYear = years[years.length - 1];
   const intermediate: number[] = [];
-  const count = 4; // najwyżej 4 etykiety pomiędzy
+  const count = 4;
   const step = (years.length - 1) / (count + 1);
   for (let i = 1; i <= count; i++) {
     const idx = Math.round(i * step);
@@ -40,7 +40,6 @@ export function getXAxisYears(years: number[]): number[] {
       intermediate.push(years[idx]);
     }
   }
-  // Unikalne posortowane lata
   return Array.from(new Set([minYear, ...intermediate, maxYear])).sort(
     (a, b) => a - b
   );

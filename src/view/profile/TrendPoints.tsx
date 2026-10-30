@@ -1,4 +1,3 @@
-
 import { formatValue } from '../../core/format/number';
 import type { SegmentPoint } from '../../core/profile/trend-geometry';
 
@@ -39,7 +38,6 @@ export function TrendPoints({
 }: TrendPointsProps) {
   return (
     <>
-      {/* Seria porównawcza (cieńsza linia) */}
       {compareSegments.map((seg, i) => {
         if (seg.length === 1) {
           return (
@@ -70,7 +68,6 @@ export function TrendPoints({
         );
       })}
 
-      {/* Główna seria (grubsza linia) */}
       {mainSegments.map((seg, i) => {
         if (seg.length === 1) {
           return (
@@ -100,7 +97,6 @@ export function TrendPoints({
         );
       })}
 
-      {/* Ostatnia wartość: wyróżniony punkt i podpis */}
       {lastValidPoint && (
         <g transform={`translate(${getX(lastValidPoint.year)}, ${getY(lastValidPoint.value)})`}>
           <circle
@@ -120,7 +116,6 @@ export function TrendPoints({
         </g>
       )}
 
-      {/* Wskaźnik interaktywny dla aktywnego roku (hover/touch/focus) */}
       {currentActiveYear !== null && (
         <g transform={`translate(${getX(currentActiveYear)}, 0)`}>
           <line
@@ -152,7 +147,6 @@ export function TrendPoints({
         </g>
       )}
 
-      {/* Obszary dotykowe / najechania dla każdego roku (min 44px szerokości) */}
       {years.map((yr) => {
         const xPos = getX(yr);
         const colWidth = Math.max(containerWidth / years.length, 44);
