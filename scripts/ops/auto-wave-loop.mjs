@@ -202,7 +202,7 @@ async function runLoop() {
         if (mainGreen) {
           log(`CI na main jest ZIELONE! Fala W${currentWave} UKONCZONA!`);
 
-          // Zapisz ukonczona fale do issue stanu (bez usuwania plikow z main, zgodnie z AGENTS.md)
+          // Zapisz ukonczona fale do issue stanu
           try {
             const issueData = await gh('GET', 'issues/421');
             if (issueData && issueData.body) {
@@ -226,7 +226,8 @@ async function runLoop() {
             log(`Blad aktualizacji issue #421: ${e.message}`);
           }
 
-          log(`Kolej na nastepna fale...`);
+          log(`Fala W${currentWave} (Jules) ukonczona! Zgodnie z decyzja uzytkownika, kolejne fale beda realizowane bezposrednio przez subagenty Antigravity w czacie.`);
+          process.exit(0);
         } else {
           log(`Czekam na zakonczenie zielonego CI na main...`);
         }
