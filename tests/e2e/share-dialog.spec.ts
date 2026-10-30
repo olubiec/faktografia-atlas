@@ -110,4 +110,32 @@ test.describe('Pobierz i udostępnij (W2.18 @S19)', () => {
     const accessibilityResults = await new AxeBuilder({ page }).analyze();
     expect(accessibilityResults.violations).toEqual([]);
   });
+
+  test('na 360x740 oraz 1440x900 podgląd karty SVG oraz główny przycisk są jednocześnie widoczne bez obcinania', async ({ page }) => {
+    const viewports = [
+      { width: 360, height: 740 },
+      { width: 1440, height: 900 }
+    ];
+
+    for (const vp of viewports) {
+      await page.setViewportSize(vp);
+      await page.goto('/__test/ui');
+      await page.click('#open-share-dialog');
+
+      const dialog = page.getByRole('dialog', { name: 'Pobierz i udostępnij' });
+      await expect(dialog).toBeVisible();
+
+      // Check SVG preview is visible
+      const svgPreview = page.getByRole('img', { name: 'Podgląd karty' });
+      await expect(svgPreview).toBeInViewport();
+
+      // Check main download button is visible
+      const downloadButton = page.getByRole('button', { name: 'Pobierz obraz' });
+      await expect(downloadButton).toBeInViewport();
+
+      // Close dialog
+      await page.keyboard.press('Escape');
+      await expect(dialog).not.toBeVisible();
+    }
+  });
 });
