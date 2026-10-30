@@ -103,7 +103,7 @@ export function ProfileParts({
                     <th scope="col" className="py-2 px-2 font-normal text-right">
                       Miasto
                     </th>
-                    <th scope="col" className="py-2 pl-2 font-normal text-right">
+                    <th scope="col" className="py-2 pl-2 font-normal text-right max-w-[80px] break-words whitespace-normal leading-tight" lang="pl">
                       Obszar wiejski
                     </th>
                   </tr>

@@ -1,0 +1,102 @@
+{
+  "population": {
+    "short": "Liczba ludności zamieszkującej daną jednostkę na koniec roku.",
+    "howToRead": "Większa populacja zazwyczaj oznacza wyższy poziom urbanizacji lub centralny punkt regionu.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/51,pojecie.html"
+  },
+  "density": {
+    "short": "Liczba ludności przypadająca na 1 km² powierzchni.",
+    "howToRead": "Wskaźnik ten zależy od wielkości jednostki. Małe, zwarte miasta wypadają naturalnie wyżej niż rozległe gminy.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/61,pojecie.html"
+  },
+  "natural-increase": {
+    "short": "Różnica między liczbą urodzeń żywych a liczbą zgonów w przeliczeniu na 1000 ludności.",
+    "howToRead": "Wartości dodatnie oznaczają przewagę urodzeń nad zgonami. Często powiązany ze strukturą wiekową ludności.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/183,pojecie.html"
+  },
+  "migration-balance": {
+    "short": "Różnica między zameldowaniami a wymeldowaniami w przeliczeniu na 1000 ludności.",
+    "howToRead": "Dodatnie saldo oznacza, że więcej osób sprowadza się do gminy niż z niej wyjeżdża. Wsie wokół dużych miast mają zwykle wysokie salda.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/185,pojecie.html"
+  },
+  "share-65plus": {
+    "short": "Odsetek osób w wieku 65 lat i więcej w populacji ogółem.",
+    "howToRead": "Wyższy wskaźnik wskazuje na starzenie się społeczeństwa w danej jednostce.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/60,pojecie.html"
+  },
+  "median-age": {
+    "short": "Wiek, powyżej i poniżej którego znajduje się dokładnie połowa ludności.",
+    "howToRead": "Pomaga szybko ocenić, czy populacja w regionie jest stosunkowo młoda, czy starsza.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/60,pojecie.html"
+  },
+  "unemployment-rate": {
+    "short": "Udział zarejestrowanych bezrobotnych w cywilnej ludności aktywnej zawodowo.",
+    "howToRead": "Różni się od stopy bezrobocia BAEL. Pokazuje osoby zarejestrowane w urzędach pracy.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/73,pojecie.html"
+  },
+  "unemployed-share-working-age": {
+    "short": "Udział bezrobotnych zarejestrowanych w liczbie ludności w wieku produkcyjnym.",
+    "howToRead": "Wskaźnik ten lepiej obrazuje bezrobocie na poziomie gminnym w stosunku do potencjalnych pracowników.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/73,pojecie.html"
+  },
+  "avg-wage": {
+    "short": "Przeciętne miesięczne wynagrodzenie brutto w przeliczeniu na jednego zatrudnionego.",
+    "howToRead": "Dane GUS dotyczą tylko firm zatrudniających 10 i więcej osób. Zawyżone przez duże zakłady przemysłowe.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/93,pojecie.html"
+  },
+  "income-per-capita": {
+    "short": "Dochody ogółem budżetów gmin w przeliczeniu na jednego mieszkańca.",
+    "howToRead": "Wysokie wartości mogą wynikać z bogactwa gminy (np. z podatków PIT/CIT) lub z dotacji i subwencji.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/394,pojecie.html"
+  },
+  "spending-per-capita": {
+    "short": "Wydatki ogółem budżetów gmin w przeliczeniu na jednego mieszkańca.",
+    "howToRead": "Pokazuje skalę działalności samorządu. Wydatki mogą być jednorazowo wysokie przez duże inwestycje z unijnym dofinansowaniem.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/395,pojecie.html"
+  },
+  "regon-per-10k": {
+    "short": "Liczba podmiotów gospodarki narodowej wpisanych do rejestru REGON na 10 tys. ludności.",
+    "howToRead": "Pokazuje nasycenie regionu firmami, stowarzyszeniami, urzędami. Miasta zawsze wypadają tu wyżej.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/279,pojecie.html"
+  },
+  "dwellings-per-1000": {
+    "short": "Liczba nowych mieszkań oddanych do użytkowania w przeliczeniu na 1000 ludności.",
+    "howToRead": "Silnie związany z saldo migracji. Wsie wokół metropolii notują najwyższe wskaźniki.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/573,pojecie.html"
+  },
+  "dwelling-area-per-person": {
+    "short": "Przeciętna powierzchnia użytkowa mieszkań przypadająca na jedną osobę.",
+    "howToRead": "Gminy wiejskie, z zabudową jednorodzinną, wykazują tu wyższe wartości niż duże miasta.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/1460,pojecie.html"
+  },
+  "forest-cover": {
+    "short": "Stosunek procentowy powierzchni lasów do ogólnej powierzchni danej jednostki.",
+    "howToRead": "Zależy mocno od geografii. Uwzględnia lasy państwowe, prywatne i parki narodowe.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/189,pojecie.html"
+  },
+  "sewerage-share": {
+    "short": "Odsetek ludności korzystającej z sieci kanalizacyjnej w ogóle populacji.",
+    "howToRead": "Wskaźnik często niższy na obszarach wiejskich o rozproszonej zabudowie.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/1457,pojecie.html"
+  },
+  "preschool-3-6": {
+    "short": "Odsetek dzieci objętych wychowaniem przedszkolnym w liczbie dzieci w wieku 3–6 lat.",
+    "howToRead": "Pokazuje dostępność opieki i strukturę potrzeb w gminie.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/645,pojecie.html"
+  },
+  "library-readers-per-1000": {
+    "short": "Liczba zarejestrowanych czytelników bibliotek publicznych na 1000 ludności.",
+    "howToRead": "Może zależeć od dostępu do innych dóbr kultury w większych ośrodkach.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/736,pojecie.html"
+  },
+  "tourist-nights-per-1000": {
+    "short": "Liczba udzielonych noclegów w obiektach turystycznych na 1000 ludności.",
+    "howToRead": "Pokazuje turystyczne znaczenie powiatu. Rejestruje obiekty z min. 10 miejscami noclegowymi.",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/260,pojecie.html"
+  },
+  "cars-per-1000": {
+    "short": "Liczba zarejestrowanych samochodów osobowych w przeliczeniu na 1000 ludności.",
+    "howToRead": "Silnie zawyżany w miastach z dużą liczbą leasingów flotowych (np. Warszawa, Poznań).",
+    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/471,pojecie.html"
+  }
+}

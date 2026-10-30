@@ -155,12 +155,12 @@ export function ContextBlock({
       {/* Skala ze wskazaniami (gdy pełne dane wartości są dostępne) */}
       {hasScale && (
         <div className="space-y-1.5 pt-1">
-          <div className="flex justify-between items-center text-3xs text-olowek font-mono">
+          <div className="flex justify-between items-center text-xs text-olowek font-mono">
             <span>najmniej: {formatValue(contextRes.min, indicator.unit)}</span>
             <span>najwięcej: {formatValue(contextRes.max, indicator.unit)}</span>
           </div>
 
-          <div className="relative h-2 bg-linia rounded-full my-2">
+          <div className="relative h-2 bg-linia  my-2">
             {/* Kreska mediany */}
             <div
               className="absolute top-1/2 -translate-y-1/2 w-0.5 h-3 bg-olowek -translate-x-1/2"
@@ -169,13 +169,13 @@ export function ContextBlock({
             />
             {/* Kropka "tu jesteś" */}
             <div
-              className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-tusz border-2 border-arkusz -translate-x-1/2 shadow-xs"
+              className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5  bg-tusz border-2 border-arkusz -translate-x-1/2 "
               style={{ left: `${positionPct}%` }}
               title={`Tu jesteś: ${contextRes.rank}. miejsce`}
             />
           </div>
 
-          <div className="flex justify-between items-center text-3xs text-olowek font-mono">
+          <div className="flex justify-between items-center text-xs text-olowek font-mono">
             <span style={{ marginLeft: `${Math.min(80, Math.max(0, medianPos - 10))}%` }}>
               mediana
             </span>
@@ -210,7 +210,7 @@ export function ContextBlock({
                   e.stopPropagation();
                   onSelectUnit?.(topBottomUnits.top!.teryt);
                 }}
-                className="min-h-[44px] px-3 py-2 bg-arkusz border border-linia hover:bg-kalka transition-colors text-tusz font-medium text-xs text-right cursor-pointer flex-1 min-w-0 truncate rounded-xs"
+                className="min-h-[44px] px-3 py-2 bg-arkusz border border-linia hover:bg-kalka transition-colors text-tusz font-medium text-xs text-right cursor-pointer flex-1 min-w-0 truncate "
               >
                 {topBottomUnits.top.name} ({formatValue(topBottomUnits.top.value, indicator.unit)})
               </button>
@@ -225,7 +225,7 @@ export function ContextBlock({
                   e.stopPropagation();
                   onSelectUnit?.(topBottomUnits.bottom!.teryt);
                 }}
-                className="min-h-[44px] px-3 py-2 bg-arkusz border border-linia hover:bg-kalka transition-colors text-tusz font-medium text-xs text-right cursor-pointer flex-1 min-w-0 truncate rounded-xs"
+                className="min-h-[44px] px-3 py-2 bg-arkusz border border-linia hover:bg-kalka transition-colors text-tusz font-medium text-xs text-right cursor-pointer flex-1 min-w-0 truncate "
               >
                 {topBottomUnits.bottom.name} ({formatValue(topBottomUnits.bottom.value, indicator.unit)})
               </button>
@@ -265,7 +265,7 @@ export function ContextBlock({
       )}
 
       {/* Stopka z informacją o źródle */}
-      <div className="pt-2 border-t border-linia text-3xs text-olowek">
+      <div className="pt-2 border-t border-linia text-xs text-olowek">
         Źródło: GUS, BDL, {year}
       </div>
     </div>
