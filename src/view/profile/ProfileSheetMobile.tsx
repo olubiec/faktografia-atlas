@@ -39,27 +39,28 @@ export function ProfileSheetMobile({
       return;
     }
 
-    let animationFrameId: number;
-
     const updateInset = () => {
       const dialogEl = document.querySelector<HTMLElement>('[role="dialog"]');
       if (dialogEl) {
         const rect = dialogEl.getBoundingClientRect();
         const visibleHeight = Math.max(0, window.innerHeight - rect.y);
-        setSheetInset(visibleHeight);
+        setSheetInset(Math.min(visibleHeight, Math.round(window.innerHeight * 0.45)));
       }
     };
 
-    const loop = () => {
-      updateInset();
-      animationFrameId = requestAnimationFrame(loop);
-    };
-    loop();
+    const observer = new ResizeObserver(() => updateInset());
+    const dialogEl = document.querySelector<HTMLElement>('[role="dialog"]');
+    if (dialogEl) observer.observe(dialogEl);
+
+    const observerMutation = new MutationObserver(() => updateInset());
+    if (dialogEl) observerMutation.observe(dialogEl, { attributes: true, attributeFilter: ['style'] });
 
     window.addEventListener('resize', updateInset);
+    updateInset();
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
+      observerMutation.disconnect();
       window.removeEventListener('resize', updateInset);
       setSheetInset(0);
     };
@@ -74,10 +75,7 @@ export function ProfileSheetMobile({
     onClose();
   };
 
-  const isFullSheet =
-    typeof window !== 'undefined' &&
-    new URLSearchParams(window.location.search).get('sheet') === 'full';
-  const initialSnap = isFullSheet ? 2 : 1;
+  const initialSnap = 1;
 
   return (
     <BottomSheet
@@ -90,6 +88,7 @@ export function ProfileSheetMobile({
       className={className}
     >
       <ProfileBody
+        showCloseButton={false}
         profile={profile}
         units={units}
         view={view}
