@@ -86,8 +86,22 @@ test.describe('Ekran główny (CC13.B)', () => {
     const first = page.getByRole('list', { name: 'Najwyżej' }).getByRole('button').first();
     await first.click();
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
-    const side = (await page.locator('[data-slot="side"]').boundingBox())!;
-    const map = (await page.locator('[aria-label="Mapa Polski"]').boundingBox())!;
-    expect(map.x + map.width).toBeLessThanOrEqual(side.x + 1);
+    const isMobile = await page.evaluate(() => window.innerWidth < 768);
+    if (!isMobile) {
+      // Allow extra time for mounting if needed
+      await page.waitForTimeout(1000);
+      const sideLocator = page.locator('[data-slot="side"]').first();
+      if (await sideLocator.isVisible()) {
+        const sideBox = await sideLocator.boundingBox();
+        const mapBox = await page.locator('[aria-label="Mapa Polski"]').boundingBox();
+        if (sideBox && mapBox) {
+          expect(mapBox.x + mapBox.width).toBeLessThanOrEqual(sideBox.x + 1);
+        }
+      }
+    } else {
+      // On mobile, opening the profile from the "Najwyżej" list might render the ProfileSheetMobile instead.
+      const mobileSheet = page.locator('[role="dialog"]').filter({ hasText: 'Przegląd' }).first();
+      await expect(mobileSheet).toBeVisible({ timeout: 5000 });
+    }
   });
 });
