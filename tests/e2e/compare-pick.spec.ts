@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { AxeBuilder } from '@axe-core/playwright';
+
 
 test.describe('Compare pick - Profile Compare', () => {
   test('desktop - compare tab is active, can pick a place to compare via URL or search', async ({ page }) => {
@@ -20,7 +20,7 @@ test.describe('Compare pick - Profile Compare', () => {
     const pickAnother = page.getByText('Porównaj z innym miejscem...');
     await expect(pickAnother).toBeVisible();
     await pickAnother.click();
-    const searchInput = page.getByRole('dialog').getByPlaceholder('Wpisz nazwę miejsca...');
+
     // await expect(searchInput).toBeVisible(); // Disabled because we replaced search with quick links/regular search btn trigger
 
 

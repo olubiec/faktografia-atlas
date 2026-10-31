@@ -6,7 +6,7 @@ import { CompareMaps } from './CompareMaps';
 import { ProfileCompareTable } from './ProfileCompareTable';
 import { compare } from '../../core/compare/compare';
 import { Button } from '../../components/ui/button';
-import { Search, X } from 'lucide-react';
+import { Search, Xmark } from 'iconoir-react';
 import { unitTitle } from '../../core/units/label';
 import { formatValue } from '../../core/format/number';
 import { loadAdminTopo, loadUnits } from '../../core/data/load-atlas-data';
@@ -217,7 +217,7 @@ export function ProfileCompare({
              const searchBtn = document.querySelector('[aria-label="Szukaj miejsca"]');
              if (searchBtn) (searchBtn as HTMLButtonElement).click();
           }} className="w-full justify-start text-muted-foreground border-dashed h-12">
-            <Search className="mr-2 h-4 w-4" />
+            <Icon icon={Search} size={16} aria-hidden={true} className="mr-2" />
             Porównaj z innym miejscem...
           </Button>
 
@@ -258,7 +258,7 @@ export function ProfileCompare({
              if (searchBtn) (searchBtn as HTMLButtonElement).click();
           }}
         >
-          <Search className="mr-2 h-4 w-4 text-muted-foreground" />
+          <Icon icon={Search} size={16} aria-hidden={true} className="mr-2 text-[var(--olowek)]" />
           {profileB.unit?.name || `TERYT ${profileB.teryt}`}
         </Button>
         <Button
@@ -267,7 +267,7 @@ export function ProfileCompare({
           onClick={clearCompare}
           aria-label="Wyczyść porównanie"
         >
-          <X className="h-4 w-4" />
+          <Icon icon={Xmark} size={16} aria-hidden={true} />
         </Button>
       </div>
 
