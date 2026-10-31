@@ -12,6 +12,7 @@ import { Icon } from '../ui/Icon';
 import { ProfileOverview } from './ProfileOverview';
 import { ProfileIndicatorRow } from './ProfileIndicatorRow';
 import { ProfileChildren } from './ProfileChildren';
+import { ProfileCompare } from './ProfileCompare';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs';
 import { formatSource } from '../../core/format/number';
 import { Xmark, Link } from 'iconoir-react';
@@ -127,7 +128,7 @@ export function ProfileBody({
 
       {/* Zakładki profilu */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-3 mb-4">
+        <TabsList className={`w-full grid mb-4 gap-1 sm:gap-2 ${childrenResult && childrenResult.label ? 'grid-cols-3' : 'grid-cols-2'}`}>
           <TabsTrigger value="overview" className="min-h-[44px]">
             Przegląd
           </TabsTrigger>
@@ -138,10 +139,9 @@ export function ProfileBody({
           ) : null}
           <TabsTrigger
             value="compare"
-            disabled
-            className="min-h-[44px] disabled:opacity-50"
+            className="min-h-[44px]"
           >
-            Porównaj <span className="text-xs text-olowek ml-1">(wkrótce)</span>
+            Porównaj
           </TabsTrigger>
         </TabsList>
 
@@ -195,6 +195,15 @@ export function ProfileBody({
             />
           </TabsContent>
         )}
+        <TabsContent value="compare" className="focus-visible:outline-none">
+          <ProfileCompare
+            profileA={profile}
+            profileB={null} // placeholder since the real code will fetch it if ?c= exists
+            units={units}
+            view={view}
+            onSelectUnit={onSelectUnit}
+          />
+        </TabsContent>
       </Tabs>
 
       {/* Stopka z przyciskiem Kopiuj link, przypisami i źródłem */}
