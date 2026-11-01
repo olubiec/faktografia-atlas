@@ -30,6 +30,7 @@ import { useMainView } from './hooks/useMainView';
 import { rankUnits } from '@/core/ranking/ranking';
 import { effectiveLevel, levelRequiresDeselect } from '@/core/map/main-view';
 import { IndicatorPanel } from '@/view/main/IndicatorPanel';
+import { MobileIndicatorBar } from '@/view/main/MobileIndicatorBar';
 import { UnitTooltip } from '@/view/main/UnitTooltip';
 import { useIsMobile } from '@/view/hooks/useIsMobile';
 import { useProfile } from './hooks/useProfile';
@@ -92,6 +93,7 @@ export function AtlasMap() {
 function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) {
   const isMobile = useIsMobile();
   const [isReady, setIsReady] = useState(false);
+  const [indicatorSheetOpen, setIndicatorSheetOpen] = useState(false);
   const unitIndex = useMemo(() => buildIndex(units), [units]);
   const bounds = useMemo(() => countryBounds(units), [units]);
 
@@ -158,6 +160,20 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
   if (selectedTeryt !== prevSelectedTeryt) {
     setPrevSelectedTeryt(selectedTeryt);
     setMobileTooltipTeryt(null);
+    if (selectedTeryt !== null) {
+      setIndicatorSheetOpen(false);
+    }
+  }
+
+  const { profile, isOpen: profileOpen, closeProfile } = useProfile(selectedTeryt, units);
+
+  const [prevProfileOpen, setPrevProfileOpen] = useState(profileOpen);
+  if (profileOpen !== prevProfileOpen) {
+    setPrevProfileOpen(profileOpen);
+    if (profileOpen) {
+      setIndicatorSheetOpen(false);
+      setMobileTooltipTeryt(null);
+    }
   }
 
   const handleSelectUnit = useCallback(
@@ -167,6 +183,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
         if (mobileTooltipTeryt === teryt) {
           selectUnit(teryt);
           setMobileTooltipTeryt(null);
+          setIndicatorSheetOpen(false);
         } else {
           setMobileTooltipTeryt(teryt);
         }
@@ -196,8 +213,6 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       setMobileTooltipTeryt(null);
     }
   }, [isMobile, mobileTooltipTeryt]);
-
-  const { profile, isOpen: profileOpen, closeProfile } = useProfile(selectedTeryt, units);
 
   const extendedDrillState = useMemo(() => {
     const compareParam = typeof window !== 'undefined' ? readUrlState(window.location.search, unitIndex).c ?? null : null;
@@ -286,23 +301,27 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       ? view.values.values[mobileTooltipTeryt]?.[view.values.years.indexOf(view.year)] ?? null
       : null;
 
+  const subUnitsSection = selectedTeryt !== null && (
+    <div className="flex flex-col gap-1.5">
+      <span className="text-sm font-semibold">Jednostki w: {selectedName}</span>
+      <UnitList selectedTeryt={selectedTeryt} index={unitIndex} onSelect={selectUnit} />
+    </div>
+  );
+
   return (
     <div className="flex flex-col md:flex-row w-full h-full min-h-0">
-      <IndicatorPanel
-        view={view}
-        choropleth={choroplethData}
-        ranking={ranking}
-        index={unitIndex}
-        selectedTeryt={selectedTeryt}
-        onSelectUnit={selectUnit}
-      >
-        {selectedTeryt !== null && (
-          <div className="flex flex-col gap-1.5">
-            <span className="text-sm font-semibold">Jednostki w: {selectedName}</span>
-            <UnitList selectedTeryt={selectedTeryt} index={unitIndex} onSelect={selectUnit} />
-          </div>
-        )}
-      </IndicatorPanel>
+      {!isMobile && (
+        <IndicatorPanel
+          view={view}
+          choropleth={choroplethData}
+          ranking={ranking}
+          index={unitIndex}
+          selectedTeryt={selectedTeryt}
+          onSelectUnit={selectUnit}
+        >
+          {subUnitsSection}
+        </IndicatorPanel>
+      )}
 
       <div
         ref={containerRef}
@@ -313,13 +332,13 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
         onKeyDown={handleKeyDown}
         onPointerLeave={() => setHover(null)}
       >
-        <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 max-w-[280px] sm:max-w-[360px] pointer-events-none">
+        <div className="absolute top-4 left-4 right-4 md:right-auto z-10 flex flex-col gap-2 max-w-[calc(100vw-32px)] sm:max-w-[360px] pointer-events-none">
           <div className="pointer-events-auto">
-            <Breadcrumbs teryt={selectedTeryt} index={unitIndex} onSelect={selectBreadcrumb} />
+            <Breadcrumbs teryt={selectedTeryt} index={unitIndex} onSelect={selectBreadcrumb} onBack={goBack} />
           </div>
 
           {selectedTeryt !== null && (
-            <div className="relative pointer-events-auto h-11 -mt-4 -ml-4">
+            <div className="hidden md:block relative pointer-events-auto h-11 -mt-4 -ml-4">
               <BackButton onClick={goBack} visible={true} />
             </div>
           )}
@@ -365,7 +384,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
           />
         )}
 
-        {isMobile && mobileTooltipTeryt && mobileTooltipUnit && (
+        {isMobile && !profileOpen && mobileTooltipTeryt && mobileTooltipUnit && (
           <UnitTooltip
             unit={mobileTooltipUnit}
             value={mobileTooltipValue}
@@ -374,16 +393,41 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
             total={ranking?.items.length ?? 0}
             levelNoun={view.level === 'woj' ? 'województw' : view.level === 'pow' ? 'powiatów' : 'gmin'}
             isMobile={true}
+            profileOpen={profileOpen}
             onOpenProfile={() => {
               selectUnit(mobileTooltipTeryt);
               setMobileTooltipTeryt(null);
+              setIndicatorSheetOpen(false);
             }}
           />
         )}
       </div>
 
       {/* Profil miejsca: osobna kolumna obok mapy, nic nie jest nałożone na mapę (PRODUKT.md §4). */}
-      <div data-slot="side" className="empty:hidden md:w-[440px] md:shrink-0 border-t md:border-t-0 md:border-l border-linia bg-arkusz overflow-y-auto max-h-[45vh] md:max-h-none" />
+      <div
+        data-slot="side"
+        className="hidden md:block empty:hidden md:w-[440px] md:shrink-0 md:border-l border-linia bg-arkusz overflow-y-auto"
+      />
+
+      {isMobile && (
+        <MobileIndicatorBar
+          view={view}
+          choropleth={choroplethData}
+          ranking={ranking}
+          index={unitIndex}
+          selectedTeryt={selectedTeryt}
+          onSelectUnit={(teryt) => {
+            setIndicatorSheetOpen(false);
+            setMobileTooltipTeryt(null);
+            selectUnit(teryt);
+          }}
+          profileOpen={profileOpen}
+          isOpen={indicatorSheetOpen}
+          onOpenChange={setIndicatorSheetOpen}
+        >
+          {subUnitsSection}
+        </MobileIndicatorBar>
+      )}
 
       <ProfilePortal profile={profile} units={units} view={view} onSelectUnit={selectUnit} isOpen={profileOpen} onClose={closeProfile} />
     </div>
