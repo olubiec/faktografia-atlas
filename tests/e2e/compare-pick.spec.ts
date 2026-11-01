@@ -27,7 +27,7 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     await expect(compareTab).not.toContainText('(wkrótce)');
 
     // Kliknięcie w zakładkę „Porównaj”
-    await compareTab.click({ noWaitAfter: true });
+    await compareTab.click();
 
     // Sprawdzenie dostępności (axe) na zakładce przed wyborem drugiego miejsca
     const axeResultsInitial = await new AxeBuilder({ page })
@@ -47,8 +47,8 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     await searchResultItem.click();
 
     // Weryfikacja parametru ?c= w adresie URL
-    await expect(page).toHaveURL(/c=12(%2C|,)14/);
-    expect(decodeURIComponent(page.url())).toContain('c=12,14');
+    await page.waitForFunction(() => page.url().includes('c=12,14'));
+    expect(page.url()).toContain('c=12,14');
 
     // Wyświetla obie mapki oraz tabelę porównania
     const compareMaps = page.locator('[data-slot="compare-maps"]');
@@ -70,7 +70,8 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     await clearButton.click();
 
     // Po wyczyszczeniu: parametr c usunięty z adresu, mapki i tabela znikają
-    await expect(page).not.toHaveURL(/c=/);
+    await page.waitForFunction(() => !page.url().includes('c='));
+    expect(page.url()).not.toContain('c=');
     await expect(compareTable).not.toBeVisible();
   });
 
@@ -92,9 +93,8 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     // Sprawdzenie paska zakładek: mieści się w kontenerze bez przewijania
     const tabsList = page.locator('[data-slot="tabs-list"]').first();
     await expect(tabsList).toBeVisible();
-    const tabsOverflow = await page.evaluate(() => {
-      const el = document.querySelector('[data-slot="tabs-list"]');
-      return el ? el.scrollWidth <= el.clientWidth + 1 : false;
+    const tabsOverflow = await tabsList.evaluate((el) => {
+      return el.scrollWidth <= el.clientWidth + 1;
     });
     expect(tabsOverflow).toBe(true);
 
@@ -105,7 +105,7 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     await expect(compareTab).not.toContainText('(wkrótce)');
 
     // Kliknięcie zakładki Porównaj
-    await compareTab.click({ force: true, noWaitAfter: true });
+    await compareTab.click();
 
     // Szybki wybór przykładowej jednostki kontrastowej
     const quickPickButton = page.locator('button', { hasText: 'Mazowieckie' }).first();
@@ -113,8 +113,8 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     await quickPickButton.click();
 
     // Potwierdzenie obecności parametru ?c= w URL
-    await expect(page).toHaveURL(/c=12(%2C|,)14/);
-    expect(decodeURIComponent(page.url())).toContain('c=12,14');
+    await page.waitForFunction(() => page.url().includes('c=12,14'));
+    expect(page.url()).toContain('c=12,14');
 
     // Wyświetlenie tabeli i mapek
     await expect(page.locator('[data-slot="compare-maps"]')).toBeVisible();
@@ -132,7 +132,8 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     await expect(clearButton).toBeVisible();
     await clearButton.click();
 
-    await expect(page).not.toHaveURL(/c=/);
+    await page.waitForFunction(() => !page.url().includes('c='));
+    expect(page.url()).not.toContain('c=');
   });
 
   test('przycisk „Porównaj z innym miejscem” w profilu przełącza na zakładkę porównania', async ({

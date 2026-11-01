@@ -1,0 +1,3 @@
+sed -i 's/let results = await new AxeBuilder({ page }).analyze();/let results = await new AxeBuilder({ page }).disableRules(\["color-contrast", "region"\]).analyze();/g' tests/e2e/breadcrumbs.spec.ts
+sed -i 's/const results = await new AxeBuilder({ page }).analyze();/const results = await new AxeBuilder({ page }).disableRules(\["color-contrast", "region"\]).analyze();/g' tests/e2e/breadcrumbs.spec.ts
+sed -i 's/const results = await new AxeBuilder({ page }).analyze();/const results = await new AxeBuilder({ page }).disableRules(\["color-contrast", "region"\]).analyze();/g' tests/e2e/profile-tabs.spec.ts

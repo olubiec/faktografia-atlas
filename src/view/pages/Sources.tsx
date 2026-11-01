@@ -85,7 +85,7 @@ export function Sources() {
     >
       <header className="space-y-3 max-w-[70ch]">
         <h1 className="text-3xl font-[800] leading-[1.05] tracking-[-0.02em]">
-          Skąd są dane: Źródła danych i rejestry
+          Źródła danych i rejestry
         </h1>
         <p className="text-sm font-[400] leading-[1.6]">
           Faktografia Atlas opiera się wyłącznie na oficjalnych, otwartych rejestrach publicznych
@@ -127,7 +127,7 @@ export function Sources() {
           />
 
           <RegistryCard
-            title="Główny Urząd Geodezji i Kartografii (GUGiK) – Rejestr PRNG (Miejscowości)"
+            title="GUGiK PRNG (Miejscowości)"
             sourceName="ogcapi.geoportal.gov.pl"
             sourceUrl="https://ogcapi.geoportal.gov.pl/res/ims/maps/PRNG/apiFeatures"
             license="Otwarte dane GUGiK"

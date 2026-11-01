@@ -1,1 +1,1 @@
-git checkout dff5239 src/view/layout/SiteLayout.tsx
+git checkout dff5239 src/view/pages/ComparePage.tsx

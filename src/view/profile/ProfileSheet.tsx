@@ -3,6 +3,7 @@ import type { UnitProfile, ProfileIndicatorItem } from '../../core/profile/profi
 import type { Unit } from '../../core/units/types';
 import type { MainView } from '../map/hooks/useMainView';
 import { collectFootnotes } from '../../core/profile/footnotes';
+import { pickHighlight } from '../../core/profile/highlight';
 import { childUnits } from '../../core/profile/sections';
 import { unitTitle } from '../../core/units/label';
 import { Footnotes } from './Footnotes';
@@ -84,7 +85,7 @@ export function ProfileBody({
   const unitTitleText = profile.unit ? unitTitle(profile.unit) : `TERYT ${profile.teryt}`;
 
   // Gdy brak `view` (np. w testach jednostkowych), wyznaczamy zakreślenie dla wskaźnika z najlepszym wynikiem
-  const highlightedIndicatorId = null;
+  const highlightedIndicatorId = !view ? pickHighlight(profile.indicators) : null;
 
   // Pozostałe wskaźniki bez bieżącego aktywnego (gdy jest view)
   const otherIndicators = view

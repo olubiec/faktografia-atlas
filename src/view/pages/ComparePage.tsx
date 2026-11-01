@@ -31,6 +31,7 @@ export function ComparePage() {
 
   useEffect(() => {
     if (!a || !units.length) {
+      setProfileA(null);
 
       return;
     }
@@ -43,6 +44,7 @@ export function ComparePage() {
 
   useEffect(() => {
     if (!b || !units.length) {
+      setProfileB(null);
 
       return;
     }
