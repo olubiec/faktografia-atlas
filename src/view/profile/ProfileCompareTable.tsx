@@ -59,7 +59,12 @@ export function ProfileCompareTable({
           Brak wspólnych danych dla wybranych jednostek.
         </p>
       ) : (
-        <div className="w-full overflow-x-auto">
+        <div
+          className="w-full overflow-x-auto"
+          tabIndex={0}
+          role="region"
+          aria-label="Tabela porównania wskaźników"
+        >
           <table
             data-slot="compare-table"
             className="w-full text-left text-xs border-collapse"
