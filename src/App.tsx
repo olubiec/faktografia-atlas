@@ -6,6 +6,8 @@ import { Sources } from './view/pages/Sources';
 import { Privacy } from './view/pages/Privacy';
 import { Library } from './view/pages/Library';
 import { LibraryVariable } from './view/pages/LibraryVariable';
+import { Rankings } from './view/pages/Rankings';
+import { ComparePage } from './view/pages/ComparePage';
 import { AnnotationTestPage } from './view/test/AnnotationTestPage';
 import UiTestPage from './view/test/UiTestPage';
 import { InteractiveTestPage } from './view/test/InteractiveTestPage';
@@ -18,6 +20,8 @@ export function App() {
       <ConsentBar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/rankingi" element={<Rankings />} />
+        <Route path="/porownaj" element={<ComparePage />} />
         <Route path="/o-projekcie" element={<About />} />
         <Route path="/zrodla" element={<Sources />} />
         <Route path="/prywatnosc" element={<Privacy />} />

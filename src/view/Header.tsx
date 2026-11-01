@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router';
 import { Menu, Search, Xmark } from 'iconoir-react';
 import { Sheet } from '@/view/ui/Sheet';
 import { Icon } from '@/view/ui/Icon';
+
 const SearchDialog = lazy(() => import('@/view/search/SearchDialog').then((m) => ({ default: m.SearchDialog })));
 
 type Theme = 'light' | 'dark' | 'system';
@@ -41,7 +42,6 @@ export function Header() {
 
   const searchParams = new URLSearchParams(location.search);
   const isZnakLogo = searchParams.get('logo') === 'znak';
-  const isLibraryActive = location.pathname.startsWith('/biblioteka');
 
   const systemIsDark = useSyncExternalStore(subscribeSystemTheme, getSystemIsDark, () => false);
 
@@ -96,6 +96,15 @@ export function Header() {
     logoClass = 'h-[40px] md:h-[48px] w-auto';
   }
 
+  const navItems = [
+    { label: 'Mapa', to: `/${location.search}`, active: location.pathname === '/' },
+    { label: 'Rankingi', to: `/rankingi${location.search}`, active: location.pathname.startsWith('/rankingi') },
+    { label: 'Porównaj', to: `/porownaj${location.search}`, active: location.pathname.startsWith('/porownaj') },
+    { label: 'Biblioteka', to: `/biblioteka${location.search}`, active: location.pathname.startsWith('/biblioteka') },
+    { label: 'O projekcie', to: `/o-projekcie${location.search}`, active: location.pathname.startsWith('/o-projekcie') },
+    { label: 'Skąd są dane', to: `/zrodla${location.search}`, active: location.pathname.startsWith('/zrodla') },
+  ];
+
   return (
     <header className="h-[56px] md:h-[72px] flex justify-between items-center px-4 md:px-8 border-b border-linia bg-kalka text-tusz relative z-20 shrink-0">
       <Link to={`/${location.search}`} className="flex items-center min-h-[44px]">
@@ -120,28 +129,19 @@ export function Header() {
       </button>
 
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex items-center gap-6 text-sm font-[500]">
-        <Link
-          to={`/biblioteka${location.search}`}
-          className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${
-            isLibraryActive ? 'font-bold text-korekta-tekst' : ''
-          }`}
-          aria-current={isLibraryActive ? 'page' : undefined}
-        >
-          Biblioteka
-        </Link>
-        <Link
-          to={`/o-projekcie${location.search}`}
-          className="hover:underline transition-colors py-2"
-        >
-          O projekcie
-        </Link>
-        <Link
-          to={`/zrodla${location.search}`}
-          className="hover:underline transition-colors py-2"
-        >
-          Skąd są dane
-        </Link>
+      <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-[500]">
+        {navItems.map((item) => (
+          <Link
+            key={item.label}
+            to={item.to}
+            className={`hover:underline transition-colors py-2 px-1 flex items-center min-h-[44px] min-w-[44px] justify-center ${
+              item.active ? 'font-bold text-korekta-tekst underline decoration-2 underline-offset-4' : ''
+            }`}
+            aria-current={item.active ? 'page' : undefined}
+          >
+            {item.label}
+          </Link>
+        ))}
         <button
           type="button"
           onClick={cycleTheme}
@@ -182,30 +182,19 @@ export function Header() {
           >
             Motyw: {themeText}
           </button>
-          <Link
-            to={`/biblioteka${location.search}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className={`text-sm font-[500] py-2 hover:underline min-h-[44px] flex items-center ${
-              isLibraryActive ? 'font-bold text-korekta-tekst' : ''
-            }`}
-            aria-current={isLibraryActive ? 'page' : undefined}
-          >
-            Biblioteka
-          </Link>
-          <Link
-            to={`/o-projekcie${location.search}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="text-sm font-[500] py-2 hover:underline"
-          >
-            O projekcie
-          </Link>
-          <Link
-            to={`/zrodla${location.search}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="text-sm font-[500] py-2 hover:underline"
-          >
-            Skąd są dane
-          </Link>
+          {navItems.map((item) => (
+            <Link
+              key={item.label}
+              to={item.to}
+              onClick={() => setMobileMenuOpen(false)}
+              className={`text-sm font-[500] py-2 px-1 hover:underline min-h-[44px] flex items-center ${
+                item.active ? 'font-bold text-korekta-tekst underline decoration-2 underline-offset-4' : ''
+              }`}
+              aria-current={item.active ? 'page' : undefined}
+            >
+              {item.label}
+            </Link>
+          ))}
         </Sheet>
       )}
 
