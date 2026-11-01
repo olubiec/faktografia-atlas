@@ -2,6 +2,7 @@ import type { UnitProfile } from '../../core/profile/profile';
 import { compare } from '../../core/compare/compare';
 import { formatValue } from '../../core/format/number';
 import { unitLabel } from '../../core/units/label';
+import { useIsMobile } from '../hooks/useIsMobile';
 import { cn } from '../../lib/utils';
 
 export interface ProfileCompareTableProps {
@@ -12,6 +13,8 @@ export interface ProfileCompareTableProps {
 
 /**
  * Tabela porównania dwóch jednostek obok siebie.
+ * Na telefonie (< 768 px) prezentuje czytelne dwupoziomowe karty ze sticky nagłówkiem.
+ * Na komputerze prezentuje klasyczną 4-kolumnową tabelę.
  * Prezentuje wskaźniki posiadające dane w obu profilach, wartości obu miejsc,
  * ich pozycje w rankingu krajowym oraz słowne określenie różnicy (diffText z compare()).
  * W przypadku porównywania jednostek na różnych poziomach wyświetla ostrzeżenie.
@@ -21,6 +24,7 @@ export function ProfileCompareTable({
   profileB,
   className,
 }: ProfileCompareTableProps) {
+  const isMobile = useIsMobile();
   const result = compare(profileA, profileB);
 
   // Filtrujemy tylko te wskaźniki, które posiadają poprawne dane liczbowe w obu profilach
@@ -44,7 +48,10 @@ export function ProfileCompareTable({
   );
 
   return (
-    <div className={cn('space-y-3 w-full max-w-full', className)} data-slot="compare-table-container">
+    <div
+      className={cn('space-y-3 w-full max-w-full', className)}
+      data-slot="compare-table-container"
+    >
       {result.differentLevels && (
         <div
           data-slot="different-levels-notice"
@@ -58,6 +65,83 @@ export function ProfileCompareTable({
         <p className="py-6 text-sm text-olowek text-center">
           Brak wspólnych danych dla wybranych jednostek.
         </p>
+      ) : isMobile ? (
+        <div data-slot="compare-table" className="w-full">
+          {/* Sticky nagłówek nazw obu jednostek */}
+          <div
+            data-slot="compare-sticky-header"
+            className="sticky top-0 z-10 bg-arkusz border-b border-linia py-2 px-1 grid grid-cols-2 gap-2 text-xs font-semibold text-olowek"
+          >
+            <div className="truncate" title={unitAName}>
+              {unitAName}
+            </div>
+            <div className="truncate text-right" title={unitBName}>
+              {unitBName}
+            </div>
+          </div>
+          <div className="divide-y divide-linia">
+            {validRows.map((row) => {
+              const itemA = profileAIndicatorsMap.get(row.indicatorId);
+              const itemB = profileBIndicatorsMap.get(row.indicatorId);
+
+              const unitUnit = itemA?.indicator.unit;
+              const formattedA = formatValue(row.a, unitUnit);
+              const formattedB = formatValue(row.b, unitUnit);
+
+              const rankTextA =
+                itemA && itemA.rankNational !== null && itemA.totalNational > 0
+                  ? `${itemA.rankNational}. miejsce`
+                  : null;
+
+              const rankTextB =
+                itemB && itemB.rankNational !== null && itemB.totalNational > 0
+                  ? `${itemB.rankNational}. miejsce`
+                  : null;
+
+              return (
+                <div
+                  key={row.indicatorId}
+                  data-slot="compare-row"
+                  className="py-2.5 px-1 space-y-1.5"
+                >
+                  {/* Poziom 1: pełna szerokość wiersza na nazwę wskaźnika i różnicę */}
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-medium text-tusz text-xs break-words">
+                      {itemA?.indicator.name ?? row.indicatorId}
+                    </span>
+                    <span className="font-mono text-olowek font-medium text-xs text-right shrink-0">
+                      {row.diffText}
+                    </span>
+                  </div>
+
+                  {/* Poziom 2: 2 równe kolumny z wartościami A i B w font-mono */}
+                  <div className="grid grid-cols-2 gap-2 pt-0.5 text-xs">
+                    <div className="tabular-nums">
+                      <div className="font-bold font-mono text-tusz">
+                        {formattedA}
+                      </div>
+                      {rankTextA && (
+                        <div className="text-xs text-olowek font-mono">
+                          {rankTextA}
+                        </div>
+                      )}
+                    </div>
+                    <div className="tabular-nums text-right">
+                      <div className="font-bold font-mono text-tusz">
+                        {formattedB}
+                      </div>
+                      {rankTextB && (
+                        <div className="text-xs text-olowek font-mono">
+                          {rankTextB}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       ) : (
         <div className="w-full overflow-x-auto">
           <table
