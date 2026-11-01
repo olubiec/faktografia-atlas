@@ -80,10 +80,10 @@ export function MobileIndicatorBar({
           type="button"
           onClick={() => setSheetOpen(true)}
           aria-expanded={isSheetOpen}
+          aria-label={`Wskaźnik: ${view.indicator.name}${view.year != null ? ` ${view.year}` : ''}`}
           className="flex-1 min-w-0 min-h-[48px] px-3 py-2 flex items-center justify-between gap-2 text-left text-tusz hover:bg-linia/15 focus:outline-none focus-visible:ring-1 focus-visible:ring-tusz cursor-pointer rounded-none transition-colors"
         >
           <div className="flex items-center gap-2 min-w-0 flex-1">
-            <span className="sr-only">Wskaźnik: </span>
             <span className="text-sm font-semibold text-tusz truncate">
               {view.indicator.name}
             </span>
@@ -126,11 +126,10 @@ export function MobileIndicatorBar({
       <BottomSheet
         isOpen={isSheetOpen}
         onClose={() => setSheetOpen(false)}
-        snapPoints={[1, 0]}
-        initialSnap={0}
+        snapPoints={[0, 0.55, 1]}
+        initialSnap={1}
         noBackdrop
-        title="Panel wskaźnika"
-        className="[&_[role=dialog]]:max-h-[55dvh] [&_[role=dialog]]:mt-auto"
+        title="Panel wskaźnika"
       >
         <IndicatorPanel
           view={view}
