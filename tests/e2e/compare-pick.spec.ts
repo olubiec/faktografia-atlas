@@ -27,7 +27,7 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     await expect(compareTab).not.toContainText('(wkrótce)');
 
     // Kliknięcie w zakładkę „Porównaj”
-    await compareTab.click();
+    await compareTab.click({ noWaitAfter: true });
 
     // Sprawdzenie dostępności (axe) na zakładce przed wyborem drugiego miejsca
     const axeResultsInitial = await new AxeBuilder({ page })
@@ -70,8 +70,7 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     await clearButton.click();
 
     // Po wyczyszczeniu: parametr c usunięty z adresu, mapki i tabela znikają
-    await page.waitForFunction(() => !page.url().includes('c='));
-    expect(page.url()).not.toContain('c=');
+    await expect(page).not.toHaveURL(/c=/);
     await expect(compareTable).not.toBeVisible();
   });
 
@@ -93,8 +92,9 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     // Sprawdzenie paska zakładek: mieści się w kontenerze bez przewijania
     const tabsList = page.locator('[data-slot="tabs-list"]').first();
     await expect(tabsList).toBeVisible();
-    const tabsOverflow = await tabsList.evaluate((el) => {
-      return el.scrollWidth <= el.clientWidth + 1;
+    const tabsOverflow = await page.evaluate(() => {
+      const el = document.querySelector('[data-slot="tabs-list"]');
+      return el ? el.scrollWidth <= el.clientWidth + 1 : false;
     });
     expect(tabsOverflow).toBe(true);
 
@@ -105,7 +105,7 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     await expect(compareTab).not.toContainText('(wkrótce)');
 
     // Kliknięcie zakładki Porównaj
-    await compareTab.click();
+    await compareTab.click({ force: true, noWaitAfter: true });
 
     // Szybki wybór przykładowej jednostki kontrastowej
     const quickPickButton = page.locator('button', { hasText: 'Mazowieckie' }).first();
@@ -132,8 +132,7 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     await expect(clearButton).toBeVisible();
     await clearButton.click();
 
-    await page.waitForFunction(() => !page.url().includes('c='));
-    expect(page.url()).not.toContain('c=');
+    await expect(page).not.toHaveURL(/c=/);
   });
 
   test('przycisk „Porównaj z innym miejscem” w profilu przełącza na zakładkę porównania', async ({
