@@ -316,16 +316,12 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           setCurrentViewState(init);
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
-        } else if (fittedKeyRef.current !== key) {
+        } else if (fittedKeyRef.current !== key || (!userMovedRef.current && (dimensions.width !== clientWidth || dimensions.height !== clientHeight))) {
           const activeBbox = drillBbox ?? bounds;
           const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
-          let kind: CameraKind = 'in';
-          if (targetView.zoom < currentViewStateRef.current.zoom - 0.05) {
-            kind = 'out';
-          }
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
-          animateToView(targetView, kind);
+          animateToView(targetView, 'instant');
         }
       }
     };
@@ -337,7 +333,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     return () => {
       resizeObserver.disconnect();
     };
-  }, [animateToView, bounds, drillBbox, setCurrentViewState, sheetInset]);
+  }, [animateToView, bounds, dimensions.height, dimensions.width, drillBbox, setCurrentViewState, sheetInset]);
 
   useEffect(() => {
     if (currentViewState.zoom >= 8.5) {
