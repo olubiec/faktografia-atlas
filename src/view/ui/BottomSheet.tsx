@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Sheet } from 'react-modal-sheet';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/view/ui/Icon';
-import { Xmark } from 'iconoir-react';
+import { Xmark, NavArrowUp, NavArrowDown } from 'iconoir-react';
 
 export interface BottomSheetProps {
   isOpen: boolean;
@@ -15,16 +15,105 @@ export interface BottomSheetProps {
   className?: string;
 }
 
+function SheetHeaderControls({
+  onClose,
+}: {
+  onClose: () => void;
+}) {
+  const { currentSnap, snapTo } = Sheet.useContext();
+  const isExpanded = currentSnap === 2;
+
+  const handleToggleExpand = () => {
+    console.log('[BottomSheet] handleToggleExpand CALLED! currentSnap =', currentSnap, 'isExpanded =', isExpanded);
+    if (isExpanded) {
+      snapTo(1);
+    } else {
+      snapTo(2);
+    }
+  };
+
+  return (
+    <Sheet.Header unstyled className="py-2 flex flex-col items-center cursor-grab relative min-h-[44px]">
+      {/* Rozwiń / Zwiń (WCAG 2.5.7) */}
+      <button
+        type="button"
+        onClick={handleToggleExpand}
+        onPointerDown={(e) => e.stopPropagation()}
+        className="absolute top-0 left-0 min-h-[44px] min-w-[44px] px-3 flex items-center gap-1.5 text-xs font-medium text-olowek hover:text-tusz focus:outline-none focus-visible:ring-2 focus-visible:ring-tusz cursor-pointer select-none"
+        aria-label={isExpanded ? 'Zwiń' : 'Rozwiń'}
+      >
+        <Icon
+          icon={isExpanded ? NavArrowDown : NavArrowUp}
+          size={16}
+          aria-hidden={true}
+        />
+        <span>{isExpanded ? 'Zwiń' : 'Rozwiń'}</span>
+      </button>
+
+      {/* Drag handle */}
+      <div className="w-12 h-1 bg-olowek/40 mt-2 rounded-none" />
+
+      {/* Close button - min touch target 44px */}
+      <button
+        type="button"
+        onClick={onClose}
+        onPointerDown={(e) => e.stopPropagation()}
+        className="absolute top-0 right-0 w-[44px] h-[44px] min-w-[44px] min-h-[44px] flex items-center justify-center text-olowek hover:text-tusz focus:outline-none focus-visible:ring-2 focus-visible:ring-tusz cursor-pointer"
+        aria-label="Zamknij"
+      >
+        <Icon icon={Xmark} aria-hidden={true} />
+      </button>
+    </Sheet.Header>
+  );
+}
+
+function SheetContentBody({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { currentSnap } = Sheet.useContext();
+  return (
+    <Sheet.Content
+      unstyled
+      disableDrag={({ scrollPosition }) => scrollPosition !== 'top'}
+      className="flex-1 overflow-hidden"
+      scrollClassName={cn(
+        'px-4 overflow-y-auto',
+        currentSnap === 1 ? 'pb-[calc(60dvh+2rem)]' : 'pb-6'
+      )}
+      scrollStyle={{
+        paddingBottom: currentSnap === 1 ? 'calc(60dvh + 2rem)' : undefined,
+      }}
+    >
+      {children}
+    </Sheet.Content>
+  );
+}
+
 export function BottomSheet({
   isOpen,
   onClose,
-  snapPoints = [1, 0.4, 0], // By default react-modal-sheet expects points from highest to lowest. 1 means 100% height, 0.4 means 40% height.
-  initialSnap = 1, // index 1 corresponds to 0.4 height.
+  snapPoints = [0, 0.4, 1],
+  initialSnap = 1,
   title,
   children,
   noBackdrop = false,
   className,
 }: BottomSheetProps) {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', onChange);
+    return () => mediaQuery.removeEventListener('change', onChange);
+  }, []);
+
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -36,17 +125,13 @@ export function BottomSheet({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // IMPORTANT: react-modal-sheet interprets `initialSnap` as the index in the `snapPoints` array.
-  // If `snapPoints` is `[1, 0.4, 0]` and we want it to open at 40%, `initialSnap` should be `1`.
-  // The fact that it is opening at ~95% height in tests means it's opening at index 0 (which is `1` i.e. 100%).
-  // Let's force initialSnap to 1 if it's undefined, but also the prop is defaulted to 1.
-
   return (
     <Sheet
       isOpen={isOpen}
       onClose={onClose}
       snapPoints={snapPoints}
       initialSnap={initialSnap}
+      prefersReducedMotion={prefersReducedMotion}
       onSnap={(index) => {
         if (snapPoints[index] === 0) {
           onClose();
@@ -65,23 +150,8 @@ export function BottomSheet({
         role="dialog"
         aria-label={title}
       >
-        <Sheet.Header unstyled className="py-2 flex flex-col items-center cursor-grab relative">
-          {/* Drag handle */}
-          <div className="w-12 h-1 bg-olowek/40 mt-2 rounded-none" />
-
-          {/* Close button - min touch target 44px */}
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute top-0 right-0 w-[44px] h-[44px] min-w-[44px] min-h-[44px] flex items-center justify-center text-olowek"
-            aria-label="Zamknij"
-          >
-            <Icon icon={Xmark} aria-hidden={true} />
-          </button>
-        </Sheet.Header>
-        <Sheet.Content unstyled className="px-4 pb-4 overflow-y-auto">
-          {children}
-        </Sheet.Content>
+        <SheetHeaderControls onClose={onClose} />
+        <SheetContentBody>{children}</SheetContentBody>
       </Sheet.Container>
       {!noBackdrop && (
         <Sheet.Backdrop

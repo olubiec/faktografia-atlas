@@ -22,7 +22,7 @@ export interface ProfileSheetMobileProps {
  * Mobilny arkusz profilu jednostki (dolny, przeciągany).
  * Wyświetlany od dołu ekranu na komponentowym BottomSheet w trybie „bez tła” (noBackdrop),
  * z punktami zatrzymania 40% (początkowy) i 100%. Zamknięcie arkusza usuwa parametr ?u= z URL
- * oraz zgłasza wysokość arkusza w pikselach (sheetInset) do widoku mapy.
+ * oraz zgłasza wysokość arkusza w pikselach (sheetInset do maks. 45% wysokości) do widoku mapy.
  */
 export function ProfileSheetMobile({
   profile,
@@ -39,27 +39,51 @@ export function ProfileSheetMobile({
       return;
     }
 
-    let animationFrameId: number;
+    let styleObserver: MutationObserver | null = null;
 
     const updateInset = () => {
       const dialogEl = document.querySelector<HTMLElement>('[role="dialog"]');
       if (dialogEl) {
         const rect = dialogEl.getBoundingClientRect();
         const visibleHeight = Math.max(0, window.innerHeight - rect.y);
-        setSheetInset(visibleHeight);
+        const maxInset = Math.round(window.innerHeight * 0.45);
+        setSheetInset(Math.min(visibleHeight, maxInset));
       }
     };
 
-    const loop = () => {
-      updateInset();
-      animationFrameId = requestAnimationFrame(loop);
+    const attachObserver = () => {
+      const dialogEl = document.querySelector<HTMLElement>('[role="dialog"]');
+      if (dialogEl) {
+        updateInset();
+        styleObserver = new MutationObserver(updateInset);
+        styleObserver.observe(dialogEl, { attributes: true, attributeFilter: ['style'] });
+        return true;
+      }
+      return false;
     };
-    loop();
+
+    if (!attachObserver()) {
+      const domObserver = new MutationObserver(() => {
+        if (attachObserver()) {
+          domObserver.disconnect();
+        }
+      });
+      domObserver.observe(document.body, { childList: true, subtree: true });
+
+      window.addEventListener('resize', updateInset);
+
+      return () => {
+        domObserver.disconnect();
+        styleObserver?.disconnect();
+        window.removeEventListener('resize', updateInset);
+        setSheetInset(0);
+      };
+    }
 
     window.addEventListener('resize', updateInset);
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      styleObserver?.disconnect();
       window.removeEventListener('resize', updateInset);
       setSheetInset(0);
     };
@@ -74,17 +98,12 @@ export function ProfileSheetMobile({
     onClose();
   };
 
-  const isFullSheet =
-    typeof window !== 'undefined' &&
-    new URLSearchParams(window.location.search).get('sheet') === 'full';
-  const initialSnap = isFullSheet ? 2 : 1;
-
   return (
     <BottomSheet
       isOpen={isOpen}
       onClose={handleClose}
       snapPoints={[0, 0.4, 1]}
-      initialSnap={initialSnap}
+      initialSnap={1}
       noBackdrop
       title={title}
       className={className}
@@ -95,6 +114,7 @@ export function ProfileSheetMobile({
         view={view}
         onSelectUnit={onSelectUnit}
         onClose={handleClose}
+        showCloseButton={false}
       />
     </BottomSheet>
   );
