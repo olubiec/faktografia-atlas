@@ -283,7 +283,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const measure = () => {
+    const measure = (isResizeEvent = false) => {
       if (!containerRef.current) return;
       const { clientWidth, clientHeight } = containerRef.current;
       if (clientWidth > 0 && clientHeight > 0) {
@@ -326,12 +326,18 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
           animateToView(targetView, kind);
+        } else if (isResizeEvent && !userMovedRef.current) {
+          const activeBbox = drillBbox ?? bounds;
+          const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
+          fittedBboxRef.current = bboxKey;
+          fittedKeyRef.current = key;
+          animateToView(targetView, 'instant');
         }
       }
     };
 
-    measure();
-    const resizeObserver = new ResizeObserver(measure);
+    measure(false);
+    const resizeObserver = new ResizeObserver(() => measure(true));
     resizeObserver.observe(containerRef.current);
 
     return () => {

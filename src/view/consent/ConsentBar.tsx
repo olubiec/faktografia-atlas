@@ -35,7 +35,7 @@ export function ConsentBar({ storage }: ConsentBarProps) {
     <div
       role="region"
       aria-label="Zgoda na analitykę"
-      className="fixed bottom-0 inset-x-0 z-40 bg-arkusz text-tusz border-t border-linia p-2 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 motion-reduce:transition-none transition-all duration-200"
+      className="fixed bottom-0 inset-x-0 z-40 bg-arkusz text-tusz border-t border-linia p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:p-4 sm:pb-4 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 motion-reduce:transition-none transition-all duration-200"
     >
       <p className="text-xs sm:text-sm text-tusz font-normal m-0 text-center sm:text-left flex items-center justify-center sm:justify-start flex-wrap gap-1 leading-tight sm:leading-normal">
         <span>Czy możemy liczyć anonimowo, czego szukasz?</span>
