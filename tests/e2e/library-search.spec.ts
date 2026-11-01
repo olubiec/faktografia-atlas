@@ -137,4 +137,90 @@ test.describe('Strona /biblioteka: szukanie, kategorie, filtry i stan w URL (@S2
     results = await new AxeBuilder({ page }).analyze();
     expect(results.violations, 'Axe violations on /biblioteka?k=1&q=ludnosc (dark)').toEqual([]);
   });
+
+  test('telefon 360x740: wyszukiwarka, popularne wyszukiwania, kompaktowy pasek filtrów i pierwsze wyniki na pierwszym ekranie (@W16-M04)', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    await page.goto('/biblioteka');
+
+    // Wyszukiwarka widoczna
+    const searchInput = page.locator('#library-search-input');
+    await expect(searchInput).toBeVisible();
+
+    // Przyciski „Popularne wyszukiwania” widoczne
+    const popularSection = page.getByTestId('popular-searches');
+    await expect(popularSection).toBeVisible();
+    await expect(popularSection.getByRole('button', { name: 'Ludność' })).toBeVisible();
+
+    // Kompaktowy pasek filtrów
+    const filterToggle = page.getByTestId('library-filters-mobile-toggle');
+    await expect(filterToggle).toBeVisible();
+    await expect(filterToggle).toContainText('Filtry (aktywne: 0)');
+
+    // Pierwsze wyniki listy są widoczne na pierwszym ekranie (y < 740)
+    const results = page.getByTestId('library-results');
+    const firstItem = results.locator('li').first();
+    await expect(firstItem).toBeVisible();
+    const box = await firstItem.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.y, 'Pierwszy wynik powinien być na pierwszym ekranie telefonu (< 740 px)').toBeLessThan(740);
+  });
+
+  test('telefon 360x740: przycisk „Popularne wyszukiwania” zawęża listę i aktualizuje ?q= (@W16-M04)', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    await page.goto('/biblioteka');
+
+    const popularSection = page.getByTestId('popular-searches');
+    const ludnoscBtn = popularSection.getByRole('button', { name: 'Ludność' });
+    await ludnoscBtn.click();
+
+    await expect(page).toHaveURL(/.*[?&]q=/);
+    const searchInput = page.locator('#library-search-input');
+    await expect(searchInput).toHaveValue('Ludność');
+
+    const results = page.getByTestId('library-results');
+    await expect(results.getByText('Struktura ludności: Liczba ludności ogółem')).toBeVisible();
+  });
+
+  test('telefon 360x740: rozwinięcie paska filtrów i wybór poziomu aktualizuje licznik (aktywne: 1) (@W16-M04)', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    await page.goto('/biblioteka');
+
+    const filterToggle = page.getByTestId('library-filters-mobile-toggle');
+    await expect(filterToggle).toContainText('Filtry (aktywne: 0)');
+
+    // Rozwiń pasek filtrów
+    await filterToggle.click();
+    await expect(filterToggle).toContainText('Filtry (aktywne: 0) ▴');
+
+    // Wybierz poziom Powiaty
+    const filters = page.getByTestId('library-filters');
+    const powBtn = filters.getByRole('button', { name: /Powiaty/i });
+    await powBtn.click();
+
+    // Licznik aktywnych filtrów zaktualizowany do 1
+    await expect(filterToggle).toContainText('Filtry (aktywne: 1)');
+    await expect(page).toHaveURL(/.*[?&]l=5/);
+  });
+
+  test('stopka SiteFooter jest widoczna na 1440x900 i 360x740 (@W16-M04)', async ({
+    page,
+  }) => {
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 360, height: 740 },
+    ]) {
+      await page.setViewportSize(viewport);
+      await page.goto('/biblioteka');
+
+      const footer = page.getByRole('contentinfo');
+      await expect(footer).toBeVisible();
+      await expect(footer.getByText('Faktografia Atlas to niezależna')).toBeVisible();
+    }
+  });
 });

@@ -156,7 +156,7 @@ export function LibrarySearchBar({
           id="library-search-suggestions"
           role="listbox"
           aria-label="Podpowiedzi wskaźników"
-          className="absolute top-full left-0 right-0 z-20 mt-1 bg-arkusz border border-linia shadow-md overflow-hidden p-0 m-0 list-none"
+          className="absolute top-full left-0 right-0 z-20 mt-1 bg-arkusz border border-linia overflow-hidden p-0 m-0 list-none"
         >
           {suggestions.map((item, idx) => {
             const catId = item.cat ?? item.categoryId ?? item.subjectId;
@@ -179,7 +179,7 @@ export function LibrarySearchBar({
                   isSelected ? 'bg-linia/20' : 'hover:bg-linia/20'
                 }`}
               >
-                <span className="font-[600] text-sm text-tusz truncate">{item.name}</span>
+                <span className="font-[600] text-sm text-tusz line-clamp-2 break-words leading-snug">{item.name}</span>
                 {pathStr.length > 0 && (
                   <span className="text-xs text-olowek truncate">{pathStr}</span>
                 )}
