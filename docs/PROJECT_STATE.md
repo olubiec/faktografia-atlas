@@ -5,13 +5,19 @@
 ## Status
 
 <!-- STATUS -->
-**Ukończone fale:** W14, W15 (Antigravity) · **Faza pętli:** build (W16) · **Aktualizacja:** 2026-11-01 12:20 UTC
-**Ostatnia fala:** Fala W15 ukończona (Wszystkie 8 zadań M01-M08 scalone pomyślnie).
+**Ukończone fale:** W14, W15 · **Faza pętli:** build (W16) · **Aktualizacja:** 2026-11-01 15:39 UTC
+**Ostatnia fala:** Fala W15 ukończona przez Antigravity (8/8 zadań scalone).
 <!-- /STATUS -->
 
 ## Log zmian (najnowsze u góry)
 
 <!-- LOG -->
+- 2026-11-01 15:39 · 🛑 **W16-M02** wymaga człowieka: konflikty, których Jules nie rozwiązał (PR #442)
+- 2026-11-01 15:39 · 🛑 **W16-M01** wymaga człowieka: CI nadal czerwone po prośbach o poprawkę (PR #444)
+- 2026-11-01 14:40 · 🛑 **W16-M04** wymaga człowieka: sesja zakończona bez PR (brak zmian?)
+- 2026-11-01 14:32 · 🛑 **W16-M05** wymaga człowieka: sesja trwa dłużej niż 120 min
+- 2026-11-01 14:32 · 🛑 **W16-M03** wymaga człowieka: sesja trwa dłużej niż 120 min
+- 2026-11-01 12:27 · ▶️ Start fali W16: 6 zadań (W16-M01, W16-M02, W16-M03, W16-M04, W16-M05, W16-M06)
 - 2026-11-01 12:20 · ✅ **W15** Ukończona pomyślnie przez Antigravity Agent: Wszystkie 8 zadań scalone (M01-M08). Wdrożono 4x sharding CI.
 - 2026-10-30 14:11 · 🛑 **W15-M04** wymaga człowieka: CI nadal czerwone po prośbach o poprawkę (PR #426)
 - 2026-10-30 12:34 · 🛑 **W15-M05** wymaga człowieka: konflikty, których Jules nie rozwiązał (PR #425)
