@@ -277,7 +277,7 @@ test.describe('Strona wskaźnika /biblioteka/:id (@S21)', () => {
 
       const cardYears = page.getByTestId('stats-card-years');
       await expect(cardYears).toBeVisible();
-      await expect(cardYears.getByText('Lata')).toBeVisible();
+      await expect(cardYears.getByText('Lata', { exact: true })).toBeVisible();
       await expect(cardYears.getByText('2022–2024')).toBeVisible();
 
       // Pasek 5 klas kwantylowych
