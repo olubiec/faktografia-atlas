@@ -10,6 +10,7 @@ import { Footnotes } from './Footnotes';
 import { Sheet } from '../ui/Sheet';
 import { Icon } from '../ui/Icon';
 import { ProfileOverview } from './ProfileOverview';
+import { ProfileCompare } from './ProfileCompare';
 import { ProfileIndicatorRow } from './ProfileIndicatorRow';
 import { ProfileChildren } from './ProfileChildren';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs';
@@ -48,13 +49,37 @@ export function ProfileBody({
   showCloseButton = true,
 }: ProfileBodyProps) {
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const c = new URLSearchParams(window.location.search).get('c');
+      if (c && c.split(',').length === 2) {
+        return 'compare';
+      }
+    }
+    return 'overview';
+  });
   const [prevTeryt, setPrevTeryt] = useState<string>(profile.teryt);
 
   if (profile.teryt !== prevTeryt) {
     setPrevTeryt(profile.teryt);
-    setActiveTab('overview');
+    const c = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('c') : null;
+    if (c && c.split(',').length === 2) {
+      setActiveTab('compare');
+    } else {
+      setActiveTab('overview');
+    }
   }
+
+  useEffect(() => {
+    const handleUrlChange = () => {
+      const c = new URLSearchParams(window.location.search).get('c');
+      if (c && c.split(',').length === 2) {
+        setActiveTab('compare');
+      }
+    };
+    window.addEventListener('popstate', handleUrlChange);
+    return () => window.removeEventListener('popstate', handleUrlChange);
+  }, []);
 
   const childrenResult = profile.unit ? childUnits(profile.unit, units) : null;
   const unitTitleText = profile.unit ? unitTitle(profile.unit) : `TERYT ${profile.teryt}`;
@@ -127,7 +152,7 @@ export function ProfileBody({
 
       {/* Zakładki profilu */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-3 mb-4">
+        <TabsList className={cn("w-full grid mb-4", childrenResult && childrenResult.label ? "grid-cols-3" : "grid-cols-2")}>
           <TabsTrigger value="overview" className="min-h-[44px]">
             Przegląd
           </TabsTrigger>
@@ -138,10 +163,9 @@ export function ProfileBody({
           ) : null}
           <TabsTrigger
             value="compare"
-            disabled
-            className="min-h-[44px] disabled:opacity-50"
+            className="min-h-[44px]"
           >
-            Porównaj <span className="text-xs text-olowek ml-1">(wkrótce)</span>
+            Porównaj
           </TabsTrigger>
         </TabsList>
 
@@ -165,7 +189,7 @@ export function ProfileBody({
             <div className="divide-y divide-linia my-2">
               {Object.entries(groupedIndicators).map(([groupName, items]) => (
                 <div key={groupName} className="pt-4 pb-2 first:pt-2">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-olowek mb-2">
+                  <h3 className="text-xs font-bold tracking-wider text-olowek mb-2">
                     {groupName}
                   </h3>
                   <div>
@@ -195,11 +219,29 @@ export function ProfileBody({
             />
           </TabsContent>
         )}
+
+        <TabsContent value="compare" className="focus-visible:outline-none">
+          <ProfileCompare
+            profileA={profile}
+            units={units}
+            view={view}
+            onSelectUnit={onSelectUnit}
+          />
+        </TabsContent>
       </Tabs>
 
       {/* Stopka z przyciskiem Kopiuj link, przypisami i źródłem */}
       <footer className="pt-4 border-t border-linia text-xs text-olowek space-y-3">
-        <div>
+        <div className="flex flex-wrap items-center gap-2">
+          {activeTab !== 'compare' && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('compare')}
+              className="min-h-[44px] min-w-[44px] px-4 py-2 bg-arkusz border border-linia hover:bg-linia/15 focus:outline-none focus:ring-2 focus:ring-tusz text-xs font-semibold text-tusz cursor-pointer transition-colors flex items-center justify-center gap-2"
+            >
+              <span>Porównaj z innym miejscem</span>
+            </button>
+          )}
           <button
             type="button"
             onClick={handleCopyLink}
