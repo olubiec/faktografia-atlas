@@ -502,8 +502,12 @@ async function runLoop() {
           // Uruchom agenta dla pierwszego niezrobionego zadania bez aktywnego PR-a
           const taskToRun = unmergedTasks.find((t) => !hasOpenPr(t.id));
           if (taskToRun) {
-            log(`Uruchamiam agenta Antigravity dla zadania: ${taskToRun.id}`);
-            await runAgentOnTask(taskToRun);
+            if (process.env.AGY_STANDALONE === '1') {
+              log(`Uruchamiam standalone agenta Antigravity dla zadania: ${taskToRun.id}`);
+              await runAgentOnTask(taskToRun);
+            } else {
+              log(`Zadanie ${taskToRun.id} jest realizowane przez subagenta Antigravity. Czekam na PR...`);
+            }
           } else {
             log(`Wszystkie niezrobione zadania mają otwarte PR-y. Czekam na checki CI...`);
           }
