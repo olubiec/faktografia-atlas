@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import { loadUnits } from '../../core/data/load-atlas-data';
 import { prepareLibraryIndex } from '../../core/library/index-contract';
 import {
@@ -20,12 +20,15 @@ import { cn } from '../../lib/utils';
 import { Header } from '../Header';
 import { DownloadCsv } from '../library/DownloadCsv';
 import { OrderButton } from '../library/OrderButton';
+import { VariableStatsBar } from '../library/VariableStatsBar';
 import { RankingBars } from '../ranking/RankingBars';
+import { SiteFooter } from '../layout/SiteFooter';
 
 type PageStatus = 'loading' | 'error' | 'not_found' | 'not_downloaded' | 'ready';
 
 export function LibraryVariable() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   const [status, setStatus] = useState<PageStatus>('loading');
   const [index, setIndex] = useState<LibraryIndex | null>(null);
@@ -199,6 +202,10 @@ export function LibraryVariable() {
     [rankedItems]
   );
 
+  const handleSelectUnit = (teryt: string) => {
+    navigate(`/?u=${teryt}`);
+  };
+
   const levelLabel =
     selectedLevel === 'gmi'
       ? 'Gminy'
@@ -300,9 +307,9 @@ export function LibraryVariable() {
             <div className="flex flex-wrap items-center justify-between gap-4 bg-arkusz border border-linia p-4">
               <div className="flex flex-wrap items-center gap-4">
                 {availableLevels.length > 1 && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-xs font-mono text-olowek">Poziom:</span>
-                    <div className="flex border border-linia bg-arkusz">
+                    <div className="flex flex-wrap border border-linia bg-arkusz">
                       {availableLevels.map((lvl) => (
                         <button
                           type="button"
@@ -358,6 +365,13 @@ export function LibraryVariable() {
               )}
             </div>
 
+            <VariableStatsBar
+              rankedItems={rankedItems}
+              years={years}
+              selectedYear={selectedYear}
+              unit={variable.unit}
+            />
+
             <section className="space-y-4">
               <h2 className="text-lg font-bold text-tusz">Ranking</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -366,12 +380,14 @@ export function LibraryVariable() {
                   unit={variable.unit}
                   title="10 najwyżej"
                   limit={10}
+                  onSelect={handleSelectUnit}
                 />
                 <RankingBars
                   items={bottom}
                   unit={variable.unit}
                   title="10 najniżej"
                   limit={10}
+                  onSelect={handleSelectUnit}
                 />
               </div>
             </section>
@@ -382,6 +398,7 @@ export function LibraryVariable() {
           </div>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }

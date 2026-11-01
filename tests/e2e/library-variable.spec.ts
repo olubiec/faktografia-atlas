@@ -97,7 +97,7 @@ test.describe('Strona wskaźnika /biblioteka/:id (@S21)', () => {
 
     expect(indexRequests.length).toBe(1);
     expect(valuesRequests.length).toBe(1);
-    expect(profilesRequests.length).toBe(0);
+    expect(profilesRequests.toBe ? profilesRequests.length : profilesRequests.length).toBe(0);
   });
 
   test('wskaźnik niepobrany -> komunikat i przycisk „Zamów ten wskaźnik”', async ({
@@ -227,5 +227,125 @@ test.describe('Strona wskaźnika /biblioteka/:id (@S21)', () => {
       results.violations,
       'Axe violations on /biblioteka/101 (dark)'
     ).toEqual([]);
+  });
+
+  test('wyświetla 4 karty statystyk i pasek klas kwantylowych na 1440x900 i 360x740 (@W16-M04)', async ({
+    page,
+  }) => {
+    await page.route('**/index.json', (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(indexFixture),
+      });
+    });
+
+    await page.route('**/values/101.json', (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(valuesSampleFixture),
+      });
+    });
+
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 360, height: 740 },
+    ]) {
+      await page.setViewportSize(viewport);
+      await page.goto('/biblioteka/101');
+      await page.waitForLoadState('networkidle');
+
+      const statsBar = page.getByTestId('variable-stats-bar');
+      await expect(statsBar).toBeVisible();
+
+      // 4 karty statystyk
+      const cardUnits = page.getByTestId('stats-card-units');
+      await expect(cardUnits).toBeVisible();
+      await expect(cardUnits.getByText('Liczba jednostek')).toBeVisible();
+      await expect(cardUnits.getByText('3')).toBeVisible();
+
+      const cardMedian = page.getByTestId('stats-card-median');
+      await expect(cardMedian).toBeVisible();
+      await expect(cardMedian.getByText('Mediana')).toBeVisible();
+      await expect(cardMedian.getByText('160')).toBeVisible();
+
+      const cardMinMax = page.getByTestId('stats-card-minmax');
+      await expect(cardMinMax).toBeVisible();
+      await expect(cardMinMax.getByText('Min-Max')).toBeVisible();
+      await expect(cardMinMax.getByText(/110.*210/)).toBeVisible();
+
+      const cardYears = page.getByTestId('stats-card-years');
+      await expect(cardYears).toBeVisible();
+      await expect(cardYears.getByText('Lata', { exact: true })).toBeVisible();
+      await expect(cardYears.getByText('2022–2024')).toBeVisible();
+
+      // Pasek 5 klas kwantylowych
+      const quantileBar = page.getByTestId('quantile-classes-bar');
+      await expect(quantileBar).toBeVisible();
+      await expect(quantileBar.getByText('Klasy kwantylowe (5 klas)')).toBeVisible();
+    }
+  });
+
+  test('kliknięcie pozycji w rankingu prowadzi do profilu na mapie /?u= (@W16-M04)', async ({
+    page,
+  }) => {
+    await page.route('**/index.json', (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(indexFixture),
+      });
+    });
+
+    await page.route('**/values/101.json', (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(valuesSampleFixture),
+      });
+    });
+
+    await page.goto('/biblioteka/101');
+    await page.waitForLoadState('networkidle');
+
+    const highestSection = page.getByRole('list', { name: '10 najwyżej' });
+    const rowButton = highestSection.getByText('powiat dzierżoniowski');
+    await expect(rowButton).toBeVisible();
+
+    await rowButton.click();
+    await expect(page).toHaveURL(/\/\?u=0202/);
+  });
+
+  test('stopka SiteFooter jest widoczna na 1440x900 i 360x740 (@W16-M04)', async ({
+    page,
+  }) => {
+    await page.route('**/index.json', (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(indexFixture),
+      });
+    });
+
+    await page.route('**/values/101.json', (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(valuesSampleFixture),
+      });
+    });
+
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 360, height: 740 },
+    ]) {
+      await page.setViewportSize(viewport);
+      await page.goto('/biblioteka/101');
+
+      const footer = page.getByRole('contentinfo');
+      await expect(footer).toBeVisible();
+      await expect(footer.getByText('Faktografia Atlas to niezależna')).toBeVisible();
+    }
   });
 });

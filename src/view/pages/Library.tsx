@@ -8,8 +8,11 @@ import { CategoryTiles } from '../library/CategoryTiles';
 import { LibraryFilters } from '../library/LibraryFilters';
 import { LibraryResults } from '../library/LibraryResults';
 import { LibrarySearchBar } from '../library/LibrarySearchBar';
+import { SiteFooter } from '../layout/SiteFooter';
 
 type PageStatus = 'loading' | 'error' | 'empty' | 'ready';
+
+const POPULAR_SEARCHES = ['Ludność', 'Bezrobocie', 'Wynagrodzenie', 'Mieszkania'] as const;
 
 function parseQueryFromParams(params: URLSearchParams): LibraryQuery {
   const k = params.get('k');
@@ -187,19 +190,50 @@ export function Library() {
         )}
 
         {status === 'ready' && index && (
-          <div className="space-y-6">
-            <CategoryTiles index={index} query={query} onQueryChange={handleQueryChange} />
-            <LibrarySearchBar
-              index={index}
-              query={query}
-              onQueryChange={handleQueryChange}
-              onPick={handlePick}
-            />
-            <LibraryFilters index={index} query={query} onQueryChange={handleQueryChange} />
-            <LibraryResults index={index} query={query} onQueryChange={handleQueryChange} />
+          <div className="flex flex-col space-y-6">
+            <div className="order-4 md:order-1">
+              <CategoryTiles index={index} query={query} onQueryChange={handleQueryChange} />
+            </div>
+            <div className="order-1 md:order-2 space-y-3">
+              <LibrarySearchBar
+                index={index}
+                query={query}
+                onQueryChange={handleQueryChange}
+                onPick={handlePick}
+              />
+              <div data-testid="popular-searches" className="flex flex-wrap items-center gap-2 pt-1">
+                <span className="text-xs font-mono text-olowek">Popularne wyszukiwania:</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {POPULAR_SEARCHES.map((term) => {
+                    const isActive = query.text.toLowerCase() === term.toLowerCase();
+                    return (
+                      <button
+                        key={term}
+                        type="button"
+                        onClick={() => handleQueryChange({ ...query, text: isActive ? '' : term })}
+                        className={`min-h-[44px] px-3 py-1.5 text-xs font-semibold border transition-colors cursor-pointer rounded-none inline-flex items-center justify-center ${
+                          isActive
+                            ? 'bg-tusz text-kalka border-tusz font-bold'
+                            : 'bg-arkusz text-tusz border-linia font-normal hover:bg-linia/20'
+                        }`}
+                      >
+                        {term}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+            <div className="order-2 md:order-3">
+              <LibraryFilters index={index} query={query} onQueryChange={handleQueryChange} />
+            </div>
+            <div className="order-3 md:order-4">
+              <LibraryResults index={index} query={query} onQueryChange={handleQueryChange} />
+            </div>
           </div>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }
