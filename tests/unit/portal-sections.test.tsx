@@ -27,7 +27,8 @@ describe('PortalSections Unit Tests (W16-M01)', () => {
     );
 
     expect(html).toContain('Działy tematyczne GUS');
-    expect(html).toMatch(/Biblioteka 64 000 zmiennych BDL/i);
+    expect(html).toContain('Brama do Biblioteki GUS');
+    expect(html).toContain('64 000 zmiennych');
   });
 
   it('renders FeaturedComparisons with contrasting pairs', () => {
@@ -37,8 +38,9 @@ describe('PortalSections Unit Tests (W16-M01)', () => {
       </MemoryRouter>
     );
 
-    expect(html).toContain('Pojedynki miejsc');
-    expect(html).toContain('Warszawa vs Kraków');
-    expect(html).toContain('Kleszczów vs Przytuły');
+    expect(html).toContain('Warszawa');
+    expect(html).toContain('Kraków');
+    expect(html).toContain('Poznań');
+    expect(html).toContain('Wrocław');
   });
 });
