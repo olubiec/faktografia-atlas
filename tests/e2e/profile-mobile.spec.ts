@@ -69,6 +69,48 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
     await expect(overviewTab).toBeVisible();
   });
 
+  test('expand/collapse button toggles sheet between >= 90% and ~40% (WCAG 2.5.7) (@S15)', async ({ page }) => {
+    await page.goto('/?e2e&u=12');
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
+    await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
+
+    const sheet = page.locator('[role="dialog"][aria-label="Województwo małopolskie"]');
+    await expect(sheet).toBeVisible();
+
+    const expandBtn = page.getByRole('button', { name: 'Rozwiń' });
+    await expect(expandBtn).toBeVisible();
+    await expandBtn.click();
+
+    await page.waitForFunction(() => {
+      const el = document.querySelector('[role="dialog"][aria-label="Województwo małopolskie"]');
+      if (!el) return false;
+      const rect = el.getBoundingClientRect();
+      const visibleRatio = (844 - rect.y) / 844;
+      return visibleRatio >= 0.90;
+    });
+
+    const collapseBtn = page.getByRole('button', { name: 'Zwiń' });
+    await expect(collapseBtn).toBeVisible();
+    await collapseBtn.click();
+
+    await page.waitForFunction(() => {
+      const el = document.querySelector('[role="dialog"][aria-label="Województwo małopolskie"]');
+      if (!el) return false;
+      const rect = el.getBoundingClientRect();
+      const visibleRatio = (844 - rect.y) / 844;
+      return visibleRatio >= 0.35 && visibleRatio <= 0.45;
+    });
+  });
+
+  test('has exactly one close button (x) in mobile sheet (@S15)', async ({ page }) => {
+    await page.goto('/?e2e&u=12');
+    await page.waitForFunction(() => (window as any).__atlas?.ready === true);
+    await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
+
+    const closeButtons = page.locator('[role="dialog"] button[aria-label="Zamknij"]');
+    await expect(closeButtons).toHaveCount(1);
+  });
+
   test('close button (x) closes sheet, removes ?u=, and leaves map zoom unchanged (@S15)', async ({ page }) => {
     await page.goto('/?e2e&u=12');
 
