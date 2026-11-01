@@ -42,6 +42,9 @@ export function Header() {
   const searchParams = new URLSearchParams(location.search);
   const isZnakLogo = searchParams.get('logo') === 'znak';
   const isLibraryActive = location.pathname.startsWith('/biblioteka');
+  const isHomeActive = location.pathname === '/';
+  const isRankingsActive = location.pathname.startsWith('/rankingi');
+  const isCompareActive = location.pathname.startsWith('/porownaj');
 
   const systemIsDark = useSyncExternalStore(subscribeSystemTheme, getSystemIsDark, () => false);
 
@@ -121,6 +124,27 @@ export function Header() {
 
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center gap-6 text-sm font-[500]">
+        <Link
+          to={`/${location.search}`}
+          className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${isHomeActive ? 'font-bold text-korekta-tekst' : ''}`}
+          aria-current={isHomeActive ? 'page' : undefined}
+        >
+          Mapa
+        </Link>
+        <Link
+          to={`/rankingi${location.search}`}
+          className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${isRankingsActive ? 'font-bold text-korekta-tekst' : ''}`}
+          aria-current={isRankingsActive ? 'page' : undefined}
+        >
+          Rankingi
+        </Link>
+        <Link
+          to={`/porownaj${location.search}`}
+          className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${isCompareActive ? 'font-bold text-korekta-tekst' : ''}`}
+          aria-current={isCompareActive ? 'page' : undefined}
+        >
+          Porównaj
+        </Link>
         <Link
           to={`/biblioteka${location.search}`}
           className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${
