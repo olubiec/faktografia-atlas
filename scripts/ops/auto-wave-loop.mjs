@@ -5,7 +5,7 @@
 // 3. W razie braku PR-a dla zadania, realizuje zadania SEKWENCYJNIE (jedno po drugim, by nie przekraczać limitów quota).
 // 4. Po ukończeniu fali aktualizuje stan issue #421, PROJECT_STATE.md, przenosi kolejną falę i kontynuuje.
 
-import { execSync, execFileSync } from 'node:child_process';
+import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -30,7 +30,8 @@ function findAgyPath() {
   return null;
 }
 
-const AGY_PATH = findAgyPath();
+const _AGY_PATH = findAgyPath();
+void _AGY_PATH;
 
 // 2. Token GitHuba
 function getGithubToken() {
@@ -44,7 +45,7 @@ function getGithubToken() {
     });
     const match = /password=(.*)/.exec(creds);
     if (match) return match[1].trim();
-  } catch (err) {}
+  } catch {}
   return null;
 }
 
@@ -87,7 +88,8 @@ async function gh(method, endpoint, body = null, retries = 5) {
 }
 
 // 3. Parsowanie zadań
-function parseTaskFile(filePath) {
+function _parseTaskFile(filePath) {
+void _parseTaskFile;
   const content = fs.readFileSync(filePath, 'utf8');
   const lines = content.split(/\r?\n/);
   const title = (lines.find((l) => l.startsWith('# ')) || path.basename(filePath, '.md')).replace(/^#\s*/, '').trim();
