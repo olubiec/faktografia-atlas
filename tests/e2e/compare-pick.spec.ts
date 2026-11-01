@@ -6,7 +6,7 @@ test.describe('Compare pick - Profile Compare', () => {
     // 1. Visit URL without ?c=
     await page.goto('/?e2e=1&u=12');
 
-    const compareTab = page.locator('button', { hasText: /^Porównaj$/ });
+    const compareTab = page.getByRole('tab', { name: /Porównaj/i })
 
 
     await expect(compareTab).toBeVisible();
