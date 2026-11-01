@@ -113,13 +113,8 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     await quickPickButton.click();
 
     // Potwierdzenie obecności parametru ?c= w URL
-<<<<<<< HEAD
-    await page.waitForFunction(() => page.url().includes('c=12,14'));
-    expect(page.url()).toContain('c=12,14');
-=======
     await expect(page).toHaveURL(/c=12(%2C|,)14/);
     expect(decodeURIComponent(page.url())).toContain('c=12,14');
->>>>>>> origin/main
 
     // Wyświetlenie tabeli i mapek
     await expect(page.locator('[data-slot="compare-maps"]')).toBeVisible();
