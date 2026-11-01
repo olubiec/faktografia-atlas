@@ -27,7 +27,7 @@ test.describe('Rankings and Compare pages (@W16-M02)', () => {
       await expect(page).toHaveURL(/\/porownaj/);
 
       await openMenu();
-      await page.goto('/biblioteka');
+      if (vp.name === 'mobile') { await page.getByRole('link', { name: 'Biblioteka', exact: true }).last().click(); } else { await page.getByRole('link', { name: 'Biblioteka', exact: true }).first().click(); }
       await expect(page).toHaveURL(/\/biblioteka/);
 
       await openMenu();

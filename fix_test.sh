@@ -1,2 +1,0 @@
-sed -i 's/\/c=1465,1261\//\/c=1465(%2C|,)1261\//g' tests/e2e/rankings-and-compare-pages.spec.ts
-sed -i 's/await page.locator('"'"'header'"'"').getByRole('"'"'link'"'"', { name: '"'"'Rankingi'"'"' }).click();/const link = page.locator('"'"'header'"'"').getByRole('"'"'link'"'"', { name: '"'"'Rankingi'"'"' }); await link.waitFor({ state: '"'"'visible'"'"' }); await link.click();/g' tests/e2e/rankings-and-compare-pages.spec.ts
