@@ -64,7 +64,7 @@ function RegistryCard({
         </div>
         <div className="flex flex-wrap gap-x-2">
           <dt className="text-olowek font-medium">Atrybucja:</dt>
-          <dd className="text-tusz font-mono text-[11px] leading-relaxed">
+          <dd className="text-tusz font-mono text-xs leading-relaxed">
             {attribution}
           </dd>
         </div>
