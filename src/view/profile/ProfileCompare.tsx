@@ -151,7 +151,6 @@ export function ProfileCompare({
       return;
     }
     if (!selectedTerytB || selectedTerytB === profileA.teryt) {
-      setLoadedProfileB(null);
       return;
     }
 
@@ -459,7 +458,7 @@ export function ProfileCompare({
   );
 }
 
-export function __renderProfileCompare(container: HTMLElement, props: ProfileCompareProps) {
+function renderProfileCompare(container: HTMLElement, props: ProfileCompareProps) {
   import('react-dom/client').then(({ createRoot }) => {
     import('react').then(({ createElement }) => {
       const root = (container as any).__reactRoot || createRoot(container);
@@ -467,4 +466,8 @@ export function __renderProfileCompare(container: HTMLElement, props: ProfileCom
       root.render(createElement(ProfileCompare, props));
     });
   });
+}
+
+if (typeof window !== 'undefined') {
+  (window as unknown as { __renderProfileCompare?: typeof renderProfileCompare }).__renderProfileCompare = renderProfileCompare;
 }
