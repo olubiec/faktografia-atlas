@@ -361,15 +361,20 @@ async function runAgentOnTask(task) {
       continue;
     }
 
-    // Weryfikacja lokalna (testy)
-    log(`[${task.id}] Uruchamiam lokalną weryfikację: ${taskMeta.verification}...`);
+    // Weryfikacja lokalna (typecheck + testy zadania)
+    log(`[${task.id}] Uruchamiam lokalną weryfikację: typecheck oraz testy...`);
     try {
-      execSync('pnpm test', { stdio: 'inherit' });
-      log(`[${task.id}] Testy jednostkowe przeszły pomyślnie!`);
+      execSync('pnpm typecheck', { stdio: 'inherit' });
+      const changedTestFiles = val.changedFiles.filter((f) => f.includes('.test.') && fs.existsSync(f));
+      if (changedTestFiles.length > 0) {
+        log(`[${task.id}] Uruchamiam testy zadania: ${changedTestFiles.join(', ')}`);
+        execSync(`pnpm vitest run ${changedTestFiles.join(' ')}`, { stdio: 'inherit' });
+      }
+      log(`[${task.id}] Weryfikacja lokalna przeszła pomyślnie!`);
       success = true;
     } catch (testErr) {
-      log(`[${task.id}] Testy nie przeszły (próba ${attempts}/${maxAttempts})`);
-      taskMeta._feedbackPrompt = `Testy lokalne (pnpm test) nie przeszły. Przeanalizuj błędy, napraw implementację lub testy zgodnie z zadaniem i upewnij się, że testy przechodzą. Nie usuwaj asercji.`;
+      log(`[${task.id}] Weryfikacja nie przeszła (próba ${attempts}/${maxAttempts}): ${testErr.message}`);
+      taskMeta._feedbackPrompt = `Weryfikacja lokalna (pnpm typecheck / vitest) nie przeszła. Przeanalizuj błędy, napraw implementację lub testy zgodnie z zadaniem i upewnij się, że testy przechodzą. Nie usuwaj asercji.`;
     }
   }
 
