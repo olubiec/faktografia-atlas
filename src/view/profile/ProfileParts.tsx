@@ -65,19 +65,19 @@ export function ProfileParts({
                   <div className="font-semibold text-tusz">{row.name}</div>
                   <div className="grid grid-cols-3 gap-2 font-mono text-center pt-2 border-t border-linia/50">
                     <div>
-                      <div className="text-xs font-sans text-olowek">Gmina</div>
+                      <div className="text-xs font-sans text-olowek min-h-[32px] flex items-center justify-center">Gmina</div>
                       <div className="font-medium text-tusz mt-0.5">
                         {formatValue(row.gmina, row.unit)}
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs font-sans text-olowek">Miasto</div>
+                      <div className="text-xs font-sans text-olowek min-h-[32px] flex items-center justify-center">Miasto</div>
                       <div className="font-medium text-tusz mt-0.5">
                         {formatValue(row.city, row.unit)}
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs font-sans text-olowek">Obszar wiejski</div>
+                      <div className="text-xs font-sans text-olowek min-h-[32px] flex items-center justify-center leading-tight">Obszar wiejski</div>
                       <div className="font-medium text-tusz mt-0.5">
                         {formatValue(row.rural, row.unit)}
                       </div>

@@ -219,14 +219,13 @@ export function ProfileOverview({
 
   return (
     <div className="space-y-4 pb-4 border-b border-linia">
-      <style>{`span.text-korekta { color: var(--korekta-tekst) !important; }`}</style>
-      {/* Nazwa wskaźnika, przycisk rozwijania i rok */}
+            {/* Nazwa wskaźnika, przycisk rozwijania i rok */}
       <div className="space-y-1">
         <button
           type="button"
           aria-expanded={isExpanded}
           onClick={() => setIsExpanded((prev) => !prev)}
-          className="w-full text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-tusz p-1 -m-1 hover:bg-linia/10 transition-colors"
+          className="w-full text-left min-h-[44px] flex flex-col justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-tusz p-1 -m-1 hover:bg-linia/10 transition-colors"
         >
           <div className="flex items-center justify-between text-xs text-olowek font-mono">
             <span className="font-semibold text-tusz min-w-0 flex-1 truncate pr-2">
@@ -286,7 +285,7 @@ export function ProfileOverview({
                   href={explanation.definitionUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-tusz underline hover:text-olowek focus:outline-none focus:ring-2 focus:ring-tusz font-medium"
+                  className="inline-flex items-center min-h-[44px] text-tusz underline hover:text-olowek focus:outline-none focus:ring-2 focus:ring-tusz font-medium"
                 >
                   Definicja GUS
                 </a>
