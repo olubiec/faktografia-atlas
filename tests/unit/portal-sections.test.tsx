@@ -1,43 +1,44 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { renderToString } from 'react-dom/server';
 import { MemoryRouter } from 'react-router';
 import { PortalSections } from '../../src/view/home/PortalSections';
 import { FeaturedComparisons } from '../../src/view/home/FeaturedComparisons';
 
 describe('PortalSections Unit Tests (W16-M01)', () => {
   it('renders quick start section with key localities and regions', () => {
-    render(
+    const html = renderToString(
       <MemoryRouter>
         <PortalSections />
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Szybki start')).toBeDefined();
-    expect(screen.getByText('Warszawa')).toBeDefined();
-    expect(screen.getByText('Kraków')).toBeDefined();
-    expect(screen.getByText('Kleszczów')).toBeDefined();
+    expect(html).toContain('Szybki start');
+    expect(html).toContain('Warszawa');
+    expect(html).toContain('Kraków');
+    expect(html).toContain('Kleszczów');
   });
 
   it('renders thematic sections and library entry point', () => {
-    render(
+    const html = renderToString(
       <MemoryRouter>
         <PortalSections />
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Działy tematyczne GUS')).toBeDefined();
-    expect(screen.getByText(/Biblioteka 64 000 zmiennych BDL/i)).toBeDefined();
+    expect(html).toContain('Działy tematyczne GUS');
+    expect(html).toMatch(/Biblioteka 64 000 zmiennych BDL/i);
   });
 
   it('renders FeaturedComparisons with contrasting pairs', () => {
-    render(
+    const html = renderToString(
       <MemoryRouter>
         <FeaturedComparisons />
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Pojedynki miejsc')).toBeDefined();
-    expect(screen.getByText('Warszawa vs Kraków')).toBeDefined();
-    expect(screen.getByText('Kleszczów vs Przytuły')).toBeDefined();
+    expect(html).toContain('Pojedynki miejsc');
+    expect(html).toContain('Warszawa vs Kraków');
+    expect(html).toContain('Kleszczów vs Przytuły');
   });
 });
