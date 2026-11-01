@@ -25,7 +25,7 @@ export function SiteLayout({ children, className, meta }: SiteLayoutProps) {
       </a>
       {meta && <PageMeta {...meta} />}
       <Header />
-      <main id="main-content" tabIndex={-1} className={cn('flex-grow', className)}>
+      <main id="main-content" className={cn('flex-grow', className)}>
         {children}
       </main>
       <SiteFooter />
