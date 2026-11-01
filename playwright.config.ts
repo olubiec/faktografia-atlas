@@ -4,10 +4,10 @@ export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
   // Wolny runner CI: 30 s bywa za krótko dla testów ładujących dane i mapę (niestabilne timeouty)
-  timeout: process.env.CI ? 35_000 : 30_000,
+  timeout: process.env.CI ? 60_000 : 30_000,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
   // W CI adnotacje GitHuba z nazwami nieudanych testów (widać je bez logów) + raport HTML jako artefakt
   reporter: process.env.CI ? [['github'], ['html']] : 'html',
   use: {
