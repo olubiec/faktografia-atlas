@@ -47,8 +47,8 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     await searchResultItem.click();
 
     // Weryfikacja parametru ?c= w adresie URL
-    await expect(page).toHaveURL(/c=12,14/);
-    expect(page.url()).toContain('c=12,14');
+    await expect(page).toHaveURL(/c=12(%2C|,)14/);
+    expect(decodeURIComponent(page.url())).toContain('c=12,14');
 
     // Wyświetla obie mapki oraz tabelę porównania
     const compareMaps = page.locator('[data-slot="compare-maps"]');
@@ -113,8 +113,8 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     await quickPickButton.click();
 
     // Potwierdzenie obecności parametru ?c= w URL
-    await expect(page).toHaveURL(/c=12,14/);
-    expect(page.url()).toContain('c=12,14');
+    await expect(page).toHaveURL(/c=12(%2C|,)14/);
+    expect(decodeURIComponent(page.url())).toContain('c=12,14');
 
     // Wyświetlenie tabeli i mapek
     await expect(page.locator('[data-slot="compare-maps"]')).toBeVisible();
