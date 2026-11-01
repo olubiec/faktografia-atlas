@@ -1,0 +1,1 @@
+sed -i 's/await page.locator('"'"'a:has-text("Rankingi")'"'"').last().click();/const rr = page.locator('"'"'header'"'"').getByRole('"'"'link'"'"', { name: '"'"'Rankingi'"'"' }); await rr.nth(rr.count() - 1).click();/g' tests/e2e/rankings-and-compare-pages.spec.ts

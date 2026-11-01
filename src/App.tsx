@@ -4,6 +4,8 @@ import { NotFound } from './view/NotFound';
 import { About } from './view/pages/About';
 import { Sources } from './view/pages/Sources';
 import { Privacy } from './view/pages/Privacy';
+import { Rankings } from './view/pages/Rankings';
+import { ComparePage } from './view/pages/ComparePage';
 import { Library } from './view/pages/Library';
 import { LibraryVariable } from './view/pages/LibraryVariable';
 import { AnnotationTestPage } from './view/test/AnnotationTestPage';
@@ -21,6 +23,8 @@ export function App() {
         <Route path="/o-projekcie" element={<About />} />
         <Route path="/zrodla" element={<Sources />} />
         <Route path="/prywatnosc" element={<Privacy />} />
+        <Route path="/rankingi" element={<Rankings />} />
+        <Route path="/porownaj" element={<ComparePage />} />
         <Route path="/biblioteka" element={<Library />} />
         <Route path="/biblioteka/:id" element={<LibraryVariable />} />
         <Route path="/design" element={<DesignPage />} />
