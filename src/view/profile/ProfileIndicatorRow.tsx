@@ -191,7 +191,7 @@ export function ProfileIndicatorRow({
                     href={explanation.definitionUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-tusz underline hover:text-olowek focus:outline-none focus:ring-2 focus:ring-tusz font-medium"
+                    className="inline-flex items-center min-h-[44px] text-tusz underline hover:text-olowek focus:outline-none focus:ring-2 focus:ring-tusz font-medium"
                   >
                     Definicja GUS
                   </a>
