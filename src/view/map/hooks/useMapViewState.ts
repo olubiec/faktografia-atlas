@@ -283,7 +283,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const measure = () => {
+    const measure = (isResizeEvent = false) => {
       if (!containerRef.current) return;
       const { clientWidth, clientHeight } = containerRef.current;
       if (clientWidth > 0 && clientHeight > 0) {
@@ -316,33 +316,34 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           setCurrentViewState(init);
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
-        } else if (fittedKeyRef.current !== key || (!userMovedRef.current && (dimensions.width !== clientWidth || dimensions.height !== clientHeight))) {
-          const isKeyChange = fittedKeyRef.current !== key;
+        } else if (fittedKeyRef.current !== key) {
+          const activeBbox = drillBbox ?? bounds;
+          const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
+          let kind: CameraKind = 'in';
+          if (targetView.zoom < currentViewStateRef.current.zoom - 0.05) {
+            kind = 'out';
+          }
+          fittedBboxRef.current = bboxKey;
+          fittedKeyRef.current = key;
+          animateToView(targetView, kind);
+        } else if (isResizeEvent && !userMovedRef.current) {
           const activeBbox = drillBbox ?? bounds;
           const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
-          if (isKeyChange) {
-            let kind: CameraKind = 'in';
-            if (targetView.zoom < currentViewStateRef.current.zoom - 0.05) {
-              kind = 'out';
-            }
-            animateToView(targetView, kind);
-          } else {
-            animateToView(targetView, 'instant');
-          }
+          animateToView(targetView, 'instant');
         }
       }
     };
 
-    measure();
-    const resizeObserver = new ResizeObserver(measure);
+    measure(false);
+    const resizeObserver = new ResizeObserver(() => measure(true));
     resizeObserver.observe(containerRef.current);
 
     return () => {
       resizeObserver.disconnect();
     };
-  }, [animateToView, bounds, dimensions.height, dimensions.width, drillBbox, setCurrentViewState, sheetInset]);
+  }, [animateToView, bounds, drillBbox, setCurrentViewState, sheetInset]);
 
   useEffect(() => {
     if (currentViewState.zoom >= 8.5) {
