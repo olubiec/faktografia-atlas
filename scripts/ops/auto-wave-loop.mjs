@@ -295,9 +295,15 @@ async function runLoop() {
         const openPrs = await gh('GET', 'pulls?state=open&per_page=50');
 
         const isTaskMerged = (taskId) => {
-          return (closedPrs || []).some(
-            (p) => p.merged_at && (p.title.includes(`[${taskId}]`) || p.head.ref.toLowerCase().includes(taskId.toLowerCase()))
+          const inClosedPr = (closedPrs || []).some(
+            (p) => (p.merged_at || p.state === 'closed') && (p.title.includes(`[${taskId}]`) || p.head.ref.toLowerCase().includes(taskId.toLowerCase()))
           );
+          if (inClosedPr) return true;
+          try {
+            const gitCheck = execSync(`git log -n 50 --grep="\\[${taskId}\\]" --oneline`, { encoding: 'utf8' }).trim();
+            if (gitCheck) return true;
+          } catch {}
+          return false;
         };
 
         const hasOpenPr = (taskId) => {
