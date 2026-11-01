@@ -277,16 +277,3 @@ export function CompareMaps({
     </div>
   );
 }
-
-if (typeof window !== 'undefined') {
-  (window as any).__CompareMaps = CompareMaps;
-  (window as any).__renderCompareMaps = (container: HTMLElement, props: CompareMapsProps) => {
-    import('react-dom/client').then(({ createRoot }) => {
-      import('react').then(({ createElement }) => {
-        const root = (container as any).__reactRoot || createRoot(container);
-        (container as any).__reactRoot = root;
-        root.render(createElement(CompareMaps, props));
-      });
-    });
-  };
-}
