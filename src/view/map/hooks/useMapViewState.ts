@@ -317,11 +317,20 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
         } else if (fittedKeyRef.current !== key || (!userMovedRef.current && (dimensions.width !== clientWidth || dimensions.height !== clientHeight))) {
+          const isKeyChange = fittedKeyRef.current !== key;
           const activeBbox = drillBbox ?? bounds;
           const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
-          animateToView(targetView, 'instant');
+          if (isKeyChange) {
+            let kind: CameraKind = 'in';
+            if (targetView.zoom < currentViewStateRef.current.zoom - 0.05) {
+              kind = 'out';
+            }
+            animateToView(targetView, kind);
+          } else {
+            animateToView(targetView, 'instant');
+          }
         }
       }
     };
