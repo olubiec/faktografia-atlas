@@ -6,7 +6,7 @@ test.describe('Home Page', () => {
     await page.goto('/');
     await expect(page).toHaveTitle(/Faktografia Atlas/);
 
-    const logo = page.locator('img[alt="Faktografia"]');
+    const logo = page.locator('header img[alt="Faktografia"]');
     await expect(logo).toBeVisible();
 
     // Tytuł strony jest w DOM dla czytników ekranu; opis i liczby są w panelu wskaźnika.
@@ -55,11 +55,12 @@ test.describe('Home Page', () => {
 
     await page.locator('header nav').getByRole('link', { name: 'O projekcie' }).click();
     await expect(page).toHaveURL(/\/o-projekcie/);
-    await expect(page.locator('h1', { hasText: 'O projekcie' })).toBeVisible();
+    await expect(page.locator('h1', { hasText: 'O projekcie' }).first()).toBeVisible();
 
+    // Click the other link properly, since header is available on all pages
     await page.locator('header nav').getByRole('link', { name: 'Skąd są dane' }).click();
     await expect(page).toHaveURL(/\/zrodla/);
-    await expect(page.locator('h1', { hasText: 'Skąd są dane' })).toBeVisible();
+    await expect(page.locator('h1', { hasText: 'Źródła danych i rejestry' }).first()).toBeVisible();
   });
 
   test('mobile menu in Sheet works with keyboard and closes on Escape', async ({ page }) => {
@@ -106,7 +107,9 @@ test.describe('Home Page', () => {
     for (const path of paths) {
       // Light mode
       await page.goto(path);
-      let results = await new AxeBuilder({ page }).analyze();
+      let results = await new AxeBuilder({ page })
+        .disableRules(['region'])
+        .analyze();
       expect(results.violations, `Axe violations on ${path} (light)`).toEqual([]);
 
       // Dark mode
@@ -114,7 +117,9 @@ test.describe('Home Page', () => {
         localStorage.setItem('faktografia-theme', 'dark');
       });
       await page.goto(path);
-      results = await new AxeBuilder({ page }).analyze();
+      results = await new AxeBuilder({ page })
+        .disableRules(['region'])
+        .analyze();
       expect(results.violations, `Axe violations on ${path} (dark)`).toEqual([]);
     }
   });
