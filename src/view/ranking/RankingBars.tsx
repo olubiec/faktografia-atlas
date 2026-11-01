@@ -95,7 +95,7 @@ export function RankingBars({
               <span
                 className={cn(
                   'text-sm min-w-0 flex-1 truncate text-left',
-                  isSelected ? 'font-bold text-korekta' : 'font-normal text-tusz'
+                  isSelected ? 'font-bold text-korekta-tekst' : 'font-normal text-tusz'
                 )}
               >
                 {item.name}
@@ -123,7 +123,7 @@ export function RankingBars({
               <span
                 className={cn(
                   'text-xs font-mono shrink-0 tabular-nums text-right min-w-[60px]',
-                  isSelected ? 'font-bold text-korekta' : 'font-semibold text-tusz'
+                  isSelected ? 'font-bold text-korekta-tekst' : 'font-semibold text-tusz'
                 )}
               >
                 {formattedVal}
