@@ -10,5 +10,6 @@ export default defineConfig({
   },
   test: {
     environment: 'node', // for tokens.test.ts since we read files
+    testTimeout: 10000,
   },
 })

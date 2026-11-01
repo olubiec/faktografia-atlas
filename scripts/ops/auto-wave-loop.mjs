@@ -78,20 +78,28 @@ const HEADERS = {
   'User-Agent': 'Antigravity-Wave-Loop',
 };
 
-async function gh(method, endpoint, body = null) {
+async function gh(method, endpoint, body = null, retries = 5) {
   const url = endpoint.startsWith('http') ? endpoint : `https://api.github.com/repos/${REPO}/${endpoint.replace(/^\//, '')}`;
   const opts = { method, headers: HEADERS };
   if (body) {
     opts.headers['Content-Type'] = 'application/json';
     opts.body = JSON.stringify(body);
   }
-  const res = await fetch(url, opts);
-  if (res.status === 204) return null;
-  const text = await res.text();
-  try {
-    return JSON.parse(text);
-  } catch {
-    return text;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, opts);
+      if (res.status === 204) return null;
+      const text = await res.text();
+      try {
+        return JSON.parse(text);
+      } catch {
+        return text;
+      }
+    } catch (err) {
+      if (attempt === retries) throw err;
+      log(`Błąd sieci w gh(${method} ${endpoint}): ${err.message}. Ponawiam (${attempt}/${retries})...`);
+      await new Promise((r) => setTimeout(r, attempt * 3000));
+    }
   }
 }
 
@@ -151,17 +159,19 @@ function getPendingPoczekalniaWaves() {
 }
 
 async function getDoneWaves() {
+  const defaults = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
   try {
     const issueData = await gh('GET', 'issues/421');
     if (issueData && issueData.body) {
       const m = /<!-- JULES_LOOP_STATE\n([\s\S]*?)\n-->/.exec(issueData.body);
       if (m) {
         const state = JSON.parse(m[1]);
-        return state.doneWaves || [];
+        const set = new Set([...defaults, ...(state.doneWaves || [])]);
+        return [...set];
       }
     }
   } catch {}
-  return [];
+  return defaults;
 }
 
 // 4. Sprawdzanie i scalanie PR-ów
@@ -180,9 +190,20 @@ async function checkAndMergePrs(waveNum) {
   for (const pr of wavePrs) {
     log(`Sprawdzam PR #${pr.number}: ${pr.title}`);
     const checkRuns = await gh('GET', `commits/${pr.head.sha}/check-runs`);
-    const runs = checkRuns.check_runs || [];
+    const allRuns = checkRuns.check_runs || [];
 
-    const ciRuns = runs.filter((r) => r.name === 'testy' || r.name === 'bezpieczenstwo' || r.name === 'CI');
+    // Deduplikacja: zachowaj tylko najnowszy run dla danej nazwy
+    const runMap = new Map();
+    for (const r of allRuns) {
+      if (r.name === 'testy' || r.name === 'bezpieczenstwo' || r.name === 'CI') {
+        const prev = runMap.get(r.name);
+        if (!prev || r.id > prev.id) {
+          runMap.set(r.name, r);
+        }
+      }
+    }
+
+    const ciRuns = [...runMap.values()];
     log(`  Checki (${ciRuns.length}): ${ciRuns.map((r) => `${r.name}=${r.status}/${r.conclusion}`).join(', ')}`);
 
     const allCompleted = ciRuns.length >= 2 && ciRuns.every((r) => r.status === 'completed');
@@ -442,111 +463,116 @@ async function runLoop() {
 
   while (true) {
     try {
-      execSync('git checkout main && git pull origin main', { stdio: 'pipe' });
-    } catch {}
+      try {
+        execSync('git checkout main && git pull origin main', { stdio: 'pipe' });
+      } catch {}
 
-    const doneWaves = await getDoneWaves();
-    const activeWaves = getActiveWaveTasks();
-    const sortedActive = [...activeWaves.keys()].filter((w) => !doneWaves.includes(w)).sort((a, b) => a - b);
+      const doneWaves = await getDoneWaves();
+      const activeWaves = getActiveWaveTasks();
+      const sortedActive = [...activeWaves.keys()].filter((w) => !doneWaves.includes(w)).sort((a, b) => a - b);
 
-    if (sortedActive.length > 0) {
-      const currentWave = sortedActive[0];
-      const tasks = activeWaves.get(currentWave);
-      log(`Aktywna fala: W${currentWave} (${tasks.length} zadań: ${tasks.map((t) => t.id).join(', ')})`);
+      if (sortedActive.length > 0) {
+        const currentWave = sortedActive[0];
+        const tasks = activeWaves.get(currentWave);
+        log(`Aktywna fala: W${currentWave} (${tasks.length} zadań: ${tasks.map((t) => t.id).join(', ')})`);
 
-      // 1. Sprawdź czy są otwarte PR-y do scalenia
-      await checkAndMergePrs(currentWave);
+        // 1. Sprawdź czy są otwarte PR-y do scalenia
+        await checkAndMergePrs(currentWave);
 
-      // 2. Sprawdź które zadania jeszcze nie są zrobione
-      const closedPrs = await gh('GET', 'pulls?state=closed&per_page=100');
-      const openPrs = await gh('GET', 'pulls?state=open&per_page=50');
+        // 2. Sprawdź które zadania jeszcze nie są zrobione
+        const closedPrs = await gh('GET', 'pulls?state=closed&per_page=100');
+        const openPrs = await gh('GET', 'pulls?state=open&per_page=50');
 
-      const isTaskMerged = (taskId) => {
-        return (closedPrs || []).some(
-          (p) => p.merged_at && (p.title.includes(`[${taskId}]`) || p.head.ref.includes(taskId.toLowerCase()))
-        );
-      };
+        const isTaskMerged = (taskId) => {
+          return (closedPrs || []).some(
+            (p) => p.merged_at && (p.title.includes(`[${taskId}]`) || p.head.ref.includes(taskId.toLowerCase()))
+          );
+        };
 
-      const hasOpenPr = (taskId) => {
-        return (openPrs || []).some(
-          (p) => p.title.includes(`[${taskId}]`) || p.head.ref.includes(taskId.toLowerCase())
-        );
-      };
+        const hasOpenPr = (taskId) => {
+          return (openPrs || []).some(
+            (p) => p.title.includes(`[${taskId}]`) || p.head.ref.includes(taskId.toLowerCase())
+          );
+        };
 
-      const unmergedTasks = tasks.filter((t) => !isTaskMerged(t.id));
-      log(`Zadania pozostałe do scalenia w W${currentWave}: ${unmergedTasks.length}/${tasks.length}`);
+        const unmergedTasks = tasks.filter((t) => !isTaskMerged(t.id));
+        log(`Zadania pozostałe do scalenia w W${currentWave}: ${unmergedTasks.length}/${tasks.length}`);
 
-      if (unmergedTasks.length > 0) {
-        // Uruchom agenta dla pierwszego niezrobionego zadania bez aktywnego PR-a
-        const taskToRun = unmergedTasks.find((t) => !hasOpenPr(t.id));
-        if (taskToRun) {
-          log(`Uruchamiam agenta Antigravity dla zadania: ${taskToRun.id}`);
-          await runAgentOnTask(taskToRun);
+        if (unmergedTasks.length > 0) {
+          // Uruchom agenta dla pierwszego niezrobionego zadania bez aktywnego PR-a
+          const taskToRun = unmergedTasks.find((t) => !hasOpenPr(t.id));
+          if (taskToRun) {
+            log(`Uruchamiam agenta Antigravity dla zadania: ${taskToRun.id}`);
+            await runAgentOnTask(taskToRun);
+          } else {
+            log(`Wszystkie niezrobione zadania mają otwarte PR-y. Czekam na checki CI...`);
+          }
         } else {
-          log(`Wszystkie niezrobione zadania mają otwarte PR-y. Czekam na checki CI...`);
+          log(`Wszystkie zadania fali W${currentWave} zostały scalone! Sprawdzam CI na main...`);
+          const mainGreen = await isMainCiGreen();
+          if (mainGreen) {
+            log(`CI na main jest ZIELONE! Fala W${currentWave} UKOŃCZONA!`);
+
+            // Zaktualizuj stan issue #421
+            try {
+              const issueData = await gh('GET', 'issues/421');
+              if (issueData && issueData.body) {
+                const m = /<!-- JULES_LOOP_STATE\n([\s\S]*?)\n-->/.exec(issueData.body);
+                if (m) {
+                  const curState = JSON.parse(m[1]);
+                  if (!curState.doneWaves.includes(currentWave)) curState.doneWaves.push(currentWave);
+                  curState.wave = null;
+                  curState.phase = 'idle';
+                  curState.tasks = [];
+                  curState.testTasks = [];
+                  curState.lastWaveSummary = `Fala W${currentWave} ukończona przez Antigravity.`;
+                  const newBody = issueData.body.replace(
+                    /<!-- JULES_LOOP_STATE[\s\S]*?-->/,
+                    `<!-- JULES_LOOP_STATE\n${JSON.stringify(curState)}\n-->`
+                  );
+                  await gh('PATCH', 'issues/421', { body: newBody });
+                  log(`Zaktualizowano stan issue #421: doneWaves=[${curState.doneWaves.join(', ')}]`);
+                }
+              }
+            } catch (e) {
+              log(`Błąd aktualizacji issue #421: ${e.message}`);
+            }
+
+            // Zaktualizuj docs/PROJECT_STATE.md
+            updateProjectState(currentWave, `Wszystkie ${tasks.length} zadań scalone, CI na main zielone.`);
+          } else {
+            log(`Oczekiwanie na zielone CI na gałęzi main...`);
+          }
         }
       } else {
-        log(`Wszystkie zadania fali W${currentWave} zostały scalone! Sprawdzam CI na main...`);
-        const mainGreen = await isMainCiGreen();
-        if (mainGreen) {
-          log(`CI na main jest ZIELONE! Fala W${currentWave} UKOŃCZONA!`);
+        // Brak aktywnej fali w tasks/. Sprawdzamy poczekalnię!
+        const poczekalnia = getPendingPoczekalniaWaves();
+        const nextWaves = [...poczekalnia.keys()].sort((a, b) => a - b);
 
-          // Zaktualizuj stan issue #421
-          try {
-            const issueData = await gh('GET', 'issues/421');
-            if (issueData && issueData.body) {
-              const m = /<!-- JULES_LOOP_STATE\n([\s\S]*?)\n-->/.exec(issueData.body);
-              if (m) {
-                const curState = JSON.parse(m[1]);
-                if (!curState.doneWaves.includes(currentWave)) curState.doneWaves.push(currentWave);
-                curState.wave = null;
-                curState.phase = 'idle';
-                curState.tasks = [];
-                curState.testTasks = [];
-                curState.lastWaveSummary = `Fala W${currentWave} ukończona przez Antigravity.`;
-                const newBody = issueData.body.replace(
-                  /<!-- JULES_LOOP_STATE[\s\S]*?-->/,
-                  `<!-- JULES_LOOP_STATE\n${JSON.stringify(curState)}\n-->`
-                );
-                await gh('PATCH', 'issues/421', { body: newBody });
-                log(`Zaktualizowano stan issue #421: doneWaves=[${curState.doneWaves.join(', ')}]`);
-              }
-            }
-          } catch (e) {
-            log(`Błąd aktualizacji issue #421: ${e.message}`);
+        if (nextWaves.length > 0) {
+          const nextWave = nextWaves[0];
+          const nextTasks = poczekalnia.get(nextWave);
+          log(`Przechodzę do fali W${nextWave} (${nextTasks.length} zadań). Przenoszę z poczekalni...`);
+
+          // Przenosimy zadania z poczekalni do tasks/
+          for (const t of nextTasks) {
+            const dest = path.join('tasks', t.file);
+            fs.renameSync(t.path, dest);
           }
 
-          // Zaktualizuj docs/PROJECT_STATE.md
-          updateProjectState(currentWave, `Wszystkie ${tasks.length} zadań scalone, CI na main zielone.`);
+          execSync('git add tasks/', { stdio: 'pipe' });
+          execSync(`git commit -m "Start fali F${nextWave} (${nextTasks.length} zadań) [Antigravity]"`, { stdio: 'pipe' });
+          execSync('git push origin main', { stdio: 'pipe' });
+
+          log(`Fala W${nextWave} została aktywowana na main!`);
         } else {
-          log(`Oczekiwanie na zielone CI na gałęzi main...`);
+          log(`🎉 Wszystkie fale ukończone! Brak zadań w tasks/ i tasks/poczekalnia/. Koniec pracy.`);
+          break;
         }
       }
-    } else {
-      // Brak aktywnej fali w tasks/. Sprawdzamy poczekalnię!
-      const poczekalnia = getPendingPoczekalniaWaves();
-      const nextWaves = [...poczekalnia.keys()].sort((a, b) => a - b);
-
-      if (nextWaves.length > 0) {
-        const nextWave = nextWaves[0];
-        const nextTasks = poczekalnia.get(nextWave);
-        log(`Przechodzę do fali W${nextWave} (${nextTasks.length} zadań). Przenoszę z poczekalni...`);
-
-        // Przenosimy zadania z poczekalni do tasks/
-        for (const t of nextTasks) {
-          const dest = path.join('tasks', t.file);
-          fs.renameSync(t.path, dest);
-        }
-
-        execSync('git add tasks/', { stdio: 'pipe' });
-        execSync(`git commit -m "Start fali F${nextWave} (${nextTasks.length} zadań) [Antigravity]"`, { stdio: 'pipe' });
-        execSync('git push origin main', { stdio: 'pipe' });
-
-        log(`Fala W${nextWave} została aktywowana na main!`);
-      } else {
-        log(`🎉 Wszystkie fale ukończone! Brak zadań w tasks/ i tasks/poczekalnia/. Koniec pracy.`);
-        break;
-      }
+    } catch (err) {
+      log(`Błąd w obiegu pętli: ${err.message}. Ponawiam za 15 sekund...`);
+      await new Promise((r) => setTimeout(r, 15000));
     }
 
     log('Czekam 30 sekund na kolejny obieg pętli...');

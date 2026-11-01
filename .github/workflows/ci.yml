@@ -20,9 +20,14 @@ permissions:
   contents: read
 
 jobs:
-  testy:
+  testy-shard:
+    name: testy-shard (${{ matrix.shard }})
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1/4, 2/4, 3/4, 4/4]
     container:
       image: mcr.microsoft.com/playwright:v1.64.1-jammy
       options: --user root
@@ -45,16 +50,25 @@ jobs:
       - run: pnpm test
       - run: pnpm build
 
-      # interfejs: testy w przeglądarce + dostępność (Playwright + axe)
-      - run: pnpm test:e2e
+      # interfejs: testy w przeglądarce + dostępność (Playwright + axe) ze shardingiem 4x
+      - run: pnpm test:e2e --shard=${{ matrix.shard }}
 
       - name: Raport Playwright (tylko przy błędzie)
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-report
+          name: playwright-report-${{ strategy.job-index }}
           path: playwright-report
           retention-days: 7
+
+  testy:
+    name: testy
+    needs: testy-shard
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Podsumowanie shardow
+        run: echo "Wszystkie 4 shardy testow E2E przeszly pomyslnie!"
 
   bezpieczenstwo:
     runs-on: ubuntu-24.04
