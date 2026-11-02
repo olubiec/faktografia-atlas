@@ -70,6 +70,7 @@ def _unquote(path: str) -> str:
 
 
 def changed_files(worktree: Path, base: str) -> list[str]:
+    run_git(['checkout', '--', 'src/styles/tokens.css'], worktree, check=False)
     files: set[str] = set()
     diff = run_git(["diff", "--name-only", f"{base}...HEAD"], worktree)
     files.update(line for line in diff.stdout.splitlines() if line.strip())
