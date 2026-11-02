@@ -1,15 +1,23 @@
-# Jules Loop – jak prowadzi projekt do końca
-Wersja 2 · 28.10.2026. **Zastępuje** stary automat (issue z etykietą `jules`, „Posłaniec”, `automat.mjs`) i ręczną pętlę (`start-tasks.mjs`). Instalacja i ustawienia: `scripts/jules-loop/README.md`; ogólny opis: `docs/WORKFLOW.md` §3d. Plan zadań: `docs/ARCHITEKTURA.md` §3–§4, kolejka dla generatora: `scripts/ops/automat-kolejka.json` (test `ops-kolejka.test.ts` pilnuje zgodności z ARCHITEKTURA).
+# Automatyzacja fal: Orkiestra (Antigravity agy) i Jules Loop
+Wersja 3 · 02.11.2026. **Orkiestra** zarządza falami zadań w Antigravity (`waves.yaml`, `orkiestra.cmd`, `python -m orkiestra`). Jules Loop (Actions, Jules API) pozostaje opcją chmurową. Dokumentacja orkiestry: `docs/orkiestra/USAGE.md`. Plan zadań: `waves.yaml`, zadania: `tasks/W*.md`.
 
-## 1. Po ludzku
+## 0. Orkiestra (natywny automat Antigravity)
+Zadania fali są definiowane w `waves.yaml` (synchronizowane automatycznie przez `node scripts/ops/sync-waves.mjs`).
+- Status zadań: `orkiestra.cmd status` (lub `python -m orkiestra status`)
+- Walidacja planu: `orkiestra.cmd validate --plan waves.yaml`
+- Uruchomienie fali: `orkiestra.cmd run --wave w16` (lub `orkiestra.cmd run` dla całości)
+- Dry-run: `orkiestra.cmd run --dry-run`
+Orkiestra tworzy izolowane worktree gita, uruchamia agenta Antigravity agy (Flash) dla każdego zadania, sprawdza zakres plików (Plan Guard), uruchamia testy projektu (`pnpm lint && pnpm typecheck && pnpm test && pnpm build`) i automatycznie scala zatwierdzone zmiany.
+
+## 1. Po ludzku (Jules Loop)
 Każde zadanie to plik `tasks/W<fala>-<id>-<nazwa>.md`. Gdy pliki fali trafią na `main`, workflow **Jules Loop** (GitHub Actions, bez tokenów AI) uruchamia Julesa, pilnuje, żeby PR robił tylko to, co zadanie, scala po zielonym CI, puszcza falę testów, sprawdza CI na `main`, zapisuje dziennik i startuje następną falę. Ty puszczasz fale i oglądasz efekt na punktach kontrolnych; pętla pinguje Cię tylko, gdy trzeba człowieka.
 
 | Kto | Co robi |
 |---|---|
 | Claude (Planista) | pisze zadania w planie (ARCHITEKTURA), generuje pliki fali, po fali poprawia `STAN.md` z dziennika |
 | Ty | pushujesz pliki fali (start), oglądasz podgląd Vercel, decydujesz przy `needs-human`, etykietą `hold` wstrzymujesz scalenie PR |
-| Jules Loop | start sesji (do 12 naraz, 80 na dobę), strażnik zgodności, prośby o poprawki, scalanie, fala testów, naprawa integracji, dziennik |
-| Jules | kod, testy, PR, poprawki |
+| Jules Loop / Orkiestra | start sesji, strażnik zgodności, prośby o poprawki, scalanie, fala testów, naprawa integracji, dziennik |
+| Agent (agy / Jules) | kod, testy, PR, poprawki |
 | GitHub Actions (`CI`) | `testy`, `bezpieczenstwo`: jedyna twarda blokada |
 
 ## 2. Jak puścić falę

@@ -1,0 +1,125 @@
+version: 1
+waves:
+  - id: w16
+    tasks:
+      - id: W16-M01
+        title: "M01 – Sekcje redakcyjnego portalu pod mapa na stronie glownej"
+        files:
+          - "src/view/Home.tsx"
+          - "src/view/home/PortalSections.tsx"
+          - "src/view/home/FeaturedComparisons.tsx"
+          - "src/view/map/IntroOverlay.tsx"
+          - "tests/unit/portal-sections.test.tsx"
+          - "tests/e2e/home-portal.spec.ts"
+        prompt_file: tasks/W16-M01-sekcje-portalu-pod-mapa.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W16-M02
+        title: "M02 – Nowe podstrony Rankingi i Porownaj oraz rozbudowana nawigacja"
+        files:
+          - "src/App.tsx"
+          - "src/view/Header.tsx"
+          - "src/view/pages/Rankings.tsx"
+          - "src/view/pages/ComparePage.tsx"
+          - "tests/e2e/rankings-and-compare-pages.spec.ts"
+          - "tests/e2e/header-library.spec.ts"
+        prompt_file: tasks/W16-M02-podstrony-rankingi-i-porownaj.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W16-M03
+        title: "M03 – Tabela porownania karty na telefonie i prawdziwe testy E2E"
+        files:
+          - "src/view/profile/ProfileCompareTable.tsx"
+          - "src/view/profile/CompareMaps.tsx"
+          - "tests/e2e/compare-table.spec.ts"
+          - "tests/e2e/compare-maps.spec.ts"
+          - "tests/e2e/s18-compare.spec.ts"
+          - "tests/e2e/share-compare.spec.ts"
+        prompt_file: tasks/W16-M03-tabela-porownania-karty-mobile.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W16-M04
+        title: "M04 – Biblioteka GUS mobile i statystyki opisowe"
+        files:
+          - "src/view/pages/Library.tsx"
+          - "src/view/library/LibraryFilters.tsx"
+          - "src/view/library/LibrarySearchBar.tsx"
+          - "src/view/pages/LibraryVariable.tsx"
+          - "src/view/library/VariableStatsBar.tsx"
+          - "tests/e2e/library-search.spec.ts"
+          - "tests/e2e/library-variable.spec.ts"
+        prompt_file: tasks/W16-M04-biblioteka-mobile-i-statystyki.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W16-M05
+        title: "M05 – Plynny resize okna bez utraty stanu profilu i skokow kamery"
+        files:
+          - "src/view/map/ProfilePortal.tsx"
+          - "src/view/map/hooks/useMapViewState.ts"
+          - "src/view/consent/ConsentBar.tsx"
+          - "tests/e2e/responsive-resize.spec.ts"
+        prompt_file: tasks/W16-M05-plynny-resize-i-kamera.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W16-M06
+        title: "M06 – Podzial monolitu card.ts na moduly ponizej 200 linii"
+        files:
+          - "src/core/share/card.ts"
+          - "src/core/share/card-map.ts"
+          - "src/core/share/card-ranking.ts"
+          - "src/core/share/card-profile.ts"
+          - "src/core/share/card-compare.ts"
+          - "src/core/profile/highlight.ts"
+          - "tests/unit/highlight.test.ts"
+          - "tests/unit/share-card.test.ts"
+        prompt_file: tasks/W16-M06-podzial-monolitu-card.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+  - id: w17
+    tasks:
+      - id: W17-T01
+        title: "T01 – Geometryczny audyt Mobile UX 360px i 390px"
+        files:
+          - "tests/e2e/helpers/mobile-audit.ts"
+          - "tests/e2e/mobile-ux-geometry.spec.ts"
+          - "tests/e2e/s15-mobile.spec.ts"
+          - "tests/e2e/s20-parts.spec.ts"
+          - "tests/e2e/share-profile.spec.ts"
+        prompt_file: tasks/poczekalnia/W17-T01-geometryczny-audyt-mobile-ux.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W17-T02
+        title: "T02 – Matryca dostepnosci WCAG 2.2 AA w jasnym i ciemnym motywie"
+        files:
+          - "tests/e2e/a11y-matrix.spec.ts"
+        prompt_file: tasks/poczekalnia/W17-T02-matryca-dostepnosci-wcag-aa.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W17-T03
+        title: "T03 – Straznik stylu Kalka i korekta oraz limitu wielkosci plikow"
+        files:
+          - "tests/unit/style-guard.test.ts"
+        prompt_file: tasks/poczekalnia/W17-T03-straznik-stylu-kalka-i-korekta.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W17-T04
+        title: "T04 – Odpornosc na bledy sieci CORS i wyscigi klikniec"
+        files:
+          - "tests/e2e/network-resilience.spec.ts"
+        prompt_file: tasks/poczekalnia/W17-T04-odpornosc-na-bledy-sieci-i-wyscigi.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W17-T05
+        title: "T05 – Podroz po portalu historia Wstecz i budzety zapytan"
+        files:
+          - "tests/e2e/navigation-and-budgets.spec.ts"
+        prompt_file: tasks/poczekalnia/W17-T05-podroz-po-portalu-i-budzety.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W17-T06
+        title: "T06 – Kontrakty danych Zod i fuzzing warunkow brzegowych"
+        files:
+          - "tests/unit/core-contracts-and-fuzz.test.ts"
+        prompt_file: tasks/poczekalnia/W17-T06-kontrakty-danych-i-fuzzing.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+

@@ -1,0 +1,24 @@
+[project]
+base_branch = "main"
+remote = "origin"
+test_command = "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+merge_mode = "local"
+
+[agent]
+cmd = ["agy"]
+model = ""                      # slug z `agy models`, np. Flash; puste = domyślny agy
+timeout_minutes = 20
+skip_permissions = true
+add_dir = true
+output_format = "json"          # json | text
+use_pty = false
+extra_args = []
+
+[run]
+max_parallel = 3
+max_attempts = 2
+quota_wait_minutes = 30
+ci_timeout_minutes = 30
+worktree_dir = "../.orkiestra-worktrees"
+state_dir = ".orkiestra"
+stop_on_failure = false

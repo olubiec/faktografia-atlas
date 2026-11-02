@@ -29,3 +29,9 @@ lerna-debug.log*
 *.sln
 *.sw?
 
+
+# Orkiestra
+.orkiestra/
+.orkiestra-result.json
+__pycache__/
+*.pyc
