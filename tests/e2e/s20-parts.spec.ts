@@ -118,8 +118,8 @@ test.describe('Full Urban-Rural Parts Flow (@S20)', () => {
         );
       });
 
-      // 1. Enter main page with ?sheet=full for full height mobile sheet in tests
-      await page.goto('/?e2e&sheet=full');
+      // 1. Enter main page without ?sheet=full (starts from 40% height)
+      await page.goto('/?e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
       // Check no horizontal overflow
@@ -152,13 +152,22 @@ test.describe('Full Urban-Rural Parts Flow (@S20)', () => {
       const sheet = page.locator('[role="dialog"]').filter({ hasText: 'Brzesko' });
       await expect(sheet).toBeVisible();
 
+      // Confirm initial sheet state at ~40%
+      await page.waitForFunction((vh) => {
+        const el = document.querySelector('[role="dialog"]');
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        const ratio = (vh - rect.y) / vh;
+        return ratio >= 0.30 && ratio <= 0.50;
+      }, viewport.height);
+
       // Check no horizontal overflow with profile sheet open
       noOverflow = await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth
       );
       expect(noOverflow).toBe(true);
 
-      // 3. Expand parts block inside mobile profile sheet
+      // 3. Expand parts block inside mobile profile sheet (scrolling inside 40% sheet)
       const partsTrigger = sheet.locator('button', { hasText: 'Miasto i obszar wiejski' });
       await partsTrigger.scrollIntoViewIfNeeded();
       await expect(partsTrigger).toBeVisible();
@@ -177,6 +186,7 @@ test.describe('Full Urban-Rural Parts Flow (@S20)', () => {
 
       // Verify mobile cards rendered with city and rural numbers from fixture
       const partsCards = sheet.locator('[data-testid="parts-cards"]');
+      await partsCards.scrollIntoViewIfNeeded();
       await expect(partsCards).toBeVisible();
 
       const cardsText = (await partsCards.innerText()).replace(/\u00a0/g, ' ');
@@ -215,8 +225,8 @@ test.describe('Full Urban-Rural Parts Flow (@S20)', () => {
 
     await page.setViewportSize({ width: 390, height: 844 });
 
-    // 1. Enter main page with ?sheet=full
-    await page.goto('/?e2e&sheet=full');
+    // 1. Enter main page without ?sheet=full
+    await page.goto('/?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     // 2. Search urban-rural gmina "Brzesko" via visible search button
@@ -244,6 +254,7 @@ test.describe('Full Urban-Rural Parts Flow (@S20)', () => {
     await partsTrigger.click();
 
     const partsCards = sheet.locator('[data-testid="parts-cards"]');
+    await partsCards.scrollIntoViewIfNeeded();
     await expect(partsCards).toBeVisible();
   });
 });

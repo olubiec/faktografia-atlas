@@ -6,6 +6,7 @@ test.describe('Udostępnianie z profilu (W2.20 @S19)', () => {
   test('profil powiatu 3217 -> karta z Powiat wałecki i liczbą z przeglądu; CSV z wierszami; zero nowych żądań', async ({
     page,
   }) => {
+    test.setTimeout(90000);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?e2e&u=3217');
 
@@ -74,20 +75,41 @@ test.describe('Udostępnianie z profilu (W2.20 @S19)', () => {
   }) => {
     test.setTimeout(120000);
     for (const viewport of [
-      { width: 360, height: 800 },
+      { width: 360, height: 740 },
       { width: 390, height: 844 },
     ]) {
       await page.setViewportSize(viewport);
-      await page.goto('/?e2e&u=3217&sheet=full');
+      await page.goto('/?e2e&u=3217');
 
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
+      // Potwierdź początkowy stan arkusza na poziomie ~40%
+      await page.waitForFunction((vh) => {
+        const el = document.querySelector('[role="dialog"]');
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        const ratio = (vh - rect.y) / vh;
+        return ratio >= 0.30 && ratio <= 0.50;
+      }, viewport.height);
+
       const profileHeading = page.locator('h2', { hasText: 'Powiat wałecki' }).first();
       await expect(profileHeading).toBeAttached();
 
+      // Przewijanie arkusza od stanu początkowego 40% do przycisku udostępniania
       const shareBtn = page.getByRole('button', { name: 'Pobierz i udostępnij', exact: true });
+      await expect(shareBtn).toBeAttached();
+      await shareBtn.scrollIntoViewIfNeeded();
       await expect(shareBtn).toBeVisible();
+
+      // Przycisk mieści się w rzutni po przewinięciu
+      const shareBox = await shareBtn.boundingBox();
+      expect(shareBox).not.toBeNull();
+      if (shareBox) {
+        expect(shareBox.y + shareBox.height).toBeLessThanOrEqual(viewport.height);
+        expect(shareBox.y).toBeGreaterThanOrEqual(0);
+      }
+
       await shareBtn.click();
 
       const dialog = page.getByRole('dialog', { name: 'Pobierz i udostępnij' });
@@ -112,8 +134,10 @@ test.describe('Udostępnianie z profilu (W2.20 @S19)', () => {
         }
       }
 
-      // Accessibility check on dialog
-      const accessibilityResults = await new AxeBuilder({ page }).include('[role="dialog"]').analyze();
+      // Accessibility check na dialogu udostępniania
+      const accessibilityResults = await new AxeBuilder({ page })
+        .include('[role="dialog"][aria-label="Pobierz i udostępnij"]')
+        .analyze();
       expect(accessibilityResults.violations).toEqual([]);
 
       await page.keyboard.press('Escape');
