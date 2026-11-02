@@ -123,3 +123,62 @@ waves:
         prompt_file: tasks/poczekalnia/W17-T06-kontrakty-danych-i-fuzzing.md
         test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
 
+  - id: w18
+    tasks:
+      - id: W18-P01
+        title: "P01 – Objasnienia wskaznikow GUS"
+        files:
+          - "public/data/explanations.json"
+          - "src/view/explain/ContextBlock.tsx"
+          - "tests/unit/explanations-data.test.ts"
+        prompt_file: tasks/poczekalnia/W18-P01-objasnienia-wskaznikow-gus.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W18-P02
+        title: "P02 – Tryb ciemny mapy i warstw"
+        files:
+          - "src/view/map/AtlasMap.tsx"
+          - "src/view/map/layers/choropleth.ts"
+          - "src/view/map/layers/admin.ts"
+          - "tests/e2e/dark-mode-map.spec.ts"
+        prompt_file: tasks/poczekalnia/W18-P02-tryb-ciemny-mapy-i-warstw.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W18-P03
+        title: "P03 – Scena wejscia i animacja granic"
+        files:
+          - "src/core/motion/timeline.ts"
+          - "src/view/map/IntroOverlay.tsx"
+          - "tests/unit/timeline.test.ts"
+          - "tests/e2e/intro-motion.spec.ts"
+        prompt_file: tasks/poczekalnia/W18-P03-scena-wejscia-i-animacja-granic.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W18-P04
+        title: "P04 – Metadane OpenGraph i SEO"
+        files:
+          - "src/core/meta/seo.ts"
+          - "src/view/pages/LibraryVariable.tsx"
+          - "src/view/pages/Rankings.tsx"
+          - "tests/unit/seo-meta.test.ts"
+        prompt_file: tasks/poczekalnia/W18-P04-metadane-opengraph-i-seo.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W18-P05
+        title: "P05 – Eksport kart wysokiej rozdzielczosci"
+        files:
+          - "src/core/share/card.ts"
+          - "src/core/share/formats.ts"
+          - "tests/unit/share-retina.test.ts"
+        prompt_file: tasks/poczekalnia/W18-P05-eksport-kart-wysokiej-rozdzielczosci.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W18-P06
+        title: "P06 – Skroty klawiszowe i dostepnosc"
+        files:
+          - "src/view/hooks/useKeyboardNavigation.ts"
+          - "src/view/Home.tsx"
+          - "tests/unit/keyboard-nav.test.ts"
+        prompt_file: tasks/poczekalnia/W18-P06-skroty-klawiszowe-dostepnosc.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+

@@ -48,30 +48,39 @@ function generateWavesYaml() {
   const tasksDir = path.join(REPO_ROOT, 'tasks');
   const poczekalniaDir = path.join(tasksDir, 'poczekalnia');
 
-  const waves = [];
+  const allFiles = [];
 
   // Active tasks in tasks/
   if (fs.existsSync(tasksDir)) {
     const files = fs.readdirSync(tasksDir).filter(f => /^W\d+-.*\.md$/i.test(f)).sort();
-    if (files.length > 0) {
-      const waveId = files[0].match(/^(W\d+)/i)[1].toLowerCase();
-      waves.push({
-        id: waveId,
-        tasks: files.map(f => parseTaskFile(path.join(tasksDir, f)))
-      });
+    for (const f of files) {
+      allFiles.push(path.join(tasksDir, f));
     }
   }
 
   // Poczekalnia tasks
   if (fs.existsSync(poczekalniaDir)) {
     const files = fs.readdirSync(poczekalniaDir).filter(f => /^W\d+-.*\.md$/i.test(f)).sort();
-    if (files.length > 0) {
-      const waveId = files[0].match(/^(W\d+)/i)[1].toLowerCase();
-      waves.push({
-        id: waveId,
-        tasks: files.map(f => parseTaskFile(path.join(poczekalniaDir, f)))
-      });
+    for (const f of files) {
+      allFiles.push(path.join(poczekalniaDir, f));
     }
+  }
+
+  // Group by wave id (e.g. w16, w17, w18)
+  const waveMap = new Map();
+  for (const filePath of allFiles) {
+    const filename = path.basename(filePath);
+    const m = filename.match(/^(W\d+)/i);
+    const waveId = m ? m[1].toLowerCase() : 'other';
+    if (!waveMap.has(waveId)) {
+      waveMap.set(waveId, []);
+    }
+    waveMap.get(waveId).push(parseTaskFile(filePath));
+  }
+
+  const waves = [];
+  for (const [id, tasks] of waveMap.entries()) {
+    waves.push({ id, tasks });
   }
 
   let yaml = 'version: 1\nwaves:\n';
