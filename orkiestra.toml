@@ -5,8 +5,8 @@ test_command = "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
 merge_mode = "local"
 
 [agent]
-cmd = ["agy"]
-model = ""                      # slug z `agy models`, np. Flash; puste = domyślny agy
+cmd = ["C:\\Users\\48782\\.gemini\\bin\\agy.exe"]
+model = "gemini-3.8-flash-medium"                      # slug z `agy models`, np. Flash; puste = domyślny agy
 timeout_minutes = 20
 skip_permissions = true
 add_dir = true
@@ -22,3 +22,4 @@ ci_timeout_minutes = 30
 worktree_dir = "../.orkiestra-worktrees"
 state_dir = ".orkiestra"
 stop_on_failure = false
+
