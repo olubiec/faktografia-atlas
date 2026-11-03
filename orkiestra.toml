@@ -6,7 +6,7 @@ merge_mode = "local"
 
 [agent]
 cmd = ["C:\\Users\\48782\\.gemini\\bin\\agy.exe"]
-model = "gemini-3.8-flash-medium"                      # slug z `agy models`, np. Flash; puste = domyślny agy
+model = "gemini-3.8-flash-low"                      # slug z `agy models`, np. Flash; puste = domyślny agy
 timeout_minutes = 20
 skip_permissions = true
 add_dir = true
