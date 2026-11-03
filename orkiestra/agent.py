@@ -191,6 +191,8 @@ def run_agent(
                 cwd=worktree,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 timeout=hard_timeout,
                 stdin=subprocess.DEVNULL,
                 check=False,

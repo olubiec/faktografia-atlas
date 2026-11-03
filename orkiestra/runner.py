@@ -341,6 +341,8 @@ class WaveRunner:
                 cwd=path,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 timeout=TEST_TIMEOUT_SECONDS,
             )
         except subprocess.TimeoutExpired as exc:

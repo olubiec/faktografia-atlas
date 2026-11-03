@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def run_git(args: list[str], cwd: Path, check: bool = True) -> subprocess.CompletedProcess[str]:
-    proc = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, check=False)
+    proc = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     if check and proc.returncode != 0:
         raise GitError(f"git {' '.join(args)} nie powiodło się", stderr=proc.stderr)
     return proc
