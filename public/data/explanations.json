@@ -7,7 +7,7 @@
    "howToRead": "Nie liczy turystów ani osób dojeżdżających do pracy. Duża liczba mieszkańców nie czyni miejsca „lepszym”, dlatego obok pokazujemy gęstość i miejsce na tle innych.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
   },
   {
    "indicatorId": "density",
@@ -15,7 +15,7 @@
    "howToRead": "Duże miasta mają tysiące osób na km², wsie kilkadziesiąt. Wysoka gęstość to zwykle bliskość sklepów i komunikacji, niska to więcej przestrzeni i ciszy.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/3915,pojecie.html"
   },
   {
    "indicatorId": "natural-increase",
@@ -23,7 +23,7 @@
    "howToRead": "Plus: więcej urodzeń niż zgonów. Minus: odwrotnie. Przykład: −5 znaczy, że w ciągu roku ubyło 5 osób na każde 1000 mieszkańców, nie licząc przeprowadzek.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/3956,pojecie.html"
   },
   {
    "indicatorId": "migration-balance",
@@ -31,7 +31,7 @@
    "howToRead": "Plus: więcej osób się wprowadziło, niż wyprowadziło. Minus: odwrotnie. Przykład: +3 to 3 osoby netto więcej na każde 1000 mieszkańców. Plus często mają gminy wokół dużych miast.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/2259,pojecie.html"
   },
   {
    "indicatorId": "share-65plus",
@@ -39,7 +39,7 @@
    "howToRead": "To miara starzenia się miejsca. Przykład: 24% to prawie co czwarty mieszkaniec. Wysoki udział to większe potrzeby opieki i lekarzy, a mniej dzieci w szkołach.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/3958,pojecie.html"
   },
   {
    "indicatorId": "median-age",
@@ -47,7 +47,7 @@
    "howToRead": "Lepszy od średniej, bo mniej zależy od skrajnych przypadków. Przykład: 43 lata znaczą, że połowa mieszkańców ma mniej niż 43 lata. Niska wartość to młode miejsce.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/3925,pojecie.html"
   },
   {
    "indicatorId": "unemployment-rate",
@@ -55,7 +55,7 @@
    "howToRead": "Liczy tylko zarejestrowanych: kto nie zapisał się w urzędzie, tu nie występuje. Dlatego wynik różni się od danych z ankiet, którymi posługuje się Unia Europejska. Dane tylko do poziomu powiatu.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/2390,pojecie.html"
   },
   {
    "indicatorId": "unemployed-share-working-age",
@@ -63,7 +63,7 @@
    "howToRead": "Wiek produkcyjny to 18–59 lat u kobiet i 18–64 u mężczyzn. Liczone od wszystkich w tym wieku, także od uczących się, więc wynik jest niższy niż stopa bezrobocia.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
   },
   {
    "indicatorId": "avg-wage",
@@ -71,7 +71,7 @@
    "howToRead": "Bardzo wysokie pensje podnoszą średnią, więc często większość osób zarabia mniej. Wynik nie obejmuje firm do 9 pracowników. To dane dla powiatu, nie dla gminy.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/693,pojecie.html"
   },
   {
    "indicatorId": "income-per-capita",
@@ -79,7 +79,7 @@
    "howToRead": "To nie zarobki mieszkańców, tylko budżet urzędu: podatki, pieniądze od państwa i dotacje, także unijne. Wysoka kwota to większe możliwości inwestowania albo jednorazowa dotacja.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
   },
   {
    "indicatorId": "spending-per-capita",
@@ -87,7 +87,7 @@
    "howToRead": "Wyższa kwota nie zawsze znaczy lepiej: często to jedna duża inwestycja w danym roku, np. budowa drogi albo szkoły.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
   },
   {
    "indicatorId": "regon-per-10k",
@@ -95,7 +95,7 @@
    "howToRead": "Liczą się też jednoosobowe działalności. Wpisana firma nie zawsze działa, część jest zawieszona. Przykład: 1000 na 10 tys. to jedna firma na 10 mieszkańców. W miastach zwykle więcej niż na wsi.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
   },
   {
    "indicatorId": "dwellings-per-1000",
@@ -103,7 +103,7 @@
    "howToRead": "Pokazuje, czy się tu buduje, a nie ile mieszkań jest ogółem. Dużo nowych mieszkań jest zwykle wokół dużych miast. Przykład: 5 na 1000 to 5 nowych mieszkań na tysiąc osób.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
   },
   {
    "indicatorId": "dwelling-area-per-person",
@@ -111,7 +111,7 @@
    "howToRead": "Więcej m² to więcej miejsca, ale nic nie mówi o jakości mieszkań. Przykład: 28 m² na osobę to mieszkanie 56 m² dla dwóch osób.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
   },
   {
    "indicatorId": "forest-cover",
@@ -119,7 +119,7 @@
    "howToRead": "Przykład: 37% to ponad jedna trzecia terenu. Czy to dużo, widać po porównaniu z innymi miejscami – zobacz sekcję „Na tle kraju”. Wynik nie mówi, czy las jest dostępny dla spacerowiczów.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/1706,pojecie.html"
   },
   {
    "indicatorId": "sewerage-share",
@@ -127,7 +127,7 @@
    "howToRead": "Reszta używa szamb albo przydomowych oczyszczalni. Niska wartość to zwykle wieś lub rozproszona zabudowa; w miastach podłączona jest zwykle większość mieszkańców.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
   },
   {
    "indicatorId": "preschool-3-6",
@@ -135,7 +135,7 @@
    "howToRead": "Wysoka wartość: niemal każde dziecko ma miejsce. Wynik zależy od liczby miejsc i od tego, czy rodzice posyłają dzieci. Warto porównać z sąsiednimi miejscami.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
   },
   {
    "indicatorId": "library-readers-per-1000",
@@ -143,7 +143,7 @@
    "howToRead": "Liczą się biblioteki publiczne i ich filie, nie szkolne. Przykład: 150 na 1000 to około co siódmy mieszkaniec.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/49,pojecie.html"
   },
   {
    "indicatorId": "tourist-nights-per-1000",
@@ -151,7 +151,7 @@
    "howToRead": "Wysoka wartość to miejsce turystyczne (morze, góry). Liczą się obiekty zgłaszane do GUS; mniejsze obiekty i prywatne wynajmy mogą być pominięte.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/1233,pojecie.html"
   },
   {
    "indicatorId": "cars-per-1000",
@@ -159,7 +159,7 @@
    "howToRead": "Liczy auta zarejestrowane na miejscu, a nie to, jak często ktoś jeździ. Firmy leasingowe rejestrujące flotę w jednym mieście zawyżają wynik w niektórych miastach.",
    "world": null,
    "funFact": null,
-   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/"
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/1125,pojecie.html"
   }
  ]
 }

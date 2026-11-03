@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import type { IndicatorValues, ProfileIndicatorItem } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
-import type { Explanation } from '../../core/explain/explanations';
+import { loadExplanations, type Explanation } from '../../core/explain/explanations';
 import { context } from '../../core/explain/context';
 import { formatValue } from '../../core/format/number';
 import { unitLabel } from '../../core/units/label';
@@ -36,10 +36,27 @@ export function ContextBlock({
   teryt,
   year,
   units,
-  explanation,
+  explanation: explanationProp,
   showExplanation = true,
   onSelectUnit,
 }: ContextBlockProps) {
+  const [loadedExplanation, setLoadedExplanation] = useState<Explanation | null>(null);
+
+  useEffect(() => {
+    if (explanationProp !== undefined || !showExplanation) return;
+    let active = true;
+    loadExplanations().then((map) => {
+      if (active) {
+        setLoadedExplanation(map.get(indicator.id) ?? null);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [explanationProp, showExplanation, indicator.id]);
+
+  const explanation = explanationProp !== undefined ? explanationProp : loadedExplanation;
+
   const contextRes = useMemo(() => {
     if (values) {
       return context(values, units, teryt, year, indicator.higherIsBetter);
@@ -111,19 +128,23 @@ export function ContextBlock({
     };
   }, [values, targetUnit, year, units, indicator.higherIsBetter]);
 
-  if (!contextRes || !targetUnit) {
+  if (!targetUnit) {
+    return null;
+  }
+
+  if (!contextRes && (!explanation || !showExplanation)) {
     return null;
   }
 
   const levelPlural = LEVEL_PLURAL[targetUnit.level] ?? 'jednostek';
-  const hasScale = typeof contextRes.medianPoland === 'number';
+  const hasScale = contextRes && typeof contextRes.medianPoland === 'number';
 
-  const positionPct = hasScale ? Math.min(100, Math.max(0, contextRes.position0to1 * 100)) : 50;
+  const positionPct = hasScale && contextRes ? Math.min(100, Math.max(0, contextRes.position0to1 * 100)) : 50;
 
   const medianPos =
-    hasScale && contextRes.max === contextRes.min
+    hasScale && contextRes && contextRes.max === contextRes.min
       ? 50
-      : hasScale
+      : hasScale && contextRes
       ? Math.min(
           100,
           Math.max(0, ((contextRes.medianPoland - contextRes.min) / (contextRes.max - contextRes.min)) * 100)
@@ -133,27 +154,29 @@ export function ContextBlock({
   return (
     <div data-slot="context-block" className="bg-arkusz border border-linia p-3.5 space-y-4 text-xs text-tusz max-w-full overflow-hidden">
       {/* Nagłówek i kontekst krajowy */}
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between gap-2 flex-wrap">
-          <span className="font-bold text-sm text-tusz">Na tle kraju</span>
-          <span className="text-olowek font-mono">
-            {contextRes.rank}. miejsce wśród {contextRes.total}
-          </span>
-        </div>
+      {contextRes && (
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <span className="font-bold text-sm text-tusz">Na tle kraju</span>
+            <span className="text-olowek font-mono">
+              {contextRes.rank}. miejsce wśród {contextRes.total}
+            </span>
+          </div>
 
-        <p className="text-tusz font-medium text-sm leading-snug">
-          wyżej niż {contextRes.percentBelow}% {levelPlural}
-        </p>
-
-        {hasScale && (
-          <p className="text-olowek">
-            Mediana Polski: <span className="font-mono font-medium text-tusz">{formatValue(contextRes.medianPoland, indicator.unit)}</span>
+          <p className="text-tusz font-medium text-sm leading-snug">
+            wyżej niż {contextRes.percentBelow}% {levelPlural}
           </p>
-        )}
-      </div>
+
+          {hasScale && (
+            <p className="text-olowek">
+              Mediana Polski: <span className="font-mono font-medium text-tusz">{formatValue(contextRes.medianPoland, indicator.unit)}</span>
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Skala ze wskazaniami (gdy pełne dane wartości są dostępne) */}
-      {hasScale && (
+      {contextRes && hasScale && (
         <div className="space-y-1.5 pt-1">
           <div className="flex justify-between items-center text-xs text-olowek font-mono">
             <span>najmniej: {formatValue(contextRes.min, indicator.unit)}</span>
@@ -184,7 +207,7 @@ export function ContextBlock({
       )}
 
       {/* Kontekst w województwie (dla powiatów i gmin) */}
-      {contextRes.sameInVoivodeship && (
+      {contextRes?.sameInVoivodeship && (
         <div className="pt-2 border-t border-linia space-y-1">
           <span className="font-semibold text-tusz block">W województwie</span>
           <p className="text-tusz">
