@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import { SiteLayout } from '../layout/SiteLayout';
 import { loadUnits } from '../../core/data/load-atlas-data';
 import { loadProfileShard, profileFromShard } from '../../core/data/load-profile';
@@ -14,9 +14,9 @@ const indicators = indicatorsData as Indicator[];
 
 /** Trzy gotowe pary do kliknięcia (kody TERYT jako napisy). */
 const COMPARE_PAIRS = [
-  { a: '14', b: '12', label: 'mazowieckie i małopolskie' },
-  { a: '1465', b: '1261', label: 'Warszawa i Kraków' },
-  { a: '0264', b: '3064', label: 'Wrocław i Poznań' },
+  { a: '14', b: '12', label: 'Mazowieckie vs Małopolskie' },
+  { a: '1465', b: '1261', label: 'Warszawa vs Kraków' },
+  { a: '0264', b: '3064', label: 'Wrocław vs Poznań' },
 ] as const;
 
 const FIELD_CLASS =
@@ -73,13 +73,14 @@ export function CompareEmptyState({ units, a, b, onPick }: CompareEmptyStateProp
       <ul className="flex flex-col gap-2 md:flex-row md:flex-wrap">
         {COMPARE_PAIRS.map((p) => (
           <li key={p.a + p.b}>
-            <Link
+            <button
+              type="button"
               data-slot="compare-pair"
-              to={{ pathname: '/porownaj', search: `?c=${p.a},${p.b}` }}
-              className="flex items-center min-h-[44px] px-3 border border-linia underline break-words"
+              onClick={() => onPick(p.a, p.b)}
+              className="flex items-center min-h-[44px] px-3 border border-linia underline break-words text-left"
             >
               {p.label}
-            </Link>
+            </button>
           </li>
         ))}
       </ul>

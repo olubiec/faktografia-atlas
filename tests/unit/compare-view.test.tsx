@@ -26,13 +26,18 @@ describe('Porównaj: stan pusty (P1-B)', () => {
     <StaticRouter location="/porownaj"><CompareEmptyState units={units} a={null} b={null} onPick={() => {}} /></StaticRouter>,
   );
 
-  it('ma dokładnie 3 gotowe pary jako linki z min. 44 px wysokości', () => {
-    const links = html.match(/<a [^>]*data-slot="compare-pair"[^>]*>/g) ?? [];
+  it('ma dokładnie 3 gotowe pary jako przyciski z min. 44 px wysokości', () => {
+    const links = html.match(/<button [^>]*data-slot="compare-pair"[^>]*>/g) ?? [];
     expect(links).toHaveLength(3);
     for (const l of links) {
       expect(l).toMatch(/min-h-\[44px\]/);
-      expect(l).toMatch(/href="\/porownaj\?c=\d+(%2C|,)\d+"/);
     }
+  });
+
+  it('pary mają czytelne nazwy „A vs B” (przyciski dostępne z nazwy)', () => {
+    expect(html).toContain('Warszawa vs Kraków');
+    expect(html).toContain('Wrocław vs Poznań');
+    expect(html).toContain('Mazowieckie vs Małopolskie');
   });
 
   it('ma dwa duże pola wyboru z nazwami dostępnymi i min. 44 px', () => {
