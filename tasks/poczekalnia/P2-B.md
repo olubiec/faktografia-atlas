@@ -4,6 +4,7 @@ Zmieniaj: src/view/pages/Privacy.tsx, tests/unit/privacy-page.test.tsx
 Wymagane: tests/unit/privacy-page.test.tsx
 Weryfikacja: pnpm lint && pnpm typecheck && pnpm test
 Przeczytaj najpierw: AGENTS.md, docs/STYL.md, src/view/pages/Privacy.tsx, src/core/consent/*.ts (tylko do czytania)
+Uwaga: jeśli P2-G jest już scalone, opisz konfigurację z `POSTHOG_CONFIG` (persistence: memory = brak kluczy ph_*).
 
 ## Jak pracować (Claude Code, jedna sesja = to jedno zadanie)
 1. `git fetch origin && git checkout claude/inspiring-shannon-vfxoax && git pull` potem `git checkout -b task/P2-B`.
