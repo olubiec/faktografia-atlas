@@ -18,6 +18,41 @@ function getSystemIsDark(): boolean {
   return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
+// Kolejność linków w menu telefonu (hamburger). Każdy adres to trasa z src/App.tsx.
+const MOBILE_MENU_LINKS = [
+  { to: '/biblioteka', label: 'Biblioteka' },
+  { to: '/rankingi', label: 'Rankingi' },
+  { to: '/porownaj', label: 'Porównaj' },
+  { to: '/o-projekcie', label: 'O projekcie' },
+  { to: '/zrodla', label: 'Skąd są dane' },
+  { to: '/prywatnosc', label: 'Prywatność' },
+] as const;
+
+// Linki w menu telefonu. Zachowują parametry adresu (np. ?i=…) i podświetlają bieżącą podstronę.
+export function MobileMenuLinks({ onNavigate }: { onNavigate: () => void }) {
+  const location = useLocation();
+  return (
+    <>
+      {MOBILE_MENU_LINKS.map((link) => {
+        const isActive = location.pathname.startsWith(link.to);
+        return (
+          <Link
+            key={link.to}
+            to={`${link.to}${location.search}`}
+            onClick={onNavigate}
+            className={`text-sm font-[500] py-2 hover:underline min-h-[44px] flex items-center ${
+              isActive ? 'font-bold text-korekta-tekst' : ''
+            }`}
+            aria-current={isActive ? 'page' : undefined}
+          >
+            {link.label}
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+
 export function Header() {
   const [theme, setTheme] = useState<Theme>(() => {
     try {
@@ -206,30 +241,7 @@ export function Header() {
           >
             Motyw: {themeText}
           </button>
-          <Link
-            to={`/biblioteka${location.search}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className={`text-sm font-[500] py-2 hover:underline min-h-[44px] flex items-center ${
-              isLibraryActive ? 'font-bold text-korekta-tekst' : ''
-            }`}
-            aria-current={isLibraryActive ? 'page' : undefined}
-          >
-            Biblioteka
-          </Link>
-          <Link
-            to={`/o-projekcie${location.search}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="text-sm font-[500] py-2 hover:underline"
-          >
-            O projekcie
-          </Link>
-          <Link
-            to={`/zrodla${location.search}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="text-sm font-[500] py-2 hover:underline"
-          >
-            Skąd są dane
-          </Link>
+          <MobileMenuLinks onNavigate={() => setMobileMenuOpen(false)} />
         </Sheet>
       )}
 
