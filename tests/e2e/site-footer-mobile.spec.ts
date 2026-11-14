@@ -72,3 +72,15 @@ test('P1-F @S1 stopka 768 px: grupy rozwinięte', async ({ page }) => {
   await page.goto('/o-projekcie');
   await expect(page.locator('footer').getByRole('link', { name: 'Skąd są dane' })).toBeVisible();
 });
+
+// Opis misji portalu zostaje widoczny także na telefonie (zwinięta stopka nadal <= 320 px)
+for (const width of [360, 390]) {
+  test(`P1-F @S1 opis misji w stopce widoczny na ${width} px, stopka nadal niska`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 740 });
+    await page.goto('/o-projekcie');
+    const footer = page.locator('footer');
+    await footer.scrollIntoViewIfNeeded();
+    await expect(footer.getByText('Faktografia Atlas to niezależna')).toBeVisible();
+    expect((await footer.boundingBox())!.height).toBeLessThanOrEqual(320);
+  });
+}

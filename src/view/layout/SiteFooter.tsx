@@ -127,10 +127,10 @@ export function SiteFooter() {
       role="contentinfo"
       className="border-t border-linia bg-arkusz text-tusz mt-auto"
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-16">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 md:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 md:gap-12">
           {/* Kolumna 1: Logo, opis misji portalu, licencja CC BY 4.0 */}
-          <div className="flex flex-col gap-4 mb-2 md:mb-0">
+          <div className="flex flex-col gap-2 md:gap-4 mb-2 md:mb-0">
             <Link
               to="/"
               className="inline-flex items-center min-h-[44px] min-w-[44px] rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
@@ -143,8 +143,8 @@ export function SiteFooter() {
                 height={32}
               />
             </Link>
-            {/* Na telefonie opis ukryty, żeby zwinięta stopka była niska */}
-            <p className="hidden md:block text-sm font-[400] text-olowek leading-[1.6]">
+            {/* Na telefonie opis skrócony do 2 linii, żeby zwinięta stopka była niska */}
+            <p className="text-xs md:text-sm font-[400] text-olowek leading-[1.5] md:leading-[1.6] line-clamp-2 md:line-clamp-none">
               Faktografia Atlas to niezależna, interaktywna mapa Polski prezentująca rzetelne statystyki GUS dla każdego województwa, powiatu i gminy.
             </p>
             <p className="text-xs font-[400] text-olowek leading-[1.5]">
