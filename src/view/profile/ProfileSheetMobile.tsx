@@ -112,14 +112,17 @@ export function ProfileSheetMobile({
       title={title}
       className={className}
     >
-      <ProfileBody
-        profile={profile}
-        units={units}
-        view={view}
-        onSelectUnit={onSelectUnit}
-        onClose={handleClose}
-        showCloseButton={false}
-      />
+      {/* Kolumna przycina zakreślenie (rough-notation rysuje poza polem liczby) */}
+      <div data-testid="profile-sheet-column" className="min-w-0 max-w-full overflow-x-clip">
+        <ProfileBody
+          profile={profile}
+          units={units}
+          view={view}
+          onSelectUnit={onSelectUnit}
+          onClose={handleClose}
+          showCloseButton={false}
+        />
+      </div>
     </BottomSheet>
   );
 }
