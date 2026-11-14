@@ -37,6 +37,28 @@ describe('compare', () => {
     expect(result.rows[0].diffText).toBe('niżej o 2,0 p.p.');
   });
 
+  it('dla wartości ujemnych podaje różnicę bezwzględną z jednostką zamiast procentu', () => {
+    const pA = createMockProfile('gmi', '01', [
+      { indicatorId: 'natural-increase', indicator: { unit: 'na 1000' }, value: -9.7, year: 2025 },
+    ]);
+    const pB = createMockProfile('gmi', '02', [
+      { indicatorId: 'natural-increase', indicator: { unit: 'na 1000' }, value: -0.5, year: 2025 },
+    ]);
+
+    expect(compare(pA, pB).rows[0].diffText).toBe('niżej o 9,2 na 1000');
+  });
+
+  it('dla wartości o różnych znakach podaje różnicę bezwzględną', () => {
+    const pA = createMockProfile('gmi', '01', [
+      { indicatorId: 'migration', indicator: { unit: 'na 1000' }, value: -2.6, year: 2025 },
+    ]);
+    const pB = createMockProfile('gmi', '02', [
+      { indicatorId: 'migration', indicator: { unit: 'na 1000' }, value: 7.2, year: 2025 },
+    ]);
+
+    expect(compare(pA, pB).rows[0].diffText).toBe('niżej o 9,8 na 1000');
+  });
+
   it('powinien poprawnie wyliczać różnice względne (%) dla wartości absolutnych', () => {
     const pA = createMockProfile('gmi', '01', [
       { indicatorId: 'population', indicator: { unit: 'osoba' }, value: 110, year: 2020 },
