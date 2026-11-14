@@ -205,7 +205,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4 bg-tusz/40 overflow-x-hidden overflow-y-auto max-w-full"
+      className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4 bg-tusz/40 overflow-x-hidden overflow-y-auto max-w-full w-full min-w-0"
       role="dialog"
       aria-modal="true"
       aria-label="Pobierz i udostępnij"
@@ -230,8 +230,8 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
         {/* Scrollable Body with Controls and Preview */}
         <div className="flex-1 overflow-y-auto p-3 md:p-6 space-y-4">
           {/* SVG Preview Box */}
-          <div className="min-h-[220px] flex items-center justify-center p-2 sm:p-3 bg-kalka border border-linia overflow-hidden max-w-full">
-            <CardSvg scene={scene} className="max-h-[38vh] md:max-h-[48vh] w-auto max-w-full" />
+          <div className="min-h-[220px] w-full min-w-0 flex items-center justify-center p-2 sm:p-3 bg-kalka border border-linia overflow-hidden max-w-full">
+            <CardSvg scene={scene} className="block w-full min-w-0 h-auto max-h-[38vh] md:max-h-[48vh]" />
           </div>
 
           <ShareControls

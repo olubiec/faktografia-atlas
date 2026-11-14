@@ -19,6 +19,7 @@ export interface CompareResult {
  * Zwraca informacje o flagach 'differentLevels', jeśli porównywane są jednostki na innych poziomach.
  * Oblicza różnicę na podstawie jednostki pomiarowej (np. '%' liczone w punktach procentowych 'p.p.', reszta w '%').
  * Formatuje napisy np. 'wyżej o 1,2 p.p.' lub 'niżej o 12,3%'.
+ * Dla wartości ujemnych podaje różnicę bezwzględną z jednostką (np. 'niżej o 9,2 na 1000').
  * Dla zera w mianowniku, podaje tylko kierunek (wyżej / niżej).
  * Dla brakujących wartości zgłasza 'brak danych'.
  */
@@ -60,6 +61,14 @@ export function compare(profileA: UnitProfile, profileB: UnitProfile): CompareRe
           } else {
             diffText = `niżej o ${formattedDiff} p.p.`;
           }
+        } else if (bValue !== 0 && (aValue < 0 || bValue < 0)) {
+          // Wartości ujemne lub o różnych znakach: procent z bliskiego zera
+          // wprowadza w błąd (np. „o 1883%”), więc podajemy różnicę bezwzględną.
+          const diff = aValue - bValue;
+          const formattedDiff = Math.abs(diff).toFixed(1).replace('.', ',');
+          const unit = itemA.indicator.unit.trim();
+          const suffix = unit ? ` ${unit}` : '';
+          diffText = `${diff > 0 ? 'wyżej' : 'niżej'} o ${formattedDiff}${suffix}`;
         } else {
           if (bValue === 0) {
             if (aValue > bValue) {

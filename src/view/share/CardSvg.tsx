@@ -106,7 +106,7 @@ export const CardSvg: React.FC<CardSvgProps> = ({ scene, className, style }) => 
           return (
             <image
               key={`image-${idx}`}
-              href={item.src}
+              href={item.src.startsWith('public/') ? item.src.replace(/^public\//, '/') : item.src}
               x={item.x}
               y={item.y}
               width={item.width}
