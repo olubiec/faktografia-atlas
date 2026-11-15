@@ -184,3 +184,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 7d3486b (galaz claude/laughing-pasteur-8af8jz, bez PR). Dodano ShareScale i scaleFormat (formats.ts) oraz scaleCardScene i opcje scale 1|2 w cardScene (card.ts); scena bazowa liczona jak dotad, potem skalowana dokladnie x2 (pozycje, fonty, obrysy, sciezki), wiec proporcje safe area i tokenow sa bez zmian.
 - Vercel: brak zmiany widocznej; UI jeszcze nie przekazuje scale.
 - Odlozone: podpiecie scale w src/view/share (render-png.ts, ShareDialog) i przelacznik 2x w UI - poza listą "Zmieniaj".
+
+## W18-P06 – Skroty klawiszowe i dostepnosc
+- Wynik: OK; lint, typecheck, Vitest (w tym nowy keyboard-nav.test.ts), build zielone; kontrola usuniec wzgledem origin/main pusta.
+- Commit: b216a70 (galaz claude/laughing-pasteur-8af8jz, bez PR). Nowy hook useKeyboardNavigation (czysta funkcja resolveKeyAction) podpiety w Home.tsx; skroty ignorowane w input/textarea/select/contenteditable i z Ctrl/Meta.
+- Vercel: Alt+1/2/3 przełącza szczebel woj/pow/gmi (adres ?l=, mapa się przemalowuje); Escape zamyka profil/okna (jak dotąd, własne nasłuchy).
+- Odłożone: +/- wysyła zdarzenie atlas:zoom, ale mapa go jeszcze nie słucha (AtlasMap.tsx poza "Zmieniaj") - zoom z klawiatury nie działa do podpięcia; Escape celowo bez drugiego nasłuchu.
