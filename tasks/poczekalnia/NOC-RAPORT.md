@@ -166,3 +166,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: test istniał z 0ca0033, nie nadpisany ani zmieniany; ten wpis w raporcie w osobnym commicie (gałąź claude/laughing-pasteur-8af8jz, bez PR).
 - Vercel: nic do klikania, brak zmian zachowania (tylko test).
 - Odłożone: nic.
+
+## W18-P01 – Objaśnienia wskaźników GUS
+- Wynik: OK; lint, typecheck, Vitest (w tym explanations-data.test.ts), build zielone; kontrola usunięć względem origin/main pusta.
+- Commit: wszystko istniało już z 07c7251 (explanations.json 20/20, ContextBlock z „Co to jest / Jak czytać / Definicja GUS", test); nic nie zmieniono w kodzie, tylko ten wpis (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Vercel: profil jednostki -> rozwiń wskaźnik -> sekcje „Co to jest", „Jak czytać" i link „Definicja GUS" (stat.gov.pl).
+- Odłożone: nie zweryfikowano w sieci, czy linki definitionUrl wskazują właściwe hasła słownika GUS (brak dostępu/źródła w repo); do ręcznego sprawdzenia.
