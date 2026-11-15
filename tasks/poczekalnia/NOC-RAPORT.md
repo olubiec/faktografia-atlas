@@ -232,3 +232,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: patrz git log ([N-07], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowy tylko plik testu; src/ bez zmian, wszystkie warunki spełnione na obecnej aplikacji.
 - Vercel: nic nowego do klikania (sam test); na telefonie sprawdź, że arkusz wskaźnika i profil (?u=12) zostawiają mapę widoczną nad sobą.
 - Odłożono/uwaga: przy równoległych workerach profil czasem pojawia się z opóźnieniem >5 s (istniejący profile-mobile.spec.ts też bywa niestabilny); w nowym teście dałem 20 s na pojawienie się arkusza. Przyczyna w aplikacji niezbadana.
+
+## N-08 – Przejścia stron z linków w stopce i 404
+- Wynik: OK; lint, typecheck, Vitest, build zielone; nowy footer-view-transitions.test.ts (3 pliki + przypadek kontrolny); kontrola usunięć pusta.
+- Commit: patrz git log ([N-08], galaz claude/laughing-pasteur-8af8jz, bez PR; kod w 9484513). Tylko prop viewTransition na 4 Linkach (SiteFooter 2, NotFound 1, DataDisclaimer 1).
+- CSS przejść i blok reduced-motion sprawdzone: działają globalnie, bez zmian.
+- Vercel: kliknij „Prywatność” / „Skąd są dane” w stopce, link w nocie o danych i „Wróć na stronę główną” na nieistniejącym adresie: łagodny fade; przy włączonym ograniczeniu ruchu bez animacji.
+- Odłożono: nic.
