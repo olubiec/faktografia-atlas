@@ -39,7 +39,7 @@ function RegistryCard({
               href={sourceUrl}
               target="_blank"
               rel="noreferrer"
-              className="underline hover:text-olowek focus:outline-none focus:ring-1 focus:ring-tusz"
+              className="inline-flex min-h-[44px] items-center break-words underline hover:text-olowek focus:outline-none focus:ring-1 focus:ring-tusz"
             >
               {sourceName}
             </a>
@@ -53,7 +53,7 @@ function RegistryCard({
                 href={licenseUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="underline hover:text-olowek focus:outline-none focus:ring-1 focus:ring-tusz"
+                className="inline-flex min-h-[44px] items-center break-words underline hover:text-olowek focus:outline-none focus:ring-1 focus:ring-tusz"
               >
                 {license}
               </a>
