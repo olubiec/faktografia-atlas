@@ -66,3 +66,12 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Scenariusze: brak zmian = koniec bez commitu/PR; zmiana = PR + auto-merge; błąd kontraktu = brak push/PR, issue nocne; błąd sieci = fetch pada, issue nocne.
 - Vercel/GitHub: Actions → Fetch data → Run workflow (workflow_dispatch) po scaleniu; sprawdź PR „Dane GUS: odświeżenie…” z włączonym auto-merge.
 - Odłożone: auto-merge wymaga włączonego „Allow auto-merge” w Settings repo i reguł gałęzi; nie dodano testu workflow (plik spoza listy).
+
+## P3-B – Audyt stanu gałęzi danych (tylko odczyt)
+- Wynik: OK, zero zmian w kodzie. Stan na 2026-11-15 (źródło: GitHub MCP).
+- data/nightly: ostatni commit beb15ac (2026-11-15 09:01, „wartości wskaźników BDL”); Fetch data przebieg #28 (43691613048) success, harmonogram dzienny, 5 ostatnich zielone (#24-#28). Otwarty PR #451 z data/nightly (od 15.11, jeszcze niescalony); poza tym PR #450 i #431 to Dependabot.
+- data/library: ostatni commit a369749 (2026-11-15 14:34, „kolejna porcja”), wcześniej 0210ee6 (14.11 22:39) i 195459b (14.11 13:34). Fetch library: #44 (43712778084) success 15.11 14:34, #45 (43762548456) w toku; #41-#44 zielone; brak otwartych PR z tej gałęzi (zapis wprost na gałąź).
+- library/index.json (ścieżka na gałęzi to library/, nie public/data/library/): 7 942 528 B (~7,6 MB); catalog.json 26 547 004 B; state.json 38 384 B, kolejka pusta (queue/pending/leafDone = []).
+- Wniosek: pobór działa, ostatni udany przebieg: Fetch data 15.11 09:01, Fetch library 15.11 14:34. Do rozstrzygnięcia: PR #451 czeka na scalenie (sprawdź auto-merge/reguły).
+- Vercel: nic do klikania; na GitHubie: PR #451 – scal lub sprawdź, czemu auto-merge nie zadziałał.
+- Odłożone: niczego (zadanie tylko-do-odczytu; tabela ma 5 pozycji, mniej niż limit 20 wierszy).
