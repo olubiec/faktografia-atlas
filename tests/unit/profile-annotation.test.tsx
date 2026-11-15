@@ -128,21 +128,6 @@ describe('P1-D zakreślenie liczby w profilu (arkusz mobilny)', () => {
   });
 
   it('duża liczba w profilu ma mniejszy padding zakreślenia i zapas w poziomie z tokenów', () => {
-    const profile = buildProfile(
-      '0201011',
-      profileSample.indicators as any,
-      profileSample.valuesById as any,
-      profileSample.units as any
-    );
-    stubBrowser(false);
-    const html = renderToString(
-      <ProfileSheetMobile
-        isOpen={true}
-        profile={profile}
-        units={profileSample.units as any}
-        onClose={() => {}}
-      />
-    );
     // Mock useRef jest zależny od kolejności hooków, więc padding sprawdzamy w źródle ProfileOverview.
     const src = readFileSync('src/view/profile/ProfileOverview.tsx', 'utf8');
     expect(src).toMatch(/<Annotate type="circle" show=\{true\} padding=\{3\}>/);
