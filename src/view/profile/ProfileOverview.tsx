@@ -245,8 +245,8 @@ export function ProfileOverview({
 
         {/* Duża liczba z zakreśleniem kółkiem i pozycja w rankingu */}
         <div className="flex flex-col items-start gap-2 pt-1">
-          <Annotate type="circle" show={true}>
-            <span className="text-3xl font-extrabold leading-none tabular-nums text-tusz px-1">
+          <Annotate type="circle" show={true} padding={3}>
+            <span className="text-3xl font-extrabold leading-none tabular-nums text-tusz px-2">
               {formattedValue}
             </span>
           </Annotate>

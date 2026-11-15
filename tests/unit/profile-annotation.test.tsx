@@ -110,4 +110,39 @@ describe('P1-D zakreślenie liczby w profilu (arkusz mobilny)', () => {
     expect(annotateCalls.length).toBeGreaterThan(0);
     expect(annotateCalls.every((o) => o.animate === true)).toBe(true);
   });
+  it('Annotate domyślnie ma padding 6, a własny padding trafia do rough-notation', async () => {
+    stubBrowser(false);
+    const { Annotate } = await import('../../src/view/annotation/Annotate');
+    renderToString(
+      <Annotate type="circle">
+        <span>4 451,0</span>
+      </Annotate>
+    );
+    renderToString(
+      <Annotate type="circle" padding={3}>
+        <span>4 451,0</span>
+      </Annotate>
+    );
+    expect(annotateCalls.map((o) => o.padding)).toEqual([6, 3]);
+  });
+
+  it('duża liczba w profilu ma mniejszy padding zakreślenia i zapas w poziomie z tokenów', () => {
+    const profile = buildProfile(
+      '0201011',
+      profileSample.indicators as any,
+      profileSample.valuesById as any,
+      profileSample.units as any
+    );
+    stubBrowser(false);
+    const html = renderToString(
+      <ProfileSheetMobile
+        isOpen={true}
+        profile={profile}
+        units={profileSample.units as any}
+        onClose={() => {}}
+      />
+    );
+    expect(annotateCalls.some((o) => o.type === 'circle' && o.padding === 3)).toBe(true);
+    expect(html).toMatch(/text-3xl[^"]*px-2|px-2[^"]*text-3xl/);
+  });
 });
