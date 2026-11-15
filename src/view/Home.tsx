@@ -1,6 +1,7 @@
 import { lazy, Suspense, useRef } from 'react';
 import { Header } from './Header';
 import { AnnotationProvider } from './annotation/AnnotationProvider';
+import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
 
 const AtlasMap = lazy(() => import('./map/AtlasMap'));
 
@@ -22,6 +23,7 @@ function scrollToPortal(target: HTMLElement | null) {
 
 export function Home() {
   const portalRef = useRef<HTMLDivElement>(null);
+  useKeyboardNavigation();
   return (
     <AnnotationProvider>
       <div className="h-screen h-dvh flex flex-col bg-kalka text-tusz overflow-hidden relative" style={{ overflowY: 'auto' }}>
