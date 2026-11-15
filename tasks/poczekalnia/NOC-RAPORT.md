@@ -190,3 +190,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: b216a70 (galaz claude/laughing-pasteur-8af8jz, bez PR). Nowy hook useKeyboardNavigation (czysta funkcja resolveKeyAction) podpiety w Home.tsx; skroty ignorowane w input/textarea/select/contenteditable i z Ctrl/Meta.
 - Vercel: Alt+1/2/3 przełącza szczebel woj/pow/gmi (adres ?l=, mapa się przemalowuje); Escape zamyka profil/okna (jak dotąd, własne nasłuchy).
 - Odłożone: +/- wysyła zdarzenie atlas:zoom, ale mapa go jeszcze nie słucha (AtlasMap.tsx poza "Zmieniaj") - zoom z klawiatury nie działa do podpięcia; Escape celowo bez drugiego nasłuchu.
+
+## N-01 – Jedno pobranie daty swiezosci
+- Wynik: OK; lint, typecheck, Vitest (884), build, e2e freshness-single-fetch i navigation-and-budgets zielone; kontrola usuniec pusta.
+- Commit: 0b4e277 (galaz claude/laughing-pasteur-8af8jz, bez PR). Stopka bierze fetchedAt z loadIndicatorValues('density') (pamiec podrecza), wiec brak drugiego pobrania density.json.
+- Vercel: wejdz na /rankingi, kliknij w naglowku "O projekcie" i "Rankingi"; stopka pokazuje "Dane GUS odświeżone", w zakladce Network density.json tylko raz.
+- Odlozone/odstep: funkcja loadFreshnessLabel jest w nowym src/core/freshness/freshness-label.ts, nie w DataFreshness.tsx - eksport funkcji z pliku komponentu daje ostrzezenie lint (only-export-components, --deny-warnings), a regul nie wolno oslabiac. Testy importuja ją stamtad.
