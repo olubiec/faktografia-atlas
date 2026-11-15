@@ -123,3 +123,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: (ten wpis, tylko NOC-RAPORT.md; bez PR).
 - Vercel: nic do klikania, brak zmian zachowania.
 - Odłożone: rozmiar paczki po zbudowaniu (bundlephobia niedostępne bez sieci), wpis do ELEMENTY.md (tylko w razie decyzji „tak”).
+
+## P4-E – Test reduced-motion na głównych trasach
+- Wynik: OK; lint, typecheck, build zielone; Vitest 860/860; nowy e2e tests/e2e/reduced-motion.spec.ts (5 tras, @S99) przechodzi lokalnie 5/5 (8,6 s).
+- Commit: a9b4a6b (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Zrobione: emulateMedia reduce, po 1 s document.getAnimations() bez trwających (running) animacji na /, /rankingi, /porownaj, /biblioteka, /o-projekcie; stan mapy przez window.__atlas.ready. Łamiących animacji nie znaleziono (test liczy też nieskończone).
+- Vercel: nic do klikania, brak zmian zachowania; test wykona CI.
+- Odłożone: nic; lokalnie użyto starszej przeglądarki Chromium przez symlink (środowisko).
