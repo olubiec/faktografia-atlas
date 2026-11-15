@@ -94,3 +94,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Ustalenie: kod już spełniał wymóg, więc bez zmian w src. tweakpane tylko przez import() w main.tsx przy ?tune (chunk TunePanel 154 kB, 32 kB gzip, poza głównym index 581 kB); index.json biblioteki ładuje wyłącznie loadLibraryIndex z leniwych stron Library*; Home go nie dotyka. Test to pilnuje (analiza importów).
 - Vercel: otwórz stronę główną (bez ?tune) – brak żądania index.json w zakładce Sieć; /biblioteka – jedno żądanie index.json; /?tune – panel działa.
 - Odłożone: pomiar żądań i bajtów na Home przez Playwright (page.on('response')) – wymaga testu e2e spoza listy „Zmieniaj”; pomiar „przed/po” trywialny, bo zmian w kodzie nie było. Commit: 8a63d7c.
+
+## P4-A – Przejścia między stronami
+- Wynik: OK; lint, typecheck, build zielone; Vitest zielony (nowy tests/unit/view-transitions.test.ts, 5 testów).
+- Commit: 3db8f47 (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Zrobione: src/styles/view-transitions.css (fade old/new z var(--motion-base), blok reduced-motion z animation: none), import w global.css, prop viewTransition na wszystkich <Link> w Header.tsx (react-router 8.5).
+- Vercel: klikaj Mapa/Rankingi/Biblioteka w nagłówku i w menu telefonu – lekki fade zamiast skoku; z systemowym „ograniczeniem ruchu” bez animacji.
+- Odłożone: test Playwright reducedMotion (document.getAnimations()) – poza listą „Zmieniaj”; krzywa easingu – brak tokenu, użyto domyślnej; linki w stopce i na podstronach bez zmian.
