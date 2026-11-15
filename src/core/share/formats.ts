@@ -51,3 +51,18 @@ export const SHARE_FORMATS: Record<ShareFormatKey, ShareFormat> = {
     safe: { top: 64, bottom: 64, left: 64, right: 64 },
   },
 };
+
+/** Mnożnik pikseli: 1 = standard, 2 = Retina. */
+export type ShareScale = 1 | 2;
+
+/** Format w podwojonej (lub zwykłej) rozdzielczości; safe i wymiary rosną o ten sam mnożnik. */
+export function scaleFormat(format: ShareFormat, scale: ShareScale = 1): ShareFormat {
+  if (scale === 1) return format;
+  const { top, bottom, left, right } = format.safe;
+  return {
+    ...format,
+    width: format.width * scale,
+    height: format.height * scale,
+    safe: { top: top * scale, bottom: bottom * scale, left: left * scale, right: right * scale },
+  };
+}

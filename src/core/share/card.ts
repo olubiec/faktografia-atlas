@@ -1,6 +1,6 @@
 import tokens from '../../../config/tokens.json';
 import { fitText, type MeasureFn } from './text-fit';
-import { SHARE_FORMATS, type ShareFormatKey } from './formats';
+import { SHARE_FORMATS, type ShareFormatKey, type ShareScale } from './formats';
 import { type MapCardData, renderMapContent } from './card-map';
 import { type RankingCardData, type RankingCardItem, renderRankingContent } from './card-ranking';
 import { type ProfileCardData, type ProfileCardIndicator, renderProfileContent } from './card-profile';
@@ -20,7 +20,7 @@ export type AnnotationItem = { type: 'annotation'; kind: 'circle'; x: number; y:
 export type CardItem = TextItem | RectItem | PathItem | ImageItem | AnnotationItem;
 
 export type CardScene = { width: number; height: number; background: string; items: CardItem[]; };
-export type CardSceneOptions = { measure: MeasureFn; siteUrl?: string; };
+export type CardSceneOptions = { measure: MeasureFn; siteUrl?: string; scale?: ShareScale; };
 
 export type CardData = MapCardData | RankingCardData | ProfileCardData | CompareCardData;
 
@@ -31,7 +31,30 @@ export function getThemeColors(theme: CardTheme) {
   return { kalka: c.kalka, arkusz: c.arkusz, linia: c.linia, tusz: c.tusz, olowek: c.olowek, korekta: c.korekta, korektaTekst: c.korektaTekst, seq, noDataColor };
 }
 
+/** Skaluje całą scenę o stały mnożnik (pozycje, rozmiary, grubości, ścieżki) – proporcje względem tokenów bez zmian. */
+export function scaleCardScene(scene: CardScene, scale: ShareScale): CardScene {
+  if (scale === 1) return scene;
+  const k = scale;
+  const scalePath = (d: string) => d.replace(/-?\d+(?:\.\d+)?/g, (n) => String(Number(n) * k));
+  const items = scene.items.map((it): CardItem => {
+    switch (it.type) {
+      case 'text': return { ...it, x: it.x * k, y: it.y * k, maxWidth: it.maxWidth * k, fontSize: it.fontSize * k, lineHeight: it.lineHeight * k };
+      case 'rect': return { ...it, x: it.x * k, y: it.y * k, width: it.width * k, height: it.height * k, ...(it.strokeWidth !== undefined && { strokeWidth: it.strokeWidth * k }), ...(it.rx !== undefined && { rx: it.rx * k }) };
+      case 'path': return { ...it, d: scalePath(it.d), ...(it.strokeWidth !== undefined && { strokeWidth: it.strokeWidth * k }) };
+      case 'image': return { ...it, x: it.x * k, y: it.y * k, width: it.width * k, height: it.height * k };
+      case 'annotation': return { ...it, x: it.x * k, y: it.y * k, width: it.width * k, height: it.height * k };
+    }
+  });
+  return { ...scene, width: scene.width * k, height: scene.height * k, items };
+}
+
 export function cardScene(kind: CardKind, data: CardData, formatKey: ShareFormatKey, theme: CardTheme, options: CardSceneOptions): CardScene {
+  const scale = options.scale ?? 1;
+  const base = buildScene(kind, data, formatKey, theme, options);
+  return scaleCardScene(base, scale);
+}
+
+function buildScene(kind: CardKind, data: CardData, formatKey: ShareFormatKey, theme: CardTheme, options: CardSceneOptions): CardScene {
   const fmt = SHARE_FORMATS[formatKey] ?? SHARE_FORMATS.post;
   const { width, height, safe } = fmt;
   const colors = getThemeColors(theme);
