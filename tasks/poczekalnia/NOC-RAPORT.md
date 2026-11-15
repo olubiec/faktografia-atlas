@@ -136,3 +136,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: d363b31 (gałąź claude/laughing-pasteur-8af8jz, bez PR). Pliki helpera i specu istniały z wcześniejszego commitu 8e2056c; poprawiono brakujący eksport expectTouchTargets i dodano test okna udostępniania.
 - Vercel: nic do klikania, brak zmian zachowania (tylko testy).
 - Odłożone: pkt 3 (usunięcie ?sheet=full w s15-mobile, s20-parts, share-profile) – wymaga zmiany istniejących testów, pominięte wg zasad; s15/s20 i tak nie używają już ?sheet=full w kodzie. Brak testu pasków zgody/dymka/arkusza wskaźnika w parach.
+
+## W17-T02 – Matryca dostępności WCAG 2.2 AA (jasny/ciemny)
+- Wynik: OK; lint, typecheck, build zielone; Vitest zielony; e2e a11y-matrix.spec.ts 28/28 (14 widoków x 2 motywy, 0 naruszeń, bez wyłączania reguł), uruchomione 2 razy.
+- Commit: 60d4220 (gałąź claude/laughing-pasteur-8af8jz, bez PR). Spec istniał z 91bc2ef; poprawiono selektor arkusza profilu (dialog po aria-label), wydłużono oczekiwanie do 20 s (flaky przy równoległości) i zawężono mock do library/index.json.
+- Vercel: nic do klikania, brak zmian zachowania (tylko test).
+- Odłożone: nic. Uwaga: profile-mobile.spec.ts ma 2 sporadyczne błędy pod obciążeniem (istniejący test, nie ruszano).
