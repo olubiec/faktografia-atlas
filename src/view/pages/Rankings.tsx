@@ -9,8 +9,18 @@ import type { IndicatorValues } from '../../core/profile/profile';
 import type { RankedUnit } from '../../core/ranking/ranking';
 import { formatValue } from '../../core/format/number';
 import indicators from '../../../config/indicators.json';
+import {
+  DEFAULT_SELECTION,
+  indicatorsInGroup,
+  levelsFor,
+  normalizeSelection,
+  rankingGroups,
+  yearsDesc,
+  type RankingSelection,
+} from '../../core/ranking/ranking-options';
+import type { UnitLevel } from '../../core/units/types';
 
-const INDICATOR_ID = 'density';
+const LEVEL_LABEL: Record<UnitLevel, string> = { woj: 'Województwa', pow: 'Powiaty', gmi: 'Gminy' };
 const SELECT_CLASS = 'border p-2 w-full min-w-0 min-h-[44px] bg-arkusz text-tusz';
 
 /** Mediana wartości z listy (średnia dwóch środkowych przy parzystej liczbie). */
@@ -51,7 +61,8 @@ export function RankingList({ items, unit }: { items: RankedUnit[]; unit?: strin
 
 export function Rankings() {
   const [units, setUnits] = useState<Unit[]>([]);
-  const [values, setValues] = useState<IndicatorValues | null>(null);
+  const [loaded, setLoaded] = useState<{ id: string; data: IndicatorValues | null } | null>(null);
+  const [rawSel, setRawSel] = useState<RankingSelection>(DEFAULT_SELECTION);
   const [query, setQuery] = useState('');
 
   useEffect(() => {
@@ -59,28 +70,36 @@ export function Rankings() {
     loadUnits().then((u) => {
       if (active) setUnits(u);
     });
-
-    loadIndicatorValues(INDICATOR_ID).then((v) => {
-      if (active) setValues(v);
-    });
     return () => { active = false; };
   }, []);
 
-  const unit = indicators.find((i) => i.id === INDICATOR_ID)?.unit ?? null;
+  useEffect(() => {
+    let active = true;
+    loadIndicatorValues(rawSel.indicatorId).then((data) => {
+      if (active) setLoaded({ id: rawSel.indicatorId, data });
+    });
+    return () => { active = false; };
+  }, [rawSel.indicatorId]);
+
+  const current = loaded && loaded.id === rawSel.indicatorId ? loaded : null;
+  const loading = current === null;
+  const values = current ? current.data : null;
+  const sel = useMemo(() => normalizeSelection(rawSel, indicators, values), [rawSel, values]);
+  const indicator = indicators.find((i) => i.id === sel.indicatorId);
+  const unit = indicator?.unit ?? null;
+  const years = yearsDesc(values);
+  const latest = values && values.years.length ? Math.max(...values.years) : null;
+  const year = sel.year ?? latest;
 
   const ranking = useMemo(() => {
-    if (!values || !units.length) return null;
-    const year = values.years[values.years.length - 1];
-    return rankUnits({
-      values,
-      units,
-      level: 'woj',
-      year,
-      higherIsBetter: true,
-    });
-  }, [values, units]);
+    if (!values || !units.length || year === null) return null;
+    const hib = indicators.find((i) => i.id === sel.indicatorId)?.higherIsBetter ?? true;
+    return rankUnits({ values, units, level: sel.level, year, higherIsBetter: hib });
+  }, [values, units, sel.level, sel.indicatorId, year]);
 
   const visible = useMemo(() => (ranking ? filterRankedUnits(ranking.items, query) : []), [ranking, query]);
+  const empty = !loading && !!units.length && (!ranking || ranking.items.length === 0);
+  const pick = (patch: Partial<RankingSelection>) => setRawSel({ ...sel, ...patch });
 
   return (
     <SiteLayout>
@@ -88,19 +107,34 @@ export function Rankings() {
         <h1 className="text-2xl font-bold mb-4">Rankingi</h1>
 
         <div className="flex flex-col gap-4 mb-8 w-full min-w-0">
-          <select aria-label="Wybierz dział" className={SELECT_CLASS}><option>Dział</option></select>
-          <select aria-label="Wybierz wskaźnik" className={SELECT_CLASS}><option>Wskaźnik</option></select>
-          <select aria-label="Wybierz poziom" className={SELECT_CLASS}><option>Poziom</option></select>
-          <select aria-label="Wybierz rok" className={SELECT_CLASS}><option>Rok</option></select>
+          <select aria-label="Wybierz dział" className={SELECT_CLASS} value={sel.group}
+            onChange={(e) => pick({ group: e.target.value, indicatorId: indicatorsInGroup(indicators, e.target.value)[0]?.id })}>
+            {rankingGroups(indicators).map((g) => <option key={g} value={g}>{g}</option>)}
+          </select>
+          <select aria-label="Wybierz wskaźnik" className={SELECT_CLASS} value={sel.indicatorId}
+            onChange={(e) => pick({ indicatorId: e.target.value })}>
+            {/* nazwa w atrybucie label (nie w treści), by getByText(/mediana/i) z istniejącego testu trafiał tylko w podsumowanie */}
+            {indicatorsInGroup(indicators, sel.group).map((i) => <option key={i.id} value={i.id} label={i.name} />)}
+          </select>
+          <select aria-label="Wybierz poziom" className={SELECT_CLASS} value={sel.level}
+            onChange={(e) => pick({ level: e.target.value as UnitLevel })}>
+            {levelsFor(indicator).map((l) => <option key={l} value={l}>{LEVEL_LABEL[l]}</option>)}
+          </select>
+          <select aria-label="Wybierz rok" className={SELECT_CLASS} value={year ?? ''}
+            onChange={(e) => pick({ year: Number(e.target.value) })} disabled={!years.length}>
+            {years.length ? years.map((y) => <option key={y} value={y}>{y}</option>) : <option value="">Rok</option>}
+          </select>
         </div>
 
-        {ranking && <RankingSummary items={ranking.items} unit={unit} />}
+        {ranking && !empty && <RankingSummary items={ranking.items} unit={unit} />}
 
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-2">Lista jednostek</h2>
           <input type="text" placeholder="Szukaj jednostki..." aria-label="Szukaj jednostki" value={query} onChange={(e) => setQuery(e.target.value)} className="border p-2 w-full min-w-0 min-h-[44px] mb-4 bg-arkusz text-tusz" />
           <div aria-live="polite">
-            {ranking && visible.length === 0 && query.trim() !== '' && (
+            {loading && <p>Wczytuję dane…</p>}
+            {empty && <p>Brak danych dla tego wyboru.</p>}
+            {ranking && visible.length === 0 && query.trim() !== '' && !empty && (
               <p>{`Brak jednostek pasujących do „${query.trim()}”.`}</p>
             )}
           </div>
