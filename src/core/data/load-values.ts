@@ -5,7 +5,12 @@ const loadingPromises = new Map<string, Promise<IndicatorValues | null>>();
 
 /**
  * Leniwie pobiera plik wartości wskaźnika /data/values/<id>.json.
- * Kesżuje wyniki i obsługuje błędy sieci oraz 404 (zwracając null).
+ * Zawsze zwraca null zamiast rzucać wyjątek, ale nie każdy null jest zapamiętany:
+ * - zapamiętywane na stałe: 404 i inne 4xx (pliku naprawdę nie ma) oraz plik
+ *   z niepoprawną treścią (brak years/values) – kolejna próba dałaby to samo;
+ * - NIE zapamiętywane: błąd sieci (odrzucony fetch) i 5xx – to stan chwilowy,
+ *   więc następne wywołanie pobiera plik ponownie zamiast pokazywać „brak danych”
+ *   do końca sesji. Równoległe wywołania dla tego samego id dzielą jedno żądanie.
  */
 export function loadIndicatorValues(
   id: string,
@@ -22,6 +27,8 @@ export function loadIndicatorValues(
   const promise = fetchImpl(`/data/values/${id}.json`)
     .then((res) => {
       if (!res.ok) {
+        // 5xx = błąd chwilowy (bez wpisu w cache); pozostałe (4xx) zapamiętujemy
+        if (res.status >= 500) throw new Error(`HTTP ${res.status}`);
         valuesCache.set(id, null);
         return null;
       }
@@ -36,7 +43,7 @@ export function loadIndicatorValues(
       return null;
     })
     .catch(() => {
-      valuesCache.set(id, null);
+      // błąd sieci lub 5xx: nic nie zapisujemy, kolejna próba ponowi żądanie
       return null;
     })
     .finally(() => {
