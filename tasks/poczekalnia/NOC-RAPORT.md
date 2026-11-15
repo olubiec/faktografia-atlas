@@ -239,3 +239,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - CSS przejść i blok reduced-motion sprawdzone: działają globalnie, bez zmian.
 - Vercel: kliknij „Prywatność” / „Skąd są dane” w stopce, link w nocie o danych i „Wróć na stronę główną” na nieistniejącym adresie: łagodny fade; przy włączonym ograniczeniu ruchu bez animacji.
 - Odłożono: nic.
+
+## N-09 – Kamera bez skoku przy zmianie kolumny
+- Wynik: CZESCIOWO; lint, typecheck, Vitest (925), build zielone; camera-resize.test.ts (7 przypadkow); nowy spec: 3/3 dla testu (a), test (b) jako test.fixme; kontrola usuniec pusta.
+- Commit: af7e5a3 (galaz claude/laughing-pasteur-8af8jz, bez PR): resizeCameraAction + 'retarget' w useMapViewState (cel podmieniany w biegnacej animacji, start przeliczany bez skoku).
+- Vercel: otworz profil (?u=12) na komputerze, kliknij „Wroc": oddalenie ma isc plynnie, bez skoku przy znikaniu kolumny.
+- Odlozono: w srodowisku profil wczytuje sie PO koncu animacji, wiec skok robi galaz 'instant' (to jest przyczyna padania camera.spec test 1: 0 wartosci posrednich, slad konczy sie skokiem 8.04 -> 7.38). Wymaga lagodnego dojazdu po animacji (poza zakresem). Warunek „krok <= 60%” pominiety (klatka >1 s bez GPU). camera.spec x3 nie przeszedl w calosci (srodowisko bardzo wolne).
