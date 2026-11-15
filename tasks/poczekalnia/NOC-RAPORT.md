@@ -220,3 +220,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 57a04a2 ([N-05], galaz claude/laughing-pasteur-8af8jz, bez PR). Zmiana tylko w load-values.ts: 5xx i błąd sieci nie trafiają do cache, 4xx i zła treść dalej tak.
 - Vercel: wylacz siec (tryb offline), wybierz wskaznik (brak danych), wlacz siec i wybierz go ponownie: dane sie wczytuja bez odswiezania strony.
 - Odlozone: load-profile.ts nadal zapamietuje blad sieci (zadanie zabrania zmiany, osobna decyzja).
+
+## N-06 – Wyszukiwanie jednostki na /rankingi
+- Wynik: OK; lint, typecheck, Vitest (914), build i 3 wskazane pliki e2e zielone; kontrola usunięć pusta.
+- Commit: patrz git log ([N-06], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowe: filter-ranked.ts, ranking-filter.test.ts, rankings-search.spec.ts; Rankings.tsx: sterowane pole, komunikat „Brak jednostek pasujących” (aria-live), bez klasy rounded.
+- Vercel: /rankingi, wpisz „slask” (lista się zawęża), „xyz” (komunikat), wyczyść (wraca 10 pozycji).
+- Odłożono/odchylenie: „slask” zwraca 2 pozycje (śląskie i dolnośląskie), bo filtr „zawiera” wg zadania; e2e sprawdza 2 zamiast 1. Martwe listy Dział/Wskaźnik/Poziom/Rok bez zmian (osobne zadanie).

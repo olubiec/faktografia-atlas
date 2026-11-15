@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { SiteLayout } from '../layout/SiteLayout';
 import { loadUnits } from '../../core/data/load-atlas-data';
 import { loadIndicatorValues } from '../../core/data/load-values';
+import { filterRankedUnits } from '../../core/ranking/filter-ranked';
 import { rankUnits } from '../../core/ranking/ranking';
 import type { Unit } from '../../core/units/types';
 import type { IndicatorValues } from '../../core/profile/profile';
@@ -28,7 +29,7 @@ export function RankingSummary({ items, unit }: { items: RankedUnit[]; unit?: st
     `${label}: ${r ? `${unitName(r)}, ${formatValue(r.value, unit)}` : 'brak danych'}`;
   const median = medianOf(items);
   return (
-    <div className="mb-8 p-4 bg-kalka/30 rounded border border-linia">
+    <div className="mb-8 p-4 bg-kalka/30 border border-linia">
       <h2 className="text-xl font-semibold mb-2">Podsumowanie</h2>
       <p>{`Mediana: ${median === null ? 'brak danych' : formatValue(median, unit)}`}</p>
       <p>{line('Najwyżej', items[0])}</p>
@@ -51,6 +52,7 @@ export function RankingList({ items, unit }: { items: RankedUnit[]; unit?: strin
 export function Rankings() {
   const [units, setUnits] = useState<Unit[]>([]);
   const [values, setValues] = useState<IndicatorValues | null>(null);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -78,6 +80,8 @@ export function Rankings() {
     });
   }, [values, units]);
 
+  const visible = useMemo(() => (ranking ? filterRankedUnits(ranking.items, query) : []), [ranking, query]);
+
   return (
     <SiteLayout>
       <div className="container mx-auto p-4 w-full text-tusz">
@@ -94,8 +98,13 @@ export function Rankings() {
 
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-2">Lista jednostek</h2>
-          <input type="text" placeholder="Szukaj jednostki..." aria-label="Szukaj jednostki" className="border p-2 w-full min-w-0 min-h-[44px] mb-4 bg-arkusz text-tusz" />
-          {ranking && <RankingList items={ranking.items} unit={unit} />}
+          <input type="text" placeholder="Szukaj jednostki..." aria-label="Szukaj jednostki" value={query} onChange={(e) => setQuery(e.target.value)} className="border p-2 w-full min-w-0 min-h-[44px] mb-4 bg-arkusz text-tusz" />
+          <div aria-live="polite">
+            {ranking && visible.length === 0 && query.trim() !== '' && (
+              <p>{`Brak jednostek pasujących do „${query.trim()}”.`}</p>
+            )}
+          </div>
+          {ranking && <RankingList items={visible} unit={unit} />}
         </div>
       </div>
     </SiteLayout>
