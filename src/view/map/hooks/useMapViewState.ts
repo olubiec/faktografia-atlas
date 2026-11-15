@@ -4,6 +4,7 @@ import { loadLocalities } from '@/core/search/load-localities';
 import type { Locality } from '@/core/search/types';
 import { useSheetInset } from '@/view/map/sheetInset';
 import { cameraTransition, type CameraKind } from '@/core/map/camera';
+import { resizeCameraAction } from '@/core/map/camera-resize';
 
 // Margines (px) wokół dopasowanego obszaru, żeby mapa nie dotykała krawędzi okna.
 const FIT_PADDING = 48;
@@ -140,6 +141,11 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
   const userMovedRef = useRef(false);
   const animRef = useRef<number | null>(null);
   const isAnimatingRef = useRef(false);
+  // Aktualny cel biegnącej animacji; czytany w każdej klatce, więc można go podmienić w trakcie.
+  const animTargetRef = useRef<ViewState | null>(null);
+  // Ostatni postęp (po krzywej) biegnącej animacji oraz prośba o przeliczenie punktu startu po zmianie celu.
+  const animEasedRef = useRef(0);
+  const animRebaseRef = useRef<ViewState | null>(null);
 
   const bounds = countryBbox;
   const limits = useMemo(
@@ -184,7 +190,10 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         typeof window !== 'undefined' &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      const fromView = { ...currentViewStateRef.current };
+      let fromView = { ...currentViewStateRef.current };
+      animEasedRef.current = 0;
+      animRebaseRef.current = null;
+      animTargetRef.current = targetView;
       const { duration, easing } = cameraTransition(fromView, targetView, kind, reducedMotion);
 
       if (duration <= 0) {
@@ -224,12 +233,27 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         const finished = timeProgress >= 1 && frameProgress >= 1;
         const eased = easeFn(finished ? 1 : progress);
 
+        const goal = animTargetRef.current ?? targetView;
+        if (animRebaseRef.current) {
+          // Cel się zmienił w trakcie: przesuwamy punkt startu tak, by widok nie skoczył,
+          // a reszta drogi do nowego celu szła po tej samej krzywej.
+          const e = Math.min(animEasedRef.current, 0.98);
+          const cur = animRebaseRef.current;
+          const k = 1 - e;
+          fromView = {
+            longitude: (cur.longitude - goal.longitude * e) / k,
+            latitude: (cur.latitude - goal.latitude * e) / k,
+            zoom: (cur.zoom - goal.zoom * e) / k,
+          };
+          animRebaseRef.current = null;
+        }
         const nextView: ViewState = {
-          longitude: fromView.longitude + (targetView.longitude - fromView.longitude) * eased,
-          latitude: fromView.latitude + (targetView.latitude - fromView.latitude) * eased,
-          zoom: fromView.zoom + (targetView.zoom - fromView.zoom) * eased,
+          longitude: fromView.longitude + (goal.longitude - fromView.longitude) * eased,
+          latitude: fromView.latitude + (goal.latitude - fromView.latitude) * eased,
+          zoom: fromView.zoom + (goal.zoom - fromView.zoom) * eased,
         };
 
+        animEasedRef.current = eased;
         setCurrentViewState(nextView);
         syncCameraSeam(!finished, { type: 'push', view: nextView });
 
@@ -291,7 +315,17 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         const bboxKey = JSON.stringify(drillBbox ?? null);
         const key = JSON.stringify({ bbox: drillBbox ?? null, inset: Math.round(sheetInset) });
 
-        if (localityTargetRef.current) {
+        const action = resizeCameraAction({
+          hasLocalityTarget: localityTargetRef.current !== null,
+          fittedKey: fittedKeyRef.current,
+          nextKey: key,
+          isResize: isResizeEvent,
+          animating: isAnimatingRef.current,
+          userMoved: userMovedRef.current,
+        });
+        const activeBbox = drillBbox ?? bounds;
+
+        if (action === 'locality' && localityTargetRef.current) {
           if (animRef.current !== null) {
             cancelAnimationFrame(animRef.current);
             animRef.current = null;
@@ -303,8 +337,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
           userMovedRef.current = true;
-        } else if (fittedKeyRef.current === null) {
-          const activeBbox = drillBbox ?? bounds;
+        } else if (action === 'init') {
           const init = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
           if (animRef.current !== null) {
             cancelAnimationFrame(animRef.current);
@@ -316,8 +349,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           setCurrentViewState(init);
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
-        } else if (fittedKeyRef.current !== key) {
-          const activeBbox = drillBbox ?? bounds;
+        } else if (action === 'animate') {
           const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
           let kind: CameraKind = 'in';
           if (targetView.zoom < currentViewStateRef.current.zoom - 0.05) {
@@ -326,8 +358,13 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
           animateToView(targetView, kind);
-        } else if (isResizeEvent && !userMovedRef.current) {
-          const activeBbox = drillBbox ?? bounds;
+        } else if (action === 'retarget') {
+          // Trwającej animacji nie anulujemy: podmieniamy tylko cel dla nowych wymiarów.
+          animTargetRef.current = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
+          animRebaseRef.current = { ...currentViewStateRef.current };
+          fittedBboxRef.current = bboxKey;
+          fittedKeyRef.current = key;
+        } else if (action === 'instant') {
           const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
