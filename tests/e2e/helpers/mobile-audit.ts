@@ -197,3 +197,10 @@ export async function expectSheetScrollRangeAt40(
     ).toBe(true);
   }
 }
+
+/**
+ * Skrót: sprawdza pola dotykowe (min. 44x44 px) całej strony.
+ */
+export async function expectTouchTargets(page: Page, minSize: number = 44): Promise<void> {
+  await expectAllTouchTargets(page.locator('body'), minSize);
+}

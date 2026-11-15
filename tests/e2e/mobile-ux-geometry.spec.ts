@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import {
+  expectNoClippedText,
   expectNoHorizontalScroll,
   expectNoOverlapPairwise,
   expectTouchTargets,
@@ -51,6 +52,19 @@ for (const vp of VIEWPORTS) {
       ];
 
       await expectNoOverlapPairwise(floaters);
+    });
+
+    test('okno udostępniania: mieści się w ekranie, bez uciętych napisów', async ({ page }) => {
+      await page.goto('/?e2e&u=1217011');
+      await page.waitForFunction(() => (window as any).__atlas?.ready === true);
+      const shareBtn = page.getByRole('button', { name: /Pobierz i udostępnij|Udostępnij/ }).first();
+      await shareBtn.scrollIntoViewIfNeeded().catch(() => undefined);
+      if (!(await shareBtn.isVisible().catch(() => false))) return;
+      await shareBtn.click();
+      const dialog = page.getByRole('dialog', { name: 'Pobierz i udostępnij' });
+      await expect(dialog).toBeVisible();
+      await expectNoHorizontalScroll(page, `share-${vp.name}`);
+      await expectNoClippedText(dialog.getByRole('button', { name: 'Pobierz obraz' }), 'Pobierz obraz');
     });
 
     test('biblioteka: brak poziomego przewijania i poprawne pola dotykowe', async ({ page }) => {
