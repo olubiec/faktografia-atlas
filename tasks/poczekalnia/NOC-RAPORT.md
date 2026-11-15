@@ -175,7 +175,7 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 
 ## W18-P02 – Tryb ciemny mapy i warstw
 - Wynik: OK; lint, typecheck, Vitest, build zielone; nowy tests/e2e/dark-mode-map.spec.ts 2/2 (komputer 1440 i telefon 390), kontrola usunięć względem origin/main pusta.
-- Commit: patrz git log ([W18-P02], gałąź claude/laughing-pasteur-8af8jz, bez PR). Kartogram już brał tokeny ciemne (choropleth.ts, useMapColors); dodano tylko token obrysu granic `granica` (w ciemnym: olowek z alfą, w jasnym bez zmian = kalka) w admin.ts i choropleth.ts.
+- Commit: e941c07 ([W18-P02], gałąź claude/laughing-pasteur-8af8jz, bez PR). Kartogram już brał tokeny ciemne (choropleth.ts, useMapColors); dodano tylko token obrysu granic `granica` (w ciemnym: olowek z alfą, w jasnym bez zmian = kalka) w admin.ts i choropleth.ts.
 - Vercel: przełącz Motyw na ciemny w nagłówku -> mapa i kartogram w ciemnych barwach, granice jednostek wyraźnie jaśniejsze od tła; jasny motyw wygląda jak dotąd.
 - Odłożone: asercja liczbowa kontrastu obrysu (wymaga rozszerzenia szwu window.__atlas w src/core/map/test-seam.ts, poza „Zmieniaj"); test filtruje szum „No actors found" (biblioteka mapy bez GPU). Zrzuty wzorcowe do odświeżenia w CI nie dotyczą.
 
@@ -199,6 +199,6 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 
 ## N-02 – Eksport PNG 2x w oknie
 - Wynik: OK; lint, typecheck, Vitest (896), build, e2e share-scale + s19-share (3 testy) zielone; kontrola usuniec pusta.
-- Commit: patrz git log ([N-02], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowy export-scene.ts (buildExportScene), stan scale w ShareDialog, przycisk aria-pressed w ShareControls, renderPng(scene, { scale }) skaluje kolko korekty.
+- Commit: e941c07 ([N-02], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowy export-scene.ts (buildExportScene), stan scale w ShareDialog, przycisk aria-pressed w ShareControls, renderPng(scene, { scale }) skaluje kolko korekty.
 - Vercel: Pobierz i udostepnij > zaznacz "Wysoka rozdzielczość (2×)" > Pobierz obraz: PNG 2160x2700 (Post); bez zaznaczenia 1080x1350. Podglad bez zmian.
 - Odlozone: ShareDialog.tsx ma 298 linii (przed: 299) – skrocony tylko minimalnie; wzorce zrzutow okna trzeba odswiezyc w CI (nowy przycisk).
