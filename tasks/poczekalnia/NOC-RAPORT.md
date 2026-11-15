@@ -160,3 +160,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 05084c7 (gałąź claude/laughing-pasteur-8af8jz, bez PR). Spec istniał z 01b613a; nie nadpisany, tylko poprawiony: Wstecz/Dalej sprawdzane względem faktycznej ścieżki adresów (klik w pojedynek zastępuje wpis historii), budżet zmierzony w jednej sesji SPA (powrót do biblioteki = 0 nowych pobrań indeksu), na telefonie otwarcie Menu.
 - Vercel: nic do klikania, brak zmian zachowania (tylko test).
 - Odłożone: budżet 0 żądań dla powrotu do profilu jednostki (aplikacja nie reaguje na sztuczny popstate, a nawigacja do jednostki wymaga kliknięcia w mapę WebGL) oraz ścieżka klik-po-kliku przez Rankingi->wiersz->profil. Znalezisko: po powrocie do /rankingi aplikacja ponownie pobiera data/values/density.json (brak 0 żądań tam); wymaga decyzji, poza zakresem (src/).
+
+## W17-T06 – Kontrakty danych Zod i fuzzing warunków brzegowych
+- Wynik: OK; lint, typecheck, Vitest (w tym core-contracts-and-fuzz.test.ts 22/22), build zielone; kontrola usunięć względem origin/main pusta.
+- Commit: test istniał z 0ca0033, nie nadpisany ani zmieniany; ten wpis w raporcie w osobnym commicie (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Vercel: nic do klikania, brak zmian zachowania (tylko test).
+- Odłożone: nic.
