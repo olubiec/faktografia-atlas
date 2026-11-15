@@ -52,3 +52,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Alternatywy: (a) rewrites tylko dla znanych tras (+ /design, /__test/*, /biblioteka/:id) bez catch-all: nieznany adres daje prawdziwe 404, ale ze zwykłą stroną Vercel; (b) to samo plus public/404.html (Vercel serwuje go ze statusem 404), wymaga pliku spoza listy „Zmieniaj” i osobnej strony bez SPA; (c) zostawić SPA-fallback (200) i polegać na `noindex` z P2-D.
 - Potrzebna decyzja: wybór (a), (b) lub (c). Test vercel-routes.test.ts (trasy z App.tsx pasują, „/nie-ma” nie) pasuje do (a)/(b).
 - Vercel: nic do klikania.
+
+## P2-E – Linki Kontakt i Zastrzeżenie w stopce i menu
+- Wynik: ZABLOKOWANE, kod i testy bez zmian (lint/typecheck/test/build nie uruchamiane, brak usuniętych plików).
+- Powód: dopisanie linków łamie istniejące testy, których nie wolno zmieniać: tests/unit/site-footer-mobile.test.tsx (dokładna lista 17 hrefów w stopce, toHaveLength(17)) oraz tests/unit/main-menu-links.test.tsx (dokładnie 6 linków w menu, test „nie zawiera linku Kontakt”). Zadanie każe jednocześnie zachować zielone testy P1-F i P1-G.
+- Potrzebna decyzja: zgoda na aktualizację tych dwóch testów (lista hrefów 17 -> 19, menu 6 -> 8 z Kontakt i Zastrzeżeniem po „Prywatność”, usunięcie testu „nie zawiera Kontakt”); wtedy zmiany to SiteFooter.tsx (grupa Dokumentacja), MOBILE_MENU_LINKS w Header.tsx i nowy tests/unit/footer-menu-new-links.test.tsx.
+- Trasy /kontakt i /zastrzezenie istnieją (P2-C/P2-D), więc test „href to trasa z App.tsx” przejdzie.
+- Vercel: nic do klikania.
