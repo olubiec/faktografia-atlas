@@ -214,3 +214,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: patrz git log ([N-04], galaz claude/laughing-pasteur-8af8jz, bez PR). Usuniete uppercase + tracking-wider/wide w 5 plikach widoku, shadow-sm w Home.tsx (2 miejsca).
 - Vercel: sprawdz etykiety legendy, suwaka roku, wybieraka wskaznika i biblioteki (zwykla wielkosc liter) oraz brak cienia pod podpowiedzia/przyciskiem nad mapa.
 - Odlozone: wzorce zrzutow legendy/suwaka/biblioteki trzeba odswiezyc workflow „Update snapshots"; e2e nie uruchamiane (zadanie wymaga tylko lint/typecheck/test/build).
+
+## N-05 – Ponowienie wskaźnika po błędzie sieci
+- Wynik: OK; lint, typecheck, Vitest (w tym 5 nowych w load-values-retry.test.ts), build zielone; kontrola usunięć pusta. e2e nie uruchamiane (zadanie wymaga lint/typecheck/test/build).
+- Commit: 57a04a2 ([N-05], galaz claude/laughing-pasteur-8af8jz, bez PR). Zmiana tylko w load-values.ts: 5xx i błąd sieci nie trafiają do cache, 4xx i zła treść dalej tak.
+- Vercel: wylacz siec (tryb offline), wybierz wskaznik (brak danych), wlacz siec i wybierz go ponownie: dane sie wczytuja bez odswiezania strony.
+- Odlozone: load-profile.ts nadal zapamietuje blad sieci (zadanie zabrania zmiany, osobna decyzja).
