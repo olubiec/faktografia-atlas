@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 import shard12Fixture from '../fixtures/parts/shard-12.json' with { type: 'json' };
 import indexFixture from '../fixtures/library/index.json' with { type: 'json' };
@@ -33,7 +33,7 @@ for (const theme of THEMES) {
         });
       });
 
-      await page.route('**/index.json', async (route) => {
+      await page.route('**/library/index.json', async (route) => {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -72,7 +72,7 @@ for (const theme of THEMES) {
       }, theme);
     });
 
-    const runAxe = async (page: any, contextDescription: string) => {
+    const runAxe = async (page: Page, contextDescription: string) => {
       // Bez przejść i animacji podczas skanu kontrastu oraz zapewnienie target-size dla przypisów
       await page.addStyleTag({
         content: `
@@ -137,10 +137,11 @@ for (const theme of THEMES) {
     test('Trasa / (profil jednostki 40%)', async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
       await page.goto('/?e2e&u=12');
-      await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
+      await page.waitForFunction(() => (window as any).__atlas?.ready === true);
+      await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true, null, { timeout: 20_000 });
 
-      const sheet = page.locator('[role="dialog"]').first();
-      await expect(sheet).toBeVisible();
+      const sheet = page.locator('[role="dialog"][aria-label="Województwo małopolskie"]');
+      await expect(sheet).toBeVisible({ timeout: 20_000 });
 
       await runAxe(page, 'Trasa / - profil jednostki 40%');
     });
@@ -149,10 +150,11 @@ for (const theme of THEMES) {
     test('Trasa / (profil jednostki 100%)', async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
       await page.goto('/?e2e&u=12&sheet=full');
-      await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
+      await page.waitForFunction(() => (window as any).__atlas?.ready === true);
+      await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true, null, { timeout: 20_000 });
 
-      const sheet = page.locator('[role="dialog"]').first();
-      await expect(sheet).toBeVisible();
+      const sheet = page.locator('[role="dialog"][aria-label="Województwo małopolskie"]');
+      await expect(sheet).toBeVisible({ timeout: 20_000 });
 
       await runAxe(page, 'Trasa / - profil jednostki 100%');
     });
