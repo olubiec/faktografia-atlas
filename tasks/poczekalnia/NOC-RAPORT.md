@@ -130,3 +130,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Zrobione: emulateMedia reduce, po 1 s document.getAnimations() bez trwających (running) animacji na /, /rankingi, /porownaj, /biblioteka, /o-projekcie; stan mapy przez window.__atlas.ready. Łamiących animacji nie znaleziono (test liczy też nieskończone).
 - Vercel: nic do klikania, brak zmian zachowania; test wykona CI.
 - Odłożone: nic; lokalnie użyto starszej przeglądarki Chromium przez symlink (środowisko).
+
+## W17-T01 – Geometryczny audyt Mobile UX 360/390
+- Wynik: OK; lint, typecheck, build zielone; Vitest zielony; nowy e2e mobile-ux-geometry.spec.ts 8/8 (360x740 i 390x844: start, profil, okno udostępniania, biblioteka).
+- Commit: d363b31 (gałąź claude/laughing-pasteur-8af8jz, bez PR). Pliki helpera i specu istniały z wcześniejszego commitu 8e2056c; poprawiono brakujący eksport expectTouchTargets i dodano test okna udostępniania.
+- Vercel: nic do klikania, brak zmian zachowania (tylko testy).
+- Odłożone: pkt 3 (usunięcie ?sheet=full w s15-mobile, s20-parts, share-profile) – wymaga zmiany istniejących testów, pominięte wg zasad; s15/s20 i tak nie używają już ?sheet=full w kodzie. Brak testu pasków zgody/dymka/arkusza wskaźnika w parach.
