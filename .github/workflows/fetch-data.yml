@@ -173,6 +173,7 @@ jobs:
 
       # Commity robota nie uruchamiają CI same z siebie, dlatego CI uruchamiamy ręcznie na gałęzi.
       - name: Otwórz PR i uruchom CI
+        id: pr
         if: steps.push.outputs.changed == 'true' && steps.checks.outcome == 'success'
         shell: bash
         run: |
@@ -183,12 +184,23 @@ jobs:
 
           Test kontraktu i liczby kontrolne (16 województw, ≥ 2470 gmin, suma ludności 36–39 mln) przeszły. Zmienione wskaźniki: ${LISTA:-wszystkie}.
           Przed scaleniem sprawdź kilka liczb z bdl.stat.gov.pl (Polska, małopolskie, Zakopane)."
-            N="$(gh api -X POST "repos/$GITHUB_REPOSITORY/pulls" -f title="data: aktualizacja wartości wskaźników BDL" -f head="$BRANCH" -f base=main -f body="$BODY" --jq .number)" \
-              || { echo "::warning::Nie udało się otworzyć PR (Settings → Actions → General → zaznacz „Allow GitHub Actions to create and approve pull requests”). Gałąź $BRANCH jest wypchnięta, PR otwórz ręcznie."; exit 0; }
+            TYTUL="Dane GUS: odświeżenie $(date -u +%Y-%m-%d)"
+            N="$(gh api -X POST "repos/$GITHUB_REPOSITORY/pulls" -f title="$TYTUL" -f head="$BRANCH" -f base=main -f body="$BODY" --jq .number)" \
+              || { echo "::warning::Nie udało się otworzyć PR (Settings → Actions → General → zaznacz „Allow GitHub Actions to create and approve pull requests”). Gałąź $BRANCH jest wypchnięta, PR otwórz ręcznie."; echo "pr_failed=true" >> "$GITHUB_OUTPUT"; exit 0; }
           fi
           echo "PR #$N" >> "$GITHUB_STEP_SUMMARY"
+          # Auto-merge (squash): GitHub scali PR sam, gdy CI będzie zielone. Błąd tu nie przerywa przebiegu.
+          gh pr merge "$N" --auto --squash --repo "$GITHUB_REPOSITORY" \
+            || echo "::warning::Nie udało się włączyć auto-merge dla PR #$N (scal go ręcznie po zielonym CI)."
           gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/dispatches" -f ref="$BRANCH" \
             || echo "::warning::Nie udało się uruchomić CI na $BRANCH (uruchom CI ręcznie: Actions → CI → Run workflow na tej gałęzi)."
+
+      - name: Zgłoszenie błędu tworzenia PR
+        if: steps.pr.outputs.pr_failed == 'true'
+        shell: bash
+        run: |
+          gh api -X POST "repos/$GITHUB_REPOSITORY/issues" -f title="Dane GUS: nie udało się otworzyć PR" \
+            -f body="Dane są na gałęzi $BRANCH, ale PR się nie utworzył. Przebieg: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID. Otwórz PR ręcznie z tej gałęzi." >/dev/null
 
       - name: Zgłoszenie błędu nocnego pobierania
         if: failure() && github.event_name != 'workflow_dispatch'
