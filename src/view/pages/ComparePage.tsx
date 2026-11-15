@@ -12,6 +12,82 @@ import type { Indicator } from '../../core/profile/profile';
 
 const indicators = indicatorsData as Indicator[];
 
+/** Trzy gotowe pary do kliknięcia (kody TERYT jako napisy). */
+const COMPARE_PAIRS = [
+  { a: '14', b: '12', label: 'Mazowieckie vs Małopolskie' },
+  { a: '1465', b: '1261', label: 'Warszawa vs Kraków' },
+  { a: '0264', b: '3064', label: 'Wrocław vs Poznań' },
+] as const;
+
+const FIELD_CLASS =
+  'block w-full min-h-[44px] border border-linia bg-arkusz px-3 text-base text-tusz focus-visible:outline-2 focus-visible:outline-tusz';
+
+interface CompareEmptyStateProps {
+  units: Unit[];
+  a: string | null;
+  b: string | null;
+  onPick: (a: string, b: string) => void;
+}
+
+/** Wybór dwóch miejsc (województwa i powiaty) oraz trzy gotowe pary. */
+export function CompareEmptyState({ units, a, b, onPick }: CompareEmptyStateProps) {
+  const options = units.filter((u) => u.level !== 'gmi');
+  // Połowicznie wybrana para żyje lokalnie; zmiana adresu odświeża komponent (key)
+  const [pick, setPick] = useState({ a, b });
+  const change = (which: 'a' | 'b', value: string) => {
+    const next = { ...pick, [which]: value || null };
+    setPick(next);
+    if (next.a && next.b && next.a !== next.b) onPick(next.a, next.b);
+  };
+  const field = (which: 'a' | 'b', label: string, value: string | null) => (
+    <div className="flex-1">
+      <label htmlFor={`compare-${which}`} className="block mb-1 text-sm font-semibold">
+        {label}
+      </label>
+      <select
+        id={`compare-${which}`}
+        className={FIELD_CLASS}
+        value={value ?? ''}
+        onChange={(e) => change(which, e.target.value)}
+      >
+        <option value="">Wybierz</option>
+        {options.map((u) => (
+          <option key={u.teryt} value={u.teryt}>
+            {u.name}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+
+  return (
+    <section className="mb-8">
+      <p className="mb-4 text-base text-olowek">
+        Wybierz dwa miejsca, a pokażemy, czym się różnią.
+      </p>
+      <div className="flex flex-col gap-3 md:flex-row md:gap-4 mb-6">
+        {field('a', 'Miejsce A', pick.a)}
+        {field('b', 'Miejsce B', pick.b)}
+      </div>
+      <h2 className="mb-2 text-sm font-semibold">Gotowe pary:</h2>
+      <ul className="flex flex-col gap-2 md:flex-row md:flex-wrap">
+        {COMPARE_PAIRS.map((p) => (
+          <li key={p.a + p.b}>
+            <button
+              type="button"
+              data-slot="compare-pair"
+              onClick={() => onPick(p.a, p.b)}
+              className="flex items-center min-h-[44px] px-3 border border-linia underline break-words text-left"
+            >
+              {p.label}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export function ComparePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const c = searchParams.get('c');
@@ -62,26 +138,7 @@ export function ComparePage() {
       <div className="container mx-auto p-4 w-full text-tusz">
         <h1 className="text-2xl font-bold mb-4">Porównaj miejsca</h1>
 
-        <div className="flex gap-4 mb-8">
-          <div className="border p-4 flex-1">
-            <h2 className="font-semibold">Miejsce A: {a || 'Wybierz'}</h2>
-          </div>
-          <div className="border p-4 flex-1">
-            <h2 className="font-semibold">Miejsce B: {b || 'Wybierz'}</h2>
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <h3 className="font-semibold mb-2">Gotowe pojedynki:</h3>
-          <ul className="flex flex-wrap gap-2">
-            <li><button onClick={() => setComparison('14', '12')} className="underline">Mazowieckie vs Małopolskie</button></li>
-            <li><button onClick={() => setComparison('1465', '1261')} className="underline">Warszawa vs Kraków</button></li>
-            <li><button onClick={() => setComparison('0264', '3064')} className="underline">Wrocław vs Poznań</button></li>
-            <li><button onClick={() => setComparison('2261', '1061')} className="underline">Gdańsk vs Łódź</button></li>
-            <li><button onClick={() => setComparison('0461', '3262')} className="underline">Bydgoszcz vs Szczecin</button></li>
-            <li><button onClick={() => setComparison('0663', '1863')} className="underline">Lublin vs Rzeszów</button></li>
-          </ul>
-        </div>
+        <CompareEmptyState key={`${a}|${b}`} units={units} a={a} b={b} onPick={setComparison} />
 
         {profileA && profileB && (
           <div data-testid="comparison-result">
