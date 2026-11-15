@@ -15,7 +15,7 @@ export function Privacy() {
       className="p-4 md:p-8 pb-24 md:pb-32 max-w-4xl mx-auto w-full"
       meta={{
         title: 'Prywatność',
-        description: 'Informacje o ochronie prywatności, braku śledzenia osób i zarządzaniu zgodą na analitykę w portalu Faktografia Atlas.',
+        description: 'Polityka prywatności: administrator, przetwarzane dane, podstawy prawne, Twoje prawa i zarządzanie zgodą na anonimową analitykę w Faktografia Atlas.',
       }}
     >
       <article className="max-w-[70ch] space-y-6">
@@ -25,57 +25,110 @@ export function Privacy() {
 
         <section className="space-y-3">
           <h2 className="text-lg font-[700] leading-[1.3]">
-            Co i dlaczego liczymy
+            1. Administrator i kontakt
           </h2>
           <p className="text-sm font-[400] leading-[1.6]">
-            Za Twoją dobrowolną zgodą zliczamy wyłącznie anonimowe wyszukiwania fraz i miejsc
-            w serwisie. Dzięki temu wiemy, które wskaźniki i regiony są najbardziej interesujące,
-            co pomaga w dalszym rozwoju serwisu.
+            Administratorem danych jest Mateusz Ołubiec, właściciel serwisu faktografia.eu (Faktografia Atlas). Kontakt w sprawach prywatności: <a href="mailto:mateuszolubiec05@gmail.com" className="underline">mateuszolubiec05@gmail.com</a>.
           </p>
         </section>
 
         <section className="space-y-3">
           <h2 className="text-lg font-[700] leading-[1.3]">
-            Gdzie przechowywane są dane
+            2. Jakie dane przetwarzamy
           </h2>
-          <p className="text-sm font-[400] leading-[1.6]">
-            Do analityki wykorzystujemy usługę PostHog. Wszystkie dane analityczne przetwarzane są
-            wyłącznie na serwerach zlokalizowanych w Unii Europejskiej (UE).
-          </p>
-        </section>
-
-        <section className="space-y-3">
-          <h2 className="text-lg font-[700] leading-[1.3]">
-            Czego nie zbieramy
-          </h2>
-          <p className="text-sm font-[400] leading-[1.6]">
-            Szanujemy Twoją prywatność. Nie gromadzimy danych osobowych (takich jak imię, nazwisko,
-            adres e-mail), adresów IP ani unikalnych identyfikatorów urządzeń. Nie śledzimy Twojej
-            aktywności poza naszym serwisem.
-          </p>
-        </section>
-
-        <section className="space-y-3">
-          <h2 className="text-lg font-[700] leading-[1.3]">
-            Pamięć przeglądarki (localStorage)
-          </h2>
-          <p className="text-sm font-[400] leading-[1.6]">
-            W pamięci Twojej przeglądarki (localStorage) przechowujemy wyłącznie niezbędne klucze konfiguracyjne:
-          </p>
           <ul className="list-disc pl-5 text-sm font-[400] leading-[1.6] space-y-1">
             <li>
-              <code className="font-mono bg-arkusz px-1.5 py-0.5 border border-linia">faktografia-theme</code> – zapis wybranego motywu graficznego (jasny, ciemny lub systemowy).
+              Logi hostingu (Vercel): adres IP, czas i adres żądania, dane przeglądarki. Zapisuje je dostawca hostingu w związku z działaniem serwisu.
             </li>
             <li>
-              <code className="font-mono bg-arkusz px-1.5 py-0.5 border border-linia">fa-consent-v1</code> – zapis Twojej decyzji o wyrażeniu lub odmowie zgody na anonimowe statystyki.
+              Analityka (PostHog), tylko po Twojej zgodzie: jedno zdarzenie „search” z wpisaną przez Ciebie frazą wyszukiwania (maks. 100 znaków; frazy z „@” lub długim ciągiem cyfr nie są wysyłane). Nie zbieramy imienia ani e-maila, nie nagrywamy sesji, a automatyczne zbieranie kliknięć i odsłon jest wyłączone. Zapisywanie adresu IP w analityce jest wyłączone w konfiguracji.
+            </li>
+            <li>
+              Pamięć przeglądarki (localStorage), zapisywana na Twoim urządzeniu:
+              <ul className="list-disc pl-5 mt-1 space-y-1">
+                <li>
+                  <code className="font-mono bg-arkusz px-1.5 py-0.5 border border-linia">faktografia-theme</code> – wybrany motyw graficzny (jasny, ciemny lub systemowy).
+                </li>
+                <li>
+                  <code className="font-mono bg-arkusz px-1.5 py-0.5 border border-linia">fa-consent-v1</code> – Twoja decyzja o zgodzie na anonimowe statystyki wraz z datą.
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <p className="text-sm font-[400] leading-[1.6]">
+            PostHog działa z trwałością „memory”: identyfikator istnieje tylko w pamięci karty i znika po jej zamknięciu, dlatego nie zapisujemy kluczy ph_* ani ciasteczek analitycznych.
+          </p>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-lg font-[700] leading-[1.3]">
+            3. Cel i podstawa prawna
+          </h2>
+          <ul className="list-disc pl-5 text-sm font-[400] leading-[1.6] space-y-1">
+            <li>
+              Anonimowe statystyki wyszukiwań: wiemy, które wskaźniki i regiony są najbardziej interesujące, co pomaga w dalszym rozwoju serwisu. Podstawa: zgoda, art. 6 ust. 1 lit. a RODO.
+            </li>
+            <li>
+              Logi hostingu (bezpieczeństwo i działanie serwisu): prawnie uzasadniony interes administratora, art. 6 ust. 1 lit. f RODO.
+            </li>
+            <li>
+              Zapis motywu i decyzji o zgodzie: niezbędny do działania serwisu, bez profilowania.
             </li>
           </ul>
         </section>
 
         <section className="space-y-3">
           <h2 className="text-lg font-[700] leading-[1.3]">
-            Zarządzanie zgodą
+            4. Okres przechowywania
           </h2>
+          <ul className="list-disc pl-5 text-sm font-[400] leading-[1.6] space-y-1">
+            <li>Decyzja o zgodzie jest ważna 12 miesięcy, potem zapytamy o nią ponownie.</li>
+            <li>Zdarzenia w PostHog i logi w Vercel są przechowywane zgodnie z ustawieniami tych usług.</li>
+            <li>Dane w localStorage zostają na Twoim urządzeniu, dopóki ich nie usuniesz.</li>
+          </ul>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-lg font-[700] leading-[1.3]">
+            5. Odbiorcy danych
+          </h2>
+          <ul className="list-disc pl-5 text-sm font-[400] leading-[1.6] space-y-1">
+            <li>Vercel Inc. – hosting serwisu; logi techniczne mogą być przetwarzane także poza UE.</li>
+            <li>PostHog – analityka po zgodzie; zdarzenia trafiają na serwery w UE (eu.i.posthog.com).</li>
+          </ul>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-lg font-[700] leading-[1.3]">
+            6. Twoje prawa
+          </h2>
+          <p className="text-sm font-[400] leading-[1.6]">
+            Masz prawo do dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania oraz sprzeciwu wobec przetwarzania opartego na uzasadnionym interesie. Zgodę możesz cofnąć w każdej chwili (przycisk poniżej), bez wpływu na zgodność z prawem wcześniejszego przetwarzania. Masz też prawo wnieść skargę do Prezesa Urzędu Ochrony Danych Osobowych (UODO). Aby skorzystać z praw, napisz na adres z punktu 1.
+          </p>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-lg font-[700] leading-[1.3]">
+            7. Zewnętrzne linki
+          </h2>
+          <p className="text-sm font-[400] leading-[1.6]">
+            Przy funkcji „Zamów wskaźnik” kierujemy do serwisu GitHub. Tam obowiązuje osobna polityka prywatności GitHuba, na którą nie mamy wpływu.
+          </p>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-lg font-[700] leading-[1.3]">
+            8. Zmiany polityki
+          </h2>
+          <p className="text-sm font-[400] leading-[1.6]">
+            Politykę możemy aktualizować, gdy zmieni się sposób działania serwisu. Aktualna wersja jest zawsze na tej stronie. Data ostatniej aktualizacji: 15 listopada 2026.
+          </p>
+        </section>
+
+        <section className="space-y-3">
+          <h3 className="text-base font-[700] leading-[1.3]">
+            Zarządzanie zgodą
+          </h3>
           <p className="text-sm font-[400] leading-[1.6]">
             W każdej chwili możesz cofnąć udzieloną wcześniej zgodę na analitykę. Użyj przycisku
             poniżej, aby usunąć zapisaną decyzję z pamięci przeglądarki.
