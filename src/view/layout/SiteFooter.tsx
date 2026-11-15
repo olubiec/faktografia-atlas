@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { NavArrowDown } from 'iconoir-react';
 import { Icon } from '../ui/Icon';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { DataFreshness } from './DataFreshness';
 
 function subscribeTheme(callback: () => void) {
   if (typeof window === 'undefined') return () => {};
@@ -159,6 +160,7 @@ export function SiteFooter() {
               </a>
               .
             </p>
+            <DataFreshness />
           </div>
 
           {GROUPS.map((g) => (
