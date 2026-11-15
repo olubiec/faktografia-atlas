@@ -7,6 +7,7 @@ import { Header } from '../Header';
 import { CategoryTiles } from '../library/CategoryTiles';
 import { LibraryFilters } from '../library/LibraryFilters';
 import { LibraryResults } from '../library/LibraryResults';
+import { paramsFromQuery, queryFromParams } from '../library/library-params';
 import { LibrarySearchBar } from '../library/LibrarySearchBar';
 import { SiteFooter } from '../layout/SiteFooter';
 
@@ -14,27 +15,11 @@ type PageStatus = 'loading' | 'error' | 'empty' | 'ready';
 
 const POPULAR_SEARCHES = ['Ludność', 'Bezrobocie', 'Wynagrodzenie', 'Mieszkania'] as const;
 
-function parseQueryFromParams(params: URLSearchParams): LibraryQuery {
-  const k = params.get('k');
-  const q = params.get('q');
-  const l = params.get('l');
-  const j = params.get('j');
-  const p = params.get('p');
-
-  return {
-    cat: k && k.trim() !== '' ? k : null,
-    text: q ?? '',
-    level: l === '5' ? 5 : l === '6' ? 6 : null,
-    unit: j && j.trim() !== '' ? j : null,
-    onlyReady: p === '1' || p === 'true',
-  };
-}
-
 export function Library() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const query = useMemo(() => parseQueryFromParams(searchParams), [searchParams]);
+  const query = useMemo(() => queryFromParams(searchParams), [searchParams]);
   const [status, setStatus] = useState<PageStatus>('loading');
   const [index, setIndex] = useState<LibraryIndex | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -99,39 +84,7 @@ export function Library() {
   };
 
   const handleQueryChange = (newQuery: LibraryQuery) => {
-    const nextParams = new URLSearchParams(searchParams);
-
-    if (newQuery.cat) {
-      nextParams.set('k', newQuery.cat);
-    } else {
-      nextParams.delete('k');
-    }
-
-    if (newQuery.text) {
-      nextParams.set('q', newQuery.text);
-    } else {
-      nextParams.delete('q');
-    }
-
-    if (newQuery.level === 5 || newQuery.level === 6) {
-      nextParams.set('l', String(newQuery.level));
-    } else {
-      nextParams.delete('l');
-    }
-
-    if (newQuery.unit) {
-      nextParams.set('j', newQuery.unit);
-    } else {
-      nextParams.delete('j');
-    }
-
-    if (newQuery.onlyReady) {
-      nextParams.set('p', '1');
-    } else {
-      nextParams.delete('p');
-    }
-
-    setSearchParams(nextParams);
+    setSearchParams(paramsFromQuery(searchParams, newQuery));
   };
 
   const handlePick = (id: string | number) => {
@@ -228,7 +181,12 @@ export function Library() {
               <LibraryFilters index={index} query={query} onQueryChange={handleQueryChange} />
             </div>
             <div className="order-3 md:order-4">
-              <LibraryResults index={index} query={query} onQueryChange={handleQueryChange} />
+              <LibraryResults
+                index={index}
+                query={query}
+                onQueryChange={handleQueryChange}
+                pageSize={20}
+              />
             </div>
           </div>
         )}
