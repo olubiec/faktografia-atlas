@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { loadFreshness } from '../../core/freshness/freshness';
+import { loadFreshnessLabel } from '../../core/freshness/freshness-label';
 
 /** Sam tekst; brak etykiety = nic. */
 export function DataFreshnessText({ label }: { label: string | null }) {
@@ -12,7 +12,7 @@ export function DataFreshness() {
   const [label, setLabel] = useState<string | null>(null);
   useEffect(() => {
     let cancelled = false;
-    loadFreshness().then((l) => {
+    loadFreshnessLabel().then((l) => {
       if (!cancelled) setLabel(l);
     });
     return () => {
