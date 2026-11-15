@@ -12,6 +12,8 @@ export interface AnnotateProps {
   show?: boolean;
   className?: string;
   as?: React.ElementType;
+  /** Odstęp zakreślenia od treści w px (domyślnie 6). */
+  padding?: number;
 }
 
 function getKorektaColor(): string {
@@ -30,6 +32,7 @@ export const Annotate: React.FC<AnnotateProps> = ({
   show = true,
   className,
   as: Component = 'span',
+  padding = 6,
 }) => {
   const containerRef = useRef<HTMLElement | null>(null);
   const targetRef = useRef<HTMLSpanElement | null>(null);
@@ -54,7 +57,7 @@ export const Annotate: React.FC<AnnotateProps> = ({
       color,
       strokeWidth: 2.5,
       iterations: 2,
-      padding: 6,
+      padding,
       animationDuration: 600,
       animate: !isReducedMotion,
     });
@@ -66,7 +69,7 @@ export const Annotate: React.FC<AnnotateProps> = ({
         annotationRef.current.show();
       }
     });
-  }, [type]);
+  }, [type, padding]);
 
   const hideAnnotation = useCallback(() => {
     if (annotationRef.current) {
