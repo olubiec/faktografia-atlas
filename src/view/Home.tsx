@@ -35,13 +35,13 @@ export function Home() {
               <AtlasMap />
             </Suspense>
           </div>
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-arkusz/90 border border-linia px-4 py-2 text-sm text-olowek pointer-events-none text-center shadow-sm whitespace-nowrap hidden md:block z-[60]">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-arkusz/90 border border-linia px-4 py-2 text-sm text-olowek pointer-events-none text-center whitespace-nowrap hidden md:block z-[60]">
             Przewiń w dół: Działy tematyczne · Rekordy Polski · Pojedynki miejsc · Biblioteka
           </div>
           <button
             type="button"
             onClick={() => scrollToPortal(portalRef.current)}
-            className="md:hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-[60] inline-flex items-center justify-center gap-2 min-h-[44px] px-4 bg-arkusz border border-linia text-sm font-medium text-tusz whitespace-nowrap shadow-sm focus:outline-none focus:ring-2 focus:ring-tusz"
+            className="md:hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-[60] inline-flex items-center justify-center gap-2 min-h-[44px] px-4 bg-arkusz border border-linia text-sm font-medium text-tusz whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-tusz"
           >
             Działy tematyczne <span aria-hidden="true">↓</span>
           </button>

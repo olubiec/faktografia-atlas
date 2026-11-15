@@ -208,3 +208,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: patrz git log ([N-03], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowe: zoom-step.ts (nextZoom, ZOOM_STEP), useZoomEvents.ts; AtlasMap.tsx +2 linie; useKeyboardNavigation pomija zdarzenia z defaultPrevented (brak podwojnego kroku).
 - Vercel: kliknij w tlo strony (nie w mape), nacisnij + / - : mapa przybliza/oddala o pol kroku; w polu wyszukiwania + nic nie robi; z fokusem na mapie jeden krok.
 - Odlozone: nic z zakresu; do sprawdzenia osobno padajace 3 testy camera.spec.ts (poza zakresem N-03).
+
+## N-04 – Dług stylu: wersaliki i cienie
+- Wynik: OK; lint, typecheck, Vitest, build zielone; kontrola usuniec pusta. Nowy test style-debt.test.ts najpierw czerwony (13 naruszen z plikiem i linia), po poprawce zielony.
+- Commit: patrz git log ([N-04], galaz claude/laughing-pasteur-8af8jz, bez PR). Usuniete uppercase + tracking-wider/wide w 5 plikach widoku, shadow-sm w Home.tsx (2 miejsca).
+- Vercel: sprawdz etykiety legendy, suwaka roku, wybieraka wskaznika i biblioteki (zwykla wielkosc liter) oraz brak cienia pod podpowiedzia/przyciskiem nad mapa.
+- Odlozone: wzorce zrzutow legendy/suwaka/biblioteki trzeba odswiezyc workflow „Update snapshots"; e2e nie uruchamiane (zadanie wymaga tylko lint/typecheck/test/build).

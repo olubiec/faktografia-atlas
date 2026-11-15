@@ -83,7 +83,7 @@ export function LibraryFilters({ index, query, onQueryChange }: LibraryFiltersPr
       {/* Główna zawartość filtrów: zwijana na telefonie, zawsze otwarta na komputerze */}
       <div className={isExpanded ? 'mt-4 space-y-4' : 'hidden md:block md:space-y-4'}>
         <div className="hidden md:flex flex-wrap items-center justify-between gap-4">
-          <h2 className="text-sm font-semibold tracking-wide uppercase text-olowek">
+          <h2 className="text-sm font-semibold text-olowek">
             Filtry
           </h2>
           {hasActiveFilters && (

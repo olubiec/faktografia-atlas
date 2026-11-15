@@ -20,7 +20,7 @@ export function Legend({ items, title, className = '' }: LegendProps) {
     >
       {title ? (
         <div className="flex items-center justify-between gap-2 mb-2.5">
-          <h4 className="text-xs font-bold text-olowek uppercase tracking-wider truncate">
+          <h4 className="text-xs font-bold text-olowek truncate">
             {title}
           </h4>
           <span className="text-xs text-olowek font-medium shrink-0">

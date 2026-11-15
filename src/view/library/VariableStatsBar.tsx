@@ -76,7 +76,7 @@ export function VariableStatsBar({
           data-testid="stats-card-units"
           className="bg-arkusz border border-linia p-3 sm:p-4 flex flex-col justify-between"
         >
-          <span className="text-xs font-semibold text-olowek uppercase tracking-wider">
+          <span className="text-xs font-semibold text-olowek">
             Liczba jednostek
           </span>
           <div className="mt-1 flex items-baseline gap-1.5">
@@ -92,7 +92,7 @@ export function VariableStatsBar({
           data-testid="stats-card-median"
           className="bg-arkusz border border-linia p-3 sm:p-4 flex flex-col justify-between"
         >
-          <span className="text-xs font-semibold text-olowek uppercase tracking-wider">
+          <span className="text-xs font-semibold text-olowek">
             Mediana
           </span>
           <div className="mt-1">
@@ -107,7 +107,7 @@ export function VariableStatsBar({
           data-testid="stats-card-minmax"
           className="bg-arkusz border border-linia p-3 sm:p-4 flex flex-col justify-between"
         >
-          <span className="text-xs font-semibold text-olowek uppercase tracking-wider">
+          <span className="text-xs font-semibold text-olowek">
             Min-Max
           </span>
           <div className="mt-1">
@@ -124,7 +124,7 @@ export function VariableStatsBar({
           data-testid="stats-card-years"
           className="bg-arkusz border border-linia p-3 sm:p-4 flex flex-col justify-between"
         >
-          <span className="text-xs font-semibold text-olowek uppercase tracking-wider">
+          <span className="text-xs font-semibold text-olowek">
             Lata
           </span>
           <div className="mt-1 flex items-baseline gap-1.5">
@@ -144,7 +144,7 @@ export function VariableStatsBar({
         className="bg-arkusz border border-linia p-3 sm:p-4 space-y-2.5"
       >
         <div className="flex items-center justify-between text-xs font-mono text-olowek">
-          <span className="font-semibold uppercase tracking-wider text-tusz">
+          <span className="font-semibold text-tusz">
             Klasy kwantylowe (5 klas)
           </span>
           <span>mniej → więcej</span>

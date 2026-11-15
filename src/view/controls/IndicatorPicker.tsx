@@ -146,7 +146,7 @@ export function IndicatorPickerContent({
         ) : (
           Object.entries(groupedFiltered).map(([groupName, groupItems]) => (
             <div key={groupName} className="py-2 first:pt-0 last:pb-0" role="group">
-              <div className="px-3 py-1 text-xs font-semibold text-olowek uppercase tracking-wider">
+              <div className="px-3 py-1 text-xs font-semibold text-olowek">
                 {groupName}
               </div>
               {groupItems.map((item) => {
@@ -268,7 +268,7 @@ export function IndicatorPicker({
           )}
         >
           <div className="flex flex-col min-w-0 pr-2">
-            <span className="text-xs text-olowek uppercase tracking-wider">Wskaźnik</span>
+            <span className="text-xs text-olowek">Wskaźnik</span>
             <span className="font-semibold text-sm text-tusz truncate">
               {selectedIndicator ? selectedIndicator.name : 'Wybierz wskaźnik'}
             </span>
