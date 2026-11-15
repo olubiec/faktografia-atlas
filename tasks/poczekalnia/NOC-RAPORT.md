@@ -277,3 +277,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: bcae96f (galaza claude/laughing-pasteur-8af8jz, bez PR): test-seam.ts (sheetInset), ProfileSheetMobile.tsx (selektor po aria-label, escapeAttr z awaryjnym wariantem bez CSS.escape dla jsdom).
 - Vercel: telefon - wybierz jednostkę z listy w panelu wskaźnika, mapa ma przesunąć się nad arkusz profilu; Rozwiń/Zwiń nie psuje położenia mapy.
 - Odłożono: profile-mobile.spec ma w tym środowisku 2-5 czerwonych testów (limit 5 s na wolnym renderingu) także bez moich zmian (stan wyjściowy), nie ruszałem.
+
+## N-15 – Test kontrastu granic w ciemnym motywie
+- Wynik: lint, typecheck, Vitest, build zielone; nowy tests/unit/map-border-contrast.test.ts (2 testy); kontrola usunięć pusta.
+- Commit: f9ca185 (galaz claude/laughing-pasteur-8af8jz, bez PR): sam test, bez zmian w src/.
+- Ciemny: granica ma alfę 140, kontrast po zmieszaniu >= 3:1 z kalką i arkuszem; jasny: granica = kalka.
+- Vercel: nic do klikania (sam test); ewentualnie ciemny motyw - granice powiatów/gmin widoczne na mapie.
+- Odłożono: przypadek kontrolny 4 (pusty --olowek -> kalka). Kod admin.ts przy pustym --olowek bierze jasny token olowek, więc granica = [77,91,114,140], nie kalka. Wymaga decyzji (zmiana admin.ts poza zakresem zadania).
