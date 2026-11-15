@@ -148,3 +148,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: ten wpis w raporcie (poprzedni commit z testem: fd6da0c); gałąź claude/laughing-pasteur-8af8jz, bez PR.
 - Vercel: nic do klikania, brak zmian zachowania (tylko test).
 - Odłożone: nic nowego. Moja zaostrzona wersja testu (osobne reguły rounded, shadow, uppercase, __render, limit 220 linii z listą długu) zmieniałaby istniejący test, więc jej nie zostawiłem. Dług, który by wykryła: shadow-sm w Home.tsx, uppercase w 5 plikach, window.__renderProfileCompare, `rounded` w Rankings.tsx i 20 plików powyżej 220 linii.
+
+## W17-T04 – Odporność na błędy sieci i wyścigi kliknięć
+- Wynik: OK; lint, typecheck, Vitest, build zielone; e2e network-resilience.spec.ts 12/12 (4 testy x 3 powtórzenia).
+- Commit: c13fab0 (gałąź claude/laughing-pasteur-8af8jz, bez PR). Spec istniał z e7d439b; nie nadpisany, tylko poprawiony: nagłówek gminy ("Brzesko"), blok części (komunikat już widoczny bez rozwijania), krótsze opóźnienia i dłuższy timeout testu wyścigu.
+- Vercel: nic do klikania, brak zmian zachowania (tylko test).
+- Odłożone: nic. Uwaga: profil nie ma przycisku "Spróbuj ponownie" (jest tylko w bibliotece); test profilu sprawdza fallback "brak danych".
