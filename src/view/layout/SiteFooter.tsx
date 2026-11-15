@@ -107,7 +107,7 @@ function FooterGroup({ title, links, isMobile }: { title: string; links: FooterL
                 {l.label}
               </a>
             ) : (
-              <Link key={l.to} to={l.to} className={LINK_CLASS}>
+              <Link key={l.to} to={l.to} viewTransition className={LINK_CLASS}>
                 {l.label}
               </Link>
             ),
@@ -134,6 +134,7 @@ export function SiteFooter() {
           <div className="flex flex-col gap-2 md:gap-4 mb-2 md:mb-0">
             <Link
               to="/"
+              viewTransition
               className="inline-flex items-center min-h-[44px] min-w-[44px] rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               <img

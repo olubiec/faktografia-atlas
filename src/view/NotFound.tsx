@@ -18,6 +18,7 @@ export function NotFound() {
         </p>
         <Link
           to="/"
+          viewTransition
           className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center px-6 py-3 border border-tusz bg-tusz text-arkusz hover:bg-tusz/90 transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
         >
           Wróć na stronę główną

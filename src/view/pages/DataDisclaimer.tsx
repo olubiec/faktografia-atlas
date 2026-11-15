@@ -42,7 +42,7 @@ export default function DataDisclaimer() {
           <p className="text-sm text-olowek leading-[1.6]">
             Zauważyłeś nieprawidłową liczbę? Zgłoś to na stronie Kontakt.
           </p>
-          <Link to="/kontakt" className={LINK_CLASS}>
+          <Link to="/kontakt" viewTransition className={LINK_CLASS}>
             Przejdź do strony Kontakt
           </Link>
         </section>
