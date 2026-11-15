@@ -31,3 +31,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Vercel: otwórz /prywatnosc – 8 numerowanych sekcji, mail kontaktowy, „Cofnij zgodę” działa.
 - Do sprawdzenia w panelach: okres przechowywania zdarzeń w PostHog i logów w Vercel (w polityce: „zgodnie z ustawieniami usługi”); w PostHog włącz „Discard client IP data”.
 - Odłożone: lokalizacja przetwarzania logów Vercel opisana ogólnie („także poza UE”); do potwierdzenia z ustawieniami regionu projektu.
+
+## P2-D – Trasy, 404, ErrorBoundary, lazy loading
+- Wynik: ZABLOKOWANE, nic nie zmieniono w kodzie (testy nie uruchamiane, brak usuniętych plików).
+- Powód: pkt 3 zadania (trasy /__test/* tylko przy DEV lub VITE_E2E=true) psuje istniejące e2e. Testy e2e (ui, annotation, interactive, a11y-matrix, bottom-sheet) wchodzą na /__test/* w buildzie produkcyjnym przez `vite preview`; `pnpm build` w playwright.config.ts (webServer), w .github/workflows/ci.yml i update-snapshots.yml nie ustawia VITE_E2E.
+- Potrzebna decyzja: zgoda na zmianę jednego z: playwright.config.ts (build z VITE_E2E=true), ci.yml/update-snapshots.yml, package.json (np. skrypt build:e2e) – wszystko poza listą „Zmieniaj”.
+- Ponadto: NotFound jest dziś w src/view/NotFound.tsx (używany w tests/unit/site-layout.test.tsx), zadanie wskazuje src/view/pages/NotFound.tsx; trzeba zdecydować, czy przenieść (re-export), bo istniejącego testu nie wolno zmieniać.
+- Vercel: nic do klikania. Odłożone całe zadanie (trasy /kontakt, /zastrzezenie, 404 z noindex, ErrorBoundary, lazy loading, rozmiar chunku).
