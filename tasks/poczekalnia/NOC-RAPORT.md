@@ -108,3 +108,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Zrobione: timeline.ts – opcja compact, stała PHONE_DURATION_RATIO=0,6, helpery sessionStorage (try/catch); IntroOverlay – raz na sesję, telefon (<768 px) krócej, dotknięcie kończy intro.
 - Vercel: pierwsze wejście na telefonie – krótsze rysowanie, dotknięcie ekranu je przerywa; odświeżenie/powrót w tej samej karcie – mapa od razu; nowa karta pokazuje intro znów.
 - Odłożone: test dotyku (onPointerDown) w DOM – brak jsdom/e2e w liście „Zmieniaj”; sprawdzono tylko klasę pointer-events-auto. Etapy fill/annotate nie są renderowane przez overlay, skrócone tylko w logice.
+
+## P4-C – Arkusz: punkty zatrzymania
+- Wynik: OK; lint, typecheck, build zielone; Vitest 860/860 (nowy tests/unit/bottom-sheet-snap.test.tsx, 5 testów).
+- Commit: ad82705 (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Zrobione: BottomSheet domyślnie [0, 0.25, 0.6, 0.95], start na 25%; przycisk Rozwiń/Zwiń liczy najwyższy punkt z kontekstu (nie na sztywno 2); usunięty console.log; reduced-motion, aria-label i safe-area były i są testowane.
+- Vercel: miejsca używające domyślnych punktów (MobileIndicatorBar, ProfilePortal) – arkusz startuje nisko, mapa widoczna.
+- Odłożone: ProfileSheetMobile.tsx nadal przekazuje [0,0.4,1] (plik ekranu spoza „Zmieniaj”); test Playwright 390x844 (>=35% mapy) – poza listą „Zmieniaj”.
