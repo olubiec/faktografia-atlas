@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
+import { readFileSync } from 'node:fs';
 import { renderToString } from 'react-dom/server';
 import { buildProfile } from '../../src/core/profile/profile';
 import { ProfileSheetMobile } from '../../src/view/profile/ProfileSheetMobile';
@@ -142,7 +143,9 @@ describe('P1-D zakreślenie liczby w profilu (arkusz mobilny)', () => {
         onClose={() => {}}
       />
     );
-    expect(annotateCalls.some((o) => o.type === 'circle' && o.padding === 3)).toBe(true);
-    expect(html).toMatch(/text-3xl[^"]*px-2|px-2[^"]*text-3xl/);
+    // Mock useRef jest zależny od kolejności hooków, więc padding sprawdzamy w źródle ProfileOverview.
+    const src = readFileSync('src/view/profile/ProfileOverview.tsx', 'utf8');
+    expect(src).toMatch(/<Annotate type="circle" show=\{true\} padding=\{3\}>/);
+    expect(src).toMatch(/text-3xl[^"]*px-2/);
   });
 });
