@@ -101,3 +101,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Zrobione: src/styles/view-transitions.css (fade old/new z var(--motion-base), blok reduced-motion z animation: none), import w global.css, prop viewTransition na wszystkich <Link> w Header.tsx (react-router 8.5).
 - Vercel: klikaj Mapa/Rankingi/Biblioteka w nagłówku i w menu telefonu – lekki fade zamiast skoku; z systemowym „ograniczeniem ruchu” bez animacji.
 - Odłożone: test Playwright reducedMotion (document.getAnimations()) – poza listą „Zmieniaj”; krzywa easingu – brak tokenu, użyto domyślnej; linki w stopce i na podstronach bez zmian.
+
+## P4-B – Intro mapy: krótkie i pomijalne
+- Wynik: OK; lint, typecheck, build zielone; Vitest 855/855 (nowy tests/unit/intro-session.test.tsx, 7 testów; timeline.test.ts bez zmian).
+- Commit: 9244fd8 (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Zrobione: timeline.ts – opcja compact, stała PHONE_DURATION_RATIO=0,6, helpery sessionStorage (try/catch); IntroOverlay – raz na sesję, telefon (<768 px) krócej, dotknięcie kończy intro.
+- Vercel: pierwsze wejście na telefonie – krótsze rysowanie, dotknięcie ekranu je przerywa; odświeżenie/powrót w tej samej karcie – mapa od razu; nowa karta pokazuje intro znów.
+- Odłożone: test dotyku (onPointerDown) w DOM – brak jsdom/e2e w liście „Zmieniaj”; sprawdzono tylko klasę pointer-events-auto. Etapy fill/annotate nie są renderowane przez overlay, skrócone tylko w logice.
