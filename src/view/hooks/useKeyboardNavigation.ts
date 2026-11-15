@@ -42,13 +42,15 @@ export function resolveKeyAction(e: KeyLike): KeyAction | null {
 
 /**
  * Globalne skróty (a11y): +/- zoom mapy, Escape, Alt+1/2/3 szczebel.
- * - Zoom: zdarzenie `atlas:zoom` ({ delta }) na window; nasłuch w mapie dopina osobne zadanie.
+ * - Zoom: zdarzenie `atlas:zoom` ({ delta }) na window.
  * - Szczebel: adres ?l= i `popstate`, który czyta useMainView (bez drugiego stanu).
  * - Escape: zamykanie profilu i okien obsługują ich własne nasłuchy; tu tylko rozpoznanie.
  */
 export function useKeyboardNavigation(): void {
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      // Mapa z fokusem obsługuje +/- sama (preventDefault) – bez podwójnego kroku.
+      if (e.defaultPrevented) return;
       const action = resolveKeyAction({
         key: e.key,
         code: e.code,

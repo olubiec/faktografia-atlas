@@ -202,3 +202,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: e941c07 ([N-02], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowy export-scene.ts (buildExportScene), stan scale w ShareDialog, przycisk aria-pressed w ShareControls, renderPng(scene, { scale }) skaluje kolko korekty.
 - Vercel: Pobierz i udostepnij > zaznacz "Wysoka rozdzielczość (2×)" > Pobierz obraz: PNG 2160x2700 (Post); bez zaznaczenia 1080x1350. Podglad bez zmian.
 - Odlozone: ShareDialog.tsx ma 298 linii (przed: 299) – skrocony tylko minimalnie; wzorce zrzutow okna trzeba odswiezyc w CI (nowy przycisk).
+
+## N-03 – Zoom mapy klawiszami + i −
+- Wynik: lint, typecheck, Vitest, build zielone; e2e keyboard-zoom (3 testy) zielone; camera.spec.ts: 3 z 6 czerwone, ale identycznie na czystym stanie bez moich zmian (sprawdzone przez stash) - wczesniejszy problem srodowiska/animacji, nie ruszany. Kontrola usuniec pusta.
+- Commit: patrz git log ([N-03], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowe: zoom-step.ts (nextZoom, ZOOM_STEP), useZoomEvents.ts; AtlasMap.tsx +2 linie; useKeyboardNavigation pomija zdarzenia z defaultPrevented (brak podwojnego kroku).
+- Vercel: kliknij w tlo strony (nie w mape), nacisnij + / - : mapa przybliza/oddala o pol kroku; w polu wyszukiwania + nic nie robi; z fokusem na mapie jeden krok.
+- Odlozone: nic z zakresu; do sprawdzenia osobno padajace 3 testy camera.spec.ts (poza zakresem N-03).

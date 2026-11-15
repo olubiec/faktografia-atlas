@@ -35,6 +35,7 @@ import { UnitTooltip } from '@/view/main/UnitTooltip';
 import { useIsMobile } from '@/view/hooks/useIsMobile';
 import { useProfile } from './hooks/useProfile';
 import { ProfilePortal } from './ProfilePortal';
+import { useZoomEvents } from './useZoomEvents';
 
 // Kolejność = kolejność rysowania: kolory wskaźnika, obrys wybranej jednostki, na wierzchu miejscowości.
 registerLayerFactory(choroplethLayerFactory);
@@ -128,6 +129,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     handleKeyDown,
     isAnimatingRef,
   } = useMapViewState(drillState.bbox, bounds);
+  useZoomEvents({ setCurrentViewState, limits, markUserMoved });
 
   const mainView = useMainView();
   const selectedLevel = selectedTeryt ? unitIndex.byTeryt.get(selectedTeryt)?.level ?? null : null;
