@@ -142,3 +142,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 60d4220 (gałąź claude/laughing-pasteur-8af8jz, bez PR). Spec istniał z 91bc2ef; poprawiono selektor arkusza profilu (dialog po aria-label), wydłużono oczekiwanie do 20 s (flaky przy równoległości) i zawężono mock do library/index.json.
 - Vercel: nic do klikania, brak zmian zachowania (tylko test).
 - Odłożone: nic. Uwaga: profile-mobile.spec.ts ma 2 sporadyczne błędy pod obciążeniem (istniejący test, nie ruszano).
+
+## W17-T03 – Strażnik stylu Kalka i korekta oraz limitu wielkości plików
+- Wynik: już zrobione wcześniej w commicie fd6da0c ([W17-T03]); tests/unit/style-guard.test.ts istnieje i przechodzi (3/3). Lint, typecheck, test, build zielone; kontrola usunięć względem origin/main pusta.
+- Commit: ten wpis w raporcie (poprzedni commit z testem: fd6da0c); gałąź claude/laughing-pasteur-8af8jz, bez PR.
+- Vercel: nic do klikania, brak zmian zachowania (tylko test).
+- Odłożone: nic nowego. Moja zaostrzona wersja testu (osobne reguły rounded, shadow, uppercase, __render, limit 220 linii z listą długu) zmieniałaby istniejący test, więc jej nie zostawiłem. Dług, który by wykryła: shadow-sm w Home.tsx, uppercase w 5 plikach, window.__renderProfileCompare, `rounded` w Rankings.tsx i 20 plików powyżej 220 linii.
