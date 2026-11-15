@@ -10,7 +10,7 @@ import {
   type ProfileCardData,
   type CompareCardData,
 } from '../../core/share/card';
-import type { ShareFormatKey } from '../../core/share/formats';
+import type { ShareFormatKey, ShareScale } from '../../core/share/formats';
 import {
   indicatorTableCsv,
   profileCsv,
@@ -24,6 +24,7 @@ import type { CompareRow } from '../../core/compare/compare';
 import { CardSvg } from './CardSvg';
 import { createMeasureFn, renderPng } from './render-png';
 import { shareFiles, downloadFile } from './share-file';
+import { buildExportScene } from './export-scene';
 import { ShareControls } from './ShareControls';
 
 export type ShareDialogData = {
@@ -69,6 +70,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
   const [selectedKind, setSelectedKind] = useState<CardKind>(defaultKind);
   const [selectedFormat, setSelectedFormat] = useState<ShareFormatKey>('post');
   const [selectedTheme, setSelectedTheme] = useState<CardTheme>('light');
+  const [scale, setScale] = useState<ShareScale>(1);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const activeKind = availableKinds.includes(selectedKind)
@@ -110,6 +112,8 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
     });
   }, [activeKind, activeCardData, selectedFormat, selectedTheme, measure]);
 
+  const exportScene = (k: CardKind, d: CardData) => // podgląd zostaje w skali 1
+    buildExportScene(k, d, selectedFormat, selectedTheme, { measure, scale });
   const canNativeShare =
     typeof navigator !== 'undefined' &&
     typeof navigator.canShare === 'function' &&
@@ -118,10 +122,9 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
   const handleDownloadPng = async () => {
     setIsProcessing(true);
     try {
-      const blob = await renderPng(scene);
+      const blob = await renderPng(exportScene(activeKind, activeCardData), { scale });
       const year = 'year' in activeCardData ? activeCardData.year : 2025;
-      const fileName = shareFileName('faktografia', [activeKind, selectedFormat, year], 'png');
-      const file = new File([blob], fileName, { type: 'image/png' });
+      const file = new File([blob], shareFileName('faktografia', [activeKind, selectedFormat, year], 'png'), { type: 'image/png' });
       downloadFile(file);
     } finally {
       setIsProcessing(false);
@@ -131,10 +134,9 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
   const handleShare = async () => {
     setIsProcessing(true);
     try {
-      const blob = await renderPng(scene);
+      const blob = await renderPng(exportScene(activeKind, activeCardData), { scale });
       const year = 'year' in activeCardData ? activeCardData.year : 2025;
-      const fileName = shareFileName('faktografia', [activeKind, selectedFormat, year], 'png');
-      const file = new File([blob], fileName, { type: 'image/png' });
+      const file = new File([blob], shareFileName('faktografia', [activeKind, selectedFormat, year], 'png'), { type: 'image/png' });
       await shareFiles([file], 'Faktografia Atlas');
     } finally {
       setIsProcessing(false);
@@ -151,11 +153,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
       for (const k of kindsToShare) {
         const cData = data[k];
         if (cData) {
-          const cScene = cardScene(k, cData, selectedFormat, selectedTheme, {
-            measure,
-            siteUrl: 'faktografia.pl',
-          });
-          const blob = await renderPng(cScene);
+          const blob = await renderPng(exportScene(k, cData), { scale });
           const year = 'year' in cData ? cData.year : 2025;
           const fileName = shareFileName('faktografia', [k, selectedFormat, year], 'png');
           files.push(new File([blob], fileName, { type: 'image/png' }));
@@ -163,9 +161,9 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
       }
 
       if (files.length === 0) {
-        const blob = await renderPng(scene);
-        const fileName = shareFileName('faktografia', [activeKind, selectedFormat, 2025], 'png');
-        files.push(new File([blob], fileName, { type: 'image/png' }));
+        const blob = await renderPng(exportScene(activeKind, activeCardData), { scale });
+        const name = shareFileName('faktografia', [activeKind, selectedFormat, 2025], 'png');
+        files.push(new File([blob], name, { type: 'image/png' }));
       }
 
       await shareFiles(files, 'Zestaw kart – Faktografia Atlas');
@@ -242,6 +240,8 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
             onSelectFormat={setSelectedFormat}
             selectedTheme={selectedTheme}
             onSelectTheme={setSelectedTheme}
+            scale={scale}
+            onSelectScale={setScale}
           />
 
           <p className="text-xs text-olowek text-center md:text-left">

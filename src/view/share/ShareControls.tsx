@@ -1,6 +1,6 @@
 import React from 'react';
 import type { CardKind, CardTheme } from '../../core/share/card';
-import type { ShareFormatKey } from '../../core/share/formats';
+import type { ShareFormatKey, ShareScale } from '../../core/share/formats';
 import { SHARE_FORMATS } from '../../core/share/formats';
 
 export interface ShareControlsProps {
@@ -11,6 +11,8 @@ export interface ShareControlsProps {
   onSelectFormat: (format: ShareFormatKey) => void;
   selectedTheme: CardTheme;
   onSelectTheme: (theme: CardTheme) => void;
+  scale?: ShareScale;
+  onSelectScale?: (scale: ShareScale) => void;
 }
 
 const FORMAT_LABELS: Record<ShareFormatKey, string> = {
@@ -35,6 +37,8 @@ export const ShareControls: React.FC<ShareControlsProps> = ({
   onSelectFormat,
   selectedTheme,
   onSelectTheme,
+  scale = 1,
+  onSelectScale,
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 max-w-full">
@@ -113,6 +117,22 @@ export const ShareControls: React.FC<ShareControlsProps> = ({
           })}
         </div>
       </div>
+
+      {/* Wysoka rozdzielczość */}
+      {onSelectScale && (
+        <button
+          type="button"
+          aria-pressed={scale === 2}
+          onClick={() => onSelectScale(scale === 2 ? 1 : 2)}
+          className={`md:col-span-3 min-h-[44px] min-w-[44px] px-3 py-2 text-xs font-medium border transition-colors ${
+            scale === 2
+              ? 'bg-tusz text-kalka border-tusz'
+              : 'bg-arkusz text-tusz border-linia hover:bg-kalka'
+          }`}
+        >
+          Wysoka rozdzielczość (2×)
+        </button>
+      )}
     </div>
   );
 };

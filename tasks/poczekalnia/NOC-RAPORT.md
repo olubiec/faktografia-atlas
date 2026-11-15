@@ -196,3 +196,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 0b4e277 (galaz claude/laughing-pasteur-8af8jz, bez PR). Stopka bierze fetchedAt z loadIndicatorValues('density') (pamiec podrecza), wiec brak drugiego pobrania density.json.
 - Vercel: wejdz na /rankingi, kliknij w naglowku "O projekcie" i "Rankingi"; stopka pokazuje "Dane GUS odświeżone", w zakladce Network density.json tylko raz.
 - Odlozone/odstep: funkcja loadFreshnessLabel jest w nowym src/core/freshness/freshness-label.ts, nie w DataFreshness.tsx - eksport funkcji z pliku komponentu daje ostrzezenie lint (only-export-components, --deny-warnings), a regul nie wolno oslabiac. Testy importuja ją stamtad.
+
+## N-02 – Eksport PNG 2x w oknie
+- Wynik: OK; lint, typecheck, Vitest (896), build, e2e share-scale + s19-share (3 testy) zielone; kontrola usuniec pusta.
+- Commit: patrz git log ([N-02], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowy export-scene.ts (buildExportScene), stan scale w ShareDialog, przycisk aria-pressed w ShareControls, renderPng(scene, { scale }) skaluje kolko korekty.
+- Vercel: Pobierz i udostepnij > zaznacz "Wysoka rozdzielczość (2×)" > Pobierz obraz: PNG 2160x2700 (Post); bez zaznaczenia 1080x1350. Podglad bez zmian.
+- Odlozone: ShareDialog.tsx ma 298 linii (przed: 299) – skrocony tylko minimalnie; wzorce zrzutow okna trzeba odswiezyc w CI (nowy przycisk).

@@ -48,7 +48,10 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-export async function renderPng(scene: CardScene): Promise<Blob> {
+export async function renderPng(
+  scene: CardScene,
+  { scale = 1 }: { scale?: number } = {},
+): Promise<Blob> {
   if (typeof document !== 'undefined' && document.fonts) {
     try {
       await document.fonts.ready;
@@ -121,7 +124,7 @@ export async function renderPng(scene: CardScene): Promise<Blob> {
         const cy = item.y + item.height / 2;
         const drawable = gen.ellipse(cx, cy, item.width, item.height, {
           stroke: item.color,
-          strokeWidth: 2.5,
+          strokeWidth: 2.5 * scale,
           roughness: 1.5,
           bowing: 1,
         });
@@ -129,7 +132,7 @@ export async function renderPng(scene: CardScene): Promise<Blob> {
         for (const set of drawable.sets) {
           const p = new Path2D(opsToPath(set.ops));
           ctx.strokeStyle = item.color;
-          ctx.lineWidth = 2.5;
+          ctx.lineWidth = 2.5 * scale;
           ctx.stroke(p);
         }
       }
