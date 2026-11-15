@@ -37,6 +37,7 @@ export function MobileMenuLinks({ onNavigate }: { onNavigate: () => void }) {
         const isActive = location.pathname.startsWith(link.to);
         return (
           <Link
+          viewTransition
             key={link.to}
             to={`${link.to}${location.search}`}
             onClick={onNavigate}
@@ -136,7 +137,7 @@ export function Header() {
 
   return (
     <header className="h-[56px] md:h-[72px] flex justify-between items-center px-4 md:px-8 border-b border-linia bg-kalka text-tusz relative z-20 shrink-0">
-      <Link to={`/${location.search}`} className="flex items-center min-h-[44px]">
+      <Link viewTransition to={`/${location.search}`} className="flex items-center min-h-[44px]">
         <img
           src={logoSrc}
           alt="Faktografia"
@@ -160,6 +161,7 @@ export function Header() {
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center gap-6 text-sm font-[500]">
         <Link
+          viewTransition
           to={`/${location.search}`}
           className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${isHomeActive ? 'font-bold text-korekta-tekst' : ''}`}
           aria-current={isHomeActive ? 'page' : undefined}
@@ -167,6 +169,7 @@ export function Header() {
           Mapa
         </Link>
         <Link
+          viewTransition
           to={`/rankingi${location.search}`}
           className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${isRankingsActive ? 'font-bold text-korekta-tekst' : ''}`}
           aria-current={isRankingsActive ? 'page' : undefined}
@@ -174,6 +177,7 @@ export function Header() {
           Rankingi
         </Link>
         <Link
+          viewTransition
           to={`/porownaj${location.search}`}
           className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${isCompareActive ? 'font-bold text-korekta-tekst' : ''}`}
           aria-current={isCompareActive ? 'page' : undefined}
@@ -181,6 +185,7 @@ export function Header() {
           Porównaj
         </Link>
         <Link
+          viewTransition
           to={`/biblioteka${location.search}`}
           className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${
             isLibraryActive ? 'font-bold text-korekta-tekst' : ''
@@ -190,12 +195,14 @@ export function Header() {
           Biblioteka
         </Link>
         <Link
+          viewTransition
           to={`/o-projekcie${location.search}`}
           className="hover:underline transition-colors py-2"
         >
           O projekcie
         </Link>
         <Link
+          viewTransition
           to={`/zrodla${location.search}`}
           className="hover:underline transition-colors py-2"
         >

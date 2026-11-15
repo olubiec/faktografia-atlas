@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./tokens.css";
+@import "./view-transitions.css";
 
 @theme {
   --color-kalka: var(--kalka);
