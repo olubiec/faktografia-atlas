@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useRef } from 'react';
 import { Header } from './Header';
 import { AnnotationProvider } from './annotation/AnnotationProvider';
 
@@ -11,7 +11,17 @@ const AtlasMap = lazy(() => import('./map/AtlasMap'));
 import { PortalSections } from './home/PortalSections';
 import { IntroOverlay } from './map/IntroOverlay';
 
+/**
+ * Na telefonie mapa przejmuje gesty dotyku, więc sekcje pod nią są trudne do znalezienia.
+ * Przycisk przewija do działów; bez animacji, gdy użytkownik wyłączył ruch.
+ */
+function scrollToPortal(target: HTMLElement | null) {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  target?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+}
+
 export function Home() {
+  const portalRef = useRef<HTMLDivElement>(null);
   return (
     <AnnotationProvider>
       <div className="h-screen h-dvh flex flex-col bg-kalka text-tusz overflow-hidden relative" style={{ overflowY: 'auto' }}>
@@ -26,9 +36,18 @@ export function Home() {
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-arkusz/90 border border-linia px-4 py-2 text-sm text-olowek pointer-events-none text-center shadow-sm whitespace-nowrap hidden md:block z-[60]">
             Przewiń w dół: Działy tematyczne · Rekordy Polski · Pojedynki miejsc · Biblioteka
           </div>
+          <button
+            type="button"
+            onClick={() => scrollToPortal(portalRef.current)}
+            className="md:hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-[60] inline-flex items-center justify-center gap-2 min-h-[44px] px-4 bg-arkusz border border-linia text-sm font-medium text-tusz whitespace-nowrap shadow-sm focus:outline-none focus:ring-2 focus:ring-tusz"
+          >
+            Działy tematyczne <span aria-hidden="true">↓</span>
+          </button>
         </main>
 
-        <PortalSections />
+        <div ref={portalRef}>
+          <PortalSections />
+        </div>
         <IntroOverlay />
       </div>
     </AnnotationProvider>
