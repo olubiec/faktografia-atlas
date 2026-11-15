@@ -1,6 +1,7 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { NavArrowUp, ShareAndroid } from 'iconoir-react';
 import { classColorToken } from '@/core/map/classes';
+import { formatValue } from '@/core/format/number';
 import type { ChoroplethData } from '@/view/map/hooks/useChoropleth';
 import type { MainView } from '@/view/map/hooks/useMainView';
 import type { RankedResult } from '@/core/ranking/ranking';
@@ -10,6 +11,48 @@ import { Icon } from '@/view/ui/Icon';
 import { useShareData } from '@/view/share/useShareData';
 import { LazyShareDialog } from '@/view/share/LazyShareDialog';
 import { IndicatorPanel } from './IndicatorPanel';
+
+// Selektor paska zgody (src/view/consent/ConsentBar.tsx) – czytany wyłącznie z DOM.
+const CONSENT_SELECTOR = '[role="region"][aria-label="Zgoda na analitykę"]';
+
+/** Zakres legendy: najmniejszy i największy próg z jednostką; null bez progów. */
+function formatLegendRange(breaks: number[], unit: string): string | null {
+  if (breaks.length === 0) return null;
+  const min = Math.min(...breaks);
+  const max = Math.max(...breaks);
+  if (min === max) return formatValue(min, unit);
+  return `${formatValue(min, unit)} – ${formatValue(max, unit)}`;
+}
+
+/** Podnosi pasek o wysokość paska zgody (zmienna --consent-offset), bo ten zasłania dół ekranu. */
+function useConsentOffset(barRef: RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const bar = barRef.current;
+    if (!bar || typeof document === 'undefined') return;
+
+    let observed: Element | null = null;
+    const sync = () => {
+      const consent = document.querySelector(CONSENT_SELECTOR);
+      if (consent !== observed) {
+        if (observed) resizeObserver?.unobserve(observed);
+        observed = consent;
+        if (consent) resizeObserver?.observe(consent);
+      }
+      const height = consent?.getBoundingClientRect().height ?? 0;
+      bar.style.setProperty('--consent-offset', `${Math.max(0, height)}px`);
+    };
+    const resizeObserver = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(sync) : null;
+    // Pasek zgody pojawia się i znika w DOM (po decyzji), więc śledzimy zmiany drzewa
+    const mutationObserver = new MutationObserver(sync);
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+    sync();
+
+    return () => {
+      mutationObserver.disconnect();
+      resizeObserver?.disconnect();
+    };
+  }, [barRef]);
+}
 
 export interface MobileIndicatorBarProps {
   view: MainView;
@@ -69,28 +112,41 @@ export function MobileIndicatorBar({
 
   const shareData = useShareData({ view, choropleth, ranking, index, selectedTeryt });
 
+  const barRef = useRef<HTMLElement | null>(null);
+  useConsentOffset(barRef);
+
+  const legendRange = choropleth ? formatLegendRange(choropleth.breaks, view.indicator.unit) : null;
+  const ariaLabel = `Wskaźnik: ${view.indicator.name}${view.year != null ? ` ${view.year}` : ''}${legendRange ? `, ${legendRange}` : ''}`;
+
   return (
     <>
       <aside
+        ref={barRef}
         aria-label="Panel wskaźnika"
         data-slot="mobile-indicator-bar"
+        style={{ transform: 'translateY(calc(var(--consent-offset, 0px) * -1))' }}
         className="w-full shrink-0 bg-arkusz text-tusz border-t border-linia z-20 min-h-[48px] pb-[env(safe-area-inset-bottom)] flex items-center"
       >
         <button
           type="button"
           onClick={() => setSheetOpen(true)}
           aria-expanded={isSheetOpen}
-          aria-label={`Wskaźnik: ${view.indicator.name}${view.year != null ? ` ${view.year}` : ''}`}
+          aria-label={ariaLabel}
           className="flex-1 min-w-0 min-h-[48px] px-3 py-2 flex items-center justify-between gap-2 text-left text-tusz hover:bg-linia/15 focus:outline-none focus-visible:ring-1 focus-visible:ring-tusz cursor-pointer rounded-none transition-colors"
         >
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            <span className="text-sm font-semibold text-tusz truncate">
-              {view.indicator.name}
-            </span>
-            {view.year != null && (
-              <span className="text-xs font-mono text-olowek shrink-0">
-                {view.year}
+          <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+            <div className="flex items-baseline gap-2 min-w-0">
+              <span className="text-sm font-semibold text-tusz line-clamp-2 break-words min-w-0">
+                {view.indicator.name}
               </span>
+              {view.year != null && (
+                <span className="text-xs font-mono text-olowek shrink-0">
+                  {view.year}
+                </span>
+              )}
+            </div>
+            {legendRange && (
+              <span className="text-xs text-olowek break-words">{legendRange}</span>
             )}
           </div>
 
@@ -129,7 +185,7 @@ export function MobileIndicatorBar({
         snapPoints={[0, 0.55, 1]}
         initialSnap={1}
         noBackdrop
-        title="Panel wskaźnika"
+        title="Panel wskaźnika"
       >
         <IndicatorPanel
           view={view}
