@@ -274,6 +274,6 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 ## N-14 – Arkusz profilu mierzy własne okno
 - Wynik: lint, typecheck, Vitest (951), build zielone; nowe e2e profile-sheet-inset (4 testy @S15) zielone, 3x z rzędu (--repeat-each=3: 56 zielonych w serii, reszta to profile-mobile.spec); kontrola usunięć pusta.
 - Hipoteza z zadania NIE potwierdziła się: testy (a)-(d) przechodzą też na starym kodzie (szew sheetInset dodany, selektor jeszcze stary); zawężenie zostawione, bo jest poprawne.
-- Commit: patrz git log [N-14] (galaza claude/laughing-pasteur-8af8jz, bez PR): test-seam.ts (sheetInset), ProfileSheetMobile.tsx (selektor po aria-label, escapeAttr z awaryjnym wariantem bez CSS.escape dla jsdom).
+- Commit: bcae96f (galaza claude/laughing-pasteur-8af8jz, bez PR): test-seam.ts (sheetInset), ProfileSheetMobile.tsx (selektor po aria-label, escapeAttr z awaryjnym wariantem bez CSS.escape dla jsdom).
 - Vercel: telefon - wybierz jednostkę z listy w panelu wskaźnika, mapa ma przesunąć się nad arkusz profilu; Rozwiń/Zwiń nie psuje położenia mapy.
 - Odłożono: profile-mobile.spec ma w tym środowisku 2-5 czerwonych testów (limit 5 s na wolnym renderingu) także bez moich zmian (stan wyjściowy), nie ruszałem.
