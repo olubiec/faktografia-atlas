@@ -18,3 +18,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Vercel: wklej link strony do komunikatora (Messenger/Slack) – powinien pokazać tytuł i opis; otwórz /robots.txt, /sitemap.xml i /site.webmanifest – powinny się wyświetlić.
 - Odłożone: w public/brand są tylko SVG. og:image wskazuje SVG logo, a większość komunikatorów go nie pokaże. Brakuje PNG 1200x630 (og:image) oraz ikon PNG 192 i 512 (manifest, instalacja na telefonie). Trzeba dodać te pliki.
 - theme-color i kolor tła w manifeście = #F8FAF9 (token --arkusz); manifest nie ma wariantu ciemnego.
+
+## P2-C – Strony Kontakt i Zastrzeżenie o danych
+- Testy: lint, typecheck, test (809/809), build zielone; e2e nie uruchamiane. Brak usuniętych plików względem main.
+- Zrobione: `src/view/pages/Contact.tsx` (autor, mailto, link do zgłoszeń GitHub) i `DataDisclaimer.tsx` (GUS BDL, CC BY 4.0, brak gwarancji, link do /kontakt), testy w `tests/unit/info-pages.test.tsx`.
+- Vercel: stron jeszcze nie widać, bo trasy dopisuje P2-D (App.tsx); po P2-D otwórz /kontakt i sprawdź mailto oraz link do zgłoszeń.
+- Odłożone: w stopce nie ma wskaźnika daty odświeżenia danych, a zastrzeżenie się do niego odwołuje; trzeba go dodać osobnym zadaniem. Trasa /kontakt jest założona w linku (P2-D).
