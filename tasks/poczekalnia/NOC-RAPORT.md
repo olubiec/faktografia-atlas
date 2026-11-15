@@ -81,3 +81,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Zrobione: domyślnie filtr „tylko z danymi” (brak p w adresie; p=0 = wszystkie), przycisk „Pokaż wszystkie (N)” w pl-PL, strona po 20 kart + „Pokaż więcej” 44 px, tytuł line-clamp-2, okruszki 2 ostatnie poziomy (pełne w title/aria-label), znacznik „dane gotowe”, podpowiedź przy pustym wyniku, opis „jeszcze niepobrane”. Nowy plik src/view/library/library-params.ts.
 - Vercel: /biblioteka (pierwsze 20 kart, same gotowe; „Pokaż wszystkie (N)”), /biblioteka?q=ludnosc, na 390 px bez poziomego przewijania.
 - Odłożone: test Playwright 390 px (wysokość <= 6000, scrollWidth <= 390) – nie ma go w liście „Zmieniaj”; „Wyczyść filtry” (LibraryFilters, istniejące testy) ustawia onlyReady=false, więc pokazuje wszystkie; tekst przy „Zamów ten wskaźnik” (OrderButton) bez zmian.
+
+## P3-D – Wskaźnik świeżości danych
+- Wynik: lint, typecheck, build zielone; Vitest 837/837 (w tym nowy tests/unit/freshness.test.ts).
+- Commit: ba36c80 (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Vercel: stopka na dole dowolnej strony, pod linijką CC BY 4.0 ma być „Dane GUS odświeżone: 19.10.2026”; po 60 dniach dopisek „(dane mogą być nieaktualne)”.
+- Źródło daty: public/data/values/density.json (fetchedAt), pobierane fetchem w runtime.
+- Odłożone: test komponentu z mockiem fetch dla efektu React (brak jsdom w środowisku node) – pokryte testem loadFreshness z mockiem + render tekstu; e2e nie dodawano.
