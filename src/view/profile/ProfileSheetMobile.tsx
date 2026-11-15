@@ -18,6 +18,12 @@ export interface ProfileSheetMobileProps {
   className?: string;
 }
 
+/** Ucieczka wartości do selektora; w środowisku bez CSS.escape (jsdom) tylko cudzysłów i ukośnik. */
+function escapeAttr(value: string): string {
+  if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') return CSS.escape(value);
+  return value.replace(/["\\]/g, '\\$&');
+}
+
 /**
  * Mobilny arkusz profilu jednostki (dolny, przeciągany).
  * Wyświetlany od dołu ekranu na komponentowym BottomSheet w trybie „bez tła” (noBackdrop),
@@ -33,6 +39,8 @@ export function ProfileSheetMobile({
   onClose,
   className,
 }: ProfileSheetMobileProps) {
+  const dialogTitle = profile.unit ? unitTitle(profile.unit) : `TERYT ${profile.teryt}`;
+
   useEffect(() => {
     if (!isOpen) {
       setSheetInset(0);
@@ -40,9 +48,11 @@ export function ProfileSheetMobile({
     }
 
     let styleObserver: MutationObserver | null = null;
+    // Własne okno arkusza (po tytule), bo w DOM bywa też zamykany arkusz wskaźnika
+    const selector = `[role="dialog"][aria-label="${escapeAttr(dialogTitle)}"]`;
 
     const updateInset = () => {
-      const dialogEl = document.querySelector<HTMLElement>('[role="dialog"]');
+      const dialogEl = document.querySelector<HTMLElement>(selector);
       if (dialogEl) {
         const rect = dialogEl.getBoundingClientRect();
         const visibleHeight = Math.max(0, window.innerHeight - rect.y);
@@ -52,7 +62,7 @@ export function ProfileSheetMobile({
     };
 
     const attachObserver = () => {
-      const dialogEl = document.querySelector<HTMLElement>('[role="dialog"]');
+      const dialogEl = document.querySelector<HTMLElement>(selector);
       if (dialogEl) {
         updateInset();
         styleObserver = new MutationObserver(updateInset);
@@ -87,11 +97,11 @@ export function ProfileSheetMobile({
       window.removeEventListener('resize', updateInset);
       setSheetInset(0);
     };
-  }, [isOpen]);
+  }, [isOpen, dialogTitle]);
 
   if (!isOpen) return null;
 
-  const title = profile.unit ? unitTitle(profile.unit) : `TERYT ${profile.teryt}`;
+  const title = dialogTitle;
 
   const handleClose = () => {
     writeUrlState({ u: null });

@@ -1,5 +1,6 @@
 import type { UnitLevel } from '../units/types';
 import { getRevealState } from '@/view/map/hooks/useChoropleth';
+import { getSheetInset } from '@/view/map/sheetInset';
 import { getCameraState, type CameraSeamState } from '@/view/map/hooks/useMapViewState';
 
 export type ChoroplethSeamState = {
@@ -28,6 +29,7 @@ export type AtlasState = {
   profileOpen: boolean;
   reveal?: RevealSeamState;
   camera?: CameraSeamState;
+  sheetInset?: number;
 };
 
 export type WindowWithAtlas = {
@@ -69,6 +71,7 @@ export function installAtlasSeam(
         profileOpen: state.profileOpen,
         reveal: typeof getRevealState === 'function' ? { ...getRevealState() } : { running: false, progress: 1 },
         camera: typeof getCameraState === 'function' ? { ...getCameraState() } : { animating: false, trace: [] },
+        sheetInset: getSheetInset(),
       });
     },
     set(_value: AtlasState) {
