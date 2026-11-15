@@ -59,3 +59,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Potrzebna decyzja: zgoda na aktualizację tych dwóch testów (lista hrefów 17 -> 19, menu 6 -> 8 z Kontakt i Zastrzeżeniem po „Prywatność”, usunięcie testu „nie zawiera Kontakt”); wtedy zmiany to SiteFooter.tsx (grupa Dokumentacja), MOBILE_MENU_LINKS w Header.tsx i nowy tests/unit/footer-menu-new-links.test.tsx.
 - Trasy /kontakt i /zastrzezenie istnieją (P2-C/P2-D), więc test „href to trasa z App.tsx” przejdzie.
 - Vercel: nic do klikania.
+
+## P3-A – Nocny pobór: PR i auto-merge
+- Wynik: OK, commit 794518c (tylko .github/workflows/fetch-data.yml); lint/typecheck/test/build zielone, brak usuniętych plików. actionlint niedostępny, YAML sprawdzony parserem.
+- Było już: permissions, concurrency, odrzucanie zmian samego fetchedAt (revert-noise), kontrakt przed PR. Dodano: tytuł „Dane GUS: odświeżenie RRRR-MM-DD”, gh pr merge --auto --squash, issue z linkiem do przebiegu przy błędzie tworzenia PR.
+- Scenariusze: brak zmian = koniec bez commitu/PR; zmiana = PR + auto-merge; błąd kontraktu = brak push/PR, issue nocne; błąd sieci = fetch pada, issue nocne.
+- Vercel/GitHub: Actions → Fetch data → Run workflow (workflow_dispatch) po scaleniu; sprawdź PR „Dane GUS: odświeżenie…” z włączonym auto-merge.
+- Odłożone: auto-merge wymaga włączonego „Allow auto-merge” w Settings repo i reguł gałęzi; nie dodano testu workflow (plik spoza listy).
