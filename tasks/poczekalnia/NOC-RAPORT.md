@@ -75,3 +75,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Wniosek: pobór działa, ostatni udany przebieg: Fetch data 15.11 09:01, Fetch library 15.11 14:34. Do rozstrzygnięcia: PR #451 czeka na scalenie (sprawdź auto-merge/reguły).
 - Vercel: nic do klikania; na GitHubie: PR #451 – scal lub sprawdź, czemu auto-merge nie zadziałał.
 - Odłożone: niczego (zadanie tylko-do-odczytu; tabela ma 5 pozycji, mniej niż limit 20 wierszy).
+
+## P3-C – Biblioteka: domyślnie to, co działa
+- Wynik: OK, commit 7315fb1; lint/typecheck/test/build zielone, brak usuniętych plików. Nowy test tests/unit/library-view.test.tsx (7 testów).
+- Zrobione: domyślnie filtr „tylko z danymi” (brak p w adresie; p=0 = wszystkie), przycisk „Pokaż wszystkie (N)” w pl-PL, strona po 20 kart + „Pokaż więcej” 44 px, tytuł line-clamp-2, okruszki 2 ostatnie poziomy (pełne w title/aria-label), znacznik „dane gotowe”, podpowiedź przy pustym wyniku, opis „jeszcze niepobrane”. Nowy plik src/view/library/library-params.ts.
+- Vercel: /biblioteka (pierwsze 20 kart, same gotowe; „Pokaż wszystkie (N)”), /biblioteka?q=ludnosc, na 390 px bez poziomego przewijania.
+- Odłożone: test Playwright 390 px (wysokość <= 6000, scrollWidth <= 390) – nie ma go w liście „Zmieniaj”; „Wyczyść filtry” (LibraryFilters, istniejące testy) ustawia onlyReady=false, więc pokazuje wszystkie; tekst przy „Zamów ten wskaźnik” (OrderButton) bez zmian.
