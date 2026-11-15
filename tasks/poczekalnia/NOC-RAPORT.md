@@ -45,3 +45,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Poza listą „Zmieniaj”: dopisałem /kontakt i /zastrzezenie do public/sitemap.xml (wymaga tego istniejący meta.test.ts).
 - Odłożone: ograniczenie tras /__test/* oraz /design do DEV/VITE_E2E (e2e wchodzą na nie w buildzie produkcyjnym; wymaga zmiany playwright.config.ts/CI). Wskaźnika daty odświeżenia danych w stopce nie dodano.
 - Vercel: otwórz /kontakt, /zastrzezenie oraz losowy adres (404 z linkiem do strony głównej); strony ładują się z krótkim pustym polem.
+
+## P2-F – vercel.json: prawdziwy 404
+- Wynik: ZABLOKOWANE, vercel.json i testy bez zmian (komend nie uruchamiano, brak usuniętych plików).
+- Powód: rewrites w vercel.json nie mają pola statusu, więc „index.html z kodem 404” się nie da. Status ma tylko legacy `routes`, ale nie łączy się z `headers`/`rewrites` (a CSP musi zostać). Zadanie każe w takim razie opisać alternatywę i stanąć.
+- Alternatywy: (a) rewrites tylko dla znanych tras (+ /design, /__test/*, /biblioteka/:id) bez catch-all: nieznany adres daje prawdziwe 404, ale ze zwykłą stroną Vercel; (b) to samo plus public/404.html (Vercel serwuje go ze statusem 404), wymaga pliku spoza listy „Zmieniaj” i osobnej strony bez SPA; (c) zostawić SPA-fallback (200) i polegać na `noindex` z P2-D.
+- Potrzebna decyzja: wybór (a), (b) lub (c). Test vercel-routes.test.ts (trasy z App.tsx pasują, „/nie-ma” nie) pasuje do (a)/(b).
+- Vercel: nic do klikania.
