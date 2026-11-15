@@ -88,3 +88,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Vercel: stopka na dole dowolnej strony, pod linijką CC BY 4.0 ma być „Dane GUS odświeżone: 19.10.2026”; po 60 dniach dopisek „(dane mogą być nieaktualne)”.
 - Źródło daty: public/data/values/density.json (fetchedAt), pobierane fetchem w runtime.
 - Odłożone: test komponentu z mockiem fetch dla efektu React (brak jsdom w środowisku node) – pokryte testem loadFreshness z mockiem + render tekstu; e2e nie dodawano.
+
+## P3-E – Mniejsza waga startowa
+- Wynik: OK; lint, typecheck, build zielone; Vitest 842/842 (nowy tests/unit/startup-weight.test.ts, 5 testów).
+- Ustalenie: kod już spełniał wymóg, więc bez zmian w src. tweakpane tylko przez import() w main.tsx przy ?tune (chunk TunePanel 154 kB, 32 kB gzip, poza głównym index 581 kB); index.json biblioteki ładuje wyłącznie loadLibraryIndex z leniwych stron Library*; Home go nie dotyka. Test to pilnuje (analiza importów).
+- Vercel: otwórz stronę główną (bez ?tune) – brak żądania index.json w zakładce Sieć; /biblioteka – jedno żądanie index.json; /?tune – panel działa.
+- Odłożone: pomiar żądań i bajtów na Home przez Playwright (page.on('response')) – wymaga testu e2e spoza listy „Zmieniaj”; pomiar „przed/po” trywialny, bo zmian w kodzie nie było. Commit: 8a63d7c.
