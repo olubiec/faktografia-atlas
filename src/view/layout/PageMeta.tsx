@@ -1,3 +1,7 @@
+const DOMAIN = 'https://faktografia.eu';
+const DEFAULT_DESCRIPTION =
+  'Interaktywna mapa Polski z danymi GUS: województwa, powiaty, gminy i miejscowości. Sprawdź, porównaj i pobierz liczby w jednym miejscu.';
+
 export interface PageMetaProps {
   title: string;
   description?: string;
@@ -10,8 +14,8 @@ export interface PageMetaProps {
  */
 export function PageMeta({
   title,
-  description,
-  canonical,
+  description = DEFAULT_DESCRIPTION,
+  canonical = DOMAIN + (typeof location === 'undefined' ? '/' : location.pathname),
   ogType = 'website',
 }: PageMetaProps) {
   const fullTitle = title.includes('Faktografia') ? title : `${title} – Faktografia Atlas`;
@@ -19,10 +23,11 @@ export function PageMeta({
   return (
     <>
       <title>{fullTitle}</title>
-      {description && <meta name="description" content={description} />}
-      {canonical && <link rel="canonical" href={canonical} />}
+      <meta name="description" content={description} />
+      <link rel="canonical" href={canonical} />
       <meta property="og:title" content={fullTitle} />
-      {description && <meta property="og:description" content={description} />}
+      <meta property="og:description" content={description} />
+      <meta property="og:url" content={canonical} />
       <meta property="og:type" content={ogType} />
     </>
   );

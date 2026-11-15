@@ -1,0 +1,12 @@
+{
+  "name": "Faktografia Atlas",
+  "short_name": "Faktografia",
+  "lang": "pl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAF9",
+  "theme_color": "#F8FAF9",
+  "icons": [
+    { "src": "/brand/faktografia-favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
