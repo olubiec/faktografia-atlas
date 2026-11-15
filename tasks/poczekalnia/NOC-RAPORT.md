@@ -38,3 +38,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Potrzebna decyzja: zgoda na zmianę jednego z: playwright.config.ts (build z VITE_E2E=true), ci.yml/update-snapshots.yml, package.json (np. skrypt build:e2e) – wszystko poza listą „Zmieniaj”.
 - Ponadto: NotFound jest dziś w src/view/NotFound.tsx (używany w tests/unit/site-layout.test.tsx), zadanie wskazuje src/view/pages/NotFound.tsx; trzeba zdecydować, czy przenieść (re-export), bo istniejącego testu nie wolno zmieniać.
 - Vercel: nic do klikania. Odłożone całe zadanie (trasy /kontakt, /zastrzezenie, 404 z noindex, ErrorBoundary, lazy loading, rozmiar chunku).
+
+## P2-D (ponowne, zawężone) – Trasy, 404, ErrorBoundary, lazy loading
+- Testy: lint, typecheck, test (820/820), build zielone; e2e nie uruchamiane. Brak usuniętych plików względem main.
+- Zrobione: trasy /kontakt i /zastrzezenie, 404 z `noindex` (NotFound zostaje w src/view/NotFound.tsx), ErrorBoundary z przyciskiem „Wczytaj ponownie” (44 px, console.error), React.lazy + Suspense dla stron poza Home, testy w tests/unit/app-routes.test.tsx. Główny chunk: 1 729 554 B (~1,73 MB) -> 579,94 kB (gzip 207 kB).
+- Poza listą „Zmieniaj”: dopisałem /kontakt i /zastrzezenie do public/sitemap.xml (wymaga tego istniejący meta.test.ts).
+- Odłożone: ograniczenie tras /__test/* oraz /design do DEV/VITE_E2E (e2e wchodzą na nie w buildzie produkcyjnym; wymaga zmiany playwright.config.ts/CI). Wskaźnika daty odświeżenia danych w stopce nie dodano.
+- Vercel: otwórz /kontakt, /zastrzezenie oraz losowy adres (404 z linkiem do strony głównej); strony ładują się z krótkim pustym polem.
