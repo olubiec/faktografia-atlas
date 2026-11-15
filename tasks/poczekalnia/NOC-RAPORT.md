@@ -115,3 +115,11 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Zrobione: BottomSheet domyślnie [0, 0.25, 0.6, 0.95], start na 25%; przycisk Rozwiń/Zwiń liczy najwyższy punkt z kontekstu (nie na sztywno 2); usunięty console.log; reduced-motion, aria-label i safe-area były i są testowane.
 - Vercel: miejsca używające domyślnych punktów (MobileIndicatorBar, ProfilePortal) – arkusz startuje nisko, mapa widoczna.
 - Odłożone: ProfileSheetMobile.tsx nadal przekazuje [0,0.4,1] (plik ekranu spoza „Zmieniaj”); test Playwright 390x844 (>=35% mapy) – poza listą „Zmieniaj”.
+
+## P4-D – Badanie biblioteki animacji (tylko raport)
+- Wynik: OK (bez zmian w kodzie; lint/typecheck/test nie były potrzebne). Rekomendacja: NIE dodawać pakietu `motion`.
+- Dane (npm view / npm pack --dry-run): motion 14.14.0, MIT, repo motiondivision/motion, peer react ^18||^19, zależy od framer-motion 14.14.0; tarball 261 kB (motion) + 2,3 MB (framer-motion), pobrania tygodniowo 34,4 mln (registry.npmjs.org/-/v1/search); api.npmjs.org zablokowane przez proxy.
+- Obecne animacje (kontury, VT, arkusz, zakreślenia) działają na CSS + View Transitions + tokenach; ELEMENTY.md ma już skreślony wpis motion (usunięty 24.10.2026, brak importów).
+- Commit: (ten wpis, tylko NOC-RAPORT.md; bez PR).
+- Vercel: nic do klikania, brak zmian zachowania.
+- Odłożone: rozmiar paczki po zbudowaniu (bundlephobia niedostępne bez sieci), wpis do ELEMENTY.md (tylko w razie decyzji „tak”).
