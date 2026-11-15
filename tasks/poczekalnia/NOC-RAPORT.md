@@ -178,3 +178,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: patrz git log ([W18-P02], gałąź claude/laughing-pasteur-8af8jz, bez PR). Kartogram już brał tokeny ciemne (choropleth.ts, useMapColors); dodano tylko token obrysu granic `granica` (w ciemnym: olowek z alfą, w jasnym bez zmian = kalka) w admin.ts i choropleth.ts.
 - Vercel: przełącz Motyw na ciemny w nagłówku -> mapa i kartogram w ciemnych barwach, granice jednostek wyraźnie jaśniejsze od tła; jasny motyw wygląda jak dotąd.
 - Odłożone: asercja liczbowa kontrastu obrysu (wymaga rozszerzenia szwu window.__atlas w src/core/map/test-seam.ts, poza „Zmieniaj"); test filtruje szum „No actors found" (biblioteka mapy bez GPU). Zrzuty wzorcowe do odświeżenia w CI nie dotyczą.
+
+## W18-P05 – Eksport kart wysokiej rozdzielczosci
+- Wynik: OK; lint, typecheck, Vitest (875, w tym nowy share-retina.test.ts), build zielone; kontrola usuniec wzgledem origin/main pusta.
+- Commit: 7d3486b (galaz claude/laughing-pasteur-8af8jz, bez PR). Dodano ShareScale i scaleFormat (formats.ts) oraz scaleCardScene i opcje scale 1|2 w cardScene (card.ts); scena bazowa liczona jak dotad, potem skalowana dokladnie x2 (pozycje, fonty, obrysy, sciezki), wiec proporcje safe area i tokenow sa bez zmian.
+- Vercel: brak zmiany widocznej; UI jeszcze nie przekazuje scale.
+- Odlozone: podpiecie scale w src/view/share (render-png.ts, ShareDialog) i przelacznik 2x w UI - poza listą "Zmieniaj".
