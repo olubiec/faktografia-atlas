@@ -245,3 +245,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: af7e5a3 (galaz claude/laughing-pasteur-8af8jz, bez PR): resizeCameraAction + 'retarget' w useMapViewState (cel podmieniany w biegnacej animacji, start przeliczany bez skoku).
 - Vercel: otworz profil (?u=12) na komputerze, kliknij „Wroc": oddalenie ma isc plynnie, bez skoku przy znikaniu kolumny.
 - Odlozono: w srodowisku profil wczytuje sie PO koncu animacji, wiec skok robi galaz 'instant' (to jest przyczyna padania camera.spec test 1: 0 wartosci posrednich, slad konczy sie skokiem 8.04 -> 7.38). Wymaga lagodnego dojazdu po animacji (poza zakresem). Warunek „krok <= 60%” pominiety (klatka >1 s bez GPU). camera.spec x3 nie przeszedl w calosci (srodowisko bardzo wolne).
+
+## N-10 – Start: równoległe pobieranie danych mapy i profilu
+- Wynik: OK; lint, typecheck, Vitest, build zielone; startup-prefetch (unit + 4 testy e2e @S99), perf-budget, navigation-and-budgets, freshness-single-fetch: 10/10 zielone; kontrola usunięć pusta.
+- Commit: 092518b (galaz claude/laughing-pasteur-8af8jz, bez PR): startupPrefetch w src/core/data/startup-prefetch.ts, wywołanie w src/main.tsx przed render.
+- Vercel: otwórz na telefonie link /?u=12 - arkusz profilu powinien pojawić się szybciej, mapa widoczna nad nim.
+- Odłożono: diagnostyka z pkt 5 niepełna - "przed" nie mierzone; "po" (profile-mobile + mobile-sheet-map-visible, x3, 4 workery): 24 przeszły, wystąpiły też błędy (exit 1), dokładnej liczby nie zdążyłem odczytać (obcięty wynik). Do powtórzenia przy PR.
