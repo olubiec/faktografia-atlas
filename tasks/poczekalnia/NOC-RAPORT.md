@@ -263,3 +263,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 099fe17 (galaz claude/laughing-pasteur-8af8jz, bez PR): ranking-options.ts (czyste funkcje), Rankings.tsx (listy sterowane, „Wczytuję dane…”, „Brak danych dla tego wyboru.”).
 - Vercel: /rankingi - zmień Dział na „Pieniądze”, poziom na „Powiaty”, rok na najstarszy; lista i „Najwyżej:” zmieniają się, jednostka miary się zgadza.
 - Odłożono: a11y-matrix.spec (trasa /rankingi) pada tak samo także bez moich zmian (stan wyjściowy), nie ruszałem. Nazwy wskaźników w <option> są w atrybucie label, bo istniejący test rankings-and-compare-pages szuka getByText(/mediana/i) i trafiałby w „Mediana wieku”.
+
+## N-13 – Geometria na telefonie: pozostałe strony
+- Wynik: OK; lint, typecheck, Vitest, build zielone; nowy mobile-geometry-pages.spec (14 testów @S21) + editorial-pages, a11y-matrix, compare-page-p1b zielone; kontrola usunięć pusta.
+- Commit: 992f220 (galaz claude/laughing-pasteur-8af8jz, bez PR): tests/e2e/mobile-geometry-pages.spec.ts, Sources.tsx (linki źródła/licencji min-h 44 px).
+- Naruszenia przed poprawką: tylko /zrodla (5 linków wys. 17 px w <dd>, 360 i 390 px); reszta tras czysta.
+- Vercel: /zrodla na telefonie - linki „Źródło”/„Licencja” mają duże pole dotyku, nic nie wychodzi poza ekran.
+- Odłożono: library-variable.spec „wejście = dokładnie 1 żądanie spisu i 1 żądanie wartości” pada też bez moich zmian (stan wyjściowy), nie ruszałem. Brak zrzutów do odświeżenia.
