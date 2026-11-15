@@ -4,6 +4,11 @@ import { cn } from '@/lib/utils';
 import { Icon } from '@/view/ui/Icon';
 import { Xmark, NavArrowUp, NavArrowDown } from 'iconoir-react';
 
+/** Punkty zatrzymania: zamknięty, niski (start, mapa widoczna), średni, prawie pełny. */
+const DEFAULT_SNAP_POINTS = [0, 0.25, 0.6, 0.95];
+/** Start na pierwszym punkcie otwartym (indeks 1 = 25%). */
+const DEFAULT_INITIAL_SNAP = 1;
+
 export interface BottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
@@ -20,16 +25,13 @@ function SheetHeaderControls({
 }: {
   onClose: () => void;
 }) {
-  const { currentSnap, snapTo } = Sheet.useContext();
-  const isExpanded = currentSnap === 2;
+  const { currentSnap, snapTo, snapPoints } = Sheet.useContext();
+  // Ostatni indeks = najwyższy punkt; środkowy otwarty punkt to cel zwinięcia
+  const lastIndex = Math.max((snapPoints?.length ?? 3) - 1, 1);
+  const isExpanded = currentSnap === lastIndex;
 
   const handleToggleExpand = () => {
-    console.log('[BottomSheet] handleToggleExpand CALLED! currentSnap =', currentSnap, 'isExpanded =', isExpanded);
-    if (isExpanded) {
-      snapTo(1);
-    } else {
-      snapTo(2);
-    }
+    snapTo(isExpanded ? Math.max(lastIndex - 1, 1) : lastIndex);
   };
 
   return (
@@ -94,8 +96,8 @@ function SheetContentBody({
 export function BottomSheet({
   isOpen,
   onClose,
-  snapPoints = [0, 0.4, 1],
-  initialSnap = 1,
+  snapPoints = DEFAULT_SNAP_POINTS,
+  initialSnap = DEFAULT_INITIAL_SNAP,
   title,
   children,
   noBackdrop = false,
