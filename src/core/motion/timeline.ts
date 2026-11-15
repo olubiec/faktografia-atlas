@@ -18,6 +18,35 @@ export interface MotionTokens {
 export interface BuildIntroTimelineOptions {
   reducedMotion: boolean;
   motion: MotionTokens;
+  /** Wersja skrócona (telefon). Domyślnie wyłączona. */
+  compact?: boolean;
+}
+
+/** Telefon: czas całkowity intra <= 0,6 × czas na desktopie. */
+export const PHONE_DURATION_RATIO = 0.6;
+
+/** Szerokość (px), poniżej której uznajemy ekran za telefon. */
+export const PHONE_MAX_WIDTH = 768;
+
+/** Klucz w sessionStorage: intro pokazujemy raz na sesję. */
+export const INTRO_SESSION_KEY = 'atlas-intro-seen';
+
+/** Czy intro było już pokazane w tej sesji (błąd storage = traktuj jak „nie”). */
+export function hasSeenIntro(storage: Storage | undefined): boolean {
+  try {
+    return storage?.getItem(INTRO_SESSION_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+/** Zapamiętuje pokazanie intra w sesji (ciche przy błędzie storage). */
+export function markIntroSeen(storage: Storage | undefined): void {
+  try {
+    storage?.setItem(INTRO_SESSION_KEY, '1');
+  } catch {
+    // storage niedostępny – intro po prostu może pokazać się ponownie
+  }
 }
 
 /**
@@ -28,6 +57,7 @@ export interface BuildIntroTimelineOptions {
 export function buildIntroTimeline({
   reducedMotion,
   motion,
+  compact = false,
 }: BuildIntroTimelineOptions): TimelineStage[] {
   if (reducedMotion) {
     return [
@@ -37,9 +67,11 @@ export function buildIntroTimeline({
     ];
   }
 
-  const outlineDuration = motion.drawOutline;
-  const fillDuration = motion.base;
-  const annotateDuration = motion.slow;
+  // floor gwarantuje, że suma etapów nie przekroczy PHONE_DURATION_RATIO × desktop
+  const scale = (ms: number) => (compact ? Math.floor(ms * PHONE_DURATION_RATIO) : ms);
+  const outlineDuration = scale(motion.drawOutline);
+  const fillDuration = scale(motion.base);
+  const annotateDuration = scale(motion.slow);
 
   const outlineStart = 0;
   const fillStart = outlineStart + outlineDuration;

@@ -1,36 +1,59 @@
 import { useState, useEffect } from 'react';
 import tokens from '@/../config/tokens.json';
+import {
+  PHONE_MAX_WIDTH,
+  buildIntroTimeline,
+  hasSeenIntro,
+  markIntroSeen,
+} from '@/core/motion/timeline';
 
-// Czysta logika osi czasu animacji wejściowej (zgodna z timeline.ts)
+// Decyzja o pokazaniu intra: raz na sesję, nie przy e2e ani reduced-motion
+function decideVisible(): boolean {
+  if (typeof window === 'undefined') return false;
+  if (window.location.search.includes('e2e')) return false;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+  let storage: Storage | undefined;
+  try {
+    storage = window.sessionStorage;
+  } catch {
+    storage = undefined;
+  }
+  if (hasSeenIntro(storage)) return false;
+  markIntroSeen(storage);
+  return true;
+}
+
+// Intro mapy: raz na sesję, skrócone na telefonie, dotknięcie je kończy
 export function IntroOverlay() {
-  const hasE2e = typeof window !== 'undefined' && window.location.search.includes('e2e');
-  const reducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const initialVisibility = !(hasE2e || reducedMotion);
-
-  const [isVisible, setIsVisible] = useState(initialVisibility);
+  const [isVisible, setIsVisible] = useState(decideVisible);
   const [stage, setStage] = useState<'outline' | 'done'>('outline');
-  const shouldAnimate = initialVisibility;
+  const shouldAnimate = isVisible;
+  const compact = typeof window !== 'undefined' && window.innerWidth < PHONE_MAX_WIDTH;
+  const timeline = buildIntroTimeline({ reducedMotion: false, motion: tokens.motion, compact });
+  const outlineDuration = timeline[0].duration;
 
   useEffect(() => {
-    if (!initialVisibility) {
-      return;
-    }
-
-    const duration = tokens.motion.drawOutline;
+    if (!isVisible) return;
     const timer = setTimeout(() => {
       setStage('done');
       setIsVisible(false);
-    }, duration + 50); // slight buffer
-
+    }, outlineDuration + 50); // slight buffer
     return () => clearTimeout(timer);
-  }, [initialVisibility]);
+  }, [isVisible, outlineDuration]);
 
   if (!isVisible) return null;
 
-  const outlineDuration = tokens.motion.drawOutline;
+  // Dotknięcie kończy intro od razu
+  const skip = () => {
+    setStage('done');
+    setIsVisible(false);
+  };
 
   return (
-    <div className="absolute inset-0 z-[50] pointer-events-none flex items-center justify-center overflow-hidden">
+    <div
+      className="absolute inset-0 z-[50] pointer-events-auto flex items-center justify-center overflow-hidden"
+      onPointerDown={skip}
+    >
       <svg
         viewBox="0 0 900 800"
         className="w-full h-full object-contain"
