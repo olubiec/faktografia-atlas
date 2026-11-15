@@ -23,7 +23,7 @@ Kodu z cudzych repozytoriów nie kopiujemy (poziom E tylko z licencją i atrybuc
 | zod | pakiet | https://www.npmjs.com/package/zod | 4.6.7 | MIT | sprawdzanie plików danych | nie | 2026-10-16 |
 | p-throttle | pakiet | https://www.npmjs.com/package/p-throttle | 8.1.1 | MIT | limit zapytań do BDL (robot) | nie | 2026-10-16 |
 | tweakpane | pakiet | https://www.npmjs.com/package/tweakpane | 4.0.5 | MIT | panel `?tune` | nie | 2026-10-16 |
-| posthog-js | pakiet | https://www.npmjs.com/package/posthog-js | 1.438.13 | Apache-2.0 AND MIT | statystyki po zgodzie (region EU) | nie | 2026-10-16 |
+| posthog-js | pakiet | https://www.npmjs.com/package/posthog-js | 1.438.13 | Apache-2.0 AND MIT | statystyki po zgodzie (region EU, host eu.i.posthog.com; tylko zdarzenie „search”, bez trwałego ID, bez nagrywania sesji) | nie | 2026-10-16 |
 | @fontsource/atkinson-hyperlegible-next, -mono | zasób (czcionka) | https://fontsource.org | 5.3.0 | OFL-1.1 | kroje strony | licencja w paczce | 2026-10-16 |
 
 ## Pakiety nieużywane – usunięte (zadanie W0.1, fala F1, 2026-10-24)
@@ -62,6 +62,6 @@ Kodu z cudzych repozytoriów nie kopiujemy (poziom E tylko z licencją i atrybuc
 |---|---|---|
 | GitHub (repo publiczne, Actions) | kod, CI, roboty danych | Secret scanning i push protection włączone |
 | Vercel (Hobby) | hosting i podgląd PR | tylko użycie niekomercyjne |
-| PostHog (EU) | statystyki wyszukiwań po zgodzie | klucz projektu publiczny z założenia; jeszcze niepodłączony |
+| PostHog (EU) | statystyki wyszukiwań po zgodzie | klucz projektu publiczny z założenia; jeszcze niepodłączony; konfiguracja `POSTHOG_CONFIG` w `src/core/consent/analytics.ts` |
 | Jules | wykonawca zadań | – |
 | CodeRabbit | komentarze do PR | darmowy dla repo publicznego |

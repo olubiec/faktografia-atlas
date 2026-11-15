@@ -1,6 +1,26 @@
 import { readConsent, canLoadAnalytics } from './consent';
 import type posthogJs from 'posthog-js';
 
+/** Maksymalna długość wysyłanej frazy. */
+const MAX_QUERY_LENGTH = 100;
+
+/**
+ * Opcje PostHog przyjazne prywatności: bez trwałego identyfikatora (pamięć karty),
+ * bez nagrywania sesji, ankiet i zapytań o flagi; tylko zdarzenie „search”.
+ */
+export const POSTHOG_CONFIG = {
+  api_host: 'https://eu.i.posthog.com',
+  autocapture: false,
+  capture_pageview: false,
+  capture_pageleave: false,
+  persistence: 'memory',
+  disable_session_recording: true,
+  disable_surveys: true,
+  advanced_disable_flags: true,
+  person_profiles: 'identified_only',
+  ip: false,
+} as const;
+
 let posthogInstance: typeof posthogJs | null = null;
 let currentKey: string | null = null;
 
@@ -29,11 +49,7 @@ export async function startAnalytics(
     const posthogModule = await import('posthog-js');
     const posthog = posthogModule.default ?? posthogModule;
 
-    posthog.init(normalizedKey, {
-      api_host: 'https://eu.i.posthog.com',
-      autocapture: false,
-      capture_pageview: false,
-    });
+    posthog.init(normalizedKey, { ...POSTHOG_CONFIG });
 
     posthogInstance = posthog;
     currentKey = normalizedKey;
@@ -51,12 +67,30 @@ export function trackSearch(query: string): void {
     return;
   }
 
-  const cleanQuery = query.trim();
+  const cleanQuery = query.trim().slice(0, MAX_QUERY_LENGTH);
   if (!cleanQuery) {
     return;
   }
 
+  // Frazy podobne do e-maila lub numeru telefonu/PESEL nie wychodzą z przeglądarki
+  if (cleanQuery.includes('@') || /\d{9,}/.test(cleanQuery)) {
+    return;
+  }
+
   posthogInstance.capture('search', { query: cleanQuery });
+}
+
+/**
+ * Zatrzymuje analitykę po cofnięciu zgody: wyłącza wysyłanie, czyści tożsamość
+ * i zeruje stan. Do podpięcia w src/view/consent przy zmianie zgody na „denied”.
+ */
+export function stopAnalytics(): void {
+  if (posthogInstance) {
+    posthogInstance.opt_out_capturing();
+    posthogInstance.reset();
+  }
+  posthogInstance = null;
+  currentKey = null;
 }
 
 /**
