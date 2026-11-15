@@ -251,3 +251,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 092518b (galaz claude/laughing-pasteur-8af8jz, bez PR): startupPrefetch w src/core/data/startup-prefetch.ts, wywołanie w src/main.tsx przed render.
 - Vercel: otwórz na telefonie link /?u=12 - arkusz profilu powinien pojawić się szybciej, mapa widoczna nad nim.
 - Odłożono: diagnostyka z pkt 5 niepełna - "przed" nie mierzone; "po" (profile-mobile + mobile-sheet-map-visible, x3, 4 workery): 24 przeszły, wystąpiły też błędy (exit 1), dokładnej liczby nie zdążyłem odczytać (obcięty wynik). Do powtórzenia przy PR.
+
+## N-11 – Kod podstrony ładuje się po najechaniu lub fokusie na link
+- Wynik: OK; lint, typecheck, Vitest (941), build zielone; route-chunks.test.ts + route-prefetch.spec (2 testy @S99), perf-budget, main-menu-links, navigation-and-budgets: 15/15 zielone; kontrola usunięć pusta.
+- Commit: patrz git log ([N-11], galaz claude/laughing-pasteur-8af8jz, bez PR): route-chunks.ts (routeChunks, routeKeyFromHref, prefetchRoute), App.tsx (usePrefetchOnIntent: pointerover + focusin, pomija saveData).
+- Vercel: na komputerze najedź na „Rankingi” w nagłówku i kliknij - strona bez białego mignięcia; to samo z Tab na „Porównaj”.
+- Odłożono: lazy dla Library zostaje z literalnym importem w App.tsx (wymaga tego istniejący startup-weight.test.ts); to ten sam moduł/chunk co w routeChunks, więc prefetch działa.
