@@ -16,6 +16,8 @@ export type MapColors = {
   ochra?: [number, number, number, number];
   korekta?: [number, number, number, number];
   olowek?: [number, number, number, number];
+  /** Obrys granic jednostek: w motywie ciemnym jaśniejszy od tła (kontrast), w jasnym = kalka. */
+  granica?: [number, number, number, number];
 };
 
 export type LayerContext = {
@@ -92,7 +94,12 @@ export function getMapColorsFromCss(): MapColors | null {
     return null;
   }
 
-  return { kalka, arkusz, tusz, ochra, olowek, korekta };
+  // Motyw ciemny rozpoznajemy po jasności tła arkusza (tokeny, nie atrybut)
+  const isDark = 0.2126 * arkusz[0] + 0.7152 * arkusz[1] + 0.0722 * arkusz[2] < 128;
+  const granica: MapColors['granica'] =
+    isDark && olowek ? [olowek[0], olowek[1], olowek[2], 140] : kalka;
+
+  return { kalka, arkusz, tusz, ochra, olowek, korekta, granica };
 }
 
 let cachedFeatures: {
@@ -153,7 +160,7 @@ export const wojLayerFactory: LayerFactory = {
       filled: true,
       stroked: true,
       getFillColor: colors.arkusz,
-      getLineColor: colors.kalka,
+      getLineColor: colors.granica ?? colors.kalka,
       getLineWidth: 1.2,
       lineWidthUnits: 'pixels',
       lineWidthMinPixels: 1,
@@ -166,7 +173,7 @@ export const wojLayerFactory: LayerFactory = {
       getTooltip: ({ object }: any) => (object?.properties?.name ? String(object.properties.name) : null),
       updateTriggers: {
         getFillColor: [colors.arkusz],
-        getLineColor: [colors.kalka],
+        getLineColor: [colors.granica, colors.kalka],
       },
     });
   },
@@ -196,7 +203,7 @@ export const powLayerFactory: LayerFactory = {
       filled: true,
       stroked: true,
       getFillColor: colors.arkusz,
-      getLineColor: colors.kalka,
+      getLineColor: colors.granica ?? colors.kalka,
       getLineWidth: 1.2,
       lineWidthUnits: 'pixels',
       lineWidthMinPixels: 1,
@@ -209,7 +216,7 @@ export const powLayerFactory: LayerFactory = {
       getTooltip: ({ object }: any) => (object?.properties?.name ? String(object.properties.name) : null),
       updateTriggers: {
         getFillColor: [colors.arkusz],
-        getLineColor: [colors.kalka],
+        getLineColor: [colors.granica, colors.kalka],
       },
     });
   },
@@ -239,7 +246,7 @@ export const gmiLayerFactory: LayerFactory = {
       filled: true,
       stroked: true,
       getFillColor: colors.arkusz,
-      getLineColor: colors.kalka,
+      getLineColor: colors.granica ?? colors.kalka,
       getLineWidth: 1.2,
       lineWidthUnits: 'pixels',
       lineWidthMinPixels: 1,
@@ -252,7 +259,7 @@ export const gmiLayerFactory: LayerFactory = {
       getTooltip: ({ object }: any) => (object?.properties?.name ? String(object.properties.name) : null),
       updateTriggers: {
         getFillColor: [colors.arkusz],
-        getLineColor: [colors.kalka],
+        getLineColor: [colors.granica, colors.kalka],
       },
     });
   },

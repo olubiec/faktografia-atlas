@@ -172,3 +172,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: wszystko istniało już z 07c7251 (explanations.json 20/20, ContextBlock z „Co to jest / Jak czytać / Definicja GUS", test); nic nie zmieniono w kodzie, tylko ten wpis (gałąź claude/laughing-pasteur-8af8jz, bez PR).
 - Vercel: profil jednostki -> rozwiń wskaźnik -> sekcje „Co to jest", „Jak czytać" i link „Definicja GUS" (stat.gov.pl).
 - Odłożone: nie zweryfikowano w sieci, czy linki definitionUrl wskazują właściwe hasła słownika GUS (brak dostępu/źródła w repo); do ręcznego sprawdzenia.
+
+## W18-P02 – Tryb ciemny mapy i warstw
+- Wynik: OK; lint, typecheck, Vitest, build zielone; nowy tests/e2e/dark-mode-map.spec.ts 2/2 (komputer 1440 i telefon 390), kontrola usunięć względem origin/main pusta.
+- Commit: patrz git log ([W18-P02], gałąź claude/laughing-pasteur-8af8jz, bez PR). Kartogram już brał tokeny ciemne (choropleth.ts, useMapColors); dodano tylko token obrysu granic `granica` (w ciemnym: olowek z alfą, w jasnym bez zmian = kalka) w admin.ts i choropleth.ts.
+- Vercel: przełącz Motyw na ciemny w nagłówku -> mapa i kartogram w ciemnych barwach, granice jednostek wyraźnie jaśniejsze od tła; jasny motyw wygląda jak dotąd.
+- Odłożone: asercja liczbowa kontrastu obrysu (wymaga rozszerzenia szwu window.__atlas w src/core/map/test-seam.ts, poza „Zmieniaj"); test filtruje szum „No actors found" (biblioteka mapy bez GPU). Zrzuty wzorcowe do odświeżenia w CI nie dotyczą.
