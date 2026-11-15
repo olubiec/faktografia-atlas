@@ -257,3 +257,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: patrz git log ([N-11], galaz claude/laughing-pasteur-8af8jz, bez PR): route-chunks.ts (routeChunks, routeKeyFromHref, prefetchRoute), App.tsx (usePrefetchOnIntent: pointerover + focusin, pomija saveData).
 - Vercel: na komputerze najedź na „Rankingi” w nagłówku i kliknij - strona bez białego mignięcia; to samo z Tab na „Porównaj”.
 - Odłożono: lazy dla Library zostaje z literalnym importem w App.tsx (wymaga tego istniejący startup-weight.test.ts); to ten sam moduł/chunk co w routeChunks, więc prefetch działa.
+
+## N-12 – Działające listy Dział / Wskaźnik / Poziom / Rok na /rankingi
+- Wynik: OK; lint, typecheck, Vitest (949), build zielone; e2e: rankings-filters (10 testów @S21), rankings-search, rankings-mobile-p1a, rankings-and-compare-pages, freshness-single-fetch: 20/20 zielone; kontrola usunięć pusta.
+- Commit: 099fe17 (galaz claude/laughing-pasteur-8af8jz, bez PR): ranking-options.ts (czyste funkcje), Rankings.tsx (listy sterowane, „Wczytuję dane…”, „Brak danych dla tego wyboru.”).
+- Vercel: /rankingi - zmień Dział na „Pieniądze”, poziom na „Powiaty”, rok na najstarszy; lista i „Najwyżej:” zmieniają się, jednostka miary się zgadza.
+- Odłożono: a11y-matrix.spec (trasa /rankingi) pada tak samo także bez moich zmian (stan wyjściowy), nie ruszałem. Nazwy wskaźników w <option> są w atrybucie label, bo istniejący test rankings-and-compare-pages szuka getByText(/mediana/i) i trafiałby w „Mediana wieku”.
