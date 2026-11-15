@@ -1,5 +1,8 @@
 import { useSyncExternalStore } from 'react';
 import { Link } from 'react-router';
+import { NavArrowDown } from 'iconoir-react';
+import { Icon } from '../ui/Icon';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 function subscribeTheme(callback: () => void) {
   if (typeof window === 'undefined') return () => {};
@@ -34,8 +37,89 @@ function getIsDark(): boolean {
   return false;
 }
 
+const LINK_CLASS =
+  'flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz';
+
+type FooterLink = { to: string; label: string; external?: boolean };
+
+// Trzy grupy linków (kolejność i adresy bez zmian)
+const GROUPS: { title: string; links: FooterLink[] }[] = [
+  {
+    title: 'Narzędzia',
+    links: [
+      { to: '/', label: 'Mapa Polski' },
+      { to: '/rankingi', label: 'Rankingi' },
+      { to: '/porownaj', label: 'Porównaj' },
+      { to: '/biblioteka', label: 'Biblioteka' },
+    ],
+  },
+  {
+    // 7 głównych wskaźników GUS
+    title: 'Działy tematyczne GUS',
+    links: [
+      { to: '/?i=density', label: 'Ludność (gęstość zaludnienia)' },
+      { to: '/?i=unemployment-rate', label: 'Rynek pracy (stopa bezrobocia)' },
+      { to: '/?i=avg-wage', label: 'Pieniądze (wynagrodzenia)' },
+      { to: '/?i=dwellings-per-1000', label: 'Mieszkania (nowe lokale)' },
+      { to: '/?i=forest-cover', label: 'Środowisko (lesistość)' },
+      { to: '/?i=preschool-3-6', label: 'Edukacja (wychowanie przedszkolne)' },
+      { to: '/?i=cars-per-1000', label: 'Transport (samochody osobowe)' },
+    ],
+  },
+  {
+    title: 'Dokumentacja',
+    links: [
+      { to: '/o-projekcie', label: 'O projekcie' },
+      { to: '/zrodla', label: 'Skąd są dane' },
+      { to: '/prywatnosc', label: 'Prywatność i zgoda' },
+      { to: 'https://github.com/olubiec/faktografia-atlas', label: 'GitHub', external: true },
+    ],
+  },
+];
+
+/**
+ * Grupa linków: na telefonie zwijana <details> (domyślnie zamknięta),
+ * od tabletu zawsze rozwinięta, a nagłówek nie jest klikalny.
+ */
+function FooterGroup({ title, links, isMobile }: { title: string; links: FooterLink[]; isMobile: boolean }) {
+  return (
+    <nav aria-label={title}>
+      <details open={!isMobile} className="group">
+        <summary
+          tabIndex={isMobile ? 0 : -1}
+          onClick={(e) => {
+            if (!isMobile) e.preventDefault();
+          }}
+          className="flex items-center justify-between min-h-[44px] md:min-h-0 list-none [&::-webkit-details-marker]:hidden cursor-pointer md:cursor-default md:pointer-events-none border-b border-linia md:border-b-0 text-tusz rounded-none focus:outline-none focus-visible:ring-2 focus-visible:ring-tusz"
+        >
+          <h2 className="text-sm font-[700] text-tusz md:mb-2">{title}</h2>
+          <Icon
+            icon={NavArrowDown}
+            aria-hidden
+            className="md:hidden group-open:rotate-180"
+          />
+        </summary>
+        <div className="flex flex-col gap-1">
+          {links.map((l) =>
+            l.external ? (
+              <a key={l.to} href={l.to} target="_blank" rel="noopener noreferrer" className={LINK_CLASS}>
+                {l.label}
+              </a>
+            ) : (
+              <Link key={l.to} to={l.to} className={LINK_CLASS}>
+                {l.label}
+              </Link>
+            ),
+          )}
+        </div>
+      </details>
+    </nav>
+  );
+}
+
 export function SiteFooter() {
   const isDark = useSyncExternalStore(subscribeTheme, getIsDark, () => false);
+  const isMobile = useIsMobile();
   const logoSrc = isDark ? '/brand/faktografia-logo-jasne.svg' : '/brand/faktografia-logo-granat.svg';
 
   return (
@@ -43,10 +127,10 @@ export function SiteFooter() {
       role="contentinfo"
       className="border-t border-linia bg-arkusz text-tusz mt-auto"
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-10 md:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 md:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 md:gap-12">
           {/* Kolumna 1: Logo, opis misji portalu, licencja CC BY 4.0 */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2 md:gap-4 mb-2 md:mb-0">
             <Link
               to="/"
               className="inline-flex items-center min-h-[44px] min-w-[44px] rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
@@ -59,7 +143,8 @@ export function SiteFooter() {
                 height={32}
               />
             </Link>
-            <p className="text-sm font-[400] text-olowek leading-[1.6]">
+            {/* Na telefonie opis skrócony do 2 linii, żeby zwinięta stopka była niska */}
+            <p className="text-xs md:text-sm font-[400] text-olowek leading-[1.5] md:leading-[1.6] line-clamp-2 md:line-clamp-none">
               Faktografia Atlas to niezależna, interaktywna mapa Polski prezentująca rzetelne statystyki GUS dla każdego województwa, powiatu i gminy.
             </p>
             <p className="text-xs font-[400] text-olowek leading-[1.5]">
@@ -76,112 +161,9 @@ export function SiteFooter() {
             </p>
           </div>
 
-          {/* Kolumna 2: Narzędzia */}
-          <nav aria-label="Narzędzia" className="flex flex-col gap-1">
-            <h2 className="text-sm font-[700] text-tusz mb-2">Narzędzia</h2>
-            <Link
-              to="/"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Mapa Polski
-            </Link>
-            <Link
-              to="/rankingi"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Rankingi
-            </Link>
-            <Link
-              to="/porownaj"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Porównaj
-            </Link>
-            <Link
-              to="/biblioteka"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Biblioteka
-            </Link>
-          </nav>
-
-          {/* Kolumna 3: Działy tematyczne GUS (7 głównych wskaźników) */}
-          <nav aria-label="Działy tematyczne GUS" className="flex flex-col gap-1">
-            <h2 className="text-sm font-[700] text-tusz mb-2">Działy tematyczne GUS</h2>
-            <Link
-              to="/?i=density"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Ludność (gęstość zaludnienia)
-            </Link>
-            <Link
-              to="/?i=unemployment-rate"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Rynek pracy (stopa bezrobocia)
-            </Link>
-            <Link
-              to="/?i=avg-wage"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Pieniądze (wynagrodzenia)
-            </Link>
-            <Link
-              to="/?i=dwellings-per-1000"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Mieszkania (nowe lokale)
-            </Link>
-            <Link
-              to="/?i=forest-cover"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Środowisko (lesistość)
-            </Link>
-            <Link
-              to="/?i=preschool-3-6"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Edukacja (wychowanie przedszkolne)
-            </Link>
-            <Link
-              to="/?i=cars-per-1000"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Transport (samochody osobowe)
-            </Link>
-          </nav>
-
-          {/* Kolumna 4: Dokumentacja */}
-          <nav aria-label="Dokumentacja" className="flex flex-col gap-1">
-            <h2 className="text-sm font-[700] text-tusz mb-2">Dokumentacja</h2>
-            <Link
-              to="/o-projekcie"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              O projekcie
-            </Link>
-            <Link
-              to="/zrodla"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Skąd są dane
-            </Link>
-            <Link
-              to="/prywatnosc"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Prywatność i zgoda
-            </Link>
-            <a
-              href="https://github.com/olubiec/faktografia-atlas"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              GitHub
-            </a>
-          </nav>
+          {GROUPS.map((g) => (
+            <FooterGroup key={g.title} title={g.title} links={g.links} isMobile={isMobile} />
+          ))}
         </div>
       </div>
     </footer>
