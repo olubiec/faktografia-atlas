@@ -226,3 +226,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: patrz git log ([N-06], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowe: filter-ranked.ts, ranking-filter.test.ts, rankings-search.spec.ts; Rankings.tsx: sterowane pole, komunikat „Brak jednostek pasujących” (aria-live), bez klasy rounded.
 - Vercel: /rankingi, wpisz „slask” (lista się zawęża), „xyz” (komunikat), wyczyść (wraca 10 pozycji).
 - Odłożono/odchylenie: „slask” zwraca 2 pozycje (śląskie i dolnośląskie), bo filtr „zawiera” wg zadania; e2e sprawdza 2 zamiast 1. Martwe listy Dział/Wskaźnik/Poziom/Rok bez zmian (osobne zadanie).
+
+## N-07 – Test: mapa widoczna nad arkuszem (telefon)
+- Wynik: OK; lint, typecheck, Vitest, build zielone; nowy mobile-sheet-map-visible.spec.ts: 18/18 (3 powtórzenia × 3 testy × 2 rozmiary 390×844 i 360×740), kontrola usunięć pusta.
+- Commit: patrz git log ([N-07], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowy tylko plik testu; src/ bez zmian, wszystkie warunki spełnione na obecnej aplikacji.
+- Vercel: nic nowego do klikania (sam test); na telefonie sprawdź, że arkusz wskaźnika i profil (?u=12) zostawiają mapę widoczną nad sobą.
+- Odłożono/uwaga: przy równoległych workerach profil czasem pojawia się z opóźnieniem >5 s (istniejący profile-mobile.spec.ts też bywa niestabilny); w nowym teście dałem 20 s na pojawienie się arkusza. Przyczyna w aplikacji niezbadana.
