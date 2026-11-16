@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 import { SiteLayout } from '../layout/SiteLayout';
 import { loadUnits } from '../../core/data/load-atlas-data';
 import { loadIndicatorValues } from '../../core/data/load-values';
@@ -10,7 +11,6 @@ import type { RankedUnit } from '../../core/ranking/ranking';
 import { formatValue } from '../../core/format/number';
 import indicators from '../../../config/indicators.json';
 import {
-  DEFAULT_SELECTION,
   indicatorsInGroup,
   levelsFor,
   normalizeSelection,
@@ -18,6 +18,7 @@ import {
   yearsDesc,
   type RankingSelection,
 } from '../../core/ranking/ranking-options';
+import { parseRankingParams, rankingSearch } from '../../core/ranking/ranking-url';
 import type { UnitLevel } from '../../core/units/types';
 
 const LEVEL_LABEL: Record<UnitLevel, string> = { woj: 'Województwa', pow: 'Powiaty', gmi: 'Gminy' };
@@ -62,8 +63,12 @@ export function RankingList({ items, unit }: { items: RankedUnit[]; unit?: strin
 export function Rankings() {
   const [units, setUnits] = useState<Unit[]>([]);
   const [loaded, setLoaded] = useState<{ id: string; data: IndicatorValues | null } | null>(null);
-  const [rawSel, setRawSel] = useState<RankingSelection>(DEFAULT_SELECTION);
-  const [query, setQuery] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+  // Stan początkowy z adresu (i, l, y, q); dalsze zmiany tylko zapisują adres.
+  const [initial] = useState(() => parseRankingParams(location.search, indicators));
+  const [rawSel, setRawSel] = useState<RankingSelection>(initial.selection);
+  const [query, setQuery] = useState(initial.query);
 
   useEffect(() => {
     let active = true;
@@ -90,6 +95,12 @@ export function Rankings() {
   const years = yearsDesc(values);
   const latest = values && values.years.length ? Math.max(...values.years) : null;
   const year = sel.year ?? latest;
+
+  // Wybór i tekst → adres, bez nowych wpisów historii.
+  useEffect(() => {
+    const next = rankingSearch(sel, query);
+    if (next !== location.search) navigate({ search: next }, { replace: true });
+  }, [sel, query, location.search, navigate]);
 
   const ranking = useMemo(() => {
     if (!values || !units.length || year === null) return null;
