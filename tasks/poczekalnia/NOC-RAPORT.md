@@ -303,3 +303,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 4dc6aa7 (galaz claude/laughing-pasteur-8af8jz, bez PR): admin.ts (granica z surowego --olowek), nowy tests/unit/map-border-fallback.test.ts (5 testów).
 - Vercel: nic do klikania; ewentualnie ciemny motyw - granice powiatów/gmin nadal widoczne.
 - Odłożono: nic (domyka przypadek kontrolny 4 z N-15).
+
+## N-19 – Kamera: łagodny dojazd po animacji
+- Wynik: lint, typecheck, Vitest (978), build zielone; nowy camera-settle e2e 3x zielony (6/6); camera-resize-retarget, reduced-motion, map-zoom-out zielone x3; kontrola usunięć pusta.
+- Commit: ac9fc55 (galaz claude/laughing-pasteur-8af8jz, bez PR): akcja 'settle' + SETTLE_WINDOW_MS=1500 w camera-resize.ts, zapamiętanie końca animacji w useMapViewState (448 linii), camera-settle unit + e2e.
+- camera.spec: przed i po zmianie 0/3 (pada tak samo; test 1, stan wyjściowy). responsive-resize: przed i po 0/3 (czerwony także bez moich zmian, zakładka Powiaty aria-selected).
+- Vercel: komputer, wybierz „małopolskie” w wyszukiwarce - po pojawieniu się kolumny profilu mapa krótko (~400 ms) dojeżdża zamiast skakać; zmiana rozmiaru okna nadal natychmiastowa.
+- Odłożono: test.fixme w camera-resize-retarget.spec.ts zostawiony (nie zmieniam istniejących testów); camera.spec nietknięty.
