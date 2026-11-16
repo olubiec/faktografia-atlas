@@ -284,3 +284,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Ciemny: granica ma alfę 140, kontrast po zmieszaniu >= 3:1 z kalką i arkuszem; jasny: granica = kalka.
 - Vercel: nic do klikania (sam test); ewentualnie ciemny motyw - granice powiatów/gmin widoczne na mapie.
 - Odłożono: przypadek kontrolny 4 (pusty --olowek -> kalka). Kod admin.ts przy pustym --olowek bierze jasny token olowek, więc granica = [77,91,114,140], nie kalka. Wymaga decyzji (zmiana admin.ts poza zakresem zadania).
+
+## N-16 – Menu telefonu: Escape i fokus
+- Wynik: lint, typecheck, Vitest (959), build zielone; e2e: mobile-menu-a11y (5 testów @S15), main-menu-links, navigation-and-budgets, keyboard-zoom, a11y-matrix zielone; kontrola usunięć pusta.
+- Commit: c8a2cc6 (galaz claude/laughing-pasteur-8af8jz, bez PR): useMenuDismiss.ts (dismissReason + hook), Header.tsx (id, aria-controls, refy), 2 nowe testy.
+- Vercel: telefon - otwórz Menu, Escape/dotknięcie obok zamyka, fokus wraca na Menu; na profilu jednostki Escape przy menu zamyka tylko menu.
+- Odłożono: Sheet nie przyjmuje ref w typach (poza Zmieniaj), więc menu owinięte w div z id/ref. Escape zatrzymywany w fazie przechwytywania (stopPropagation), bo ProfileSheet nie sprawdza defaultPrevented.
