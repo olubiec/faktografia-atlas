@@ -96,8 +96,10 @@ export function getMapColorsFromCss(): MapColors | null {
 
   // Motyw ciemny rozpoznajemy po jasności tła arkusza (tokeny, nie atrybut)
   const isDark = 0.2126 * arkusz[0] + 0.7152 * arkusz[1] + 0.0722 * arkusz[2] < 128;
+  // Granica z SUROWEJ zmiennej --olowek (bez jasnego zapasu): pusta lub zła → kalka
+  const olowekRaw = parseCssColor(style?.getPropertyValue('--olowek')?.trim() ?? '', 255);
   const granica: MapColors['granica'] =
-    isDark && olowek ? [olowek[0], olowek[1], olowek[2], 140] : kalka;
+    isDark && olowekRaw ? [olowekRaw[0], olowekRaw[1], olowekRaw[2], 140] : kalka;
 
   return { kalka, arkusz, tusz, ochra, olowek, korekta, granica };
 }
