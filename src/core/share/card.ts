@@ -1,4 +1,5 @@
 import tokens from '../../../config/tokens.json';
+import { pageLabel } from './pagination';
 import { fitText, type MeasureFn } from './text-fit';
 import { SHARE_FORMATS, type ShareFormatKey, type ShareScale } from './formats';
 import { type MapCardData, renderMapContent } from './card-map';
@@ -20,7 +21,7 @@ export type AnnotationItem = { type: 'annotation'; kind: 'circle'; x: number; y:
 export type CardItem = TextItem | RectItem | PathItem | ImageItem | AnnotationItem;
 
 export type CardScene = { width: number; height: number; background: string; items: CardItem[]; };
-export type CardSceneOptions = { measure: MeasureFn; siteUrl?: string; scale?: ShareScale; };
+export type CardSceneOptions = { measure: MeasureFn; siteUrl?: string; scale?: ShareScale; /** Numer strony karty wielostronicowej; plakietka „n/N” pojawia się tylko gdy total > 1. */ page?: { number: number; total: number }; };
 
 export type CardData = MapCardData | RankingCardData | ProfileCardData | CompareCardData;
 
@@ -88,6 +89,20 @@ function buildScene(kind: CardKind, data: CardData, formatKey: ShareFormatKey, t
   const logoHeight = Math.round(60 * scaleFactor);
   const logoWidth = Math.round((logoHeight * 312.2) / 110);
   const logoY = safe.top;
+
+  const { page } = options;
+  if (page && page.total > 1) {
+    // Plakietka numeru strony po prawej, w osi logo, w polu safe.
+    const label = pageLabel(page.number, page.total);
+    const badgeFont = fontScale.sm;
+    const padX = Math.round(16 * scaleFactor);
+    const badgeW = Math.round(measure(label, badgeFont, tokens.font.weights.heading)) + 2 * padX;
+    const badgeH = Math.round(badgeFont * 1.2) + Math.round(16 * scaleFactor);
+    const bx = width - safe.right - badgeW;
+    const by = safe.top + Math.round((60 * scaleFactor - badgeH) / 2);
+    items.push({ type: 'rect', x: bx, y: by, width: badgeW, height: badgeH, fill: colors.arkusz, stroke: colors.linia, strokeWidth: 2 });
+    items.push({ type: 'text', x: bx + badgeW / 2, y: by + Math.round(8 * scaleFactor), maxWidth: badgeW, fontSize: badgeFont, fontWeight: tokens.font.weights.heading, color: colors.tusz, align: 'center', lines: [label], lineHeight: Math.round(badgeFont * 1.2) });
+  }
 
   items.push({ type: 'image', src: logoSrc, x: safe.left, y: logoY, width: logoWidth, height: logoHeight });
   const titleY = logoY + logoHeight + Math.round(16 * scaleFactor);

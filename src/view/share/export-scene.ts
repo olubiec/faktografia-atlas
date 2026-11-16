@@ -8,7 +8,7 @@ export function buildExportScene(
   data: CardData,
   format: ShareFormatKey,
   theme: CardTheme,
-  { measure, scale }: { measure: MeasureFn; scale: ShareScale },
+  { measure, scale, page }: { measure: MeasureFn; scale: ShareScale; page?: { number: number; total: number } },
 ): CardScene {
-  return cardScene(kind, data, format, theme, { measure, siteUrl: 'faktografia.eu', scale });
+  return cardScene(kind, data, format, theme, { measure, siteUrl: 'faktografia.eu', scale, page });
 }

@@ -6,6 +6,8 @@ export interface CardSvgProps {
   scene: CardScene;
   className?: string;
   style?: React.CSSProperties;
+  /** Plakietka „n/N” jest częścią sceny; tu tylko opis dla czytników ekranu. */
+  page?: { number: number; total: number };
 }
 
 function opsToPath(ops: { op: string; data: number[] }[]): string {
@@ -26,7 +28,7 @@ function opsToPath(ops: { op: string; data: number[] }[]): string {
   return path.trim();
 }
 
-export const CardSvg: React.FC<CardSvgProps> = ({ scene, className, style }) => {
+export const CardSvg: React.FC<CardSvgProps> = ({ scene, className, style, page }) => {
   const { width, height, background, items } = scene;
   const gen = rough.generator();
 
@@ -37,7 +39,7 @@ export const CardSvg: React.FC<CardSvgProps> = ({ scene, className, style }) => 
       style={style}
       xmlns="http://www.w3.org/2000/svg"
       role="img"
-      aria-label="Podgląd karty"
+      aria-label={page && page.total > 1 ? `Podgląd karty, strona ${page.number}/${page.total}` : 'Podgląd karty'}
     >
       {background && (
         <rect x={0} y={0} width={width} height={height} fill={background} />

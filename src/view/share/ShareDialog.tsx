@@ -23,6 +23,7 @@ import type { Unit } from '../../core/units/types';
 import type { CompareRow } from '../../core/compare/compare';
 import { CardSvg } from './CardSvg';
 import { createMeasureFn, renderPng } from './render-png';
+import { cardPages } from '../../core/share/card-pages';
 import { shareFiles, downloadFile } from './share-file';
 import { buildExportScene } from './export-scene';
 import { ShareControls } from './ShareControls';
@@ -105,12 +106,16 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
     );
   }, [activeKind, data]);
 
+  const firstPage = useMemo(() => cardPages(activeKind, activeCardData)[0], [activeKind, activeCardData]);
+  const pagePreview = firstPage.page;
+
   const scene = useMemo(() => {
-    return cardScene(activeKind, activeCardData, selectedFormat, selectedTheme, {
+    return cardScene(activeKind, firstPage.data, selectedFormat, selectedTheme, {
       measure,
       siteUrl: 'faktografia.eu',
+      page: firstPage.page,
     });
-  }, [activeKind, activeCardData, selectedFormat, selectedTheme, measure]);
+  }, [activeKind, firstPage, selectedFormat, selectedTheme, measure]);
 
   const exportScene = (k: CardKind, d: CardData) => // podgląd zostaje w skali 1
     buildExportScene(k, d, selectedFormat, selectedTheme, { measure, scale });
@@ -167,6 +172,34 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
       }
 
       await shareFiles(files, 'Zestaw kart – Faktografia Atlas');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  /** Wszystkie dostępne karty (każda strona osobno) jako pliki PNG. */
+  const renderAllFiles = async (): Promise<File[]> => {
+    const files: File[] = [];
+    for (const k of availableKinds) {
+      const cData = data[k] ?? activeCardData;
+      const year = 'year' in cData ? cData.year : 2025;
+      for (const p of cardPages(k, cData)) {
+        const sc = buildExportScene(k, p.data, selectedFormat, selectedTheme, { measure, scale, page: p.page });
+        const blob = await renderPng(sc, { scale });
+        const parts: (string | number)[] = [k, selectedFormat, year];
+        if (p.page.total > 1) parts.push(`str${p.page.number}z${p.page.total}`);
+        files.push(new File([blob], shareFileName('faktografia', parts, 'png'), { type: 'image/png' }));
+      }
+    }
+    return files;
+  };
+
+  const handleDownloadAll = async () => {
+    setIsProcessing(true);
+    try {
+      const files = await renderAllFiles();
+      // Telefony: jedno okno udostępniania z wieloma plikami; w innych przypadkach sekwencyjne pobrania.
+      await shareFiles(files, 'Wszystkie karty – Faktografia Atlas');
     } finally {
       setIsProcessing(false);
     }
@@ -229,7 +262,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
         <div className="flex-1 overflow-y-auto p-3 md:p-6 space-y-4">
           {/* SVG Preview Box */}
           <div className="min-h-[220px] w-full min-w-0 flex items-center justify-center p-2 sm:p-3 bg-kalka border border-linia overflow-hidden max-w-full">
-            <CardSvg scene={scene} className="block w-full min-w-0 h-auto max-h-[38vh] md:max-h-[48vh]" />
+            <CardSvg scene={scene} page={pagePreview} className="block w-full min-w-0 h-auto max-h-[38vh] md:max-h-[48vh]" />
           </div>
 
           <ShareControls
@@ -279,6 +312,15 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
               className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
             >
               Udostępnij zestaw
+            </button>
+
+            <button
+              type="button"
+              disabled={isProcessing}
+              onClick={handleDownloadAll}
+              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
+            >
+              Pobierz wszystkie
             </button>
 
             <button
