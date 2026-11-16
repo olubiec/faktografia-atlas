@@ -32,7 +32,21 @@ const InteractiveTestPage = lazy(() =>
 
 /** Zajmuje stałe miejsce na czas ładowania strony (bez skakania układu). */
 export function PageFallback() {
-  return <div data-testid="page-fallback" className="min-h-[50vh] bg-arkusz" aria-busy="true" />;
+  // Landmark main i h1 od pierwszej chwili: czytnik ekranu i axe nie trafiają na pustą stronę.
+  return (
+    <main
+      id="main-content"
+      tabIndex={-1}
+      data-testid="page-fallback"
+      className="min-h-[50vh] bg-arkusz"
+      aria-busy="true"
+    >
+      <h1 className="sr-only">Wczytywanie strony…</h1>
+      <p role="status" aria-live="polite" className="sr-only">
+        Wczytywanie strony…
+      </p>
+    </main>
+  );
 }
 
 /** Strona 404 z blokadą indeksowania (tag meta trafia do <head>). */
