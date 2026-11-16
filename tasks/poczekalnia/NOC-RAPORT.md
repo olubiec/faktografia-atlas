@@ -422,3 +422,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 4c088b1 ([N-34]).
 - Vercel: na /rankingi?i=unemployment-rate&l=pow kliknij „Rankingi” w stopce (telefon: rozwiń „Narzędzia”) – wraca widok domyślny; potem Wstecz – znów stopa bezrobocia; pisanie w „Szukaj jednostki” bez gubienia znaków.
 - Odłożono: nic.
+
+## N-35 – podział src/core/search/index.ts
+- Wynik: lint, typecheck, test (1041), build zielone; e2e search.spec.ts 8/8 (--workers=1).
+- Zmiana: funkcje opisu/kolejności (getUnitLabel, getUnitContext, getCleanName, isMnpp, getTierRank, getMatchCategory) w unit-meta.ts; index.ts 226 -> 128 linii, unit-meta.ts 102; eksporty bez zmian; test tests/unit/search-index-split.test.ts.
+- Commit: 0f86fa7 ([N-35]).
+- Vercel: wyszukiwarka (Ctrl+K / lupa) – wpisz "krakow", "war": te same wyniki i kolejność co wcześniej.
+- Odłożono: wpis długu index.ts w style-guard zostaje (zgodnie z zadaniem, usunie planista).
