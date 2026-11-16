@@ -29,3 +29,20 @@
 - Powód: dnd-kit i react-grid-layout (obie MIT) rozwiązują przeciąganie, którego na telefonie nie chcemy (konflikt z przewijaniem, słaba dostępność); przyciski działają z klawiatury i czytnika. Bez nowego pakietu nie ma wpisu w `docs/ELEMENTY.md`. Uwaga: ocena bez sprawdzenia w rejestrze npm (brak dostępu do wyszukiwarki w tej sesji); jeśli właściciel zechce przeciąganie, sprawdzić wtedy wersję i licencję.
 - Model: `src/core/layout/` (bloki `{id, visible}`, presety „podstawowy” i „pełny”, zapis URL-safe `a.-b.c`, localStorage przez adapter). Grafika do pobrania ma czytać `visibleIds(layout)`.
 - Edytor: `src/view/layout/LayoutEditor.tsx`; podpięcie do Home/ProfileSheet/ShareDialog w następnym kroku.
+
+## Podsumowanie fal A–E (stan na 16.11)
+
+Zrobione:
+- A: model układu strony (`src/core/layout/`, presety „podstawowy” i „pełny”) i edytor z przyciskami góra/dół.
+- B: animacje poziomów i zmiany wskaźnika (crossfade warstw choropleth, kamera), wyłączone przy ograniczeniu ruchu.
+- C: układ profilu czytany z wyboru użytkownika; domyślnie pokazuje podstawowe bloki.
+- D: codzienny robot danych GUS (`fetch-data.yml`, PR + auto-merge po zielonym CI, strażnik anomalii).
+- E: adres kanoniczny i `og:url` ustawione na https://faktografia.eu/ w `index.html`.
+
+Do ustawienia przez właściciela:
+- GitHub → Settings → General: włączyć „Allow auto-merge”.
+- GitHub → Settings → Actions → General: „Allow GitHub Actions to create and approve pull requests”.
+- Sekret repozytorium `BDL_CLIENT_ID` (klucz BDL GUS, wyższe limity zapytań).
+- Ochrona gałęzi `main` z wymaganym zielonym CI.
+- DNS home.pl (rekord A i CNAME `www`) oraz dodanie domeny w Vercelu.
+- Uruchomienie workflow „Update snapshots” po zmianach wyglądu.

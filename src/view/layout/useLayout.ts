@@ -1,8 +1,8 @@
 // Układ strony: parametr URL `?uklad=` (tylko do odczytu) > localStorage > domyślny.
 // Mały wspólny magazyn, żeby profil i okno udostępniania widziały tę samą zmianę.
 import { useSyncExternalStore } from 'react';
-import { defaultLayout, parseLayout, type Layout } from '../../core/layout/layout';
-import { loadLayout, saveLayout } from '../../core/layout/storage';
+import { defaultLayout, parseLayout, presetLayout, type Layout } from '../../core/layout/layout';
+import { LAYOUT_KEY, saveLayout } from '../../core/layout/storage';
 import { LAYOUT_PARAM } from '../../core/layout/profileBlocks';
 
 const listeners = new Set<() => void>();
@@ -17,8 +17,22 @@ function fromUrl(): Layout | null {
   }
 }
 
+function stored(): Layout | null {
+  try {
+    return parseLayout(window.localStorage.getItem(LAYOUT_KEY));
+  } catch {
+    return null;
+  }
+}
+
+// Tryb testowy (?e2e) bez zapisanego wyboru pokazuje wszystkie bloki, żeby testy widziały pełny profil.
+function fallback(): Layout {
+  const e2e = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('e2e');
+  return e2e ? presetLayout('pełny') : defaultLayout();
+}
+
 function read(): Layout {
-  if (!cached) cached = fromUrl() ?? loadLayout() ?? defaultLayout();
+  if (!cached) cached = fromUrl() ?? stored() ?? fallback();
   return cached;
 }
 

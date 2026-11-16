@@ -175,8 +175,11 @@ export const choroplethLayerFactory: LayerFactory = {
     if (!choropleth) return null;
 
     const key = scopeKeyOf(choropleth);
+    // Tryb testowy (?e2e) pomija przenikanie, żeby stan warstw był deterministyczny.
     const reduced =
-      typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      typeof window !== 'undefined' &&
+      (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        new URLSearchParams(window.location.search).has('e2e'));
     if (fade.key !== null && fade.key !== key && shown) outgoing = shown;
     const frame = stepCrossfade(fade, key, choropleth.reveal?.progress ?? 1, reduced);
     fade = frame.next;
