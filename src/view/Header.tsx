@@ -1,8 +1,9 @@
-import { lazy, Suspense, useEffect, useState, useSyncExternalStore } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Link, useLocation } from 'react-router';
 import { Menu, Search, Xmark } from 'iconoir-react';
 import { Sheet } from '@/view/ui/Sheet';
 import { Icon } from '@/view/ui/Icon';
+import { useMenuDismiss } from '@/view/hooks/useMenuDismiss';
 const SearchDialog = lazy(() => import('@/view/search/SearchDialog').then((m) => ({ default: m.SearchDialog })));
 
 type Theme = 'light' | 'dark' | 'system';
@@ -106,16 +107,10 @@ export function Header() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  useEffect(() => {
-    if (!mobileMenuOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setMobileMenuOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [mobileMenuOpen]);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
+  useMenuDismiss({ open: mobileMenuOpen, onClose: closeMobileMenu, menuRef, triggerRef: menuButtonRef });
 
   const cycleTheme = () => {
     const next: Theme = theme === 'system' ? 'light' : theme === 'light' ? 'dark' : 'system';
@@ -229,9 +224,11 @@ export function Header() {
         </button>
         <button
           type="button"
+          ref={menuButtonRef}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Menu"
           aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-menu"
           className="min-w-[44px] min-h-[44px] border border-linia bg-arkusz flex items-center justify-center text-tusz cursor-pointer rounded-none hover:bg-linia/20 transition-colors"
         >
           <Icon icon={mobileMenuOpen ? Xmark : Menu} aria-hidden={true} size={20} />
@@ -240,7 +237,8 @@ export function Header() {
 
       {/* Mobile Menu Sheet */}
       {mobileMenuOpen && (
-        <Sheet className="absolute top-[56px] md:top-[72px] left-0 right-0 z-30 flex flex-col gap-4 border-t-0 shadow-none md:hidden">
+        <div ref={menuRef} id="mobile-menu" className="absolute top-[56px] md:top-[72px] left-0 right-0 z-30 md:hidden">
+        <Sheet className="flex flex-col gap-4 border-t-0 shadow-none">
           <button
             type="button"
             onClick={cycleTheme}
@@ -250,6 +248,7 @@ export function Header() {
           </button>
           <MobileMenuLinks onNavigate={() => setMobileMenuOpen(false)} />
         </Sheet>
+        </div>
       )}
 
       {/* Search Modal */}
