@@ -352,3 +352,11 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Zmiana: PortalSections `<main>` -> `<section aria-label="Działy i skróty">` (wygląd bez zmian).
 - Na Vercelu: strona główna wygląda jak wcześniej; nic do klikania poza kontrolą wizualną działów pod mapą.
 - Odłożono: na telefonie z otwartym profilem `<footer>` w ProfileSheet.tsx dubluje contentinfo ze SiteFooter (axe landmark-unique) – wymaga zmiany poza „Zmieniaj”; w home-single-main ten jeden przypadek pomija regułę landmark-unique (komentarz w teście).
+
+## N-26 – stopka profilu bez roli contentinfo
+- Wynik: lint, typecheck, test (1004), build zielone; e2e: profile-single-contentinfo (nowy), s20-parts, profile, s14-profile, footnote-target-size, home-single-main (odblokowano landmark-unique) zielone.
+- site-footer-mobile.spec.ts: 4 testy czerwone (wysokość stopki 343,5 > 320) – to samo na czystym stanie bez mojej zmiany, nie jest to skutek N-26; do osobnej diagnozy.
+- Zmiana: ProfileSheet.tsx `<footer>` -> `<div data-slot="profile-footer">`; nowe testy unit + e2e; w home-single-main usunięte pominięcie landmark-unique.
+- Vercel: otwórz /?u=12 na telefonie, profil wygląda tak samo jak dotąd (stopka z „Źródło: GUS” bez zmian wizualnych).
+- Odłożono: naprawa site-footer-mobile (poza zakresem).
+- Commit: patrz git log ([N-26]).

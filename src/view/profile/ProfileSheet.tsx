@@ -230,7 +230,7 @@ export function ProfileBody({
       </Tabs>
 
       {/* Stopka z przyciskiem Kopiuj link, przypisami i źródłem */}
-      <footer className="pt-4 border-t border-linia text-xs text-olowek space-y-3">
+      <div data-slot="profile-footer" className="pt-4 border-t border-linia text-xs text-olowek space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           {activeTab !== 'compare' && (
             <button
@@ -256,7 +256,7 @@ export function ProfileBody({
 
         <Footnotes footnotes={footnotes} />
         <p>{formatSource(latestYear)}</p>
-      </footer>
+      </div>
     </div>
   );
 }

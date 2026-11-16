@@ -16,12 +16,7 @@ for (const vp of VIEWPORTS) {
 
       await expect(page.locator('main')).toHaveCount(1);
 
-      // ODŁOŻONE (N-25): na telefonie z otwartym profilem stopka profilu (<footer>)
-      // dubluje contentinfo ze SiteFooter -> landmark-unique; poprawka wymaga plików
-      // spoza „Zmieniaj” (ProfileSheet*/SiteFooter), więc tu tej reguły nie sprawdzamy.
-      const odlozone = vp.name === 'telefon' && url.includes('u=');
-      const rules = ['landmark-no-duplicate-main', 'landmark-one-main'];
-      if (!odlozone) rules.push('landmark-unique');
+      const rules = ['landmark-no-duplicate-main', 'landmark-one-main', 'landmark-unique'];
       const results = await new AxeBuilder({ page }).withRules(rules).analyze();
       expect(results.violations).toEqual([]);
     });
