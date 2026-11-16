@@ -14,3 +14,8 @@ export async function loadFreshnessLabel(
   const values = await load(DEFAULT_INDICATOR_ID);
   return freshnessLabel(values?.fetchedAt, now);
 }
+
+/** Biblioteka nie pobiera plików głównej mapy (PRODUKT §7), więc bez linijki świeżości. */
+export function freshnessFetchAllowed(pathname: string): boolean {
+  return !/^\/biblioteka(\/|$)/.test(pathname);
+}

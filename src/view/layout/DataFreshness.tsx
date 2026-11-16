@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { loadFreshnessLabel } from '../../core/freshness/freshness-label';
+import { useLocation } from 'react-router';
+import { freshnessFetchAllowed, loadFreshnessLabel } from '../../core/freshness/freshness-label';
 
 /** Sam tekst; brak etykiety = nic. */
 export function DataFreshnessText({ label }: { label: string | null }) {
@@ -10,7 +11,10 @@ export function DataFreshnessText({ label }: { label: string | null }) {
 /** Wczytuje datę odświeżenia danych i pokazuje jedną linijkę. */
 export function DataFreshness() {
   const [label, setLabel] = useState<string | null>(null);
+  const { pathname } = useLocation();
+  const allowed = freshnessFetchAllowed(pathname);
   useEffect(() => {
+    if (!allowed) return;
     let cancelled = false;
     loadFreshnessLabel().then((l) => {
       if (!cancelled) setLabel(l);
@@ -18,6 +22,6 @@ export function DataFreshness() {
     return () => {
       cancelled = true;
     };
-  }, []);
-  return <DataFreshnessText label={label} />;
+  }, [allowed]);
+  return <DataFreshnessText label={allowed ? label : null} />;
 }
