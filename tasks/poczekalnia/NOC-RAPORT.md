@@ -450,3 +450,11 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Atrybuty `<iframe>` escapowane (`& " < >`), kolejność parametrów stała; kod to tylko tekst, bez HTML w DOM.
 - Bez trasy, bez zmian w vercel.json, state.ts i src/view; nie ruszono cudzej zmiany w Footnotes.tsx.
 - Vercel: nic do sprawdzenia (czysta logika bez UI).
+
+## N-41 – Logika wyszukiwania naturalnego (`parseIntent`)
+- Wynik: lint, typecheck, test (1075), build zielone; e2e nie uruchamiano (bez UI).
+- Nowe pliki: src/core/search/intent.ts, intent-synonyms.ts, tests/unit/search-intent.test.ts (testy najpierw).
+- Słownik: min. 2 frazy dla każdego z 20 wskaźników, poziomy woj/pow/gmi; test pilnuje zgodności z indicators.json.
+- `minLevel` rozumiane jako najdrobniejszy poziom danych GUS; drobniejszy poziom z tekstu jest pomijany z notką o powiatach.
+- Fixture context-test-units.json nie ma nazw, więc test używa własnych jednostek (Kraków, Wałcz, Gdów x2).
+- Nie ruszono normalize.ts, index.ts, state.ts, src/view ani cudzej zmiany w Footnotes.tsx.
