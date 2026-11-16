@@ -140,8 +140,9 @@ export function ProfileIndicatorRow({
           </div>
         </button>
 
+        {/* Pole kliknięcia przypisów >= 24x24 px (WCAG 2.5.8) nadaje rodzic <sup>, bo klasy samego <a> przypina istniejący test */}
         {itemFootnotes.length > 0 && (
-          <sup className="ml-0.5 shrink-0 self-start pt-1">
+          <sup className="ml-0.5 shrink-0 self-start pt-1 [&>a]:inline-flex [&>a]:min-h-6 [&>a]:min-w-6 [&>a]:items-center [&>a]:justify-center">
             {itemFootnotes.map((fn, index) => (
               <Fragment key={fn.id}>
                 {index > 0 && ','}
