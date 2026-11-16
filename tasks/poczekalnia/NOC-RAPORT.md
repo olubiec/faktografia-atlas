@@ -429,3 +429,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 0f86fa7 ([N-35]).
 - Vercel: wyszukiwarka (Ctrl+K / lupa) – wpisz "krakow", "war": te same wyniki i kolejność co wcześniej.
 - Odłożono: wpis długu index.ts w style-guard zostaje (zgodnie z zadaniem, usunie planista).
+
+## N-36 – podział choropleth.ts (obrys wybranej jednostki)
+- Wynik: lint, typecheck, test (1045), build zielone; e2e main-screen, drill, compare-pick, s18-compare 18/18 (--workers=1).
+- Zmiana: selectedOutlineLayerFactory przeniesiona do selected-outline.ts (bez zmian treści), choropleth.ts ją re-eksportuje; choropleth.ts 224 -> 179 linii, selected-outline.ts 52; test tests/unit/selected-outline-split.test.ts.
+- Commit: 0ea2a9a ([N-36]).
+- Vercel: wybierz województwo i porównaj dwie jednostki (?c=) – czerwony obrys wygląda jak dotąd.
+- Odłożono: wpis długu choropleth.ts w style-guard zostaje (zgodnie z zadaniem, usunie planista).
