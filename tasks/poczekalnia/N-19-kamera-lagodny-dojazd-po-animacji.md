@@ -1,0 +1,19 @@
+# N-19 – Kamera: łagodny dojazd, gdy kolumna profilu pojawia się tuż po animacji
+Cel: Domknięcie N-09. Na komputerze profil często wczytuje się PO końcu animacji przybliżenia; kolumna `[data-slot="side"]` (440 px) wtedy się pojawia, ResizeObserver daje gałąź `'instant'` i kamera skacze (ślad camera.spec test 1: 0 wartości pośrednich, skok 8.04 → 7.38). Taki pomiar ma dać krótki, płynny dojazd zamiast skoku.
+Zmieniaj: src/core/map/camera-resize.ts, src/view/map/hooks/useMapViewState.ts, tests/unit/camera-settle.test.ts, tests/e2e/camera-settle.spec.ts
+Wymagane: src/core/map/camera-resize.ts, tests/unit/camera-settle.test.ts, tests/e2e/camera-settle.spec.ts
+Weryfikacja: pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e tests/e2e/camera-settle.spec.ts tests/e2e/camera.spec.ts tests/e2e/camera-resize-retarget.spec.ts tests/e2e/responsive-resize.spec.ts tests/e2e/reduced-motion.spec.ts tests/e2e/map-zoom-out.spec.ts --repeat-each=3
+Przeczytaj najpierw: tasks/poczekalnia/N-09-kamera-bez-skoku-przy-zmianie-kolumny.md, NOC-RAPORT.md (N-09), src/core/map/camera-resize.ts, tests/unit/camera-resize.test.ts, src/view/map/hooks/useMapViewState.ts (`measure`, `animateToView`, `animTargetRef`), src/core/map/camera.ts (stałe czasów), docs/PRODUKT.md §5a
+
+Zadanie:
+1. `camera-resize.ts`: do `ResizeCameraInput` dodaj OPCJONALNE pola `msSinceAnimationEnd?: number` (czas od końca ostatniej animacji kamery; brak = nie było animacji) i `reducedMotion?: boolean`; do typu odpowiedzi dodaj `'settle'`. Nowa reguła (sprawdzana tam, gdzie dziś zwracane jest `'instant'`): `isResize && !animating && !userMoved && msSinceAnimationEnd !== undefined && msSinceAnimationEnd <= SETTLE_WINDOW_MS && !reducedMotion` → `'settle'`. `SETTLE_WINDOW_MS = 1500` jako eksportowana stała z komentarzem po polsku. Gdy nowych pól brak – wynik identyczny jak dziś (istniejący camera-resize.test.ts musi przejść bez zmian).
+2. `useMapViewState.ts`: zapamiętaj chwilę końca animacji (`performance.now()` w miejscu, gdzie dziś kończy się animacja) i przekazuj `msSinceAnimationEnd` oraz `reducedMotion` (z tego samego źródła, którego plik już używa). `'settle'` = `animateToView(nowyCel, …)` z czasem ruchu wstecz (ok. 400 ms, istniejąca stała z camera.ts – bez nowego tokenu) i tą samą krzywą. Ruch użytkownika przerywa dojazd jak każdą animację. Plik nie może przekroczyć 450 linii (limit w style-guard).
+3. `tests/unit/camera-settle.test.ts`: resize 200 ms po animacji → `'settle'`; 2000 ms po → `'instant'`; z `reducedMotion: true` → `'instant'`; po ruchu użytkownika → `'none'`; w trakcie animacji → `'retarget'` (bez zmian); bez pola `msSinceAnimationEnd` → `'instant'`.
+4. `tests/e2e/camera-settle.spec.ts` (nazwy z `@S16`, 1440×900): `/?e2e`, przytrzymaj odpowiedź `**/data/profiles/12.json` w `page.route` do chwili, gdy `__atlas.camera.animating` wróci do `false` po wyborze „małopolskie” w wyszukiwarce; potem zwolnij odpowiedź; poczekaj na widoczną kolumnę `[data-slot="side"]` i ponowne `animating === false`. Ostatni krok śladu `__atlas.camera.trace` po pojawieniu się kolumny ma co najmniej 2 punkty pośrednie (nie ma skoku jednym krokiem). Drugi test: to samo z `reducedMotion: 'reduce'` → kamera ustawia się od razu (bez punktów pośrednich), zgodnie z §5a.
+
+Gotowe, gdy:
+- Testy jednostkowe zielone, w tym istniejący camera-resize.test.ts bez zmian.
+- Nowy spec przechodzi 3 razy z rzędu. responsive-resize, reduced-motion, map-zoom-out, camera-resize-retarget zielone bez zmian.
+- Dla camera.spec.ts podaj w raporcie wynik 9 prób (3×3) przed i po zmianie; nie zmieniaj go, nawet jeśli nadal czasem pada.
+
+Nie rób: zmian w AtlasMap.tsx, camera.ts, tokenach, istniejących testach; bez wydłużania czasów animacji i bez `waitForTimeout` > 500 ms w nowym specu. Zmiana rozmiaru okna przez użytkownika (bez świeżej animacji) zostaje natychmiastowa (§5a).
