@@ -10,7 +10,7 @@ Kodu z cudzych repozytoriów nie kopiujemy (poziom E tylko z licencją i atrybuc
 | react-router | pakiet | https://www.npmjs.com/package/react-router | 8.5.0 | MIT | strony (`/`, `/o-projekcie`…) | nie | 2026-10-16 |
 | maplibre-gl | pakiet | https://www.npmjs.com/package/maplibre-gl | 6.15.0 | BSD-3-Clause | silnik mapy | licencja w paczce | 2026-10-16 |
 | react-map-gl | pakiet | https://www.npmjs.com/package/react-map-gl | 8.1.3 | MIT | MapLibre w React | nie | 2026-10-16 |
-| @deck.gl/core, /layers, /mapbox, /extensions | pakiet | https://www.npmjs.com/package/@deck.gl/core | 9.4.0 | MIT | warstwy mapy (kolory, obrysy, miejscowości; S16 – kafelki) | nie | 2026-10-16 |
+| @deck.gl/core, /layers, /mapbox, /extensions | pakiet | https://www.npmjs.com/package/@deck.gl/core | 9.4.0 | MIT | warstwy mapy (kolory, obrysy, miejscowości; S16 – kafelki); `FlyToInterpolator` – tor lotu kamery (src/core/map/camera-path.ts) | nie | 2026-10-16 |
 | topojson-client | pakiet | https://www.npmjs.com/package/topojson-client | 3.1.0 | ISC | odczyt granic | nie | 2026-10-16 |
 | @observablehq/plot | pakiet | https://www.npmjs.com/package/@observablehq/plot | 0.6.17 | ISC | wykresy lat w profilu | nie | 2026-10-16 |
 | radix-ui | pakiet | https://www.npmjs.com/package/radix-ui | 1.8.1 | MIT | prymitywy UI (zakładki, okna, suwak) | nie | 2026-10-16 |

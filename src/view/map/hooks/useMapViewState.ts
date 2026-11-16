@@ -5,6 +5,8 @@ import type { Locality } from '@/core/search/types';
 import { useSheetInset } from '@/view/map/sheetInset';
 import { cameraTransition, type CameraKind } from '@/core/map/camera';
 import { resizeCameraAction } from '@/core/map/camera-resize';
+import { flyView, flyDuration } from '@/core/map/camera-path';
+import tokensJson from '../../../../config/tokens.json';
 
 // Margines (px) wokół dopasowanego obszaru, żeby mapa nie dotykała krawędzi okna.
 const FIT_PADDING = 48;
@@ -190,7 +192,11 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
       animEasedRef.current = 0;
       animRebaseRef.current = null;
       animTargetRef.current = targetView;
-      const { duration, easing } = cameraTransition(fromView, targetView, kind, reducedMotion);
+      const base = cameraTransition(fromView, targetView, kind, reducedMotion);
+      const size = { width: containerRef.current?.clientWidth || 800, height: containerRef.current?.clientHeight || 600 };
+      // Czas lotu dobrany do odległości; 0 zostaje 0 (link, reduced motion).
+      let duration = base.duration > 0 ? flyDuration(fromView, targetView, kind, size) : 0;
+      const easing = base.duration > 0 ? tokensJson.motion.cameraFlyEasing : base.easing;
 
       if (duration <= 0) {
         userMovedRef.current = false;
@@ -231,23 +237,15 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
 
         const goal = animTargetRef.current ?? targetView;
         if (animRebaseRef.current) {
-          // Cel się zmienił w trakcie: przesuwamy punkt startu tak, by widok nie skoczył,
-          // a reszta drogi do nowego celu szła po tej samej krzywej.
-          const e = Math.min(animEasedRef.current, 0.98);
-          const cur = animRebaseRef.current;
-          const k = 1 - e;
-          fromView = {
-            longitude: (cur.longitude - goal.longitude * e) / k,
-            latitude: (cur.latitude - goal.latitude * e) / k,
-            zoom: (cur.zoom - goal.zoom * e) / k,
-          };
+          // Cel się zmienił w trakcie (np. kolumna profilu): lecimy dalej z bieżącego widoku, bez skoku.
+          fromView = { ...animRebaseRef.current };
+          duration = Math.max(400, duration * (1 - timeProgress));
+          startTime = now;
           animRebaseRef.current = null;
+          animRef.current = requestAnimationFrame(animate);
+          return;
         }
-        const nextView: ViewState = {
-          longitude: fromView.longitude + (goal.longitude - fromView.longitude) * eased,
-          latitude: fromView.latitude + (goal.latitude - fromView.latitude) * eased,
-          zoom: fromView.zoom + (goal.zoom - fromView.zoom) * eased,
-        };
+        const nextView: ViewState = flyView(fromView, goal, eased, size);
 
         animEasedRef.current = eased;
         setCurrentViewState(nextView);
