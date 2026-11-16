@@ -360,3 +360,11 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Vercel: otwórz /?u=12 na telefonie, profil wygląda tak samo jak dotąd (stopka z „Źródło: GUS” bez zmian wizualnych).
 - Odłożono: naprawa site-footer-mobile (poza zakresem).
 - Commit: patrz git log ([N-26]).
+
+## N-27 – ekran ładowania podstrony z main i h1
+- Wynik: lint/typecheck/test/build zielone; e2e (page-fallback-a11y, library-page, route-prefetch, editorial-pages, navigation-and-budgets, a11y-matrix) 41/41 zielone.
+- Commit: 8922f7c (zmiany: src/App.tsx, tests/unit/page-fallback.test.tsx, tests/e2e/page-fallback-a11y.spec.ts).
+- Chunk biblioteki: wzorzec `**/assets/Library-*.js` pasuje do dist (Library-<hash>.js).
+- Vercel: wejdź na /biblioteka z wolnym łączem (throttling) – widać krótko pusty ekran, czytnik ogłasza „Wczytywanie strony”.
+- Uwaga: library-search „brak błędów dostępności axe” przy --repeat-each=3 padł raz na 15 uruchomień (kolejne 9 zielone), reguły nie udało się złapać – test sam nie czeka na wczytanie spisu (bez page.route); do osobnej diagnozy.
+- Odłożono: nic z zakresu zadania; istniejących testów nie ruszano.
