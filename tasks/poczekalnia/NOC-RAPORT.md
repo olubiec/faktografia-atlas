@@ -436,3 +436,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 0ea2a9a ([N-36]).
 - Vercel: wybierz województwo i porównaj dwie jednostki (?c=) – czerwony obrys wygląda jak dotąd.
 - Odłożono: wpis długu choropleth.ts w style-guard zostaje (zgodnie z zadaniem, usunie planista).
+
+## [FIX-E2E] Trzy czerwone e2e z weryfikacji końcowej
+- share-compare (axe heading-order): regresja aplikacji. `Footnotes.tsx` miał `<h4 class="sr-only">Przypisy</h4>` po `h2` (bez `h3`); zmieniono na `h3`. Test zielony (27 z 29 w trzech plikach przeszło).
+- home „loads properly”: nie regresja aplikacji, selektor testu `img[alt="Faktografia"]` jest zbyt szeroki (logo w nagłówku i stopce; stopka z logo istnieje od 2026-11-01, W15-M04). Testu nie ruszano, wymaga decyzji właściciela.
+- library-search „1 żądanie index.json”: po kroku z `?k=1&q=ludnosc` adres jest poprawny (sprawdzone logiem nawigacji), pada dopiero po kliku „Powiaty” i cofnięciu (adres wraca do `?q=ludnosc` bez `k=1`). Przyczyny nie ustalono w limicie czasu; porównania z worktree na starszym commicie nie zdążono zrobić, więc nie wiadomo, czy to regresja.
+- Nie zmieniono testów, wzorców, configów, STAN.md ani consent.
