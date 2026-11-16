@@ -137,11 +137,11 @@ export function MobileIndicatorBar({
           <div className="flex flex-col gap-0.5 min-w-0 flex-1">
             <div className="flex items-baseline gap-2 min-w-0">
               <span className="text-sm font-semibold text-tusz line-clamp-2 break-words min-w-0">
-                {view.indicator.name}
+                {view.indicator.name}{' '}
               </span>
               {view.year != null && (
                 <span className="text-xs font-mono text-olowek shrink-0">
-                  {view.year}
+                  {view.year}{' '}
                 </span>
               )}
             </div>
