@@ -42,6 +42,9 @@ test.describe('Test całej ścieżki „Biblioteka GUS” (@S21)', () => {
 
     // 1. Wejście z nagłówka
     await page.goto('/');
+    // Mapa na / dociąga density.json po gotowości: czekamy, aż ucichnie, i dopiero zerujemy licznik
+    await page.waitForLoadState('networkidle');
+    requests.length = 0; // zliczamy dopiero żądania po wejściu na /biblioteka
     const desktopLink = page.locator('header nav').getByRole('link', { name: 'Biblioteka' });
     await expect(desktopLink).toBeVisible();
     await desktopLink.click();
@@ -115,6 +118,8 @@ test.describe('Test całej ścieżki „Biblioteka GUS” (@S21)', () => {
     await expect(page).toHaveURL(/\/biblioteka$/);
 
     await searchInput.fill('poprodukcyjnym');
+    // Domyślnie „tylko z danymi” (P3-C): wskaźnik niepobrany pokazuje „Pokaż wszystkie (N)”
+    await page.getByRole('button', { name: /^Pokaż wszystkie \(/ }).click();
     const unreadyRow = page
       .getByTestId('library-results')
       .getByText('Struktura ludności: Ludność w wieku poprodukcyjnym');
@@ -144,6 +149,9 @@ test.describe('Test całej ścieżki „Biblioteka GUS” (@S21)', () => {
 
     // 1. Wejście z nagłówka mobilnego
     await page.goto('/');
+    // Mapa na / dociąga density.json po gotowości: czekamy, aż ucichnie, i dopiero zerujemy licznik
+    await page.waitForLoadState('networkidle');
+    requests.length = 0; // zliczamy dopiero żądania po wejściu na /biblioteka
     const menuBtn = page.locator('header button[aria-label="Menu"]');
     await expect(menuBtn).toBeVisible();
     await menuBtn.click();
@@ -214,6 +222,8 @@ test.describe('Test całej ścieżki „Biblioteka GUS” (@S21)', () => {
     await expect(page).toHaveURL(/\/biblioteka$/);
 
     await searchInput.fill('poprodukcyjnym');
+    // Domyślnie „tylko z danymi” (P3-C): wskaźnik niepobrany pokazuje „Pokaż wszystkie (N)”
+    await page.getByRole('button', { name: /^Pokaż wszystkie \(/ }).click();
     const unreadyRow = page
       .getByTestId('library-results')
       .getByText('Struktura ludności: Ludność w wieku poprodukcyjnym');

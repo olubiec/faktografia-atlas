@@ -2,6 +2,10 @@ import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 
 test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
+  // Przycisk wyboru wskaźnika po nazwie dostępnej (komputer: „Wskaźnik Nazwa”, telefon: „Wskaźnik: Nazwa rok”).
+  const pickerTrigger = (page: import('@playwright/test').Page) =>
+    page.getByRole('button', { name: /^Wskaźnik/ }).first();
+
   const viewports = [
     { name: '390x844 (mobile)', width: 390, height: 844 },
     { name: '1440x600 (low screen desktop)', width: 1440, height: 600 },
@@ -13,7 +17,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
       await page.goto('/');
 
       // Open indicator picker button
-      const triggerButton = page.locator('button', { hasText: 'Wskaźnik' }).first();
+      const triggerButton = pickerTrigger(page);
       await expect(triggerButton).toBeVisible();
       await triggerButton.click();
 
@@ -57,7 +61,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
       await expect(panel).toBeVisible();
 
       // Find ranking or footer element at the bottom of indicator panel
-      const footerText = panel.getByText(/Źródło: GUS, Bank Danych Lokalnych/i);
+      const footerText = panel.locator('p:not(.sr-only)', { hasText: /Źródło: GUS, Bank Danych Lokalnych/i });
 
       // Scroll to footer
       await footerText.scrollIntoViewIfNeeded();
@@ -69,7 +73,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
     await page.setViewportSize({ width: 1440, height: 600 });
     await page.goto('/');
 
-    const triggerButton = page.locator('button', { hasText: 'Wskaźnik' }).first();
+    const triggerButton = pickerTrigger(page);
     await triggerButton.click();
 
     const listbox = page.getByRole('listbox', { name: 'Lista wskaźników' });
@@ -93,7 +97,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
     });
     expect(isNotHorizontallyScrollable).toBe(true);
 
-    const triggerButton = page.locator('button', { hasText: 'Wskaźnik' }).first();
+    const triggerButton = pickerTrigger(page);
     const box = await triggerButton.boundingBox();
     expect(box).not.toBeNull();
     expect(box!.height).toBeGreaterThanOrEqual(44);
@@ -109,7 +113,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
 
-    const triggerButton = page.locator('button', { hasText: 'Wskaźnik' }).first();
+    const triggerButton = pickerTrigger(page);
     await triggerButton.click();
     await expect(page.getByRole('listbox', { name: 'Lista wskaźników' })).toBeVisible();
 

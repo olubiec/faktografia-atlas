@@ -471,3 +471,8 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - [N-47] trackSearch nadal niepodpięty; wróci razem ze zdaniem w polityce osobnym zadaniem.
 - [N-49b] PageMeta (useLayoutEffect) usuwa statyczny canonical i og:url z index.html przy montowaniu (zostaje jeden, z ?u=) i przywraca je po odmontowaniu; Home.tsx, index.html i istniejące testy bez zmian.
 - [N-49b] Nowy test tests/unit/page-meta-canonical.test.ts (na sztucznym DOM, bo Vitest nie ma jsdom); e2e nie uruchamiano.
+
+## N-48 (poprawki kruchych testów e2e, DECYZJE pkt 2, 4, 6)
+- Zmienione: home (A1), picker-scroll (A2), compare-maps (A3), profile-overview (A4), tune (A5), library-search (A6 wariant b, filtr do `/library/index.json`), s21-library (A7: zerowanie licznika po `networkidle` na `/` + krok „Pokaż wszystkie (N)” przed szukaniem wskaźnika niepobranego). Bez skip/slow, asercje zostają lub są ściślejsze.
+- Uruchomiono (chromium, --workers=1): home, compare-maps, library-search (29 zielonych); s21-library wariant „komputer” (zielony). `pnpm typecheck` zielony; `pnpm lint` kończy kodem 1 przez ostrzeżenia w cudzym pliku `tests/unit/consent-revoke.test.tsx` (N-47), błędów w plikach N-48 brak.
+- NIE uruchomiono: picker-scroll, profile-overview, tune, s21-library wariant telefon (390 px, po poprawce nie sprawdzony po raz drugi), pełne e2e. Poprawki A2/A4/A5 oparte na odczycie kodu z AUDYT-TESTOW.

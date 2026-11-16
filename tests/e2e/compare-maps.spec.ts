@@ -62,8 +62,8 @@ test.describe('Compare Maps W2.22 (@S18)', () => {
     );
 
     const mapButtons = page.locator('[data-slot="compare-map"]');
-    const count = await mapButtons.count();
-    expect(count).toBe(2);
+    await expect(mapButtons).toHaveCount(2);
+    const count = 2;
 
     for (let i = 0; i < count; i++) {
       const box = await mapButtons.nth(i).boundingBox();

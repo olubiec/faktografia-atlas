@@ -166,8 +166,12 @@ test.describe('Tune Panel ?tune', () => {
     expect(cssMd).toBe('22px');
 
     const computedFontSize = await page.evaluate(() => {
-      const elem = document.querySelector('.text-md');
-      return elem ? window.getComputedStyle(elem).fontSize : null;
+      const probe = document.createElement('p');
+      probe.className = 'text-md';
+      document.body.appendChild(probe);
+      const size = window.getComputedStyle(probe).fontSize;
+      probe.remove();
+      return size;
     });
     expect(computedFontSize).toBe('22px');
   });

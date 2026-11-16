@@ -119,9 +119,10 @@ test.describe('Strona /biblioteka: szukanie, kategorie, filtry i stan w URL (@S2
     await expect(page).toHaveURL(/[?&]l=/);
 
     await page.evaluate(() => window.history.back());
-    await expect(page).toHaveURL(/.*[?&]k=1/);
+    // Szukanie celowo czyści kategorię (po N-29 szuka w całym spisie), więc zostaje q=
+    await expect(page).toHaveURL(/[?&]q=ludnosc/);
 
-    const indexRequests = requests.filter((url) => url.includes('index.json'));
+    const indexRequests = requests.filter((url) => new URL(url).pathname.endsWith('/library/index.json'));
     expect(indexRequests.length).toBe(1);
   });
 

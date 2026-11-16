@@ -86,9 +86,10 @@ test.describe('Profile Overview (@S14)', () => {
     // Po rozwinięciu 16 województw
     await expect(rankingListItems).toHaveCount(16);
 
-    // Sprawdzenie wyróżnienia dla małopolskiego (klasa lub styl wyróżniający)
-    const highlightedItem = rankingContainer.locator('li button .text-korekta, li button.font-bold');
-    await expect(highlightedItem.first()).toBeVisible();
+    // Wyróżniona jest dokładnie jedna pozycja: małopolskie (klasa z tokenu korekta-tekst)
+    const highlightedItem = rankingContainer.locator('li:has(.text-korekta-tekst)');
+    await expect(highlightedItem).toHaveCount(1);
+    await expect(highlightedItem).toContainText(/małopolskie/i);
   });
 
   test('county profile ?u=1217 shows ranking with all counties in the voivodeship', async ({ page }) => {

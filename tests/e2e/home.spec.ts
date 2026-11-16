@@ -6,7 +6,7 @@ test.describe('Home Page', () => {
     await page.goto('/');
     await expect(page).toHaveTitle(/Faktografia Atlas/);
 
-    const logo = page.locator('img[alt="Faktografia"]');
+    const logo = page.locator('header img[alt="Faktografia"]');
     await expect(logo).toBeVisible();
 
     // Tytuł strony jest w DOM dla czytników ekranu; opis i liczby są w panelu wskaźnika.
