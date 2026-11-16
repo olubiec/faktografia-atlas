@@ -1,3 +1,6 @@
+import { useEffect } from 'react';
+import { dropStaticDuplicates, leavePage } from './pageMetaHead';
+
 const DOMAIN = 'https://faktografia.eu';
 const DEFAULT_DESCRIPTION =
   'Interaktywna mapa Polski z danymi GUS: województwa, powiaty, gminy i miejscowości. Sprawdź, porównaj i pobierz liczby w jednym miejscu.';
@@ -19,6 +22,13 @@ export function PageMeta({
   ogType = 'website',
 }: PageMetaProps) {
   const fullTitle = title.includes('Faktografia') ? title : `${title} – Faktografia Atlas`;
+
+  useEffect(() => {
+    dropStaticDuplicates();
+    return () => {
+      leavePage();
+    };
+  }, [canonical]);
 
   return (
     <>
