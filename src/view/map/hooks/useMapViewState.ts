@@ -13,13 +13,9 @@ type Bbox = [number, number, number, number];
 // Przybliżony obrys Polski; używany tylko, gdy lista jednostek nie jest jeszcze wczytana.
 const POLAND_BBOX: Bbox = [14.12, 49.0, 24.15, 54.84];
 
-function mercatorLat(latDeg: number): number {
-  return Math.log(Math.tan(Math.PI / 4 + (latDeg * Math.PI) / 360));
-}
+const mercatorLat = (latDeg: number): number => Math.log(Math.tan(Math.PI / 4 + (latDeg * Math.PI) / 360));
 
-function mercatorLatToDeg(m: number): number {
-  return (360 / Math.PI) * Math.atan(Math.exp(m)) - 90;
-}
+const mercatorLatToDeg = (m: number): number => (360 / Math.PI) * Math.atan(Math.exp(m)) - 90;
 
 /**
  * Oblicza stan widoku kamery uwzględniając dolny margines (wysokość arkusza w px).
@@ -145,6 +141,8 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
   const animTargetRef = useRef<ViewState | null>(null);
   // Ostatni postęp (po krzywej) biegnącej animacji oraz prośba o przeliczenie punktu startu po zmianie celu.
   const animEasedRef = useRef(0);
+  // Koniec ostatniej animacji (performance.now); null = brak.
+  const animEndRef = useRef<number | null>(null);
   const animRebaseRef = useRef<ViewState | null>(null);
 
   const bounds = countryBbox;
@@ -186,9 +184,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         animRef.current = null;
       }
 
-      const reducedMotion =
-        typeof window !== 'undefined' &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       let fromView = { ...currentViewStateRef.current };
       animEasedRef.current = 0;
@@ -260,6 +256,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         if (!finished) {
           animRef.current = requestAnimationFrame(animate);
         } else {
+          animEndRef.current = performance.now();
           animRef.current = null;
           isAnimatingRef.current = false;
           syncCameraSeam(false);
@@ -322,6 +319,9 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           isResize: isResizeEvent,
           animating: isAnimatingRef.current,
           userMoved: userMovedRef.current,
+          msSinceAnimationEnd:
+            animEndRef.current === null ? undefined : performance.now() - animEndRef.current,
+          reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
         });
         const activeBbox = drillBbox ?? bounds;
 
@@ -364,6 +364,11 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           animRebaseRef.current = { ...currentViewStateRef.current };
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
+        } else if (action === 'settle') {
+          // Kolumna pojawiła się tuż po animacji: krótki dojazd (czas ruchu wstecz) zamiast skoku.
+          fittedBboxRef.current = bboxKey;
+          fittedKeyRef.current = key;
+          animateToView(viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset), 'out');
         } else if (action === 'instant') {
           const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
           fittedBboxRef.current = bboxKey;

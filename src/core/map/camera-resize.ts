@@ -13,9 +13,19 @@ export type ResizeCameraInput = {
   animating: boolean;
   /** Użytkownik sam poruszył mapą. */
   userMoved: boolean;
+  /** Czas (ms) od końca ostatniej animacji kamery; brak = nie było animacji. */
+  msSinceAnimationEnd?: number;
+  /** Użytkownik ma włączone ograniczenie ruchu. */
+  reducedMotion?: boolean;
 };
 
-export type ResizeCameraAction = 'locality' | 'init' | 'animate' | 'retarget' | 'instant' | 'none';
+/**
+ * Okno (ms) po końcu animacji, w którym zmiana rozmiaru (np. kolumna profilu wczytana
+ * tuż po przybliżeniu) daje krótki dojazd zamiast skoku.
+ */
+export const SETTLE_WINDOW_MS = 1500;
+
+export type ResizeCameraAction = 'locality' | 'init' | 'animate' | 'retarget' | 'settle' | 'instant' | 'none';
 
 export function resizeCameraAction(input: ResizeCameraInput): ResizeCameraAction {
   if (input.hasLocalityTarget) return 'locality';
@@ -23,7 +33,10 @@ export function resizeCameraAction(input: ResizeCameraInput): ResizeCameraAction
   if (input.fittedKey !== input.nextKey) return 'animate';
   if (input.isResize && !input.userMoved) {
     // Zmiana szerokości w trakcie animacji (np. kolumna profilu): nie przerywamy, tylko podmieniamy cel.
-    return input.animating ? 'retarget' : 'instant';
+    if (input.animating) return 'retarget';
+    const recent =
+      input.msSinceAnimationEnd !== undefined && input.msSinceAnimationEnd <= SETTLE_WINDOW_MS;
+    return recent && !input.reducedMotion ? 'settle' : 'instant';
   }
   return 'none';
 }
