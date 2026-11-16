@@ -460,3 +460,6 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Nie ruszono normalize.ts, index.ts, state.ts, src/view ani cudzej zmiany w Footnotes.tsx.
 - [N-43b] Dodano scripts/seo/sitemap.d.ts (typy eksportów sitemap.mjs); usunięto @ts-expect-error z tests/unit/sitemap-build.test.ts.
 - [N-43b] Zmieniono tylko d.ts, test sitemap-build i ten raport; bez workflowów i istniejących testów.
+
+## N-44 – JSON-LD (czysta logika SEO)
+- Nowe: src/core/seo/jsonld.ts (Dataset + WebSite/SearchAction), tests/unit/seo-jsonld.test.ts (9 przypadków); bez UI, nic nie podpięte do stron.
