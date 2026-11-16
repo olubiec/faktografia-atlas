@@ -407,3 +407,11 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Vercel: na komputerze wybierz województwo – kolumna po prawej od razu, "Wczytywanie profilu…", mapa dojeżdża bez przybliżenia za mocno i cofania.
 - Zrzuty do odświeżenia (kolumna widoczna wcześniej): zrzuty z wybraną jednostką na desktopie, jeśli istnieją w *-snapshots.
 - Odłożono: nic.
+
+## N-33 – zwinięta stopka telefonu poniżej 320 px
+- Wynik: lint, typecheck, test (1029), build zielone; e2e 57/57 (site-footer-mobile x7, site-footer-mobile-height nowy x3, freshness-single-fetch, library-no-map-values, home-portal, a11y-matrix, mobile-geometry-pages; --workers=1).
+- Zmiana: kolumna z logo to siatka na telefonie, świeżość danych w wierszu z logo (po prawej); od md bez zmian. DataFreshnessText/DataFreshness dostały opcjonalny className.
+- Wysokość stopki 360 i 390 px: przed 343,5 px, po 316 px.
+- Commit: 1e3e5d1 ([N-33]).
+- Vercel: na telefonie otwórz /o-projekcie, zjedź na dół – stopka niższa, "Dane GUS odświeżone" obok logo; na komputerze pod licencją.
+- Odłożono: zrzuty (*-snapshots) ze stopką na telefonie do odświeżenia workflow "Update snapshots".
