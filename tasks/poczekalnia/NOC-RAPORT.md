@@ -399,3 +399,11 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 25932fa ([N-31]).
 - Vercel: na telefonie/oknie otwórz województwo, kliknij "Powiaty", obróć telefon/zmień szerokość – zakładka zostaje; wybór innej jednostki wraca do "Przegląd".
 - Odłożono: nic.
+
+## N-32 – kamera bez przestrzelenia przy kolumnie profilu
+- Wynik: lint, typecheck, test (1025), build zielone; e2e 30/30 (camera-no-overshoot nowy, camera x3 powtórzeń testu 1, camera-settle, camera-resize-retarget, responsive-resize, main-screen, profile, drill; --workers=1).
+- Zmiana: AtlasMap.tsx (kolumna side zawiera ProfileColumnPlaceholder od wyboru jednostki na komputerze, znika po wczytaniu profilu), nowy ProfileColumnPlaceholder.tsx; testy unit + e2e. useMapViewState/camera-resize bez zmian.
+- Commit: cb2f80c ([N-32]).
+- Vercel: na komputerze wybierz województwo – kolumna po prawej od razu, "Wczytywanie profilu…", mapa dojeżdża bez przybliżenia za mocno i cofania.
+- Zrzuty do odświeżenia (kolumna widoczna wcześniej): zrzuty z wybraną jednostką na desktopie, jeśli istnieją w *-snapshots.
+- Odłożono: nic.
