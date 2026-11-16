@@ -392,3 +392,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 6efc0de ([N-30]).
 - Vercel: na telefonie wejdź na /biblioteka – przycisk "Filtry (aktywne: 0)"; rozwiń, wybierz Powiaty – "aktywne: 1".
 - Odłożono: nic.
+
+## N-31 – zakładka profilu po zmianie szerokości okna
+- Wynik: lint, typecheck, test (1020), build zielone; e2e 40/40 (profile-tab-resize nowy, responsive-resize x3, profile-tabs, profile, compare-pick, s18-compare, profile-mobile; --workers=1).
+- Zmiana: stan zakładki w ProfilePortal (useState + reset po TERYT/?c=), propsy activeTab/onTabChange przez ProfileSheet/ProfileSheetMobile do ProfileBody; usunięte klikanie w DOM. Pomocniki zakładki wystawione jako ProfileBody.initialTab/hasComparePair (lint fast-refresh nie pozwala na dodatkowy eksport).
+- Commit: 25932fa ([N-31]).
+- Vercel: na telefonie/oknie otwórz województwo, kliknij "Powiaty", obróć telefon/zmień szerokość – zakładka zostaje; wybór innej jednostki wraca do "Przegląd".
+- Odłożono: nic.
