@@ -324,3 +324,12 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit kodu: fc473ac
 - Vercel: /biblioteka i /biblioteka/<id> – ranking i CSV działają jak dotąd (zmiana bez wpływu na wygląd).
 - Odłożono: nic z zadania; wpis 300 w style-guard dla load-library zostaje (zakaz zmiany testu).
+
+## N-22 – przewijane tabele dostępne z klawiatury
+- Wynik: lint, typecheck, test, build zielone; nowe testy (scroll-regions unit 4, e2e 5) zielone; a11y-matrix, editorial-pages, mobile-geometry-pages zielone.
+- E2E: 4 czerwone (s20-parts x3, compare-table mobile 360) – te same padają bez moich zmian (sprawdzone przez stash; axe "więcej niż jeden contentinfo" itp.), nie ruszane.
+- Commit kodu: 27bf57b
+- Vercel: /zrodla – kliknij w tabelę i Tab/strzałki (widoczny pierścień fokusu); tabela porównania (?u=12&c=12,14) i blok „Miasto i obszar wiejski” w profilu gminy – to samo.
+- Zmiana etykiety tabeli porównania: „Tabela porównania wskaźników” → „Porównanie miejsc – tabela” (zgodnie z zadaniem; atrybuty tabindex/role były już w kodzie).
+- Zrzuty do ewentualnego odświeżenia: brak widocznych zmian w stanie spoczynku; fokus tylko po Tab – design.spec.ts-snapshots raczej bez zmian.
+- Odłożono: nic z zadania; 4 istniejące czerwone e2e do zbadania osobno.
