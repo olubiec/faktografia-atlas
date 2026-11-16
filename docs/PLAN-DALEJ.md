@@ -3,6 +3,10 @@
 ## 1. Dane z GUS codziennie, od razu na stronie
 - Robot w GitHub Actions pobiera dane GUS raz dziennie i zapisuje je do `public/data`.
 - Po zapisie dane trafiają na stronę bez ręcznego kroku: automatyczne scalenie zielonego PR (albo zapis wprost na gałąź produkcyjną) i nowe wdrożenie na Vercelu.
+- Stan (fala D): `fetch-data.yml` biegnie codziennie (cron 01:10 UTC), zapisuje dane na `data/nightly`, otwiera PR i włącza auto-merge (squash) po zielonym CI; scalenie na main uruchamia wdrożenie Vercel. Wybrano PR + auto-merge zamiast commitu wprost (CI jako bezpiecznik).
+- Strażnik anomalii (`nightly-checks.mjs anomaly`, `checkAnomalies`): odrzuca aktualizację, gdy brakuje pliku wskaźnika albo liczba jednostek/wartości spadła o >20% względem main; krok jest przed commitem.
+- Limity BDL: API GUS ma limity zapytań na sekundę/kwartał/dzień (znacznie wyższe z kluczem `BDL_CLIENT_ID`, który jest sekretem repozytorium); pobieranie jest więc wolne (krok do 135 min) i wznawialne. Dokładne wartości limitów do potwierdzenia w dokumentacji BDL.
+- Właściciel ustawia w GitHub: Settings → General → włączyć „Allow auto-merge”; Actions → General → „Allow GitHub Actions to create and approve pull requests”; sekret `BDL_CLIENT_ID`; ochrona main z wymaganym CI.
 - Do ustalenia z właścicielem: czy „baza” = pliki w repozytorium (jak teraz), czy osobna baza.
 
 ## 2. Układ strony do pełnej customizacji
@@ -19,3 +23,9 @@
 ## 4. Domena faktografia.eu (home.pl + Vercel)
 - Rekord A dla domeny głównej i CNAME dla `www` w DNS home.pl; domena dodana w Vercelu.
 - Po podpięciu: zrobione: stopka kart to faktografia.eu.
+
+### Decyzja do punktu 2 (układ): bez nowych pakietów
+- Edytor to prosta lista z przyciskami „w górę / w dół” i przełącznikiem widoczności (pola min. 44 px), bez przeciągania.
+- Powód: dnd-kit i react-grid-layout (obie MIT) rozwiązują przeciąganie, którego na telefonie nie chcemy (konflikt z przewijaniem, słaba dostępność); przyciski działają z klawiatury i czytnika. Bez nowego pakietu nie ma wpisu w `docs/ELEMENTY.md`. Uwaga: ocena bez sprawdzenia w rejestrze npm (brak dostępu do wyszukiwarki w tej sesji); jeśli właściciel zechce przeciąganie, sprawdzić wtedy wersję i licencję.
+- Model: `src/core/layout/` (bloki `{id, visible}`, presety „podstawowy” i „pełny”, zapis URL-safe `a.-b.c`, localStorage przez adapter). Grafika do pobrania ma czytać `visibleIds(layout)`.
+- Edytor: `src/view/layout/LayoutEditor.tsx`; podpięcie do Home/ProfileSheet/ShareDialog w następnym kroku.

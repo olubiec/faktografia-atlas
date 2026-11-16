@@ -59,6 +59,27 @@ export function checkControlNumbers(population, units) {
   return errors;
 }
 
+/**
+ * Strażnik anomalii: porównuje nowy plik wartości wskaźnika z poprzednim (z main).
+ * Odrzuca, gdy liczba jednostek albo liczba wartości (nie-null) spadła o więcej niż 20%.
+ * `prev` = null (nowy wskaźnik) nie jest anomalią. Zwraca listę błędów (pusta = w porządku).
+ */
+export function checkAnomalies(id, prev, next, maxDrop = 0.2) {
+  if (!next || typeof next.values !== 'object' || next.values === null) return [`${id}: brak pliku albo zły kształt.`];
+  if (!prev || typeof prev.values !== 'object' || prev.values === null) return [];
+  const count = (o) => {
+    const units = Object.keys(o.values);
+    const points = units.reduce((s, k) => s + (o.values[k] ?? []).filter((v) => typeof v === 'number').length, 0);
+    return { units: units.length, points };
+  };
+  const a = count(prev);
+  const b = count(next);
+  const errors = [];
+  if (a.units > 0 && b.units < a.units * (1 - maxDrop)) errors.push(`${id}: jednostek ${a.units} -> ${b.units} (spadek > ${maxDrop * 100}%).`);
+  if (a.points > 0 && b.points < a.points * (1 - maxDrop)) errors.push(`${id}: wartości ${a.points} -> ${b.points} (spadek > ${maxDrop * 100}%).`);
+  return errors;
+}
+
 function readJson(file) {
   return JSON.parse(readFileSync(file, 'utf8'));
 }
@@ -97,6 +118,40 @@ function main() {
     return;
   }
 
+  if (mode === 'anomaly') {
+    // Brak pliku wskaźnika z config/indicators.json albo spadek > 20% względem main = odrzucenie aktualizacji.
+    let ids = [];
+    try {
+      ids = readJson(path.join(root, 'config/indicators.json')).map((i) => (typeof i === 'string' ? i : i.id));
+    } catch {
+      ids = readdirSync(dir).filter((n) => n.endsWith('.json')).map((n) => n.replace(/\.json$/, ''));
+    }
+    const errors = [];
+    for (const id of ids) {
+      const rel = `public/data/values/${id}.json`;
+      let next = null;
+      try {
+        next = readJson(path.join(root, rel));
+      } catch {
+        errors.push(`${id}: brak pliku ${rel}.`);
+        continue;
+      }
+      let prev = null;
+      try {
+        prev = JSON.parse(execFileSync('git', ['show', `HEAD:${rel}`], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }));
+      } catch {
+        // wskaźnik nowy
+      }
+      errors.push(...checkAnomalies(id, prev, next));
+    }
+    if (errors.length) {
+      console.error('Strażnik anomalii odrzuca aktualizację:\n- ' + errors.join('\n- '));
+      process.exit(1);
+    }
+    console.log('Strażnik anomalii: OK.');
+    return;
+  }
+
   if (mode === 'revert-noise') {
     const changed = [];
     for (const name of readdirSync(dir).filter((n) => n.endsWith('.json'))) {
@@ -119,7 +174,7 @@ function main() {
     return;
   }
 
-  console.error('Użycie: node scripts/data/nightly-checks.mjs control|revert-noise');
+  console.error('Użycie: node scripts/data/nightly-checks.mjs control|anomaly|revert-noise');
   process.exit(1);
 }
 

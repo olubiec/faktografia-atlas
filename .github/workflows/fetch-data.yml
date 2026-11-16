@@ -1,7 +1,7 @@
 name: Fetch data
 
 # Pobiera z API BDL (GUS) wartości wskaźników z config/indicators.json do public/data/values/<id>.json.
-# Uruchamia się: (1) ręcznie (Run workflow, NIE Re-run), (2) nocą, (3) po zmianie skryptu pobierania lub config/indicators.json na main.
+# Uruchamia się: (1) ręcznie (Run workflow, NIE Re-run), (2) codziennie (cron nocą), (3) po zmianie skryptu pobierania lub config/indicators.json na main.
 # Dane NIGDY nie trafiają prosto na main: workflow zapisuje je na osobną gałąź i sam otwiera PR, ale tylko
 # gdy przeszły test kontraktu i liczby kontrolne oraz zmieniło się coś poza znacznikami czasu.
 # Ręczne uruchomienie jest wznawialne: gotowe pliki są pomijane (--skip-existing), więc jeśli krok nie zdąży, uruchom jeszcze raz.
@@ -135,25 +135,31 @@ jobs:
           node scripts/data/nightly-checks.mjs control
           pnpm exec vitest run tests/unit/data-contract.test.ts
 
+      # Strażnik anomalii: spadek liczby jednostek/wartości o >20% względem main albo brak pliku = nic nie trafia na main.
+      - name: Strażnik anomalii
+        id: guard
+        if: steps.checks.outcome == 'success' && env.MANUAL != 'true'
+        run: node scripts/data/nightly-checks.mjs anomaly
+
       - name: Odrzuć zmiany tylko w znacznikach czasu
         id: noise
-        if: steps.checks.outcome == 'success' && env.MANUAL != 'true'
+        if: steps.guard.outcome == 'success' && env.MANUAL != 'true'
         run: node scripts/data/nightly-checks.mjs revert-noise
 
       - name: Zbuduj pliki profili z nowych wartości
         id: profiles
-        if: steps.checks.outcome == 'success'
+        if: steps.checks.outcome == 'success' && (steps.guard.outcome == 'success' || steps.guard.outcome == 'skipped')
         run: node scripts/data/build-profiles.mjs
 
       # (S20) Części miasto / obszar wiejski: fetch-values.mjs zapisał data/parts/<id>.json, tu składamy pliki na województwa.
       - name: Zbuduj pliki części miasto i wieś (public/data/parts/)
         id: parts
-        if: steps.checks.outcome == 'success'
+        if: steps.checks.outcome == 'success' && (steps.guard.outcome == 'success' || steps.guard.outcome == 'skipped')
         run: node scripts/data/build-parts.mjs
 
       - name: Zatwierdź i wypchnij dane (values, profiles, parts)
         id: push
-        if: always() && (env.MANUAL == 'true' || steps.checks.outcome == 'success')
+        if: always() && (env.MANUAL == 'true' || (steps.checks.outcome == 'success' && steps.guard.outcome == 'success'))
         shell: bash
         run: |
           git add public/data/values/ public/data/profiles/
@@ -174,7 +180,7 @@ jobs:
       # Commity robota nie uruchamiają CI same z siebie, dlatego CI uruchamiamy ręcznie na gałęzi.
       - name: Otwórz PR i uruchom CI
         id: pr
-        if: steps.push.outputs.changed == 'true' && steps.checks.outcome == 'success'
+        if: steps.push.outputs.changed == 'true' && steps.checks.outcome == 'success' && (steps.guard.outcome == 'success' || steps.guard.outcome == 'skipped')
         shell: bash
         run: |
           N="$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&head=${GITHUB_REPOSITORY_OWNER}:${BRANCH}" --jq '.[0].number // empty')"
