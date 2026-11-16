@@ -26,10 +26,8 @@ export function LibraryFilters({ index, query, onQueryChange }: LibraryFiltersPr
   }, [matchingVarsForUnits]);
 
   const hasActiveFilters = query.level !== null || query.unit !== null || query.onlyReady;
-  const activeCount =
-    (query.level !== null ? 1 : 0) +
-    (query.unit !== null ? 1 : 0) +
-    (query.onlyReady ? 1 : 0);
+  // Licznik: tylko wybory użytkownika (poziom, jednostka); „tylko z danymi” ma własną kontrolkę
+  const activeCount = (query.level !== null ? 1 : 0) + (query.unit !== null ? 1 : 0);
 
   const handleLevelChange = (level: 5 | 6 | null) => {
     onQueryChange({ ...query, level });
