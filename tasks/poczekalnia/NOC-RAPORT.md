@@ -290,3 +290,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: c8a2cc6 (galaz claude/laughing-pasteur-8af8jz, bez PR): useMenuDismiss.ts (dismissReason + hook), Header.tsx (id, aria-controls, refy), 2 nowe testy.
 - Vercel: telefon - otwórz Menu, Escape/dotknięcie obok zamyka, fokus wraca na Menu; na profilu jednostki Escape przy menu zamyka tylko menu.
 - Odłożono: Sheet nie przyjmuje ref w typach (poza Zmieniaj), więc menu owinięte w div z id/ref. Escape zatrzymywany w fazie przechwytywania (stopPropagation), bo ProfileSheet nie sprawdza defaultPrevented.
+
+## N-17 – Biblioteka bez pobierania density.json ze stopki
+- Wynik: lint, typecheck, Vitest, build zielone; e2e: nowy library-no-map-values (3), library-variable x3 (27/27), freshness-single-fetch, navigation-and-budgets zielone; kontrola usunięć pusta.
+- Commit: ff00551 (galaz claude/laughing-pasteur-8af8jz, bez PR): freshnessFetchAllowed, DataFreshness bez fetchu na /biblioteka*, 2 nowe testy.
+- Vercel: /biblioteka/101 - w stopce brak linijki „Dane GUS odświeżone”; na /rankingi i / nadal jest.
+- Efekt uboczny: library-page „1 żądanie spisu i 0 values” teraz przechodzi (wcześniej czerwony).
+- Odłożono: library-page axe oraz 2 testy s21-library „pełna ścieżka” czerwone także bez moich zmian (stan wyjściowy), nie ruszałem.
