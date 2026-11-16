@@ -41,3 +41,19 @@ export function rankingSearch(selection: RankingSelection, query: string): strin
   const s = p.toString();
   return s ? `?${s}` : '';
 }
+
+/**
+ * Czy adres zmienił się z zewnątrz (link, Wstecz/Dalej), a nie przez zapis strony?
+ * Porównanie po postaci znormalizowanej (rankingSearch ∘ parseRankingParams),
+ * więc kolejność parametrów i wartości domyślne nie dają fałszywych zmian.
+ * lastWritten = null to pierwsze wejście: stan powstał z tego adresu, więc nie ma zmiany.
+ */
+export function isExternalRankingChange(
+  search: string,
+  lastWritten: string | null,
+  indicators: RankingIndicator[],
+): boolean {
+  if (lastWritten === null) return false;
+  const p = parseRankingParams(search, indicators);
+  return rankingSearch(p.selection, p.query) !== lastWritten;
+}

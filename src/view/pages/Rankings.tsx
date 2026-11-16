@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { SiteLayout } from '../layout/SiteLayout';
 import { loadUnits } from '../../core/data/load-atlas-data';
@@ -18,7 +18,7 @@ import {
   yearsDesc,
   type RankingSelection,
 } from '../../core/ranking/ranking-options';
-import { parseRankingParams, rankingSearch } from '../../core/ranking/ranking-url';
+import { isExternalRankingChange, parseRankingParams, rankingSearch } from '../../core/ranking/ranking-url';
 import type { UnitLevel } from '../../core/units/types';
 
 const LEVEL_LABEL: Record<UnitLevel, string> = { woj: 'Województwa', pow: 'Powiaty', gmi: 'Gminy' };
@@ -96,9 +96,22 @@ export function Rankings() {
   const latest = values && values.years.length ? Math.max(...values.years) : null;
   const year = sel.year ?? latest;
 
-  // Wybór i tekst → adres, bez nowych wpisów historii.
+  // Adres ↔ stan. Zmiana adresu z zewnątrz (link, Wstecz) ustawia stan;
+  // własny zapis (replace, bez nowych wpisów historii) go nie resetuje.
+  const lastWritten = useRef<string | null>(null);
+  const seenSearch = useRef(location.search);
   useEffect(() => {
+    const searchChanged = seenSearch.current !== location.search;
+    seenSearch.current = location.search;
+    if (searchChanged && isExternalRankingChange(location.search, lastWritten.current, indicators)) {
+      const ext = parseRankingParams(location.search, indicators);
+      lastWritten.current = rankingSearch(ext.selection, ext.query);
+      setRawSel(ext.selection);
+      setQuery(ext.query);
+      return;
+    }
     const next = rankingSearch(sel, query);
+    lastWritten.current = next;
     if (next !== location.search) navigate({ search: next }, { replace: true });
   }, [sel, query, location.search, navigate]);
 
