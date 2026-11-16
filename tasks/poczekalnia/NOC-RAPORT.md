@@ -442,3 +442,11 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - home „loads properly”: nie regresja aplikacji, selektor testu `img[alt="Faktografia"]` jest zbyt szeroki (logo w nagłówku i stopce; stopka z logo istnieje od 2026-11-01, W15-M04). Testu nie ruszano, wymaga decyzji właściciela.
 - library-search „1 żądanie index.json”: po kroku z `?k=1&q=ludnosc` adres jest poprawny (sprawdzone logiem nawigacji), pada dopiero po kliku „Powiaty” i cofnięciu (adres wraca do `?q=ludnosc` bez `k=1`). Przyczyny nie ustalono w limicie czasu; porównania z worktree na starszym commicie nie zdążono zrobić, więc nie wiadomo, czy to regresja.
 - Nie zmieniono testów, wzorców, configów, STAN.md ani consent.
+
+## N-42 – Logika parametrów osadzania (`/osadz`) i kodu `<iframe>`
+- Wynik: lint, typecheck, test (1056), build zielone; e2e nie uruchamiano (zadanie bez UI).
+- Nowe pliki: src/core/embed/embed-params.ts (`readEmbedParams`, `hasSourceFooter`), src/core/embed/embed-code.ts (`fullViewHref`, `embedSnippet`); testy tests/unit/embed-params.test.ts i embed-code.test.ts (testy najpierw).
+- Wskaźnik, poziom, jednostkę i rok waliduje istniejące `readUrlState`; domyślny wskaźnik z `DEFAULT_INDICATOR_ID`. `hideSource`/`nologo`/`source` ignorowane.
+- Atrybuty `<iframe>` escapowane (`& " < >`), kolejność parametrów stała; kod to tylko tekst, bez HTML w DOM.
+- Bez trasy, bez zmian w vercel.json, state.ts i src/view; nie ruszono cudzej zmiany w Footnotes.tsx.
+- Vercel: nic do sprawdzenia (czysta logika bez UI).
