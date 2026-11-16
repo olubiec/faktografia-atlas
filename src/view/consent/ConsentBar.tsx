@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { readConsent, writeConsent, shouldAskForConsent } from '@/core/consent/consent';
-import { startAnalytics } from '@/core/consent/analytics';
+import { startAnalytics, stopAnalytics } from '@/core/consent/analytics';
 
 export interface ConsentBarProps {
   storage?: Storage | null;
@@ -28,6 +28,7 @@ export function ConsentBar({ storage }: ConsentBarProps) {
 
   const handleDeny = () => {
     writeConsent(storage, 'denied');
+    stopAnalytics();
     setVisible(false);
   };
 

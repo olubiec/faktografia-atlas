@@ -467,3 +467,7 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - [N-45] Uwaga: świeżość z 20 plików łamie PRODUKT §7 – plan używa najstarszego fetchedAt z cache; pełny manifest wymaga zgody (scripts/data).
 - N-46: plan bezpieczeństwa (trasy /__test i /design, SHA akcji, CSP bez unsafe-eval) w tasks/poczekalnia/N-46-bezpieczenstwo.md; kluczowe: e2e idzie na buildzie PROD z localhost:4173, więc bramka po hoście, nie po PROD/?e2e.
 - N-46: CSP bez unsafe-eval wymaga Report-Only na podglądzie Vercel (analiza statyczna nie znalazła eval w deck.gl/luma/maplibre, brak potwierdzenia w przeglądarce); workflowy przypina właściciel.
+- [N-47] Zrobione: stopAnalytics() w Privacy.handleRevoke i ConsentBar.handleDeny; z polityki usunięto zdanie o zdarzeniu „search”; nowy test tests/unit/consent-revoke.test.tsx.
+- [N-47] trackSearch nadal niepodpięty; wróci razem ze zdaniem w polityce osobnym zadaniem.
+- [N-49b] PageMeta (useLayoutEffect) usuwa statyczny canonical i og:url z index.html przy montowaniu (zostaje jeden, z ?u=) i przywraca je po odmontowaniu; Home.tsx, index.html i istniejące testy bez zmian.
+- [N-49b] Nowy test tests/unit/page-meta-canonical.test.ts (na sztucznym DOM, bo Vitest nie ma jsdom); e2e nie uruchamiano.

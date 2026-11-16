@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { clearConsent } from '@/core/consent/consent';
+import { stopAnalytics } from '@/core/consent/analytics';
 import { SiteLayout } from '../layout/SiteLayout';
 
 export function Privacy() {
@@ -7,6 +8,7 @@ export function Privacy() {
 
   const handleRevoke = () => {
     clearConsent();
+    stopAnalytics();
     setRevoked(true);
   };
 
@@ -41,7 +43,7 @@ export function Privacy() {
               Logi hostingu (Vercel): adres IP, czas i adres żądania, dane przeglądarki. Zapisuje je dostawca hostingu w związku z działaniem serwisu.
             </li>
             <li>
-              Analityka (PostHog), tylko po Twojej zgodzie: jedno zdarzenie „search” z wpisaną przez Ciebie frazą wyszukiwania (maks. 100 znaków; frazy z „@” lub długim ciągiem cyfr nie są wysyłane). Nie zbieramy imienia ani e-maila, nie nagrywamy sesji, a automatyczne zbieranie kliknięć i odsłon jest wyłączone. Zapisywanie adresu IP w analityce jest wyłączone w konfiguracji.
+              Analityka (PostHog), tylko po Twojej zgodzie. Nie zbieramy imienia ani e-maila, nie nagrywamy sesji, a automatyczne zbieranie kliknięć i odsłon jest wyłączone. Zapisywanie adresu IP w analityce jest wyłączone w konfiguracji.
             </li>
             <li>
               Pamięć przeglądarki (localStorage), zapisywana na Twoim urządzeniu:
