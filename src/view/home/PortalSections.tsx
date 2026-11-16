@@ -5,7 +5,7 @@ import { FeaturedComparisons } from './FeaturedComparisons';
 export function PortalSections() {
   return (
     <div className="flex flex-col border-t border-linia">
-      <main className="max-w-7xl mx-auto w-full px-4 md:px-8 py-10 md:py-16 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+      <section aria-label="Działy i skróty" className="max-w-7xl mx-auto w-full px-4 md:px-8 py-10 md:py-16 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
         {/* Szybki start */}
         <section className="flex flex-col gap-4">
           <h2 className="text-xl font-bold text-tusz tracking-tight">Szybki start</h2>
@@ -124,7 +124,7 @@ export function PortalSections() {
             </Link>
           </div>
         </section>
-      </main>
+      </section>
 
       <SiteFooter />
     </div>

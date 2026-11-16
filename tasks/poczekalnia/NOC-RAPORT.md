@@ -346,3 +346,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 5161600 (kod), wypchnięty na claude/laughing-pasteur-8af8jz.
 - Na Vercelu: otwórz /rankingi, zmień dział/wskaźnik/poziom/rok i wpisz tekst – adres dostaje i, l, y, q; wklej ten link w nowej karcie – ten sam ranking. /rankingi?i=nieistnieje pokazuje widok domyślny.
 - Odłożono: nic. Uwaga: klik w link „Rankingi” w nagłówku, gdy jesteś już na /rankingi z parametrami, przywraca adres z bieżącego wyboru (stan strony nie jest resetowany).
+
+## N-25 – jeden <main> na stronie głównej
+- Wynik: lint, typecheck, unit, build zielone; e2e home-single-main (4), profile-row, home-portal, a11y-matrix, main-screen zielone. s20-parts 1440 zielony; profile-mobile "passes axe" i s20-parts mobile nadal czerwone.
+- Zmiana: PortalSections `<main>` -> `<section aria-label="Działy i skróty">` (wygląd bez zmian).
+- Na Vercelu: strona główna wygląda jak wcześniej; nic do klikania poza kontrolą wizualną działów pod mapą.
+- Odłożono: na telefonie z otwartym profilem `<footer>` w ProfileSheet.tsx dubluje contentinfo ze SiteFooter (axe landmark-unique) – wymaga zmiany poza „Zmieniaj”; w home-single-main ten jeden przypadek pomija regułę landmark-unique (komentarz w teście).
