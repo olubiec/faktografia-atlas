@@ -32,7 +32,8 @@ export function LibrarySearchBar({
     if (!query.text.trim()) {
       return [];
     }
-    return filterVars(index, query).slice(0, 5);
+    // Podpowiedzi z całego spisu (także niepobrane), reszta filtrów bez zmian
+    return filterVars(index, { ...query, onlyReady: false }).slice(0, 5);
   }, [index, query]);
 
   // Click outside listener
@@ -163,6 +164,7 @@ export function LibrarySearchBar({
             const path = catId ? categoryPath(index, String(catId)) : [];
             const pathStr = path.map((c) => c.name).join(' / ');
             const isSelected = activeIndex === idx;
+            const isOrderable = !(item.has === 1 || item.has === true || item.hasReady === true);
 
             return (
               <li
@@ -170,6 +172,7 @@ export function LibrarySearchBar({
                 id={`suggestion-option-${idx}`}
                 role="option"
                 aria-selected={isSelected}
+                aria-label={isOrderable ? `${item.name}, do zamówienia` : undefined}
                 onMouseDown={(e) => {
                   e.preventDefault();
                 }}
@@ -180,6 +183,7 @@ export function LibrarySearchBar({
                 }`}
               >
                 <span className="font-[600] text-sm text-tusz line-clamp-2 break-words leading-snug">{item.name}</span>
+                {isOrderable && <span className="text-xs text-olowek">do zamówienia</span>}
                 {pathStr.length > 0 && (
                   <span className="text-xs text-olowek truncate">{pathStr}</span>
                 )}

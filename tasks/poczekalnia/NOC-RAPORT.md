@@ -376,3 +376,11 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: 741be2e ([N-28]).
 - Vercel: na telefonie dół mapy wygląda tak samo jak dotąd (pasek wskaźnika bez zmian wizualnych).
 - Odłożono: nic.
+
+## N-29 – podpowiedzi biblioteki z całego spisu
+- Wynik: lint, typecheck, test (1012), build zielone; e2e (suggestions-all, library-search, library-page, header-library) 25/27 – „onPick” zielony.
+- Padają 2 testy telefonu 360x740 w library-search (:141, :188) – padały tak samo przed zmianą (poza zakresem); „1 żądanie index.json” raz padł w pełnym biegu, osobno i w powtórce zielony (flaky).
+- Zmiana: LibrarySearchBar.tsx (podpowiedzi z onlyReady:false, znacznik „do zamówienia” + aria-label); nowe testy unit + e2e.
+- Vercel: na /biblioteka wpisz „Mediana” – pojawia się „Mediana wieku” z „do zamówienia”; klik prowadzi do /biblioteka/104 z „Ten wskaźnik jeszcze nie został pobrany”.
+- Odłożono: 2 testy telefonu w library-search (osobna diagnoza).
+- Commit: kod w następnym commicie [N-29] (ten wpis w kolejnym).
