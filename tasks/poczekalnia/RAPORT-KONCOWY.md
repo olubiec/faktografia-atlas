@@ -1,0 +1,662 @@
+# Raport końcowy nocnej zmiany – Faktografia Atlas
+
+Gałąź: `claude/laughing-pasteur-8af8jz` (bez PR do main). Stan na koniec: HEAD `2bce5ff`, drzewo czyste, lint + typecheck + Vitest (178 plików / 1135 testów) zielone. Pełne e2e NIE było uruchomione lokalnie – zrobi je CI / właściciel. Zrzuty wzorcowe: tylko workflow „Update snapshots".
+
+## Co zrobiono w ostatniej fazie (po 04:39 UTC)
+- N-47: cofnięcie zgody zatrzymuje analitykę (PostHog); polityka bez zdarzenia „search".
+- N-48: poprawki kruchych testów e2e (home, picker-scroll, compare-maps, profile-overview, tune, library-search, s21-library).
+- N-49b: jeden canonical i og:url na podstronach (PageMeta usuwa statyczne duplikaty z index.html).
+- N-50/50b: PNG og:image 1200x630 + ikony 192/512; index.html wskazuje PNG.
+- N-43/43b: sitemapa z generatora + typy; N-44: JSON-LD (czysta logika, jeszcze niepodpięta); N-40/41/42: logika największych zmian, wyszukiwania naturalnego, osadzania (jeszcze niepodpięte do UI).
+- Plany do wykonania: N-45 (walidacja danych), N-46 (bezpieczeństwo), N-51 (punkty zatrzymania arkusza).
+- Testy brzegowe (story, search intent, embed): bez znalezionych błędów.
+- Audyty: bezpieczeństwo, dane, SEO, testy, UX/a11y, porównanie z innymi serwisami, koncepty rozwoju (osobne pliki w tym katalogu).
+
+## Czego NIE zrobiono / czeka na Ciebie
+- Pełne e2e, wygląd na Vercelu, podgląd PNG w mediach społecznościowych, punkty zatrzymania arkusza profilu – niezweryfikowane.
+- N-45, N-46 (vercel.json i workflowy wymagają Twojej zgody), N-51, ikony PNG w site.webmanifest, podpięcie JSON-LD i logiki N-40/41/42 do UI.
+- PR #451 – ręczne scalenie przez Ciebie. PR do main dopiero po „otwórz PR do main".
+
+---
+# CZĘŚĆ 1 – Decyzje (podjęte przez Opusa)
+# Decyzje właściciela (podjęte w jego imieniu, 2026-11-16)
+
+Podstawa: właściciel polecił podjąć wszystkie otwarte decyzje po analizie. Źródła: NOC-RAPORT.md, AUDYT-BEZPIECZENSTWO/SEO/TESTOW/UX-A11Y.md, DIAGNOZA-E2E.md, KONCEPTY-ROZWOJU.md, CHECKLISTA-WLASCICIELA.md (D1–D12), docs/. Ten plik to tylko decyzje – kod robią osobne zadania.
+
+## Tabela
+
+| # | Kwestia | Decyzja | Powód | Ryzyko | Kto wykonuje | Pliki |
+|---|---|---|---|---|---|---|
+| 1 | Cofnięcie zgody a analityka (D6) | **TAK, od razu.** `stopAnalytics()` w `Privacy.handleRevoke` i `ConsentBar.handleDeny`. Z polityki prywatności usunąć zdanie o zdarzeniu „search” (dziś nikt go nie wysyła); `trackSearch` podpiąć dopiero osobnym zadaniem razem z powrotem zdania do polityki. | RODO: po „Nie” wysyłanie musi ustać natychmiast, nie po odświeżeniu. Polityka ma opisywać stan faktyczny. Właściciel wprost zezwolił na `src/core/consent` i `src/view/consent`. | Niskie. Test Vitest: po cofnięciu `trackSearch('Kraków')` nie woła `capture`. | Agent (zadanie N-47) | `src/view/consent/ConsentBar.tsx`, `src/view/pages/Privacy.tsx`, ew. `src/core/consent/analytics.ts`, nowy `tests/unit/consent-revoke.test.ts(x)` |
+| 2 | Kruche testy e2e (AUDYT-TESTOW A1–A5, A7, D5) | **TAK dla A1, A2, A3, A4, A5, A7** – to błędy samych testów (zły selektor, `count()` bez czekania, licznik żądań liczony od `/`). Asercje zostają lub są ściślejsze (A4: `toHaveCount(1)` + nazwa). **A6** – patrz pkt 4. **A8** (`test.slow()`): **NIE** – to środowisko bez GPU; lokalnie `--workers=1`, CI ma `workers: 1`. | Każda z poprawek sprawdza to samo zachowanie co wcześniej, tylko trafia we właściwy element. Logo w stopce zostaje (D5 = A). | Średnie dla A2 na telefonie: jeśli przycisk po nazwie dostępnej nie istnieje, to błąd aplikacji → wtedy osobne zadanie z `data-testid`, testu nie osłabiać. | Agent (zadanie N-48) | `tests/e2e/home.spec.ts`, `picker-scroll.spec.ts`, `compare-maps.spec.ts`, `profile-overview.spec.ts`, `tune.spec.ts`, `s21-library.spec.ts` (tylko krok 1: wyzerowanie licznika po `__atlas.ready`) |
+| 3 | Canonical dla `?u=` (D-SEO-1) | **(a) canonical zachowuje `?u=<TERYT>`** (tylko ten parametr; `ind`, `y`, `c`, `k` odrzucone). Najpierw naprawa podwójnego canonical (P1-1): usunąć canonical/`og:url` z `index.html`, jeden canonical z `PageMeta`. Ścieżki `/gmina/...` (b) – nie teraz. | Najmniej zmian, bez zmiany struktury URL (zmiana architektury = osobna decyzja). Podwójny canonical szkodzi już dziś. | Bez prerenderu Google widzi canonical dopiero po JS – zysk SEO umiarkowany. 2 875 adresów w sitemap tylko po potwierdzeniu, że Google je renderuje. | Agent (zadanie N-49) | `index.html`, `src/view/layout/PageMeta.tsx`, `src/core/url/*` (helper canonical), `tests/unit/meta.test.ts` (nowe przypadki, bez zmiany istniejących), nowy e2e meta per trasa |
+| 4 | library-search: powrót do `k=1` (A6) | **(b)** – szukanie celowo czyści kategorię (po N-29 szuka w całym spisie). Test: oczekiwać `?q=ludnosc` po `history.back()`; filtr żądań zawęzić do `/library/index.json`. | Zgodne z obecnym zachowaniem i z N-29; zmiana historii w aplikacji to więcej ryzyka niż wartości. Asercja „dokładnie 1 żądanie spisu” zostaje, a po zawężeniu filtra jest ściślejsza. | Zmiana istniejącej asercji URL – dopuszczona tą decyzją; „1 żądanie” bez zmian. | Agent (w N-48) | `tests/e2e/library-search.spec.ts` |
+| 5 | PNG og:image i ikony (D4) | **TAK, da się bez nowych pakietów.** Logo SVG w `public/brand/` to same ścieżki (0 elementów `<text>`, brak zależności od fontów). ImageMagick w kontenerze nie ma delegata SVG, ale Playwright/Chromium jest już w projekcie: jednorazowy skrypt w scratchpadzie renderuje stronę 1200×630 (tło i kolor z `config/tokens.json`, logo z `public/brand/`) → `page.screenshot()`; tak samo ikony 192/512 ze znaku. Wynikowe PNG w `public/brand/`, wpis w `docs/ELEMENTY.md` (pochodne logo), `og:image:width/height/alt`, `twitter:image`, ikony w `site.webmanifest`. | Komunikatory nie pokazują SVG – udostępnianie linku to główny scenariusz (PRODUKT §2). | Skrypt generujący nie trafia do repo (`scripts/` bez zgody), więc ponowne wygenerowanie wymaga powtórzenia ręcznego. PNG traci manifest C2PA z SVG. | Agent (zadanie N-50) | `public/brand/faktografia-og-1200x630.png`, `public/brand/faktografia-icon-192.png`, `-512.png`, `index.html`, `public/site.webmanifest`, `docs/ELEMENTY.md` |
+| 6 | Kolizja s21 krok 5 z P3-C (DIAGNOZA 4b) | **Wygrywa P3-C** (domyślnie „tylko z danymi”, wyszukiwanie zachowuje filtr – przypięte testem `library-view.test.tsx`). Test s21: przed szukaniem wskaźnika niepobranego kliknąć „Pokaż wszystkie (N)” (ścieżka użytkownika), asercja „wskaźnik niepobrany widoczny + przycisk Zamów” bez zmian. | P3-C to świadoma, nowsza decyzja produktowa; test s21 opisuje stary domyślny stan. Dodanie kroku nie usuwa żadnej asercji. | Niskie; jeśli „Pokaż wszystkie” nie istnieje na telefonie – błąd aplikacji, osobne zadanie. | Agent (w N-48) | `tests/e2e/s21-library.spec.ts` |
+| 7 | Status 404 (D2, P2-F) | **C – zostaje 200 + `noindex`.** Wrócić do (b) `404.html` + lista tras po wdrożeniu canonical i Search Console, jeśli pokaże dużo „Soft 404”. | `vercel.json` rewrites nie dają statusu; legacy `routes` kłóci się z `headers` (CSP). Lista tras łatwo się rozjedzie z aplikacją. | Search Console może raportować „Soft 404” – akceptowalne. | Nikt teraz | — |
+| 8 | Auto-merge PR #451 (D11) | **Zalecenie: B na teraz – właściciel scala PR-y danych ręcznie** po zielonym CI (przycisk „Merge” na GitHubie, raz na kilka dni). Opcjonalnie później A: „Allow auto-merge” + ochrona `main` z wymaganym CI. Agenci **nie** scalają #451 i nie otwierają PR do `main`. | Dane trafiają na publiczną stronę; dopóki walidacja danych (N-45) nie jest w CI, człowiek ogląda diff. | Ręczne scalanie = opóźnienie danych o kilka dni. | Właściciel | — (ustawienia repo na GitHubie) |
+| 9 | Snap points ProfileSheetMobile | **Ujednolicić z BottomSheet: `[0, 0.25, 0.6, 0.95]`, start 0.6 (zwykle) / 0.95 przy `isSheetFull`.** Dziś `[0, 0.4, 1]` (plik ekranu, poza P4-C). Start na 0.6, nie 0.25, bo profil ma nagłówek, zakładki i pierwszą liczbę – 25% to sam nagłówek. Przycisk Rozwiń liczy najwyższy punkt z kontekstu (P4-C). 0.95 zamiast 1 zostawia pasek przeglądarki i gest zamknięcia. | Spójne zachowanie arkuszy; przy starcie 0.6 nad profilem zostaje ok. 40% mapy (próg z P4-C: ≥ 35%). | Zmiana pliku ekranu – dopuszczona tą decyzją tylko w N-51. Zrzuty z arkuszem profilu do odświeżenia workflow „Update snapshots”. Łączyć ostrożnie z N-14 i N-31 (ten sam plik) – po kolei, nie równolegle. | Agent (zadanie N-51, po N-14 i N-31) | `src/view/profile/ProfileSheetMobile.tsx`, nowy `tests/e2e/profile-sheet-snap.spec.ts` (390×844: mapa ≥ 35% widoczna po otwarciu) |
+
+## Pozostałe pozycje z CHECKLISTY (D1, D3, D7–D10, D12)
+
+| D | Decyzja | Powód |
+|---|---|---|
+| D1 trasy /__test/* i /design | **A** – build e2e z `VITE_E2E=true` (playwright.config.ts + skrypt), w produkcji tras nie ma. | Bezpieczeństwo (AUDYT-BEZP. P2-2); zmiana konfiguracji dopuszczona tą decyzją. |
+| D3 linki Kontakt/Zastrzeżenie | **A** – zgoda na zmianę liczników w dwóch testach (17→19, 6→8). | Strony istnieją, ale są niewidoczne. Zmiana licznika wynika z nowej funkcji, nie z osłabienia. |
+| D7 pierwsza fala | **B, potem A** – najpierw porządki (N-25…N-31, N-47…N-51), potem „Odpowiedzi szybciej”. | Czerwone e2e blokują pętlę scalającą. |
+| D8 osadzanie | **B – nie teraz.** | Wymaga zmian CSP i sprawdzenia warunków Vercel Hobby. |
+| D9 Atom / PWA | **B – nie teraz.** | Nowy pakiet i `scripts/data` – większy zakres. |
+| D10 „Zgadnij, gdzie” | **B – odłożone.** | Teksty wymagają akceptacji człowieka. |
+| D12 bezpieczeństwo CI/CSP | **A** – osobne zadanie z prośbą wprost o `.github/workflows` i `vercel.json`. | Przypięcie akcji do SHA i mniejsze uprawnienia to tanie, ważne poprawki. |
+
+## Kolejność wykonania
+1. N-47 (zgoda) · 2. N-48 (testy e2e, pkt 2/4/6) · 3. N-25…N-31 (błędy aplikacji z DIAGNOZY) · 4. N-51 (snap points, po N-14/N-31) · 5. N-49 (canonical) · 6. N-50 (PNG) · 7. D1, D3, D12.
+
+Treść zadań N-47…N-51 trzeba jeszcze rozpisać w `tasks/poczekalnia/` (ten dokument ich nie tworzy).
+
+---
+# CZĘŚĆ 2 – Checklista „co sprawdzić" (krok po kroku)
+# Checklista właściciela – podgląd Vercel z telefonu
+
+Źródła: NOC-RAPORT.md, AUDYT-BEZPIECZENSTWO/DANYCH/SEO/TESTOW/UX-A11Y.md, KONCEPTY-ROZWOJU.md.
+Jak czytać: najpierw „Zrób", potem „Spodziewaj się", na końcu „Jeśli inaczej". Wynik zapisuj jako OK / NIE OK (+ zrzut ekranu). Gdy coś jest NIE OK, nie naprawiaj sam: wyślij zrzut i numer kroku.
+
+Przed startem: otwórz najnowszy podgląd z Vercel (Deployments → ostatni zielony → Visit). Najlepiej w Chrome na telefonie, raz w karcie prywatnej (pierwsze wejście), raz w zwykłej.
+
+## Część 1. Szybkie wejście (5 minut)
+
+1. **Strona główna.** Zrób: otwórz link podglądu przez sieć komórkową. Spodziewaj się: kolorowa mapa w ok. 3 sekundy, krótkie rysowanie granic; dotknięcie ekranu przerywa rysowanie. Jeśli inaczej: zapisz, ile sekund trwało, i wyślij zrzut.
+2. **Odświeżenie.** Zrób: odśwież stronę w tej samej karcie. Spodziewaj się: mapa od razu, bez rysowania granic. W nowej karcie rysowanie wraca. Jeśli inaczej: opisz, co zobaczyłeś.
+3. **Pasek zgody.** Zrób: w karcie prywatnej wejdź na stronę. Spodziewaj się: pasek zgody, w którym „Nie" jest tak samo widoczne jak „Zgadzam się", nie zasłania dolnego paska wskaźnika. Jeśli inaczej: zrzut.
+4. **Dotknij gminę na mapie.** Spodziewaj się: arkusz profilu wysuwa się nisko, mapa nad nim dalej widoczna. Przeciągnij arkusz w górę i w dół; paski nie powinny wychodzić poza ekran. Jeśli inaczej: zrzut, numer kroku.
+5. **Przewiń palcem poza mapą**, nad dolnym paskiem wskaźnika. Spodziewaj się: cała strona się nie przesuwa, dolny pasek jest cały widoczny. Obróć telefon i wróć: nadal tak samo.
+6. **Ciemny motyw.** Zrób: przełącz motyw w nagłówku. Spodziewaj się: mapa i kolory ciemne, granice wyraźnie jaśniejsze od tła, górny pasek przeglądarki ściemnia się. Jasny motyw wygląda jak wcześniej.
+
+## Część 2. Strony i menu
+
+7. **Menu telefonu** (ikona w nagłówku). Spodziewaj się: Mapa, Rankingi, Biblioteka itd. Klikanie daje lekkie rozmycie przejścia (fade). Jeśli w telefonie masz włączone „ograniczenie ruchu", przejść nie ma. Uwaga: linków Kontakt i Zastrzeżenie w menu i stopce jeszcze nie ma (czeka decyzja D3), więc ich brak jest OK.
+8. **/kontakt.** Zrób: dopisz do adresu /kontakt. Spodziewaj się: autor, link mailto i link do zgłoszeń na GitHubie; krótka pusta chwila przy ładowaniu jest OK. Jeśli inaczej: zrzut.
+9. **/zastrzezenie.** Spodziewaj się: tekst o danych GUS BDL, licencji CC BY 4.0 i braku gwarancji, link do /kontakt.
+10. **/prywatnosc.** Spodziewaj się: 8 numerowanych sekcji, adres kontaktowy, przycisk „Cofnij zgodę" działa. Jeśli inaczej: zrzut.
+11. **Zły adres** (np. /nie-ma-takiej). Spodziewaj się: strona 404 z linkiem do strony głównej. Uwaga: to zwykły ekran aplikacji, nie prawdziwy kod 404 (decyzja D2).
+12. **Stopka, data danych.** Zrób: zjedź na sam dół dowolnej strony. Spodziewaj się: pod linijką CC BY 4.0 napis „Dane GUS odświeżone: 19.10.2026" (jedna data dla wszystkich wskaźników). Po 60 dniach dopisek „(dane mogą być nieaktualne)". Jeśli inaczej: zrzut.
+13. **Biblioteka** (/biblioteka). Spodziewaj się: pierwsze 20 kart, same gotowe, przycisk „Pokaż wszystkie (N)"; /biblioteka?q=ludnosc filtruje; brak przewijania w poziomie. Jeśli inaczej: zrzut i adres.
+14. **Rankingi** (/rankingi). Spodziewaj się: listy działają. Uwaga: listy Dział/Wskaźnik/Poziom/Rok i wyszukiwarka na tej stronie są dopiero w planie, więc ich brak nie jest błędem.
+
+## Część 3. Dane (najważniejsze dla wiarygodności)
+
+15. **Wychowanie przedszkolne.** Zrób: wskaźnik „Wychowanie przedszkolne", ostatni rok, „Najwyżej". Spodziewaj się: jeśli któraś jednostka ma ponad 100 %, jest wyjaśnienie. Sprawdź gminę 2417052 w profilu: wykres lat, rok 2014 = 203,6 %. Jeśli ponad 100 % bez wyjaśnienia: zapisz jednostkę (to znane niedociągnięcie danych).
+16. **Mediana wieku.** Zrób: przesuń suwak lat. Spodziewaj się: czy sięga 2026 i czy gminy Stanisławów, Małkinia Górna i Staroźreby są szare. Porównaj z „Gęstością zaludnienia", która kończy się na 2025. Zapisz, co widzisz.
+17. **Wskaźniki tylko powiatowe.** Zrób: poziom „Gminy" przy Przeciętne wynagrodzenie, Noclegi, Samochody, Stopa bezrobocia. Spodziewaj się: komunikat, że dane są tylko dla powiatów. Jeśli brak: zapisz, który wskaźnik.
+18. **Wyszukiwarka.** Wpisz „Bolesławiec", „Wąsosz", „Janów". Spodziewaj się: da się odróżnić gminy (miasto/wieś). Wpisz „Janów Podlaski", „Stanisławów", „Branice": mają się znaleźć miejscowości.
+19. **Liczby.** Ludność gminy ≥ 1 000: spacja jako separator tysięcy, liczba nie łamie się od jednostki w wąskiej kolumnie. Przyrost naturalny: przecinek i prawdziwy minus (−), nie dywiz.
+20. **Objaśnienia wskaźników.** Zrób: profil → rozwiń wskaźnik. Spodziewaj się: „Co to jest", „Jak czytać" i link „Definicja GUS". Kliknij ten link dla: Dochody, Wydatki, REGON, Mieszkania, Kanalizacja, Przedszkola, Bezrobotni (udział). Czy trafia na konkretne hasło, czy na ogólny słownik? Zapisz, które są ogólne (linki nie były sprawdzone w sieci).
+21. **Nazwy wskaźników.** Czy „(%)" w nazwie nie dubluje się z „%" przy liczbie.
+
+## Część 4. Prywatność i udostępnianie
+
+22. **Cofnięcie zgody.** Zrób: karta prywatna → „Zgadzam się" → wyszukaj „Kraków" → Stopka › Prywatność → „Cofnij zgodę" → wróć i wyszukaj „Gdańsk". Spodziewaj się: w PostHogu (Live events) nie ma „Gdańsk". Uwaga: dziś „Gdańsk" prawdopodobnie jeszcze się pojawi (wyłączenie analityki po cofnięciu zgody czeka na osobne zadanie). Jeśli się pojawi: zapisz to jako „znane, do naprawy" i nie panikuj.
+23. **Dane w przeglądarce.** Zrób: po „Zgadzam się" otwórz Narzędzia deweloperskie (na komputerze) → Local Storage. Spodziewaj się: brak kluczy zaczynających się od ph_. Po wpisaniu frazy w wyszukiwarkę w Network jest wywołanie do eu.i.posthog.com.
+24. **Podgląd linku.** Zrób: wyślij sobie link w Messengerze/WhatsAppie. Spodziewaj się: tytuł i opis. Obrazka jeszcze nie będzie (brak PNG 1200×630, decyzja D6), więc brak obrazka to znany stan. Wyślij też link do konkretnej gminy: karta jest dziś ogólna, to też znane.
+25. **Pliki techniczne.** Otwórz /robots.txt, /sitemap.xml, /site.webmanifest. Spodziewaj się: tekst lub XML, nie strona aplikacji. W sitemap ma być 9 adresów (7 tras + /kontakt + /zastrzezenie).
+
+## Część 5. Panele i konfiguracja (robisz raz, najlepiej na komputerze)
+
+26. **Vercel → Settings → Environment Variables.** Dodaj VITE_POSTHOG_KEY (Production i Preview), potem Redeploy. Bez tego analityka nie działa.
+27. **PostHog.** Włącz „Discard client IP data", wyłącz Session replay, sprawdź okres przechowywania zdarzeń (polityka mówi „zgodnie z ustawieniami usługi").
+28. **Vercel – region logów.** Sprawdź region projektu; polityka prywatności pisze ogólnie „także poza UE". Jeśli region jest w UE, można to doprecyzować.
+29. **GitHub → Settings → General → „Allow auto-merge".** Włącz; bez tego nocny pobór danych nie scali się sam.
+30. **GitHub → Pull requests → PR #451 (data/nightly).** Scal albo sprawdź, czemu auto-merge nie zadziałał. Potem Actions → „Fetch data" → Run workflow i sprawdź, czy pojawia się PR „Dane GUS: odświeżenie RRRR-MM-DD" z auto-merge.
+31. **Google Search Console** (domena faktografia.eu, weryfikacja rekordem DNS TXT). Mapy witryn → dodaj https://faktografia.eu/sitemap.xml → status „Sukces". Sprawdź adres /kontakt: jeden canonical. Po 2–4 tygodniach zajrzyj w Skuteczność.
+32. **Podglądy linków (komputer).** Facebook Sharing Debugger i LinkedIn Post Inspector: wklej adres strony. Dopóki nie ma PNG 1200×630, obrazka nie będzie.
+
+## Część 6. Dla czytnika ekranu i klawiatury (opcjonalnie)
+
+33. **VoiceOver/TalkBack.** Dotknij gminę, przesuń na przycisk nad arkuszem. Spodziewaj się „Rozwiń, zwinięty" i nazwy arkusza z nazwą gminy. Dziś może być samo „Rozwiń": znane.
+34. **Klawiatura (komputer).** Tab po zakładkach profilu i przełączniku Woj/Pow/Gmi: fokus wyraźnie widoczny także na zaznaczonym przycisku. Alt+1/2/3 przełącza poziom woj/pow/gmi. Klawisze + i − (zoom) jeszcze nie działają: znane.
+
+## Znane braki (nie zgłaszaj jako błędów)
+
+- Brak PNG do podglądu linków i do instalacji na telefonie (OG 1200×630, ikony 192 i 512).
+- Brak linków Kontakt i Zastrzeżenie w stopce i menu (D3).
+- Nieznany adres daje ekran 404 z kodem 200 (D2); dla wyszukiwarek jest tag noindex.
+- Cofnięcie zgody nie zatrzymuje analityki w otwartej karcie (krok 22).
+- Zoom klawiszami + i − nie jest podpięty do mapy.
+- Eksport kart w wysokiej rozdzielczości: logika gotowa, w interfejsie jeszcze nie ma przycisku.
+- Trzy testy e2e mogą być czerwone: home „loads properly" (za szeroki selektor logo), library-search „1 żądanie index.json" (po cofnięciu adres traci k=1), plus kilka kruchych testów z AUDYT-TESTOW. To nie wpływa na wygląd strony.
+
+---
+
+# Decyzje do podjęcia
+
+Dla każdej: wybierz A lub B (albo napisz „pomiń"). Domyślna propozycja jest w nawiasie.
+
+**D1. Trasy testowe /__test/* i /design w produkcji.** (Zadanie P2-D zablokowane; audyt bezpieczeństwa P2-2.)
+- A: pozwalam zmienić konfigurację testów (playwright.config.ts i CI), żeby te trasy były tylko w trybie testowym. (propozycja)
+- B: zostawiamy jak jest, trasy zostają publiczne.
+
+**D2. Prawdziwy kod 404 dla błędnych adresów.** (P2-F zablokowane.)
+- A: tylko znane trasy i zwykła strona 404 Vercela.
+- B: to samo plus własny plik 404.html (osobna prosta strona).
+- C: zostawiamy jak jest (kod 200 + noindex). (propozycja na teraz, najmniej ryzyka)
+
+**D3. Linki Kontakt i Zastrzeżenie w stopce i menu.** (P2-E zablokowane: wymaga zmiany dwóch istniejących testów.)
+- A: zgoda na zaktualizowanie tych dwóch testów (17 → 19 linków w stopce, 6 → 8 w menu). (propozycja)
+- B: bez linków, strony dostępne tylko z adresu.
+
+**D4. Obraz do podglądu linków i ikony aplikacji.**
+- A: dostarczam PNG 1200×630 oraz ikony 192 i 512 (albo zlecam wygenerowanie z logo). (propozycja)
+- B: zostajemy z SVG; podglądy linków bez obrazka.
+
+**D5. Test logo na stronie głównej** (selektor łapie logo w nagłówku i stopce).
+- A: zgoda na poprawienie selektora w teście. (propozycja)
+- B: usuwamy logo ze stopki.
+
+**D6. Cofnięcie zgody a analityka.**
+- A: zlecam zadanie: po cofnięciu zgody analityka zatrzymuje się od razu (wymaga zmiany w pliku zgody). (propozycja)
+- B: zostaje jak jest, działa po odświeżeniu.
+
+**D7. Pierwsza fala rozwoju (KONCEPTY-ROZWOJU).**
+- A: „Odpowiedzi szybciej": wyszukiwanie naturalne, co się zmieniło, karta zmiany w czasie. (propozycja autora)
+- B: najpierw porządki (testy, dług stylu, dostępność z listy N-*).
+
+**D8. Osadzanie mapy na cudzych stronach.**
+- A: tak, zgoda na zmianę nagłówków w vercel.json tylko dla /osadz; wcześniej sprawdzam warunki Vercel Hobby (użytek niekomercyjny).
+- B: nie teraz.
+
+**D9. Kanał Atom (powiadomienia o nowych danych) i tryb offline (PWA).**
+- A: tak, zgoda na zmiany w scripts/data i vite.config.ts oraz nowy pakiet.
+- B: nie teraz.
+
+**D10. Tryb edukacyjny „Zgadnij, gdzie".**
+- A: ja akceptuję teksty pytań, zaczynamy.
+- B: odkładamy.
+
+**D11. Nocny pobór danych a auto-merge.**
+- A: włączam „Allow auto-merge" i reguły gałęzi, PR-y z danymi scalają się same. (propozycja)
+- B: scalam PR-y z danymi ręcznie.
+
+**D12. Zaostrzenie bezpieczeństwa (AUDYT-BEZPIECZENSTWO P1-1, P2-1, P2-3).** Akcje GitHub przypięte do SHA, ciaśniejsza CSP, mniejsze uprawnienia workflowów. Wymaga zmian w .github/workflows i vercel.json.
+- A: zgoda na zadanie z tymi zmianami. (propozycja)
+- B: odkładamy.
+
+---
+# CZĘŚĆ 3 – Dziennik nocny (szczegóły każdego zadania)
+# Raport nocnej zmiany (koniec pracy: 05:00 czasu PL = 04:00 UTC)
+
+Kolejność: P2-G → P2-A → P2-C → P2-B → P2-D → P2-F → P2-E → P3-A..E → P4-A..E → koncepty (lepszy model).
+Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odłożone.
+
+
+## P2-G – PostHog: konfiguracja przyjazna prywatności
+- Testy: lint, typecheck, test (793/793), build zielone; e2e nie uruchamiane.
+- Zrobione: `POSTHOG_CONFIG` (memory, bez nagrań/ankiet/pageleave, identified_only, ip:false, EU), `trackSearch` przycina do 100 znaków i pomija e-mail/9+ cyfr, nowe `stopAnalytics()`, wpis w ELEMENTY.md.
+- Odstępstwo: zamiast `advanced_disable_decide` użyto `advanced_disable_flags` (w posthog-js 1.438.13 decide jest przestarzałe).
+- Do podpięcia (osobne zadanie): `stopAnalytics()` w src/view/consent przy zmianie zgody na „denied”.
+- Vercel: ustaw `VITE_POSTHOG_KEY` (Production+Preview), Redeploy; kliknij „Akceptuję” – w Local Storage nie ma kluczy `ph_*`, a w Network po wpisaniu frazy jest wywołanie do `eu.i.posthog.com`.
+- PostHog: włącz „Discard client IP data”, wyłącz Session replay.
+
+## P2-A – Meta, SEO, manifest, robots, sitemap
+- Wynik: lint, typecheck, test (805 zielone) i build przechodzą; e2e nie uruchamiano. Brak usuniętych plików względem main.
+- Zrobione: tagi w index.html (opis, canonical, OG, twitter, theme-color, manifest), domyślne meta w PageMeta, robots.txt, sitemap.xml (7 tras), site.webmanifest, tests/unit/meta.test.ts.
+- Vercel: wklej link strony do komunikatora (Messenger/Slack) – powinien pokazać tytuł i opis; otwórz /robots.txt, /sitemap.xml i /site.webmanifest – powinny się wyświetlić.
+- Odłożone: w public/brand są tylko SVG. og:image wskazuje SVG logo, a większość komunikatorów go nie pokaże. Brakuje PNG 1200x630 (og:image) oraz ikon PNG 192 i 512 (manifest, instalacja na telefonie). Trzeba dodać te pliki.
+- theme-color i kolor tła w manifeście = #F8FAF9 (token --arkusz); manifest nie ma wariantu ciemnego.
+
+## P2-C – Strony Kontakt i Zastrzeżenie o danych
+- Testy: lint, typecheck, test (809/809), build zielone; e2e nie uruchamiane. Brak usuniętych plików względem main.
+- Zrobione: `src/view/pages/Contact.tsx` (autor, mailto, link do zgłoszeń GitHub) i `DataDisclaimer.tsx` (GUS BDL, CC BY 4.0, brak gwarancji, link do /kontakt), testy w `tests/unit/info-pages.test.tsx`.
+- Vercel: stron jeszcze nie widać, bo trasy dopisuje P2-D (App.tsx); po P2-D otwórz /kontakt i sprawdź mailto oraz link do zgłoszeń.
+- Odłożone: w stopce nie ma wskaźnika daty odświeżenia danych, a zastrzeżenie się do niego odwołuje; trzeba go dodać osobnym zadaniem. Trasa /kontakt jest założona w linku (P2-D).
+
+## P2-B – Polityka prywatności zgodna z RODO
+- Wynik: lint, typecheck, test (815 zielone) i build przechodzą; e2e nie uruchamiano. Brak usuniętych plików względem main.
+- Zrobione: Privacy.tsx z 8 sekcjami h2 (administrator, dane, podstawa prawna, okres, odbiorcy, prawa/UODO, linki, zmiany + data), klucze localStorage zgodne z kodem, opis PostHog z `persistence: memory` (brak ph_*); przycisk „Cofnij zgodę” bez zmian; tests/unit/privacy-page.test.tsx.
+- Vercel: otwórz /prywatnosc – 8 numerowanych sekcji, mail kontaktowy, „Cofnij zgodę” działa.
+- Do sprawdzenia w panelach: okres przechowywania zdarzeń w PostHog i logów w Vercel (w polityce: „zgodnie z ustawieniami usługi”); w PostHog włącz „Discard client IP data”.
+- Odłożone: lokalizacja przetwarzania logów Vercel opisana ogólnie („także poza UE”); do potwierdzenia z ustawieniami regionu projektu.
+
+## P2-D – Trasy, 404, ErrorBoundary, lazy loading
+- Wynik: ZABLOKOWANE, nic nie zmieniono w kodzie (testy nie uruchamiane, brak usuniętych plików).
+- Powód: pkt 3 zadania (trasy /__test/* tylko przy DEV lub VITE_E2E=true) psuje istniejące e2e. Testy e2e (ui, annotation, interactive, a11y-matrix, bottom-sheet) wchodzą na /__test/* w buildzie produkcyjnym przez `vite preview`; `pnpm build` w playwright.config.ts (webServer), w .github/workflows/ci.yml i update-snapshots.yml nie ustawia VITE_E2E.
+- Potrzebna decyzja: zgoda na zmianę jednego z: playwright.config.ts (build z VITE_E2E=true), ci.yml/update-snapshots.yml, package.json (np. skrypt build:e2e) – wszystko poza listą „Zmieniaj”.
+- Ponadto: NotFound jest dziś w src/view/NotFound.tsx (używany w tests/unit/site-layout.test.tsx), zadanie wskazuje src/view/pages/NotFound.tsx; trzeba zdecydować, czy przenieść (re-export), bo istniejącego testu nie wolno zmieniać.
+- Vercel: nic do klikania. Odłożone całe zadanie (trasy /kontakt, /zastrzezenie, 404 z noindex, ErrorBoundary, lazy loading, rozmiar chunku).
+
+## P2-D (ponowne, zawężone) – Trasy, 404, ErrorBoundary, lazy loading
+- Testy: lint, typecheck, test (820/820), build zielone; e2e nie uruchamiane. Brak usuniętych plików względem main.
+- Zrobione: trasy /kontakt i /zastrzezenie, 404 z `noindex` (NotFound zostaje w src/view/NotFound.tsx), ErrorBoundary z przyciskiem „Wczytaj ponownie” (44 px, console.error), React.lazy + Suspense dla stron poza Home, testy w tests/unit/app-routes.test.tsx. Główny chunk: 1 729 554 B (~1,73 MB) -> 579,94 kB (gzip 207 kB).
+- Poza listą „Zmieniaj”: dopisałem /kontakt i /zastrzezenie do public/sitemap.xml (wymaga tego istniejący meta.test.ts).
+- Odłożone: ograniczenie tras /__test/* oraz /design do DEV/VITE_E2E (e2e wchodzą na nie w buildzie produkcyjnym; wymaga zmiany playwright.config.ts/CI). Wskaźnika daty odświeżenia danych w stopce nie dodano.
+- Vercel: otwórz /kontakt, /zastrzezenie oraz losowy adres (404 z linkiem do strony głównej); strony ładują się z krótkim pustym polem.
+
+## P2-F – vercel.json: prawdziwy 404
+- Wynik: ZABLOKOWANE, vercel.json i testy bez zmian (komend nie uruchamiano, brak usuniętych plików).
+- Powód: rewrites w vercel.json nie mają pola statusu, więc „index.html z kodem 404” się nie da. Status ma tylko legacy `routes`, ale nie łączy się z `headers`/`rewrites` (a CSP musi zostać). Zadanie każe w takim razie opisać alternatywę i stanąć.
+- Alternatywy: (a) rewrites tylko dla znanych tras (+ /design, /__test/*, /biblioteka/:id) bez catch-all: nieznany adres daje prawdziwe 404, ale ze zwykłą stroną Vercel; (b) to samo plus public/404.html (Vercel serwuje go ze statusem 404), wymaga pliku spoza listy „Zmieniaj” i osobnej strony bez SPA; (c) zostawić SPA-fallback (200) i polegać na `noindex` z P2-D.
+- Potrzebna decyzja: wybór (a), (b) lub (c). Test vercel-routes.test.ts (trasy z App.tsx pasują, „/nie-ma” nie) pasuje do (a)/(b).
+- Vercel: nic do klikania.
+
+## P2-E – Linki Kontakt i Zastrzeżenie w stopce i menu
+- Wynik: ZABLOKOWANE, kod i testy bez zmian (lint/typecheck/test/build nie uruchamiane, brak usuniętych plików).
+- Powód: dopisanie linków łamie istniejące testy, których nie wolno zmieniać: tests/unit/site-footer-mobile.test.tsx (dokładna lista 17 hrefów w stopce, toHaveLength(17)) oraz tests/unit/main-menu-links.test.tsx (dokładnie 6 linków w menu, test „nie zawiera linku Kontakt”). Zadanie każe jednocześnie zachować zielone testy P1-F i P1-G.
+- Potrzebna decyzja: zgoda na aktualizację tych dwóch testów (lista hrefów 17 -> 19, menu 6 -> 8 z Kontakt i Zastrzeżeniem po „Prywatność”, usunięcie testu „nie zawiera Kontakt”); wtedy zmiany to SiteFooter.tsx (grupa Dokumentacja), MOBILE_MENU_LINKS w Header.tsx i nowy tests/unit/footer-menu-new-links.test.tsx.
+- Trasy /kontakt i /zastrzezenie istnieją (P2-C/P2-D), więc test „href to trasa z App.tsx” przejdzie.
+- Vercel: nic do klikania.
+
+## P3-A – Nocny pobór: PR i auto-merge
+- Wynik: OK, commit 794518c (tylko .github/workflows/fetch-data.yml); lint/typecheck/test/build zielone, brak usuniętych plików. actionlint niedostępny, YAML sprawdzony parserem.
+- Było już: permissions, concurrency, odrzucanie zmian samego fetchedAt (revert-noise), kontrakt przed PR. Dodano: tytuł „Dane GUS: odświeżenie RRRR-MM-DD”, gh pr merge --auto --squash, issue z linkiem do przebiegu przy błędzie tworzenia PR.
+- Scenariusze: brak zmian = koniec bez commitu/PR; zmiana = PR + auto-merge; błąd kontraktu = brak push/PR, issue nocne; błąd sieci = fetch pada, issue nocne.
+- Vercel/GitHub: Actions → Fetch data → Run workflow (workflow_dispatch) po scaleniu; sprawdź PR „Dane GUS: odświeżenie…” z włączonym auto-merge.
+- Odłożone: auto-merge wymaga włączonego „Allow auto-merge” w Settings repo i reguł gałęzi; nie dodano testu workflow (plik spoza listy).
+
+## P3-B – Audyt stanu gałęzi danych (tylko odczyt)
+- Wynik: OK, zero zmian w kodzie. Stan na 2026-11-15 (źródło: GitHub MCP).
+- data/nightly: ostatni commit beb15ac (2026-11-15 09:01, „wartości wskaźników BDL”); Fetch data przebieg #28 (43691613048) success, harmonogram dzienny, 5 ostatnich zielone (#24-#28). Otwarty PR #451 z data/nightly (od 15.11, jeszcze niescalony); poza tym PR #450 i #431 to Dependabot.
+- data/library: ostatni commit a369749 (2026-11-15 14:34, „kolejna porcja”), wcześniej 0210ee6 (14.11 22:39) i 195459b (14.11 13:34). Fetch library: #44 (43712778084) success 15.11 14:34, #45 (43762548456) w toku; #41-#44 zielone; brak otwartych PR z tej gałęzi (zapis wprost na gałąź).
+- library/index.json (ścieżka na gałęzi to library/, nie public/data/library/): 7 942 528 B (~7,6 MB); catalog.json 26 547 004 B; state.json 38 384 B, kolejka pusta (queue/pending/leafDone = []).
+- Wniosek: pobór działa, ostatni udany przebieg: Fetch data 15.11 09:01, Fetch library 15.11 14:34. Do rozstrzygnięcia: PR #451 czeka na scalenie (sprawdź auto-merge/reguły).
+- Vercel: nic do klikania; na GitHubie: PR #451 – scal lub sprawdź, czemu auto-merge nie zadziałał.
+- Odłożone: niczego (zadanie tylko-do-odczytu; tabela ma 5 pozycji, mniej niż limit 20 wierszy).
+
+## P3-C – Biblioteka: domyślnie to, co działa
+- Wynik: OK, commit 7315fb1; lint/typecheck/test/build zielone, brak usuniętych plików. Nowy test tests/unit/library-view.test.tsx (7 testów).
+- Zrobione: domyślnie filtr „tylko z danymi” (brak p w adresie; p=0 = wszystkie), przycisk „Pokaż wszystkie (N)” w pl-PL, strona po 20 kart + „Pokaż więcej” 44 px, tytuł line-clamp-2, okruszki 2 ostatnie poziomy (pełne w title/aria-label), znacznik „dane gotowe”, podpowiedź przy pustym wyniku, opis „jeszcze niepobrane”. Nowy plik src/view/library/library-params.ts.
+- Vercel: /biblioteka (pierwsze 20 kart, same gotowe; „Pokaż wszystkie (N)”), /biblioteka?q=ludnosc, na 390 px bez poziomego przewijania.
+- Odłożone: test Playwright 390 px (wysokość <= 6000, scrollWidth <= 390) – nie ma go w liście „Zmieniaj”; „Wyczyść filtry” (LibraryFilters, istniejące testy) ustawia onlyReady=false, więc pokazuje wszystkie; tekst przy „Zamów ten wskaźnik” (OrderButton) bez zmian.
+
+## P3-D – Wskaźnik świeżości danych
+- Wynik: lint, typecheck, build zielone; Vitest 837/837 (w tym nowy tests/unit/freshness.test.ts).
+- Commit: ba36c80 (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Vercel: stopka na dole dowolnej strony, pod linijką CC BY 4.0 ma być „Dane GUS odświeżone: 19.10.2026”; po 60 dniach dopisek „(dane mogą być nieaktualne)”.
+- Źródło daty: public/data/values/density.json (fetchedAt), pobierane fetchem w runtime.
+- Odłożone: test komponentu z mockiem fetch dla efektu React (brak jsdom w środowisku node) – pokryte testem loadFreshness z mockiem + render tekstu; e2e nie dodawano.
+
+## P3-E – Mniejsza waga startowa
+- Wynik: OK; lint, typecheck, build zielone; Vitest 842/842 (nowy tests/unit/startup-weight.test.ts, 5 testów).
+- Ustalenie: kod już spełniał wymóg, więc bez zmian w src. tweakpane tylko przez import() w main.tsx przy ?tune (chunk TunePanel 154 kB, 32 kB gzip, poza głównym index 581 kB); index.json biblioteki ładuje wyłącznie loadLibraryIndex z leniwych stron Library*; Home go nie dotyka. Test to pilnuje (analiza importów).
+- Vercel: otwórz stronę główną (bez ?tune) – brak żądania index.json w zakładce Sieć; /biblioteka – jedno żądanie index.json; /?tune – panel działa.
+- Odłożone: pomiar żądań i bajtów na Home przez Playwright (page.on('response')) – wymaga testu e2e spoza listy „Zmieniaj”; pomiar „przed/po” trywialny, bo zmian w kodzie nie było. Commit: 8a63d7c.
+
+## P4-A – Przejścia między stronami
+- Wynik: OK; lint, typecheck, build zielone; Vitest zielony (nowy tests/unit/view-transitions.test.ts, 5 testów).
+- Commit: 3db8f47 (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Zrobione: src/styles/view-transitions.css (fade old/new z var(--motion-base), blok reduced-motion z animation: none), import w global.css, prop viewTransition na wszystkich <Link> w Header.tsx (react-router 8.5).
+- Vercel: klikaj Mapa/Rankingi/Biblioteka w nagłówku i w menu telefonu – lekki fade zamiast skoku; z systemowym „ograniczeniem ruchu” bez animacji.
+- Odłożone: test Playwright reducedMotion (document.getAnimations()) – poza listą „Zmieniaj”; krzywa easingu – brak tokenu, użyto domyślnej; linki w stopce i na podstronach bez zmian.
+
+## P4-B – Intro mapy: krótkie i pomijalne
+- Wynik: OK; lint, typecheck, build zielone; Vitest 855/855 (nowy tests/unit/intro-session.test.tsx, 7 testów; timeline.test.ts bez zmian).
+- Commit: 9244fd8 (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Zrobione: timeline.ts – opcja compact, stała PHONE_DURATION_RATIO=0,6, helpery sessionStorage (try/catch); IntroOverlay – raz na sesję, telefon (<768 px) krócej, dotknięcie kończy intro.
+- Vercel: pierwsze wejście na telefonie – krótsze rysowanie, dotknięcie ekranu je przerywa; odświeżenie/powrót w tej samej karcie – mapa od razu; nowa karta pokazuje intro znów.
+- Odłożone: test dotyku (onPointerDown) w DOM – brak jsdom/e2e w liście „Zmieniaj”; sprawdzono tylko klasę pointer-events-auto. Etapy fill/annotate nie są renderowane przez overlay, skrócone tylko w logice.
+
+## P4-C – Arkusz: punkty zatrzymania
+- Wynik: OK; lint, typecheck, build zielone; Vitest 860/860 (nowy tests/unit/bottom-sheet-snap.test.tsx, 5 testów).
+- Commit: ad82705 (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Zrobione: BottomSheet domyślnie [0, 0.25, 0.6, 0.95], start na 25%; przycisk Rozwiń/Zwiń liczy najwyższy punkt z kontekstu (nie na sztywno 2); usunięty console.log; reduced-motion, aria-label i safe-area były i są testowane.
+- Vercel: miejsca używające domyślnych punktów (MobileIndicatorBar, ProfilePortal) – arkusz startuje nisko, mapa widoczna.
+- Odłożone: ProfileSheetMobile.tsx nadal przekazuje [0,0.4,1] (plik ekranu spoza „Zmieniaj”); test Playwright 390x844 (>=35% mapy) – poza listą „Zmieniaj”.
+
+## P4-D – Badanie biblioteki animacji (tylko raport)
+- Wynik: OK (bez zmian w kodzie; lint/typecheck/test nie były potrzebne). Rekomendacja: NIE dodawać pakietu `motion`.
+- Dane (npm view / npm pack --dry-run): motion 14.14.0, MIT, repo motiondivision/motion, peer react ^18||^19, zależy od framer-motion 14.14.0; tarball 261 kB (motion) + 2,3 MB (framer-motion), pobrania tygodniowo 34,4 mln (registry.npmjs.org/-/v1/search); api.npmjs.org zablokowane przez proxy.
+- Obecne animacje (kontury, VT, arkusz, zakreślenia) działają na CSS + View Transitions + tokenach; ELEMENTY.md ma już skreślony wpis motion (usunięty 24.10.2026, brak importów).
+- Commit: (ten wpis, tylko NOC-RAPORT.md; bez PR).
+- Vercel: nic do klikania, brak zmian zachowania.
+- Odłożone: rozmiar paczki po zbudowaniu (bundlephobia niedostępne bez sieci), wpis do ELEMENTY.md (tylko w razie decyzji „tak”).
+
+## P4-E – Test reduced-motion na głównych trasach
+- Wynik: OK; lint, typecheck, build zielone; Vitest 860/860; nowy e2e tests/e2e/reduced-motion.spec.ts (5 tras, @S99) przechodzi lokalnie 5/5 (8,6 s).
+- Commit: a9b4a6b (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Zrobione: emulateMedia reduce, po 1 s document.getAnimations() bez trwających (running) animacji na /, /rankingi, /porownaj, /biblioteka, /o-projekcie; stan mapy przez window.__atlas.ready. Łamiących animacji nie znaleziono (test liczy też nieskończone).
+- Vercel: nic do klikania, brak zmian zachowania; test wykona CI.
+- Odłożone: nic; lokalnie użyto starszej przeglądarki Chromium przez symlink (środowisko).
+
+## W17-T01 – Geometryczny audyt Mobile UX 360/390
+- Wynik: OK; lint, typecheck, build zielone; Vitest zielony; nowy e2e mobile-ux-geometry.spec.ts 8/8 (360x740 i 390x844: start, profil, okno udostępniania, biblioteka).
+- Commit: d363b31 (gałąź claude/laughing-pasteur-8af8jz, bez PR). Pliki helpera i specu istniały z wcześniejszego commitu 8e2056c; poprawiono brakujący eksport expectTouchTargets i dodano test okna udostępniania.
+- Vercel: nic do klikania, brak zmian zachowania (tylko testy).
+- Odłożone: pkt 3 (usunięcie ?sheet=full w s15-mobile, s20-parts, share-profile) – wymaga zmiany istniejących testów, pominięte wg zasad; s15/s20 i tak nie używają już ?sheet=full w kodzie. Brak testu pasków zgody/dymka/arkusza wskaźnika w parach.
+
+## W17-T02 – Matryca dostępności WCAG 2.2 AA (jasny/ciemny)
+- Wynik: OK; lint, typecheck, build zielone; Vitest zielony; e2e a11y-matrix.spec.ts 28/28 (14 widoków x 2 motywy, 0 naruszeń, bez wyłączania reguł), uruchomione 2 razy.
+- Commit: 60d4220 (gałąź claude/laughing-pasteur-8af8jz, bez PR). Spec istniał z 91bc2ef; poprawiono selektor arkusza profilu (dialog po aria-label), wydłużono oczekiwanie do 20 s (flaky przy równoległości) i zawężono mock do library/index.json.
+- Vercel: nic do klikania, brak zmian zachowania (tylko test).
+- Odłożone: nic. Uwaga: profile-mobile.spec.ts ma 2 sporadyczne błędy pod obciążeniem (istniejący test, nie ruszano).
+
+## W17-T03 – Strażnik stylu Kalka i korekta oraz limitu wielkości plików
+- Wynik: już zrobione wcześniej w commicie fd6da0c ([W17-T03]); tests/unit/style-guard.test.ts istnieje i przechodzi (3/3). Lint, typecheck, test, build zielone; kontrola usunięć względem origin/main pusta.
+- Commit: ten wpis w raporcie (poprzedni commit z testem: fd6da0c); gałąź claude/laughing-pasteur-8af8jz, bez PR.
+- Vercel: nic do klikania, brak zmian zachowania (tylko test).
+- Odłożone: nic nowego. Moja zaostrzona wersja testu (osobne reguły rounded, shadow, uppercase, __render, limit 220 linii z listą długu) zmieniałaby istniejący test, więc jej nie zostawiłem. Dług, który by wykryła: shadow-sm w Home.tsx, uppercase w 5 plikach, window.__renderProfileCompare, `rounded` w Rankings.tsx i 20 plików powyżej 220 linii.
+
+## W17-T04 – Odporność na błędy sieci i wyścigi kliknięć
+- Wynik: OK; lint, typecheck, Vitest, build zielone; e2e network-resilience.spec.ts 12/12 (4 testy x 3 powtórzenia).
+- Commit: c13fab0 (gałąź claude/laughing-pasteur-8af8jz, bez PR). Spec istniał z e7d439b; nie nadpisany, tylko poprawiony: nagłówek gminy ("Brzesko"), blok części (komunikat już widoczny bez rozwijania), krótsze opóźnienia i dłuższy timeout testu wyścigu.
+- Vercel: nic do klikania, brak zmian zachowania (tylko test).
+- Odłożone: nic. Uwaga: profil nie ma przycisku "Spróbuj ponownie" (jest tylko w bibliotece); test profilu sprawdza fallback "brak danych".
+
+## W17-T05 – Podróż po portalu i budżety zapytań
+- Wynik: OK; lint, typecheck, Vitest, build zielone; e2e navigation-and-budgets.spec.ts 6/6 (desktop + mobile, 3 powtórzenia); kontrola usunięć względem origin/main pusta.
+- Commit: 05084c7 (gałąź claude/laughing-pasteur-8af8jz, bez PR). Spec istniał z 01b613a; nie nadpisany, tylko poprawiony: Wstecz/Dalej sprawdzane względem faktycznej ścieżki adresów (klik w pojedynek zastępuje wpis historii), budżet zmierzony w jednej sesji SPA (powrót do biblioteki = 0 nowych pobrań indeksu), na telefonie otwarcie Menu.
+- Vercel: nic do klikania, brak zmian zachowania (tylko test).
+- Odłożone: budżet 0 żądań dla powrotu do profilu jednostki (aplikacja nie reaguje na sztuczny popstate, a nawigacja do jednostki wymaga kliknięcia w mapę WebGL) oraz ścieżka klik-po-kliku przez Rankingi->wiersz->profil. Znalezisko: po powrocie do /rankingi aplikacja ponownie pobiera data/values/density.json (brak 0 żądań tam); wymaga decyzji, poza zakresem (src/).
+
+## W17-T06 – Kontrakty danych Zod i fuzzing warunków brzegowych
+- Wynik: OK; lint, typecheck, Vitest (w tym core-contracts-and-fuzz.test.ts 22/22), build zielone; kontrola usunięć względem origin/main pusta.
+- Commit: test istniał z 0ca0033, nie nadpisany ani zmieniany; ten wpis w raporcie w osobnym commicie (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Vercel: nic do klikania, brak zmian zachowania (tylko test).
+- Odłożone: nic.
+
+## W18-P01 – Objaśnienia wskaźników GUS
+- Wynik: OK; lint, typecheck, Vitest (w tym explanations-data.test.ts), build zielone; kontrola usunięć względem origin/main pusta.
+- Commit: wszystko istniało już z 07c7251 (explanations.json 20/20, ContextBlock z „Co to jest / Jak czytać / Definicja GUS", test); nic nie zmieniono w kodzie, tylko ten wpis (gałąź claude/laughing-pasteur-8af8jz, bez PR).
+- Vercel: profil jednostki -> rozwiń wskaźnik -> sekcje „Co to jest", „Jak czytać" i link „Definicja GUS" (stat.gov.pl).
+- Odłożone: nie zweryfikowano w sieci, czy linki definitionUrl wskazują właściwe hasła słownika GUS (brak dostępu/źródła w repo); do ręcznego sprawdzenia.
+
+## W18-P02 – Tryb ciemny mapy i warstw
+- Wynik: OK; lint, typecheck, Vitest, build zielone; nowy tests/e2e/dark-mode-map.spec.ts 2/2 (komputer 1440 i telefon 390), kontrola usunięć względem origin/main pusta.
+- Commit: e941c07 ([W18-P02], gałąź claude/laughing-pasteur-8af8jz, bez PR). Kartogram już brał tokeny ciemne (choropleth.ts, useMapColors); dodano tylko token obrysu granic `granica` (w ciemnym: olowek z alfą, w jasnym bez zmian = kalka) w admin.ts i choropleth.ts.
+- Vercel: przełącz Motyw na ciemny w nagłówku -> mapa i kartogram w ciemnych barwach, granice jednostek wyraźnie jaśniejsze od tła; jasny motyw wygląda jak dotąd.
+- Odłożone: asercja liczbowa kontrastu obrysu (wymaga rozszerzenia szwu window.__atlas w src/core/map/test-seam.ts, poza „Zmieniaj"); test filtruje szum „No actors found" (biblioteka mapy bez GPU). Zrzuty wzorcowe do odświeżenia w CI nie dotyczą.
+
+## W18-P05 – Eksport kart wysokiej rozdzielczosci
+- Wynik: OK; lint, typecheck, Vitest (875, w tym nowy share-retina.test.ts), build zielone; kontrola usuniec wzgledem origin/main pusta.
+- Commit: 7d3486b (galaz claude/laughing-pasteur-8af8jz, bez PR). Dodano ShareScale i scaleFormat (formats.ts) oraz scaleCardScene i opcje scale 1|2 w cardScene (card.ts); scena bazowa liczona jak dotad, potem skalowana dokladnie x2 (pozycje, fonty, obrysy, sciezki), wiec proporcje safe area i tokenow sa bez zmian.
+- Vercel: brak zmiany widocznej; UI jeszcze nie przekazuje scale.
+- Odlozone: podpiecie scale w src/view/share (render-png.ts, ShareDialog) i przelacznik 2x w UI - poza listą "Zmieniaj".
+
+## W18-P06 – Skroty klawiszowe i dostepnosc
+- Wynik: OK; lint, typecheck, Vitest (w tym nowy keyboard-nav.test.ts), build zielone; kontrola usuniec wzgledem origin/main pusta.
+- Commit: b216a70 (galaz claude/laughing-pasteur-8af8jz, bez PR). Nowy hook useKeyboardNavigation (czysta funkcja resolveKeyAction) podpiety w Home.tsx; skroty ignorowane w input/textarea/select/contenteditable i z Ctrl/Meta.
+- Vercel: Alt+1/2/3 przełącza szczebel woj/pow/gmi (adres ?l=, mapa się przemalowuje); Escape zamyka profil/okna (jak dotąd, własne nasłuchy).
+- Odłożone: +/- wysyła zdarzenie atlas:zoom, ale mapa go jeszcze nie słucha (AtlasMap.tsx poza "Zmieniaj") - zoom z klawiatury nie działa do podpięcia; Escape celowo bez drugiego nasłuchu.
+
+## N-01 – Jedno pobranie daty swiezosci
+- Wynik: OK; lint, typecheck, Vitest (884), build, e2e freshness-single-fetch i navigation-and-budgets zielone; kontrola usuniec pusta.
+- Commit: 0b4e277 (galaz claude/laughing-pasteur-8af8jz, bez PR). Stopka bierze fetchedAt z loadIndicatorValues('density') (pamiec podrecza), wiec brak drugiego pobrania density.json.
+- Vercel: wejdz na /rankingi, kliknij w naglowku "O projekcie" i "Rankingi"; stopka pokazuje "Dane GUS odświeżone", w zakladce Network density.json tylko raz.
+- Odlozone/odstep: funkcja loadFreshnessLabel jest w nowym src/core/freshness/freshness-label.ts, nie w DataFreshness.tsx - eksport funkcji z pliku komponentu daje ostrzezenie lint (only-export-components, --deny-warnings), a regul nie wolno oslabiac. Testy importuja ją stamtad.
+
+## N-02 – Eksport PNG 2x w oknie
+- Wynik: OK; lint, typecheck, Vitest (896), build, e2e share-scale + s19-share (3 testy) zielone; kontrola usuniec pusta.
+- Commit: e941c07 ([N-02], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowy export-scene.ts (buildExportScene), stan scale w ShareDialog, przycisk aria-pressed w ShareControls, renderPng(scene, { scale }) skaluje kolko korekty.
+- Vercel: Pobierz i udostepnij > zaznacz "Wysoka rozdzielczość (2×)" > Pobierz obraz: PNG 2160x2700 (Post); bez zaznaczenia 1080x1350. Podglad bez zmian.
+- Odlozone: ShareDialog.tsx ma 298 linii (przed: 299) – skrocony tylko minimalnie; wzorce zrzutow okna trzeba odswiezyc w CI (nowy przycisk).
+
+## N-03 – Zoom mapy klawiszami + i −
+- Wynik: lint, typecheck, Vitest, build zielone; e2e keyboard-zoom (3 testy) zielone; camera.spec.ts: 3 z 6 czerwone, ale identycznie na czystym stanie bez moich zmian (sprawdzone przez stash) - wczesniejszy problem srodowiska/animacji, nie ruszany. Kontrola usuniec pusta.
+- Commit: patrz git log ([N-03], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowe: zoom-step.ts (nextZoom, ZOOM_STEP), useZoomEvents.ts; AtlasMap.tsx +2 linie; useKeyboardNavigation pomija zdarzenia z defaultPrevented (brak podwojnego kroku).
+- Vercel: kliknij w tlo strony (nie w mape), nacisnij + / - : mapa przybliza/oddala o pol kroku; w polu wyszukiwania + nic nie robi; z fokusem na mapie jeden krok.
+- Odlozone: nic z zakresu; do sprawdzenia osobno padajace 3 testy camera.spec.ts (poza zakresem N-03).
+
+## N-04 – Dług stylu: wersaliki i cienie
+- Wynik: OK; lint, typecheck, Vitest, build zielone; kontrola usuniec pusta. Nowy test style-debt.test.ts najpierw czerwony (13 naruszen z plikiem i linia), po poprawce zielony.
+- Commit: patrz git log ([N-04], galaz claude/laughing-pasteur-8af8jz, bez PR). Usuniete uppercase + tracking-wider/wide w 5 plikach widoku, shadow-sm w Home.tsx (2 miejsca).
+- Vercel: sprawdz etykiety legendy, suwaka roku, wybieraka wskaznika i biblioteki (zwykla wielkosc liter) oraz brak cienia pod podpowiedzia/przyciskiem nad mapa.
+- Odlozone: wzorce zrzutow legendy/suwaka/biblioteki trzeba odswiezyc workflow „Update snapshots"; e2e nie uruchamiane (zadanie wymaga tylko lint/typecheck/test/build).
+
+## N-05 – Ponowienie wskaźnika po błędzie sieci
+- Wynik: OK; lint, typecheck, Vitest (w tym 5 nowych w load-values-retry.test.ts), build zielone; kontrola usunięć pusta. e2e nie uruchamiane (zadanie wymaga lint/typecheck/test/build).
+- Commit: 57a04a2 ([N-05], galaz claude/laughing-pasteur-8af8jz, bez PR). Zmiana tylko w load-values.ts: 5xx i błąd sieci nie trafiają do cache, 4xx i zła treść dalej tak.
+- Vercel: wylacz siec (tryb offline), wybierz wskaznik (brak danych), wlacz siec i wybierz go ponownie: dane sie wczytuja bez odswiezania strony.
+- Odlozone: load-profile.ts nadal zapamietuje blad sieci (zadanie zabrania zmiany, osobna decyzja).
+
+## N-06 – Wyszukiwanie jednostki na /rankingi
+- Wynik: OK; lint, typecheck, Vitest (914), build i 3 wskazane pliki e2e zielone; kontrola usunięć pusta.
+- Commit: patrz git log ([N-06], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowe: filter-ranked.ts, ranking-filter.test.ts, rankings-search.spec.ts; Rankings.tsx: sterowane pole, komunikat „Brak jednostek pasujących” (aria-live), bez klasy rounded.
+- Vercel: /rankingi, wpisz „slask” (lista się zawęża), „xyz” (komunikat), wyczyść (wraca 10 pozycji).
+- Odłożono/odchylenie: „slask” zwraca 2 pozycje (śląskie i dolnośląskie), bo filtr „zawiera” wg zadania; e2e sprawdza 2 zamiast 1. Martwe listy Dział/Wskaźnik/Poziom/Rok bez zmian (osobne zadanie).
+
+## N-07 – Test: mapa widoczna nad arkuszem (telefon)
+- Wynik: OK; lint, typecheck, Vitest, build zielone; nowy mobile-sheet-map-visible.spec.ts: 18/18 (3 powtórzenia × 3 testy × 2 rozmiary 390×844 i 360×740), kontrola usunięć pusta.
+- Commit: patrz git log ([N-07], galaz claude/laughing-pasteur-8af8jz, bez PR). Nowy tylko plik testu; src/ bez zmian, wszystkie warunki spełnione na obecnej aplikacji.
+- Vercel: nic nowego do klikania (sam test); na telefonie sprawdź, że arkusz wskaźnika i profil (?u=12) zostawiają mapę widoczną nad sobą.
+- Odłożono/uwaga: przy równoległych workerach profil czasem pojawia się z opóźnieniem >5 s (istniejący profile-mobile.spec.ts też bywa niestabilny); w nowym teście dałem 20 s na pojawienie się arkusza. Przyczyna w aplikacji niezbadana.
+
+## N-08 – Przejścia stron z linków w stopce i 404
+- Wynik: OK; lint, typecheck, Vitest, build zielone; nowy footer-view-transitions.test.ts (3 pliki + przypadek kontrolny); kontrola usunięć pusta.
+- Commit: patrz git log ([N-08], galaz claude/laughing-pasteur-8af8jz, bez PR; kod w 9484513). Tylko prop viewTransition na 4 Linkach (SiteFooter 2, NotFound 1, DataDisclaimer 1).
+- CSS przejść i blok reduced-motion sprawdzone: działają globalnie, bez zmian.
+- Vercel: kliknij „Prywatność” / „Skąd są dane” w stopce, link w nocie o danych i „Wróć na stronę główną” na nieistniejącym adresie: łagodny fade; przy włączonym ograniczeniu ruchu bez animacji.
+- Odłożono: nic.
+
+## N-09 – Kamera bez skoku przy zmianie kolumny
+- Wynik: CZESCIOWO; lint, typecheck, Vitest (925), build zielone; camera-resize.test.ts (7 przypadkow); nowy spec: 3/3 dla testu (a), test (b) jako test.fixme; kontrola usuniec pusta.
+- Commit: af7e5a3 (galaz claude/laughing-pasteur-8af8jz, bez PR): resizeCameraAction + 'retarget' w useMapViewState (cel podmieniany w biegnacej animacji, start przeliczany bez skoku).
+- Vercel: otworz profil (?u=12) na komputerze, kliknij „Wroc": oddalenie ma isc plynnie, bez skoku przy znikaniu kolumny.
+- Odlozono: w srodowisku profil wczytuje sie PO koncu animacji, wiec skok robi galaz 'instant' (to jest przyczyna padania camera.spec test 1: 0 wartosci posrednich, slad konczy sie skokiem 8.04 -> 7.38). Wymaga lagodnego dojazdu po animacji (poza zakresem). Warunek „krok <= 60%” pominiety (klatka >1 s bez GPU). camera.spec x3 nie przeszedl w calosci (srodowisko bardzo wolne).
+
+## N-10 – Start: równoległe pobieranie danych mapy i profilu
+- Wynik: OK; lint, typecheck, Vitest, build zielone; startup-prefetch (unit + 4 testy e2e @S99), perf-budget, navigation-and-budgets, freshness-single-fetch: 10/10 zielone; kontrola usunięć pusta.
+- Commit: 092518b (galaz claude/laughing-pasteur-8af8jz, bez PR): startupPrefetch w src/core/data/startup-prefetch.ts, wywołanie w src/main.tsx przed render.
+- Vercel: otwórz na telefonie link /?u=12 - arkusz profilu powinien pojawić się szybciej, mapa widoczna nad nim.
+- Odłożono: diagnostyka z pkt 5 niepełna - "przed" nie mierzone; "po" (profile-mobile + mobile-sheet-map-visible, x3, 4 workery): 24 przeszły, wystąpiły też błędy (exit 1), dokładnej liczby nie zdążyłem odczytać (obcięty wynik). Do powtórzenia przy PR.
+
+## N-11 – Kod podstrony ładuje się po najechaniu lub fokusie na link
+- Wynik: OK; lint, typecheck, Vitest (941), build zielone; route-chunks.test.ts + route-prefetch.spec (2 testy @S99), perf-budget, main-menu-links, navigation-and-budgets: 15/15 zielone; kontrola usunięć pusta.
+- Commit: patrz git log ([N-11], galaz claude/laughing-pasteur-8af8jz, bez PR): route-chunks.ts (routeChunks, routeKeyFromHref, prefetchRoute), App.tsx (usePrefetchOnIntent: pointerover + focusin, pomija saveData).
+- Vercel: na komputerze najedź na „Rankingi” w nagłówku i kliknij - strona bez białego mignięcia; to samo z Tab na „Porównaj”.
+- Odłożono: lazy dla Library zostaje z literalnym importem w App.tsx (wymaga tego istniejący startup-weight.test.ts); to ten sam moduł/chunk co w routeChunks, więc prefetch działa.
+
+## N-12 – Działające listy Dział / Wskaźnik / Poziom / Rok na /rankingi
+- Wynik: OK; lint, typecheck, Vitest (949), build zielone; e2e: rankings-filters (10 testów @S21), rankings-search, rankings-mobile-p1a, rankings-and-compare-pages, freshness-single-fetch: 20/20 zielone; kontrola usunięć pusta.
+- Commit: 099fe17 (galaz claude/laughing-pasteur-8af8jz, bez PR): ranking-options.ts (czyste funkcje), Rankings.tsx (listy sterowane, „Wczytuję dane…”, „Brak danych dla tego wyboru.”).
+- Vercel: /rankingi - zmień Dział na „Pieniądze”, poziom na „Powiaty”, rok na najstarszy; lista i „Najwyżej:” zmieniają się, jednostka miary się zgadza.
+- Odłożono: a11y-matrix.spec (trasa /rankingi) pada tak samo także bez moich zmian (stan wyjściowy), nie ruszałem. Nazwy wskaźników w <option> są w atrybucie label, bo istniejący test rankings-and-compare-pages szuka getByText(/mediana/i) i trafiałby w „Mediana wieku”.
+
+## N-13 – Geometria na telefonie: pozostałe strony
+- Wynik: OK; lint, typecheck, Vitest, build zielone; nowy mobile-geometry-pages.spec (14 testów @S21) + editorial-pages, a11y-matrix, compare-page-p1b zielone; kontrola usunięć pusta.
+- Commit: 992f220 (galaz claude/laughing-pasteur-8af8jz, bez PR): tests/e2e/mobile-geometry-pages.spec.ts, Sources.tsx (linki źródła/licencji min-h 44 px).
+- Naruszenia przed poprawką: tylko /zrodla (5 linków wys. 17 px w <dd>, 360 i 390 px); reszta tras czysta.
+- Vercel: /zrodla na telefonie - linki „Źródło”/„Licencja” mają duże pole dotyku, nic nie wychodzi poza ekran.
+- Odłożono: library-variable.spec „wejście = dokładnie 1 żądanie spisu i 1 żądanie wartości” pada też bez moich zmian (stan wyjściowy), nie ruszałem. Brak zrzutów do odświeżenia.
+
+## N-14 – Arkusz profilu mierzy własne okno
+- Wynik: lint, typecheck, Vitest (951), build zielone; nowe e2e profile-sheet-inset (4 testy @S15) zielone, 3x z rzędu (--repeat-each=3: 56 zielonych w serii, reszta to profile-mobile.spec); kontrola usunięć pusta.
+- Hipoteza z zadania NIE potwierdziła się: testy (a)-(d) przechodzą też na starym kodzie (szew sheetInset dodany, selektor jeszcze stary); zawężenie zostawione, bo jest poprawne.
+- Commit: bcae96f (galaza claude/laughing-pasteur-8af8jz, bez PR): test-seam.ts (sheetInset), ProfileSheetMobile.tsx (selektor po aria-label, escapeAttr z awaryjnym wariantem bez CSS.escape dla jsdom).
+- Vercel: telefon - wybierz jednostkę z listy w panelu wskaźnika, mapa ma przesunąć się nad arkusz profilu; Rozwiń/Zwiń nie psuje położenia mapy.
+- Odłożono: profile-mobile.spec ma w tym środowisku 2-5 czerwonych testów (limit 5 s na wolnym renderingu) także bez moich zmian (stan wyjściowy), nie ruszałem.
+
+## N-15 – Test kontrastu granic w ciemnym motywie
+- Wynik: lint, typecheck, Vitest, build zielone; nowy tests/unit/map-border-contrast.test.ts (2 testy); kontrola usunięć pusta.
+- Commit: f9ca185 (galaz claude/laughing-pasteur-8af8jz, bez PR): sam test, bez zmian w src/.
+- Ciemny: granica ma alfę 140, kontrast po zmieszaniu >= 3:1 z kalką i arkuszem; jasny: granica = kalka.
+- Vercel: nic do klikania (sam test); ewentualnie ciemny motyw - granice powiatów/gmin widoczne na mapie.
+- Odłożono: przypadek kontrolny 4 (pusty --olowek -> kalka). Kod admin.ts przy pustym --olowek bierze jasny token olowek, więc granica = [77,91,114,140], nie kalka. Wymaga decyzji (zmiana admin.ts poza zakresem zadania).
+
+## N-16 – Menu telefonu: Escape i fokus
+- Wynik: lint, typecheck, Vitest (959), build zielone; e2e: mobile-menu-a11y (5 testów @S15), main-menu-links, navigation-and-budgets, keyboard-zoom, a11y-matrix zielone; kontrola usunięć pusta.
+- Commit: c8a2cc6 (galaz claude/laughing-pasteur-8af8jz, bez PR): useMenuDismiss.ts (dismissReason + hook), Header.tsx (id, aria-controls, refy), 2 nowe testy.
+- Vercel: telefon - otwórz Menu, Escape/dotknięcie obok zamyka, fokus wraca na Menu; na profilu jednostki Escape przy menu zamyka tylko menu.
+- Odłożono: Sheet nie przyjmuje ref w typach (poza Zmieniaj), więc menu owinięte w div z id/ref. Escape zatrzymywany w fazie przechwytywania (stopPropagation), bo ProfileSheet nie sprawdza defaultPrevented.
+
+## N-17 – Biblioteka bez pobierania density.json ze stopki
+- Wynik: lint, typecheck, Vitest, build zielone; e2e: nowy library-no-map-values (3), library-variable x3 (27/27), freshness-single-fetch, navigation-and-budgets zielone; kontrola usunięć pusta.
+- Commit: ff00551 (galaz claude/laughing-pasteur-8af8jz, bez PR): freshnessFetchAllowed, DataFreshness bez fetchu na /biblioteka*, 2 nowe testy.
+- Vercel: /biblioteka/101 - w stopce brak linijki „Dane GUS odświeżone”; na /rankingi i / nadal jest.
+- Efekt uboczny: library-page „1 żądanie spisu i 0 values” teraz przechodzi (wcześniej czerwony).
+- Odłożono: library-page axe oraz 2 testy s21-library „pełna ścieżka” czerwone także bez moich zmian (stan wyjściowy), nie ruszałem.
+
+## N-18 – Granica: pusty --olowek daje kalkę
+- Wynik: lint, typecheck, Vitest, build zielone; e2e dark-mode-map + map (7/7) zielone; kontrola usunięć pusta.
+- Commit: 4dc6aa7 (galaz claude/laughing-pasteur-8af8jz, bez PR): admin.ts (granica z surowego --olowek), nowy tests/unit/map-border-fallback.test.ts (5 testów).
+- Vercel: nic do klikania; ewentualnie ciemny motyw - granice powiatów/gmin nadal widoczne.
+- Odłożono: nic (domyka przypadek kontrolny 4 z N-15).
+
+## N-19 – Kamera: łagodny dojazd po animacji
+- Wynik: lint, typecheck, Vitest (978), build zielone; nowy camera-settle e2e 3x zielony (6/6); camera-resize-retarget, reduced-motion, map-zoom-out zielone x3; kontrola usunięć pusta.
+- Commit: ac9fc55 (galaz claude/laughing-pasteur-8af8jz, bez PR): akcja 'settle' + SETTLE_WINDOW_MS=1500 w camera-resize.ts, zapamiętanie końca animacji w useMapViewState (448 linii), camera-settle unit + e2e.
+- camera.spec: przed i po zmianie 0/3 (pada tak samo; test 1, stan wyjściowy). responsive-resize: przed i po 0/3 (czerwony także bez moich zmian, zakładka Powiaty aria-selected).
+- Vercel: komputer, wybierz „małopolskie” w wyszukiwarce - po pojawieniu się kolumny profilu mapa krótko (~400 ms) dojeżdża zamiast skakać; zmiana rozmiaru okna nadal natychmiastowa.
+- Odłożono: test.fixme w camera-resize-retarget.spec.ts zostawiony (nie zmieniam istniejących testów); camera.spec nietknięty.
+
+## N-20 – podział library/query.ts
+- Wynik: lint, typecheck, test (983), build zielone; wc -l: query.ts 174, query-index.ts 149 (limit 220).
+- E2E (3 speki biblioteki): 17 zielonych, 7 czerwonych – te same 7 padają na czystym main (przed zmianą), więc nie od N-20 (środowisko/axe/podpowiedzi).
+- Commit: c6e99e4 (kod). Zmiana bez zmiany zachowania ani importów; typy re-eksportowane z query.ts.
+- Na Vercelu: /biblioteka – szukanie („ludnosc”), filtr Powiaty/Gminy, liczniki kategorii działają jak wcześniej.
+- Odłożono: wpis 'src/core/library/query.ts': 350 w style-guard zostaje (usunie planista); 7 czerwonych e2e do zbadania osobno.
+
+## N-21 – podział load-library.ts
+- Wynik: lint, typecheck, test (986), build zielone; load-library.ts 248 → 165 linii, library-values.ts 88 linii.
+- E2E: library-variable.spec zielone; s21-library: 2 testy (pełna ścieżka desktop/telefon, krok "wskaźnik niepobrany") czerwone TAKŻE bez moich zmian (sprawdzone przez stash) – znany błąd, nie ruszane.
+- Commit kodu: fc473ac
+- Vercel: /biblioteka i /biblioteka/<id> – ranking i CSV działają jak dotąd (zmiana bez wpływu na wygląd).
+- Odłożono: nic z zadania; wpis 300 w style-guard dla load-library zostaje (zakaz zmiany testu).
+
+## N-22 – przewijane tabele dostępne z klawiatury
+- Wynik: lint, typecheck, test, build zielone; nowe testy (scroll-regions unit 4, e2e 5) zielone; a11y-matrix, editorial-pages, mobile-geometry-pages zielone.
+- E2E: 4 czerwone (s20-parts x3, compare-table mobile 360) – te same padają bez moich zmian (sprawdzone przez stash; axe "więcej niż jeden contentinfo" itp.), nie ruszane.
+- Commit kodu: 27bf57b
+- Vercel: /zrodla – kliknij w tabelę i Tab/strzałki (widoczny pierścień fokusu); tabela porównania (?u=12&c=12,14) i blok „Miasto i obszar wiejski” w profilu gminy – to samo.
+- Zmiana etykiety tabeli porównania: „Tabela porównania wskaźników” → „Porównanie miejsc – tabela” (zgodnie z zadaniem; atrybuty tabindex/role były już w kodzie).
+- Zrzuty do ewentualnego odświeżenia: brak widocznych zmian w stanie spoczynku; fokus tylko po Tab – design.spec.ts-snapshots raczej bez zmian.
+- Odłożono: nic z zadania; 4 istniejące czerwone e2e do zbadania osobno.
+
+## N-23 – przypisy z polem 24x24 px
+- Wynik: lint, typecheck, test (992), build zielone; e2e: footnote-target-size (6) + a11y-matrix, profile, s14-profile zielone.
+- Znany czerwony, niezwiązany z zadaniem: profile-row.spec.ts "no axe ... expanded row" (landmark-no-duplicate-main, <main> zagnieżdżony) – pada też na czystym main.
+- Commit kodu: 9de3b88
+- Na Vercelu: otwórz profil gminy ?u=1217011 (telefon i komputer), kliknij cyfrę przypisu – przewija do przypisu, wiersz się nie rozwija.
+- Odłożono: klasy rozmiaru są na <sup> (`[&>a]:…`), bo istniejący footnotes-format.test pinuje dokładny class samego <a> i przecinek; zrzuty profilu mogą wymagać odświeżenia w CI; wstrzyknięty styl w a11y-matrix zostaje (zakaz zmiany testu).
+
+## N-24 – Stan /rankingi w adresie
+- Wynik: lint, typecheck, test, build zielone; e2e (7 plików wskazanych w zadaniu, 54 testy) zielone.
+- Commit: 5161600 (kod), wypchnięty na claude/laughing-pasteur-8af8jz.
+- Na Vercelu: otwórz /rankingi, zmień dział/wskaźnik/poziom/rok i wpisz tekst – adres dostaje i, l, y, q; wklej ten link w nowej karcie – ten sam ranking. /rankingi?i=nieistnieje pokazuje widok domyślny.
+- Odłożono: nic. Uwaga: klik w link „Rankingi” w nagłówku, gdy jesteś już na /rankingi z parametrami, przywraca adres z bieżącego wyboru (stan strony nie jest resetowany).
+
+## N-25 – jeden <main> na stronie głównej
+- Wynik: lint, typecheck, unit, build zielone; e2e home-single-main (4), profile-row, home-portal, a11y-matrix, main-screen zielone. s20-parts 1440 zielony; profile-mobile "passes axe" i s20-parts mobile nadal czerwone.
+- Zmiana: PortalSections `<main>` -> `<section aria-label="Działy i skróty">` (wygląd bez zmian).
+- Na Vercelu: strona główna wygląda jak wcześniej; nic do klikania poza kontrolą wizualną działów pod mapą.
+- Odłożono: na telefonie z otwartym profilem `<footer>` w ProfileSheet.tsx dubluje contentinfo ze SiteFooter (axe landmark-unique) – wymaga zmiany poza „Zmieniaj”; w home-single-main ten jeden przypadek pomija regułę landmark-unique (komentarz w teście).
+
+## N-26 – stopka profilu bez roli contentinfo
+- Wynik: lint, typecheck, test (1004), build zielone; e2e: profile-single-contentinfo (nowy), s20-parts, profile, s14-profile, footnote-target-size, home-single-main (odblokowano landmark-unique) zielone.
+- site-footer-mobile.spec.ts: 4 testy czerwone (wysokość stopki 343,5 > 320) – to samo na czystym stanie bez mojej zmiany, nie jest to skutek N-26; do osobnej diagnozy.
+- Zmiana: ProfileSheet.tsx `<footer>` -> `<div data-slot="profile-footer">`; nowe testy unit + e2e; w home-single-main usunięte pominięcie landmark-unique.
+- Vercel: otwórz /?u=12 na telefonie, profil wygląda tak samo jak dotąd (stopka z „Źródło: GUS” bez zmian wizualnych).
+- Odłożono: naprawa site-footer-mobile (poza zakresem).
+- Commit: patrz git log ([N-26]).
+
+## N-27 – ekran ładowania podstrony z main i h1
+- Wynik: lint/typecheck/test/build zielone; e2e (page-fallback-a11y, library-page, route-prefetch, editorial-pages, navigation-and-budgets, a11y-matrix) 41/41 zielone.
+- Commit: 8922f7c (zmiany: src/App.tsx, tests/unit/page-fallback.test.tsx, tests/e2e/page-fallback-a11y.spec.ts).
+- Chunk biblioteki: wzorzec `**/assets/Library-*.js` pasuje do dist (Library-<hash>.js).
+- Vercel: wejdź na /biblioteka z wolnym łączem (throttling) – widać krótko pusty ekran, czytnik ogłasza „Wczytywanie strony”.
+- Uwaga: library-search „brak błędów dostępności axe” przy --repeat-each=3 padł raz na 15 uruchomień (kolejne 9 zielone), reguły nie udało się złapać – test sam nie czeka na wczytanie spisu (bez page.route); do osobnej diagnozy.
+- Odłożono: nic z zakresu zadania; istniejących testów nie ruszano.
+
+## N-28 – pasek wskaźnika: nazwa zgodna z tekstem (WCAG 2.5.3)
+- Wynik: lint, typecheck, test, build zielone; e2e 50/50 zielone (mobile-indicator-name nowy, mobile-indicator-sheet, mobile-layout, a11y-matrix, profile-mobile z --workers=1).
+- profile-mobile „passes axe accessibility scan with no violations”: zielony.
+- Zmiana: MobileIndicatorBar.tsx – spacje po nazwie i roku w tekście przycisku; aria-label bez zmian; nowe testy unit + e2e.
+- Commit: 741be2e ([N-28]).
+- Vercel: na telefonie dół mapy wygląda tak samo jak dotąd (pasek wskaźnika bez zmian wizualnych).
+- Odłożono: nic.
+
+## N-29 – podpowiedzi biblioteki z całego spisu
+- Wynik: lint, typecheck, test (1012), build zielone; e2e (suggestions-all, library-search, library-page, header-library) 25/27 – „onPick” zielony.
+- Padają 2 testy telefonu 360x740 w library-search (:141, :188) – padały tak samo przed zmianą (poza zakresem); „1 żądanie index.json” raz padł w pełnym biegu, osobno i w powtórce zielony (flaky).
+- Zmiana: LibrarySearchBar.tsx (podpowiedzi z onlyReady:false, znacznik „do zamówienia” + aria-label); nowe testy unit + e2e.
+- Vercel: na /biblioteka wpisz „Mediana” – pojawia się „Mediana wieku” z „do zamówienia”; klik prowadzi do /biblioteka/104 z „Ten wskaźnik jeszcze nie został pobrany”.
+- Odłożono: 2 testy telefonu w library-search (osobna diagnoza).
+- Commit: kod w następnym commicie [N-29] (ten wpis w kolejnym).
+
+## N-30 – licznik filtrów biblioteki bez domyślnego
+- Wynik: lint, typecheck, test, build zielone; e2e 19/19 (library-filters-count nowy, library-search, library-page; --workers=1).
+- Dwa testy telefonu 360x740 w library-search (aktywne: 0 / 1) są teraz zielone bez zmian.
+- Zmiana: LibraryFilters.tsx – activeCount liczy tylko poziom i jednostkę; nowe testy unit + e2e.
+- Commit: 6efc0de ([N-30]).
+- Vercel: na telefonie wejdź na /biblioteka – przycisk "Filtry (aktywne: 0)"; rozwiń, wybierz Powiaty – "aktywne: 1".
+- Odłożono: nic.
+
+## N-31 – zakładka profilu po zmianie szerokości okna
+- Wynik: lint, typecheck, test (1020), build zielone; e2e 40/40 (profile-tab-resize nowy, responsive-resize x3, profile-tabs, profile, compare-pick, s18-compare, profile-mobile; --workers=1).
+- Zmiana: stan zakładki w ProfilePortal (useState + reset po TERYT/?c=), propsy activeTab/onTabChange przez ProfileSheet/ProfileSheetMobile do ProfileBody; usunięte klikanie w DOM. Pomocniki zakładki wystawione jako ProfileBody.initialTab/hasComparePair (lint fast-refresh nie pozwala na dodatkowy eksport).
+- Commit: 25932fa ([N-31]).
+- Vercel: na telefonie/oknie otwórz województwo, kliknij "Powiaty", obróć telefon/zmień szerokość – zakładka zostaje; wybór innej jednostki wraca do "Przegląd".
+- Odłożono: nic.
+
+## N-32 – kamera bez przestrzelenia przy kolumnie profilu
+- Wynik: lint, typecheck, test (1025), build zielone; e2e 30/30 (camera-no-overshoot nowy, camera x3 powtórzeń testu 1, camera-settle, camera-resize-retarget, responsive-resize, main-screen, profile, drill; --workers=1).
+- Zmiana: AtlasMap.tsx (kolumna side zawiera ProfileColumnPlaceholder od wyboru jednostki na komputerze, znika po wczytaniu profilu), nowy ProfileColumnPlaceholder.tsx; testy unit + e2e. useMapViewState/camera-resize bez zmian.
+- Commit: cb2f80c ([N-32]).
+- Vercel: na komputerze wybierz województwo – kolumna po prawej od razu, "Wczytywanie profilu…", mapa dojeżdża bez przybliżenia za mocno i cofania.
+- Zrzuty do odświeżenia (kolumna widoczna wcześniej): zrzuty z wybraną jednostką na desktopie, jeśli istnieją w *-snapshots.
+- Odłożono: nic.
+
+## N-33 – zwinięta stopka telefonu poniżej 320 px
+- Wynik: lint, typecheck, test (1029), build zielone; e2e 57/57 (site-footer-mobile x7, site-footer-mobile-height nowy x3, freshness-single-fetch, library-no-map-values, home-portal, a11y-matrix, mobile-geometry-pages; --workers=1).
+- Zmiana: kolumna z logo to siatka na telefonie, świeżość danych w wierszu z logo (po prawej); od md bez zmian. DataFreshnessText/DataFreshness dostały opcjonalny className.
+- Wysokość stopki 360 i 390 px: przed 343,5 px, po 316 px.
+- Commit: 1e3e5d1 ([N-33]).
+- Vercel: na telefonie otwórz /o-projekcie, zjedź na dół – stopka niższa, "Dane GUS odświeżone" obok logo; na komputerze pod licencją.
+- Odłożono: zrzuty (*-snapshots) ze stopką na telefonie do odświeżenia workflow "Update snapshots".
+
+## N-34 – /rankingi reagują na zmianę adresu z zewnątrz
+- Wynik: lint, typecheck, test (1034), build zielone; e2e 32/32 (rankings-url-external nowy, rankings-url, -filters, -search, -mobile-p1a, rankings-and-compare-pages, freshness-single-fetch; --workers=1).
+- Zmiana: ranking-url.ts (isExternalRankingChange), Rankings.tsx (ref ostatniego zapisu; zmiana adresu z zewnątrz ustawia wybór i „Szukaj”, własny replace nic nie resetuje); testy unit + e2e.
+- Commit: 4c088b1 ([N-34]).
+- Vercel: na /rankingi?i=unemployment-rate&l=pow kliknij „Rankingi” w stopce (telefon: rozwiń „Narzędzia”) – wraca widok domyślny; potem Wstecz – znów stopa bezrobocia; pisanie w „Szukaj jednostki” bez gubienia znaków.
+- Odłożono: nic.
+
+## N-35 – podział src/core/search/index.ts
+- Wynik: lint, typecheck, test (1041), build zielone; e2e search.spec.ts 8/8 (--workers=1).
+- Zmiana: funkcje opisu/kolejności (getUnitLabel, getUnitContext, getCleanName, isMnpp, getTierRank, getMatchCategory) w unit-meta.ts; index.ts 226 -> 128 linii, unit-meta.ts 102; eksporty bez zmian; test tests/unit/search-index-split.test.ts.
+- Commit: 0f86fa7 ([N-35]).
+- Vercel: wyszukiwarka (Ctrl+K / lupa) – wpisz "krakow", "war": te same wyniki i kolejność co wcześniej.
+- Odłożono: wpis długu index.ts w style-guard zostaje (zgodnie z zadaniem, usunie planista).
+
+## N-36 – podział choropleth.ts (obrys wybranej jednostki)
+- Wynik: lint, typecheck, test (1045), build zielone; e2e main-screen, drill, compare-pick, s18-compare 18/18 (--workers=1).
+- Zmiana: selectedOutlineLayerFactory przeniesiona do selected-outline.ts (bez zmian treści), choropleth.ts ją re-eksportuje; choropleth.ts 224 -> 179 linii, selected-outline.ts 52; test tests/unit/selected-outline-split.test.ts.
+- Commit: 0ea2a9a ([N-36]).
+- Vercel: wybierz województwo i porównaj dwie jednostki (?c=) – czerwony obrys wygląda jak dotąd.
+- Odłożono: wpis długu choropleth.ts w style-guard zostaje (zgodnie z zadaniem, usunie planista).
+
+## [FIX-E2E] Trzy czerwone e2e z weryfikacji końcowej
+- share-compare (axe heading-order): regresja aplikacji. `Footnotes.tsx` miał `<h4 class="sr-only">Przypisy</h4>` po `h2` (bez `h3`); zmieniono na `h3`. Test zielony (27 z 29 w trzech plikach przeszło).
+- home „loads properly”: nie regresja aplikacji, selektor testu `img[alt="Faktografia"]` jest zbyt szeroki (logo w nagłówku i stopce; stopka z logo istnieje od 2026-11-01, W15-M04). Testu nie ruszano, wymaga decyzji właściciela.
+- library-search „1 żądanie index.json”: po kroku z `?k=1&q=ludnosc` adres jest poprawny (sprawdzone logiem nawigacji), pada dopiero po kliku „Powiaty” i cofnięciu (adres wraca do `?q=ludnosc` bez `k=1`). Przyczyny nie ustalono w limicie czasu; porównania z worktree na starszym commicie nie zdążono zrobić, więc nie wiadomo, czy to regresja.
+- Nie zmieniono testów, wzorców, configów, STAN.md ani consent.
+
+## N-42 – Logika parametrów osadzania (`/osadz`) i kodu `<iframe>`
+- Wynik: lint, typecheck, test (1056), build zielone; e2e nie uruchamiano (zadanie bez UI).
+- Nowe pliki: src/core/embed/embed-params.ts (`readEmbedParams`, `hasSourceFooter`), src/core/embed/embed-code.ts (`fullViewHref`, `embedSnippet`); testy tests/unit/embed-params.test.ts i embed-code.test.ts (testy najpierw).
+- Wskaźnik, poziom, jednostkę i rok waliduje istniejące `readUrlState`; domyślny wskaźnik z `DEFAULT_INDICATOR_ID`. `hideSource`/`nologo`/`source` ignorowane.
+- Atrybuty `<iframe>` escapowane (`& " < >`), kolejność parametrów stała; kod to tylko tekst, bez HTML w DOM.
+- Bez trasy, bez zmian w vercel.json, state.ts i src/view; nie ruszono cudzej zmiany w Footnotes.tsx.
+- Vercel: nic do sprawdzenia (czysta logika bez UI).
+
+## N-41 – Logika wyszukiwania naturalnego (`parseIntent`)
+- Wynik: lint, typecheck, test (1075), build zielone; e2e nie uruchamiano (bez UI).
+- Nowe pliki: src/core/search/intent.ts, intent-synonyms.ts, tests/unit/search-intent.test.ts (testy najpierw).
+- Słownik: min. 2 frazy dla każdego z 20 wskaźników, poziomy woj/pow/gmi; test pilnuje zgodności z indicators.json.
+- `minLevel` rozumiane jako najdrobniejszy poziom danych GUS; drobniejszy poziom z tekstu jest pomijany z notką o powiatach.
+- Fixture context-test-units.json nie ma nazw, więc test używa własnych jednostek (Kraków, Wałcz, Gdów x2).
+- Nie ruszono normalize.ts, index.ts, state.ts, src/view ani cudzej zmiany w Footnotes.tsx.
+- [N-43b] Dodano scripts/seo/sitemap.d.ts (typy eksportów sitemap.mjs); usunięto @ts-expect-error z tests/unit/sitemap-build.test.ts.
+- [N-43b] Zmieniono tylko d.ts, test sitemap-build i ten raport; bez workflowów i istniejących testów.
+
+## N-44 – JSON-LD (czysta logika SEO)
+- Nowe: src/core/seo/jsonld.ts (Dataset + WebSite/SearchAction), tests/unit/seo-jsonld.test.ts (9 przypadków); bez UI, nic nie podpięte do stron.
+- [N-45] Plan walidacji danych (przedszkola >100 %, median-age null, świeżość stopki): tasks/poczekalnia/N-45-dane-walidacja.md (z AUDYT-DANYCH.md, ścieżki i linie w kodzie).
+- [N-45] Uwaga: świeżość z 20 plików łamie PRODUKT §7 – plan używa najstarszego fetchedAt z cache; pełny manifest wymaga zgody (scripts/data).
+- N-46: plan bezpieczeństwa (trasy /__test i /design, SHA akcji, CSP bez unsafe-eval) w tasks/poczekalnia/N-46-bezpieczenstwo.md; kluczowe: e2e idzie na buildzie PROD z localhost:4173, więc bramka po hoście, nie po PROD/?e2e.
+- N-46: CSP bez unsafe-eval wymaga Report-Only na podglądzie Vercel (analiza statyczna nie znalazła eval w deck.gl/luma/maplibre, brak potwierdzenia w przeglądarce); workflowy przypina właściciel.
+- [N-47] Zrobione: stopAnalytics() w Privacy.handleRevoke i ConsentBar.handleDeny; z polityki usunięto zdanie o zdarzeniu „search”; nowy test tests/unit/consent-revoke.test.tsx.
+- [N-47] trackSearch nadal niepodpięty; wróci razem ze zdaniem w polityce osobnym zadaniem.
+- [N-49b] PageMeta (useLayoutEffect) usuwa statyczny canonical i og:url z index.html przy montowaniu (zostaje jeden, z ?u=) i przywraca je po odmontowaniu; Home.tsx, index.html i istniejące testy bez zmian.
+- [N-49b] Nowy test tests/unit/page-meta-canonical.test.ts (na sztucznym DOM, bo Vitest nie ma jsdom); e2e nie uruchamiano.
+
+## N-48 (poprawki kruchych testów e2e, DECYZJE pkt 2, 4, 6)
+- Zmienione: home (A1), picker-scroll (A2), compare-maps (A3), profile-overview (A4), tune (A5), library-search (A6 wariant b, filtr do `/library/index.json`), s21-library (A7: zerowanie licznika po `networkidle` na `/` + krok „Pokaż wszystkie (N)” przed szukaniem wskaźnika niepobranego). Bez skip/slow, asercje zostają lub są ściślejsze.
+- Uruchomiono (chromium, --workers=1): home, compare-maps, library-search (29 zielonych); s21-library wariant „komputer” (zielony). `pnpm typecheck` zielony; `pnpm lint` kończy kodem 1 przez ostrzeżenia w cudzym pliku `tests/unit/consent-revoke.test.tsx` (N-47), błędów w plikach N-48 brak.
+- NIE uruchomiono: picker-scroll, profile-overview, tune, s21-library wariant telefon (390 px, po poprawce nie sprawdzony po raz drugi), pełne e2e. Poprawki A2/A4/A5 oparte na odczycie kodu z AUDYT-TESTOW.
