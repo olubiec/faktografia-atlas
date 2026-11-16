@@ -1,15 +1,17 @@
 // Czysty model układu strony i grafiki do pobrania: lista bloków z widocznością.
 
+// Bloki profilu: „ranking” to przegląd bieżącego wskaźnika, reszta to grupy wskaźników z config/indicators.json
+// (wiek mieszkańców wydzielony z grupy „Ludność”). Mapowanie wskaźników: profileBlocks.ts.
 export const BLOCK_IDS = [
+  'ranking',
   'population',
-  'density',
   'age',
   'income',
   'unemployment',
   'housing',
-  'budget',
-  'ranking',
-  'comparison',
+  'environment',
+  'life',
+  'transport',
 ] as const;
 
 export type BlockId = (typeof BLOCK_IDS)[number];
@@ -23,7 +25,7 @@ export type Layout = LayoutBlock[];
 
 export type PresetName = 'podstawowy' | 'pełny';
 
-const BASIC_VISIBLE: readonly BlockId[] = ['population', 'density', 'income'];
+const BASIC_VISIBLE: readonly BlockId[] = ['ranking', 'population', 'income', 'unemployment', 'housing'];
 
 /** Domyślne układy: podstawowy pokazuje kilka bloków, pełny wszystkie. */
 export function presetLayout(name: PresetName): Layout {

@@ -16,6 +16,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/ta
 import { formatSource } from '../../core/format/number';
 import { Xmark, Link } from 'iconoir-react';
 import { cn } from '../../lib/utils';
+import { visibleIds } from '../../core/layout/layout';
+import { orderByLayout } from '../../core/layout/profileBlocks';
+import { useLayout } from '../layout/useLayout';
+import { LayoutDialogButton } from '../layout/LayoutDialog';
 
 export interface ProfileSheetProps {
   profile: UnitProfile;
@@ -67,6 +71,8 @@ export function ProfileBody({
   onTabChange,
 }: ProfileBodyProps) {
   const [copied, setCopied] = useState(false);
+  const [layout] = useLayout();
+  const showOverview = visibleIds(layout).includes('ranking');
   const [ownTab, setOwnTab] = useState<string>(initialProfileTab);
   const [prevTeryt, setPrevTeryt] = useState<string>(profile.teryt);
   const controlled = controlledTab !== undefined;
@@ -98,9 +104,14 @@ export function ProfileBody({
   const highlightedIndicatorId = null;
 
   // Pozostałe wskaźniki bez bieżącego aktywnego (gdy jest view)
-  const otherIndicators = view
-    ? profile.indicators.filter((item) => item.indicatorId !== view.indicator.id)
-    : profile.indicators;
+  // i tylko widoczne bloki układu, w jego kolejności
+  const otherIndicators = orderByLayout(
+    view
+      ? profile.indicators.filter((item) => item.indicatorId !== view.indicator.id)
+      : profile.indicators,
+    layout,
+    (item) => ({ id: item.indicatorId, group: item.indicator.group }),
+  );
 
   // Grupowanie wskaźników z zachowaniem kolejności wystąpienia
   const groupedIndicators = otherIndicators.reduce<Record<string, ProfileIndicatorItem[]>>(
@@ -181,7 +192,7 @@ export function ProfileBody({
 
         <TabsContent value="overview" className="space-y-4 focus-visible:outline-none">
           {/* Sekcja Przeglądu (bieżący wskaźnik i ranking) */}
-          {view && onSelectUnit && (
+          {showOverview && view && onSelectUnit && (
             <ProfileOverview
               profile={profile}
               units={units}
@@ -252,6 +263,7 @@ export function ProfileBody({
               <span>Porównaj z innym miejscem</span>
             </button>
           )}
+          <LayoutDialogButton />
           <button
             type="button"
             onClick={handleCopyLink}

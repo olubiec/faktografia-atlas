@@ -1,13 +1,13 @@
 import type { BlockId } from '../../core/layout/layout';
 
 export const BLOCK_LABELS: Record<BlockId, string> = {
+  ranking: 'Przegląd i ranking',
   population: 'Ludność',
-  density: 'Gęstość zaludnienia',
   age: 'Wiek mieszkańców',
-  income: 'Dochody',
-  unemployment: 'Bezrobocie',
+  income: 'Pieniądze',
+  unemployment: 'Praca',
   housing: 'Mieszkania',
-  budget: 'Budżet gminy',
-  ranking: 'Ranking',
-  comparison: 'Porównanie',
+  environment: 'Środowisko',
+  life: 'Życie',
+  transport: 'Transport',
 };

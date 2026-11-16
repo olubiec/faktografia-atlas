@@ -19,6 +19,9 @@ import { ProfileParts } from './ProfileParts';
 import type { ShareDialogData } from '../share/ShareDialog';
 import type { ProfileCardData, RankingCardData } from '../../core/share/card';
 import { Icon } from '../ui/Icon';
+import { visibleIds } from '../../core/layout/layout';
+import { orderByLayout } from '../../core/layout/profileBlocks';
+import { useLayout } from '../layout/useLayout';
 import { NavArrowDown, NavArrowUp, Download } from 'iconoir-react';
 
 export interface ProfileOverviewProps {
@@ -153,6 +156,7 @@ export function ProfileOverview({
   }, [isPartsLoaded, partsShard, profile.teryt, profile.indicators, view.values]);
 
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const [layout] = useLayout();
 
   const handleShowOnMap = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -163,8 +167,12 @@ export function ProfileOverview({
   const shareData = useMemo<ShareDialogData>(() => {
     const unitName = profile.unit ? unitTitle(profile.unit) : profile.teryt;
 
-    const otherInds = profile.indicators
-      .filter((item) => item.indicatorId !== view.indicator.id)
+    // Karta czyta widoczne bloki układu (visibleIds) w jego kolejności
+    const otherInds = orderByLayout(
+      profile.indicators.filter((item) => item.indicatorId !== view.indicator.id),
+      layout,
+      (item) => ({ id: item.indicatorId, group: item.indicator.group }),
+    )
       .slice(0, 5)
       .map((item) => ({
         name: item.indicator.name,
@@ -180,7 +188,7 @@ export function ProfileOverview({
       unit: view.indicator.unit,
       year: view.year ?? 2025,
       bigNumber: formatValue(currentItem?.value ?? null, null),
-      rankText: rankText ?? undefined,
+      rankText: visibleIds(layout).includes('ranking') ? (rankText ?? undefined) : undefined,
       indicators: otherInds,
     };
 
@@ -215,6 +223,7 @@ export function ProfileOverview({
     rankText,
     ranking,
     rankingItems,
+    layout,
   ]);
 
   return (

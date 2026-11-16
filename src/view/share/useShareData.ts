@@ -10,6 +10,9 @@ import { loadGeoData } from '@/view/map/layers/admin';
 import { LEVEL_LABELS } from '@/core/map/main-view';
 import { formatValue } from '@/core/format/number';
 import { buildProfile } from '@/core/profile/profile';
+import { visibleIds } from '@/core/layout/layout';
+import { orderByLayout } from '@/core/layout/profileBlocks';
+import { useLayout } from '@/view/layout/useLayout';
 
 export interface UseShareDataProps {
   view: MainView;
@@ -31,6 +34,7 @@ export function useShareData({
   selectedTeryt,
 }: UseShareDataProps): ShareDialogData {
   const [topoData, setTopoData] = useState<any>(null);
+  const [layout] = useLayout();
 
   useEffect(() => {
     let cancelled = false;
@@ -196,8 +200,12 @@ export function useShareData({
         ? formatValue(currentItem.value, indicator.unit)
         : 'brak danych';
 
-    const otherIndicators = profile.indicators
-      .filter((i) => i.indicatorId !== indicator.id && i.value != null)
+    // Karta czyta widoczne bloki układu (visibleIds) w jego kolejności
+    const otherIndicators = orderByLayout(
+      profile.indicators.filter((i) => i.indicatorId !== indicator.id && i.value != null),
+      layout,
+      (i) => ({ id: i.indicatorId, group: i.indicator.group }),
+    )
       .slice(0, 5)
       .map((i) => ({
         name: i.indicator.name,
@@ -213,10 +221,10 @@ export function useShareData({
       unit: indicator.unit,
       year,
       bigNumber,
-      rankText: currentItem?.rankNational ? `${currentItem.rankNational}. miejsce w Polsce` : undefined,
+      rankText: visibleIds(layout).includes('ranking') && currentItem?.rankNational ? `${currentItem.rankNational}. miejsce w Polsce` : undefined,
       indicators: otherIndicators,
     };
-  }, [selectedTeryt, year, index, view.indicators, indicator, values]);
+  }, [selectedTeryt, year, index, view.indicators, indicator, values, layout]);
 
   return useMemo<ShareDialogData>(
     () => ({
