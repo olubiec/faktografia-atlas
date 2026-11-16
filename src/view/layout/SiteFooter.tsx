@@ -131,11 +131,11 @@ export function SiteFooter() {
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 md:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 md:gap-12">
           {/* Kolumna 1: Logo, opis misji portalu, licencja CC BY 4.0 */}
-          <div className="flex flex-col gap-2 md:gap-4 mb-2 md:mb-0">
+          <div className="grid grid-cols-[1fr_auto] gap-x-2 gap-y-2 md:flex md:flex-col md:gap-4 mb-2 md:mb-0 [&>*]:col-span-2 [&>*]:md:col-span-1">
             <Link
               to="/"
               viewTransition
-              className="inline-flex items-center min-h-[44px] min-w-[44px] rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
+              className="inline-flex items-center justify-self-start min-h-[44px] min-w-[44px] rounded-none focus:outline-none focus:ring-2 focus:ring-tusz col-span-1! col-start-1 row-start-1 md:col-auto md:row-auto"
             >
               <img
                 src={logoSrc}
@@ -161,7 +161,8 @@ export function SiteFooter() {
               </a>
               .
             </p>
-            <DataFreshness />
+            {/* Na telefonie w wierszu z logo (po prawej), od md pod licencją */}
+            <DataFreshness className="col-span-1! col-start-2 row-start-1 self-center text-right md:col-auto md:row-auto md:self-auto md:text-left" />
           </div>
 
           {GROUPS.map((g) => (
