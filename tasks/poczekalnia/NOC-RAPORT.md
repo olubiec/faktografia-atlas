@@ -317,3 +317,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit: c6e99e4 (kod). Zmiana bez zmiany zachowania ani importów; typy re-eksportowane z query.ts.
 - Na Vercelu: /biblioteka – szukanie („ludnosc”), filtr Powiaty/Gminy, liczniki kategorii działają jak wcześniej.
 - Odłożono: wpis 'src/core/library/query.ts': 350 w style-guard zostaje (usunie planista); 7 czerwonych e2e do zbadania osobno.
+
+## N-21 – podział load-library.ts
+- Wynik: lint, typecheck, test (986), build zielone; load-library.ts 248 → 165 linii, library-values.ts 88 linii.
+- E2E: library-variable.spec zielone; s21-library: 2 testy (pełna ścieżka desktop/telefon, krok "wskaźnik niepobrany") czerwone TAKŻE bez moich zmian (sprawdzone przez stash) – znany błąd, nie ruszane.
+- Commit kodu: fc473ac
+- Vercel: /biblioteka i /biblioteka/<id> – ranking i CSV działają jak dotąd (zmiana bez wpływu na wygląd).
+- Odłożono: nic z zadania; wpis 300 w style-guard dla load-library zostaje (zakaz zmiany testu).
