@@ -1,7 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-// @ts-expect-error moduł .mjs bez typów
 import { readPublicRoutes, unitUrls, buildSitemap, DOMAIN, INCLUDE_UNITS } from '../../scripts/seo/sitemap.mjs';
 
 // Pilnuje, że public/sitemap.xml jest dokładnie wynikiem generatora.

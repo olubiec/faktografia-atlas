@@ -458,3 +458,5 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - `minLevel` rozumiane jako najdrobniejszy poziom danych GUS; drobniejszy poziom z tekstu jest pomijany z notką o powiatach.
 - Fixture context-test-units.json nie ma nazw, więc test używa własnych jednostek (Kraków, Wałcz, Gdów x2).
 - Nie ruszono normalize.ts, index.ts, state.ts, src/view ani cudzej zmiany w Footnotes.tsx.
+- [N-43b] Dodano scripts/seo/sitemap.d.ts (typy eksportów sitemap.mjs); usunięto @ts-expect-error z tests/unit/sitemap-build.test.ts.
+- [N-43b] Zmieniono tylko d.ts, test sitemap-build i ten raport; bez workflowów i istniejących testów.
