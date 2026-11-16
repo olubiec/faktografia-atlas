@@ -310,3 +310,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - camera.spec: przed i po zmianie 0/3 (pada tak samo; test 1, stan wyjściowy). responsive-resize: przed i po 0/3 (czerwony także bez moich zmian, zakładka Powiaty aria-selected).
 - Vercel: komputer, wybierz „małopolskie” w wyszukiwarce - po pojawieniu się kolumny profilu mapa krótko (~400 ms) dojeżdża zamiast skakać; zmiana rozmiaru okna nadal natychmiastowa.
 - Odłożono: test.fixme w camera-resize-retarget.spec.ts zostawiony (nie zmieniam istniejących testów); camera.spec nietknięty.
+
+## N-20 – podział library/query.ts
+- Wynik: lint, typecheck, test (983), build zielone; wc -l: query.ts 174, query-index.ts 149 (limit 220).
+- E2E (3 speki biblioteki): 17 zielonych, 7 czerwonych – te same 7 padają na czystym main (przed zmianą), więc nie od N-20 (środowisko/axe/podpowiedzi).
+- Commit: c6e99e4 (kod). Zmiana bez zmiany zachowania ani importów; typy re-eksportowane z query.ts.
+- Na Vercelu: /biblioteka – szukanie („ludnosc”), filtr Powiaty/Gminy, liczniki kategorii działają jak wcześniej.
+- Odłożono: wpis 'src/core/library/query.ts': 350 w style-guard zostaje (usunie planista); 7 czerwonych e2e do zbadania osobno.
