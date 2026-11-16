@@ -340,3 +340,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Commit kodu: 9de3b88
 - Na Vercelu: otwórz profil gminy ?u=1217011 (telefon i komputer), kliknij cyfrę przypisu – przewija do przypisu, wiersz się nie rozwija.
 - Odłożono: klasy rozmiaru są na <sup> (`[&>a]:…`), bo istniejący footnotes-format.test pinuje dokładny class samego <a> i przecinek; zrzuty profilu mogą wymagać odświeżenia w CI; wstrzyknięty styl w a11y-matrix zostaje (zakaz zmiany testu).
+
+## N-24 – Stan /rankingi w adresie
+- Wynik: lint, typecheck, test, build zielone; e2e (7 plików wskazanych w zadaniu, 54 testy) zielone.
+- Commit: 5161600 (kod), wypchnięty na claude/laughing-pasteur-8af8jz.
+- Na Vercelu: otwórz /rankingi, zmień dział/wskaźnik/poziom/rok i wpisz tekst – adres dostaje i, l, y, q; wklej ten link w nowej karcie – ten sam ranking. /rankingi?i=nieistnieje pokazuje widok domyślny.
+- Odłożono: nic. Uwaga: klik w link „Rankingi” w nagłówku, gdy jesteś już na /rankingi z parametrami, przywraca adres z bieżącego wyboru (stan strony nie jest resetowany).
