@@ -56,6 +56,8 @@ Kodu z cudzych repozytoriów nie kopiujemy (poziom E tylko z licencją i atrybuc
 | TERYT SIMC (nazwy miejscowości) | dane | https://eteryt.stat.gov.pl | otwarte dane GUS | `public/data/localities.json` | tak – strona „Źródła” |
 | GUGiK PRNG (współrzędne miejscowości) | dane (API) | https://ogcapi.geoportal.gov.pl/res/ims/maps/PRNG/apiFeatures | otwarte dane GUGiK | `public/data/localities.json` | tak – strona „Źródła” |
 | Logo i znak Faktografia | zasób | `public/brand/` (własne) | własność marki | logo, favicon | – |
+| Obraz podglądu linku (og:image) 1200×630 | zasób pochodny | `public/brand/faktografia-og-1200x630.png` (render `faktografia-logo-granat.svg`, tło `arkusz` z tokenów; `scripts/brand/make-png.mjs`) | własność marki | og:image, twitter:image | – |
+| Ikony aplikacji 192 i 512 px | zasób pochodny | `public/brand/faktografia-icon-192.png`, `faktografia-icon-512.png` (render `faktografia-znak-granat.svg`; `scripts/brand/make-png.mjs`) | własność marki | manifest, ikony PWA | – |
 
 ## Usługi
 | Element | Do czego | Uwagi |
