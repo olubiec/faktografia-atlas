@@ -87,7 +87,12 @@ export function ProfileParts({
               ))}
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div
+              className="overflow-x-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-tusz"
+              tabIndex={0}
+              role="region"
+              aria-label="Miasto i obszar wiejski – tabela"
+            >
               <table
                 className="w-full text-xs text-left border-collapse"
                 data-testid="parts-table"

@@ -144,10 +144,10 @@ export function ProfileCompareTable({
         </div>
       ) : (
         <div
-          className="w-full overflow-x-auto"
+          className="w-full overflow-x-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-tusz"
           tabIndex={0}
           role="region"
-          aria-label="Tabela porównania wskaźników"
+          aria-label="Porównanie miejsc – tabela"
         >
           <table
             data-slot="compare-table"

@@ -33,7 +33,12 @@ function formatLevel(level: string): string {
  */
 export function SourcesIndicatorTable() {
   return (
-    <div className="overflow-x-auto border border-linia bg-arkusz">
+    <div
+      className="overflow-x-auto border border-linia bg-arkusz focus:outline-none focus-visible:ring-2 focus-visible:ring-tusz"
+      tabIndex={0}
+      role="region"
+      aria-label="Wskaźniki i źródła – tabela"
+    >
       <table
         className="w-full text-left text-sm border-collapse"
         aria-label="Wykaz 20 głównych wskaźników BDL GUS"
