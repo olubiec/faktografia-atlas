@@ -419,6 +419,6 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 ## N-34 – /rankingi reagują na zmianę adresu z zewnątrz
 - Wynik: lint, typecheck, test (1034), build zielone; e2e 32/32 (rankings-url-external nowy, rankings-url, -filters, -search, -mobile-p1a, rankings-and-compare-pages, freshness-single-fetch; --workers=1).
 - Zmiana: ranking-url.ts (isExternalRankingChange), Rankings.tsx (ref ostatniego zapisu; zmiana adresu z zewnątrz ustawia wybór i „Szukaj”, własny replace nic nie resetuje); testy unit + e2e.
-- Commit: COMMIT_HASH ([N-34]).
+- Commit: 4c088b1 ([N-34]).
 - Vercel: na /rankingi?i=unemployment-rate&l=pow kliknij „Rankingi” w stopce (telefon: rozwiń „Narzędzia”) – wraca widok domyślny; potem Wstecz – znów stopa bezrobocia; pisanie w „Szukaj jednostki” bez gubienia znaków.
 - Odłożono: nic.
