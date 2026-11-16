@@ -12,3 +12,8 @@
 - lint, typecheck, test (1081), build zielone. meta.test.ts bez zmian.
 - Brak usuniętych plików względem origin/main; bez zmian package.json/workflow/configów.
 - Uwaga: w teście import .mjs z `@ts-expect-error` (brak typów modułu).
+
+## [T-EDGE] Testy przypadków brzegowych (N-40/41/42)
+- Dodano tests/unit/story-edge.test.ts, search-intent-edge.test.ts, embed-edge.test.ts (puste dane, null, polskie znaki, bardzo długie wejście, złośliwe parametry URL).
+- Błędów w src/core nie ujawniły – kodu nie zmieniano. Uwaga projektowa: bez indeksu jednostek `readEmbedParams` przepuszcza `u` jako surowy tekst; jest bezpieczny, bo trafia tylko do kodowanego URL-a i escapowanego atrybutu.
+- Istniejące testy bez zmian.
