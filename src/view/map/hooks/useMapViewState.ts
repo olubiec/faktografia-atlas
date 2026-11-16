@@ -438,6 +438,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     localities,
     setLocalities,
     localityTargetRef,
+    animateToView,
     updateViewStateForBbox,
     markUserMoved,
     handleKeyDown,

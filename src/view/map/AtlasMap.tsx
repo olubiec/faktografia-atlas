@@ -113,7 +113,8 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     },
     onLocalitySelectView: (targetView) => {
       localityTargetRef.current = targetView;
-      setCurrentViewState(targetView);
+      // Płynny lot do miejscowości; przy prefers-reduced-motion animateToView skacze bez animacji.
+      animateToView(targetView, 'in');
     },
   });
 
@@ -125,6 +126,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     limits,
     localities,
     localityTargetRef,
+    animateToView,
     updateViewStateForBbox,
     markUserMoved,
     handleKeyDown,
