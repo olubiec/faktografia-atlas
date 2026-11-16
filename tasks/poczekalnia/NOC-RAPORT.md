@@ -333,3 +333,10 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Zmiana etykiety tabeli porównania: „Tabela porównania wskaźników” → „Porównanie miejsc – tabela” (zgodnie z zadaniem; atrybuty tabindex/role były już w kodzie).
 - Zrzuty do ewentualnego odświeżenia: brak widocznych zmian w stanie spoczynku; fokus tylko po Tab – design.spec.ts-snapshots raczej bez zmian.
 - Odłożono: nic z zadania; 4 istniejące czerwone e2e do zbadania osobno.
+
+## N-23 – przypisy z polem 24x24 px
+- Wynik: lint, typecheck, test (992), build zielone; e2e: footnote-target-size (6) + a11y-matrix, profile, s14-profile zielone.
+- Znany czerwony, niezwiązany z zadaniem: profile-row.spec.ts "no axe ... expanded row" (landmark-no-duplicate-main, <main> zagnieżdżony) – pada też na czystym main.
+- Commit kodu: 9de3b88
+- Na Vercelu: otwórz profil gminy ?u=1217011 (telefon i komputer), kliknij cyfrę przypisu – przewija do przypisu, wiersz się nie rozwija.
+- Odłożono: klasy rozmiaru są na <sup> (`[&>a]:…`), bo istniejący footnotes-format.test pinuje dokładny class samego <a> i przecinek; zrzuty profilu mogą wymagać odświeżenia w CI; wstrzyknięty styl w a11y-matrix zostaje (zakaz zmiany testu).
