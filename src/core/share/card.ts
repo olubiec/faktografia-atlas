@@ -84,8 +84,9 @@ function buildScene(kind: CardKind, data: CardData, formatKey: ShareFormatKey, t
 
   const contentBottom = footerY - 16 * scaleFactor;
   const logoSrc = theme === 'light' ? 'public/brand/faktografia-logo-granat.svg' : 'public/brand/faktografia-logo-jasne.svg';
-  const logoWidth = Math.round(180 * scaleFactor);
-  const logoHeight = Math.round(28 * scaleFactor);
+  // Proporcje pliku logo (viewBox 312,2 × 110): wcześniej ramka 180×28 zmniejszała znak i odsuwała go od lewego marginesu.
+  const logoHeight = Math.round(60 * scaleFactor);
+  const logoWidth = Math.round((logoHeight * 312.2) / 110);
   const logoY = safe.top;
 
   items.push({ type: 'image', src: logoSrc, x: safe.left, y: logoY, width: logoWidth, height: logoHeight });
