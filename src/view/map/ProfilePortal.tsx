@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { UnitProfile } from '@/core/profile/profile';
 import type { Unit } from '@/core/units/types';
 import type { MainView } from '@/view/map/hooks/useMainView';
-import { ProfileSheet } from '@/view/profile/ProfileSheet';
+import { ProfileSheet, ProfileBody } from '@/view/profile/ProfileSheet';
 import { ProfileSheetMobile } from '@/view/profile/ProfileSheetMobile';
 import { useIsMobile } from '@/view/hooks/useIsMobile';
 
@@ -21,25 +21,36 @@ export interface ProfilePortalProps {
  * lub do document.body na urządzeniu mobilnym (< 768 px), co pozwala profilowi
  * na telefonie unosić się nad mapą w dolnym arkuszu (BottomSheet).
  *
- * Zachowuje stan aktywnej zakładki (activeTab) oraz rozwiniętych sekcji
+ * Trzyma stan aktywnej zakładki (activeTab) i przekazuje go w dół; zachowuje też rozwinięte sekcji
  * podczas płynnego przełączania między kolumną boczną a BottomSheet przy przekraczaniu progu 768 px.
  */
 export function ProfilePortal({ profile, units, view, onSelectUnit, isOpen, onClose }: ProfilePortalProps) {
   const isMobile = useIsMobile();
-  const lastActiveTabRef = useRef<string | null>(null);
   const lastExpandedSectionsRef = useRef<string[]>([]);
-  const prevTerytRef = useRef<string | null>(profile?.teryt ?? null);
+  const [activeTab, setActiveTab] = useState<string>(ProfileBody.initialTab);
+  const [prevTeryt, setPrevTeryt] = useState<string | null>(profile?.teryt ?? null);
 
-  // Reset stanu po zmianie wybranej jednostki TERYT
+  // Reset zakładki po zmianie jednostki (albo „compare” przy ?c=) – ta sama logika co dawniej w ProfileBody
+  if (profile && profile.teryt !== prevTeryt) {
+    setPrevTeryt(profile.teryt);
+    setActiveTab(ProfileBody.initialTab());
+  }
+
+  // Zmiana jednostki czyści zapamiętane sekcje (poza renderem)
   useEffect(() => {
-    if (profile && profile.teryt !== prevTerytRef.current) {
-      prevTerytRef.current = profile.teryt;
-      lastActiveTabRef.current = null;
-      lastExpandedSectionsRef.current = [];
-    }
-  }, [profile]);
+    lastExpandedSectionsRef.current = [];
+  }, [profile?.teryt]);
 
-  // Śledzenie aktywnej zakładki i stanu sekcji
+  // Powrót w historii do adresu z parą ?c= otwiera porównanie
+  useEffect(() => {
+    const onPop = () => {
+      if (ProfileBody.hasComparePair()) setActiveTab('compare');
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  // Śledzenie rozwiniętych sekcji (zakładka jest już w stanie portalu)
   useEffect(() => {
     if (!isOpen) return;
 
@@ -53,65 +64,27 @@ export function ProfilePortal({ profile, units, view, onSelectUnit, isOpen, onCl
       lastExpandedSectionsRef.current = keys;
     };
 
-    const handlePointerOrClick = (e: Event) => {
-      const target = e.target as HTMLElement | null;
-      if (!target) return;
-
-      const trigger = target.closest<HTMLElement>('[data-slot="tabs-trigger"], [role="tab"]');
-      if (trigger) {
-        const val = trigger.getAttribute('data-value') || trigger.getAttribute('value');
-        if (val) {
-          lastActiveTabRef.current = val;
-        }
-      }
-
-      const compareBtn = target.closest<HTMLElement>('button');
-      if (compareBtn && compareBtn.textContent?.includes('Porównaj z innym miejscem')) {
-        lastActiveTabRef.current = 'compare';
-      }
-
-      if (compareBtn && compareBtn.hasAttribute('aria-expanded')) {
+    const handleClick = (e: Event) => {
+      const btn = (e.target as HTMLElement | null)?.closest<HTMLElement>('button');
+      if (btn && btn.hasAttribute('aria-expanded')) {
         setTimeout(captureExpandedSections, 50);
       }
     };
 
-    const handleResize = () => {
-      const activeTrigger = document.querySelector<HTMLElement>(
-        '[data-slot="tabs-trigger"][data-state="active"], [role="tab"][data-state="active"], [role="tab"][aria-selected="true"]'
-      );
-      if (activeTrigger) {
-        const val = activeTrigger.getAttribute('data-value') || activeTrigger.getAttribute('value');
-        if (val) {
-          lastActiveTabRef.current = val;
-        }
-      }
-      captureExpandedSections();
-    };
-
-    document.addEventListener('click', handlePointerOrClick, true);
-    window.addEventListener('resize', handleResize, { passive: true });
+    document.addEventListener('click', handleClick, true);
+    window.addEventListener('resize', captureExpandedSections, { passive: true });
 
     return () => {
-      document.removeEventListener('click', handlePointerOrClick, true);
-      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('click', handleClick, true);
+      window.removeEventListener('resize', captureExpandedSections);
     };
   }, [isOpen]);
 
-  // Przywracanie stanu zakładki i sekcji po przełączeniu widoku (desktop <-> mobile)
+  // Przywracanie rozwiniętych sekcji po przełączeniu widoku (komputer <-> telefon)
   useEffect(() => {
     if (!isOpen) return;
 
     const restoreState = () => {
-      const targetTabVal = lastActiveTabRef.current;
-      if (targetTabVal && targetTabVal !== 'overview') {
-        const trigger = document.querySelector<HTMLButtonElement>(
-          `[data-slot="tabs-trigger"][data-value="${targetTabVal}"], [role="tab"][data-value="${targetTabVal}"], [role="tab"][value="${targetTabVal}"]`
-        );
-        if (trigger && trigger.getAttribute('data-state') !== 'active' && trigger.getAttribute('aria-selected') !== 'true') {
-          trigger.click();
-        }
-      }
-
       if (lastExpandedSectionsRef.current.length > 0) {
         const closedButtons = document.querySelectorAll<HTMLButtonElement>('button[aria-expanded="false"]');
         closedButtons.forEach((btn) => {
@@ -146,6 +119,8 @@ export function ProfilePortal({ profile, units, view, onSelectUnit, isOpen, onCl
         onSelectUnit={onSelectUnit}
         isOpen={isOpen}
         onClose={onClose}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />,
       document.body
     );
@@ -163,6 +138,8 @@ export function ProfilePortal({ profile, units, view, onSelectUnit, isOpen, onCl
       view={view}
       onSelectUnit={onSelectUnit}
       onClose={onClose}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
     />,
     container
   );

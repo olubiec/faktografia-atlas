@@ -24,6 +24,8 @@ export interface ProfileSheetProps {
   onSelectUnit?: (teryt: string) => void;
   onClose: () => void;
   className?: string;
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
 }
 
 export interface ProfileBodyProps {
@@ -33,6 +35,21 @@ export interface ProfileBodyProps {
   onSelectUnit?: (teryt: string) => void;
   onClose?: () => void;
   showCloseButton?: boolean;
+  /** Zakładka sterowana z zewnątrz (ProfilePortal); bez niej ProfileBody trzyma ją sam. */
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
+}
+
+/** Czy adres ma parę do porównania (`?c=a,b`). */
+function hasComparePair(): boolean {
+  if (typeof window === 'undefined') return false;
+  const c = new URLSearchParams(window.location.search).get('c');
+  return !!c && c.split(',').length === 2;
+}
+
+/** Zakładka początkowa: „compare” przy `?c=` z parą, inaczej „overview”. */
+function initialProfileTab(): string {
+  return hasComparePair() ? 'compare' : 'overview';
 }
 
 /**
@@ -46,39 +63,33 @@ export function ProfileBody({
   onSelectUnit,
   onClose,
   showCloseButton = true,
+  activeTab: controlledTab,
+  onTabChange,
 }: ProfileBodyProps) {
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      const c = new URLSearchParams(window.location.search).get('c');
-      if (c && c.split(',').length === 2) {
-        return 'compare';
-      }
-    }
-    return 'overview';
-  });
+  const [ownTab, setOwnTab] = useState<string>(initialProfileTab);
   const [prevTeryt, setPrevTeryt] = useState<string>(profile.teryt);
+  const controlled = controlledTab !== undefined;
+  const activeTab = controlled ? controlledTab : ownTab;
+  const setActiveTab = (tab: string) => {
+    if (controlled) onTabChange?.(tab);
+    else setOwnTab(tab);
+  };
 
-  if (profile.teryt !== prevTeryt) {
+  // Własny stan tylko poza portalem; w portalu reset i `?c=` robi ProfilePortal
+  if (!controlled && profile.teryt !== prevTeryt) {
     setPrevTeryt(profile.teryt);
-    const c = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('c') : null;
-    if (c && c.split(',').length === 2) {
-      setActiveTab('compare');
-    } else {
-      setActiveTab('overview');
-    }
+    setOwnTab(initialProfileTab());
   }
 
   useEffect(() => {
+    if (controlled) return;
     const handleUrlChange = () => {
-      const c = new URLSearchParams(window.location.search).get('c');
-      if (c && c.split(',').length === 2) {
-        setActiveTab('compare');
-      }
+      if (hasComparePair()) setOwnTab('compare');
     };
     window.addEventListener('popstate', handleUrlChange);
     return () => window.removeEventListener('popstate', handleUrlChange);
-  }, []);
+  }, [controlled]);
 
   const childrenResult = profile.unit ? childUnits(profile.unit, units) : null;
   const unitTitleText = profile.unit ? unitTitle(profile.unit) : `TERYT ${profile.teryt}`;
@@ -261,6 +272,10 @@ export function ProfileBody({
   );
 }
 
+// Pomocniki zakładki współdzielone z ProfilePortal (bez osobnego eksportu – lint fast-refresh)
+ProfileBody.hasComparePair = hasComparePair;
+ProfileBody.initialTab = initialProfileTab;
+
 /**
  * Komponent arkusza profilu jednostki (wersja na komputer, 440 px).
  * Prezentuje nagłówek jednostki, przycisk zamknięcia, przegląd bieżącego wskaźnika
@@ -273,6 +288,8 @@ export function ProfileSheet({
   onSelectUnit,
   onClose,
   className,
+  activeTab,
+  onTabChange,
 }: ProfileSheetProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -292,6 +309,8 @@ export function ProfileSheet({
         view={view}
         onSelectUnit={onSelectUnit}
         onClose={onClose}
+        activeTab={activeTab}
+        onTabChange={onTabChange}
       />
     </Sheet>
   );

@@ -16,6 +16,8 @@ export interface ProfileSheetMobileProps {
   isOpen?: boolean;
   onClose: () => void;
   className?: string;
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
 }
 
 /** Ucieczka wartości do selektora; w środowisku bez CSS.escape (jsdom) tylko cudzysłów i ukośnik. */
@@ -38,6 +40,8 @@ export function ProfileSheetMobile({
   isOpen = true,
   onClose,
   className,
+  activeTab,
+  onTabChange,
 }: ProfileSheetMobileProps) {
   const dialogTitle = profile.unit ? unitTitle(profile.unit) : `TERYT ${profile.teryt}`;
 
@@ -131,6 +135,8 @@ export function ProfileSheetMobile({
           onSelectUnit={onSelectUnit}
           onClose={handleClose}
           showCloseButton={false}
+          activeTab={activeTab}
+          onTabChange={onTabChange}
         />
       </div>
     </BottomSheet>
