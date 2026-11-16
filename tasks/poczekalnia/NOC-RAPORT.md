@@ -368,3 +368,11 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Vercel: wejdź na /biblioteka z wolnym łączem (throttling) – widać krótko pusty ekran, czytnik ogłasza „Wczytywanie strony”.
 - Uwaga: library-search „brak błędów dostępności axe” przy --repeat-each=3 padł raz na 15 uruchomień (kolejne 9 zielone), reguły nie udało się złapać – test sam nie czeka na wczytanie spisu (bez page.route); do osobnej diagnozy.
 - Odłożono: nic z zakresu zadania; istniejących testów nie ruszano.
+
+## N-28 – pasek wskaźnika: nazwa zgodna z tekstem (WCAG 2.5.3)
+- Wynik: lint, typecheck, test, build zielone; e2e 50/50 zielone (mobile-indicator-name nowy, mobile-indicator-sheet, mobile-layout, a11y-matrix, profile-mobile z --workers=1).
+- profile-mobile „passes axe accessibility scan with no violations”: zielony.
+- Zmiana: MobileIndicatorBar.tsx – spacje po nazwie i roku w tekście przycisku; aria-label bez zmian; nowe testy unit + e2e.
+- Commit: 741be2e ([N-28]).
+- Vercel: na telefonie dół mapy wygląda tak samo jak dotąd (pasek wskaźnika bez zmian wizualnych).
+- Odłożono: nic.
