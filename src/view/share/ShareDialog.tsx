@@ -108,7 +108,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
   const scene = useMemo(() => {
     return cardScene(activeKind, activeCardData, selectedFormat, selectedTheme, {
       measure,
-      siteUrl: 'faktografia.pl',
+      siteUrl: 'faktografia.eu',
     });
   }, [activeKind, activeCardData, selectedFormat, selectedTheme, measure]);
 

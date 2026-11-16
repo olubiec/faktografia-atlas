@@ -52,7 +52,9 @@ export function createMapLayers(
 
   for (const factory of getLayerFactories()) {
     const layer = factory.create(ctx);
-    if (layer) {
+    if (Array.isArray(layer)) {
+      layers.push(...(layer as Layer[]));
+    } else if (layer) {
       layers.push(layer as Layer);
     }
   }

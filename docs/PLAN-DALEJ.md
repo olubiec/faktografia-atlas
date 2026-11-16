@@ -18,4 +18,4 @@
 
 ## 4. Domena faktografia.eu (home.pl + Vercel)
 - Rekord A dla domeny głównej i CNAME dla `www` w DNS home.pl; domena dodana w Vercelu.
-- Po podpięciu: zmienić `faktografia.pl` w stopce kart na `faktografia.eu`.
+- Po podpięciu: zrobione: stopka kart to faktografia.eu.

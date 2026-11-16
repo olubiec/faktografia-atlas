@@ -34,7 +34,7 @@ export type LayerContext = {
 
 export type LayerFactory = {
   id: string;
-  create: (ctx: LayerContext) => Layer | null;
+  create: (ctx: LayerContext) => Layer | Layer[] | null;
 };
 
 /**

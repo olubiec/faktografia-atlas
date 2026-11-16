@@ -10,5 +10,5 @@ export function buildExportScene(
   theme: CardTheme,
   { measure, scale }: { measure: MeasureFn; scale: ShareScale },
 ): CardScene {
-  return cardScene(kind, data, format, theme, { measure, siteUrl: 'faktografia.pl', scale });
+  return cardScene(kind, data, format, theme, { measure, siteUrl: 'faktografia.eu', scale });
 }

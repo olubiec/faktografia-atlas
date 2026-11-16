@@ -4,6 +4,8 @@ import type { LayerFactory, LayerContext } from './admin';
 import { loadGeoData, parseCssColor } from './admin';
 import { classColorToken, type ClassifyResult } from '@/core/map/classes';
 import { getNoDataPatternProps } from './no-data-pattern';
+import { initialCrossfade, stepCrossfade, easeInOut, type CrossfadeState } from '@/core/map/crossfade';
+import type { ChoroplethData } from '../hooks/useChoropleth';
 import tokensJson from '../../../../config/tokens.json';
 
 /**
@@ -50,13 +52,10 @@ export function resolveTokenColor(
   return fallback;
 }
 
-export const choroplethLayerFactory: LayerFactory = {
-  id: 'choropleth-layer',
-  create: (ctx: LayerContext) => {
-    const choropleth = ctx.choropleth ?? ctx.drillState?.choropleth;
-    if (!choropleth) {
-      return null;
-    }
+type LayerOpts = { id: string; opacity: number; pickable: boolean };
+
+function buildChoroplethLayer(ctx: LayerContext, choropleth: ChoroplethData, opts: LayerOpts) {
+  {
 
     const { wojFeatures, powFeatures, gmiFeatures } = loadGeoData(ctx.topoData);
     // Rysujemy pełny podział administracyjny danego poziomu. Reszta kraju jest rysowana jako wyblakłe tło.
@@ -93,21 +92,18 @@ export const choroplethLayerFactory: LayerFactory = {
     };
     const lineColor = resolveTokenColor('--linia');
 
-    const progress = choropleth.reveal?.progress ?? 1;
-    const running = choropleth.reveal?.running ?? false;
-    const totalDuration = tokensJson.motion.revealTotal ?? 900;
-    const elapsed = progress * totalDuration;
-
     const isReduced =
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Zmiana wskaźnika/roku na tej samej warstwie: płynne przejście kolorów (wbudowane w deck.gl).
     const transitionDuration = isReduced ? 0 : tokensJson.motion.base ?? 300;
 
     return new GeoJsonLayer({
       ...getNoDataPatternProps(choropleth.classByTeryt),
-      id: 'choropleth-layer',
+      id: opts.id,
+      opacity: opts.opacity,
       transitions: {
-        getFillColor: transitionDuration,
+        getFillColor: { duration: transitionDuration, easing: easeInOut },
       },
       data: features,
       filled: true,
@@ -122,21 +118,13 @@ export const choroplethLayerFactory: LayerFactory = {
           return [fullColor[0], fullColor[1], fullColor[2], 64];
         }
 
-        // Jednostki w aktywnym zakresie: animowane pojawianie się po kolei
-        if (running && progress < 1) {
-          const res = teryt ? choropleth.revealResults?.get(teryt) : undefined;
-          if (res && elapsed < res.delay) {
-            return [fullColor[0], fullColor[1], fullColor[2], 64];
-          }
-        }
-
         return fullColor;
       },
       getLineColor: ctx.colors.granica ?? ctx.colors.kalka,
       getLineWidth: 1.2,
       lineWidthUnits: 'pixels',
       lineWidthMinPixels: 1,
-      pickable: true,
+      pickable: opts.pickable,
       onClick: (info) => {
         const teryt = info.object?.properties?.teryt;
         if (teryt && isInScope(teryt) && ctx.onSelectUnit) {
@@ -162,9 +150,6 @@ export const choroplethLayerFactory: LayerFactory = {
           choropleth.year,
           choropleth.level,
           choropleth.classByTeryt,
-          choropleth.reveal?.progress,
-          choropleth.reveal?.running,
-          choropleth.classByTeryt,
           activeWojTeryt,
           activePowTeryt,
           ctx.colors,
@@ -172,6 +157,44 @@ export const choroplethLayerFactory: LayerFactory = {
         getLineColor: [ctx.colors.granica, ctx.colors.kalka],
       },
     });
+  }
+}
+
+const scopeKeyOf = (c: ChoroplethData) =>
+  `${c.level}:${c.activeScope?.activeWojTeryt ?? ''}:${c.activeScope?.activePowTeryt ?? ''}`;
+
+// Pamięć ostatnio narysowanego zakresu: stara warstwa zostaje pod spodem, aż nowa wjedzie.
+let fade: CrossfadeState = initialCrossfade;
+let shown: ChoroplethData | null = null;
+let outgoing: ChoroplethData | null = null;
+
+export const choroplethLayerFactory: LayerFactory = {
+  id: 'choropleth-layer',
+  create: (ctx: LayerContext) => {
+    const choropleth = ctx.choropleth ?? ctx.drillState?.choropleth;
+    if (!choropleth) return null;
+
+    const key = scopeKeyOf(choropleth);
+    const reduced =
+      typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (fade.key !== null && fade.key !== key && shown) outgoing = shown;
+    const frame = stepCrossfade(fade, key, choropleth.reveal?.progress ?? 1, reduced);
+    fade = frame.next;
+    shown = choropleth;
+    if (!frame.showOutgoing) outgoing = null;
+
+    const top = buildChoroplethLayer(ctx, choropleth, {
+      id: 'choropleth-layer',
+      opacity: frame.incoming,
+      pickable: true,
+    });
+    if (!outgoing) return top;
+    const under = buildChoroplethLayer(ctx, outgoing, {
+      id: 'choropleth-layer-out',
+      opacity: 1,
+      pickable: false,
+    });
+    return [under, top];
   },
 };
 

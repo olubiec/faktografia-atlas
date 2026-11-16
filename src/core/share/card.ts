@@ -58,7 +58,7 @@ function buildScene(kind: CardKind, data: CardData, formatKey: ShareFormatKey, t
   const fmt = SHARE_FORMATS[formatKey] ?? SHARE_FORMATS.post;
   const { width, height, safe } = fmt;
   const colors = getThemeColors(theme);
-  const { measure, siteUrl = 'faktografia.pl' } = options;
+  const { measure, siteUrl = 'faktografia.eu' } = options;
 
   const scaleFactor = width / 1080;
   const fontScale = {
