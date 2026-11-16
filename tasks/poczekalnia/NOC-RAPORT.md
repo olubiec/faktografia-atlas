@@ -384,3 +384,11 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Vercel: na /biblioteka wpisz „Mediana” – pojawia się „Mediana wieku” z „do zamówienia”; klik prowadzi do /biblioteka/104 z „Ten wskaźnik jeszcze nie został pobrany”.
 - Odłożono: 2 testy telefonu w library-search (osobna diagnoza).
 - Commit: kod w następnym commicie [N-29] (ten wpis w kolejnym).
+
+## N-30 – licznik filtrów biblioteki bez domyślnego
+- Wynik: lint, typecheck, test, build zielone; e2e 19/19 (library-filters-count nowy, library-search, library-page; --workers=1).
+- Dwa testy telefonu 360x740 w library-search (aktywne: 0 / 1) są teraz zielone bez zmian.
+- Zmiana: LibraryFilters.tsx – activeCount liczy tylko poziom i jednostkę; nowe testy unit + e2e.
+- Commit: 6efc0de ([N-30]).
+- Vercel: na telefonie wejdź na /biblioteka – przycisk "Filtry (aktywne: 0)"; rozwiń, wybierz Powiaty – "aktywne: 1".
+- Odłożono: nic.
