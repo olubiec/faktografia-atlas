@@ -297,3 +297,9 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 - Vercel: /biblioteka/101 - w stopce brak linijki „Dane GUS odświeżone”; na /rankingi i / nadal jest.
 - Efekt uboczny: library-page „1 żądanie spisu i 0 values” teraz przechodzi (wcześniej czerwony).
 - Odłożono: library-page axe oraz 2 testy s21-library „pełna ścieżka” czerwone także bez moich zmian (stan wyjściowy), nie ruszałem.
+
+## N-18 – Granica: pusty --olowek daje kalkę
+- Wynik: lint, typecheck, Vitest, build zielone; e2e dark-mode-map + map (7/7) zielone; kontrola usunięć pusta.
+- Commit: 4dc6aa7 (galaz claude/laughing-pasteur-8af8jz, bez PR): admin.ts (granica z surowego --olowek), nowy tests/unit/map-border-fallback.test.ts (5 testów).
+- Vercel: nic do klikania; ewentualnie ciemny motyw - granice powiatów/gmin nadal widoczne.
+- Odłożono: nic (domyka przypadek kontrolny 4 z N-15).
