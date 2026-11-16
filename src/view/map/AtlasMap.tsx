@@ -34,6 +34,7 @@ import { MobileIndicatorBar } from '@/view/main/MobileIndicatorBar';
 import { UnitTooltip } from '@/view/main/UnitTooltip';
 import { useIsMobile } from '@/view/hooks/useIsMobile';
 import { useProfile } from './hooks/useProfile';
+import { ProfileColumnPlaceholder } from './ProfileColumnPlaceholder';
 import { ProfilePortal } from './ProfilePortal';
 import { useZoomEvents } from './useZoomEvents';
 
@@ -168,6 +169,9 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
   }
 
   const { profile, isOpen: profileOpen, closeProfile } = useProfile(selectedTeryt, units);
+
+  // Komputer: po wyborze jednostki kolumna jest widoczna od razu; zajawka znika, gdy profil się wczyta.
+  const reserveSide = !isMobile && selectedTeryt !== null && profile === null;
 
   const [prevProfileOpen, setPrevProfileOpen] = useState(profileOpen);
   if (profileOpen !== prevProfileOpen) {
@@ -409,7 +413,10 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       <div
         data-slot="side"
         className="hidden md:block empty:hidden md:w-[440px] md:shrink-0 md:border-l border-linia bg-arkusz overflow-y-auto"
-      />
+      >
+        {/* Miejsce na kolumnę rezerwujemy od wyboru jednostki, nie od wczytania profilu. */}
+        {reserveSide && <ProfileColumnPlaceholder name={selectedName} />}
+      </div>
 
       {isMobile && (
         <MobileIndicatorBar
