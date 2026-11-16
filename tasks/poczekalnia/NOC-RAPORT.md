@@ -463,3 +463,5 @@ Każdy wpis: ID · wynik testów · commit · co sprawdzić na Vercel · co odł
 
 ## N-44 – JSON-LD (czysta logika SEO)
 - Nowe: src/core/seo/jsonld.ts (Dataset + WebSite/SearchAction), tests/unit/seo-jsonld.test.ts (9 przypadków); bez UI, nic nie podpięte do stron.
+- [N-45] Plan walidacji danych (przedszkola >100 %, median-age null, świeżość stopki): tasks/poczekalnia/N-45-dane-walidacja.md (z AUDYT-DANYCH.md, ścieżki i linie w kodzie).
+- [N-45] Uwaga: świeżość z 20 plików łamie PRODUKT §7 – plan używa najstarszego fetchedAt z cache; pełny manifest wymaga zgody (scripts/data).
