@@ -150,6 +150,14 @@ export async function expectAllTouchTargets(
 }
 
 /**
+ * Weryfikuje pola dotykowe (min. 44x44 px) wszystkich widocznych elementów
+ * interaktywnych na stronie. Skrót dla specyfikacji pracujących na `page`.
+ */
+export async function expectTouchTargets(page: Page, minSize: number = 44): Promise<void> {
+  await expectAllTouchTargets(page.locator('body'), minSize);
+}
+
+/**
  * Weryfikuje zasięg przewijania arkusza przy stanie 40% (PRODUKT.md §5):
  * 1. Sprawdza, czy arkusz zajmuje ok. 35–48% wysokości okna (stan początkowy 40%).
  * 2. Przewija do elementu docelowego wewnątrz arkusza (np. przycisk na dole).
