@@ -128,6 +128,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
   const [localities, setLocalities] = useState<Locality[]>([]);
   const localityTargetRef = useRef<ViewState | null>(null);
   const sideExpectedRef = useRef(sidePanelPx);
+  const lastSideRef = useRef(sidePanelPx);
 
   const fittedKeyRef = useRef<string | null>(null);
   const fittedBboxRef = useRef<string | null>(null);
@@ -334,6 +335,8 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           if (targetView.zoom < currentViewStateRef.current.zoom - 0.05) {
             kind = 'out';
           }
+          // Sama zmiana układu (panel profilu pojawia się lub znika, np. zmiana szerokości okna) – bez animacji.
+          if (fittedBboxRef.current === bboxKey && lastSideRef.current !== side) kind = 'instant';
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
           animateToView(targetView, kind);
@@ -354,6 +357,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     };
 
     measure(false);
+    lastSideRef.current = sidePanelPx;
     const resizeObserver = new ResizeObserver(() => measure(true));
     resizeObserver.observe(containerRef.current);
 
