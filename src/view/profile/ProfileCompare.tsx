@@ -6,6 +6,7 @@ import type { MainView } from '../map/hooks/useMainView';
 import { CompareMaps } from './CompareMaps';
 import { ProfileCompareTable } from './ProfileCompareTable';
 import { compare } from '../../core/compare/compare';
+import { rankUnits } from '../../core/ranking/ranking';
 import { unitTitle } from '../../core/units/label';
 import { formatValue } from '../../core/format/number';
 import { loadAdminTopo, loadUnits } from '../../core/data/load-atlas-data';
@@ -45,6 +46,20 @@ const CONTRAST_SUGGESTIONS: Record<'woj' | 'pow' | 'gmi', { teryt: string; name:
     { teryt: '1821022', name: 'Cisna' },
   ],
 };
+
+/** Miejsce we wskaźniku liczone względem wszystkich jednostek poziomu (z wczytanego pliku), nie dwóch porównywanych. */
+function withFullRanking(profile: UnitProfile, id: string, values: IndicatorValues | null, units: Unit[]): UnitProfile {
+  const item = profile.indicators.find((i) => i.indicatorId === id);
+  if (!values || !item || item.year === null || item.value === null) return profile;
+  const teryt = item.fromParent ?? profile.teryt;
+  const level = units.find((u) => u.teryt === teryt)?.level;
+  if (!level) return profile;
+  const ranked = rankUnits({ values, units, level, year: item.year, higherIsBetter: item.indicator.higherIsBetter });
+  const own = ranked.find((r) => r.teryt === teryt);
+  if (!own) return profile;
+  const patched = { ...item, rankNational: own.rank, totalNational: own.total };
+  return { ...profile, indicators: profile.indicators.map((i) => (i === item ? patched : i)) };
+}
 
 export interface ProfileCompareProps {
   profileA: UnitProfile;
@@ -190,7 +205,15 @@ export function ProfileCompare({
     window.dispatchEvent(new PopStateEvent('popstate'));
   }, []);
 
-  const profileB = cleared ? null : (profileBProp ?? loadedProfileB);
+  const rawProfileB = cleared ? null : (profileBProp ?? loadedProfileB);
+  const rankedA = useMemo(
+    () => withFullRanking(profileA, indicatorId, indicatorValues, units),
+    [profileA, indicatorId, indicatorValues, units]
+  );
+  const profileB = useMemo(
+    () => (rawProfileB ? withFullRanking(rawProfileB, indicatorId, indicatorValues, units) : null),
+    [rawProfileB, indicatorId, indicatorValues, units]
+  );
 
   // Wyszukiwanie drugiego miejsca
   const { results: searchResultsRaw } = useSearch(searchQuery);
@@ -330,11 +353,12 @@ export function ProfileCompare({
     return {
       compare: compareCard,
       compareRows: compResult.rows,
-      compareUnitA: profileA,
+      compareUnitA: rankedA,
       compareUnitB: profileB,
     };
   }, [
     profileA,
+    rankedA,
     profileB,
     view,
     year,
@@ -437,7 +461,7 @@ export function ProfileCompare({
         view={view}
         onSelectUnit={onSelectUnit}
       />
-      <ProfileCompareTable profileA={profileA} profileB={profileB} />
+      <ProfileCompareTable profileA={rankedA} profileB={profileB} />
 
       <div className="pt-3 flex justify-start">
         <button
