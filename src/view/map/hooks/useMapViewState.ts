@@ -58,26 +58,18 @@ function parseCubicBezier(easingStr: string): (t: number) => number {
   if (!match) {
     return (t: number) => t;
   }
-  const x1 = parseFloat(match[1]);
-  const y1 = parseFloat(match[2]);
-  const x2 = parseFloat(match[3]);
-  const y2 = parseFloat(match[4]);
+  const [x1, y1, x2, y2] = match.slice(1, 5).map(parseFloat);
 
   return function ease(x: number): number {
     if (x <= 0) return 0;
     if (x >= 1) return 1;
 
-    let tLo = 0;
-    let tHi = 1;
-    let t = x;
+    let [tLo, tHi, t] = [0, 1, x];
 
     for (let i = 0; i < 12; i++) {
       const currentX = 3 * (1 - t) * (1 - t) * t * x1 + 3 * (1 - t) * t * t * x2 + t * t * t;
-      if (currentX < x) {
-        tLo = t;
-      } else {
-        tHi = t;
-      }
+      if (currentX < x) tLo = t;
+      else tHi = t;
       t = (tLo + tHi) / 2;
     }
 
@@ -133,6 +125,8 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
   const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [localities, setLocalities] = useState<Locality[]>([]);
   const localityTargetRef = useRef<ViewState | null>(null);
+  // Kamera stoi (albo leci) na wybranej miejscowości: pomiary kontenera nie dopasowują jej z powrotem do obszaru.
+  const localityLockRef = useRef(false);
 
   const fittedKeyRef = useRef<string | null>(null);
   const fittedBboxRef = useRef<string | null>(null);
@@ -176,6 +170,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     }
     isAnimatingRef.current = false;
     userMovedRef.current = true;
+    localityLockRef.current = false;
     syncCameraSeam(false);
   }, []);
 
@@ -293,6 +288,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
 
         fittedBboxRef.current = bboxKey;
         fittedKeyRef.current = key;
+        localityLockRef.current = false;
         animateToView(newView, kind);
       }
     },
@@ -316,7 +312,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           nextKey: key,
           isResize: isResizeEvent,
           animating: isAnimatingRef.current,
-          userMoved: userMovedRef.current,
+          userMoved: userMovedRef.current || localityLockRef.current,
           msSinceAnimationEnd:
             animEndRef.current === null ? undefined : performance.now() - animEndRef.current,
           reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
@@ -324,17 +320,20 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         const activeBbox = drillBbox ?? bounds;
 
         if (action === 'locality' && localityTargetRef.current) {
-          if (animRef.current !== null) {
-            cancelAnimationFrame(animRef.current);
-            animRef.current = null;
-          }
-          isAnimatingRef.current = false;
-          syncCameraSeam(false);
-          setCurrentViewState(localityTargetRef.current);
+          // Lot do miejscowości już trwa: nie przerywamy go skokiem (dawniej anulowało to animację).
+          const target = localityTargetRef.current;
           localityTargetRef.current = null;
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
-          userMovedRef.current = true;
+          localityLockRef.current = true;
+          const flying = isAnimatingRef.current && animTargetRef.current === target;
+          const cur = currentViewStateRef.current;
+          const there = cur.longitude === target.longitude && cur.latitude === target.latitude && cur.zoom === target.zoom;
+          if (!flying && !there) animateToView(target, 'in');
+        } else if (action === 'animate' && localityLockRef.current) {
+          // Zmiana marginesu (arkusz profilu) przy miejscowości: zostajemy na miejscowości.
+          fittedBboxRef.current = bboxKey;
+          fittedKeyRef.current = key;
         } else if (action === 'init') {
           const init = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
           if (animRef.current !== null) {

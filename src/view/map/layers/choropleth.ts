@@ -4,7 +4,14 @@ import type { LayerFactory, LayerContext } from './admin';
 import { loadGeoData, parseCssColor } from './admin';
 import { classColorToken, type ClassifyResult } from '@/core/map/classes';
 import { getNoDataPatternProps } from './no-data-pattern';
-import { initialCrossfade, stepCrossfade, easeInOut, type CrossfadeState } from '@/core/map/crossfade';
+import {
+  initialCrossfade,
+  stepCrossfade,
+  easeInOut,
+  crossfadeEnabled,
+  crossfadeLayers,
+  type CrossfadeState,
+} from '@/core/map/crossfade';
 import type { ChoroplethData } from '../hooks/useChoropleth';
 import tokensJson from '../../../../config/tokens.json';
 
@@ -52,7 +59,7 @@ export function resolveTokenColor(
   return fallback;
 }
 
-type LayerOpts = { id: string; opacity: number; pickable: boolean };
+type LayerOpts = { id: string; opacity: number; pickable: boolean; animate: boolean };
 
 function buildChoroplethLayer(ctx: LayerContext, choropleth: ChoroplethData, opts: LayerOpts) {
   {
@@ -92,19 +99,17 @@ function buildChoroplethLayer(ctx: LayerContext, choropleth: ChoroplethData, opt
     };
     const lineColor = resolveTokenColor('--linia');
 
-    const isReduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     // Zmiana wskaźnika/roku na tej samej warstwie: płynne przejście kolorów (wbudowane w deck.gl).
-    const transitionDuration = isReduced ? 0 : tokensJson.motion.base ?? 300;
+    // Na telefonach wyłączone (przejścia atrybutów to dodatkowe shadery GPU).
+    const transitionDuration = opts.animate ? tokensJson.motion.base : 0;
 
     return new GeoJsonLayer({
       ...getNoDataPatternProps(choropleth.classByTeryt),
       id: opts.id,
       opacity: opts.opacity,
-      transitions: {
-        getFillColor: { duration: transitionDuration, easing: easeInOut },
-      },
+      ...(transitionDuration > 0
+        ? { transitions: { getFillColor: { duration: transitionDuration, easing: easeInOut } } }
+        : {}),
       data: features,
       filled: true,
       stroked: true,
@@ -168,6 +173,11 @@ let fade: CrossfadeState = initialCrossfade;
 let shown: ChoroplethData | null = null;
 let outgoing: ChoroplethData | null = null;
 
+const matches = (q: string) => typeof window !== 'undefined' && window.matchMedia(q).matches;
+
+// Przenikanie jest 3x szybsze od odsłaniania (ok. 300 ms zamiast 900 ms).
+const FADE_SPEEDUP = tokensJson.motion.revealTotal / tokensJson.motion.base;
+
 export const choroplethLayerFactory: LayerFactory = {
   id: 'choropleth-layer',
   create: (ctx: LayerContext) => {
@@ -175,29 +185,31 @@ export const choroplethLayerFactory: LayerFactory = {
     if (!choropleth) return null;
 
     const key = scopeKeyOf(choropleth);
-    // Tryb testowy (?e2e) pomija przenikanie, żeby stan warstw był deterministyczny.
-    const reduced =
-      typeof window !== 'undefined' &&
-      (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-        new URLSearchParams(window.location.search).has('e2e'));
+    // Tryb testowy (?e2e) pomija przenikanie, żeby stan warstw był deterministyczny;
+    // ekran dotykowy rysuje jedną warstwę (bezpieczny render na telefonach).
+    const reducedMotion = matches('(prefers-reduced-motion: reduce)');
+    const coarsePointer = matches('(pointer: coarse)');
+    const enabled = crossfadeEnabled({
+      reducedMotion,
+      coarsePointer,
+      testMode: typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('e2e'),
+    });
     if (fade.key !== null && fade.key !== key && shown) outgoing = shown;
-    const frame = stepCrossfade(fade, key, choropleth.reveal?.progress ?? 1, reduced);
+    const frame = stepCrossfade(fade, key, choropleth.reveal?.progress ?? 1, !enabled, FADE_SPEEDUP);
     fade = frame.next;
     shown = choropleth;
     if (!frame.showOutgoing) outgoing = null;
 
-    const top = buildChoroplethLayer(ctx, choropleth, {
-      id: 'choropleth-layer',
-      opacity: frame.incoming,
-      pickable: true,
-    });
-    if (!outgoing) return top;
-    const under = buildChoroplethLayer(ctx, outgoing, {
-      id: 'choropleth-layer-out',
-      opacity: 1,
-      pickable: false,
-    });
-    return [under, top];
+    const specs = crossfadeLayers('choropleth-layer', frame, outgoing !== null);
+    const layers = specs.map((spec) =>
+      buildChoroplethLayer(ctx, spec.role === 'outgoing' && outgoing ? outgoing : choropleth, {
+        id: spec.id,
+        opacity: spec.opacity,
+        pickable: spec.pickable,
+        animate: !reducedMotion && !coarsePointer,
+      })
+    );
+    return layers.length === 1 ? layers[0] : layers;
   },
 };
 
