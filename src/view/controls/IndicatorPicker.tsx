@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { NavArrowDown, Check, Search } from 'iconoir-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { IndicatorCategories } from './IndicatorCategories';
 import { Icon } from '@/view/ui/Icon';
 import { normalize } from '@/core/search/normalize';
 import type { Indicator } from '@/core/profile/profile';
@@ -257,8 +258,8 @@ export function IndicatorPicker({
   };
 
   return (
-    <Popover open={isOpen} onOpenChange={handleOpenChange}>
-      <PopoverTrigger asChild>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
         <button
           type="button"
           aria-expanded={isOpen}
@@ -275,14 +276,26 @@ export function IndicatorPicker({
           </div>
           <Icon icon={NavArrowDown} size={20} aria-hidden={true} className="text-tusz flex-shrink-0" />
         </button>
-      </PopoverTrigger>
+      </DialogTrigger>
 
-      <PopoverContent
-        align="start"
-        collisionPadding={8}
+      {/* Okno pełnoekranowe: czytelne na telefonie, Esc zamyka, fokus uwięziony w oknie (Radix). */}
+      <DialogContent
         aria-label="Wybór wskaźnika"
-        className="w-80 sm:w-96 p-0 bg-arkusz text-tusz border border-linia rounded-none shadow-none z-50 flex flex-col max-h-[var(--radix-popover-content-available-height)] sm:max-h-[min(80vh,var(--radix-popover-content-available-height))] overflow-hidden"
+        className="inset-0 top-0 left-0 h-dvh w-screen max-w-none translate-x-0 translate-y-0 gap-0 p-0 flex flex-col overflow-hidden"
       >
+        <DialogTitle className="sr-only">Wybór wskaźnika</DialogTitle>
+        <DialogDescription className="sr-only">
+          Wyszukaj wskaźnik po nazwie albo wybierz kategorię.
+        </DialogDescription>
+        <div className="pr-14 shrink-0">
+          <IndicatorCategories
+            indicators={indicators}
+            onApply={(ids) => {
+              onChange(ids[ids.length - 1]);
+              handleOpenChange(false);
+            }}
+          />
+        </div>
         <IndicatorPickerContent
           indicators={indicators}
           value={value}
@@ -293,7 +306,7 @@ export function IndicatorPicker({
           activeIndex={activeIndex}
           setActiveIndex={setActiveIndex}
         />
-      </PopoverContent>
-    </Popover>
+      </DialogContent>
+    </Dialog>
   );
 }
