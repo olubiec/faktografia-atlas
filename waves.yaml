@@ -182,3 +182,180 @@ waves:
         prompt_file: tasks/poczekalnia/W18-P06-skroty-klawiszowe-dostepnosc.md
         test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
 
+  - id: q1
+    tasks:
+      - id: W1-QC101
+        title: "QC101 – Stan rankingu zapisany w adresie (`?i=&l=&y=&w=&q=`)"
+        files:
+          - "src/core/ranking/rankings-url.ts"
+          - "tests/unit/rankings-url.test.ts"
+        prompt_file: tasks/W1-QC101-rankingi-adres-stan.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC102
+        title: "QC102 – Podsumowanie rankingu zdaniami (najwyżej, najniżej, mediana)"
+        files:
+          - "src/core/ranking/rankings-summary.ts"
+          - "tests/unit/rankings-summary.test.ts"
+        prompt_file: tasks/W1-QC102-rankingi-podsumowanie.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC103
+        title: "QC103 – Filtr listy rankingu (szukanie po nazwie i województwo)"
+        files:
+          - "src/core/ranking/rankings-filter.ts"
+          - "tests/unit/rankings-filter.test.ts"
+        prompt_file: tasks/W1-QC103-rankingi-filtr-listy.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC105
+        title: "QC105 – Lista rankingu (miejsce, nazwa, wartość, słupek, „Pokaż więcej”)"
+        files:
+          - "src/view/ranking/RankingsList.tsx"
+          - "tests/unit/rankings-list.test.tsx"
+        prompt_file: tasks/W1-QC105-rankingi-lista.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC201
+        title: "QC201 – Stan porównania w adresie (`?c=a,b`) i operacje na parze"
+        files:
+          - "src/core/compare/compare-url.ts"
+          - "tests/unit/compare-url.test.ts"
+        prompt_file: tasks/W1-QC201-porownaj-stan-adres.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC202
+        title: "QC202 – Pole wyboru miejsca z podpowiedziami (PlacePicker)"
+        files:
+          - "src/view/compare/PlacePicker.tsx"
+          - "tests/unit/place-picker.test.tsx"
+        prompt_file: tasks/W1-QC202-porownaj-pole-miejsca.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC301
+        title: "QC301 – Reguła widoczności czerwonego obrysu (gaśnie po oddaleniu)"
+        files:
+          - "src/core/map/outline-visibility.ts"
+          - "tests/unit/outline-visibility.test.ts"
+        prompt_file: tasks/W1-QC301-obrys-regula-widocznosci.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC401
+        title: "QC401 – Pomiar ruchu mapy (RAPORT, bez zmian w kodzie aplikacji)"
+        files:
+          - "docs/research/q-c401-ruch-mapy.md"
+        prompt_file: tasks/W1-QC401-ruch-mapy-pomiar-raport.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm build"
+
+      - id: W1-QC501
+        title: "QC501 – Model listy „Moje wskaźniki” (stała podstawowa, dodaj, usuń, przesuń, przywróć)"
+        files:
+          - "src/core/my-indicators/my-indicators.ts"
+          - "tests/unit/my-indicators.test.ts"
+        prompt_file: tasks/W1-QC501-moje-wskazniki-model.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC510
+        title: "QC510 – Polityka prywatności: jedno zdanie o liście „Moje wskaźniki”"
+        files:
+          - "src/view/pages/Privacy.tsx"
+          - "tests/unit/privacy-my-indicators.test.tsx"
+        prompt_file: tasks/W1-QC510-prywatnosc-moje-wskazniki.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm exec playwright test tests/e2e/privacy.spec.ts"
+
+      - id: W1-QC602
+        title: "QC602 – Wspólny rejestr wskaźników (20 głównych + pobrane z biblioteki)"
+        files:
+          - "src/core/indicators/registry.ts"
+          - "tests/unit/indicator-registry.test.ts"
+        prompt_file: tasks/W1-QC602-rejestr-wskaznikow.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC604
+        title: "QC604 – Jeden sposób pobierania wartości dla każdego wskaźnika (główny i z biblioteki)"
+        files:
+          - "src/core/indicators/load-any-values.ts"
+          - "tests/unit/load-any-values.test.ts"
+        prompt_file: tasks/W1-QC604-jeden-sposob-pobierania-wartosci.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC605
+        title: "QC605 – Adres przyjmuje wskaźnik z biblioteki (`?i=b60614`)"
+        files:
+          - "src/core/url/state.ts"
+          - "tests/unit/url-library-indicator.test.ts"
+        prompt_file: tasks/W1-QC605-adres-wskaznik-z-biblioteki.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC701
+        title: "QC701 – Zapytanie biblioteki zawsze tylko z danymi + liczniki (m z n)"
+        files:
+          - "src/core/library/query.ts"
+          - "tests/unit/library-only-fetched.test.ts"
+        prompt_file: tasks/W1-QC701-biblioteka-zapytanie-tylko-pobrane.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC704
+        title: "QC704 – Przycisk „Zamów dane na temat…”"
+        files:
+          - "src/view/library/OrderTopicButton.tsx"
+          - "src/core/library/order.ts"
+          - "tests/unit/order-topic-button.test.tsx"
+        prompt_file: tasks/W1-QC704-biblioteka-zamow-dane-na-temat.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC801
+        title: "QC801 – Wspólny pasek „Kopiuj link · Pobierz i udostępnij”"
+        files:
+          - "src/view/share/ShareBar.tsx"
+          - "tests/unit/share-bar.test.tsx"
+        prompt_file: tasks/W1-QC801-pasek-udostepniania.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC901
+        title: "QC901 – Model zestawu stron eksportu (strony, dodaj, usuń, przesuń, numeracja n/N)"
+        files:
+          - "src/core/share/deck.ts"
+          - "tests/unit/deck.test.ts"
+        prompt_file: tasks/W1-QC901-zestaw-model.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC905
+        title: "QC905 – Numer „n/N” na karcie (w stopce obok źródła)"
+        files:
+          - "src/core/share/card.ts"
+          - "tests/unit/card-page-number.test.ts"
+        prompt_file: tasks/W1-QC905-karta-numer-strony.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC906
+        title: "QC906 – Karta „Tabela” (wskaźnik, wartość, miejsce)"
+        files:
+          - "src/core/share/card-table.ts"
+          - "tests/unit/card-table.test.ts"
+        prompt_file: tasks/W1-QC906-karta-tabela.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC907
+        title: "QC907 – Karta „Duża liczba” (liczba, jednostka, miejsce, jedno kółko korekty)"
+        files:
+          - "src/core/share/card-bignumber.ts"
+          - "tests/unit/card-bignumber.test.ts"
+        prompt_file: tasks/W1-QC907-karta-duza-liczba.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC908
+        title: "QC908 – Karta „Wykres lat” (linia wskaźnika w czasie dla miejsca)"
+        files:
+          - "src/core/share/card-trend.ts"
+          - "tests/unit/card-trend.test.ts"
+        prompt_file: tasks/W1-QC908-karta-wykres-lat.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+
+      - id: W1-QC909
+        title: "QC909 – Karta „Rozkład” (ile jednostek w każdej z 5 klas kolorystycznych)"
+        files:
+          - "src/core/share/card-histogram.ts"
+          - "tests/unit/card-histogram.test.ts"
+        prompt_file: tasks/W1-QC909-karta-rozklad.md
+        test_command: "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
