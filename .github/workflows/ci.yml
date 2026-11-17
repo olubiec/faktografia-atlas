@@ -7,7 +7,7 @@ on:
   pull_request:
   push:
     branches: [main]
-    paths-ignore: ['tasks/**']   # push plików fali (Jules Loop) nie odpala 30-minutowego CI
+    paths-ignore: ['tasks/**']   # push plików fali nie odpala 30-minutowego CI
   workflow_dispatch:
 
 # Nowy commit w tym samym PR anuluje poprzedni, trwający przebieg (na main nic nie anulujemy:

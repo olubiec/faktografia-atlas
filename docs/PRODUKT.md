@@ -91,11 +91,11 @@ Pomysł właściciela 24.10.2026: każdy może pobrać dane, tabelki, mapy z leg
   | Porównanie | dwa miejsca, dwie małe mapki, 5–8 wierszy porównania ze słowną różnicą |
   Każda karta ma logo z `public/brand/`, linijkę „Źródło: GUS, Bank Danych Lokalnych, <rok>” i adres strony – bez wyjątku (licencja danych CC BY 4.0).
 - **Formaty:** Post 4:5 – 1080×1350 (Instagram, Facebook, Threads) · Kwadrat 1:1 – 1080×1080 (komentarze, X, Facebook) · Story 9:16 – 1080×1920 (treść w środkowym pasie 1080×1610) · Poziomy 16:9 – 1600×900 (X, LinkedIn, strony). Motyw jasny albo ciemny.
-- **Zestaw:** „Udostępnij zestaw” wysyła naraz kartę mapy i rankingu (oraz profilu, gdy wybrane jest miejsce) – na telefonie przez systemowe okno udostępniania (Instagram robi z tego karuzelę), na komputerze pobiera kolejne pliki.
+- **Zestaw (edytowalny, decyzja 17.11.2026):** okno otwiera się z gotowym zestawem stron zależnym od miejsca otwarcia (mapa: Mapa · Ranking najwyżej · Ranking najniżej · Tabela, + Profil przy wybranym miejscu; profil: Profil · Duża liczba · Wykres lat · Tabela; porównanie: Porównanie · Tabela · Duża liczba A vs B; rankingi: Ranking · Mapa · Rozkład; biblioteka: Ranking · Rozkład). Strony są numerowane „n/N” (numer także na karcie, gdy N > 1). Każda strona ma **×** (usuwa; ostatniej nie da się usunąć) i ‹ › (kolejność); **+** dodaje stronę: Mapa, Ranking, Tabela, Duża liczba, Wykres lat, Rozkład, Porównanie (gdy są dwa miejsca) albo „Podziel tę stronę” (np. tabela > 8 wierszy → kilka stron). Pod podglądem „Dane na tej stronie”: lista wskaźników z × i „+ Dodaj dane” (domyślnie wskaźniki z listy „Moje wskaźniki”, §4f). „Pobierz wszystkie” pobiera kolejne pliki PNG (bez ZIP); na telefonie „Udostępnij zestaw” wysyła je systemowym oknem. Zakaz generatora serii slajdów pod konta Faktografii zostaje – to jest narzędzie dla każdego użytkownika.
 - **Dane (CSV):** to, co widać – bieżący wskaźnik dla wszystkich jednostek poziomu (lub obszaru), cały profil miejsca albo tabela porównania. Kodowanie UTF-8, separator „;”, przecinek dziesiętny (otwiera się wprost w polskim Excelu), kolumny z rokiem i źródłem.
 - **Na telefonie** przycisk „Udostępnij” otwiera systemowe okno (Instagram, X, komunikatory), jeśli przeglądarka to umie; inaczej „Pobierz”.
 - **Prawa:** w oknie zdanie „Możesz używać i udostępniać, podając źródło: Faktografia Atlas, dane GUS”. Karty i CSV na licencji CC BY 4.0.
-- **Zasady techniczne:** zero nowych pobrań danych (karty powstają z tego, co już jest w pamięci strony), zero nowych pakietów (SVG i `canvas` przeglądarki, istniejące `roughjs` do kółka korekty), napisy nie wychodzą poza pola także dla najdłuższych nazw („Powiat kędzierzyńsko-kozielski”), działa offline po wczytaniu strony; kod okna i rysowania ładowany dopiero po kliknięciu (osobny plik JS – nie powiększa wejścia, §7).
+- **Zasady techniczne:** karty powstają z tego, co już jest w pamięci strony; **wyjątek (17.11.2026): dodanie do strony wskaźnika, którego wartości nie ma w pamięci = dokładnie jedno pobranie pliku wartości** (potem z pamięci), zero nowych pakietów (SVG i `canvas` przeglądarki, istniejące `roughjs` do kółka korekty), napisy nie wychodzą poza pola także dla najdłuższych nazw („Powiat kędzierzyńsko-kozielski”), działa offline po wczytaniu strony; kod okna i rysowania ładowany dopiero po kliknięciu (osobny plik JS – nie powiększa wejścia, §7).
 - **Poza zakresem:** generator serii slajdów pod konta Faktografii (osobne prywatne repo – może korzystać z tych samych kart), wideo, GIF, XLSX.
 
 ## 4c. Miasto i obszar wiejski w gminach miejsko-wiejskich (S20)
@@ -112,8 +112,23 @@ Decyzja 25.10.2026 (zwiad W1.11: `docs/research/W1.11-wynik.md`). Dotyczy **tylk
 Decyzja 25.10.2026. Osobna strona na całą bibliotekę wskaźników BDL pobieraną stopniowo przez robota (`docs/research/biblioteka-gus.md`). Ekran główny z mapą i 20 wskaźnikami zostaje taki, jaki jest.
 - **`/biblioteka`** (link „Biblioteka” w nagłówku): licznik („<n> wskaźników GUS, z czego <m> można już przeglądać”), kafelki kategorii (działy GUS) z okruszkami, wyszukiwarka po nazwie (bez względu na polskie znaki i wielkość liter), filtry: poziom (powiaty / gminy), jednostka miary, „tylko już pobrane”; wyniki jako lista po 50 z „Pokaż więcej”. Stan (kategoria, tekst, filtry) w adresie `?k= &q= &l= &p=`.
 - **`/biblioteka/<id>`**: nazwa, kategoria, jednostka, wybór roku i poziomu, ranking „najwyżej / najniżej” (po 10), „Pobierz CSV”, źródło i licencja (GUS, BDL, CC BY 4.0). Wskaźnik jeszcze niepobrany → komunikat i przycisk „Zamów ten wskaźnik” (otwiera zgłoszenie na GitHubie z wypełnionym tekstem – sami niczego nie wysyłamy).
-- **Nie ma w pierwszej wersji** (idzie do „Później”): mapa dla wskaźnika z biblioteki (wymaga zmiany ekranu głównego), porównania, karty PNG, konta, automatyczna kolejka zamówień (zamówienia czytamy ręcznie).
+- **Zmiana 17.11.2026 – tylko pobrane:** lista pokazuje wyłącznie wskaźniki z danymi (niepobrane są ukryte, bez przełącznika „tylko pobrane”). Nad listą: „<m> wskaźników z danymi (z <n> w spisie GUS). Kolejne dane dochodzą co noc.” i przycisk „Zamów dane na temat…” (zgłoszenie na GitHubie z wpisanym tematem, jak „Zamów ten wskaźnik”). Pusty wynik: „Nie mamy jeszcze danych o „…”” + przycisk zamówienia.
+- **Zmiana 17.11.2026 – pobrane działają wszędzie:** wskaźnik z biblioteki (id `b<id>` w adresie `?i=b<id>`) działa na mapie, w rankingach, w tabeli porównania i w eksporcie jak 20 głównych; **nie** w profilu miejsca (profil = jeden plik na województwo, §7). Spis pobranych: mały plik `library/available.json` zapisywany przez robota (id, nazwa, jednostka, dział, poziomy, lata); strona nigdy nie ładuje pełnego `index.json` poza `/biblioteka`. Na stronie wskaźnika: „Pokaż na mapie”, „Dodaj do moich”.
+- **Nie ma w pierwszej wersji** (idzie do „Później”): wskaźniki z biblioteki w profilu miejsca, konta, automatyczna kolejka zamówień (zamówienia czytamy ręcznie).
 - Dane: indeks (jeden plik) i wartości (jeden plik na wskaźnik) czytane z jednego adresu, ustawianego w `src/core/library/config.ts` (zmienna `VITE_LIBRARY_BASE`) – dzięki temu zmiana magazynu danych (gałąź w repo → Cloudflare R2) nie dotyka kodu stron.
+
+## 4e. Rankingi (`/rankingi`, 17.11.2026)
+
+- Pasek wyboru: wskaźnik (okno wskaźników jak na mapie), poziom (Województwa/Powiaty/Gminy; poziom, którego wskaźnik nie ma, jest wyłączony z podpowiedzią), rok, województwo (zawężenie), pole „Szukaj” po nazwie (bez względu na polskie znaki i wielkość liter).
+- Nad listą zdania: „Najwyżej: …”, „Najniżej: …”, „Mediana: …” (liczone z danych, z jednostką). Lista: miejsce, pełna nazwa (z rodzajem gminy), wartość z jednostką, słupek; po 50 z „Pokaż więcej”; klik → mapa z tym miejscem i wskaźnikiem. Nigdzie nie ma samego kodu TERYT.
+- Stan w adresie `?i= &l= &y= &w= &q=`; pasek „Kopiuj link · Pobierz i udostępnij” (§4b).
+- Dla wskaźnika z biblioteki (§4d) ranking działa tak samo.
+
+## 4f. Moje wskaźniki (17.11.2026)
+
+- Każdy użytkownik ma własną listę wskaźników. Na start 7 podstawowych (stała w kodzie): Ludność ogółem · Gęstość zaludnienia · Przyrost naturalny · Saldo migracji · Udział ludności 65+ · Stopa bezrobocia · Przeciętne wynagrodzenie. Każdy da się usunąć (×) i przesunąć (‹ ›); „+ Dodaj wskaźnik” otwiera okno z zakładkami „Szukaj” (wyszukiwarka) i „Kategorie” (grupy głównych wskaźników i działy biblioteki, z okruszkami); dodać można dowolny wskaźnik z danymi (z 20 głównych i pobrany z biblioteki). „Przywróć podstawowe” wraca do startu. Lista może być pusta.
+- Gdzie działa: panel wskaźnika na mapie (na górze), arkusz wskaźnika na telefonie, sekcja na górze Biblioteki, wiersze tabeli „Porównaj”, domyślne dane stron w eksporcie (§4b), wybór w Rankingach.
+- Zapis w pamięci przeglądarki (klucz `faktografia-my-indicators`; tylko lista identyfikatorów; nie wysyłamy jej do nas; bez kont). Polityka prywatności ma o tym jedno zdanie. Link do własnej listy – „Później”.
 
 ## 5. Telefon (< 768 px) – makieta 04
 
@@ -135,6 +150,7 @@ Ogląd właściciela 21.10.2026: telefon nie nadaje się do użytku (panel wska�
 - Jednostki niższego poziomu pojawiają się **kafelek po kafelku**, od środka na zewnątrz; cała fala < 1 s niezależnie od liczby jednostek.
 - Reszta Polski nie znika – zostaje wyblakła jako tło.
 - „Wróć” i okruszki: ruch odwrotny, szybszy (ok. 400 ms). Zmiana wskaźnika / roku: kolory przelewają się w 300 ms.
+- Przybliżanie i oddalanie kółkiem, gestem dwóch palców i przyciskami „+ / −” jest płynne (ok. 300 ms, bez skoków). Czerwony obrys wybranej jednostki gaśnie (300 ms), gdy jednostka zajmuje mniej niż ok. 2% szerokości mapy (po oddaleniu), i wraca po przybliżeniu; wybór zostaje w adresie.
 - Otwarcie linku z `?u=` i zmiana rozmiaru okna – bez animacji. `prefers-reduced-motion` – wszystko od razu.
 
 ## 6. Objaśnienia wskaźników
@@ -158,7 +174,9 @@ Zasady: każda liczba i ciekawostka ma źródło z linkiem; research robi Gem Re
 | Kod JavaScript ładowany na wejściu | bez danych w środku: `units.json` i granice doczytywane jako osobne pliki z pamięcią podręczną |
 | Dane pobierane na wejściu | granice + lista jednostek + **jeden** plik wskaźnika domyślnego; żadnego `profiles/*` |
 | Wybór miejsca | **dokładnie jedno** żądanie danych profilu (`public/data/profiles/<województwo>.json`) |
-| Zmiana wskaźnika | jedno żądanie `values/<id>.json` (jeśli nie było w pamięci) |
+| Zmiana wskaźnika | jedno żądanie `values/<id>.json` (jeśli nie było w pamięci); dla wskaźnika z biblioteki jedno żądanie pliku wartości biblioteki |
+| Wejście (po zmianie 17.11) | dodatkowo mały `library/available.json` (< 50 KB); nigdy pełny `index.json` biblioteki (7,9 MB) |
+| Wskaźnik dodany do strony eksportu | dokładnie jedno żądanie pliku wartości (potem z pamięci) |
 | Profil gminy miejsko-wiejskiej | bez dodatkowych żądań; dopiero rozwinięcie „Miasto i obszar wiejski” = jedno żądanie `parts/<województwo>.json` (§4c) |
 | Biblioteka GUS (`/biblioteka`) | wejście = jedno żądanie indeksu; wybór wskaźnika = jedno żądanie wartości; żadnych `values/*` ani `profiles/*` z głównej mapy (§4d) |
 | Pliki danych | bez wcięć (`JSON.stringify` bez spacji) |

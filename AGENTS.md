@@ -20,14 +20,14 @@ Stos: Vite + React + TypeScript (strict), pnpm, Tailwind v4 (tokeny w @theme), V
 - Nowy pakiet: napisz w PR nazwę, link do npm i do repozytorium, datę wydania, pobrania tygodniowo i po co. Nie wymyślaj nazw – sprawdź w rejestrze. Każdy element z zewnątrz (pakiet, zasób, usługa) = wpis w `docs/ELEMENTY.md` (źródło, wersja, licencja) w tym samym PR; element spoza ELEMENTY.md bez decyzji w prompcie → opisz w PR i zatrzymaj się. Bez sprawdzonej licencji nic nie wchodzi.
 - Wzorce zrzutów (`*-snapshots/`) powstają wyłącznie w CI przez workflow „Update snapshots” (uruchamia go właściciel). Nie generuj ich u siebie; w PR napisz, że trzeba je odświeżyć.
 - Uwagi CodeRabbit o błędach poprawiasz; z uwagą o stylu możesz się nie zgodzić – napisz dlaczego.
-- Nie edytuj `docs/STAN.md`, `package.json` ani `pnpm-lock.yaml`, chyba że prompt wprost na to pozwala (STAN.md poprawia Claude po fali; dziennik `docs/PROJECT_STATE.md` pisze tylko pętla).
-- Zadania przychodzą z pętli Jules Loop (`docs/AUTOMAT.md`) jako pliki `tasks/W<fala>-<id>-*.md`: wykonujesz dokładnie ten plik; tytuł PR zaczyna się od `[W<fala>-<id>]` (np. `[W10-W224]`), opis ma „Po ludzku”, bez `Closes #`. Pętla sama scala zielony PR, a PR z plikami spoza „Zmieniaj/Wymagane”, bez plików „Wymagane” albo z usuniętymi asercjami odsyła z prośbą o poprawkę (po dwóch próbach czeka na człowieka). Prośby pętli traktujesz jak uwagi CodeRabbit o błędach; poprawiasz w tym samym PR.
+- Nie edytuj `docs/STAN.md`, `package.json` ani `pnpm-lock.yaml`, chyba że prompt wprost na to pozwala (STAN.md poprawia Claude po fali; dziennika `docs/PROJECT_STATE.md` nie edytujesz).
+- Zadania to pliki `tasks/W<fala>-<id>-*.md` (opis: `docs/FALE.md`). Wykonujesz dokładnie jeden plik, w osobnej sesji, na gałęzi `claude/<id>` od `origin/main`. Tytuł PR zaczyna się od `[W<fala>-<id>]` (np. `[W1-QC101]`), opis ma „Po ludzku”, bez `Closes #`. Nic nie scala się samo: scala właściciel po obejrzeniu podglądu Vercel. Zakres pilnujesz sam: przed pushem `git diff --name-only origin/main...HEAD` musi zawierać tylko pliki z „Zmieniaj” i „Wymagane”, a każdy plik „Wymagane” musi istnieć i zawierać testy bez usuniętych asercji.
 - Opis PR zawsze z sekcją „Po ludzku” (dla osoby, która nie programuje): co zrobiłeś · co sprawdzić na podglądzie · czego nie zrobiłeś i dlaczego.
 
 ## Nigdy
 - Tajnych kluczy i haseł w kodzie, testach, commitach, logach. Zmienne `VITE_*` są publiczne w przeglądarce – dozwolone tylko klucze publiczne z założenia (np. klucz projektu PostHog).
 - Wstawiania danych jako HTML (`dangerouslySetInnerHTML`, HTML w tooltipach deck.gl).
-- Zmian w `.github/workflows/` i `scripts/jules-loop/` bez prośby w zadaniu (pętla odrzuca taki PR).
+- Zmian w `.github/workflows/` bez prośby w zadaniu.
 - Osłabiania testów: `skip`/`only` bez powodu środowiskowego, `@ts-ignore`, `oxlint-disable`, usuwania asercji.
 - Pakietu, którego istnienia nie sprawdziłeś w rejestrze (modele AI wymyślają nazwy pakietów).
 
@@ -54,6 +54,6 @@ Nigdy:
 - Kodu generatora serii slajdów pod konta Faktografii (osobne, prywatne repo). Pojedyncze karty i CSV do pobrania dla użytkowników są w planie (S19: `src/core/share`, `src/view/share`).
 
 ## Błędy powtarzalne (dopisywane po sesjach)
-- Jules wysyłał PR-y, które usuwały pliki z main (budowa gałęzi od nowa) → tylko `git merge origin/main` + kontrola `--diff-filter=D` (zasada wyżej).
+- Wcześniejszy agent (Jules) wysyłał PR-y, które usuwały pliki z main (budowa gałęzi od nowa) → tylko `git merge origin/main` + kontrola `--diff-filter=D` (zasada wyżej).
 - Profil czytał adres po swojemu (własny `popstate`) i wybierał jednostkę sztucznym zdarzeniem → stan wskaźnika, roku i wybranej jednostki bierzesz z `useMainView` / `useMapSelection` (przekazany propsami z `AtlasMap`), nie tworzysz drugiego.
 - Zmieniano istniejące testy, żeby przeszły (np. „1 zakreślenie” → „2”) → istniejącego testu nie zmieniasz; jeśli przeszkadza, opisz w PR i zatrzymaj się.

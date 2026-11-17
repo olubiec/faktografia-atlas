@@ -1,6 +1,6 @@
 # Prompty i zadania – co jest aktualne
 
-Od 28.10.2026 **zadania dla Julesa to pliki `tasks/W<fala>-<id>-<nazwa>.md`**, a wykonuje je pętla Jules Loop (`docs/AUTOMAT.md`, `docs/WORKFLOW.md` §3d i §9.1). Wklejanie promptów do Julesa odpada.
+Zadania to pliki `tasks/W<fala>-<id>-<nazwa>.md`; wykonują je sesje Claude (`docs/FALE.md`). Pętla Jules Loop została usunięta 17.11.2026; opisy Julesa niżej są historyczne.
 
 | Plik | Stan | Co zrobić |
 |---|---|---|
