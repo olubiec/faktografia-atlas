@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { UnitProfile, ProfileIndicatorItem } from '../../core/profile/profile';
+import type { UnitProfile } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import type { MainView } from '../map/hooks/useMainView';
 import { collectFootnotes } from '../../core/profile/footnotes';
@@ -10,7 +10,7 @@ import { Sheet } from '../ui/Sheet';
 import { Icon } from '../ui/Icon';
 import { ProfileOverview } from './ProfileOverview';
 import { ProfileCompare } from './ProfileCompare';
-import { ProfileIndicatorRow } from './ProfileIndicatorRow';
+import { ProfileIndicatorList } from './ProfileIndicatorList';
 import { ProfileChildren } from './ProfileChildren';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs';
 import { formatSource } from '../../core/format/number';
@@ -83,26 +83,10 @@ export function ProfileBody({
   const childrenResult = profile.unit ? childUnits(profile.unit, units) : null;
   const unitTitleText = profile.unit ? unitTitle(profile.unit) : `TERYT ${profile.teryt}`;
 
-  // Gdy brak `view` (np. w testach jednostkowych), wyznaczamy zakreślenie dla wskaźnika z najlepszym wynikiem
-  const highlightedIndicatorId = null;
-
   // Pozostałe wskaźniki bez bieżącego aktywnego (gdy jest view)
   const otherIndicators = view
     ? profile.indicators.filter((item) => item.indicatorId !== view.indicator.id)
     : profile.indicators;
-
-  // Grupowanie wskaźników z zachowaniem kolejności wystąpienia
-  const groupedIndicators = otherIndicators.reduce<Record<string, ProfileIndicatorItem[]>>(
-    (acc, item) => {
-      const group = item.indicator.group || 'Inne';
-      if (!acc[group]) {
-        acc[group] = [];
-      }
-      acc[group].push(item);
-      return acc;
-    },
-    {}
-  );
 
   // Szukanie najnowszego roku dla formatSource
   const latestYear = profile.indicators.reduce<number | null>((max, ind) => {
@@ -185,26 +169,7 @@ export function ProfileBody({
               Brak danych profilu dla tej jednostki.
             </p>
           ) : (
-            <div className="divide-y divide-linia my-2">
-              {Object.entries(groupedIndicators).map(([groupName, items]) => (
-                <div key={groupName} className="pt-4 pb-2 first:pt-2">
-                  <h3 className="text-xs font-bold tracking-wider text-olowek mb-2">
-                    {groupName}
-                  </h3>
-                  <div>
-                    {items.map((item) => (
-                      <ProfileIndicatorRow
-                        key={item.indicatorId}
-                        item={item}
-                        units={units}
-                        footnotes={footnotes}
-                        isHighlighted={!view && item.indicatorId === highlightedIndicatorId}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ProfileIndicatorList items={otherIndicators} units={units} footnotes={footnotes} personalize={Boolean(view)} />
           )}
         </TabsContent>
 

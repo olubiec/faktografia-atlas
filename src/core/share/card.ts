@@ -1,4 +1,5 @@
 import tokens from '../../../config/tokens.json';
+import { logoSize } from './logo';
 import { fitText, type MeasureFn } from './text-fit';
 import { SHARE_FORMATS, type ShareFormatKey } from './formats';
 import { type MapCardData, renderMapContent } from './card-map';
@@ -67,8 +68,8 @@ export function cardScene(kind: CardKind, data: CardData, formatKey: ShareFormat
 
   const contentBottom = footerY - 16 * scaleFactor;
   const logoSrc = theme === 'light' ? 'public/brand/faktografia-logo-granat.svg' : 'public/brand/faktografia-logo-jasne.svg';
-  const logoWidth = Math.round(180 * scaleFactor);
-  const logoHeight = Math.round(28 * scaleFactor);
+  // Proporcje jak w pliku logo (viewBox), żeby znak nie był ściśnięty.
+  const { width: logoWidth, height: logoHeight } = logoSize(Math.round(56 * scaleFactor));
   const logoY = safe.top;
 
   items.push({ type: 'image', src: logoSrc, x: safe.left, y: logoY, width: logoWidth, height: logoHeight });

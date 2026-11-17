@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router';
 import { Menu, Search, Xmark } from 'iconoir-react';
 import { Sheet } from '@/view/ui/Sheet';
 import { Icon } from '@/view/ui/Icon';
+import { ATLAS_RESET_EVENT, homeSearch } from '@/core/url/home';
 const SearchDialog = lazy(() => import('@/view/search/SearchDialog').then((m) => ({ default: m.SearchDialog })));
 
 type Theme = 'light' | 'dark' | 'system';
@@ -101,7 +102,12 @@ export function Header() {
 
   return (
     <header className="h-[56px] md:h-[72px] flex justify-between items-center px-4 md:px-8 border-b border-linia bg-kalka text-tusz relative z-20 shrink-0">
-      <Link to={`/${location.search}`} className="flex items-center min-h-[44px]">
+      <Link
+        to={`/${homeSearch(location.search)}`}
+        onClick={() => window.dispatchEvent(new Event(ATLAS_RESET_EVENT))}
+        aria-label="Faktografia – strona główna"
+        className="flex items-center min-h-[44px]"
+      >
         <img
           src={logoSrc}
           alt="Faktografia"
