@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Xmark } from 'iconoir-react';
 import {
-  cardScene,
   type CardKind,
   type CardTheme,
   type CardData,
@@ -16,7 +14,6 @@ import { dialogCsv } from './dialog-csv';
 import type { UnitProfile, Indicator, IndicatorValues } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import type { CompareRow } from '../../core/compare/compare';
-import { CardSvg } from './CardSvg';
 import { createMeasureFn, renderPng } from './render-png';
 import { cardPages } from '../../core/share/card-pages';
 import { shareFiles, downloadFile } from './share-file';
@@ -25,7 +22,8 @@ import { ShareControls } from './ShareControls';
 import { CardSetList } from './CardSetList';
 import { ShareActions } from './ShareActions';
 import { useCardSet } from './useCardSet';
-import { SharePreviewPager } from './SharePreviewPager';
+import { SharePreviewPanel } from './SharePreviewPanel';
+import { ShareDialogHeader } from './ShareDialogHeader';
 import { cardSetFileParts } from '../../core/share/card-set';
 
 export type ShareDialogData = {
@@ -126,14 +124,6 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
   const pagePreview = setPreview ? setPreview.page : firstPage.page;
   const previewPageData = setPreview ? setPreview.data : firstPage.data;
 
-  const scene = useMemo(() => {
-    return cardScene(previewKind, previewPageData, selectedFormat, selectedTheme, {
-      measure,
-      siteUrl: 'faktografia.eu',
-      page: pagePreview,
-    });
-  }, [previewKind, previewPageData, pagePreview, selectedFormat, selectedTheme, measure]);
-
   const pagerTotal = setPages.length;
   const pagerIndex = setPreview
     ? setPages.indexOf(setPreview)
@@ -226,25 +216,22 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
       }}
     >
       <div className="bg-arkusz text-tusz border-linia w-full md:max-w-4xl md:border md:max-h-[92vh] max-md:fixed max-md:inset-0 max-md:h-dvh max-md:max-h-none flex flex-col overflow-hidden max-w-full">
-        {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-arkusz flex items-center justify-between border-b border-linia p-3 md:p-6 shrink-0">
-          <h2 className="text-lg md:text-xl font-bold">Pobierz i udostępnij</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="min-h-[44px] min-w-[44px] flex items-center justify-center text-olowek hover:text-tusz border border-transparent hover:border-linia transition-colors"
-            aria-label="Zamknij"
-          >
-            <Xmark className="w-5 h-5" />
-          </button>
-        </div>
+        <ShareDialogHeader onClose={onClose} />
 
         {/* Scrollable Body with Controls and Preview */}
         <div className="flex-1 min-h-0 overflow-y-auto p-3 md:p-6 space-y-4">
-          {/* SVG Preview Box */}
-          <SharePreviewPager index={pagerIndex} total={pagerTotal} cardId={setPreview ? setPreview.entry.id : activeKind} onChange={changePage}>
-            <CardSvg scene={scene} page={pagePreview} className="block w-full min-w-0 h-auto max-h-[38vh] md:max-h-[48vh]" />
-          </SharePreviewPager>
+          <SharePreviewPanel
+            kind={previewKind}
+            data={previewPageData}
+            page={pagePreview}
+            format={selectedFormat}
+            theme={selectedTheme}
+            measure={measure}
+            index={pagerIndex}
+            total={pagerTotal}
+            cardId={setPreview ? setPreview.entry.id : activeKind}
+            onChange={changePage}
+          />
 
           <ShareControls
             availableKinds={availableKinds}
