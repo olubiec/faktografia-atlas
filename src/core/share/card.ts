@@ -20,7 +20,7 @@ export type AnnotationItem = { type: 'annotation'; kind: 'circle'; x: number; y:
 export type CardItem = TextItem | RectItem | PathItem | ImageItem | AnnotationItem;
 
 export type CardScene = { width: number; height: number; background: string; items: CardItem[]; };
-export type CardSceneOptions = { measure: MeasureFn; siteUrl?: string; };
+export type CardSceneOptions = { measure: MeasureFn; siteUrl?: string; pageLabel?: string; };
 
 export type CardData = MapCardData | RankingCardData | ProfileCardData | CompareCardData;
 
@@ -35,7 +35,7 @@ export function cardScene(kind: CardKind, data: CardData, formatKey: ShareFormat
   const fmt = SHARE_FORMATS[formatKey] ?? SHARE_FORMATS.post;
   const { width, height, safe } = fmt;
   const colors = getThemeColors(theme);
-  const { measure, siteUrl = 'faktografia.pl' } = options;
+  const { measure, siteUrl = 'faktografia.pl', pageLabel = '' } = options;
 
   const scaleFactor = width / 1080;
   const fontScale = {
@@ -52,11 +52,17 @@ export function cardScene(kind: CardKind, data: CardData, formatKey: ShareFormat
   const footerFontSize = fontScale.xs;
   const footerLineHeight = Math.round(footerFontSize * 1.2);
   const yearVal = 'year' in data ? data.year : 2025;
-  const sourceText = `Źródło: GUS, Bank Danych Lokalnych, ${yearVal}`;
   const siteUrlWidth = measure(siteUrl, footerFontSize, tokens.font.weights.text);
   const footerY = height - safe.bottom - footerLineHeight;
+  const sourceMaxWidth = safeWidth - siteUrlWidth - 16 * scaleFactor;
+  // Numer strony dopisujemy do linii źródła; gdy się nie mieści, skracamy tylko „Bank Danych Lokalnych” do „BDL”.
+  let sourceText = `Źródło: GUS, Bank Danych Lokalnych, ${yearVal}`;
+  if (pageLabel) {
+    sourceText = `${sourceText} · ${pageLabel}`;
+    if (measure(sourceText, footerFontSize, tokens.font.weights.text) > sourceMaxWidth) sourceText = `Źródło: GUS, BDL, ${yearVal} · ${pageLabel}`;
+  }
 
-  items.push({ type: 'text', x: safe.left, y: footerY, maxWidth: safeWidth - siteUrlWidth - 16 * scaleFactor, fontSize: footerFontSize, fontWeight: tokens.font.weights.text, color: colors.olowek, align: 'left', lines: [sourceText], lineHeight: footerLineHeight });
+  items.push({ type: 'text', x: safe.left, y: footerY, maxWidth: sourceMaxWidth, fontSize: footerFontSize, fontWeight: tokens.font.weights.text, color: colors.olowek, align: 'left', lines: [sourceText], lineHeight: footerLineHeight });
   items.push({ type: 'text', x: width - safe.right - siteUrlWidth, y: footerY, maxWidth: siteUrlWidth, fontSize: footerFontSize, fontWeight: tokens.font.weights.text, color: colors.olowek, align: 'right', lines: [siteUrl], lineHeight: footerLineHeight });
 
   const contentBottom = footerY - 16 * scaleFactor;
