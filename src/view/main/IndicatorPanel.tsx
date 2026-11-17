@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { NavArrowDown } from 'iconoir-react';
 import type { Explanation } from '@/core/explain/explanations';
 import { loadExplanations } from '@/core/explain/explanations';
 import type { ChoroplethData } from '@/view/map/hooks/useChoropleth';
@@ -11,7 +10,7 @@ import { unitLabel } from '@/core/units/label';
 import { buildLegend, LEGEND_DIRECTION_LABEL } from '@/core/legend/legend';
 import { LEVEL_LABELS } from '@/core/map/main-view';
 import { UNIT_COUNTS } from '@/core/units/counts';
-import { IndicatorPicker, IndicatorPickerContent } from '@/view/controls/IndicatorPicker';
+import { IndicatorPicker } from '@/view/controls/IndicatorPicker';
 import { YearSlider } from '@/view/controls/YearSlider';
 import { Legend } from '@/view/legend/Legend';
 import { RankingBars } from '@/view/ranking/RankingBars';
@@ -20,7 +19,6 @@ import { LevelSwitch } from './LevelSwitch';
 import { ContextBlock } from '@/view/explain/ContextBlock';
 import { useShareData } from '@/view/share/useShareData';
 import { LazyShareDialog } from '@/view/share/LazyShareDialog';
-import { Icon } from '@/view/ui/Icon';
 
 export interface IndicatorPanelProps {
   view: MainView;
@@ -52,8 +50,6 @@ export function IndicatorPanel({
   const { indicator, indicators, year, years, level } = view;
   const [explanation, setExplanation] = useState<Explanation | null>(null);
   const [isShareOpen, setIsShareOpen] = useState(false);
-  const [sheetPickerOpen, setSheetPickerOpen] = useState(true);
-  const [pickerQuery, setPickerQuery] = useState('');
 
   const shareData = useShareData({ view, choropleth, ranking, index, selectedTeryt });
 
@@ -95,39 +91,8 @@ export function IndicatorPanel({
       <div className="flex flex-col gap-1">
         <div className="flex items-start gap-2">
           <div className="flex-1 min-w-0">
-            {inSheet ? (
-              <div className="flex flex-col">
-                <button
-                  type="button"
-                  aria-expanded={sheetPickerOpen}
-                  onClick={() => setSheetPickerOpen(true)}
-                  className="flex items-center justify-between gap-2 px-4 py-2 min-h-[44px] w-full text-left bg-arkusz text-tusz border border-linia hover:bg-linia/10 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer rounded-none transition-colors"
-                >
-                  <div className="flex flex-col min-w-0 pr-2">
-                    <span className="text-xs text-olowek">Wskaźnik</span>
-                    <span className="font-semibold text-sm text-tusz truncate">{indicator.name}</span>
-                  </div>
-                  <Icon icon={NavArrowDown} size={20} aria-hidden={true} className="text-tusz shrink-0" />
-                </button>
-                {sheetPickerOpen && (
-                  <div className="max-h-[220px] flex flex-col border border-t-0 border-linia bg-arkusz overflow-hidden">
-                    <IndicatorPickerContent
-                      indicators={indicators}
-                      value={indicator.id}
-                      query={pickerQuery}
-                      onQueryChange={setPickerQuery}
-                      onSelect={(id) => {
-                        view.setIndicator(id);
-                        setSheetPickerOpen(false);
-                        setPickerQuery('');
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-            ) : (
-              <IndicatorPicker indicators={indicators} value={indicator.id} onChange={view.setIndicator} />
-            )}
+            {/* Na telefonie (arkusz) i na komputerze ten sam wybór: okno pełnoekranowe z kategoriami. */}
+            <IndicatorPicker indicators={indicators} value={indicator.id} onChange={view.setIndicator} />
           </div>
           <IndicatorInfo indicatorId={indicator.id} name={indicator.name} explanation={explanation} />
         </div>
