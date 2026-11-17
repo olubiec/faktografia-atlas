@@ -1,6 +1,6 @@
 # Plan Q – prompty zadań (17.11.2026)
 
-71 plików `W<fala>-QC<cel><nn>-<nazwa>.md` (np. `W3-QC106-rankingi-zlozenie-strony.md` = fala Q3, zadanie C1-6). Plan i decyzje: `../PLAN-UWAGI-17-11.md`. Pętla ignoruje ten katalog.
+70 plików `W<fala>-QC<cel><nn>-<nazwa>.md` (7 fal; w fali zadania nie dzielą plików i nie zależą od siebie, więc idą równolegle) plus `QC601-CLAUDE-…md` (robot biblioteki robi Claude, nie pętla) (np. `W3-QC106-rankingi-zlozenie-strony.md` = fala Q3, zadanie C1-6). Plan i decyzje: `../PLAN-UWAGI-17-11.md`. Pętla ignoruje ten katalog.
 
 ## Jak puścić falę
 1. Poprzednia fala scalona i zielona (plus punkt kontrolny właściciela, jeśli jest w planie §4).

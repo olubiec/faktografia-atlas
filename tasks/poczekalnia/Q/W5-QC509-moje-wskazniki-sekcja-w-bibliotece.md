@@ -6,7 +6,7 @@ Weryfikacja: pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm exec
 Przeczytaj najpierw: src/view/pages/Library.tsx (po QC702/QC705), src/view/my-indicators/MyIndicatorsList.tsx, tests/e2e/library-page.spec.ts i tests/unit/library*.test.tsx (**istniejące – nie zmieniaj**), docs/PRODUKT.md §4f
 
 ## Kontekst
-Decyzja D2: sekcja nad kafelkami działów. Nazwy wskaźników głównych znamy z configu, wskaźników z biblioteki z `available.json` (QC603, wczytywany przez ekran przez QC606). Do czasu wpięcia rejestru (Q7) wiersze z id biblioteki mogą pokazywać id – akceptowalne tymczasowo, opisz w PR.
+Decyzja D2: sekcja nad kafelkami działów. Nazwy wskaźników głównych znamy z configu, wskaźników z biblioteki z `available.json` (QC603, wczytywany przez ekran przez QC606). Do czasu wpięcia rejestru (po wpięciu rejestru w QC606) wiersze z id biblioteki mogą pokazywać id – akceptowalne tymczasowo, opisz w PR.
 
 ## Research
 1. Czy Biblioteka ma już dostęp do indeksu z nazwami? Tak (`index.json` wczytany na tej stronie) – użyj go do nazw wskaźników `b<id>` (id → `variables`). Zbuduj mapę nazw z indeksu strony + configu, **bez dodatkowego żądania**.

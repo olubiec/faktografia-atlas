@@ -144,24 +144,23 @@ Ekran (`src/view/share`):
 
 ---
 
-## 4. Fale (≤ 7 zadań; w fali – różne pliki, równolegle)
+## 4. Fale (zadania w fali nie dzielą plików i nie zależą od siebie – idą równolegle; fala startuje po scaleniu poprzedniej)
 
-| Fala | Zadania | Warunek startu |
-|---|---|---|
-| **Q1** logika | C1-1 · C1-2 · C1-3 · C2-1 · C2-2 · C3-1 · C5-1 | C0 zrobione |
-| **Q2** ekrany napraw | C1-4 · C1-5 · C2-3 · C3-2 · C5-2 · C4-1 (raport) · C7-1 | Q1 scalona |
-| **Q3** strony + stan | C1-6 · C2-4 · C3-3 · C5-3 · C7-2 · C7-3 · C7-4 | Q2 scalona; **punkt kontrolny K-Q1** |
-| **Q4** ruch + rejestr | C4-2 · C4-5 · C5-4 · C6-2 · C7-5 · C8-1 · C6-1 (Claude) | Q3 scalona |
-| **Q5** moje + ładowanie | C4-3 · C4-4 · C5-5 · C6-3 · C6-4 · C8-2 · C8-3 | Q4 scalona; **K-Q2** |
-| **Q6** moje wszędzie | C4-6 · C5-6 · C5-7 · C5-8 · C5-9 · C5-10 · C6-5 | Q5 scalona |
-| **Q7** biblioteka wszędzie | C6-6 · C6-7 · C6-8 · C6-9 · C6-10 · C8-5 | Q6 scalona; **K-Q3** |
-| **Q8** eksport – logika i karty | C9-1 · C9-2 · C9-5 · C9-6 · C9-7 · C9-8 · C9-9 | może iść równolegle z Q5–Q7 (inne pliki) |
-| **Q9** eksport – logika 2 + domknięcia | C9-3 · C9-4 · C9-10 · C9-11 · C2-5 · C6-11 · C8-4 | Q8 i Q7 scalone |
-| **Q10** eksport – elementy ekranu | C9-12 · C9-13 · C9-14 · C9-15 · C9-16 | Q9 scalona |
-| **Q11** eksport – złożenie | C9-17 · C9-18 | Q10 scalona |
-| **Q12** eksport – testy odbiorcze | C9-19 · C9-20 | Q11 scalona; **K-Q4** |
+Układ policzony z zależności (kto potrzebuje czyjego kodu) i z kolizji plików (np. `Library.tsx`, `Rankings.tsx`, `ComparePage.tsx`, `AtlasMap.tsx` – zmieniane po kolei w kolejnych falach). Skrypt sprawdził: w żadnej fali dwa zadania nie mają wspólnego pliku. QC601 (robot) robi Claude poza falami.
 
-**Zmiany względem wersji z pierwszego zapisu (17.11, po napisaniu promptów):** C6-2 → Q4 (C5-5 potrzebuje rejestru); C4-3 → Q5 (kolizja `AtlasMap.tsx` z C4-2); C6-5 → Q6; C8-4 → Q9 (kolizja `LibraryVariable.tsx` z C6-8); C9-19 i C9-20 → osobna fala Q12 (testy e2e wymagają scalonych C9-17/18); C9-16 obejmuje też `deck-scene.ts` i `card.ts` (wspólny dispatch nowych kart). W fali żadne dwa zadania nie zmieniają tego samego pliku (sprawdzone skryptem na liniach „Zmieniaj:”).
+| Fala | Zadań | Zadania | Punkt kontrolny |
+|---|---|---|---|
+| **Q1** | 22 | C1-1 · C1-2 · C1-3 · C1-5 · C2-1 · C2-2 · C3-1 · C4-1 (raport) · C5-1 · C5-10 · C6-2 · C6-4 · C6-5 · C7-1 · C7-4 · C8-1 · C9-1 · C9-5 · C9-6 · C9-7 · C9-8 · C9-9 | – |
+| **Q2** | 15 | C1-4 · C2-3 · C3-2 · C4-2 · C4-5 · C5-2 · C6-3 · C6-10 · C7-2 · C7-3 · C9-2 · C9-10 · C9-11 · C9-13 · C9-14 | – |
+| **Q3** | 11 | C1-6 · C2-4 · C3-3 · C4-3 · C4-4 · C5-3 · C6-6 · C7-5 · C9-3 · C9-4 · C9-16 | **K-Q1** |
+| **Q4** | 9 | C4-6 · C5-4 · C5-5 · C5-6 · C5-8 · C6-7 · C8-2 · C8-3 · C9-12 | **K-Q2** |
+| **Q5** | 6 | C2-5 · C5-7 · C5-9 · C6-8 · C6-9 · C9-15 | – |
+| **Q6** | 4 | C6-11 · C8-4 · C8-5 · C9-17 | **K-Q3** |
+| **Q7** | 3 | C9-18 · C9-19 · C9-20 | **K-Q4** |
+
+Numery C…-… odpowiadają `QC<cel><nn>` (C1-5 = QC105 itd.); lista zadań każdej fali jest też w `Q/waves-Q.fragment.yaml`.
+
+**Zmiana 17.11 (druga):** zamiast 12 fal po ≤ 7 zadań jest 7 fal z szerokim równoległym frontem (22/15/11/9/6/4/3 zadań), bo właściciel chce, żeby zadania na różnych plikach szły jednocześnie. Zależności między zadaniami nadal wymuszają kolejność fal.
 
 Razem: **78 zadań** (71 z promptami w `Q/`: 70 dla pętli + QC601 dla Claude; C0 i C10 to prace Claude bez pliku) (4 Claude w C0, 1 Claude w C6-1, 3 Claude w C10, reszta dla pętli).
 

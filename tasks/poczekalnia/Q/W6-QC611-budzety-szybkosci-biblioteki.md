@@ -19,7 +19,7 @@ Napisz spec `@Q` z mockiem sieci dla: `units.json`, granic, `values/*.json`, `pr
 2. `/?i=b101`: jedno żądanie pliku wartości biblioteki `101`, zero `values/*.json` głównych (poza ewentualnym domyślnym – ustal zgodnie z QC606 i opisz), zero `index.json`.
 3. Dodanie wskaźnika do „Moich” (okno + z listą) **nie** pobiera wartości (samo dodanie do listy jest bez sieci).
 4. Kliknięcie dodanego `b…` w panelu = jedno żądanie jego wartości; ponowny klik = zero.
-5. Eksport (wymaga QC912/QC917 – w fali Q9 jeszcze ich nie ma): **nie pisz tego scenariusza teraz**; zapisz w opisie PR, że żądania wskaźnika dodanego w eksporcie sprawdza QC920 (krok 4). Nie używaj `skip`/`fixme`.
+5. Eksport (wymaga QC912/QC917 – w tej fali jeszcze ich nie ma): **nie pisz tego scenariusza teraz**; zapisz w opisie PR, że żądania wskaźnika dodanego w eksporcie sprawdza QC920 (krok 4). Nie używaj `skip`/`fixme`.
 6. `/biblioteka`: dokładnie jedno żądanie `index.json` (PRODUKT §7); asercja o `available.json` zgodna z faktycznym zachowaniem strony (jeśli `/biblioteka` go nie pobiera – zero; jeśli sekcja „Moje wskaźniki” (QC509) go pobiera – jedno) i opisana komentarzem w teście.
 7. `available.json` w 404: strona główna działa (mapa się koloruje), w konsoli brak błędów, żadnych powtórnych prób (zlicz żądania: 1).
 8. Rozmiar `available.json` w fixture’ach < 50 KB.
