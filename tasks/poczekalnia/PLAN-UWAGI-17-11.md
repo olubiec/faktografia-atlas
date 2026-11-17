@@ -1,7 +1,7 @@
 # Plan Q: uwagi właściciela z 17.11.2026 – pełna lista zadań
 
 Wersja 2 (17.11.2026). Źródło: dwie wiadomości właściciela z 17.11 + odpowiedzi na pytania doprecyzowujące.
-Plik w `tasks/poczekalnia/` – pętla go ignoruje. **Prompty wszystkich zadań są napisane** w `tasks/poczekalnia/Q/` (`W<fala>-QC<cel><nn>-*.md`, wzór: `tasks/SZABLON.md`; opis: `Q/README.md`). Start fali = skopiowanie jej plików do `tasks/` + blok z `Q/waves-Q.fragment.yaml` do `waves.yaml` + push na `main`.
+Plik w `tasks/poczekalnia/` – czeka na start fali. **Prompty wszystkich zadań są napisane** w `tasks/poczekalnia/Q/` (`W<fala>-QC<cel><nn>-*.md`, wzór: `tasks/SZABLON.md`; opis: `Q/README.md`). Start fali = skopiowanie jej plików do `tasks/` + blok z `Q/waves-Q.fragment.yaml` do `waves.yaml` + push na `main`.
 Zastępuje zadania: **P1-A** (Rankingi), **P1-B** (Porównaj), **P3-C** (Biblioteka) – przy puszczaniu fal pomijamy je.
 
 Jak czytać: **10 celów (C1–C10)**, każdy rozbity na najmniejsze zadania (1 zachowanie, 1–3 pliki, ok. 50–150 linii, własny test).
@@ -158,7 +158,7 @@ Układ policzony z zależności (kto potrzebuje czyjego kodu) i z kolizji plikó
 | **Q6** | 4 | C6-11 · C8-4 · C8-5 · C9-17 | **K-Q3** |
 | **Q7** | 3 | C9-18 · C9-19 · C9-20 | **K-Q4** |
 
-Numery C…-… odpowiadają `QC<cel><nn>` (C1-5 = QC105 itd.); lista zadań każdej fali jest też w `Q/waves-Q.fragment.yaml`.
+Numery C…-… odpowiadają `QC<cel><nn>` (C1-5 = QC105 itd.); lista zadań każdej fali = pliki `Q/W<fala>-*.md`.
 
 **Zmiana 17.11 (druga):** zamiast 12 fal po ≤ 7 zadań jest 7 fal z szerokim równoległym frontem (22/15/11/9/6/4/3 zadań), bo właściciel chce, żeby zadania na różnych plikach szły jednocześnie. Zależności między zadaniami nadal wymuszają kolejność fal.
 

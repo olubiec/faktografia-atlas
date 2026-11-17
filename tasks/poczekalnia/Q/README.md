@@ -1,15 +1,15 @@
 # Plan Q – prompty zadań (17.11.2026)
 
-70 plików `W<fala>-QC<cel><nn>-<nazwa>.md` (7 fal; w fali zadania nie dzielą plików i nie zależą od siebie, więc idą równolegle) plus `QC601-CLAUDE-…md` (robot biblioteki robi Claude, nie pętla) (np. `W3-QC106-rankingi-zlozenie-strony.md` = fala Q3, zadanie C1-6). Plan i decyzje: `../PLAN-UWAGI-17-11.md`. Pętla ignoruje ten katalog.
+70 plików `W<fala>-QC<cel><nn>-<nazwa>.md` (7 fal; w fali zadania nie dzielą plików i nie zależą od siebie, więc idą równolegle) plus `QC601-CLAUDE-…md` (robot biblioteki robi sesja Claude poza falami) (np. `W3-QC106-rankingi-zlozenie-strony.md` = fala Q3, zadanie C1-6). Plan i decyzje: `../PLAN-UWAGI-17-11.md`. Pętla ignoruje ten katalog.
 
 ## Jak puścić falę
 1. Poprzednia fala scalona i zielona (plus punkt kontrolny właściciela, jeśli jest w planie §4).
-2. `cp tasks/poczekalnia/Q/W<n>-*.md tasks/` (bez `README.md` i `waves-Q.fragment.yaml`).
-3. Do `waves.yaml` wklej blok `- id: q<n>` z `Q/waves-Q.fragment.yaml`.
-4. Push na `main`. **QC601** wykonuje Claude, nie pętla (celowo nie ma go we fragmencie).
+2. Prompt startowy (`docs/FALE.md`) wrzuca `W<n>-*.md` do `tasks/` na `main` i uruchamia osobną sesję Claude na każde zadanie. Sesja startowa niczego nie wykonuje sama.
+3. Każda sesja robi PR `[W<n>-<id>]`; nic nie scala się samo, scala właściciel po obejrzeniu podglądu Vercel.
+4. **QC601** robi osobna sesja Claude poza falami.
 
 ## Co jest w każdym prompcie
-Cel · `Zmieniaj` / `Wymagane` / `Weryfikacja` (linie czytane maszynowo) · **Przeczytaj najpierw** (konkretne pliki i funkcje) · **Kontekst** (skąd uwaga właściciela, co jest dziś w kodzie) · **Research** (co sprawdzić przed kodem: istniejące funkcje do ponownego użycia, pakiety już w repo, dokumentacja MapLibre/deck.gl, zweryfikowane wpisy z `docs/INSPIRACJE.md`; **bez nowych pakietów**) · **Zadanie** (pliki, funkcje, sygnatury) · **Testy** (numerowana lista przypadków) · **Gotowe, gdy** · **Nie ruszaj** · wspólna stopka z zasadami AGENTS.md.
+Cel · `Zmieniaj` / `Wymagane` / `Weryfikacja` (linie wyznaczają zakres zadania) · **Przeczytaj najpierw** (konkretne pliki i funkcje) · **Kontekst** (skąd uwaga właściciela, co jest dziś w kodzie) · **Research** (co sprawdzić przed kodem: istniejące funkcje do ponownego użycia, pakiety już w repo, dokumentacja MapLibre/deck.gl, zweryfikowane wpisy z `docs/INSPIRACJE.md`; **bez nowych pakietów**) · **Zadanie** (pliki, funkcje, sygnatury) · **Testy** (numerowana lista przypadków) · **Gotowe, gdy** · **Nie ruszaj** · wspólna stopka z zasadami AGENTS.md.
 
 Zadania z zadaniem badawczym: QC401 (raport pomiaru ruchu mapy – nadrzędny dla QC402–QC405). Zadania, które wprost dostają zgodę na pliki ekranu: QC402, QC403, QC404, QC405, QC606 (reszta plików ekranu zakazana).
 
