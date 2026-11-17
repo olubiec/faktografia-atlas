@@ -6,6 +6,7 @@ import { useSheetInset } from '@/view/map/sheetInset';
 import { cameraTransition, type CameraKind } from '@/core/map/camera';
 import { resizeCameraAction } from '@/core/map/camera-resize';
 import { flyView, flyDuration } from '@/core/map/camera-path';
+import { ZOOM_END_DELAY_MS, ZOOM_END_EVENT } from '@/core/map/zoom-level';
 import tokensJson from '../../../../config/tokens.json';
 
 // Margines (px) wokół dopasowanego obszaru, żeby mapa nie dotykała krawędzi okna.
@@ -383,6 +384,18 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
       resizeObserver.disconnect();
     };
   }, [animateToView, bounds, drillBbox, setCurrentViewState, sheetInset]);
+
+  // Koniec ruchu z gestu (szczypanie, kółko, +/−, strzałki): zgłaszamy zoom, żeby poziom mapy poszedł za nim.
+  // Lot kamery po kliknięciu jednostki (animateToView) zeruje userMovedRef, więc go nie zgłaszamy.
+  useEffect(() => {
+    if (!userMovedRef.current || isAnimatingRef.current) return;
+    const zoom = currentViewState.zoom;
+    const timer = window.setTimeout(() => {
+      if (!userMovedRef.current || isAnimatingRef.current) return;
+      window.dispatchEvent(new CustomEvent(ZOOM_END_EVENT, { detail: { zoom } }));
+    }, ZOOM_END_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [currentViewState]);
 
   useEffect(() => {
     if (currentViewState.zoom >= 8.5) {

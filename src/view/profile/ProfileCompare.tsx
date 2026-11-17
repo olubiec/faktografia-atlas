@@ -186,6 +186,8 @@ export function ProfileCompare({
     setCleared(true);
     setSearchQuery('');
     writeUrlState({ c: null });
+    // Mapa czyta adres przez popstate: bez tego obrys porównania zostałby na mapie.
+    window.dispatchEvent(new PopStateEvent('popstate'));
   }, []);
 
   const profileB = cleared ? null : (profileBProp ?? loadedProfileB);

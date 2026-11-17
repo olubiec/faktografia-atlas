@@ -3,7 +3,8 @@ import type { Indicator, IndicatorValues } from '@/core/profile/profile';
 import type { UnitLevel } from '@/core/units/types';
 import { loadIndicatorValues } from '@/core/data/load-values';
 import { readUrlState, writeUrlState } from '@/core/url/state';
-import { DEFAULT_INDICATOR_ID, DEFAULT_LEVEL, clampLevel, resolveYear } from '@/core/map/main-view';
+import { DEFAULT_INDICATOR_ID, DEFAULT_LEVEL, allowedLevels, clampLevel, resolveYear } from '@/core/map/main-view';
+import { ZOOM_END_EVENT, levelForZoom } from '@/core/map/zoom-level';
 import indicatorsData from '../../../../config/indicators.json';
 
 export const INDICATORS = indicatorsData as Indicator[];
@@ -75,6 +76,21 @@ export function useMainView(): MainView {
     writeUrlState({ l });
     setUrl((prev) => ({ ...prev, l }));
   }, []);
+
+  // Poziom idzie za zoomem z gestu użytkownika (zdarzenie z useMapViewState); adres przez replaceState.
+  const minLevel = indicator.minLevel;
+  useEffect(() => {
+    const onZoomEnd = (e: Event) => {
+      const zoom = (e as CustomEvent<{ zoom?: unknown }>).detail?.zoom;
+      if (typeof zoom !== 'number' || Number.isNaN(zoom)) return;
+      const next = levelForZoom(zoom, level, allowedLevels(minLevel));
+      if (next === level) return;
+      writeUrlState({ l: next });
+      setUrl((prev) => ({ ...prev, l: next }));
+    };
+    window.addEventListener(ZOOM_END_EVENT, onZoomEnd);
+    return () => window.removeEventListener(ZOOM_END_EVENT, onZoomEnd);
+  }, [level, minLevel]);
 
   return { indicator, indicators: INDICATORS, values, year, years, level, setIndicator, setYear, setLevel };
 }

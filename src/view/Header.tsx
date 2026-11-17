@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { Menu, Search, Xmark } from 'iconoir-react';
 import { Sheet } from '@/view/ui/Sheet';
 import { Icon } from '@/view/ui/Icon';
@@ -55,7 +55,23 @@ export function MobileMenuLinks({ onNavigate }: { onNavigate: () => void }) {
   );
 }
 
+// Parametry, które przeżywają klik w logo: wskaźnik i rok (oraz wariant logo). Reszta (l, u, c, compare…) znika.
+// Flagi trybu testowego (e2e, tune) zostają, bo bez nich szew testowy przestaje się odświeżać.
+const LOGO_KEEP_PARAMS = ['i', 'y', 'wsk', 'rok', 'logo', 'e2e', 'tune'] as const;
+
+function logoHomeTarget(search: string): string {
+  const from = new URLSearchParams(search);
+  const to = new URLSearchParams();
+  for (const key of LOGO_KEEP_PARAMS) {
+    const value = from.get(key);
+    if (value !== null) to.set(key, value);
+  }
+  const query = to.toString();
+  return query ? `/?${query}` : '/';
+}
+
 export function Header() {
+  const navigate = useNavigate();
   const [theme, setTheme] = useState<Theme>(() => {
     try {
       const saved = localStorage.getItem('faktografia-theme') as Theme | null;
@@ -132,7 +148,18 @@ export function Header() {
 
   return (
     <header className="h-[56px] md:h-[72px] flex justify-between items-center px-4 md:px-8 border-b border-linia bg-kalka text-tusz relative z-20 shrink-0">
-      <Link viewTransition to={`/${location.search}`} className="flex items-center min-h-[44px]">
+      <Link
+        viewTransition
+        to={logoHomeTarget(location.search)}
+        onClick={(e) => {
+          if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+          e.preventDefault();
+          navigate(logoHomeTarget(location.search), { viewTransition: true });
+          // Hooki mapy czytają adres po zdarzeniu historii; sama zmiana trasy go nie wysyła.
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }}
+        className="flex items-center min-h-[44px]"
+      >
         <img
           src={logoSrc}
           alt="Faktografia"
