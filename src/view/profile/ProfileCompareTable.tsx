@@ -4,6 +4,8 @@ import { formatValue } from '../../core/format/number';
 import { unitLabel } from '../../core/units/label';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { cn } from '../../lib/utils';
+import { CompareIndicatorPicker } from '../compare/CompareIndicatorPicker';
+import { useIndicatorSelection } from '../compare/useIndicatorSelection';
 
 export interface ProfileCompareTableProps {
   profileA: UnitProfile;
@@ -28,9 +30,12 @@ export function ProfileCompareTable({
   const result = compare(profileA, profileB);
 
   // Filtrujemy tylko te wskaźniki, które posiadają poprawne dane liczbowe w obu profilach
-  const validRows = result.rows.filter(
+  const dataRows = result.rows.filter(
     (row) => row.a !== null && row.a !== undefined && row.b !== null && row.b !== undefined
   );
+  const allIds = dataRows.map((row) => row.indicatorId);
+  const { selected, toggle } = useIndicatorSelection(allIds);
+  const validRows = dataRows.filter((row) => selected.includes(row.indicatorId));
 
   const unitAName = profileA.unit
     ? unitLabel(profileA.unit, { short: true })
@@ -59,6 +64,19 @@ export function ProfileCompareTable({
         >
           różne poziomy – porównuj ostrożnie
         </div>
+      )}
+
+      {dataRows.length > 1 && (
+        <CompareIndicatorPicker
+          options={dataRows.map((row) => ({
+            id: row.indicatorId,
+            name:
+              profileA.indicators.find((i) => i.indicatorId === row.indicatorId)?.indicator.name ??
+              row.indicatorId,
+          }))}
+          selected={selected}
+          onToggle={toggle}
+        />
       )}
 
       {validRows.length === 0 ? (
