@@ -34,7 +34,12 @@ function getIsDark(): boolean {
   return false;
 }
 
-export function SiteFooter() {
+interface SiteFooterProps {
+  /** Na stronie głównej logo jest już w nagłówku – w stopce ma być dekoracyjne (alt=""), by nie dublować go dla czytników. */
+  decorativeLogo?: boolean;
+}
+
+export function SiteFooter({ decorativeLogo = false }: SiteFooterProps = {}) {
   const isDark = useSyncExternalStore(subscribeTheme, getIsDark, () => false);
   const logoSrc = isDark ? '/brand/faktografia-logo-jasne.svg' : '/brand/faktografia-logo-granat.svg';
 
@@ -49,11 +54,12 @@ export function SiteFooter() {
           <div className="flex flex-col gap-4">
             <Link
               to="/"
+              aria-label="Faktografia"
               className="inline-flex items-center min-h-[44px] min-w-[44px] rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               <img
                 src={logoSrc}
-                alt="Faktografia"
+                alt={decorativeLogo ? '' : 'Faktografia'}
                 className="h-[28px] md:h-[32px] w-auto"
                 width={160}
                 height={32}
