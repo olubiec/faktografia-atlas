@@ -73,7 +73,7 @@ export const ShareControls: React.FC<ShareControlsProps> = ({
       {/* Format */}
       <div className="flex flex-col gap-1.5 max-w-full">
         <span className="text-xs font-semibold text-olowek tracking-wider">Format</span>
-        <div className="flex flex-wrap gap-1.5 max-w-full">
+        <div data-testid="share-formats" className="grid grid-cols-2 gap-1.5 max-w-full">
           {(Object.keys(SHARE_FORMATS) as ShareFormatKey[]).map((fmtKey) => {
             const isSelected = selectedFormat === fmtKey;
             return (
@@ -81,7 +81,7 @@ export const ShareControls: React.FC<ShareControlsProps> = ({
                 key={fmtKey}
                 type="button"
                 onClick={() => onSelectFormat(fmtKey)}
-                className={`min-h-[44px] min-w-[44px] px-3 py-2 text-xs font-medium border transition-colors ${
+                className={`min-h-[44px] min-w-0 px-2 py-2 text-xs font-medium border transition-colors ${
                   isSelected
                     ? 'bg-tusz text-kalka border-tusz'
                     : 'bg-arkusz text-tusz border-linia hover:bg-kalka'

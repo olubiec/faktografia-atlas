@@ -99,9 +99,15 @@ export interface CardSetPage {
   page: { number: number; total: number };
 }
 
-/** Rozkłada zestaw na strony w kolejności listy; ranking może zająć kilka stron. */
+/**
+ * Rozkłada zestaw na strony w kolejności listy; ranking może zająć kilka stron.
+ * Tabela porównawcza w zestawie to jedna karta (pierwsze wskaźniki): zestaw ma stałą liczbę kart,
+ * a pełną, wielostronicową tabelę daje karta „Porównanie” wybrana przełącznikiem (cardPages).
+ */
 export function cardSetPages(set: CardSet): CardSetPage[] {
-  const raw = set.flatMap((e) => cardPages(e.kind, e.data).map((p) => ({ entry: e, data: p.data })));
+  const raw = set.flatMap((e) =>
+    (e.kind === 'compare' ? cardPages(e.kind, e.data).slice(0, 1) : cardPages(e.kind, e.data)).map((p) => ({ entry: e, data: p.data })),
+  );
   const total = raw.length;
   return raw.map((p, i) => ({ ...p, page: { number: i + 1, total } }));
 }

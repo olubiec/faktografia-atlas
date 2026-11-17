@@ -69,3 +69,41 @@ test("przyciski eksportu na 375 px: krótkie etykiety, pełne aria-label, nic ni
   // siatka 2 kolumn: najwyżej dwie różne pozycje lewej krawędzi
   expect(xs.size).toBeLessThanOrEqual(2);
 });
+
+test("przyciski formatów na 375 px: siatka 2×2, bez osieroconego przycisku, dotyk ≥44 px (@S-share)", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "fa-consent-v1",
+      JSON.stringify({ value: "denied", at: new Date().toISOString() }),
+    );
+  });
+  await page.goto("/?i=density&l=pow");
+  const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
+  await expect(panel).toBeVisible({ timeout: 15000 });
+  await panel.getByRole("button", { name: "Pobierz i udostępnij mapę" }).click();
+  const dialog = page.getByRole("dialog", { name: "Pobierz i udostępnij" });
+  await expect(dialog).toBeVisible();
+
+  const buttons = dialog.getByTestId("share-formats").getByRole("button");
+  await expect(buttons).toHaveCount(4);
+  const boxes = [];
+  for (let i = 0; i < 4; i++) {
+    const box = await buttons.nth(i).boundingBox();
+    expect(box!.height).toBeGreaterThanOrEqual(44);
+    expect(box!.width).toBeGreaterThanOrEqual(44);
+    expect(box!.x).toBeGreaterThanOrEqual(0);
+    expect(box!.x + box!.width).toBeLessThanOrEqual(375);
+    boxes.push(box!);
+  }
+  // Dwa rzędy po dwa przyciski: żaden nie jest sam w rzędzie.
+  const rows = new Map<number, number>();
+  for (const b of boxes) {
+    const y = Math.round(b.y);
+    rows.set(y, (rows.get(y) ?? 0) + 1);
+  }
+  expect([...rows.values()]).toEqual([2, 2]);
+});
