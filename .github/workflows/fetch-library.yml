@@ -79,6 +79,16 @@ jobs:
             echo "Brak katalogu – spis pominięty."
           fi
 
+      - name: Zbuduj spis pobranych (available.json)
+        if: always()
+        run: |
+          if [ -f lib-wt/library/index.json ] && [ -d lib-wt/library/values ]; then
+            node scripts/data/library-available.mjs lib-wt/library
+            ls -l lib-wt/library/available.json
+          else
+            echo "Brak indeksu lub wartości – spis pobranych pominięty."
+          fi
+
       - name: Podsumowanie
         if: always()
         run: |
