@@ -14,7 +14,7 @@ export function Footnotes({ footnotes }: FootnotesProps) {
 
   return (
     <div className="space-y-1">
-      <h4 className="sr-only">Przypisy</h4>
+      <h3 className="sr-only">Przypisy</h3>
       <ol className="list-none space-y-1 text-xs text-olowek font-mono">
         {footnotes.map((fn) => (
           <li id={`footnote-${fn.id}`} key={fn.id} className="break-words">

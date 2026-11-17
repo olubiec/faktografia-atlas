@@ -1,5 +1,19 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+
+// Na telefonie (< 768 px) panel wskaźnika jest dolnym arkuszem: najpierw trzeba go otworzyć dolnym paskiem.
+// Zwraca panel, w którym są wskaźnik i stopka (arkusz na telefonie, kolumna na komputerze).
+async function openPanelIfMobile(page: Page) {
+  const bar = page.locator('[data-slot="mobile-indicator-bar"] button').first();
+  await expect(page.getByRole('complementary', { name: 'Panel wskaźnika' })).toBeVisible();
+  if (await bar.isVisible()) {
+    await bar.click();
+    const sheet = page.getByRole('dialog', { name: 'Panel wskaźnika' });
+    await expect(sheet).toBeVisible();
+    return sheet;
+  }
+  return page.getByRole('complementary', { name: 'Panel wskaźnika' });
+}
 
 test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
   const viewports = [
@@ -11,6 +25,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
     test(`@S14 indicator picker fits in viewport and scrolls internally to select last indicator on ${name}`, async ({ page }) => {
       await page.setViewportSize({ width, height });
       await page.goto('/');
+      await openPanelIfMobile(page);
 
       // Open indicator picker button
       const triggerButton = page.locator('button', { hasText: 'Wskaźnik' }).first();
@@ -52,8 +67,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
     test(`@S14 indicator panel scrolls completely so ranking and footer are visible on ${name}`, async ({ page }) => {
       await page.setViewportSize({ width, height });
       await page.goto('/');
-
-      const panel = page.getByRole('complementary', { name: 'Panel wskaźnika' });
+      const panel = await openPanelIfMobile(page);
       await expect(panel).toBeVisible();
 
       // Find ranking or footer element at the bottom of indicator panel
@@ -87,6 +101,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
   test('@S14 no horizontal scroll at 390px and touch targets are at least 44px', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
+    await openPanelIfMobile(page);
 
     const isNotHorizontallyScrollable = await page.evaluate(() => {
       return document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1;

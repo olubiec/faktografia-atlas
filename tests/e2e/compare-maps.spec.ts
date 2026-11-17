@@ -62,6 +62,8 @@ test.describe('Compare Maps W2.22 (@S18)', () => {
     );
 
     const mapButtons = page.locator('[data-slot="compare-map"]');
+    // Mapki porównania dochodzą po wczytaniu leniwego modułu, więc czekamy na nie zamiast liczyć od razu.
+    await expect(mapButtons).toHaveCount(2);
     const count = await mapButtons.count();
     expect(count).toBe(2);
 
@@ -86,6 +88,9 @@ test.describe('Compare Maps W2.22 (@S18)', () => {
         (window as any).__atlas?.ready === true &&
         (window as any).__atlas?.profileOpen === true
     );
+
+    // Kontener mapek pojawia się po wczytaniu leniwego modułu porównania.
+    await expect(page.locator('[data-slot="compare-maps"]')).toBeVisible();
 
     const results = await new AxeBuilder({ page })
       .include('[data-slot="compare-maps"]')

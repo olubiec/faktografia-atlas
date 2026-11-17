@@ -108,7 +108,8 @@ export function ProfilePortal({ profile, units, view, onSelectUnit, isOpen, onCl
           `[data-slot="tabs-trigger"][data-value="${targetTabVal}"], [role="tab"][data-value="${targetTabVal}"], [role="tab"][value="${targetTabVal}"]`
         );
         if (trigger && trigger.getAttribute('data-state') !== 'active' && trigger.getAttribute('aria-selected') !== 'true') {
-          trigger.click();
+          // Radix Tabs przełącza zakładkę na mousedown, a nie na click, więc samo click() nic nie zmienia.
+          trigger.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
         }
       }
 
