@@ -221,3 +221,12 @@ describe('cardScene layout logic (W1.14)', () => {
     expect(sceneDark.background).toBe(tokens.color.dark.kalka);
   });
 });
+
+describe('stopka karty: domena', () => {
+  it('domyślna stopka to faktografia.eu (nie .pl)', () => {
+    const scene = cardScene('map', mockMapData, 'post', 'light', { measure: mockMeasure });
+    const texts = scene.items.flatMap((i) => (i.type === 'text' ? i.lines : []));
+    expect(texts).toContain('faktografia.eu');
+    expect(texts).not.toContain('faktografia.pl');
+  });
+});
