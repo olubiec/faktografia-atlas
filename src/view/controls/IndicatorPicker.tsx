@@ -278,10 +278,11 @@ export function IndicatorPicker({
         </button>
       </DialogTrigger>
 
+      {/* Z-index nad arkuszem (react-modal-sheet ustawia własne 9999), inaczej arkusz przykrywa dolną część okna. */}
       {/* Okno pełnoekranowe: czytelne na telefonie, Esc zamyka, fokus uwięziony w oknie (Radix). */}
       <DialogContent
         aria-label="Wybór wskaźnika"
-        className="z-[60] inset-0 top-0 left-0 h-dvh w-screen max-w-none translate-x-0 translate-y-0 gap-0 p-0 flex flex-col overflow-hidden"
+        className="z-[10000] inset-0 top-0 left-0 h-dvh w-screen max-w-none translate-x-0 translate-y-0 gap-0 p-0 flex flex-col overflow-hidden"
       >
         <DialogTitle className="sr-only">Wybór wskaźnika</DialogTitle>
         <DialogDescription className="sr-only">

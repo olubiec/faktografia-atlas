@@ -23,6 +23,7 @@ import { shareFiles, downloadFile } from './share-file';
 import { buildExportScene } from './export-scene';
 import { ShareControls } from './ShareControls';
 import { CardSetList } from './CardSetList';
+import { ShareActions } from './ShareActions';
 import { useCardSet } from './useCardSet';
 import { cardSetFileParts } from '../../core/share/card-set';
 
@@ -135,13 +136,17 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
     typeof navigator.canShare === 'function' &&
     typeof navigator.share === 'function';
 
+  /** Plik PNG z karty widocznej w podglądzie. */
+  const renderPreviewFile = async (): Promise<File> => {
+    const blob = await renderPng(exportScene(previewKind, previewData), { scale });
+    const year = 'year' in previewData ? previewData.year : 2025;
+    return new File([blob], shareFileName('faktografia', [previewKind, selectedFormat, year], 'png'), { type: 'image/png' });
+  };
+
   const handleDownloadPng = async () => {
     setIsProcessing(true);
     try {
-      const blob = await renderPng(exportScene(previewKind, previewData), { scale });
-      const year = 'year' in previewData ? previewData.year : 2025;
-      const file = new File([blob], shareFileName('faktografia', [previewKind, selectedFormat, year], 'png'), { type: 'image/png' });
-      downloadFile(file);
+      downloadFile(await renderPreviewFile());
     } finally {
       setIsProcessing(false);
     }
@@ -150,39 +155,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
   const handleShare = async () => {
     setIsProcessing(true);
     try {
-      const blob = await renderPng(exportScene(previewKind, previewData), { scale });
-      const year = 'year' in previewData ? previewData.year : 2025;
-      const file = new File([blob], shareFileName('faktografia', [previewKind, selectedFormat, year], 'png'), { type: 'image/png' });
-      await shareFiles([file], 'Faktografia Atlas');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleShareSet = async () => {
-    setIsProcessing(true);
-    try {
-      const files: File[] = [];
-      const kindsToShare: CardKind[] = ['map', 'ranking'];
-      if (data.profile) kindsToShare.push('profile');
-
-      for (const k of kindsToShare) {
-        const cData = data[k];
-        if (cData) {
-          const blob = await renderPng(exportScene(k, cData), { scale });
-          const year = 'year' in cData ? cData.year : 2025;
-          const fileName = shareFileName('faktografia', [k, selectedFormat, year], 'png');
-          files.push(new File([blob], fileName, { type: 'image/png' }));
-        }
-      }
-
-      if (files.length === 0) {
-        const blob = await renderPng(exportScene(activeKind, activeCardData), { scale });
-        const name = shareFileName('faktografia', [activeKind, selectedFormat, 2025], 'png');
-        files.push(new File([blob], name, { type: 'image/png' }));
-      }
-
-      await shareFiles(files, 'Zestaw kart – Faktografia Atlas');
+      await shareFiles([await renderPreviewFile()], 'Faktografia Atlas');
     } finally {
       setIsProcessing(false);
     }
@@ -197,6 +170,17 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
       files.push(new File([blob], shareFileName('faktografia', cardSetFileParts(p, selectedFormat), 'png'), { type: 'image/png' }));
     }
     return files;
+  };
+
+  // „Udostępnij zestaw” bierze ten sam zestaw co „Pobierz wszystkie” (usunięte i przestawione karty).
+  const handleShareSet = async () => {
+    setIsProcessing(true);
+    try {
+      const files = cardSet.pages.length > 0 ? await renderAllFiles() : [await renderPreviewFile()];
+      await shareFiles(files, 'Zestaw kart – Faktografia Atlas');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleDownloadAll = async () => {
@@ -278,57 +262,16 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
           </p>
         </div>
 
-        {/* Stały dolny pasek: treść nad nim przewija się, a pasek sam przewija się, gdy jest za wysoki */}
-        <div data-testid="share-actions" className="z-10 bg-arkusz border-t border-linia p-3 md:p-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shrink-0 max-h-[40dvh] overflow-y-auto flex flex-wrap gap-2 items-center justify-between">
-          <div className="flex flex-wrap gap-2 w-full max-w-full">
-            <button
-              type="button"
-              disabled={isProcessing}
-              onClick={handleDownloadPng}
-              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-tusz text-kalka hover:opacity-90 transition-opacity grow basis-32 sm:grow-0 sm:basis-auto"
-            >
-              Pobierz obraz
-            </button>
-
-            {canNativeShare && (
-              <button
-                type="button"
-                disabled={isProcessing}
-                onClick={handleShare}
-                className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors grow basis-32 sm:grow-0 sm:basis-auto"
-              >
-                Udostępnij
-              </button>
-            )}
-
-            <button
-              type="button"
-              disabled={isProcessing}
-              onClick={handleShareSet}
-              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors grow basis-32 sm:grow-0 sm:basis-auto"
-            >
-              Udostępnij zestaw
-            </button>
-
-            <button
-              type="button"
-              disabled={isProcessing || cardSet.pages.length === 0}
-              onClick={handleDownloadAll}
-              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors grow basis-32 sm:grow-0 sm:basis-auto"
-            >
-              Pobierz wszystkie
-            </button>
-
-            <button
-              type="button"
-              disabled={isProcessing}
-              onClick={handleDownloadCsv}
-              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors grow basis-32 sm:grow-0 sm:basis-auto"
-            >
-              Pobierz dane (CSV)
-            </button>
-          </div>
-        </div>
+        <ShareActions
+          isProcessing={isProcessing}
+          canNativeShare={canNativeShare}
+          canDownloadAll={cardSet.pages.length > 0}
+          onDownloadPng={handleDownloadPng}
+          onShare={handleShare}
+          onShareSet={handleShareSet}
+          onDownloadAll={handleDownloadAll}
+          onDownloadCsv={handleDownloadCsv}
+        />
       </div>
     </div>
   );
