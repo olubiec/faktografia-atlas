@@ -1,4 +1,13 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+
+// Arkusz wjeżdża animacją, która na wolnym runnerze (programowy WebGL) trwa kilka sekund.
+// Zamiast liczyć na domyślne 5 s w `toBeVisible`, czekamy na stan: arkusz jest w oknie (górna krawędź nad dolną).
+async function waitForSheetInView(page: Page, viewportHeight: number) {
+  await page.waitForFunction((vh) => {
+    const el = document.querySelector('[role="dialog"]');
+    return !!el && el.getBoundingClientRect().y < vh - 100;
+  }, viewportHeight);
+}
 
 test.describe('Mobile BottomSheet Scroll W15-M02', () => {
   test.setTimeout(60000);
@@ -18,6 +27,7 @@ test.describe('Mobile BottomSheet Scroll W15-M02', () => {
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
       const sheet = page.locator('[role="dialog"]');
+      await waitForSheetInView(page, viewport.height);
       await expect(sheet).toBeVisible();
 
       // Potwierdź stan arkusza na poziomie 35–45% wysokości okna
@@ -61,6 +71,7 @@ test.describe('Mobile BottomSheet Scroll W15-M02', () => {
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const sheet = page.locator('[role="dialog"]');
+    await waitForSheetInView(page, 844);
     await expect(sheet).toBeVisible();
 
     // Poczekaj na ustabilizowanie arkusza na poziomie ~40%
@@ -106,6 +117,7 @@ test.describe('Mobile BottomSheet Scroll W15-M02', () => {
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const sheet = page.locator('[role="dialog"]');
+    await waitForSheetInView(page, 844);
     await expect(sheet).toBeVisible();
 
     const closeButtons = sheet.locator('button[aria-label="Zamknij"]');
