@@ -29,4 +29,9 @@ describe('lista wskaźników w profilu (FIX3)', () => {
     expect(html).not.toContain('Usuń wskaźnik');
     expect(html).not.toContain('Dodaj wskaźnik');
   });
+  it('każdy wiersz ma własną linię oddzielającą (last:border-b-0 liczy się w jego opakowaniu)', () => {
+    const html = renderToString(<ProfileIndicatorList items={items as never} units={[]} footnotes={[]} personalize={false} />);
+    const wrappers = html.match(/flex items-start gap-1 border-b border-linia last:border-b-0/g) ?? [];
+    expect(wrappers.length).toBe(items.length);
+  });
 });

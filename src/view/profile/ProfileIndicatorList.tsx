@@ -66,7 +66,8 @@ export function ProfileIndicatorList({
             </h3>
             <div>
               {groupItems.map((item) => (
-                <div key={item.indicatorId} className="flex items-start gap-1">
+                // Linia oddzielająca wiersze jest tu, bo „last:border-b-0” w wierszu liczy się w jego własnym opakowaniu.
+                <div key={item.indicatorId} className="flex items-start gap-1 border-b border-linia last:border-b-0">
                   <div className="flex-1 min-w-0">
                     <ProfileIndicatorRow
                       item={item}
