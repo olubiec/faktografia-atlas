@@ -126,7 +126,7 @@ export function PortalSections() {
         </section>
       </section>
 
-      <SiteFooter />
+      <SiteFooter decorativeLogo />
     </div>
   );
 }
