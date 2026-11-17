@@ -11,13 +11,8 @@ import {
   type CompareCardData,
 } from '../../core/share/card';
 import type { ShareFormatKey, ShareScale } from '../../core/share/formats';
-import {
-  indicatorTableCsv,
-  profileCsv,
-  compareCsv,
-  shareFileName,
-  toCsv,
-} from '../../core/share/csv';
+import { shareFileName } from '../../core/share/csv';
+import { dialogCsv } from './dialog-csv';
 import type { UnitProfile, Indicator, IndicatorValues } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import type { CompareRow } from '../../core/compare/compare';
@@ -27,6 +22,9 @@ import { cardPages } from '../../core/share/card-pages';
 import { shareFiles, downloadFile } from './share-file';
 import { buildExportScene } from './export-scene';
 import { ShareControls } from './ShareControls';
+import { CardSetList } from './CardSetList';
+import { useCardSet } from './useCardSet';
+import { cardSetFileParts } from '../../core/share/card-set';
 
 export type ShareDialogData = {
   map?: MapCardData;
@@ -106,16 +104,29 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
     );
   }, [activeKind, data]);
 
+  // Zestaw „Pobierz wszystkie”: stabilne źródło (pola z data), żeby zestaw nie wracał do domyślnego przy każdym renderze.
+  const { map, ranking, profile, compare, compareUnitA, compareUnitB } = data;
+  const cardSource = useMemo(
+    () => ({ map, ranking, profile, compare, compareUnitA, compareUnitB }),
+    [map, ranking, profile, compare, compareUnitA, compareUnitB],
+  );
+  const cardSet = useCardSet(cardSource, isOpen);
+  const setPreview = cardSet.previewPage;
+
   const firstPage = useMemo(() => cardPages(activeKind, activeCardData)[0], [activeKind, activeCardData]);
-  const pagePreview = firstPage.page;
+  // Podgląd: karta wybrana z zestawu (z numeracją zestawu) albo karta z przełącznika „Karta”.
+  const previewKind = setPreview ? setPreview.entry.kind : activeKind;
+  const previewData = setPreview ? setPreview.entry.data : activeCardData;
+  const pagePreview = setPreview ? setPreview.page : firstPage.page;
+  const previewPageData = setPreview ? setPreview.data : firstPage.data;
 
   const scene = useMemo(() => {
-    return cardScene(activeKind, firstPage.data, selectedFormat, selectedTheme, {
+    return cardScene(previewKind, previewPageData, selectedFormat, selectedTheme, {
       measure,
       siteUrl: 'faktografia.eu',
-      page: firstPage.page,
+      page: pagePreview,
     });
-  }, [activeKind, firstPage, selectedFormat, selectedTheme, measure]);
+  }, [previewKind, previewPageData, pagePreview, selectedFormat, selectedTheme, measure]);
 
   const exportScene = (k: CardKind, d: CardData) => // podgląd zostaje w skali 1
     buildExportScene(k, d, selectedFormat, selectedTheme, { measure, scale });
@@ -127,9 +138,9 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
   const handleDownloadPng = async () => {
     setIsProcessing(true);
     try {
-      const blob = await renderPng(exportScene(activeKind, activeCardData), { scale });
-      const year = 'year' in activeCardData ? activeCardData.year : 2025;
-      const file = new File([blob], shareFileName('faktografia', [activeKind, selectedFormat, year], 'png'), { type: 'image/png' });
+      const blob = await renderPng(exportScene(previewKind, previewData), { scale });
+      const year = 'year' in previewData ? previewData.year : 2025;
+      const file = new File([blob], shareFileName('faktografia', [previewKind, selectedFormat, year], 'png'), { type: 'image/png' });
       downloadFile(file);
     } finally {
       setIsProcessing(false);
@@ -139,9 +150,9 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
   const handleShare = async () => {
     setIsProcessing(true);
     try {
-      const blob = await renderPng(exportScene(activeKind, activeCardData), { scale });
-      const year = 'year' in activeCardData ? activeCardData.year : 2025;
-      const file = new File([blob], shareFileName('faktografia', [activeKind, selectedFormat, year], 'png'), { type: 'image/png' });
+      const blob = await renderPng(exportScene(previewKind, previewData), { scale });
+      const year = 'year' in previewData ? previewData.year : 2025;
+      const file = new File([blob], shareFileName('faktografia', [previewKind, selectedFormat, year], 'png'), { type: 'image/png' });
       await shareFiles([file], 'Faktografia Atlas');
     } finally {
       setIsProcessing(false);
@@ -177,19 +188,13 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
     }
   };
 
-  /** Wszystkie dostępne karty (każda strona osobno) jako pliki PNG. */
+  /** Karty zestawu w kolejności wybranej przez użytkownika (każda strona osobno, numeracja n/N całego zestawu). */
   const renderAllFiles = async (): Promise<File[]> => {
     const files: File[] = [];
-    for (const k of availableKinds) {
-      const cData = data[k] ?? activeCardData;
-      const year = 'year' in cData ? cData.year : 2025;
-      for (const p of cardPages(k, cData)) {
-        const sc = buildExportScene(k, p.data, selectedFormat, selectedTheme, { measure, scale, page: p.page });
-        const blob = await renderPng(sc, { scale });
-        const parts: (string | number)[] = [k, selectedFormat, year];
-        if (p.page.total > 1) parts.push(`str${p.page.number}z${p.page.total}`);
-        files.push(new File([blob], shareFileName('faktografia', parts, 'png'), { type: 'image/png' }));
-      }
+    for (const p of cardSet.pages) {
+      const sc = buildExportScene(p.entry.kind, p.data, selectedFormat, selectedTheme, { measure, scale, page: p.page });
+      const blob = await renderPng(sc, { scale });
+      files.push(new File([blob], shareFileName('faktografia', cardSetFileParts(p, selectedFormat), 'png'), { type: 'image/png' }));
     }
     return files;
   };
@@ -206,30 +211,8 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
   };
 
   const handleDownloadCsv = () => {
-    let csvStr = '';
-    let fileName = '';
-
-    if (data.csvContent) {
-      csvStr = data.csvContent;
-      fileName = data.csvFileName || shareFileName('faktografia', [activeKind, 'dane'], 'csv');
-    } else if (activeKind === 'profile' && data.unitProfile) {
-      csvStr = profileCsv(data.unitProfile);
-      fileName = shareFileName('faktografia', ['profil', data.unitProfile.teryt], 'csv');
-    } else if (activeKind === 'compare' && data.compareRows) {
-      csvStr = compareCsv(data.compareRows, data.compareUnitA, data.compareUnitB);
-      fileName = shareFileName('faktografia', ['porownanie'], 'csv');
-    } else if (data.units && data.indicatorValues && data.indicator && data.year) {
-      csvStr = indicatorTableCsv(data.units, data.indicatorValues, data.indicator, data.year);
-      fileName = shareFileName('faktografia', [data.indicator.id, data.indicator.minLevel, data.year], 'csv');
-    } else {
-      const cols = ['Tytuł', 'Wartość', 'Źródło'];
-      const rows = [['Faktografia Atlas', 'Dane GUS', 'GUS, Bank Danych Lokalnych (CC BY 4.0)']];
-      csvStr = toCsv(cols, rows);
-      fileName = shareFileName('faktografia', ['dane'], 'csv');
-    }
-
-    const blob = new Blob([csvStr], { type: 'text/csv;charset=utf-8;' });
-    downloadFile(blob, fileName);
+    const { csv, fileName } = dialogCsv(data, activeKind);
+    downloadFile(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), fileName);
   };
 
   if (!isOpen) return null;
@@ -268,13 +251,26 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
           <ShareControls
             availableKinds={availableKinds}
             activeKind={activeKind}
-            onSelectKind={setSelectedKind}
+            onSelectKind={(k) => {
+              setSelectedKind(k);
+              cardSet.setPreviewId(null);
+            }}
             selectedFormat={selectedFormat}
             onSelectFormat={setSelectedFormat}
             selectedTheme={selectedTheme}
             onSelectTheme={setSelectedTheme}
             scale={scale}
             onSelectScale={setScale}
+          />
+
+          <CardSetList
+            set={cardSet.set}
+            positions={cardSet.positions}
+            previewId={cardSet.previewId}
+            onPreview={cardSet.setPreviewId}
+            onRemove={cardSet.remove}
+            onMove={cardSet.move}
+            onReset={cardSet.reset}
           />
 
           <p className="text-xs text-olowek text-center md:text-left">
@@ -316,7 +312,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
 
             <button
               type="button"
-              disabled={isProcessing}
+              disabled={isProcessing || cardSet.pages.length === 0}
               onClick={handleDownloadAll}
               className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors grow basis-32 sm:grow-0 sm:basis-auto"
             >
