@@ -87,7 +87,7 @@ test.describe('Profile Overview (@S14)', () => {
     await expect(rankingListItems).toHaveCount(16);
 
     // Sprawdzenie wyróżnienia dla małopolskiego (klasa lub styl wyróżniający)
-    const highlightedItem = rankingContainer.locator('li button .text-korekta, li button.font-bold');
+    const highlightedItem = rankingContainer.locator('li button .text-korekta-tekst, li button.font-bold');
     await expect(highlightedItem.first()).toBeVisible();
   });
 

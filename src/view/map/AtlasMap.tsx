@@ -244,7 +244,8 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
   const getState = useCallback((): AtlasState => {
     const compareParam = typeof window !== 'undefined' ? readUrlState(window.location.search, unitIndex).c ?? null : null;
     return {
-      ready: isReady,
+      // Gotowe dopiero, gdy układ się ustalił: przy wybranej jednostce panel profilu zmienia szerokość mapy.
+      ready: isReady && (selectedTeryt === null || profileOpen),
       layers: layers.map((layer) => layer.id),
       selected: compareParam ?? drillState.selected,
       viewState: currentViewStateRef.current,
@@ -259,7 +260,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
         : null,
       profileOpen,
     };
-  }, [isReady, layers, unitIndex, drillState.selected, theme, choroplethData, profileOpen, currentViewStateRef]);
+  }, [isReady, selectedTeryt, layers, unitIndex, drillState.selected, theme, choroplethData, profileOpen, currentViewStateRef]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

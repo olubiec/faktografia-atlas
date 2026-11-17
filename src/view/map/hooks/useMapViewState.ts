@@ -140,6 +140,8 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
   const userMovedRef = useRef(false);
   const animRef = useRef<number | null>(null);
   const isAnimatingRef = useRef(false);
+  // Cel trwającej animacji; zmiana rozmiaru w jej trakcie tylko podmienia cel, nie przerywa ruchu.
+  const animTargetRef = useRef<ViewState | null>(null);
 
   const bounds = countryBbox;
   const limits = useMemo(
@@ -197,6 +199,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
 
       userMovedRef.current = false;
       isAnimatingRef.current = true;
+      animTargetRef.current = targetView;
       syncCameraSeam(true, { type: 'reset', view: fromView });
 
       let startTime: number | null = null;
@@ -224,10 +227,11 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         const finished = timeProgress >= 1 && frameProgress >= 1;
         const eased = easeFn(finished ? 1 : progress);
 
+        const to = animTargetRef.current ?? targetView;
         const nextView: ViewState = {
-          longitude: fromView.longitude + (targetView.longitude - fromView.longitude) * eased,
-          latitude: fromView.latitude + (targetView.latitude - fromView.latitude) * eased,
-          zoom: fromView.zoom + (targetView.zoom - fromView.zoom) * eased,
+          longitude: fromView.longitude + (to.longitude - fromView.longitude) * eased,
+          latitude: fromView.latitude + (to.latitude - fromView.latitude) * eased,
+          zoom: fromView.zoom + (to.zoom - fromView.zoom) * eased,
         };
 
         setCurrentViewState(nextView);
@@ -331,7 +335,13 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
-          animateToView(targetView, 'instant');
+          if (isAnimatingRef.current) {
+            // Zmiana rozmiaru w trakcie animacji (np. otwarcie lub zamknięcie panelu profilu)
+            // nie może jej ucinać skokiem: zmieniamy tylko cel, a ruch płynnie go dogania.
+            animTargetRef.current = targetView;
+          } else {
+            animateToView(targetView, 'instant');
+          }
         }
       }
     };
