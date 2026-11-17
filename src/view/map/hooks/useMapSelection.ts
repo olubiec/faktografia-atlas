@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import type { UnitIndex } from '@/core/units/types';
 import { getDrillState, getParentTeryt } from '@/core/map/drill';
 import { readUrlState, writeUrlState } from '@/core/url/state';
+import { ATLAS_RESET_EVENT } from '@/core/url/home';
 import { loadLocalities } from '@/core/search/load-localities';
 import type { ViewState } from '@/core/map/view';
 
@@ -78,6 +79,16 @@ export function useMapSelection(unitIndex: UnitIndex, options?: MapSelectionOpti
       return () => window.removeEventListener('popstate', handlePopState);
     }
   }, [unitIndex]);
+
+  // Kliknięcie w logo: wracamy do ekranu startowego (adres ustawia router, my czyścimy wybór i kamerę).
+  useEffect(() => {
+    const handleReset = () => {
+      setSelectedTeryt(null);
+      optionsRef.current?.onBboxChange?.(null);
+    };
+    window.addEventListener(ATLAS_RESET_EVENT, handleReset);
+    return () => window.removeEventListener(ATLAS_RESET_EVENT, handleReset);
+  }, []);
 
   // Obsługa zdarzenia wyboru miejscowości w wyszukiwarce Ctrl+K
   useEffect(() => {
