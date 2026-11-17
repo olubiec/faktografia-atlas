@@ -6,7 +6,8 @@ import { useSheetInset } from '@/view/map/sheetInset';
 import { cameraTransition, type CameraKind } from '@/core/map/camera';
 import { resizeCameraAction } from '@/core/map/camera-resize';
 import { flyView, flyDuration } from '@/core/map/camera-path';
-import { ZOOM_END_DELAY_MS, ZOOM_END_EVENT } from '@/core/map/zoom-level';
+import { useZoomEndReport } from './zoomGesture';
+import { parseCubicBezier } from './cubicBezier';
 import tokensJson from '../../../../config/tokens.json';
 
 // Margines (px) wokół dopasowanego obszaru, żeby mapa nie dotykała krawędzi okna.
@@ -51,30 +52,6 @@ function viewStateWithInset(
     longitude: baseView.longitude,
     latitude,
     zoom: baseView.zoom,
-  };
-}
-
-function parseCubicBezier(easingStr: string): (t: number) => number {
-  const match = easingStr.match(/cubic-bezier\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*\)/);
-  if (!match) {
-    return (t: number) => t;
-  }
-  const [x1, y1, x2, y2] = match.slice(1, 5).map(parseFloat);
-
-  return function ease(x: number): number {
-    if (x <= 0) return 0;
-    if (x >= 1) return 1;
-
-    let [tLo, tHi, t] = [0, 1, x];
-
-    for (let i = 0; i < 12; i++) {
-      const currentX = 3 * (1 - t) * (1 - t) * t * x1 + 3 * (1 - t) * t * t * x2 + t * t * t;
-      if (currentX < x) tLo = t;
-      else tHi = t;
-      t = (tLo + tHi) / 2;
-    }
-
-    return 3 * (1 - t) * (1 - t) * t * y1 + 3 * (1 - t) * t * t * y2 + t * t * t;
   };
 }
 
@@ -385,17 +362,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     };
   }, [animateToView, bounds, drillBbox, setCurrentViewState, sheetInset]);
 
-  // Koniec ruchu z gestu (szczypanie, kółko, +/−, strzałki): zgłaszamy zoom, żeby poziom mapy poszedł za nim.
-  // Lot kamery po kliknięciu jednostki (animateToView) zeruje userMovedRef, więc go nie zgłaszamy.
-  useEffect(() => {
-    if (!userMovedRef.current || isAnimatingRef.current) return;
-    const zoom = currentViewState.zoom;
-    const timer = window.setTimeout(() => {
-      if (!userMovedRef.current || isAnimatingRef.current) return;
-      window.dispatchEvent(new CustomEvent(ZOOM_END_EVENT, { detail: { zoom } }));
-    }, ZOOM_END_DELAY_MS);
-    return () => window.clearTimeout(timer);
-  }, [currentViewState]);
+  useZoomEndReport(currentViewState, userMovedRef, isAnimatingRef);
 
   useEffect(() => {
     if (currentViewState.zoom >= 8.5) {
