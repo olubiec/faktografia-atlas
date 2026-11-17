@@ -1,3 +1,5 @@
+> **ZASTĄPIONE 17.11.2026 planem Q (`tasks/poczekalnia/Q/`). Nie wykonuj tego zadania.**
+
 # P1-B – Porównaj: stan pusty i wynik na telefonie
 Cel: /porownaj ma sensowny stan pusty i czytelny wynik na 390 px.
 Zmieniaj: plik strony Porównaj (znajdź: grep -rl "Porównaj" src/view/pages), tests/unit/compare-view.test.tsx

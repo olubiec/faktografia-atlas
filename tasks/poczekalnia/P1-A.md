@@ -1,3 +1,5 @@
+> **ZASTĄPIONE 17.11.2026 planem Q (`tasks/poczekalnia/Q/`). Nie wykonuj tego zadania.**
+
 # P1-A – Rankingi czytelne na telefonie
 Cel: /rankingi na 390 px bez przewijania w poziomie i bez kodów zamiast nazw.
 Zmieniaj: src/view/pages/Rankings.tsx, tests/unit/rankings-view.test.tsx

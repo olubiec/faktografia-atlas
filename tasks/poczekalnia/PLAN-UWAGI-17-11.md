@@ -1,7 +1,7 @@
 # Plan Q: uwagi właściciela z 17.11.2026 – pełna lista zadań
 
 Wersja 2 (17.11.2026). Źródło: dwie wiadomości właściciela z 17.11 + odpowiedzi na pytania doprecyzowujące.
-Plik w `tasks/poczekalnia/` – pętla go ignoruje. Po akceptacji Claude zamienia każdą falę na pliki `tasks/W<n>-Q<id>-*.md` (wzór: `tasks/SZABLON.md`).
+Plik w `tasks/poczekalnia/` – pętla go ignoruje. **Prompty wszystkich zadań są napisane** w `tasks/poczekalnia/Q/` (`W<fala>-QC<cel><nn>-*.md`, wzór: `tasks/SZABLON.md`; opis: `Q/README.md`). Start fali = skopiowanie jej plików do `tasks/` + blok z `Q/waves-Q.fragment.yaml` do `waves.yaml` + push na `main`.
 Zastępuje zadania: **P1-A** (Rankingi), **P1-B** (Porównaj), **P3-C** (Biblioteka) – przy puszczaniu fal pomijamy je.
 
 Jak czytać: **10 celów (C1–C10)**, każdy rozbity na najmniejsze zadania (1 zachowanie, 1–3 pliki, ok. 50–150 linii, własny test).
@@ -148,19 +148,22 @@ Ekran (`src/view/share`):
 
 | Fala | Zadania | Warunek startu |
 |---|---|---|
-| **Q1** naprawy, logika | C1-1 · C1-2 · C1-3 · C2-1 · C2-2 · C3-1 · C5-1 | C0 zrobione |
+| **Q1** logika | C1-1 · C1-2 · C1-3 · C2-1 · C2-2 · C3-1 · C5-1 | C0 zrobione |
 | **Q2** ekrany napraw | C1-4 · C1-5 · C2-3 · C3-2 · C5-2 · C4-1 (raport) · C7-1 | Q1 scalona |
-| **Q3** strony + moje (stan) | C1-6 · C2-4 · C3-3 · C5-3 · C7-2 · C7-3 · C7-4 | Q2 scalona; **punkt kontrolny K-Q1** |
-| **Q4** ruch mapy + biblioteka | C4-2 · C4-3 · C4-5 · C5-4 · C7-5 · C8-1 · C6-1 (Claude) | Q3 scalona |
-| **Q5** moje wskaźniki wszędzie | C4-4 · C5-5 · C6-2 · C6-3 · C6-4 · C8-2 · C8-3 | Q4 scalona; **K-Q2** |
-| **Q6** biblioteka na mapie | C4-6 · C5-6 · C5-7 · C5-8 · C5-9 · C5-10 · C6-5 | Q5 scalona |
-| **Q7** biblioteka wszędzie | C6-6 · C6-7 · C6-8 · C6-9 · C6-10 · C8-4 · C8-5 | Q6 scalona; **K-Q3** |
-| **Q8** eksport – logika | C9-1 · C9-2 · C9-5 · C9-6 · C9-7 · C9-8 · C9-9 | może iść równolegle z Q5–Q7 (inne pliki) |
-| **Q9** eksport – logika 2 | C9-3 · C9-4 · C9-10 · C9-11 · C2-5 · C6-11 | Q8 scalona |
-| **Q10** eksport – ekran | C9-12 · C9-13 · C9-14 · C9-15 · C9-16 | Q9 scalona |
-| **Q11** eksport – złożenie | C9-17 · C9-18 · C9-19 · C9-20 | Q10 scalona; **K-Q4** |
+| **Q3** strony + stan | C1-6 · C2-4 · C3-3 · C5-3 · C7-2 · C7-3 · C7-4 | Q2 scalona; **punkt kontrolny K-Q1** |
+| **Q4** ruch + rejestr | C4-2 · C4-5 · C5-4 · C6-2 · C7-5 · C8-1 · C6-1 (Claude) | Q3 scalona |
+| **Q5** moje + ładowanie | C4-3 · C4-4 · C5-5 · C6-3 · C6-4 · C8-2 · C8-3 | Q4 scalona; **K-Q2** |
+| **Q6** moje wszędzie | C4-6 · C5-6 · C5-7 · C5-8 · C5-9 · C5-10 · C6-5 | Q5 scalona |
+| **Q7** biblioteka wszędzie | C6-6 · C6-7 · C6-8 · C6-9 · C6-10 · C8-5 | Q6 scalona; **K-Q3** |
+| **Q8** eksport – logika i karty | C9-1 · C9-2 · C9-5 · C9-6 · C9-7 · C9-8 · C9-9 | może iść równolegle z Q5–Q7 (inne pliki) |
+| **Q9** eksport – logika 2 + domknięcia | C9-3 · C9-4 · C9-10 · C9-11 · C2-5 · C6-11 · C8-4 | Q8 i Q7 scalone |
+| **Q10** eksport – elementy ekranu | C9-12 · C9-13 · C9-14 · C9-15 · C9-16 | Q9 scalona |
+| **Q11** eksport – złożenie | C9-17 · C9-18 | Q10 scalona |
+| **Q12** eksport – testy odbiorcze | C9-19 · C9-20 | Q11 scalona; **K-Q4** |
 
-Razem: **78 zadań** (4 Claude w C0, 1 Claude w C6-1, 3 Claude w C10, reszta dla pętli).
+**Zmiany względem wersji z pierwszego zapisu (17.11, po napisaniu promptów):** C6-2 → Q4 (C5-5 potrzebuje rejestru); C4-3 → Q5 (kolizja `AtlasMap.tsx` z C4-2); C6-5 → Q6; C8-4 → Q9 (kolizja `LibraryVariable.tsx` z C6-8); C9-19 i C9-20 → osobna fala Q12 (testy e2e wymagają scalonych C9-17/18); C9-16 obejmuje też `deck-scene.ts` i `card.ts` (wspólny dispatch nowych kart). W fali żadne dwa zadania nie zmieniają tego samego pliku (sprawdzone skryptem na liniach „Zmieniaj:”).
+
+Razem: **78 zadań** (71 z promptami w `Q/`: 70 dla pętli + QC601 dla Claude; C0 i C10 to prace Claude bez pliku) (4 Claude w C0, 1 Claude w C6-1, 3 Claude w C10, reszta dla pętli).
 
 ## 5. Co Ty sprawdzasz na podglądzie (komputer i telefon)
 - **K-Q1 (po Q3):** `/rankingi` – zmień wskaźnik, poziom, rok, wyszukaj gminę, skopiuj adres do nowej karty. `/porownaj` – wpisz dwa miasta, zamień, wyczyść. Mapa – wybierz gminę, oddal do Polski: obrys gaśnie. `/biblioteka` – tylko wskaźniki z danymi, licznik, „Zamów dane na temat…”.
