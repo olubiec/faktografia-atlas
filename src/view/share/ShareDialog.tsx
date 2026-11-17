@@ -25,6 +25,7 @@ import { ShareControls } from './ShareControls';
 import { CardSetList } from './CardSetList';
 import { ShareActions } from './ShareActions';
 import { useCardSet } from './useCardSet';
+import { SharePreviewPager } from './SharePreviewPager';
 import { cardSetFileParts } from '../../core/share/card-set';
 
 export type ShareDialogData = {
@@ -112,7 +113,11 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
     [map, ranking, profile, compare, compareUnitA, compareUnitB],
   );
   const cardSet = useCardSet(cardSource, isOpen);
-  const setPreview = cardSet.previewPage;
+  // Strona zestawu wybrana strzałkami/przesunięciem (null = karta z listy albo z przełącznika „Karta”).
+  const [pageIdx, setPageIdx] = useState<number | null>(null);
+  const setPages = cardSet.pages;
+  const setPreview =
+    pageIdx !== null && setPages.length > 0 ? setPages[Math.min(pageIdx, setPages.length - 1)] : cardSet.previewPage;
 
   const firstPage = useMemo(() => cardPages(activeKind, activeCardData)[0], [activeKind, activeCardData]);
   // Podgląd: karta wybrana z zestawu (z numeracją zestawu) albo karta z przełącznika „Karta”.
@@ -128,6 +133,15 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
       page: pagePreview,
     });
   }, [previewKind, previewPageData, pagePreview, selectedFormat, selectedTheme, measure]);
+
+  const pagerTotal = setPages.length;
+  const pagerIndex = setPreview
+    ? setPages.indexOf(setPreview)
+    : Math.max(0, setPages.findIndex((p) => p.entry.kind === activeKind));
+  const changePage = (i: number) => {
+    setPageIdx(i);
+    cardSet.setPreviewId(setPages[i].entry.id);
+  };
 
   const exportScene = (k: CardKind, d: CardData) => // podgląd zostaje w skali 1
     buildExportScene(k, d, selectedFormat, selectedTheme, { measure, scale });
@@ -228,15 +242,16 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
         {/* Scrollable Body with Controls and Preview */}
         <div className="flex-1 min-h-0 overflow-y-auto p-3 md:p-6 space-y-4">
           {/* SVG Preview Box */}
-          <div className="min-h-[220px] w-full min-w-0 flex items-center justify-center p-2 sm:p-3 bg-kalka border border-linia overflow-hidden max-w-full">
+          <SharePreviewPager index={pagerIndex} total={pagerTotal} cardId={setPreview ? setPreview.entry.id : activeKind} onChange={changePage}>
             <CardSvg scene={scene} page={pagePreview} className="block w-full min-w-0 h-auto max-h-[38vh] md:max-h-[48vh]" />
-          </div>
+          </SharePreviewPager>
 
           <ShareControls
             availableKinds={availableKinds}
             activeKind={activeKind}
             onSelectKind={(k) => {
               setSelectedKind(k);
+              setPageIdx(null);
               cardSet.setPreviewId(null);
             }}
             selectedFormat={selectedFormat}
@@ -251,10 +266,19 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
             set={cardSet.set}
             positions={cardSet.positions}
             previewId={cardSet.previewId}
-            onPreview={cardSet.setPreviewId}
-            onRemove={cardSet.remove}
+            onPreview={(id) => {
+              setPageIdx(null);
+              cardSet.setPreviewId(id);
+            }}
+            onRemove={(id) => {
+              setPageIdx(null);
+              cardSet.remove(id);
+            }}
             onMove={cardSet.move}
-            onReset={cardSet.reset}
+            onReset={() => {
+              setPageIdx(null);
+              cardSet.reset();
+            }}
           />
 
           <p className="text-xs text-olowek text-center md:text-left">

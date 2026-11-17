@@ -64,6 +64,7 @@ test("przyciski eksportu na 375 px: krótkie etykiety, pełne aria-label, nic ni
     expect(box!.x).toBeGreaterThanOrEqual(0);
     expect(box!.x + box!.width).toBeLessThanOrEqual(375);
     expect(box!.y).toBeGreaterThanOrEqual(barBox!.y - 1);
+    if (i === 0) console.log("DLG", JSON.stringify(await dialog.boundingBox()), JSON.stringify(await dialog.locator("> div").first().boundingBox()), await page.evaluate(() => innerHeight));
     expect(box!.y + box!.height).toBeLessThanOrEqual(812);
     expect(await b.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(
       true,
