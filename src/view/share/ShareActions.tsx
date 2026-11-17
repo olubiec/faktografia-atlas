@@ -80,7 +80,7 @@ export const ShareActions: React.FC<ShareActionsProps> = ({
         aria-label="Pobierz dane (CSV)"
         className={SECONDARY}
       >
-        <span className="md:hidden">CSV</span>
+        <span className="md:hidden">(CSV)</span>
         <span className="hidden md:inline">Pobierz dane (CSV)</span>
       </button>
     </div>

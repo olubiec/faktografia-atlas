@@ -16,6 +16,14 @@ async function openCompareShare(page: Page) {
   return dialog;
 }
 
+/** Domyślnie podgląd pokazuje kartę z przełącznika „Karta” (tu tabelę), więc cofamy się na początek zestawu. */
+async function goToFirst(dialog: ReturnType<Page['getByRole']>) {
+  const counter = dialog.getByTestId('preview-pager-counter');
+  const prev = dialog.getByRole('button', { name: 'Poprzednia karta' });
+  while (await prev.isEnabled()) await prev.click();
+  await expect(counter).toHaveText(/^1 \/ \d+$/);
+}
+
 test.describe('Pager podglądu zestawu (@S-share)', () => {
   test('licznik 1 / N, klik w strzałkę zmienia kartę, kropki i pola dotykowe (@S-share)', async ({ page }) => {
     test.setTimeout(60000);
@@ -24,6 +32,7 @@ test.describe('Pager podglądu zestawu (@S-share)', () => {
     const counter = dialog.getByTestId('preview-pager-counter');
     const preview = dialog.getByTestId('share-preview');
 
+    await goToFirst(dialog);
     await expect(counter).toHaveAttribute('aria-live', 'polite');
     await expect(counter).toHaveText(/^1 \/ \d+$/);
     const total = Number((await counter.textContent())!.split('/')[1]);
@@ -55,6 +64,7 @@ test.describe('Pager podglądu zestawu (@S-share)', () => {
     const dialog = await openCompareShare(page);
     const counter = dialog.getByTestId('preview-pager-counter');
     const preview = dialog.getByTestId('share-preview');
+    await goToFirst(dialog);
     const total = Number((await counter.textContent())!.split('/')[1]);
     const box = (await preview.boundingBox())!;
     const y = box.y + box.height / 2;

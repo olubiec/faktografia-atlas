@@ -21,15 +21,11 @@ test("przyciski eksportu na 375 px: krótkie etykiety, pełne aria-label, nic ni
       value: async () => {},
     });
   });
-  await page.goto("/?e2e=1&u=12&c=12,24");
-  await page.waitForFunction(
-    () =>
-      (window as any).__atlas?.ready === true &&
-      (window as any).__atlas?.profileOpen === true,
-  );
-  await page
-    .locator('[data-slot="profile-compare"]')
-    .getByRole("button", { name: "Pobierz i udostępnij" })
+  await page.goto("/?i=density&l=pow");
+  const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
+  await expect(panel).toBeVisible({ timeout: 15000 });
+  await panel
+    .getByRole("button", { name: "Pobierz i udostępnij mapę" })
     .click();
   const dialog = page.getByRole("dialog", { name: "Pobierz i udostępnij" });
   await expect(dialog).toBeVisible();
@@ -40,7 +36,7 @@ test("przyciski eksportu na 375 px: krótkie etykiety, pełne aria-label, nic ni
     ["Pobierz obraz", "Obraz"],
     ["Udostępnij", "Udostępnij"],
     ["Udostępnij zestaw", "Zestaw"],
-    ["Pobierz dane (CSV)", "CSV"],
+    ["Pobierz dane (CSV)", "(CSV)"],
   ];
   for (const [aria, text] of expected) {
     const b = bar.locator(`button[aria-label="${aria}"]`);
@@ -64,7 +60,6 @@ test("przyciski eksportu na 375 px: krótkie etykiety, pełne aria-label, nic ni
     expect(box!.x).toBeGreaterThanOrEqual(0);
     expect(box!.x + box!.width).toBeLessThanOrEqual(375);
     expect(box!.y).toBeGreaterThanOrEqual(barBox!.y - 1);
-    if (i === 0) console.log("DLG", JSON.stringify(await dialog.boundingBox()), JSON.stringify(await dialog.locator("> div").first().boundingBox()), await page.evaluate(() => innerHeight));
     expect(box!.y + box!.height).toBeLessThanOrEqual(812);
     expect(await b.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(
       true,
