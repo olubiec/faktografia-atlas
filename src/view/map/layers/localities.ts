@@ -1,6 +1,5 @@
 import { ScatterplotLayer } from '@deck.gl/layers';
 import type { LayerFactory, LayerContext } from './admin';
-import tokensJson from '../../../../config/tokens.json';
 import type { Locality } from '@/core/search/types';
 
 // Kolor z nadpisaną alfa (0–255); kolory warstw to tablice RGB(A).
@@ -18,10 +17,6 @@ export const localitiesLayerFactory: LayerFactory = {
     }
     const visibleTarget = zoom >= 9;
     const alpha = visibleTarget ? 255 : 0;
-    const reduced =
-      typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    const duration = reduced ? 0 : tokensJson.motion.base;
-
     const localities: Locality[] = ctx.localities ?? [];
     const selectedTeryt = ctx.drillState?.selected;
     const gminaTeryt = selectedTeryt && selectedTeryt.length === 7 ? selectedTeryt : undefined;
@@ -42,7 +37,6 @@ export const localitiesLayerFactory: LayerFactory = {
       getPosition: (d: Locality) => [d.lon, d.lat],
       getFillColor: (d: Locality) => withAlpha(d.approx ? ochraColor : tuszColor, alpha),
       getLineColor: withAlpha(arkuszColor, alpha),
-      transitions: { getFillColor: duration, getLineColor: duration },
       getRadius: (d: Locality) => (d.approx ? 35 : 45),
       radiusMinPixels: 4,
       radiusMaxPixels: 12,

@@ -164,7 +164,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     }),
     [mainView, level, selectedLevel, selectBreadcrumb]
   );
-  const choroplethData = useChoropleth(view, units);
+  const choroplethData = useChoropleth(view, units, selectedTeryt);
 
   // Ranking wg wartości (miejsce 1 = największa wartość) dla bieżącego wskaźnika, roku i poziomu.
   const ranking = useMemo(() => {
