@@ -351,6 +351,8 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
         onClick={handleContainerClick}
         onKeyDown={handleKeyDown}
         onWheel={markUserMoved}
+        onTouchStart={markUserMoved}
+        onMouseDown={markUserMoved}
         onPointerLeave={() => setHover(null)}
       >
         <div className="absolute top-4 left-4 right-4 md:right-auto z-10 flex flex-col gap-2 max-w-[calc(100vw-32px)] sm:max-w-[360px] pointer-events-none">
@@ -369,6 +371,9 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
           mapLib={maplibregl}
           ref={mapRef}
           initialViewState={initialView}
+          onMoveStart={(evt) => {
+            if (evt.originalEvent) markUserMoved();
+          }}
           onMove={(evt) => handleMapMove(evt.viewState, Boolean(evt.originalEvent))}
           onMoveEnd={(evt) => handleMapMoveEnd(evt.viewState)}
           mapStyle={mapStyle}
@@ -377,6 +382,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
           minZoom={limits.minZoom}
           onLoad={(evt) => {
             configureWheel(evt.target);
+            evt.target.touchZoomRotate.disableRotation();
             syncMap();
             setIsReady(true);
           }}
