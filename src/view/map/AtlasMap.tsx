@@ -1,3 +1,4 @@
+import { WHEEL_ZOOM_RATE, TRACKPAD_ZOOM_RATE } from '../../core/map/camera-wheel';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import Map, { useControl } from 'react-map-gl/maplibre';
 import { MapboxOverlay } from '@deck.gl/mapbox';
@@ -280,6 +281,12 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     }
   }, [getState]);
 
+  // Tempo kółka: natywny scrollZoom zostaje, zmieniamy tylko jego czułość.
+  const configureWheel = useCallback((map: { scrollZoom: { setWheelZoomRate(r: number): void; setZoomRate(r: number): void } }) => {
+    map.scrollZoom.setWheelZoomRate(WHEEL_ZOOM_RATE);
+    map.scrollZoom.setZoomRate(TRACKPAD_ZOOM_RATE);
+  }, []);
+
   const mapStyle: StyleSpecification = useMemo(() => {
     const c = colors?.kalka ?? defaultKalka;
     const kalkaRgb = c ? `rgb(${c[0]}, ${c[1]}, ${c[2]})` : tokensJson.color.light.kalka;
@@ -368,7 +375,8 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
           maxBounds={limits.maxBounds}
           maxZoom={limits.maxZoom}
           minZoom={limits.minZoom}
-          onLoad={() => {
+          onLoad={(evt) => {
+            configureWheel(evt.target);
             syncMap();
             setIsReady(true);
           }}
