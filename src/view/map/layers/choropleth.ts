@@ -5,6 +5,7 @@ import { loadGeoData, parseCssColor } from './admin';
 import { classColorToken, type ClassifyResult } from '@/core/map/classes';
 import { getNoDataPatternProps } from './no-data-pattern';
 import type { Feature } from 'geojson';
+import { resolveFillTransition } from '@/core/map/fill-transition';
 import { readUrlState } from '@/core/url/state';
 import tokensJson from '../../../../config/tokens.json';
 
@@ -114,7 +115,8 @@ export const choroplethLayerFactory: LayerFactory = {
     return new GeoJsonLayer({
       id: 'choropleth-layer',
       transitions: {
-        getFillColor: transitionDuration,
+        // Zestaw cech zależy tylko od poziomu (zakres filtruje kolor, nie dane).
+        getFillColor: resolveFillTransition(choropleth.level, transitionDuration).ms,
       },
       data: features,
       filled: true,
