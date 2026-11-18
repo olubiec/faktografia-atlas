@@ -7,6 +7,7 @@ import { getNoDataPatternProps } from './no-data-pattern';
 import type { Feature } from 'geojson';
 import { memoLast } from '@/core/map/memo-last';
 import { resolveFillTransition } from '@/core/map/fill-transition';
+import { readDiag } from '@/core/map/diag';
 import { readUrlState } from '@/core/url/state';
 import tokensJson from '../../../../config/tokens.json';
 
@@ -111,7 +112,7 @@ export const choroplethLayerFactory: LayerFactory = {
     const isReduced =
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const transitionDuration = isReduced ? 0 : tokensJson.motion.base ?? 300;
+    const transitionDuration = isReduced || readDiag().notrans ? 0 : tokensJson.motion.base ?? 300;
 
     return new GeoJsonLayer({
       id: 'choropleth-layer',
@@ -225,7 +226,7 @@ export const choroplethNoDataLayerFactory: LayerFactory = {
   id: 'choropleth-nodata-layer',
   create: (ctx: LayerContext) => {
     const choropleth = ctx.choropleth ?? ctx.drillState?.choropleth;
-    if (!choropleth) return null;
+    if (!choropleth || readDiag().nohatch) return null;
     const { features, activeWojTeryt, activePowTeryt, isInScope } = resolveScope(ctx, choropleth);
     const data = noDataData(features, choropleth.classByTeryt, choropleth.level, activeWojTeryt, activePowTeryt, isInScope);
     if (!data) return null;
@@ -247,6 +248,7 @@ export const choroplethNoDataLayerFactory: LayerFactory = {
 export const selectedOutlineLayerFactory: LayerFactory = {
   id: 'selected-outline-layer',
   create: (ctx: LayerContext) => {
+    if (readDiag().nooutline) return null;
     const compareParam = (ctx.drillState as any)?.c ?? (typeof window !== 'undefined' ? readUrlState(window.location.search).c : null);
     const terytsToOutline: string[] = [];
 
