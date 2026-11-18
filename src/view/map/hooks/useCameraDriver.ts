@@ -5,6 +5,7 @@ import {
   type DriverMap,
 } from "../../../core/map/camera-driver";
 import type { ViewState } from "../../../core/map/view";
+import { useReducedMotion } from "./useReducedMotion";
 
 type Options = {
   map: DriverMap | null;
@@ -12,9 +13,24 @@ type Options = {
   onEnd?: () => void;
 };
 
+/** Przy ograniczonym ruchu retarget (np. cofnięcie w locie) to skok, nie jazda. */
+export function withReducedMotion(
+  driver: CameraDriver,
+  isReduced: () => boolean,
+): CameraDriver {
+  return {
+    ...driver,
+    retarget(to) {
+      if (!isReduced()) return driver.retarget(to);
+      driver.start({ from: driver.getCurrent(), to, durationMs: 0 });
+    },
+  };
+}
+
 /** Zwraca sterownik kamery (jeden rAF, bez stanu Reacta) albo null przed mapą. */
 export function useCameraDriver({ map, onFrame, onEnd }: Options) {
   const driverRef = useRef<CameraDriver | null>(null);
+  const reducedRef = useReducedMotion();
   const cbRef = useRef({ onFrame, onEnd });
 
   useEffect(() => {
@@ -35,12 +51,12 @@ export function useCameraDriver({ map, onFrame, onEnd }: Options) {
       onFrame: (v) => cbRef.current.onFrame?.(v),
       onEnd: () => cbRef.current.onEnd?.(),
     });
-    driverRef.current = driver;
+    driverRef.current = withReducedMotion(driver, () => reducedRef.current);
     return () => {
       driver.cancel();
       driverRef.current = null;
     };
-  }, [map]);
+  }, [map, reducedRef]);
 
   return driverRef;
 }
