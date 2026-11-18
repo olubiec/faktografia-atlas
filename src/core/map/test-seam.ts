@@ -23,6 +23,8 @@ export type AtlasState = {
     latitude: number;
     zoom: number;
   };
+  /** Widok faktycznie ustawiony w mapie (nie plan kamery); undefined, zanim mapa powstanie. */
+  mapView?: { longitude: number; latitude: number; zoom: number };
   theme: 'light' | 'dark';
   choropleth: ChoroplethSeamState;
   profileOpen: boolean;
@@ -64,6 +66,7 @@ export function installAtlasSeam(
         layers: [...state.layers],
         selected: state.selected,
         viewState: { ...state.viewState },
+        mapView: state.mapView ? { ...state.mapView } : undefined,
         theme: state.theme,
         choropleth: state.choropleth ? { ...state.choropleth } : null,
         profileOpen: state.profileOpen,

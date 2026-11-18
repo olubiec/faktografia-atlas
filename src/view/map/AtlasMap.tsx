@@ -49,6 +49,10 @@ if (typeof maplibregl.setWorkerCount === 'function') {
   maplibregl.setWorkerCount(0);
 }
 
+// Telefony mają devicePixelRatio 3; ponad 2 to koszt GPU bez widocznej różnicy.
+const MAX_PIXEL_RATIO = 2;
+const pixelRatio = typeof window === 'undefined' ? 1 : Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO);
+
 function DeckGLOverlay(props: MapboxOverlayProps) {
   const overlay = useControl<MapboxOverlay>(() => new MapboxOverlay(props));
   overlay.setProps(props);
@@ -266,6 +270,9 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       layers: layers.map((layer) => layer.id),
       selected: compareParam ?? drillState.selected,
       viewState: currentViewStateRef.current,
+      mapView: mapRef.current
+        ? { longitude: mapRef.current.getCenter().lng, latitude: mapRef.current.getCenter().lat, zoom: mapRef.current.getZoom() }
+        : undefined,
       theme,
       choropleth: choroplethData
         ? {
@@ -277,7 +284,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
         : null,
       profileOpen,
     };
-  }, [isReady, selectedTeryt, layers, unitIndex, drillState.selected, theme, choroplethData, profileOpen, currentViewStateRef]);
+  }, [isReady, selectedTeryt, layers, unitIndex, drillState.selected, theme, choroplethData, profileOpen, currentViewStateRef, mapRef]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -387,12 +394,13 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
           onLoad={(evt) => {
             configureWheel(evt.target);
             evt.target.touchZoomRotate.disableRotation();
-            syncMap();
+            syncMap(evt.target);
             setIsReady(true);
           }}
           attributionControl={false}
+          pixelRatio={pixelRatio}
         >
-          <DeckGLOverlay layers={layers} />
+          <DeckGLOverlay layers={layers} useDevicePixels={pixelRatio} />
         </Map>
 
         {!isMobile && hover && hoverUnit && (
