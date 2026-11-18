@@ -40,4 +40,14 @@ describe('resolveFillTransition (W20-CN01)', () => {
     resolveFillTransition('woj', 300);
     expect(getFillTransitionState()).toEqual({ ms: 300, dataKey: 'woj' });
   });
+
+  it('revealRunning wyłącza przejście, także gdy klucz bez zmian (W20-CN02)', () => {
+    resolveFillTransition('woj', 300);
+    expect(resolveFillTransition('woj', 300, { revealRunning: true }).ms).toBe(0);
+  });
+
+  it('revealRunning: false działa jak w CN01 (W20-CN02)', () => {
+    resolveFillTransition('woj', 300);
+    expect(resolveFillTransition('woj', 300, { revealRunning: false }).ms).toBe(300);
+  });
 });

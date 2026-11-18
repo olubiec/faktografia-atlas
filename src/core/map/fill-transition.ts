@@ -5,11 +5,15 @@
 let lastKey: string | null = null;
 let lastMs = 0;
 
-/** Zwraca czas przejścia: 0 przy pierwszym wywołaniu i zmianie klucza, inaczej baseMs. */
-export function resolveFillTransition(dataKey: string, baseMs: number): { ms: number; changed: boolean } {
+/** Zwraca czas przejścia: 0 przy pierwszym wywołaniu, zmianie klucza i w trakcie reveal, inaczej baseMs. */
+export function resolveFillTransition(
+  dataKey: string,
+  baseMs: number,
+  opts: { revealRunning?: boolean } = {},
+): { ms: number; changed: boolean } {
   const changed = lastKey !== dataKey;
   lastKey = dataKey;
-  lastMs = changed ? 0 : baseMs;
+  lastMs = changed || opts.revealRunning ? 0 : baseMs;
   return { ms: lastMs, changed };
 }
 

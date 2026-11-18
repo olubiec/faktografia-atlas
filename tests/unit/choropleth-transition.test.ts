@@ -56,3 +56,23 @@ describe('przejście koloru choropleth (W20-CN01)', () => {
     expect(ms('pow', { '1201': 1 })).toBe(0);
   });
 });
+
+describe('przejście koloru podczas reveal (W20-CN02)', () => {
+  beforeEach(() => {
+    resetFillTransition();
+    mockReduced(false);
+  });
+  afterEach(() => vi.unstubAllGlobals());
+
+  const withReveal = (reveal: { running: boolean; progress: number }) => {
+    const ctx = ctxWith('woj', { '12': 1 }) as any;
+    ctx.choropleth.reveal = reveal;
+    return (choroplethLayerFactory.create(ctx) as any).props.transitions.getFillColor;
+  };
+
+  it('reveal w toku: 0 ms, po zakończeniu: czas z tokenu', () => {
+    withReveal({ running: false, progress: 1 });
+    expect(withReveal({ running: true, progress: 0.4 })).toBe(0);
+    expect(withReveal({ running: false, progress: 1 })).toBe(BASE);
+  });
+});

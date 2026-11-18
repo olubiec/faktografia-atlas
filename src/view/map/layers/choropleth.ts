@@ -116,7 +116,7 @@ export const choroplethLayerFactory: LayerFactory = {
       id: 'choropleth-layer',
       transitions: {
         // Zestaw cech zależy tylko od poziomu (zakres filtruje kolor, nie dane).
-        getFillColor: resolveFillTransition(choropleth.level, transitionDuration).ms,
+        getFillColor: resolveFillTransition(choropleth.level, transitionDuration, { revealRunning: choropleth.reveal?.running ?? false }).ms,
       },
       data: features,
       filled: true,
