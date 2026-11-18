@@ -4,7 +4,6 @@ import type { ClassificationScheme, ClassifyResult } from '@/core/map/classes';
 import { buildChoropleth } from '@/core/map/choropleth';
 import type { MainView } from './useMainView';
 import { revealPlan, type RevealResult } from '@/core/map/reveal';
-import { readUrlState } from '@/core/url/state';
 import tokensJson from '../../../../config/tokens.json';
 
 export type RevealState = {
@@ -45,34 +44,13 @@ function setGlobalRevealState(state: RevealState) {
  */
 export function useChoropleth(
   view: Pick<MainView, 'indicator' | 'values' | 'year' | 'level'>,
-  units: Unit[]
+  units: Unit[],
+  // Wybrana jednostka z useMapSelection: jedyne źródło zakresu (bez odczytu adresu).
+  selectedTeryt: string | null = null
 ): ChoroplethData | null {
   const { indicator, values, year, level } = view;
 
   const [revealState, setRevealState] = useState<RevealState>({ running: false, progress: 1 });
-
-  // Śledzenie TERYT wybranej jednostki z URL
-  const [selectedTeryt, setSelectedTeryt] = useState<string | null>(() => {
-    if (typeof window === 'undefined') return null;
-    return readUrlState(window.location.search).u ?? null;
-  });
-
-  useEffect(() => {
-    const updateSelected = () => {
-      const u = readUrlState(window.location.search).u ?? null;
-      setSelectedTeryt(u);
-    };
-
-    window.addEventListener('popstate', updateSelected);
-    window.addEventListener('hashchange', updateSelected);
-
-    const timer = setInterval(updateSelected, 100);
-    return () => {
-      window.removeEventListener('popstate', updateSelected);
-      window.removeEventListener('hashchange', updateSelected);
-      clearInterval(timer);
-    };
-  }, []);
 
   const activeWojTeryt = useMemo(() => {
     if (!selectedTeryt) return null;
