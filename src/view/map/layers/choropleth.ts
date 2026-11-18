@@ -7,6 +7,7 @@ import { getNoDataPatternProps } from './no-data-pattern';
 import type { Feature } from 'geojson';
 import { readUrlState } from '@/core/url/state';
 import tokensJson from '../../../../config/tokens.json';
+import { outlineOpacityFor } from '@/core/map/outline-visibility';
 
 /**
  * Odczytuje kolor z aktualnych zmiennych CSS tokenu (np. --seq-1, --div-3, --no-data)
@@ -213,10 +214,38 @@ export const choroplethNoDataLayerFactory: LayerFactory = {
   },
 };
 
-/** Czerwony obrys wybranej jednostki lub porównywanych jednostek (STYL.md: korekta); nie zasłania koloru wypełnienia. */
+/** Kontekst obrysu: zoom bierze z `viewState`, szerokość mapy i ruch ograniczony podaje wywołujący. */
+export type OutlineLayerContext = LayerContext & {
+  /** Szerokość mapy w px; brak = obrys bez wygaszania (jak dotąd). */
+  mapWidthPx?: number;
+  /** Brak podanej wartości = odczyt `prefers-reduced-motion` (jak w warstwie miejscowości). */
+  reducedMotion?: boolean;
+};
+
+/** Szerokość bbox (stopnie) sumy geometrii. */
+function featuresBboxWidthDeg(features: Feature[]): number {
+  let west = Infinity;
+  let east = -Infinity;
+  const walk = (c: unknown): void => {
+    if (Array.isArray(c) && typeof c[0] === 'number') {
+      west = Math.min(west, c[0]);
+      east = Math.max(east, c[0]);
+    } else if (Array.isArray(c)) c.forEach(walk);
+  };
+  for (const f of features) walk((f.geometry as { coordinates?: unknown } | null)?.coordinates);
+  return east >= west ? east - west : 0;
+}
+
+/**
+ * Czerwony obrys wybranej jednostki lub porównywanych jednostek (STYL.md: korekta); nie zasłania koloru wypełnienia.
+ * Przejście `getLineColor` w deck.gl uruchamia się samo przy zmianie wartości akcesora (porównanie propsów), więc
+ * wystarczy nowa tablica koloru; `updateTriggers` służy tylko do odświeżenia przy zmianie danych wejściowych.
+ * Alfa wynika z `outlineOpacityFor` (QC301); czas 300 ms to `motion.base` z tokenów, przy ograniczonym ruchu 0.
+ */
 export const selectedOutlineLayerFactory: LayerFactory = {
   id: 'selected-outline-layer',
-  create: (ctx: LayerContext) => {
+  create: (rawCtx: LayerContext) => {
+    const ctx = rawCtx as OutlineLayerContext;
     const compareParam = (ctx.drillState as any)?.c ?? (typeof window !== 'undefined' ? readUrlState(window.location.search).c : null);
     const terytsToOutline: string[] = [];
 
@@ -243,17 +272,23 @@ export const selectedOutlineLayerFactory: LayerFactory = {
 
     if (foundFeatures.length === 0) return null;
 
+    const opacity = ctx.mapWidthPx ? outlineOpacityFor(featuresBboxWidthDeg(foundFeatures), ctx.viewState?.zoom ?? 0, ctx.mapWidthPx) : 1;
+    const [r, g, b, a = 255] = ctx.colors.korekta ?? ctx.colors.tusz;
+    const lineColor: [number, number, number, number] = [r, g, b, Math.round(opacity * a)];
+    const reducedMotion = ctx.reducedMotion ?? (typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+
     return new GeoJsonLayer({
       id: 'selected-outline-layer',
       data: { type: 'FeatureCollection', features: foundFeatures } as FeatureCollection,
       filled: false,
       stroked: true,
-      getLineColor: ctx.colors.korekta ?? ctx.colors.tusz,
+      getLineColor: lineColor,
+      transitions: { getLineColor: reducedMotion ? 0 : tokensJson.motion.base },
       getLineWidth: 3,
       lineWidthUnits: 'pixels',
       pickable: false,
       updateTriggers: {
-        getLineColor: [ctx.colors.korekta, ctx.colors.tusz],
+        getLineColor: [ctx.colors.korekta, ctx.colors.tusz, lineColor[3]],
         data: [terytsToOutline.join(',')],
       },
     });
