@@ -1,4 +1,5 @@
 # QC406 – Strażnik: przy `prefers-reduced-motion` każdy ruch mapy kończy się w jednej klatce
+> **KOREKTA 18.11.2026:** zadanie przeniesione z fali 4 do fali 5 (po QC403 i QC404). Obejmuje także ruchy z `W3-PM10`.
 Cel: Test e2e pilnujący, że wszystkie animacje z QC402–QC405 są wyłączane u osób, które o to proszą.
 Zmieniaj: tests/e2e/q-reduced-motion-map.spec.ts
 Wymagane: tests/e2e/q-reduced-motion-map.spec.ts

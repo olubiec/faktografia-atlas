@@ -1,4 +1,5 @@
 # QC403 – Przyciski „+ / −” na mapie (płynne przybliżenie ok. 300 ms)
+> **KOREKTA 18.11.2026:** zadanie przeniesione z fali 3 do fali 4 (po `W3-PM10`, które przepisuje te same pliki ekranu). Użyj `useImperativeCamera` (PM02) i `zoomStepTarget` zamiast własnej animacji; numery linii z raportu QC401 są nieaktualne – czytaj kod po PM10. **[CZEKA NA ZGODĘ D4]**
 Cel: Widoczne przyciski przybliż/oddal, które działają płynnie, mają 44 px i etykiety.
 Zmieniaj: src/view/map/ZoomButtons.tsx, src/view/map/AtlasMap.tsx, tests/unit/zoom-buttons.test.tsx
 Wymagane: tests/unit/zoom-buttons.test.tsx

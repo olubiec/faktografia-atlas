@@ -1,4 +1,5 @@
 # QC505 – Okno „+ Dodaj wskaźnik” (zakładki „Szukaj” i „Kategorie”)
+> **KOREKTA 18.11.2026:** [FIX4] (okno dodawania wskaźników po kategoriach, gałąź `claude/fix4-picker-zoom`) może już zawierać zakładki/kategorie. Przed startem przeczytaj, co FIX4 scalił; jeśli okno jest gotowe, zmień zakres na „wpięcie istniejącego okna w panel mapy, bibliotekę i eksport” i **zatrzymaj się z pytaniem w PR**, zamiast dublować komponent.
 Cel: Użytkownik dodaje do „Moich wskaźników” dowolny wskaźnik z danymi – wyszukiwarką albo przeglądając kategorie.
 Zmieniaj: src/view/my-indicators/AddIndicatorDialog.tsx, tests/unit/add-indicator-dialog.test.tsx
 Wymagane: tests/unit/add-indicator-dialog.test.tsx

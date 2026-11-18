@@ -1,4 +1,5 @@
 # QC503 – Wspólny stan „Moich wskaźników” w Reakcie (jeden stan dla całej strony)
+> **KOREKTA 18.11.2026:** hook `useMyIndicators` **już istnieje** w `src/view/hooks/useMyIndicators.ts` ([FIX3], a `W2-PX01` dodaje do niego `move`). Zamiast tworzyć `src/view/my-indicators/useMyIndicators.ts`, rozbuduj ten plik do wspólnego stanu (jeden magazyn, odświeżanie przez zdarzenie `storage`), zachowując API `{ list, add, remove, reset, move }` i istniejący `ProfileIndicatorList`. W „Zmieniaj” zamień ścieżki odpowiednio (testy: `tests/unit/use-my-indicators.test.tsx`).
 Cel: Hook `useMyIndicators` – wszystkie komponenty widzą tę samą listę, a zmiana w innej karcie przeglądarki ją odświeża.
 Zmieniaj: src/view/my-indicators/useMyIndicators.ts, tests/unit/use-my-indicators.test.tsx
 Wymagane: tests/unit/use-my-indicators.test.tsx
