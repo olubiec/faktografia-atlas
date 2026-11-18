@@ -1,57 +1,21 @@
 import { GeoJsonLayer } from '@deck.gl/layers';
 import type { FeatureCollection } from 'geojson';
 import type { LayerFactory, LayerContext } from './admin';
-import { loadGeoData, parseCssColor } from './admin';
-import { classColorToken, type ClassifyResult } from '@/core/map/classes';
+import { loadGeoData } from './admin';
+import { makeFillColorGetter, resolveTokenColor } from './choropleth-color';
 import { getNoDataPatternProps } from './no-data-pattern';
 import type { Feature } from 'geojson';
+import { memoLast } from '@/core/map/memo-last';
+import { noteFillLayer } from '@/core/map/fill-transition';
+import { createColorMemory } from '@/core/map/fill-blend';
+import { readDiag } from '@/core/map/diag';
 import { readUrlState } from '@/core/url/state';
 import tokensJson from '../../../../config/tokens.json';
 import { outlineOpacityFor } from '@/core/map/outline-visibility';
 
-/**
- * Odczytuje kolor z aktualnych zmiennych CSS tokenu (np. --seq-1, --div-3, --no-data)
- * lub z pliku zapasowego config/tokens.json dla podanego motywu.
- */
-export function resolveTokenColor(
-  token: string,
-  theme: 'light' | 'dark' = 'light'
-): [number, number, number, number] {
-  if (typeof window !== 'undefined') {
-    const style = getComputedStyle(document.documentElement);
-    const val = style.getPropertyValue(token)?.trim();
-    if (val) {
-      const parsed = parseCssColor(val);
-      if (parsed) return parsed;
-    }
-  }
+export { resolveTokenColor };
 
-  const isDark = theme === 'dark';
-  let hex: string | undefined;
-
-  if (token === '--no-data') {
-    hex = tokensJson.data.noData[isDark ? 'dark' : 'light'];
-  } else if (token.startsWith('--seq-')) {
-    const idx = parseInt(token.slice(6), 10) - 1;
-    const seq = tokensJson.data.sequential[isDark ? 'dark' : 'light'];
-    hex = seq[idx] ?? seq[0];
-  } else if (token.startsWith('--div-')) {
-    const idx = parseInt(token.slice(6), 10) - 1;
-    const div = tokensJson.data.diverging[isDark ? 'dark' : 'light'];
-    hex = div[idx] ?? div[0];
-  }
-
-  if (hex) {
-    const parsed = parseCssColor(hex);
-    if (parsed) return parsed;
-  }
-
-  const fallback = parseCssColor(tokensJson.color.light.arkusz);
-  if (!fallback) {
-    throw new Error('Nieprawidłowy token koloru arkusz w config/tokens.json');
-  }
-  return fallback;
-}
+const colorMemory = createColorMemory();
 
 type Choropleth = NonNullable<LayerContext['choropleth']>;
 
@@ -89,57 +53,23 @@ export const choroplethLayerFactory: LayerFactory = {
 
     const { features, activeWojTeryt, activePowTeryt, isInScope } = resolveScope(ctx, choropleth);
 
-    // Kolory klas liczymy raz na warstwę, a nie osobno dla każdej z tysięcy jednostek.
-    const palette = new Map<string, [number, number, number, number]>();
-    const colorOf = (cls: ClassifyResult) => {
-      const token = classColorToken(cls, choropleth.classes, choropleth.scheme);
-      let color = palette.get(token);
-      if (!color) {
-        color = resolveTokenColor(token);
-        palette.set(token, color);
-      }
-      return color;
-    };
-    const lineColor = resolveTokenColor('--linia');
-
-    const progress = choropleth.reveal?.progress ?? 1;
-    const running = choropleth.reveal?.running ?? false;
-    const totalDuration = tokensJson.motion.revealTotal ?? 900;
-    const elapsed = progress * totalDuration;
-
     const isReduced =
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const transitionDuration = isReduced ? 0 : tokensJson.motion.base ?? 300;
+    const getFillColor = makeFillColorGetter({
+      choropleth,
+      isInScope,
+      memory: colorMemory,
+      reduced: isReduced || readDiag().notrans,
+    });
 
-    return new GeoJsonLayer({
+    // Bez `transitions`: przejścia GPU parują wierzchołki po indeksie i dają wachlarze.
+    const layer = new GeoJsonLayer({
       id: 'choropleth-layer',
-      transitions: {
-        getFillColor: transitionDuration,
-      },
       data: features,
       filled: true,
       stroked: true,
-      getFillColor: (f: any) => {
-        const teryt = f.properties?.teryt;
-        const cls = teryt ? choropleth.classByTeryt[teryt] ?? 'no-data' : 'no-data';
-        const fullColor = cls === 'no-data' ? lineColor : colorOf(cls);
-
-        // Reszta kraju (poza aktywnym zakresem): wyblakły kolor tła
-        if (!isInScope(teryt)) {
-          return [fullColor[0], fullColor[1], fullColor[2], 64];
-        }
-
-        // Jednostki w aktywnym zakresie: animowane pojawianie się po kolei
-        if (running && progress < 1) {
-          const res = teryt ? choropleth.revealResults?.get(teryt) : undefined;
-          if (res && elapsed < res.delay) {
-            return [fullColor[0], fullColor[1], fullColor[2], 64];
-          }
-        }
-
-        return fullColor;
-      },
+      getFillColor,
       getLineColor: ctx.colors.kalka,
       getLineWidth: 1.2,
       lineWidthUnits: 'pixels',
@@ -172,7 +102,8 @@ export const choroplethLayerFactory: LayerFactory = {
           choropleth.classByTeryt,
           choropleth.reveal?.progress,
           choropleth.reveal?.running,
-          choropleth.classByTeryt,
+          choropleth.blend?.progress,
+          choropleth.blend?.running,
           activeWojTeryt,
           activePowTeryt,
           ctx.colors,
@@ -180,8 +111,41 @@ export const choroplethLayerFactory: LayerFactory = {
         getLineColor: [ctx.colors.kalka],
       },
     });
+    noteFillLayer('choropleth-layer', choropleth.level, layer.props.transitions as Record<string, unknown> | undefined);
+    return layer;
   },
 };
+
+/**
+ * Dane warstwy „brak danych” liczone raz na zestaw wejść: stała referencja `data` między
+ * wywołaniami fabryki oszczędza deckowi ponowne tesselowanie i wysyłkę buforów na GPU.
+ */
+const noDataData = memoLast(
+  (features: FeatureCollection, classByTeryt: Record<string, string | number>, _level: string, _woj: string | null, _pow: string | null, isInScope: (teryt: string | null | undefined) => boolean): FeatureCollection | null => {
+    const noData = features.features.filter((f: Feature) => {
+      const teryt = f.properties?.teryt;
+      if (!isInScope(teryt)) return false;
+      return (classByTeryt[teryt] ?? 'no-data') === 'no-data';
+    });
+    return noData.length === 0 ? null : ({ type: 'FeatureCollection', features: noData } as FeatureCollection);
+  },
+  // Klucz bez `isInScope` (nowa funkcja co wywołanie): zakres wynika z poziomu i aktywnych TERYT.
+  (a, b) => a.slice(0, 5).every((x, i) => x === b[i]),
+);
+
+/** Dane obrysu wybranej jednostki: ta sama referencja, dopóki zestaw TERYT i dane geo są te same. */
+const outlineData = memoLast(
+  (_key: string, terytsToOutline: string[], wojFeatures: FeatureCollection, powFeatures: FeatureCollection, gmiFeatures: FeatureCollection): FeatureCollection | null => {
+    const found = terytsToOutline
+      .map((teryt) => {
+        const pool = teryt.length <= 2 ? wojFeatures : teryt.length <= 4 ? powFeatures : gmiFeatures;
+        return pool.features.find((f) => f.properties?.teryt === teryt);
+      })
+      .filter((f): f is NonNullable<typeof f> => f != null);
+    return found.length === 0 ? null : ({ type: 'FeatureCollection', features: found } as FeatureCollection);
+  },
+  (a, b) => a[0] === b[0] && a[2] === b[2] && a[3] === b[3] && a[4] === b[4],
+);
 
 /**
  * Kreskowanie „brak danych” jako osobna warstwa tylko z takimi cechami w zakresie.
@@ -192,19 +156,15 @@ export const choroplethNoDataLayerFactory: LayerFactory = {
   id: 'choropleth-nodata-layer',
   create: (ctx: LayerContext) => {
     const choropleth = ctx.choropleth ?? ctx.drillState?.choropleth;
-    if (!choropleth) return null;
-    const { features, isInScope } = resolveScope(ctx, choropleth);
-    const noData = features.features.filter((f: Feature) => {
-      const teryt = f.properties?.teryt;
-      if (!isInScope(teryt)) return false;
-      return (choropleth.classByTeryt[teryt] ?? 'no-data') === 'no-data';
-    });
-    if (noData.length === 0) return null;
+    if (!choropleth || readDiag().nohatch) return null;
+    const { features, activeWojTeryt, activePowTeryt, isInScope } = resolveScope(ctx, choropleth);
+    const data = noDataData(features, choropleth.classByTeryt, choropleth.level, activeWojTeryt, activePowTeryt, isInScope);
+    if (!data) return null;
     const lineColor = resolveTokenColor('--linia');
     return new GeoJsonLayer({
       ...getNoDataPatternProps(choropleth.classByTeryt),
       id: 'choropleth-nodata-layer',
-      data: { type: 'FeatureCollection', features: noData } as FeatureCollection,
+      data,
       filled: true,
       stroked: false,
       pickable: false,
@@ -246,6 +206,7 @@ export const selectedOutlineLayerFactory: LayerFactory = {
   id: 'selected-outline-layer',
   create: (rawCtx: LayerContext) => {
     const ctx = rawCtx as OutlineLayerContext;
+    if (readDiag().nooutline) return null;
     const compareParam = (ctx.drillState as any)?.c ?? (typeof window !== 'undefined' ? readUrlState(window.location.search).c : null);
     const terytsToOutline: string[] = [];
 
@@ -263,23 +224,17 @@ export const selectedOutlineLayerFactory: LayerFactory = {
     if (terytsToOutline.length === 0) return null;
 
     const { wojFeatures, powFeatures, gmiFeatures } = loadGeoData(ctx.topoData);
-    const foundFeatures = terytsToOutline
-      .map((teryt) => {
-        const pool = teryt.length <= 2 ? wojFeatures : teryt.length <= 4 ? powFeatures : gmiFeatures;
-        return pool.features.find((f) => f.properties?.teryt === teryt);
-      })
-      .filter((f): f is NonNullable<typeof f> => f != null);
+    const data = outlineData(terytsToOutline.join(','), terytsToOutline, wojFeatures, powFeatures, gmiFeatures);
+    if (!data) return null;
 
-    if (foundFeatures.length === 0) return null;
-
-    const opacity = ctx.mapWidthPx ? outlineOpacityFor(featuresBboxWidthDeg(foundFeatures), ctx.viewState?.zoom ?? 0, ctx.mapWidthPx) : 1;
+    const opacity = ctx.mapWidthPx ? outlineOpacityFor(featuresBboxWidthDeg(data.features), ctx.viewState?.zoom ?? 0, ctx.mapWidthPx) : 1;
     const [r, g, b, a = 255] = ctx.colors.korekta ?? ctx.colors.tusz;
     const lineColor: [number, number, number, number] = [r, g, b, Math.round(opacity * a)];
     const reducedMotion = ctx.reducedMotion ?? (typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
 
     return new GeoJsonLayer({
       id: 'selected-outline-layer',
-      data: { type: 'FeatureCollection', features: foundFeatures } as FeatureCollection,
+      data,
       filled: false,
       stroked: true,
       getLineColor: lineColor,
