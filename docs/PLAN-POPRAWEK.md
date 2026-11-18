@@ -2,6 +2,18 @@
 
 Dokument planisty. Nie zmienia kodu strony. Źródła: stan `main` (0021a6e, po [FIX3] #479), raport `docs/research/q-c401-ruch-mapy.md`, plan Q (`tasks/poczekalnia/PLAN-UWAGI-17-11.md`, prompty w `tasks/poczekalnia/Q/`), przebiegi GitHub Actions i gałęzie `data/nightly`, `data/library` sprawdzone 18.11.2026 (05:30 UTC). Zadania nowe: `tasks/poczekalnia/W<N>-<ID>-*.md` (23 pliki). Zadania planu Q zostają w `tasks/poczekalnia/Q/` (kilka ma dopisaną „KOREKTĘ”, patrz §9).
 
+## 0. Status wykonania (18.11.2026, `main` = f22ee8c)
+| Status | Pozycja | Szczegóły |
+|---|---|---|
+| ✅ | PLAN #480, FIX3 #479, FIX4 #485, FIX5 #481 | scalone; założenia §2 o zakresie FIX4/FIX5 sprawdzone przy starcie Q2 (do weryfikacji) |
+| ✅ | P1 = W19 PF01–PF09 | #489 (PF01), #487 (PF02), #488 (PF03), #482 (PF04), #483 (PF05), #484 (PF06), #486 (PF07), #490 (PF08), #491 (PF09) |
+| ✅ | Dane #451 | wartości BDL na main (40c3f27); czerwony gitleaks i wynik „Fetch data” #31 – do weryfikacji |
+| ✅ | FIX6 (A–I) | #493–#502 – zrealizowało większość celu PM02/PM10 (kamera imperatywna, bez stanu Reacta); zakres PM02, PM10, QC402, QC403–QC405 i PM13 przed startem fal W2–W5 **do weryfikacji** pod kątem duplikacji |
+| 🔶 | FIX7 (#503) | startowy widok mapy; CI czerwone (testy dotykowe) |
+| ⬜ | Q2–Q7, PX02 (D3), reduced motion `scrollZoom`/`dragPan`, wskaźniki biblioteki w UI, skrypt GUS, 155 + 375, odświeżenie STAN.md (D10) | patrz `docs/STATUS-PRZERWANE.md` |
+| ⬜ | PM20 (pomiar „po”) | częściowo zastąpiony tabelą „po” z FIX6G (SwiftShader); pomiar na telefonie właściciela nadal potrzebny |
+Odnośniki w tekście poniżej do „w toku: FIX4/FIX5” i „PF01 jako przyszłe” są historyczne – obowiązuje ta tabela.
+
 ## 1. Diagnoza
 
 ### 1.1 „Nie wszystkie pobrane wskaźniki są widoczne” i „automat nic nie przyniósł”
