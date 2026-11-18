@@ -5,6 +5,7 @@ import { loadGeoData, parseCssColor } from './admin';
 import { classColorToken, type ClassifyResult } from '@/core/map/classes';
 import { getNoDataPatternProps } from './no-data-pattern';
 import type { Feature } from 'geojson';
+import { memoLast } from '@/core/map/memo-last';
 import { resolveFillTransition } from '@/core/map/fill-transition';
 import { readUrlState } from '@/core/url/state';
 import tokensJson from '../../../../config/tokens.json';
@@ -185,6 +186,37 @@ export const choroplethLayerFactory: LayerFactory = {
 };
 
 /**
+ * Dane warstwy „brak danych” liczone raz na zestaw wejść: stała referencja `data` między
+ * wywołaniami fabryki oszczędza deckowi ponowne tesselowanie i wysyłkę buforów na GPU.
+ */
+const noDataData = memoLast(
+  (features: FeatureCollection, classByTeryt: Record<string, string | number>, _level: string, _woj: string | null, _pow: string | null, isInScope: (teryt: string | null | undefined) => boolean): FeatureCollection | null => {
+    const noData = features.features.filter((f: Feature) => {
+      const teryt = f.properties?.teryt;
+      if (!isInScope(teryt)) return false;
+      return (classByTeryt[teryt] ?? 'no-data') === 'no-data';
+    });
+    return noData.length === 0 ? null : ({ type: 'FeatureCollection', features: noData } as FeatureCollection);
+  },
+  // Klucz bez `isInScope` (nowa funkcja co wywołanie): zakres wynika z poziomu i aktywnych TERYT.
+  (a, b) => a.slice(0, 5).every((x, i) => x === b[i]),
+);
+
+/** Dane obrysu wybranej jednostki: ta sama referencja, dopóki zestaw TERYT i dane geo są te same. */
+const outlineData = memoLast(
+  (_key: string, terytsToOutline: string[], wojFeatures: FeatureCollection, powFeatures: FeatureCollection, gmiFeatures: FeatureCollection): FeatureCollection | null => {
+    const found = terytsToOutline
+      .map((teryt) => {
+        const pool = teryt.length <= 2 ? wojFeatures : teryt.length <= 4 ? powFeatures : gmiFeatures;
+        return pool.features.find((f) => f.properties?.teryt === teryt);
+      })
+      .filter((f): f is NonNullable<typeof f> => f != null);
+    return found.length === 0 ? null : ({ type: 'FeatureCollection', features: found } as FeatureCollection);
+  },
+  (a, b) => a[0] === b[0] && a[2] === b[2] && a[3] === b[3] && a[4] === b[4],
+);
+
+/**
  * Kreskowanie „brak danych” jako osobna warstwa tylko z takimi cechami w zakresie.
  * Wzór procedury (FillStyleExtension) nie dotyka reszty wielokątów, więc przy dużym zbliżeniu
  * nie powstają wachlarze na jednolitych kolorach. Warstwa kolorów rysuje te cechy pod spodem.
@@ -194,18 +226,14 @@ export const choroplethNoDataLayerFactory: LayerFactory = {
   create: (ctx: LayerContext) => {
     const choropleth = ctx.choropleth ?? ctx.drillState?.choropleth;
     if (!choropleth) return null;
-    const { features, isInScope } = resolveScope(ctx, choropleth);
-    const noData = features.features.filter((f: Feature) => {
-      const teryt = f.properties?.teryt;
-      if (!isInScope(teryt)) return false;
-      return (choropleth.classByTeryt[teryt] ?? 'no-data') === 'no-data';
-    });
-    if (noData.length === 0) return null;
+    const { features, activeWojTeryt, activePowTeryt, isInScope } = resolveScope(ctx, choropleth);
+    const data = noDataData(features, choropleth.classByTeryt, choropleth.level, activeWojTeryt, activePowTeryt, isInScope);
+    if (!data) return null;
     const lineColor = resolveTokenColor('--linia');
     return new GeoJsonLayer({
       ...getNoDataPatternProps(choropleth.classByTeryt),
       id: 'choropleth-nodata-layer',
-      data: { type: 'FeatureCollection', features: noData } as FeatureCollection,
+      data,
       filled: true,
       stroked: false,
       pickable: false,
@@ -236,18 +264,12 @@ export const selectedOutlineLayerFactory: LayerFactory = {
     if (terytsToOutline.length === 0) return null;
 
     const { wojFeatures, powFeatures, gmiFeatures } = loadGeoData(ctx.topoData);
-    const foundFeatures = terytsToOutline
-      .map((teryt) => {
-        const pool = teryt.length <= 2 ? wojFeatures : teryt.length <= 4 ? powFeatures : gmiFeatures;
-        return pool.features.find((f) => f.properties?.teryt === teryt);
-      })
-      .filter((f): f is NonNullable<typeof f> => f != null);
-
-    if (foundFeatures.length === 0) return null;
+    const data = outlineData(terytsToOutline.join(','), terytsToOutline, wojFeatures, powFeatures, gmiFeatures);
+    if (!data) return null;
 
     return new GeoJsonLayer({
       id: 'selected-outline-layer',
-      data: { type: 'FeatureCollection', features: foundFeatures } as FeatureCollection,
+      data,
       filled: false,
       stroked: true,
       getLineColor: ctx.colors.korekta ?? ctx.colors.tusz,
