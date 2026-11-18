@@ -84,13 +84,6 @@ function getPreparedIndex(index: LibraryIndex): PreparedIndex {
     }
   }
 
-  for (let i = 0; i < vars.length; i++) {
-    const v = vars[i];
-    if (v.normName === undefined) {
-      v.normName = normalize(v.name);
-    }
-  }
-
   const ancestorsMap = new Map<string, string[]>();
   const subcategoriesMap = new Map<string, Set<string>>();
 
@@ -130,6 +123,12 @@ function getPreparedIndex(index: LibraryIndex): PreparedIndex {
 
   indexCache.set(index, cached);
   return cached;
+}
+
+/** Leniwa normalizacja nazwy: liczona przy pierwszym użyciu frazy, potem z pola `normName`. */
+function getNormName(v: LibraryVariable): string {
+  if (v.normName === undefined) v.normName = normalize(v.name);
+  return v.normName;
 }
 
 /** Pobiera identyfikator kategorii zmiennej. */
@@ -219,7 +218,7 @@ function filterVarsInternal(index: LibraryIndex, query: LibraryQuery, sortResult
 
     // 2. Wyszukiwanie tekstowe
     if (numWords > 0) {
-      const normName = v.normName ?? normalize(v.name);
+      const normName = getNormName(v);
       let matchesText = true;
       for (let w = 0; w < numWords; w++) {
         if (!normName.includes(queryWords[w])) {
@@ -258,8 +257,8 @@ function filterVarsInternal(index: LibraryIndex, query: LibraryQuery, sortResult
   // Sortowanie: początek nazwy wg tekstu, potem alfabetycznie po nazwie
   if (normQuery.length > 0) {
     matched.sort((a, b) => {
-      const aNorm = a.normName ?? normalize(a.name);
-      const bNorm = b.normName ?? normalize(b.name);
+      const aNorm = getNormName(a);
+      const bNorm = getNormName(b);
       const aPrefix = aNorm.startsWith(normQuery);
       const bPrefix = bNorm.startsWith(normQuery);
       if (aPrefix && !bPrefix) return -1;
