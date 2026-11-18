@@ -1,4 +1,5 @@
 # QC402 – Płynne przybliżanie i oddalanie kółkiem myszy i gestem dwóch palców
+> **KOREKTA 18.11.2026 (docs/PLAN-POPRAWEK.md): NIE PUSZCZAĆ.** Treść (naprawa `onMove`, test kółka i palców w trakcie animacji) wchodzi do zadania `W3-PM10-kamera-bez-stanu-reacta.md`, bo oba zadania zmieniają te same pliki ekranu.
 Cel: Jeden ruch kółkiem lub gestem pinch daje wiele pośrednich klatek zoomu (bez skoków).
 Zmieniaj: src/view/map/AtlasMap.tsx, src/view/map/hooks/useMapViewState.ts, tests/e2e/q-zoom-smooth.spec.ts
 Wymagane: tests/e2e/q-zoom-smooth.spec.ts

@@ -1,4 +1,5 @@
 # QC607 – Okno wyboru wskaźnika zawiera grupę „Z biblioteki GUS”
+> **KOREKTA 18.11.2026:** biblioteka ma 1773 pobrane wskaźniki (nie ok. 100). Grupa „Z biblioteki GUS” w pickerze nie może renderować wszystkich naraz: pokazuj wyniki wyszukiwania (do 50 + „Pokaż więcej”) albo kategorie; bez nowych pakietów (wirtualizacja `@tanstack/react-virtual` jest w INSPIRACJE.md jako zweryfikowana, ale nie wchodzi bez decyzji). Eksport `searchIndicators` z `src/core/indicators/reachability.ts` (PF02) zastępuje lokalną kopię filtra.
 Cel: W standardowym oknie wskaźników (mapa, rankingi) widać i da się wyszukać pobrane wskaźniki z biblioteki.
 Zmieniaj: src/view/controls/IndicatorPicker.tsx, tests/unit/indicator-picker-library.test.tsx
 Wymagane: tests/unit/indicator-picker-library.test.tsx

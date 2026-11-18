@@ -1,4 +1,5 @@
 # QC611 – Strażnik szybkości: wejście na mapę = granice + jednostki + 1 plik wskaźnika + `available.json`
+> **KOREKTA 18.11.2026:** próg „`available.json` < 50 KB” dotyczy ok. 100 wskaźników; dziś plik ma 1773 pozycje (ok. 538 KB po rozpakowaniu, ok. 27 KB po gzip). Test ma pilnować rozmiaru **po kompresji** (≤ 100 KB, decyzja D7 w docs/PLAN-POPRAWEK.md – do zatwierdzenia) i że wejście nigdy nie pobiera pełnego `index.json`.
 Cel: Test e2e pilnujący progów z PRODUKT §7 po dodaniu wskaźników z biblioteki (nigdy pełny `index.json`, jedno żądanie na dodany wskaźnik).
 Zmieniaj: tests/e2e/q-budgets-library.spec.ts
 Wymagane: tests/e2e/q-budgets-library.spec.ts

@@ -1,4 +1,5 @@
 # QC404 – Wejście w głąb (≈ 600 ms) i „Wróć” (≈ 400 ms) naprawdę widać
+> **KOREKTA 18.11.2026:** zadanie przeniesione z fali 3 do fali 4 (po `W3-PM10`). Numery linii z raportu QC401 są nieaktualne – czytaj kod po PM10. **[CZEKA NA ZGODĘ D4]**
 Cel: Klik w województwo i „Wróć” kończą się płynnym ruchem kamery, a nie skokiem.
 Zmieniaj: src/view/map/hooks/useMapViewState.ts, src/core/map/camera.ts, tests/e2e/q-drill-motion.spec.ts
 Wymagane: tests/e2e/q-drill-motion.spec.ts

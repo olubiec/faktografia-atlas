@@ -1,4 +1,5 @@
 # QC405 – Kafelki wchodzą falą (< 1 s), a kolory przelewają się 300 ms
+> **KOREKTA 18.11.2026: [CZEKA NA ZGODĘ D4]** – zadanie z grupy „animacje mapy czekające na zgodę” (QC402–QC405). Przed startem przeczytaj `docs/research/p-kamera-pomiar-telefon.md` (PF01); nie zmieniaj `useMapViewState.ts`.
 Cel: Wejście w głąb pokazuje jednostki „kafelek po kafelku” (postęp 0→1 w < 1 s), zmiana wskaźnika/roku przelewa kolory 300 ms.
 Zmieniaj: src/view/map/hooks/useChoropleth.ts, tests/e2e/q-reveal-colors.spec.ts
 Wymagane: tests/e2e/q-reveal-colors.spec.ts

@@ -1,4 +1,5 @@
 # QC502 – Zapis „Moich wskaźników” w przeglądarce (bezpieczny odczyt/zapis)
+> **KOREKTA 18.11.2026 (docs/PLAN-POPRAWEK.md): NIE PUSZCZAĆ.** `src/core/my-indicators/storage.ts` i `tests/unit/my-indicators-storage.test.ts` powstały w [FIX3] (#479). Brakujący test klucza prywatności robi `W19-PF06`.
 Cel: Lista przeżywa odświeżenie strony; zepsuty lub niedostępny zapis nigdy nie wywala aplikacji.
 Zmieniaj: src/core/my-indicators/storage.ts, tests/unit/my-indicators-storage.test.ts
 Wymagane: tests/unit/my-indicators-storage.test.ts

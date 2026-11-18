@@ -1,4 +1,5 @@
 # QC603 – Ładowanie spisu pobranych (`available.json`): jedno żądanie, pamięć podręczna, odporność na błędy
+> **KOREKTA 18.11.2026:** prawdziwy `available.json` na gałęzi `data/library` ma dziś 1773 wskaźniki, ok. 538 KB po rozpakowaniu i ok. 27 KB po kompresji gzip; wszystkie mają poziomy tylko `pow`/`gmi` (żaden `woj`). Loader musi to znieść (decyzja D7: próg dotyczy rozmiaru po kompresji). Dodaj do testów wariant z plikiem ok. 2000 pozycji (generowany w teście).
 Cel: Strona dowiaduje się, które wskaźniki biblioteki są pobrane, jednym małym żądaniem i bez ryzyka dla reszty aplikacji.
 Zmieniaj: src/core/indicators/load-available.ts, tests/unit/load-available.test.ts
 Wymagane: tests/unit/load-available.test.ts
