@@ -1,15 +1,32 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
-import { initialViewState, mapLimits, type ViewState } from '@/core/map/view';
+import { initialViewState, mapLimits, type MapLimits, type ViewState } from '@/core/map/view';
 import { loadLocalities } from '@/core/search/load-localities';
 import type { Locality } from '@/core/search/types';
 import { useSheetInset } from '@/view/map/sheetInset';
-import { cameraTransition, type CameraKind } from '@/core/map/camera';
-import { parseCubicBezier } from '@/core/map/ease';
+import type { CameraKind } from '@/core/map/camera';
+import { planCamera } from '@/core/map/camera-plan';
+import type { DriverMap } from '@/core/map/camera-driver';
+import { layersZoomBucket } from '@/core/map/localities-layer';
+import { useCameraDriver } from '@/view/map/hooks/useCameraDriver';
+import type { MapRef } from 'react-map-gl/maplibre';
 
 // Margines (px) wokół dopasowanego obszaru, żeby mapa nie dotykała krawędzi okna.
 const FIT_PADDING = 48;
-// Największy krok postępu animacji na jedną klatkę (min. ok. 5 klatek ruchu).
-const MAX_STEP = 0.2;
+// Tolerancja (stopnie / poziomy zoomu), poniżej której widoki uznajemy za równe.
+const SAME_EPS = 1e-9;
+
+function sameView(a: ViewState, b: ViewState): boolean {
+  return (
+    Math.abs(a.longitude - b.longitude) < SAME_EPS &&
+    Math.abs(a.latitude - b.latitude) < SAME_EPS &&
+    Math.abs(a.zoom - b.zoom) < SAME_EPS
+  );
+}
+
+function readMapView(map: MapRef): ViewState {
+  const c = map.getCenter();
+  return { longitude: c.lng, latitude: c.lat, zoom: map.getZoom() };
+}
 
 type Bbox = [number, number, number, number];
 // Przybliżony obrys Polski; używany tylko, gdy lista jednostek nie jest jeszcze wczytana.
@@ -37,23 +54,31 @@ function viewStateWithInset(
   if (insetPx <= 0) {
     return initialViewState(bounds, Math.max(width - FIT_PADDING, 1), Math.max(height - FIT_PADDING, 1));
   }
+  const baseView = initialViewState(bounds, Math.max(1, width - FIT_PADDING), Math.max(1, height - insetPx - FIT_PADDING));
+  const mShift = insetPx * Math.PI / (512 * Math.pow(2, baseView.zoom));
+  return { longitude: baseView.longitude, latitude: mercatorLatToDeg(mercatorLat(baseView.latitude) - mShift), zoom: baseView.zoom };
+}
 
-  const fitWidth = Math.max(1, width - FIT_PADDING);
-  const fitHeight = Math.max(1, height - insetPx - FIT_PADDING);
-
-  const baseView = initialViewState(bounds, fitWidth, fitHeight);
-
-  const tileSize = 512;
-  const offsetY = insetPx / 2;
-  const mBaseLat = mercatorLat(baseView.latitude);
-  const mShift = (offsetY * 2 * Math.PI) / (tileSize * Math.pow(2, baseView.zoom));
-  const mCamLat = mBaseLat - mShift;
-  const latitude = mercatorLatToDeg(mCamLat);
-
+/**
+ * MapLibre nie pozwala oddalić się dalej, niż mieści maxBounds. Na wysokim ekranie (telefon)
+ * to uniemożliwiałoby dojście do minZoom, więc maxBounds obejmuje też okno widoku przy minZoom.
+ */
+function widenToViewport(l: MapLimits, b: Bbox, { width, height }: { width: number; height: number }): MapLimits {
+  if (width <= 0 || height <= 0) return l;
+  const worldPx = 512 * Math.pow(2, l.minZoom);
+  const halfLon = (width / 2 / worldPx) * 360;
+  const halfMerc = (height / 2 / worldPx) * 2 * Math.PI;
+  const cLon = (b[0] + b[2]) / 2;
+  const cMerc = (mercatorLat(b[1]) + mercatorLat(b[3])) / 2;
+  const [w, s, e, n] = l.maxBounds;
   return {
-    longitude: baseView.longitude,
-    latitude,
-    zoom: baseView.zoom,
+    ...l,
+    maxBounds: [
+      Math.min(w, cLon - halfLon),
+      Math.min(s, mercatorLatToDeg(cMerc - halfMerc)),
+      Math.max(e, cLon + halfLon),
+      Math.max(n, mercatorLatToDeg(cMerc + halfMerc)),
+    ],
   };
 }
 
@@ -73,7 +98,6 @@ export function shiftForLayout(view: ViewState, pendingPx: number): ViewState {
   const degPerPx = 360 / (512 * Math.pow(2, view.zoom));
   return { ...view, longitude: view.longitude - (pendingPx / 2) * degPerPx };
 }
-
 export type CameraSeamState = {
   animating: boolean;
   trace: ViewState[];
@@ -105,15 +129,9 @@ function syncCameraSeam(
     return;
   }
   let trace = currentCameraSeamState.trace;
-  if (action?.type === 'reset') {
-    trace = [{ ...action.view }];
-  } else if (action?.type === 'push') {
-    trace = [...currentCameraSeamState.trace, { ...action.view }];
-  }
-  currentCameraSeamState = {
-    animating,
-    trace,
-  };
+  if (action?.type === 'reset') trace = [{ ...action.view }];
+  else if (action?.type === 'push') trace = [...trace, { ...action.view }];
+  currentCameraSeamState = { animating, trace };
 }
 
 /**
@@ -133,49 +151,112 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
   const fittedKeyRef = useRef<string | null>(null);
   const fittedBboxRef = useRef<string | null>(null);
   const userMovedRef = useRef(false);
-  const animRef = useRef<number | null>(null);
   const isAnimatingRef = useRef(false);
-  // Cel trwającej animacji; zmiana rozmiaru w jej trakcie tylko podmienia cel, nie przerywa ruchu.
-  const animTargetRef = useRef<ViewState | null>(null);
-
+  // Mapa niekontrolowana: kamerą steruje sterownik (jump na klatkę), bez setState.
+  const mapRef = useRef<MapRef>(null);
   const bounds = countryBbox;
   const limits = useMemo(
-    () => mapLimits(bounds, dimensions.width, dimensions.height),
-    [bounds, dimensions.width, dimensions.height]
+    () => widenToViewport(mapLimits(bounds, dimensions.width, dimensions.height), bounds, dimensions),
+    [bounds, dimensions]
   );
 
+  // „Widok spoczynkowy”: stan Reacta zmienia się na koniec ruchu i przy zmianie koszyka warstw, nie na klatkę.
   const [currentViewState, _setCurrentViewState] = useState<ViewState>({
     longitude: 19.145,
     latitude: 51.919,
     zoom: 5.5,
   });
 
+  // Źródło prawdy o bieżącym widoku (także w trakcie animacji i gestu).
   const currentViewStateRef = useRef<ViewState>(currentViewState);
+  const restRef = useRef<ViewState>(currentViewState);
 
-  const setCurrentViewState = useCallback((action: React.SetStateAction<ViewState>) => {
-    _setCurrentViewState((prev) => {
-      const next = typeof action === 'function' ? action(prev) : action;
-      currentViewStateRef.current = next;
-      return next;
-    });
+  const commitRest = useCallback((view: ViewState) => {
+    if (sameView(restRef.current, view)) return;
+    restRef.current = view;
+    _setCurrentViewState(view);
   }, []);
 
-  const markUserMoved = useCallback(() => {
-    if (animRef.current !== null) {
-      cancelAnimationFrame(animRef.current);
-      animRef.current = null;
+  /** Ustawia widok od razu (bez animacji): stan, ref i kamera mapy. */
+  const setCurrentViewState = useCallback(
+    (action: React.SetStateAction<ViewState>) => {
+      const next = typeof action === 'function' ? action(currentViewStateRef.current) : action;
+      currentViewStateRef.current = next;
+      commitRest(next);
+      mapRef.current?.jumpTo({ center: [next.longitude, next.latitude], zoom: next.zoom });
+    },
+    [commitRest]
+  );
+  /** Po załadowaniu mapy: ustawia kamerę, jeśli widok wyznaczono przed jej powstaniem. */
+  const syncMap = useCallback(() => {
+    const map = mapRef.current;
+    const want = currentViewStateRef.current;
+    if (map && !sameView(readMapView(map), want)) {
+      map.jumpTo({ center: [want.longitude, want.latitude], zoom: want.zoom });
     }
+  }, []);
+
+  /** Zapisuje widok z mapy do refa; jeden setState tylko przy przekroczeniu progu koszyka warstw. */
+  const trackView = useCallback(
+    (view: ViewState) => {
+      currentViewStateRef.current = view;
+      if (layersZoomBucket(view.zoom) !== layersZoomBucket(restRef.current.zoom)) commitRest(view);
+    },
+    [commitRest]
+  );
+
+  // Adapter mapy dla sterownika; mapa może jeszcze nie istnieć, wtedy klatki nic nie robią.
+  const driverMap = useMemo<DriverMap>(
+    () => ({
+      jumpTo: (v) => mapRef.current?.jumpTo({ center: [v.longitude, v.latitude], zoom: v.zoom }),
+      getView: () => currentViewStateRef.current,
+      getViewportWidthPx: () => containerRef.current?.clientWidth ?? 0,
+    }),
+    []
+  );
+
+  const driverRef = useCameraDriver({
+    map: driverMap,
+    onFrame: (view) => {
+      trackView(view);
+      syncCameraSeam(true, { type: 'push', view });
+    },
+    onEnd: () => {
+      isAnimatingRef.current = false;
+      const last = currentViewStateRef.current;
+      syncCameraSeam(false, { type: 'push', view: last });
+      commitRest(last);
+    },
+  });
+
+  const markUserMoved = useCallback(() => {
+    driverRef.current?.cancel();
     isAnimatingRef.current = false;
     userMovedRef.current = true;
     syncCameraSeam(false);
-  }, []);
+  }, [driverRef]);
+
+  /** Ruch zgłaszany przez mapę (gest użytkownika albo nasz jump); koniec ruchu zapisuje widok spoczynkowy. */
+  const handleMapMove = useCallback(
+    (view: ViewState, byUser: boolean) => {
+      if (byUser) markUserMoved();
+      trackView(view);
+    },
+    [markUserMoved, trackView]
+  );
+  const handleMapMoveEnd = useCallback(
+    (view: ViewState) => {
+      if (isAnimatingRef.current) return;
+      currentViewStateRef.current = view;
+      commitRest(view);
+    },
+    [commitRest]
+  );
 
   const animateToView = useCallback(
     (targetView: ViewState, kind: CameraKind = 'in', fromOverride?: ViewState) => {
-      if (animRef.current !== null) {
-        cancelAnimationFrame(animRef.current);
-        animRef.current = null;
-      }
+      const driver = driverRef.current;
+      driver?.cancel();
 
       const reducedMotion =
         typeof window !== 'undefined' &&
@@ -184,70 +265,26 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
       const fromView = fromOverride ? { ...fromOverride } : { ...currentViewStateRef.current };
       if (fromOverride) {
         // Punkt startu skorygowany o zmianę układu: ustawiamy go od razu, w tym samym renderze co układ.
-        currentViewStateRef.current = fromView;
         setCurrentViewState(fromView);
       }
-      const { duration, easing } = cameraTransition(fromView, targetView, kind, reducedMotion);
+      const plan = planCamera(fromView, targetView, {
+        viewportWidthPx: containerRef.current?.clientWidth ?? 0,
+        reducedMotion: reducedMotion || kind === 'instant',
+      });
 
-      if (duration <= 0) {
-        userMovedRef.current = false;
+      userMovedRef.current = false;
+      if (plan.durationMs <= 0 || !driver) {
         isAnimatingRef.current = false;
         setCurrentViewState(targetView);
         syncCameraSeam(false, { type: 'push', view: targetView });
         return;
       }
 
-      userMovedRef.current = false;
       isAnimatingRef.current = true;
-      animTargetRef.current = targetView;
       syncCameraSeam(true, { type: 'reset', view: fromView });
-
-      let startTime: number | null = null;
-      let progress = 0;
-      const easeFn = parseCubicBezier(easing);
-
-      const animate = (now: number) => {
-        if (userMovedRef.current) {
-          animRef.current = null;
-          isAnimatingRef.current = false;
-          syncCameraSeam(false);
-          return;
-        }
-
-        if (startTime === null) {
-          startTime = now;
-        }
-
-        const elapsed = now - startTime;
-        const timeProgress = Math.min(1, elapsed / duration);
-        // Postęp wynika z czasu: pierwsza klatka = 0 (bez skoku na starcie), a po zacięciu
-        // strony ruch nie przeskakuje na koniec, tylko rusza w krokach po najwyżej 1/5 drogi.
-        progress = Math.min(timeProgress, progress + MAX_STEP);
-        const finished = progress >= 1;
-        const eased = easeFn(progress);
-
-        const to = animTargetRef.current ?? targetView;
-        const nextView: ViewState = {
-          longitude: fromView.longitude + (to.longitude - fromView.longitude) * eased,
-          latitude: fromView.latitude + (to.latitude - fromView.latitude) * eased,
-          zoom: fromView.zoom + (to.zoom - fromView.zoom) * eased,
-        };
-
-        setCurrentViewState(nextView);
-        syncCameraSeam(!finished, { type: 'push', view: nextView });
-
-        if (!finished) {
-          animRef.current = requestAnimationFrame(animate);
-        } else {
-          animRef.current = null;
-          isAnimatingRef.current = false;
-          syncCameraSeam(false);
-        }
-      };
-
-      animRef.current = requestAnimationFrame(animate);
+      driver.start(plan);
     },
-    [setCurrentViewState]
+    [driverRef, setCurrentViewState]
   );
 
   const updateViewStateForBbox = useCallback(
@@ -304,10 +341,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         const key = JSON.stringify({ bbox: drillBbox ?? null, inset: Math.round(sheetInset), side });
 
         if (localityTargetRef.current) {
-          if (animRef.current !== null) {
-            cancelAnimationFrame(animRef.current);
-            animRef.current = null;
-          }
+          driverRef.current?.cancel();
           isAnimatingRef.current = false;
           syncCameraSeam(false);
           setCurrentViewState(localityTargetRef.current);
@@ -318,10 +352,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         } else if (fittedKeyRef.current === null) {
           const activeBbox = drillBbox ?? bounds;
           const init = viewStateWithInset(activeBbox, fitWidth, clientHeight, sheetInset);
-          if (animRef.current !== null) {
-            cancelAnimationFrame(animRef.current);
-            animRef.current = null;
-          }
+          driverRef.current?.cancel();
           isAnimatingRef.current = false;
           userMovedRef.current = false;
           syncCameraSeam(false);
@@ -348,7 +379,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           if (isAnimatingRef.current) {
             // Zmiana rozmiaru w trakcie animacji (np. otwarcie lub zamknięcie panelu profilu)
             // nie może jej ucinać skokiem: zmieniamy tylko cel, a ruch płynnie go dogania.
-            animTargetRef.current = targetView;
+            driverRef.current?.retarget(targetView);
           } else {
             animateToView(targetView, 'instant');
           }
@@ -364,7 +395,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     return () => {
       resizeObserver.disconnect();
     };
-  }, [animateToView, bounds, drillBbox, setCurrentViewState, sheetInset, sidePanelPx]);
+  }, [animateToView, bounds, drillBbox, driverRef, setCurrentViewState, sheetInset, sidePanelPx]);
 
   // Efekt zależy od progu, nie od zoomu: nie uruchamia się na każdej klatce płynnego zoomu.
   const needsLocalities = currentViewState.zoom >= 8.5;
@@ -382,31 +413,16 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
       const panStep = 0.5 / Math.pow(2, currentViewStateRef.current.zoom - 5);
       const zoomStep = 0.5;
 
-      if (e.key === 'ArrowRight') {
+      const move = (patch: (prev: ViewState) => Partial<ViewState>) => {
         e.preventDefault();
-        setCurrentViewState((prev) => ({ ...prev, longitude: prev.longitude + panStep }));
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        setCurrentViewState((prev) => ({ ...prev, longitude: prev.longitude - panStep }));
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setCurrentViewState((prev) => ({ ...prev, latitude: prev.latitude + panStep }));
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setCurrentViewState((prev) => ({ ...prev, latitude: prev.latitude - panStep }));
-      } else if (e.key === '+' || e.key === '=') {
-        e.preventDefault();
-        setCurrentViewState((prev) => ({
-          ...prev,
-          zoom: Math.min(limits.maxZoom, prev.zoom + zoomStep),
-        }));
-      } else if (e.key === '-') {
-        e.preventDefault();
-        setCurrentViewState((prev) => ({
-          ...prev,
-          zoom: Math.max(limits.minZoom, prev.zoom - zoomStep),
-        }));
-      }
+        setCurrentViewState((prev) => ({ ...prev, ...patch(prev) }));
+      };
+      if (e.key === 'ArrowRight') move((p) => ({ longitude: p.longitude + panStep }));
+      else if (e.key === 'ArrowLeft') move((p) => ({ longitude: p.longitude - panStep }));
+      else if (e.key === 'ArrowUp') move((p) => ({ latitude: p.latitude + panStep }));
+      else if (e.key === 'ArrowDown') move((p) => ({ latitude: p.latitude - panStep }));
+      else if (e.key === '+' || e.key === '=') move((p) => ({ zoom: Math.min(limits.maxZoom, p.zoom + zoomStep) }));
+      else if (e.key === '-') move((p) => ({ zoom: Math.max(limits.minZoom, p.zoom - zoomStep) }));
     },
     [limits.maxZoom, limits.minZoom, markUserMoved, setCurrentViewState]
   );
@@ -425,5 +441,9 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     markUserMoved,
     handleKeyDown,
     isAnimatingRef,
+    mapRef,
+    syncMap,
+    handleMapMove,
+    handleMapMoveEnd,
   };
 }
