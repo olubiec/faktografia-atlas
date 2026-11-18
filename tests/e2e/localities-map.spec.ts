@@ -17,16 +17,16 @@ test.describe('Localities Map Layer & Navigation (CC5.4b)', () => {
     });
   });
 
-  test('loc-layer jest w window.__atlas.layers tylko przy zoomie >= 9', async ({ page }) => {
+  test('loc-layer pojawia się w window.__atlas.layers od zoomu 8,5 i znika poniżej 8,0 (histereza)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
-    // Initial map zoom is ~5.5 (zoom < 9), so loc-layer should NOT be in layers
+    // Initial map zoom is ~5.5 (zoom < 8,5), so loc-layer should NOT be in layers
     const initialLayers = await page.evaluate(() => (window as any).__atlas.layers);
     expect(initialLayers).not.toContain('loc-layer');
 
-    // Zoom in using keyboard '+' until zoom >= 9
+    // Zoom in using keyboard '+' until zoom >= 8.5
     const mapContainer = page.locator('[aria-label="Mapa Polski"]');
     await mapContainer.focus();
 
@@ -34,21 +34,21 @@ test.describe('Localities Map Layer & Navigation (CC5.4b)', () => {
       await page.keyboard.press('+');
       await page.waitForTimeout(100);
       const currentZoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
-      if (currentZoom >= 9) break;
+      if (currentZoom >= 8.5) break;
     }
 
     const currentZoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
-    expect(currentZoom).toBeGreaterThanOrEqual(9);
+    expect(currentZoom).toBeGreaterThanOrEqual(8.5);
 
     const zoomInLayers = await page.evaluate(() => (window as any).__atlas.layers);
     expect(zoomInLayers).toContain('loc-layer');
 
-    // Zoom out using '-' until zoom < 9
+    // Zoom out using '-' until zoom < 8
     for (let i = 0; i < 10; i++) {
       await page.keyboard.press('-');
       await page.waitForTimeout(100);
       const zoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
-      if (zoom < 9) break;
+      if (zoom < 8) break;
     }
 
     const zoomOutLayers = await page.evaluate(() => (window as any).__atlas.layers);
