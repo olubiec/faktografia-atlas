@@ -5,9 +5,16 @@ export interface LibraryFiltersProps {
   index: LibraryIndex;
   query: LibraryQuery;
   onQueryChange: (query: LibraryQuery) => void;
+  /** Czy pokazać przełącznik „Tylko już pobrane” (strona Biblioteka go ukrywa). */
+  showReadyToggle?: boolean;
 }
 
-export function LibraryFilters({ index, query, onQueryChange }: LibraryFiltersProps) {
+export function LibraryFilters({
+  index,
+  query,
+  onQueryChange,
+  showReadyToggle = true,
+}: LibraryFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const matchingVarsForUnits = useMemo(() => {
@@ -25,11 +32,12 @@ export function LibraryFilters({ index, query, onQueryChange }: LibraryFiltersPr
     return Array.from(unitsSet).sort((a, b) => a.localeCompare(b, 'pl', { sensitivity: 'base' }));
   }, [matchingVarsForUnits]);
 
-  const hasActiveFilters = query.level !== null || query.unit !== null || query.onlyReady;
+  const readyActive = showReadyToggle && query.onlyReady;
+  const hasActiveFilters = query.level !== null || query.unit !== null || readyActive;
   const activeCount =
     (query.level !== null ? 1 : 0) +
     (query.unit !== null ? 1 : 0) +
-    (query.onlyReady ? 1 : 0);
+    (readyActive ? 1 : 0);
 
   const handleLevelChange = (level: 5 | 6 | null) => {
     onQueryChange({ ...query, level });
@@ -169,6 +177,7 @@ export function LibraryFilters({ index, query, onQueryChange }: LibraryFiltersPr
           </div>
 
           {/* Tylko już pobrane */}
+          {showReadyToggle && (
           <div className="flex items-center min-h-[44px] pt-4 sm:pt-0">
             <label
               htmlFor="library-filter-only-ready"
@@ -188,6 +197,7 @@ export function LibraryFilters({ index, query, onQueryChange }: LibraryFiltersPr
               <span>Tylko już pobrane</span>
             </label>
           </div>
+          )}
         </div>
       </div>
     </div>

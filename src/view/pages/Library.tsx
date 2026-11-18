@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { prepareLibraryIndex } from '@/core/library/index-contract';
 import { loadLibraryIndex, resetLibraryCache } from '@/core/library/load-library';
-import { type LibraryIndex, type LibraryQuery } from '@/core/library/query';
+import { libraryCounts, type LibraryIndex, type LibraryQuery } from '@/core/library/query';
 import { Header } from '../Header';
 import { CategoryTiles } from '../library/CategoryTiles';
 import { LibraryFilters } from '../library/LibraryFilters';
@@ -19,15 +19,84 @@ function parseQueryFromParams(params: URLSearchParams): LibraryQuery {
   const q = params.get('q');
   const l = params.get('l');
   const j = params.get('j');
-  const p = params.get('p');
+  params.get('p');
 
   return {
     cat: k && k.trim() !== '' ? k : null,
     text: q ?? '',
     level: l === '5' ? 5 : l === '6' ? 6 : null,
     unit: j && j.trim() !== '' ? j : null,
-    onlyReady: p === '1' || p === 'true',
+    // Strona pokazuje tylko pobrane; parametr „p” (stare adresy) jest czytany, ale ignorowany.
+    onlyReady: false,
   };
+}
+
+function formatCount(n: number): string {
+  return new Intl.NumberFormat('pl-PL').format(n).replace(/\u00a0/g, ' ');
+}
+
+interface LibraryContentProps {
+  index: LibraryIndex;
+  query: LibraryQuery;
+  onQueryChange: (query: LibraryQuery) => void;
+  onPick: (id: string | number) => void;
+}
+
+/** Treść gotowej strony: tylko wskaźniki z danymi (filterFetched) + zdanie „m z n”. */
+export function LibraryContent({ index, query, onQueryChange, onPick }: LibraryContentProps) {
+  const counts = useMemo(() => libraryCounts(index), [index]);
+  const fetchedQuery = useMemo(() => ({ ...query, onlyReady: true }), [query]);
+  return (
+    <div className="flex flex-col space-y-6">
+      <p role="status" className="text-sm text-olowek leading-[1.6]">
+        {`${formatCount(counts.fetched)} wskaźników z danymi (z ${formatCount(counts.total)} w spisie GUS). Kolejne dane dochodzą co noc.`}
+      </p>
+      <div className="order-4 md:order-1">
+          <CategoryTiles index={index} query={query} onQueryChange={onQueryChange} />
+        </div>
+        <div className="order-1 md:order-2 space-y-3">
+          <LibrarySearchBar
+            index={index}
+            query={query}
+            onQueryChange={onQueryChange}
+            onPick={onPick}
+          />
+          <div data-testid="popular-searches" className="flex flex-wrap items-center gap-2 pt-1">
+            <span className="text-xs font-mono text-olowek">Popularne wyszukiwania:</span>
+            <div className="flex flex-wrap gap-1.5">
+              {POPULAR_SEARCHES.map((term) => {
+                const isActive = query.text.toLowerCase() === term.toLowerCase();
+                return (
+                  <button
+                    key={term}
+                    type="button"
+                    onClick={() => onQueryChange({ ...query, text: isActive ? '' : term })}
+                    className={`min-h-[44px] px-3 py-1.5 text-xs font-semibold border transition-colors cursor-pointer rounded-none inline-flex items-center justify-center ${
+                      isActive
+                        ? 'bg-tusz text-kalka border-tusz font-bold'
+                        : 'bg-arkusz text-tusz border-linia font-normal hover:bg-linia/20'
+                    }`}
+                  >
+                    {term}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        <div className="order-2 md:order-3">
+          <LibraryFilters
+            index={index}
+            query={query}
+            onQueryChange={onQueryChange}
+            showReadyToggle={false}
+          />
+        </div>
+        <div className="order-3 md:order-4">
+          <LibraryResults index={index} query={fetchedQuery} onQueryChange={onQueryChange} />
+        </div>
+      </div>
+  );
 }
 
 export function Library() {
@@ -125,11 +194,7 @@ export function Library() {
       nextParams.delete('j');
     }
 
-    if (newQuery.onlyReady) {
-      nextParams.set('p', '1');
-    } else {
-      nextParams.delete('p');
-    }
+    nextParams.delete('p');
 
     setSearchParams(nextParams);
   };
@@ -190,47 +255,12 @@ export function Library() {
         )}
 
         {status === 'ready' && index && (
-          <div className="flex flex-col space-y-6">
-            <div className="order-4 md:order-1">
-              <CategoryTiles index={index} query={query} onQueryChange={handleQueryChange} />
-            </div>
-            <div className="order-1 md:order-2 space-y-3">
-              <LibrarySearchBar
-                index={index}
-                query={query}
-                onQueryChange={handleQueryChange}
-                onPick={handlePick}
-              />
-              <div data-testid="popular-searches" className="flex flex-wrap items-center gap-2 pt-1">
-                <span className="text-xs font-mono text-olowek">Popularne wyszukiwania:</span>
-                <div className="flex flex-wrap gap-1.5">
-                  {POPULAR_SEARCHES.map((term) => {
-                    const isActive = query.text.toLowerCase() === term.toLowerCase();
-                    return (
-                      <button
-                        key={term}
-                        type="button"
-                        onClick={() => handleQueryChange({ ...query, text: isActive ? '' : term })}
-                        className={`min-h-[44px] px-3 py-1.5 text-xs font-semibold border transition-colors cursor-pointer rounded-none inline-flex items-center justify-center ${
-                          isActive
-                            ? 'bg-tusz text-kalka border-tusz font-bold'
-                            : 'bg-arkusz text-tusz border-linia font-normal hover:bg-linia/20'
-                        }`}
-                      >
-                        {term}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-            <div className="order-2 md:order-3">
-              <LibraryFilters index={index} query={query} onQueryChange={handleQueryChange} />
-            </div>
-            <div className="order-3 md:order-4">
-              <LibraryResults index={index} query={query} onQueryChange={handleQueryChange} />
-            </div>
-          </div>
+          <LibraryContent
+            index={index}
+            query={query}
+            onQueryChange={handleQueryChange}
+            onPick={handlePick}
+          />
         )}
       </main>
       <SiteFooter />
