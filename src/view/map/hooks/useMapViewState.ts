@@ -1,5 +1,6 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
-import { initialViewState, mapLimits, type MapLimits, type ViewState } from '@/core/map/view';
+import { fitViewState, TOP_OVERLAY_PX } from '@/core/map/fit';
+import { mapLimits, type MapLimits, type ViewState } from '@/core/map/view';
 import { loadLocalities } from '@/core/search/load-localities';
 import type { Locality } from '@/core/search/types';
 import { useSheetInset } from '@/view/map/sheetInset';
@@ -11,8 +12,6 @@ import { layersZoomBucket } from '@/core/map/localities-layer';
 import { useCameraDriver } from '@/view/map/hooks/useCameraDriver';
 import type { MapRef } from 'react-map-gl/maplibre';
 
-// Margines (px) wokół dopasowanego obszaru, żeby mapa nie dotykała krawędzi okna.
-const FIT_PADDING = 48;
 // Tolerancja (stopnie / poziomy zoomu), poniżej której widoki uznajemy za równe.
 const SAME_EPS = 1e-9;
 
@@ -24,7 +23,9 @@ function sameView(a: ViewState, b: ViewState): boolean {
   );
 }
 
-function readMapView(map: MapRef): ViewState {
+type ViewMap = Pick<MapRef, 'getCenter' | 'getZoom' | 'jumpTo'>;
+
+function readMapView(map: ViewMap): ViewState {
   const c = map.getCenter();
   return { longitude: c.lng, latitude: c.lat, zoom: map.getZoom() };
 }
@@ -36,23 +37,9 @@ const POLAND_BBOX: Bbox = [14.12, 49.0, 24.15, 54.84];
 const mercatorLat = (latDeg: number): number => Math.log(Math.tan(Math.PI / 4 + (latDeg * Math.PI) / 360));
 const mercatorLatToDeg = (m: number): number => (360 / Math.PI) * Math.atan(Math.exp(m)) - 90;
 
-/**
- * Oblicza stan widoku kamery uwzględniając dolny margines (wysokość arkusza w px).
- * Jeśli dolny arkusz jest widoczny (insetPx > 0), środek dopasowywanego obszaru
- * zostaje przesunięty w pionie tak, aby mieścił się w widocznej części mapy nad arkuszem.
- */
-function viewStateWithInset(
-  bounds: Bbox,
-  width: number,
-  height: number,
-  insetPx: number
-): ViewState {
-  if (insetPx <= 0) {
-    return initialViewState(bounds, Math.max(width - FIT_PADDING, 1), Math.max(height - FIT_PADDING, 1));
-  }
-  const baseView = initialViewState(bounds, Math.max(1, width - FIT_PADDING), Math.max(1, height - insetPx - FIT_PADDING));
-  const mShift = insetPx * Math.PI / (512 * Math.pow(2, baseView.zoom));
-  return { longitude: baseView.longitude, latitude: mercatorLatToDeg(mercatorLat(baseView.latitude) - mShift), zoom: baseView.zoom };
+/** Dopasowanie obszaru do kontenera z miejscem na pasek okruszków u góry i dolny arkusz. */
+function viewStateWithInset(bounds: Bbox, width: number, height: number, insetPx: number): ViewState {
+  return fitViewState(bounds, width, height, { top: TOP_OVERLAY_PX, bottom: Math.max(0, insetPx) });
 }
 
 /**
@@ -185,8 +172,9 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     [commitRest]
   );
   /** Po załadowaniu mapy: ustawia kamerę, jeśli widok wyznaczono przed jej powstaniem. */
-  const syncMap = useCallback(() => {
-    const map = mapRef.current;
+  const syncMap = useCallback((loaded?: ViewMap) => {
+    // W onLoad ref mapy bywa jeszcze pusty, więc wolno przekazać instancję z zdarzenia.
+    const map = loaded ?? mapRef.current;
     const want = currentViewStateRef.current;
     if (map && !sameView(readMapView(map), want)) {
       map.jumpTo({ center: [want.longitude, want.latitude], zoom: want.zoom });

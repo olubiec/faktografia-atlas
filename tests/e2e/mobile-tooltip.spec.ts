@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { canvasPoint, VOIVODESHIP_CENTROIDS } from './helpers/map-tap';
 
 test.describe('Mobile Unit Tooltip (W2.9 / @S15)', () => {
   test.beforeEach(async ({ page }) => {
@@ -20,9 +21,8 @@ test.describe('Mobile Unit Tooltip (W2.9 / @S15)', () => {
     expect(box).not.toBeNull();
     if (!box) return;
 
-    // Tap central Poland (upper-middle of map area)
-    const tapX = Math.round(box.width / 2);
-    const tapY = Math.round(box.height * 0.35);
+    // Tap środek województwa pomorskiego (widoczny nad arkuszem)
+    const { x: tapX, y: tapY } = await canvasPoint(page, canvas, VOIVODESHIP_CENTROIDS.pomorskie.lon, VOIVODESHIP_CENTROIDS.pomorskie.lat);
 
     await canvas.click({ position: { x: tapX, y: tapY } });
 
@@ -44,8 +44,7 @@ test.describe('Mobile Unit Tooltip (W2.9 / @S15)', () => {
     const box = await canvas.boundingBox();
     if (!box) return;
 
-    const tapX = Math.round(box.width / 2);
-    const tapY = Math.round(box.height * 0.35);
+    const { x: tapX, y: tapY } = await canvasPoint(page, canvas, VOIVODESHIP_CENTROIDS.pomorskie.lon, VOIVODESHIP_CENTROIDS.pomorskie.lat);
 
     // First tap -> shows dymek
     await canvas.click({ position: { x: tapX, y: tapY } });
@@ -68,8 +67,7 @@ test.describe('Mobile Unit Tooltip (W2.9 / @S15)', () => {
     const box = await canvas.boundingBox();
     if (!box) return;
 
-    const tapX = Math.round(box.width / 2);
-    const tapY = Math.round(box.height * 0.35);
+    const { x: tapX, y: tapY } = await canvasPoint(page, canvas, VOIVODESHIP_CENTROIDS.pomorskie.lon, VOIVODESHIP_CENTROIDS.pomorskie.lat);
 
     // First tap -> shows dymek
     await canvas.click({ position: { x: tapX, y: tapY } });
@@ -90,8 +88,7 @@ test.describe('Mobile Unit Tooltip (W2.9 / @S15)', () => {
     const box = await canvas.boundingBox();
     if (!box) return;
 
-    const tapX = Math.round(box.width / 2);
-    const tapY = Math.round(box.height * 0.35);
+    const { x: tapX, y: tapY } = await canvasPoint(page, canvas, VOIVODESHIP_CENTROIDS.pomorskie.lon, VOIVODESHIP_CENTROIDS.pomorskie.lat);
 
     // First tap -> shows dymek
     await canvas.click({ position: { x: tapX, y: tapY } });
@@ -116,7 +113,9 @@ test.describe('Mobile Unit Tooltip (W2.9 / @S15)', () => {
       if (!box) continue;
 
       // Tap near left edge of Poland (e.g. Lubuskie / Zachodniopomorskie)
-      await canvas.click({ position: { x: Math.round(box.width * 0.25), y: Math.round(box.height * 0.35) } });
+      await page.waitForFunction(() => (window as any).__atlas?.mapView);
+      const left = await canvasPoint(page, canvas, VOIVODESHIP_CENTROIDS.zachodniopomorskie.lon, VOIVODESHIP_CENTROIDS.zachodniopomorskie.lat);
+      await canvas.click({ position: left });
       let tooltip = page.locator('[role="status"]', { hasText: 'Otwórz profil' });
       await expect(tooltip).toBeVisible();
 
@@ -126,7 +125,8 @@ test.describe('Mobile Unit Tooltip (W2.9 / @S15)', () => {
       expect(isNotHorizontallyScrollable).toBe(true);
 
       // Tap near right edge of Poland (e.g. Podlaskie / Lubelskie)
-      await canvas.click({ position: { x: Math.round(box.width * 0.75), y: Math.round(box.height * 0.35) } });
+      const right = await canvasPoint(page, canvas, VOIVODESHIP_CENTROIDS.podlaskie.lon, VOIVODESHIP_CENTROIDS.podlaskie.lat);
+      await canvas.click({ position: right });
       tooltip = page.locator('[role="status"]', { hasText: 'Otwórz profil' });
       await expect(tooltip).toBeVisible();
 
@@ -142,8 +142,7 @@ test.describe('Mobile Unit Tooltip (W2.9 / @S15)', () => {
     const box = await canvas.boundingBox();
     if (!box) return;
 
-    const tapX = Math.round(box.width / 2);
-    const tapY = Math.round(box.height * 0.35);
+    const { x: tapX, y: tapY } = await canvasPoint(page, canvas, VOIVODESHIP_CENTROIDS.pomorskie.lon, VOIVODESHIP_CENTROIDS.pomorskie.lat);
 
     await canvas.click({ position: { x: tapX, y: tapY } });
 
