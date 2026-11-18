@@ -55,9 +55,9 @@ export function ComparePage() {
   const profileA = useComparedProfile(pair.a, units);
   const profileB = useComparedProfile(pair.b, units);
 
-  // Każda zmiana trafia do adresu (replace: historia nie puchnie)
-  const update = (next: ComparePair) => {
-    navigate({ pathname: location.pathname, search: writeCompareSearch(next) }, { replace: true });
+  // Każda zmiana trafia do adresu (domyślnie replace: historia nie puchnie; gotowa para to osobny krok w historii)
+  const update = (next: ComparePair, replace = true) => {
+    navigate({ pathname: location.pathname, search: writeCompareSearch(next) }, { replace });
   };
 
   return (
@@ -103,7 +103,7 @@ export function ComparePage() {
           <ul className="flex flex-wrap gap-2">
             {PRESETS.map((p) => (
               <li key={p.label}>
-                <button onClick={() => update({ a: p.a, b: p.b })} className="underline min-h-[44px]">{p.label}</button>
+                <button onClick={() => update({ a: p.a, b: p.b }, false)} className="underline min-h-[44px]">{p.label}</button>
               </li>
             ))}
           </ul>
