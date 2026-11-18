@@ -7,6 +7,7 @@ import { isBasic } from "../../core/my-indicators/my-indicators";
 import { useMyIndicators } from "../hooks/useMyIndicators";
 import { Icon } from "../ui/Icon";
 import { ProfileIndicatorRow } from "./ProfileIndicatorRow";
+import { AddIndicatorWindow } from "./AddIndicatorWindow";
 
 export interface ProfileIndicatorListProps {
   /** Wskaźniki do wyboru (bez bieżącego, który jest w przeglądzie). */
@@ -113,29 +114,7 @@ export function ProfileIndicatorList({
       )}
 
       {personalize && pickerOpen && available.length > 0 && (
-        <div
-          className="mt-3 border border-linia bg-arkusz"
-          role="group"
-          aria-label="Wskaźniki do dodania"
-        >
-          {groupBy(available).map(([groupName, groupItems]) => (
-            <div key={groupName} className="p-2">
-              <h3 className="text-xs font-bold tracking-wider text-olowek mb-1">
-                {groupName}
-              </h3>
-              {groupItems.map((item) => (
-                <button
-                  key={item.indicatorId}
-                  type="button"
-                  onClick={() => add(item.indicatorId)}
-                  className="w-full min-h-[44px] px-2 py-2 text-left text-sm text-tusz hover:bg-linia/15 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer"
-                >
-                  {`Dodaj: ${item.indicator.name}`}
-                </button>
-              ))}
-            </div>
-          ))}
-        </div>
+        <AddIndicatorWindow items={available} onAdd={add} />
       )}
     </div>
   );
