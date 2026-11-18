@@ -91,9 +91,6 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 - Raw.githubusercontent jako adres danych biblioteki: CORS i limity niesprawdzone z przeglądarki · S21 · średni · e2e używają podmienionych żądań; sprawdzić na podglądzie po F12, w razie problemu – R2.
 - Klucz PostHog · plan · niski · „Później”.
 
-## Pomiar fal
-F1–F13 i szczegóły F8–F14: `docs/STAN-ARCHIWUM.md`. Od 18.11: fale Q/P liczone w `docs/FALE.md`.
-
 ## Decyzje (najnowsze na górze, 1 linia, kto)
 - 18.11.2026 · **D1–D10 z `docs/PLAN-POPRAWEK.md` zatwierdzone** (decyzja oddana Claude przez właściciela); zgoda na zmianę **tylko miejsca kliknięcia** w testach mobilnych dla FIX7 (`s15-mobile`, `mobile-tooltip`, `profile-mobile`), bez zmiany asercji; scalanie dokumentacji bez sprawdzania kodu (Ty)
 - 28.10.2026 · **F13: cztery zadania tylko-testowe** (T13.1–T13.4, `docs/prompty/F13.md`, PR #409): zgoda na zmianę wyłącznie czterech niestabilnych testów i tylko w zakresie „czekaj na warunek zamiast sprawdzać od razu”; liczba asercji bez zmian, bez `skip`/`fixme`/`only`/`ts-ignore`; scalone #414–#417 po zielonym CI (Claude, na polecenie „puszczaj kolejne prompty testowe”)
@@ -107,4 +104,4 @@ F1–F13 i szczegóły F8–F14: `docs/STAN-ARCHIWUM.md`. Od 18.11: fale Q/P lic
 - 26.10.2026 · **R9** (Claude): objaśnienia pisane własnymi słowami + `definitionUrl` do hasła GUS (GUS: kopiowanie z podaniem źródła, brak nazwanej licencji; część haseł to cytaty osób trzecich); **R10**: `trustPolicy: no-downgrade` działa na pnpm 10.30.3, akcja `@v6` już jest → W0.2; **R11**: darmowy plan R2 wystarcza, `r2.dev` nie na produkcję (własna domena); **R2**: Positron nie ma warstw rastrowych, `name:pl` zadeklarowane → W3.7; **R5**: kreskowanie `FillStyleExtension` możliwe → W3.8; **R12**: bez zmian w kodzie
 - 26.10.2026 · Kontrakt spisu biblioteki: robot (`categories`, `variables`) ≠ `query.ts` (inne pola) – naprawa schematem zod i adapterem (`index-contract.ts`) scalona jako #350 (Claude)
 - 26.10.2026 · Research R2, R5, R7–R12 robi Haiku w wąskich zleceniach (jedno pytanie, fakty z linkami); decyzję podejmuje Opus/Sonnet po weryfikacji i Ty (Ty, czat Claude)
-- Starsze wpisy (21–25.10.2026), „Pomiar fal” i szczegóły F8–F14: `docs/STAN-ARCHIWUM.md`.
+- Starsze wpisy (21–25.10.2026), „Pomiar fal” (F1–F13) i szczegóły F8–F14: `docs/STAN-ARCHIWUM.md`; fale Q/P: `docs/FALE.md`.
