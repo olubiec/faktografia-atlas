@@ -13,7 +13,7 @@ import { installAtlasSeam, type AtlasState } from '@/core/map/test-seam';
 import { buildIndex } from '@/core/units/units';
 import { loadUnits, loadAdminTopo } from '@/core/data/load-atlas-data';
 import { countryBounds } from '@/core/map/view';
-import { layersZoomBucket } from '@/core/map/localities-layer';
+import { localitiesLayerZoom, localitiesVisibleWithHysteresis } from '@/core/map/localities-layer';
 import { readUrlState } from '@/core/url/state';
 import { createMapLayers, registerLayerFactory, parseCssColor } from './layers';
 import { localitiesLayerFactory } from './layers/localities';
@@ -238,7 +238,11 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
   }, [drillState, choroplethData, unitIndex]);
 
   // Warstwy dostają tylko „kubełek” zoomu (5 albo 11): bez tego przebudowywałyby się na każdej klatce płynnego zoomu.
-  const layersZoom = layersZoomBucket(currentViewState.zoom);
+  // Histereza 8,5/8,0 + alfa przez transitions (FIX6F): kropki wchodzą płynnie, bez „pop” na zoomie 9.
+  const [localitiesBuilt, setLocalitiesBuilt] = useState(false);
+  const nextBuilt = localitiesVisibleWithHysteresis(localitiesBuilt, currentViewState.zoom);
+  if (nextBuilt !== localitiesBuilt) setLocalitiesBuilt(nextBuilt);
+  const layersZoom = localitiesLayerZoom(nextBuilt, currentViewState.zoom);
   // Fabryki warstw czytają tylko zoom, więc długość i szerokość geograficzna są tu stałe.
   const viewStateForLayers = useMemo(() => ({ longitude: 0, latitude: 0, zoom: layersZoom }), [layersZoom]);
 

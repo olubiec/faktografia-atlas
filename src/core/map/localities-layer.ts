@@ -20,6 +20,26 @@ export function layersZoomBucket(zoom: number): 5 | 11 {
   return shouldShowLocalitiesLayer(zoom) ? 11 : 5;
 }
 
+/** Histereza budowy warstwy: włącz od 8,5, wyłącz poniżej 8,0 (bez migotania na progu). */
+export function localitiesVisibleWithHysteresis(prev: boolean, zoom: number): boolean {
+  return prev ? zoom >= 8 : zoom >= 8.5;
+}
+
+/** Docelowa przezroczystość kropek (0–1): smoothstep od zoomu 8,8 do 9,2. */
+export function localitiesAlphaTarget(zoom: number): number {
+  const t = Math.min(1, Math.max(0, (zoom - 8.8) / 0.4));
+  return t * t * (3 - 2 * t);
+}
+
+/**
+ * Zoom przekazywany warstwom z histerezą: 5 = brak warstwy, 8,5 = zbudowana ale przezroczysta,
+ * 11 = widoczna (alfa 255, wchodzi płynnie przez transitions).
+ */
+export function localitiesLayerZoom(built: boolean, zoom: number): 5 | 8.5 | 11 {
+  if (!built) return 5;
+  return localitiesAlphaTarget(zoom) >= 0.5 ? 11 : 8.5;
+}
+
 /**
  * Filtruje listę miejscowości dla danego zoomu i opcjonalnego filtru gminy.
  */
