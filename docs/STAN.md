@@ -1,4 +1,42 @@
-# Stan – 28.10.2026 (wieczór)
+# Stan – 18.11.2026
+
+## Stan na 18.11.2026 (aktualizacja D10; reszta pliku niżej to opis z 28.10 – tam, gdzie się różni, obowiązuje ta sekcja)
+`main` = commit f22ee8c ([W2-FIX6G] #502). Pełny wykaz prac przerwanych i otwartych: `docs/STATUS-PRZERWANE.md`; plan fal: `docs/PLAN-POPRAWEK.md`; kolejność animacji kamery: `tasks/poczekalnia/FIX6-KOLEJNOSC.md`. Liczby i odczyt na telefonie: „do weryfikacji” przez właściciela.
+
+### Co zostało scalone od 28.10 (✅)
+| Status | Praca | PR | Co dało |
+|---|---|---|---|
+| ✅ | Fala Q1 = W1-QC* (22 zadania z `tasks/`, wszystkie scalone) | #453–#472, #474–#476 | logika Rankingów (adres, filtr, podsumowanie, lista), stan pary Porównaj i PlacePicker, reguła obrysu, model „Moich wskaźników”, wspólny rejestr wskaźników i jeden loader wartości, spis pobranych biblioteki, karty eksportu (tabela, duża liczba, rozkład, wykres lat, numer strony), pasek udostępniania, „Zamów dane na temat…”, adres `?i=b60614`, raport ruchu mapy. Dodatkowo robot spisu pobranych `available.json` (QC601, #459) |
+| ✅ | Naprawa helpera e2e | #473 | brakujący eksport `expectTouchTargets` |
+| ✅ | [FIX], [FIX2] | #477, #478 | czerwone testy e2e na main (dostępność, podwójne logo, reszta) |
+| ✅ | [FIX3] uwagi właściciela | #479 | logo w eksporcie, płynniejsza kamera, logo = strona główna, wybór wskaźników |
+| ✅ | [PLAN] plan poprawek | #480 | `docs/PLAN-POPRAWEK.md`, zadania W2–W7 i W19 w poczekalni |
+| ✅ | [FIX5] audyt automatu danych | #481 | audyt pokrycia i robotów (`docs/AUDYT-DANYCH.md`) |
+| ✅ | [FIX4] okno dodawania wskaźników po kategoriach (także z biblioteki), mniej przebudów warstw przy zoomie | #485 | picker/okno dodawania |
+| ✅ | Fala P1 = W19-PF01–PF09 (9/9) | #482–#491 | PF04 #482 · PF05 #483 · PF06 #484 · PF07 #486 · PF02 #487 · PF03 #488 · PF01 #489 · PF08 #490 · PF09 #491 (pomiar klatek, strażnicy osiągalności i workflowów, świeżość danych, stabilizacja testów) |
+| ✅ | Dane wartości BDL | #451 | `data: wartości wskaźników BDL (public/data/values)` jest już na main (commit 40c3f27); czerwony gitleaks i wynik „Fetch data” #31 – do weryfikacji, patrz „Do zrobienia” |
+| ✅ | FIX6 – płynna kamera, całość (A–I, 10 PR) | #492–#502 | opis niżej |
+
+**FIX6 szczegółowo** (research: `docs/research/p-animacja-kamery.md`; pomiar: `p-animacja-kamery-pomiar.md`):
+- A #494 wachlarze w wielokątach (wzór tylko dla braku danych) · B #493 czysty planer kamery (`camera-plan.ts`: easing, czas, zoom log) · I #495 pomiar klatek przed/po z progami · H1 #496 sterownik rAF + `jumpTo` (niepodłączony) · H2 #497 mapa niekontrolowana, kamera bez `setState` na klatkę.
+- C #498 płynne kółko (tempo `scrollZoom` ze stałych) · D #499 dotyk i pinch przerywają animację · E #500 „Cofnij”/„Wróć” tym samym planerem (stos widoków, miękkie lądowanie) · F #501 warstwa miejscowości bez „pop” (od zoomu 8,5, znika poniżej 8,0) · G #502 reduced motion (plan o czasie 0 = jedno `jumpTo`) i tabela „po”.
+- **Pomiary:** środowisko to SwiftShader (programowy WebGL, dławienie CPU ×4), nie telefon. Progi (p95 ≤ 33 ms, zgubione < 10%, max ≤ 100 ms, skok zoomu ≤ 0,25) **nie zostały spełnione w żadnym z 5 scenariuszy**. Poprawa widoczna w pinch (p95 1833→567 ms), „cofnij” (3700→983 ms), zoom do gminy (1717→733 ms); `wheel×3` wyszło gorzej (367→717 ms, duży rozrzut). Liczby są orientacyjne; **werdykt wymaga telefonu właściciela**.
+
+### W toku (🔶)
+- 🔶 **[W2-FIX7] PR #503** (gałąź `claude/FIX7`, nie scalony): mapa startuje za blisko na telefonie (widać tylko środek Polski). Przyczyna: pusta referencja mapy w `onLoad`, więc `syncMap` nic nie ustawiał i zoom zostawał 5,5. Na gałęzi: `fitViewState` w `src/core/map/fit.ts` (margines 48 px, 64 px u góry na pasek „Polska”; „Wróć” używa tej samej funkcji), `pixelRatio` MapLibre i `useDevicePixels` deck.gl ≤ 2, `__atlas.mapView`, testy `fix7-fit-view.test.ts` i `fix7-start-view.spec.ts`. **CI czerwone:** stały punkt kliknięcia w testach trafia teraz w pustkę – `s15-mobile.spec.ts` poprawiony (zgoda właściciela, tylko miejsce kliknięcia), `mobile-tooltip.spec.ts` (6 testów) w połowie zmiany (WIP, niesprawdzone), `profile-mobile.spec.ts:114` nieruszony. Uwaga: `playwright.config.ts` ma `reuseExistingServer` poza CI – przed testami lokalnymi `pkill -f "vite preview"` i `pnpm build`.
+
+### Do zrobienia (⬜)
+- ⬜ Dokończyć FIX7 (testy dotykowe, zielone CI, scalenie squashem; zrzuty – workflow „Update snapshots”, jeśli się zmienią).
+- ⬜ Fala Q2 = W2 (19 zadań w `tasks/poczekalnia/`: 6 nowych PD01, PM01, PM02, PU01, PX01, PX02 + 13 z `Q/`): tylko na „start Q2”, po sprawdzeniu kolizji plików z FIX4/FIX6/FIX7 (`AtlasMap.tsx`, `useMapViewState.ts`, `ProfileIndicatorList.tsx`, `AddIndicatorWindow.tsx`, `localities-layer.ts`, `picker-results.ts`). PX02 (decyzja D3) dopiero po sprawdzeniu przyczyny na kodzie po FIX4.
+- ⬜ Fale Q3–Q7 (W3–W7, PLAN-POPRAWEK §3).
+- ⬜ Reduced motion: bezwładność `scrollZoom`/`dragPan` nie jest wyłączona (konfiguracja w `AtlasMap.tsx`).
+- ⬜ Wskaźniki biblioteki (1773 w `available.json`) niepodpięte do UI mapy (QC603, QC606, QC607 w W2–W4).
+- ⬜ Skrypt GUS (host wewnętrzny) – do weryfikacji; 155 nieudanych pobrań + 375 wskaźników poza `available.json` – do weryfikacji (patrz `docs/AUDYT-DANYCH.md`).
+- ⬜ Czerwony gitleaks w PR #451 i wynik „Fetch data” #31 – do weryfikacji.
+- ⬜ Odświeżenie reszty STAN.md (D10): sekcje niżej opisują stan z 28.10.
+- ⬜ Nie scalać Dependabot #450 w trakcie W3–W5.
+- ⬜ Stare gałęzie `claude/FIX6A` i `claude/FIX6I` (obce commity, nieszkodliwe) – usunąć (Claude nie może: proxy blokuje usuwanie gałęzi).
+- ⬜ **Do sprawdzenia przez właściciela na telefonie (FIX6):** płynny zoom kółkiem i pinchem · „Cofnij”/„Wróć” (miękkie lądowanie) · warstwa miejscowości bez skoku (pojawia się od 8,5, znika poniżej 8,0) · wachlarze przy zoomie 11–12 · przerwanie animacji dotykiem · tryb ograniczonego ruchu · po FIX7: start mapy pokazuje całą Polskę.
 
 ## Co działa (po ludzku; „sprawdzone przez właściciela: tak/nie”)
 Na podstawie kodu na main (po F13, commit 3c38f23; **CI na `main` zielone**; `pnpm test` zielony na ostatnim pomiarze 26.10: 93 pliki, 620 testów, od tego czasu dochodzą nowe pliki). **Właściciel obejrzał K1–K5 na podglądzie 25.10.2026 i zaakceptował; ma uwagi do poprawek (lista przyjdzie osobno, zostaną rozbite na małe zadania).**
@@ -16,10 +54,6 @@ Na podstawie kodu na main (po F13, commit 3c38f23; **CI na `main` zielone**; `pn
 
 ## Sesja teraz: S20 + S21 zamknięte (F8–F12) i F13; do obejrzenia K6 i K7
 Od 17.11.2026 pętla Jules Loop i Orkiestra są usunięte; fale prowadzą sesje Claude (`docs/FALE.md`), scala właściciel. Fala Q1 wystartowała 17.11.2026 na pętli, reszta zadań Q1 idzie sesjami Claude.
-- **F8** (6): W1.15 · W1.16 · W1.21 · W1.22 · W1.23 · W1.24 · **F9** (7): W1.17 · W1.18 · W1.19 · W1.20 · W2.27 · W2.34 · W2.35 · **F10** (7): W2.24 · W2.28 · W2.29 · W2.30 · W2.31 · W2.33 · W2.38 (nowe po researchu rundy 3: arkusz na telefonie) · **F11** (3): W2.25 · W2.32 · W2.36 · **F12** (2): W2.26 · W2.37.
-- **Punkty kontrolne:** K6 = S20 (miasto i wieś) · K7 = S21 (biblioteka GUS) – **czekają na Twoje obejrzenie na podglądzie** (najlepiej z telefonu). K6 z liczbami dopiero po scaleniu danych z `data/nightly` (patrz „Znane problemy”).
-- **F8b zamknięta 26.10.2026** (3/3: W1.25 #358 · W1.26 #357 · W1.27 #356). **F9 zamknięta 27.10.2026 (7/7, PR #373–#379).** **F10 zamknięta 27.10.2026 (7/7, PR #389–#395).** **F11 zamknięta 28.10.2026 (3/3: W2.36 #399 · W2.32 #400 · W2.25 #401).** **F12 zamknięta 28.10.2026 (2/2: W2.37 #404 · W2.26 #405).** **F13 zamknięta 28.10.2026 (4/4, zadania tylko-testowe: T13.4 #415 · T13.3 #414 · T13.2 #417 · T13.1 #416)** plus poprawka testu W2.37 (#408) – patrz „Decyzje”. **CI na `main` zielone (commit 3c38f23).** Przed W2.35 test linku „Zamów” na drugim koncie nadal do zrobienia (5 min).
-- **F14 (szlif, pętla Jules Loop od 28.10.2026):** W3.8 kreskowanie „brak danych” · W3.9 rozbicie TrendChart (`tasks/W14-*`). **Poza kolejką:** W1.9 (teksty objaśnień – Twoja akceptacja), W3.5, W3.7 (spike podkładu – po K7) i „Później”; kroki Claude w workflow (`.github/`) – ARCHITEKTURA §4 „Poza falami”.
 
 ### Postęp (pisze automat – nie edytuj ręcznie)
 <!-- automat:start -->
@@ -29,11 +63,12 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 ## Plan (1 linia na sesję; zadania i fale w docs/ARCHITEKTURA.md §3–§4)
 - S14–S19 – zrobione (profil, telefon, ruch, „Na tle kraju”, porównanie, pobierz i udostępnij; F1–F7).
 - S20 (miasto i wieś w profilu gminy, czeka na K6) i S21 (Biblioteka GUS, czeka na K7) – zrobione (F8–F13); F13 = stabilizacja testów e2e.
+- 18.11.2026: po K7 wypłynęła lista poprawek właściciela → [FIX]–[FIX7], P1 (W19), FIX6 (kamera); dalej Q2–Q7 (`docs/PLAN-POPRAWEK.md`).
 - Po K7: przegląd „Później” (SEO, mapa dla wskaźnika z biblioteki, R2, tryb ciemny mapy…) i nowa fala poprawek z Twojej listy.
 
 ## Przypomnienia (pełna tabela: ARCHITEKTURA §4 „Poza falami”)
 - **Research, runda 2 i 3: wyniki wróciły 27.10.2026** i są sprawdzone (`docs/research/weryfikacja-runda3.md`): R9.5 (hasła GUS dla 11 z 20 wskaźników), R2.4/R5.4/R11.4 (częściowo), R13 (brak gotowego szablonu mobilnego → nowe W2.38), R14 (animacje: brak gotowego zasobu z licencją), R15 (lista kandydatów do decyzji). Odrzucone cztery raporty z sesji bez dostępu do sieci. **Opcjonalnie dalej (nie blokuje F10):** R9.6 – źródło tekstów dla 9 wskaźników bez hasła GUS (przed W1.9); R14.4 – deck.gl `transitions` i `setPaintProperty` (przed W3.5).
-- **Ty (ważne dla K6):** na gałęzi `data/nightly` czekają dane o miastach i wsiach (`public/data/parts`, `data/parts`, 47 plików, 1 commit przed `main`), ale **PR z danymi nie został otwarty** (workflow „Fetch data” próbuje go założyć; prawdopodobna przyczyna: wyłączona zgoda w GitHub → Settings → Actions → General → „Allow GitHub Actions to create and approve pull requests”). Włącz to ustawienie albo otwórz PR z `data/nightly` ręcznie, sprawdź kilka liczb z bdl.stat.gov.pl i scal – dopiero wtedy blok „Miasto i obszar wiejski” pokaże liczby.
+- **[Nieaktualne od 18.11: wartości BDL trafiły na main w #451 (commit 40c3f27); czy `public/data/parts` jest na main – do weryfikacji.]** **Ty (ważne dla K6):** na gałęzi `data/nightly` czekają dane o miastach i wsiach (`public/data/parts`, `data/parts`, 47 plików, 1 commit przed `main`), ale **PR z danymi nie został otwarty** (workflow „Fetch data” próbuje go założyć; prawdopodobna przyczyna: wyłączona zgoda w GitHub → Settings → Actions → General → „Allow GitHub Actions to create and approve pull requests”). Włącz to ustawienie albo otwórz PR z `data/nightly` ręcznie, sprawdź kilka liczb z bdl.stat.gov.pl i scal – dopiero wtedy blok „Miasto i obszar wiejski” pokaże liczby.
 - **Ty:** „Fetch library” (ostatni udany przebieg 28.10 ok. 10:47 UTC) – sprawdź, że w `library/catalog.json` tytuły z n4/n5 są pełne; na gałęzi `data/library` jest 101 plików wartości (`values/`), dla reszty wskaźników strona pokazuje „jeszcze niepobrane” i przycisk zamówienia. Test linku „Zamów” na drugim koncie (5 min).
 - **Ty, 2 min:** ruleset na `main` (GitHub → Settings → Rules: wymagane `testy` i `bezpieczenstwo`).
 - **Ty:** lista uwag z oglądu K1–K5 (zrobię z niej małe zadania w nowej fali) · teksty objaśnień do akceptacji (W1.9; przygotuję listę do przeczytania).
@@ -56,13 +91,8 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 - Raw.githubusercontent jako adres danych biblioteki: CORS i limity niesprawdzone z przeglądarki · S21 · średni · e2e używają podmienionych żądań; sprawdzić na podglądzie po F12, w razie problemu – R2.
 - Klucz PostHog · plan · niski · „Później”.
 
-## Pomiar fal
-- F1–F7: 33 zadania; część PR-ów (np. W2.1, W2.13, W1.10, W0.1) wymagała 2–3 prób; W2.21 miał jedną nieudaną próbę Julesa. Dokładne liczby poprawek nie były zbierane po zatrzymaniu automatu (25.10).
-- Od F8: po każdej fali jedna linia w tej sekcji (zadania · PR-y poprawione · Twoje minuty) – dopisuje Claude przy kolejnej fali.
-- F8: 6 zadań, 6 PR-ów scalonych (#325–#330). F8b: 3 zadania, 3 PR-y scalone (#356–#358), plus 2 PR-y Claude (#350 kontrakt, #351 formularz). Liczby prób Julesa i Twoje minuty nie były zbierane.
-- F9: 7 zadań, 7 PR (#373–#379). F10: 7 zadań, 7 PR (#389–#395). F11: 3 zadania, 3 PR (#399–#401). F12: 2 zadania, 2 PR (#404, #405); po F12 CI na `main` czerwone (wyścig w teście W2.37) → poprawka Claude #408, PR Julesa #407 odrzucony. F13: 4 zadania, 4 PR (#414–#417; #414 po jednym ponowieniu CI), start 16:47, ostatni PR scalony 17:52 (ok. 1 h 5 min); prompty F13 jako #409. F11–F13 scalane przez skrypt nadzorujący Claude, Twoje minuty na scalanie: 0. Dokładne liczby poprawek Julesa dla F9–F12 nie były zbierane.
-
 ## Decyzje (najnowsze na górze, 1 linia, kto)
+- 18.11.2026 · **D1–D10 z `docs/PLAN-POPRAWEK.md` zatwierdzone** (decyzja oddana Claude przez właściciela); zgoda na zmianę **tylko miejsca kliknięcia** w testach mobilnych dla FIX7 (`s15-mobile`, `mobile-tooltip`, `profile-mobile`), bez zmiany asercji; scalanie dokumentacji bez sprawdzania kodu (Ty)
 - 28.10.2026 · **F13: cztery zadania tylko-testowe** (T13.1–T13.4, `docs/prompty/F13.md`, PR #409): zgoda na zmianę wyłącznie czterech niestabilnych testów i tylko w zakresie „czekaj na warunek zamiast sprawdzać od razu”; liczba asercji bez zmian, bez `skip`/`fixme`/`only`/`ts-ignore`; scalone #414–#417 po zielonym CI (Claude, na polecenie „puszczaj kolejne prompty testowe”)
 - 28.10.2026 · **CI na `main` czerwone po F12 – przyczyna i naprawa:** test W2.37 (`s21-library.spec.ts`) liczył żądania `index.json` w chwili zmiany adresu, zanim strona je wysłała (`Expected: 1, Received: 0`); naprawa tylko w teście (PR #408, lokalnie 18 z 18 testów w 3 powtórzeniach). **PR Julesa #407 zamknięty bez scalenia** (zmieniał kod aplikacji: `useMapViewState.ts`, `Header.tsx`, `Library.tsx`, `ProfileParts.tsx`, m.in. plik z listy zakazanej w AGENTS.md) i issue #406 zamknięte (Claude, na polecenie „poprawiaj błędy automatycznie”)
 - 28.10.2026 · **Nadzór nad scalaniem F11–F13 przez skrypt Claude** (poza repo): scala PR-y Julesa po zielonym `testy` + `bezpieczenstwo`, najpierw ponawia niestabilne CI (rerun failed jobs), potem zwraca błąd Julesowi komentarzem; nie scala usunięć plików, plików spoza zakresu zadania, osłabionych testów ani PR-ów z konfliktem (Claude, na polecenie „ustaw automaty”)
@@ -74,36 +104,4 @@ Automat zatrzymany od 25.10.2026 (etykieta `automat-stop` na #221); fale puszcza
 - 26.10.2026 · **R9** (Claude): objaśnienia pisane własnymi słowami + `definitionUrl` do hasła GUS (GUS: kopiowanie z podaniem źródła, brak nazwanej licencji; część haseł to cytaty osób trzecich); **R10**: `trustPolicy: no-downgrade` działa na pnpm 10.30.3, akcja `@v6` już jest → W0.2; **R11**: darmowy plan R2 wystarcza, `r2.dev` nie na produkcję (własna domena); **R2**: Positron nie ma warstw rastrowych, `name:pl` zadeklarowane → W3.7; **R5**: kreskowanie `FillStyleExtension` możliwe → W3.8; **R12**: bez zmian w kodzie
 - 26.10.2026 · Kontrakt spisu biblioteki: robot (`categories`, `variables`) ≠ `query.ts` (inne pola) – naprawa schematem zod i adapterem (`index-contract.ts`) scalona jako #350 (Claude)
 - 26.10.2026 · Research R2, R5, R7–R12 robi Haiku w wąskich zleceniach (jedno pytanie, fakty z linkami); decyzję podejmuje Opus/Sonnet po weryfikacji i Ty (Ty, czat Claude)
-- 25.10.2026 · Raporty R1–R5 zweryfikowane (`docs/research/weryfikacja-raportow-v2.md`): zero wymian własnych komponentów na pakiety teraz; szablonów nie bierzemy; prerender RR8 odpada (tryb framework); rozpiska N1–N12 w `docs/research/zadania-fala-8.md`, wchodzi do planu po decyzjach D1–D5; plan S22 nie wchodzi do ARCHITEKTURA ani kolejki – decyzja właściciela (Ty, czat Claude)
-- 25.10.2026 · Research kierujemy na audyt tego, co już zrobione (szablon stron, strona główna, animacje, własne komponenty) i na gotowce pod S20–S21; wzorce z cudzych repozytoriów wolno studiować i przepisać po swojemu tylko z wpisu w `docs/INSPIRACJE.md` (licencja MIT/BSD/ISC/Apache-2.0/CC0); zmiana zasady w `AGENTS.md` (Ty, czat Claude)
-- 25.10.2026 · **Plan S20 + S21** zatwierdzony do realizacji: 24 małe zadania w falach F8–F12, ≤ 7 w fali (Jules lepiej radzi sobie z małymi zadaniami; limit 15 naraz) (Ty, czat Claude)
-- 25.10.2026 · **Ręczna pętla:** Ty scalasz, Claude puszcza kolejne (`start-tasks.mjs`); automat zatrzymany (`automat-stop` na #221); limity w kolejce podniesione do 15 naraz (Ty, czat Claude)
-- 25.10.2026 · K1–K5 zaakceptowane przez właściciela; uwagi do poprawek później, jako małe zadania (Ty)
-- 25.10.2026 · **S20: blok w profilu, bez map** – zwijany blok „Miasto i obszar wiejski” (14 wskaźników), jeden dodatkowy plik na województwo ładowany dopiero po rozwinięciu; bez obrysów części gminy i bez dochodów/wydatków (Claude, decyzja produktowa do zmiany na życzenie)
-- 25.10.2026 · **S21 v1 bez mapy dla wskaźnika z biblioteki** – katalog, szukanie, filtry, ranking, CSV, zamówienie; mapa i karty PNG z biblioteki do „Później”; zamówienia = zgłoszenie na GitHubie czytane ręcznie (Claude)
-- 25.10.2026 · **Magazyn biblioteki:** docelowo Cloudflare R2 (raport Deep Research zweryfikowany: cennik potwierdzony drugim źródłem, 10 GB bezpłatnie, egress 0); do czasu przejścia gałąź `data/library` + adres w jednym miejscu (`VITE_LIBRARY_BASE`) – przejście na R2 bez zmian w kodzie stron (Claude, tymczasowa)
-- 25.10.2026 · **SEO podstron gmin odłożone:** raport Deep Research błędnie uznał limit 2048 „routes” na Vercel za blokadę dla 2500 stron statycznych (dokumentacja: liczą się reguły z `vercel.json`, plików wyjściowych nie ograniczono); ryzyko „scaled content abuse” i brak gotowej treści – wrócić po K7 (Claude)
-- 25.10.2026 · **Zbiorczy eksport BDL:** raport zweryfikowany częściowo – liczba „1 mln zapytań” błędna (nasz pomiar: ~38 zapytań na wskaźnik, ok. 1000 wskaźników tygodniowo), ścieżka „Pobrane podgrupy” i adres e-mail sekretariatu niepotwierdzone; formularz GUS i telefon potwierdzone; tekst pisma gotowy (Claude)
-- 25.10.2026 · Ręcznie uruchomiony pierwszy przebieg „Fetch library” (poprzednio workflow nigdy nie biegł mimo wpisu „działa”) (Claude)
-- 24.10.2026 · W1.11 zrobione: raport Deep Research zweryfikowany na nagraniach BDL – podział miasto/wieś **istnieje** (kody 4 i 5) dla 14 z 16 wskaźników gminnych; w dochodach/wydatkach to fałszywe zera; robimy w sesji S20 po K5 (Ty, czat Claude)
-- 24.10.2026 · **Pełny automat** prowadzi fale do końca (S14–S19): Jules przez etykietę `jules`, scalanie po `check-pr` i zielonym CI, Twoja ocena na punktach kontrolnych K1–K5 nie blokuje (poprawki jako nowe zadania); zmienia zasadę WORKFLOW „ręczne wklejanie” i bramkę „ocena przed falą” (Ty, czat Claude)
-- 24.10.2026 · Posłaniec = zadanie cykliczne co godzinę 7–23 na tanim modelu, decyzje podejmuje skrypt `scripts/ops/automat.mjs`; Naprawiacz raz dziennie (Ty, czat Claude)
-- 24.10.2026 · `STAN.md` aktualizuje automat tylko na punktach kontrolnych (blok „Postęp”), nie po każdej fali (Ty, czat Claude)
-- 24.10.2026 · W2.4 może zmienić dokładnie dwa testy mobilne (`home.spec.ts`, `picker-scroll.spec.ts`) tak, jak opisuje ARCHITEKTURA §3; W2.5 zdejmuje `fixme` (Ty, czat Claude)
-- 24.10.2026 · Automat może sam nałożyć `aktualizuj-zrzuty` raz na PR, gdy czerwone są tylko zrzuty (Ty, czat Claude)
-- 24.10.2026 · W1.9 poza automatem (czeka na Twoją akceptację tekstów); W3.5 do „Później” (Ty, czat Claude)
-- 24.10.2026 · PR-y #210, #215, #217 zamknięte – zadania W3.1, W2.4, W2.6 wracają przez automat od nowa (Ty, czat Claude)
-- 24.10.2026 · Nowe: S19 „Pobierz i udostępnij” (karty PNG w 4 formatach, CSV, systemowe udostępnianie; bez nowych pakietów) i dwie mapki w porównaniu – pomysły właściciela; „generator karuzel” zawężony do serii slajdów pod konta Faktografii (osobne repo) (Ty, czat Claude)
-- 24.10.2026 · Wycofany test W2.3 (#216) przez #218, bo `main` był czerwony: test szukał rankingu i zakładek, których nie ma (W2.1/W2.2 niewykonane). Wraca w F3′ po W2.1 i W2.2 (Ty, czat Claude)
-- 24.10.2026 · PR #208 zastąpiony czystym #219; #210, #215, #217 wstrzymane (zależności i naruszenia AGENTS.md) (Ty, czat Claude)
-- 22.10.2026 · Zadanie W1.3 (BottomSheet) wykonane (PR #207) – poza kolejnością fal (Ty)
-- 22.10.2026 · Plan przebudowany wg v5.3: wszystkie zadania wg warstw (33 dla Julesa) i 14 fal F1–F14 z tabelą kolizji w ARCHITEKTURA.md; prompty pisze właściciel innym narzędziem z zadań §3, dlatego docs/prompty/ usunięty; logika W1 dla S15–S18 robiona wcześniej, równolegle z profilem (Ty, czat Claude)
-- 22.10.2026 · WORKFLOW v5.3: warstwy W0–W3 i pliki-węzły w `docs/ARCHITEKTURA.md` (zastępuje TECHNIKA.md i PLAN.md), rejestr licencji `docs/ELEMENTY.md`, STAN aktualizowany po każdej fali; baza: od zera (Ty, czat Claude)
-- 22.10.2026 · Usunięty duplikat projektu Vercel; GitHub usuwa gałęzie po scaleniu automatycznie (Ty)
-- 21.10.2026 · Proces WORKFLOW UNIWERSALNY v5.1 (fale, gotowe elementy, tryby czatu); CI wg §10.5 (zadania `testy`, `bezpieczenstwo`); `MASTER_PLAN.md` usunięty (Ty, czat Claude)
-- 21.10.2026 · Stary Autopilot i „Zgody” wyłączone w GitHub, ich Issues zamknięte, etykiety starego procesu usunięte, stare gałęzie usunięte (Ty, czat Claude)
-- 21.10.2026 · Nocne PR-y z danymi bez auto-scalania; wrócić, gdy będą ≥ 2 tygodniowo (v5.3 §12) (Ty, czat Claude)
-- 21.10.2026 · Plan: S15 telefon, S16 płynne wejście w głąb „kafelek po kafelku”, S17 objaśnienia, S18 porównanie; profil na telefonie (dawne S14.5) w S15 (Ty, czat Claude)
-- 21.10.2026 · PR #199 (S14.3) zamknięty – dwa zakreślenia, własne czytanie adresu, zmienione testy; S14.3 od nowa. PR #198 (S14.10) – scalić po obejrzeniu podglądu (Ty, czat Claude)
-- 21.10.2026 · Kontekst „na tle kraju” liczony automatycznie z danych, ręczne objaśnienia opcjonalne (Ty, czat Claude)
-- 21.10.2026 · S14 = profil miejsca wg makiety 03 (Ty, czat Claude)
+- Starsze wpisy (21–25.10.2026), „Pomiar fal” (F1–F13) i szczegóły F8–F14: `docs/STAN-ARCHIWUM.md`; fale Q/P: `docs/FALE.md`.

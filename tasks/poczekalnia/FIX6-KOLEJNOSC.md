@@ -1,20 +1,22 @@
 # FIX6 – kolejność zadań animacji kamery
 
-Research i diagnoza: `docs/research/p-animacja-kamery.md`. Każde zadanie = jeden PR, 1–5 plików, jeden subagent. Zadania są w tym katalogu i **nie są uruchomione**; uruchamia je właściciel/koordynator po kolei.
+Research i diagnoza: `docs/research/p-animacja-kamery.md`. Każde zadanie = jeden PR, 1–5 plików, jeden subagent. Zadania są w tym katalogu i **zostały wykonane i scalone 18.11.2026** (PR #493–#502, plan #492); plik zostaje jako zapis kolejności.
+
+**Status: ✅ wszystkie 10 zadań scalone.** Pomiar (SwiftShader) nie spełnił progów, werdykt po telefonie właściciela (`docs/research/p-animacja-kamery-pomiar.md`). Dalsze prace nad startem mapy: FIX7 (#503, 🔶).
 
 ## Tabela
 | ID | Plik zadania | Co | Zależy od | Rusza `AtlasMap.tsx` / `useMapViewState.ts` | Rozm. |
 |---|---|---|---|---|---|
-| A | `W2-FIX6A-artefakty-warstwa.md` | wzór „brak danych” w osobnej warstwie (wachlarze) | – | tak: 1 linia w `AtlasMap.tsx` | S |
-| B | `W2-FIX6B-plan-kamery.md` | `camera-plan.ts`: easing, czas, zoom log | – | nie | S |
-| I | `W2-FIX6I-pomiar-klatek.md` | pomiar przed/po, progi | – | nie | S |
-| H1 | `W2-FIX6H1-sterownik-kamery.md` | sterownik rAF + `jumpTo` (niepodłączony) | B | nie | M |
-| H2 | `W2-FIX6H2-kamera-bez-reacta.md` | podłączenie, mapa niekontrolowana | H1 | tak (oba) | L |
-| C | `W2-FIX6C-kolko.md` | tempo kółka | H2 | tak (`AtlasMap`) | S |
-| D | `W2-FIX6D-dotyk-pinch.md` | pinch i przerwanie dotykiem | C | tak (oba) | S |
-| E | `W2-FIX6E-cofnij.md` | „Cofnij” tym samym planerem, retarget | D | tak (`useMapViewState`) | M |
-| F | `W2-FIX6F-koszyk-bez-pop.md` | koszyk zoomu 9 bez „pop” | E | tak (`AtlasMap`) | S |
-| G | `W2-FIX6G-reduced-motion.md` | reduced-motion + tabela „po” | F, I | nie | S |
+| ✅ A #494 | `W2-FIX6A-artefakty-warstwa.md` | wzór „brak danych” w osobnej warstwie (wachlarze) | – | tak: 1 linia w `AtlasMap.tsx` | S |
+| ✅ B #493 | `W2-FIX6B-plan-kamery.md` | `camera-plan.ts`: easing, czas, zoom log | – | nie | S |
+| ✅ I #495 | `W2-FIX6I-pomiar-klatek.md` | pomiar przed/po, progi | – | nie | S |
+| ✅ H1 #496 | `W2-FIX6H1-sterownik-kamery.md` | sterownik rAF + `jumpTo` (niepodłączony) | B | nie | M |
+| ✅ H2 #497 | `W2-FIX6H2-kamera-bez-reacta.md` | podłączenie, mapa niekontrolowana | H1 | tak (oba) | L |
+| ✅ C #498 | `W2-FIX6C-kolko.md` | tempo kółka | H2 | tak (`AtlasMap`) | S |
+| ✅ D #499 | `W2-FIX6D-dotyk-pinch.md` | pinch i przerwanie dotykiem | C | tak (oba) | S |
+| ✅ E #500 | `W2-FIX6E-cofnij.md` | „Cofnij” tym samym planerem, retarget | D | tak (`useMapViewState`) | M |
+| ✅ F #501 | `W2-FIX6F-koszyk-bez-pop.md` | koszyk zoomu 9 bez „pop” | E | tak (`AtlasMap`) | S |
+| ✅ G #502 | `W2-FIX6G-reduced-motion.md` | reduced-motion + tabela „po” | F, I | nie | S |
 
 ## Kolejność
 ```
