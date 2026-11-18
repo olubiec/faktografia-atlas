@@ -67,8 +67,16 @@ test.describe('Full Mobile Path Flow (@S15)', () => {
       expect(canvasBox).not.toBeNull();
       if (!canvasBox) return;
 
-      const tapX = Math.round(canvasBox.width / 2);
-      const tapY = Math.round(canvasBox.height * 0.35);
+      // Środek województwa pomorskiego (centroid z units.json) liczony z kamery w rzucie Web Mercator;
+      // leży nad dolnym arkuszem, więc nie jest przez niego zasłonięty.
+      await page.waitForFunction(() => (window as any).__atlas?.mapView);
+      const view = await page.evaluate(() => (window as any).__atlas.mapView);
+      const merc = (l: number) => Math.log(Math.tan(Math.PI / 4 + (l * Math.PI) / 360));
+      const world = 512 * Math.pow(2, view.zoom);
+      const tapX = Math.round(canvasBox.width / 2 + (world * (18.0368 - view.longitude)) / 360);
+      const tapY = Math.round(
+        canvasBox.height / 2 + (world * (merc(view.latitude) - merc(54.2914))) / (2 * Math.PI)
+      );
 
       await canvas.click({ position: { x: tapX, y: tapY } });
 
