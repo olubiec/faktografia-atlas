@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 
-// Przejście koloru jest wyłączone przy zmianie poziomu i wraca do 300 ms po ustabilizowaniu – @S20.
+// Przejście koloru GPU nie istnieje: fill.ms zawsze 0 – @S20.
 
 type Fill = { ms: number; dataKey: string };
 type Atlas = { ready: boolean; selected: string | null; fill: Fill; camera: { animating: boolean } };
@@ -42,44 +42,39 @@ const sample = (page: Page) =>
       }),
   );
 
-/** Po zmianie poziomu: pierwsza próbka ze zmienionym kluczem ma ms 0, a na końcu stan = expectedEnd. */
-async function checkStep(page: Page, prevKey: string, expectedEnd: number, act: () => Promise<void>) {
+/** Po zmianie poziomu klucz danych się zmienia, a przejścia GPU koloru nie ma w żadnej próbce (ms = 0). */
+async function checkStep(page: Page, prevKey: string, act: () => Promise<void>) {
   await act();
   const samples = await sample(page);
   const last = samples[samples.length - 1];
   expect(last.dataKey).not.toBe(prevKey);
-  // Wartości pośrednie (np. 150) oznaczałyby trwające przejście przy zmienionym zestawie
-  expect(samples.filter((s) => s.ms !== 0 && s.ms !== expectedEnd)).toHaveLength(0);
-  if (samples[0].dataKey !== prevKey) expect(samples[0].ms).toBe(0);
-  expect(last.ms).toBe(expectedEnd);
+  expect(samples.every((s) => s.ms === 0)).toBe(true);
   return last.dataKey;
 }
 
-async function walk(page: Page, expectedEnd: number) {
+async function walk(page: Page) {
   await open(page);
   let key = (await fillNow(page)).dataKey;
-  key = await checkStep(page, key, expectedEnd, () => search(page, 'małopolskie'));
-  key = await checkStep(page, key, expectedEnd, () => search(page, 'krakowski'));
-  key = await checkStep(page, key, expectedEnd, () => page.locator('button', { hasText: 'Wróć' }).click());
-  key = await checkStep(page, key, expectedEnd, () => page.locator('button', { hasText: 'Wróć' }).click());
-  await checkStep(page, key, expectedEnd, () => page.goBack());
+  key = await checkStep(page, key, () => search(page, 'małopolskie'));
+  key = await checkStep(page, key, () => search(page, 'krakowski'));
+  key = await checkStep(page, key, () => page.locator('button', { hasText: 'Wróć' }).click());
+  await checkStep(page, key, () => page.locator('button', { hasText: 'Wróć' }).click());
 }
 
 test.describe('Przejście koloru przy zmianie poziomu (@S20)', () => {
   test.setTimeout(120_000);
 
-  test('wejście, „Wróć” i wstecz przeglądarki: zmiana poziomu bez przejścia, potem 300 ms (@S20)', async ({ page }) => {
-    await walk(page, 300);
+  test('wejście i „Wróć”: przejście GPU zawsze 0 ms (@S20)', async ({ page }) => {
+    await walk(page);
   });
 
   test('przy reduced-motion przejście zawsze 0 (@S20)', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await walk(page, 0);
+    await walk(page);
   });
 
-  test('zmiana wskaźnika na tym samym poziomie zachowuje przejście 300 ms (@S20)', async ({ page }) => {
+  test('zmiana wskaźnika na tym samym poziomie nie włącza przejścia GPU (@S20)', async ({ page }) => {
     await open(page);
-    await page.waitForFunction(() => (window as unknown as Win).__atlas.fill.ms === 300);
     await page.evaluate(() => {
       const url = new URL(window.location.href);
       url.searchParams.set('i', 'unemployment-rate');
@@ -87,6 +82,6 @@ test.describe('Przejście koloru przy zmianie poziomu (@S20)', () => {
       window.dispatchEvent(new Event('popstate'));
     });
     const samples = await sample(page);
-    expect(samples.every((s) => s.ms === 300)).toBe(true);
+    expect(samples.every((s) => s.ms === 0)).toBe(true);
   });
 });

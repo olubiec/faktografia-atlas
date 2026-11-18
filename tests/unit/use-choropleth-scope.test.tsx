@@ -74,6 +74,7 @@ const view = {
   level: 'pow',
 } as never;
 
+let curView = view;
 const out: { data: ChoroplethData | null } = { data: null };
 let current: { sel: string | null };
 
@@ -83,8 +84,9 @@ function mount(sel: string | null) {
   h.idx = 0;
   h.effects = [];
   let busy = false;
+  curView = view;
   function Probe() {
-    return useChoropleth(view, units, current.sel);
+    return useChoropleth(curView, units, current.sel);
   }
   const run = () => {
     if (busy) return;
@@ -157,5 +159,50 @@ describe('useChoropleth: zakres z selectedTeryt', () => {
     m.setSel('120102');
     expect(out.data?.activeScope).toMatchObject({ activeWojTeryt: '12', activePowTeryt: '1201' });
     expect(raf).toHaveBeenCalledTimes(0);
+  });
+
+  it('reveal startuje raz w obie strony (przybliżanie i oddalanie), powrót do tego samego klucza bez drugiego startu (CN)', () => {
+    const m = mount('1201');
+    m.setSel('12'); // oddalanie
+    expect(raf).toHaveBeenCalledTimes(1);
+    expect(out.data?.reveal).toEqual({ running: true, progress: 0 });
+    m.setSel('12'); // ten sam klucz
+    expect(raf).toHaveBeenCalledTimes(1);
+    m.setSel('1201'); // przybliżanie
+    expect(raf).toHaveBeenCalledTimes(2);
+    m.setSel('1201');
+    expect(raf).toHaveBeenCalledTimes(2);
+  });
+
+  it('zmiana roku uruchamia osobne mieszanie (blend) raz, a reveal nie rusza (CN)', () => {
+    mount('1201');
+    expect(out.data?.blend).toEqual({ running: false, progress: 1 });
+    curView = { ...view, year: 2021 } as never;
+    h.rerender();
+    expect(raf).toHaveBeenCalledTimes(1);
+    expect(out.data?.blend).toEqual({ running: true, progress: 0 });
+    expect(out.data?.reveal.running).toBe(false);
+  });
+
+  it('klatki blend: throttling ok. 30/s i brak setState przy tym samym postępie (CN)', () => {
+    const cbs: Array<(t: number) => void> = [];
+    raf.mockImplementation(((cb: (t: number) => void) => (cbs.push(cb), cbs.length)) as never);
+    let now = 1000;
+    vi.spyOn(performance, 'now').mockImplementation(() => now);
+    mount('1201');
+    curView = { ...view, year: 2021 } as never;
+    h.rerender();
+    const frame = (t: number) => cbs.shift()!(t);
+    frame(1010); // < 33 ms od startu: pomijamy
+    expect(out.data?.blend?.progress).toBe(0);
+    frame(1040);
+    const p = out.data?.blend?.progress ?? 0;
+    expect(p).toBeGreaterThan(0);
+    frame(1050); // znów < 33 ms
+    expect(out.data?.blend?.progress).toBe(p);
+    frame(1400);
+    expect(out.data?.blend).toEqual({ running: false, progress: 1 });
+    expect(cbs).toHaveLength(0);
+    now = 0;
   });
 });

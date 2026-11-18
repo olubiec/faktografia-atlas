@@ -1,29 +1,27 @@
-// Decyzja o przejściu koloru wypełnienia mapy.
-// deck.gl paruje wierzchołki starych i nowych danych po indeksie, więc przy zmianie zestawu
-// wielokątów (inny poziom) interpolacja dawałaby promieniste gradienty. Wtedy przejście = 0.
+// Stan diagnostyczny koloru wypełnienia (szew testowy). Przejść GPU atrybutów nie ma:
+// animację liczy getter koloru na CPU (fill-blend.ts), więc czas przejścia warstwy to zawsze 0.
 
-let lastKey: string | null = null;
-let lastMs = 0;
+let lastKey = '';
+let layerTransitions: Array<{ id: string; transitionMs: number }> = [];
 
-/** Zwraca czas przejścia: 0 przy pierwszym wywołaniu, zmianie klucza i w trakcie reveal, inaczej baseMs. */
-export function resolveFillTransition(
-  dataKey: string,
-  baseMs: number,
-  opts: { revealRunning?: boolean } = {},
-): { ms: number; changed: boolean } {
-  const changed = lastKey !== dataKey;
+/** Zapamiętuje klucz danych warstwy (poziom) i największy czas przejścia GPU jej atrybutów. */
+export function noteFillLayer(id: string, dataKey: string, transitions: Record<string, unknown> | undefined): void {
   lastKey = dataKey;
-  lastMs = changed || opts.revealRunning ? 0 : baseMs;
-  return { ms: lastMs, changed };
+  const ms = Math.max(0, ...Object.values(transitions ?? {}).map((v) => (typeof v === 'number' ? v : 0)));
+  layerTransitions = [...layerTransitions.filter((l) => l.id !== id), { id, transitionMs: ms }];
 }
 
-/** Ostatnia decyzja (szew testowy). */
+/** Ostatni stan (szew testowy): `ms` jest zawsze 0. */
 export function getFillTransitionState(): { ms: number; dataKey: string } {
-  return { ms: lastMs, dataKey: lastKey ?? '' };
+  return { ms: 0, dataKey: lastKey };
+}
+
+export function getLayerTransitions(): Array<{ id: string; transitionMs: number }> {
+  return layerTransitions;
 }
 
 /** Zeruje pamięć modułu (testy). */
 export function resetFillTransition(): void {
-  lastKey = null;
-  lastMs = 0;
+  lastKey = '';
+  layerTransitions = [];
 }

@@ -1,6 +1,6 @@
 import type { UnitLevel } from '../units/types';
 import { getRevealState } from '@/view/map/hooks/useChoropleth';
-import { getFillTransitionState } from './fill-transition';
+import { getFillTransitionState, getLayerTransitions } from './fill-transition';
 import { getCameraState, type CameraSeamState } from '@/view/map/hooks/useMapViewState';
 
 export type ChoroplethSeamState = {
@@ -32,6 +32,8 @@ export type AtlasState = {
   reveal?: RevealSeamState;
   camera?: CameraSeamState;
   fill?: { ms: number; dataKey: string };
+  /** Czas przejścia GPU atrybutów warstw (ma być 0). */
+  layerTransitions?: Array<{ id: string; transitionMs: number }>;
 };
 
 export type WindowWithAtlas = {
@@ -73,7 +75,8 @@ export function installAtlasSeam(
         choropleth: state.choropleth ? { ...state.choropleth } : null,
         profileOpen: state.profileOpen,
         reveal: typeof getRevealState === 'function' ? { ...getRevealState() } : { running: false, progress: 1 },
-        fill: typeof getFillTransitionState === 'function' ? { ...getFillTransitionState() } : { ms: 300, dataKey: '' },
+        fill: typeof getFillTransitionState === 'function' ? { ...getFillTransitionState() } : { ms: 0, dataKey: '' },
+        layerTransitions: typeof getLayerTransitions === 'function' ? [...getLayerTransitions()] : [],
         camera: typeof getCameraState === 'function' ? { ...getCameraState() } : { animating: false, trace: [] },
       });
     },

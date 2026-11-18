@@ -1,59 +1,19 @@
 import { GeoJsonLayer } from '@deck.gl/layers';
 import type { FeatureCollection } from 'geojson';
 import type { LayerFactory, LayerContext } from './admin';
-import { loadGeoData, parseCssColor } from './admin';
-import { classColorToken, type ClassifyResult } from '@/core/map/classes';
+import { loadGeoData } from './admin';
+import { makeFillColorGetter, resolveTokenColor } from './choropleth-color';
 import { getNoDataPatternProps } from './no-data-pattern';
 import type { Feature } from 'geojson';
 import { memoLast } from '@/core/map/memo-last';
-import { resolveFillTransition } from '@/core/map/fill-transition';
+import { noteFillLayer } from '@/core/map/fill-transition';
+import { createColorMemory } from '@/core/map/fill-blend';
 import { readDiag } from '@/core/map/diag';
 import { readUrlState } from '@/core/url/state';
-import tokensJson from '../../../../config/tokens.json';
 
-/**
- * Odczytuje kolor z aktualnych zmiennych CSS tokenu (np. --seq-1, --div-3, --no-data)
- * lub z pliku zapasowego config/tokens.json dla podanego motywu.
- */
-export function resolveTokenColor(
-  token: string,
-  theme: 'light' | 'dark' = 'light'
-): [number, number, number, number] {
-  if (typeof window !== 'undefined') {
-    const style = getComputedStyle(document.documentElement);
-    const val = style.getPropertyValue(token)?.trim();
-    if (val) {
-      const parsed = parseCssColor(val);
-      if (parsed) return parsed;
-    }
-  }
+export { resolveTokenColor };
 
-  const isDark = theme === 'dark';
-  let hex: string | undefined;
-
-  if (token === '--no-data') {
-    hex = tokensJson.data.noData[isDark ? 'dark' : 'light'];
-  } else if (token.startsWith('--seq-')) {
-    const idx = parseInt(token.slice(6), 10) - 1;
-    const seq = tokensJson.data.sequential[isDark ? 'dark' : 'light'];
-    hex = seq[idx] ?? seq[0];
-  } else if (token.startsWith('--div-')) {
-    const idx = parseInt(token.slice(6), 10) - 1;
-    const div = tokensJson.data.diverging[isDark ? 'dark' : 'light'];
-    hex = div[idx] ?? div[0];
-  }
-
-  if (hex) {
-    const parsed = parseCssColor(hex);
-    if (parsed) return parsed;
-  }
-
-  const fallback = parseCssColor(tokensJson.color.light.arkusz);
-  if (!fallback) {
-    throw new Error('Nieprawidłowy token koloru arkusz w config/tokens.json');
-  }
-  return fallback;
-}
+const colorMemory = createColorMemory();
 
 type Choropleth = NonNullable<LayerContext['choropleth']>;
 
@@ -91,58 +51,23 @@ export const choroplethLayerFactory: LayerFactory = {
 
     const { features, activeWojTeryt, activePowTeryt, isInScope } = resolveScope(ctx, choropleth);
 
-    // Kolory klas liczymy raz na warstwę, a nie osobno dla każdej z tysięcy jednostek.
-    const palette = new Map<string, [number, number, number, number]>();
-    const colorOf = (cls: ClassifyResult) => {
-      const token = classColorToken(cls, choropleth.classes, choropleth.scheme);
-      let color = palette.get(token);
-      if (!color) {
-        color = resolveTokenColor(token);
-        palette.set(token, color);
-      }
-      return color;
-    };
-    const lineColor = resolveTokenColor('--linia');
-
-    const progress = choropleth.reveal?.progress ?? 1;
-    const running = choropleth.reveal?.running ?? false;
-    const totalDuration = tokensJson.motion.revealTotal ?? 900;
-    const elapsed = progress * totalDuration;
-
     const isReduced =
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const transitionDuration = isReduced || readDiag().notrans ? 0 : tokensJson.motion.base ?? 300;
+    const getFillColor = makeFillColorGetter({
+      choropleth,
+      isInScope,
+      memory: colorMemory,
+      reduced: isReduced || readDiag().notrans,
+    });
 
-    return new GeoJsonLayer({
+    // Bez `transitions`: przejścia GPU parują wierzchołki po indeksie i dają wachlarze.
+    const layer = new GeoJsonLayer({
       id: 'choropleth-layer',
-      transitions: {
-        // Zestaw cech zależy tylko od poziomu (zakres filtruje kolor, nie dane).
-        getFillColor: resolveFillTransition(choropleth.level, transitionDuration, { revealRunning: choropleth.reveal?.running ?? false }).ms,
-      },
       data: features,
       filled: true,
       stroked: true,
-      getFillColor: (f: any) => {
-        const teryt = f.properties?.teryt;
-        const cls = teryt ? choropleth.classByTeryt[teryt] ?? 'no-data' : 'no-data';
-        const fullColor = cls === 'no-data' ? lineColor : colorOf(cls);
-
-        // Reszta kraju (poza aktywnym zakresem): wyblakły kolor tła
-        if (!isInScope(teryt)) {
-          return [fullColor[0], fullColor[1], fullColor[2], 64];
-        }
-
-        // Jednostki w aktywnym zakresie: animowane pojawianie się po kolei
-        if (running && progress < 1) {
-          const res = teryt ? choropleth.revealResults?.get(teryt) : undefined;
-          if (res && elapsed < res.delay) {
-            return [fullColor[0], fullColor[1], fullColor[2], 64];
-          }
-        }
-
-        return fullColor;
-      },
+      getFillColor,
       getLineColor: ctx.colors.kalka,
       getLineWidth: 1.2,
       lineWidthUnits: 'pixels',
@@ -175,7 +100,8 @@ export const choroplethLayerFactory: LayerFactory = {
           choropleth.classByTeryt,
           choropleth.reveal?.progress,
           choropleth.reveal?.running,
-          choropleth.classByTeryt,
+          choropleth.blend?.progress,
+          choropleth.blend?.running,
           activeWojTeryt,
           activePowTeryt,
           ctx.colors,
@@ -183,6 +109,8 @@ export const choroplethLayerFactory: LayerFactory = {
         getLineColor: [ctx.colors.kalka],
       },
     });
+    noteFillLayer('choropleth-layer', choropleth.level, layer.props.transitions as Record<string, unknown> | undefined);
+    return layer;
   },
 };
 

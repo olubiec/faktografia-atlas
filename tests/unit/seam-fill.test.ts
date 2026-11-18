@@ -22,6 +22,13 @@ describe('Szew testowy: przejście koloru (fill)', () => {
     expect(typeof fill?.dataKey).toBe('string');
   });
 
+  it('fill.ms jest 0, a layerTransitions to tablica', () => {
+    const win: WindowWithAtlas = { location: { search: '?e2e' } };
+    installAtlasSeam(win, () => state);
+    expect(win.__atlas?.fill?.ms).toBe(0);
+    expect(Array.isArray(win.__atlas?.layerTransitions)).toBe(true);
+  });
+
   it('bez ?e2e nie ma __atlas', () => {
     const win: WindowWithAtlas = { location: { search: '' } };
     installAtlasSeam(win, () => state);

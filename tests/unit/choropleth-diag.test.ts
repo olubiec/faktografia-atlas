@@ -34,7 +34,6 @@ function setSearch(search: string) {
   vi.stubGlobal('document', { documentElement: {} });
   vi.stubGlobal('getComputedStyle', () => ({ getPropertyValue: () => '' }));
 }
-const fillMs = (c: never) => (choroplethLayerFactory.create(c) as any).props.transitions.getFillColor;
 
 describe('przełączniki ?diag= w warstwach choropleth (W20-CN05)', () => {
   beforeEach(() => {
@@ -46,13 +45,18 @@ describe('przełączniki ?diag= w warstwach choropleth (W20-CN05)', () => {
     vi.restoreAllMocks();
   });
 
-  it('notrans: przejście koloru 0 mimo tego samego klucza', () => {
+  it('notrans: reveal bez animacji (pełna alfa), bez diag animowany', () => {
+    const reveal = new Map([['12', { teryt: '12', order: 0, delay: 100, duration: 150 }]]);
+    const alpha = () => {
+      const c = ctx({ '12': 1 }) as any;
+      c.choropleth.reveal = { running: true, progress: 0 };
+      c.choropleth.revealResults = reveal;
+      return (choroplethLayerFactory.create(c) as any).props.getFillColor({ properties: { teryt: '12' } })[3];
+    };
     setSearch('');
-    fillMs(ctx({ '12': 1 }));
-    expect(fillMs(ctx({ '12': 2 }))).toBeGreaterThan(0);
+    expect(alpha()).toBe(64);
     setSearch('?diag=notrans');
-    expect(fillMs(ctx({ '12': 1 }))).toBe(0);
-    expect(fillMs(ctx({ '12': 2 }))).toBe(0);
+    expect(alpha()).toBe(255);
   });
 
   it('nohatch: brak warstwy kreskowania, a warstwa kolorów koloruje no-data na --linia', () => {
