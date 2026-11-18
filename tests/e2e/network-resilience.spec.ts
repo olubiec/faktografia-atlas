@@ -76,18 +76,22 @@ test.describe('Odporność na błędy sieci, CORS i wyścigi kliknięć (@W17-T0
     await expect(sideSheet).toBeVisible();
     await expect(sideSheet.locator('h2', { hasText: 'Gmina miejsko-wiejska Brzesko' })).toBeVisible();
 
-    // Rozwinięcie bloku części miasta i wsi
+    // Plik części jest pobierany dopiero przy pierwszym rozwinięciu, więc najpierw przycisk jest widoczny.
     const partsTrigger = page.locator('button', { hasText: 'Miasto i obszar wiejski' });
     await expect(partsTrigger).toBeVisible();
     await partsTrigger.click();
 
-    // Komunikat o braku danych części
+    // Po błędzie 404 komponent celowo zamienia przycisk na ramkę z komunikatem (nie ma czego rozwijać).
+    // Czekamy na komunikat, a nie na zniknięcie przycisku.
     const fallbackMsg = page.getByText('Dane o mieście i wsi pojawią się po najbliższej aktualizacji');
     await expect(fallbackMsg).toBeVisible();
 
+    // Nagłówek ramki jest widoczny, a przycisku o tej nazwie po zakończeniu ładowania już nie ma
+    await expect(sideSheet.getByText('Miasto i obszar wiejski', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Miasto i obszar wiejski/ })).toHaveCount(0);
+
     // Główny profil nie jest zablokowany i nadal jest w pełni czytelny
     await expect(sideSheet.locator('h2', { hasText: 'Gmina miejsko-wiejska Brzesko' })).toBeVisible();
-    await expect(partsTrigger).toBeVisible();
   });
 
   test('symulacja błędu sieciowego / CORS na index.json biblioteki: strona /biblioteka wyświetla komunikat z ponowieniem próby', async ({
