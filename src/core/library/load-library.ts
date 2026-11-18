@@ -97,33 +97,24 @@ export function loadLibraryIndex(
   }
 
   const url = `${libraryBase()}/index.json`;
-  indexPromise = fetchImpl(url)
-    .then((res) => {
-      if (!res.ok) {
-        isIndexCached = true;
-        indexCache = null;
-        return null;
-      }
-      return res.json();
-    })
+  // Błąd (sieć, status inny niż OK, zły JSON/kształt) daje null tylko tej próbie;
+  // trwale zapamiętujemy wyłącznie poprawną odpowiedź.
+  const attempt: Promise<LibraryIndex | null> = fetchImpl(url)
+    .then((res) => (res.ok ? res.json() : null))
     .then((data) => {
       if (isValidIndex(data)) {
         isIndexCached = true;
         indexCache = data as LibraryIndex;
         return indexCache;
       }
-      isIndexCached = true;
-      indexCache = null;
       return null;
     })
-    .catch(() => {
-      isIndexCached = true;
-      indexCache = null;
-      return null;
-    })
+    .catch(() => null)
     .finally(() => {
-      indexPromise = null;
+      // Zwalniamy slot tylko własnej próby (reset w trakcie nie może zgubić nowszej).
+      if (indexPromise === attempt) indexPromise = null;
     });
+  indexPromise = attempt;
 
   return indexPromise;
 }
