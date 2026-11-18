@@ -124,4 +124,15 @@ describe("camera-driver", () => {
       setState: () => {},
     });
   });
+
+  it("wolny render: po pierwszej klatce krok ≤ 1/6, animacja ma ≥ 6 klatek i kończy na celu", () => {
+    const s = setup();
+    s.driver.start(plan);
+    s.step(16.7);
+    // Dalsze klatki co 2 s (≫ czas animacji 600 ms).
+    for (let i = 0; i < 20 && s.driver.isAnimating(); i++) s.step(2000);
+    expect(s.jumps.length).toBeGreaterThanOrEqual(6);
+    expect(s.jumps.at(-1)).toEqual(B);
+    expect(s.driver.isAnimating()).toBe(false);
+  });
 });

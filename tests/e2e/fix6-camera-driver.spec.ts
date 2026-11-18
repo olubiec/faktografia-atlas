@@ -43,7 +43,7 @@ test.describe('Kamera przez sterownik (@FIX6H2)', () => {
     await settled(page);
     const a = await atlas(page);
     const zooms = a.camera.trace.map((v) => v.zoom);
-    expect(zooms.length).toBeGreaterThanOrEqual(20);
+    expect(zooms.length).toBeGreaterThanOrEqual(6);
     for (let i = 1; i < zooms.length; i += 1) expect(zooms[i]).toBeGreaterThanOrEqual(zooms[i - 1] - 1e-9);
     expect(zooms[zooms.length - 1]).toBeCloseTo(a.viewState.zoom, 6);
   });
