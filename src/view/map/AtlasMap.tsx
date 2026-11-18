@@ -135,8 +135,14 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     updateViewStateForBbox,
     markUserMoved,
     handleKeyDown,
-    isAnimatingRef,
+    mapRef,
+    syncMap,
+    handleMapMove,
+    handleMapMoveEnd,
   } = useMapViewState(drillState.bbox, bounds, sidePanelPx);
+
+  // Mapa jest niekontrolowana: widok startowy tylko przy tworzeniu, dalej steruje nim sterownik kamery.
+  const [initialView] = useState(() => currentViewState);
 
   const mainView = useMainView();
   const selectedLevel = selectedTeryt ? unitIndex.byTeryt.get(selectedTeryt)?.level ?? null : null;
@@ -337,6 +343,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
         aria-label="Mapa Polski"
         onClick={handleContainerClick}
         onKeyDown={handleKeyDown}
+        onWheel={markUserMoved}
         onPointerLeave={() => setHover(null)}
       >
         <div className="absolute top-4 left-4 right-4 md:right-auto z-10 flex flex-col gap-2 max-w-[calc(100vw-32px)] sm:max-w-[360px] pointer-events-none">
@@ -353,25 +360,18 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
 
         <Map
           mapLib={maplibregl}
-          {...currentViewState}
-          onMove={(evt) => {
-            if (!evt.originalEvent) return;
-            const orig = evt.originalEvent as any;
-            const isDragging =
-              orig.type === 'mousemove' || orig.type === 'pointermove'
-                ? orig.buttons > 0
-                : orig.type === 'touchmove';
-
-            if (isAnimatingRef.current && !isDragging) return;
-
-            markUserMoved();
-            setCurrentViewState(evt.viewState);
-          }}
+          ref={mapRef}
+          initialViewState={initialView}
+          onMove={(evt) => handleMapMove(evt.viewState, Boolean(evt.originalEvent))}
+          onMoveEnd={(evt) => handleMapMoveEnd(evt.viewState)}
           mapStyle={mapStyle}
           maxBounds={limits.maxBounds}
           maxZoom={limits.maxZoom}
           minZoom={limits.minZoom}
-          onLoad={() => setIsReady(true)}
+          onLoad={() => {
+            syncMap();
+            setIsReady(true);
+          }}
           attributionControl={false}
         >
           <DeckGLOverlay layers={layers} />

@@ -34,6 +34,10 @@ export type CameraDriver = {
 /** Najkrótszy czas przejęcia animacji w locie. */
 const MIN_RETARGET_MS = 200;
 const FALLBACK_VIEWPORT_PX = 1000;
+/** Największy przyrost postępu na klatkę (po pierwszej): animacja ma ≥ 6 klatek nawet przy wolnym renderze. */
+const MAX_STEP = 1 / 6;
+/** Pierwsza klatka spóźniona o więcej (strona była zablokowana) też podlega limitowi kroku. */
+const STALL_MS = 300;
 
 export function createCameraDriver(opts: CameraDriverOptions): CameraDriver {
   const { map, clock, onFrame, onEnd } = opts;
@@ -43,6 +47,8 @@ export function createCameraDriver(opts: CameraDriverOptions): CameraDriver {
   let cancelFrame: (() => void) | void;
   // Znacznik pokolenia: spóźniona klatka anulowanej animacji jest ignorowana.
   let generation = 0;
+  // Ostatnio pokazany postęp (0..1); null do pierwszej klatki planu.
+  let shown: number | null = null;
 
   const stopPending = () => {
     if (cancelFrame) cancelFrame();
@@ -57,10 +63,15 @@ export function createCameraDriver(opts: CameraDriverOptions): CameraDriver {
 
   const tick = (gen: number) => {
     if (gen !== generation || !plan) return;
-    // Bez limitu kroku: po zacięciu pozycja wynika z czasu, nie z licznika klatek.
+    // Postęp wynika z czasu (po zacięciu pozycja nie zależy od licznika klatek),
+    // ale rośnie najwyżej o MAX_STEP, by ruch nie „teleportował się” na koniec.
     const elapsed = clock.now() - startedAt;
-    emit(sampleCamera(plan, elapsed));
-    if (elapsed >= plan.durationMs) {
+    const timeProgress = Math.min(1, elapsed / plan.durationMs);
+    const base = shown ?? (elapsed > STALL_MS ? 0 : null);
+    const progress = base === null ? timeProgress : Math.min(timeProgress, base + MAX_STEP);
+    shown = progress;
+    emit(sampleCamera(plan, progress * plan.durationMs));
+    if (progress >= 1) {
       plan = null;
       cancelFrame = undefined;
       onEnd?.();
@@ -73,6 +84,7 @@ export function createCameraDriver(opts: CameraDriverOptions): CameraDriver {
     stopPending();
     generation += 1;
     plan = next;
+    shown = null;
     startedAt = clock.now();
     if (next.durationMs <= 0) {
       emit(next.to);
