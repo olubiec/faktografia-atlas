@@ -4,6 +4,7 @@ import type { LayerFactory, LayerContext } from './admin';
 import { loadGeoData, parseCssColor } from './admin';
 import { classColorToken, type ClassifyResult } from '@/core/map/classes';
 import { getNoDataPatternProps } from './no-data-pattern';
+import type { Feature } from 'geojson';
 import { readUrlState } from '@/core/url/state';
 import tokensJson from '../../../../config/tokens.json';
 
@@ -51,6 +52,32 @@ export function resolveTokenColor(
   return fallback;
 }
 
+type Choropleth = NonNullable<LayerContext['choropleth']>;
+
+/** Wspólne dla obu warstw: pełny podział poziomu, aktywny zakres i test „czy w zakresie”. */
+function resolveScope(ctx: LayerContext, choropleth: Choropleth) {
+  const { wojFeatures, powFeatures, gmiFeatures } = loadGeoData(ctx.topoData);
+  // Rysujemy pełny podział administracyjny danego poziomu. Reszta kraju jest rysowana jako wyblakłe tło.
+  const features: FeatureCollection =
+    choropleth.level === 'pow' ? powFeatures : choropleth.level === 'gmi' ? gmiFeatures : wojFeatures;
+  const activeWojTeryt = choropleth.activeScope?.activeWojTeryt ?? ctx.drillState?.activeWojTeryt ?? null;
+  const activePowTeryt = choropleth.activeScope?.activePowTeryt ?? ctx.drillState?.activePowTeryt ?? null;
+  const isInScope = (teryt: string | null | undefined): boolean => {
+    if (!teryt) return false;
+    if (choropleth.level === 'woj') return true;
+    if (choropleth.level === 'pow') {
+      return activeWojTeryt ? teryt.startsWith(activeWojTeryt) : true;
+    }
+    if (choropleth.level === 'gmi') {
+      if (activePowTeryt) return teryt.startsWith(activePowTeryt);
+      if (activeWojTeryt) return teryt.startsWith(activeWojTeryt);
+      return true;
+    }
+    return true;
+  };
+  return { features, activeWojTeryt, activePowTeryt, isInScope };
+}
+
 export const choroplethLayerFactory: LayerFactory = {
   id: 'choropleth-layer',
   create: (ctx: LayerContext) => {
@@ -59,27 +86,7 @@ export const choroplethLayerFactory: LayerFactory = {
       return null;
     }
 
-    const { wojFeatures, powFeatures, gmiFeatures } = loadGeoData(ctx.topoData);
-    // Rysujemy pełny podział administracyjny danego poziomu. Reszta kraju jest rysowana jako wyblakłe tło.
-    const features: FeatureCollection =
-      choropleth.level === 'pow' ? powFeatures : choropleth.level === 'gmi' ? gmiFeatures : wojFeatures;
-
-    const activeWojTeryt = choropleth.activeScope?.activeWojTeryt ?? ctx.drillState?.activeWojTeryt ?? null;
-    const activePowTeryt = choropleth.activeScope?.activePowTeryt ?? ctx.drillState?.activePowTeryt ?? null;
-
-    const isInScope = (teryt: string | null | undefined): boolean => {
-      if (!teryt) return false;
-      if (choropleth.level === 'woj') return true;
-      if (choropleth.level === 'pow') {
-        return activeWojTeryt ? teryt.startsWith(activeWojTeryt) : true;
-      }
-      if (choropleth.level === 'gmi') {
-        if (activePowTeryt) return teryt.startsWith(activePowTeryt);
-        if (activeWojTeryt) return teryt.startsWith(activeWojTeryt);
-        return true;
-      }
-      return true;
-    };
+    const { features, activeWojTeryt, activePowTeryt, isInScope } = resolveScope(ctx, choropleth);
 
     // Kolory klas liczymy raz na warstwę, a nie osobno dla każdej z tysięcy jednostek.
     const palette = new Map<string, [number, number, number, number]>();
@@ -105,7 +112,6 @@ export const choroplethLayerFactory: LayerFactory = {
     const transitionDuration = isReduced ? 0 : tokensJson.motion.base ?? 300;
 
     return new GeoJsonLayer({
-      ...getNoDataPatternProps(choropleth.classByTeryt),
       id: 'choropleth-layer',
       transitions: {
         getFillColor: transitionDuration,
@@ -172,6 +178,37 @@ export const choroplethLayerFactory: LayerFactory = {
         ],
         getLineColor: [ctx.colors.kalka],
       },
+    });
+  },
+};
+
+/**
+ * Kreskowanie „brak danych” jako osobna warstwa tylko z takimi cechami w zakresie.
+ * Wzór procedury (FillStyleExtension) nie dotyka reszty wielokątów, więc przy dużym zbliżeniu
+ * nie powstają wachlarze na jednolitych kolorach. Warstwa kolorów rysuje te cechy pod spodem.
+ */
+export const choroplethNoDataLayerFactory: LayerFactory = {
+  id: 'choropleth-nodata-layer',
+  create: (ctx: LayerContext) => {
+    const choropleth = ctx.choropleth ?? ctx.drillState?.choropleth;
+    if (!choropleth) return null;
+    const { features, isInScope } = resolveScope(ctx, choropleth);
+    const noData = features.features.filter((f: Feature) => {
+      const teryt = f.properties?.teryt;
+      if (!isInScope(teryt)) return false;
+      return (choropleth.classByTeryt[teryt] ?? 'no-data') === 'no-data';
+    });
+    if (noData.length === 0) return null;
+    const lineColor = resolveTokenColor('--linia');
+    return new GeoJsonLayer({
+      ...getNoDataPatternProps(choropleth.classByTeryt),
+      id: 'choropleth-nodata-layer',
+      data: { type: 'FeatureCollection', features: noData } as FeatureCollection,
+      filled: true,
+      stroked: false,
+      pickable: false,
+      getFillColor: lineColor,
+      updateTriggers: { data: [choropleth.classByTeryt, choropleth.level] },
     });
   },
 };

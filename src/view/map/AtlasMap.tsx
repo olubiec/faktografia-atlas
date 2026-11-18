@@ -16,7 +16,7 @@ import { layersZoomBucket } from '@/core/map/localities-layer';
 import { readUrlState } from '@/core/url/state';
 import { createMapLayers, registerLayerFactory, parseCssColor } from './layers';
 import { localitiesLayerFactory } from './layers/localities';
-import { choroplethLayerFactory, selectedOutlineLayerFactory } from './layers/choropleth';
+import { choroplethLayerFactory, choroplethNoDataLayerFactory, selectedOutlineLayerFactory } from './layers/choropleth';
 import { BackButton } from './BackButton';
 import { Breadcrumbs } from './Breadcrumbs';
 import { UnitList } from './UnitList';
@@ -38,6 +38,7 @@ import { ProfilePortal } from './ProfilePortal';
 
 // Kolejność = kolejność rysowania: kolory wskaźnika, obrys wybranej jednostki, na wierzchu miejscowości.
 registerLayerFactory(choroplethLayerFactory);
+registerLayerFactory(choroplethNoDataLayerFactory);
 registerLayerFactory(selectedOutlineLayerFactory);
 registerLayerFactory(localitiesLayerFactory);
 
