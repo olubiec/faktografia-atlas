@@ -13,6 +13,14 @@ export function shouldShowLocalitiesLayer(zoom: number): boolean {
 }
 
 /**
+ * Zoom przekazywany do fabryk warstw: tylko dwie wartości (poniżej progu miejscowości i od progu).
+ * Dzięki temu warstwy nie przebudowują się na każdej klatce płynnego zoomu.
+ */
+export function layersZoomBucket(zoom: number): 5 | 11 {
+  return shouldShowLocalitiesLayer(zoom) ? 11 : 5;
+}
+
+/**
  * Filtruje listę miejscowości dla danego zoomu i opcjonalnego filtru gminy.
  */
 export function filterLocalitiesByZoom(

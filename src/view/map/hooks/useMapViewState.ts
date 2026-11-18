@@ -366,18 +366,20 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     };
   }, [animateToView, bounds, drillBbox, setCurrentViewState, sheetInset, sidePanelPx]);
 
+  // Efekt zależy od progu, nie od zoomu: nie uruchamia się na każdej klatce płynnego zoomu.
+  const needsLocalities = currentViewState.zoom >= 8.5;
   useEffect(() => {
-    if (currentViewState.zoom >= 8.5) {
+    if (needsLocalities) {
       loadLocalities().then((data) => setLocalities(data));
     }
-  }, [currentViewState.zoom]);
+  }, [needsLocalities]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', '+', '=', '-'].includes(e.key)) {
         markUserMoved();
       }
-      const panStep = 0.5 / Math.pow(2, currentViewState.zoom - 5);
+      const panStep = 0.5 / Math.pow(2, currentViewStateRef.current.zoom - 5);
       const zoomStep = 0.5;
 
       if (e.key === 'ArrowRight') {
@@ -406,7 +408,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         }));
       }
     },
-    [currentViewState.zoom, limits.maxZoom, limits.minZoom, markUserMoved, setCurrentViewState]
+    [limits.maxZoom, limits.minZoom, markUserMoved, setCurrentViewState]
   );
 
   return {
