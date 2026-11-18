@@ -57,6 +57,9 @@ const defaultKalka = parseCssColor(tokensJson.color.light.kalka);
 
 type AtlasData = { units: Unit[]; adminTopo: any };
 
+// Szerokość kolumny profilu obok mapy (md:w-[440px]).
+const SIDE_PANEL_PX = 440;
+
 let lastUnitClickTime = 0;
 
 /**
@@ -107,13 +110,18 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     goBack,
   } = useMapSelection(unitIndex, {
     onBboxChange: (bbox) => {
-      updateViewStateForBbox(bbox);
+      // Wybór jednostki od razu rezerwuje miejsce na panel profilu (jeden ciągły ruch kamery).
+      updateViewStateForBbox(bbox, undefined, !isMobile && bbox ? SIDE_PANEL_PX : 0);
     },
     onLocalitySelectView: (targetView) => {
       localityTargetRef.current = targetView;
       setCurrentViewState(targetView);
     },
   });
+
+  const { profile, isOpen: profileOpen, expected: profileExpected, closeProfile } = useProfile(selectedTeryt, units);
+  // Kolumna profilu zajmuje miejsce od chwili wyboru jednostki, jeszcze przed wczytaniem danych.
+  const sidePanelPx = !isMobile && profileExpected ? SIDE_PANEL_PX : 0;
 
   const {
     containerRef,
@@ -127,7 +135,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     markUserMoved,
     handleKeyDown,
     isAnimatingRef,
-  } = useMapViewState(drillState.bbox, bounds);
+  } = useMapViewState(drillState.bbox, bounds, sidePanelPx);
 
   const mainView = useMainView();
   const selectedLevel = selectedTeryt ? unitIndex.byTeryt.get(selectedTeryt)?.level ?? null : null;
@@ -164,8 +172,6 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       setIndicatorSheetOpen(false);
     }
   }
-
-  const { profile, isOpen: profileOpen, closeProfile } = useProfile(selectedTeryt, units);
 
   const [prevProfileOpen, setPrevProfileOpen] = useState(profileOpen);
   if (profileOpen !== prevProfileOpen) {
@@ -244,7 +250,8 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
   const getState = useCallback((): AtlasState => {
     const compareParam = typeof window !== 'undefined' ? readUrlState(window.location.search, unitIndex).c ?? null : null;
     return {
-      ready: isReady,
+      // Gotowe dopiero, gdy układ się ustalił: przy wybranej jednostce panel profilu zmienia szerokość mapy.
+      ready: isReady && (selectedTeryt === null || profileOpen),
       layers: layers.map((layer) => layer.id),
       selected: compareParam ?? drillState.selected,
       viewState: currentViewStateRef.current,
@@ -259,7 +266,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
         : null,
       profileOpen,
     };
-  }, [isReady, layers, unitIndex, drillState.selected, theme, choroplethData, profileOpen, currentViewStateRef]);
+  }, [isReady, selectedTeryt, layers, unitIndex, drillState.selected, theme, choroplethData, profileOpen, currentViewStateRef]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -406,7 +413,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       {/* Profil miejsca: osobna kolumna obok mapy, nic nie jest nałożone na mapę (PRODUKT.md §4). */}
       <div
         data-slot="side"
-        className="hidden md:block empty:hidden md:w-[440px] md:shrink-0 md:border-l border-linia bg-arkusz overflow-y-auto"
+        className={`hidden md:block md:w-[440px] md:shrink-0 md:border-l border-linia bg-arkusz overflow-y-auto${profileExpected ? '' : ' empty:hidden'}`}
       />
 
       {isMobile && (

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import type { Indicator, IndicatorValues } from '@/core/profile/profile';
 import type { UnitLevel } from '@/core/units/types';
 import { loadIndicatorValues } from '@/core/data/load-values';
+import { ATLAS_RESET_EVENT } from '@/core/url/home';
 import { readUrlState, writeUrlState } from '@/core/url/state';
 import { DEFAULT_INDICATOR_ID, DEFAULT_LEVEL, clampLevel, resolveYear } from '@/core/map/main-view';
 import indicatorsData from '../../../../config/indicators.json';
@@ -40,7 +41,13 @@ export function useMainView(): MainView {
   useEffect(() => {
     const onPop = () => setUrl(readView());
     window.addEventListener('popstate', onPop);
-    return () => window.removeEventListener('popstate', onPop);
+    // Logo = powrót do stanu startowego (domyślny wskaźnik, rok i poziom).
+    const onReset = () => setUrl({ i: null, y: null, l: null });
+    window.addEventListener(ATLAS_RESET_EVENT, onReset);
+    return () => {
+      window.removeEventListener('popstate', onPop);
+      window.removeEventListener(ATLAS_RESET_EVENT, onReset);
+    };
   }, []);
 
   const indicator = useMemo(

@@ -4,9 +4,12 @@ import { loadLocalities } from '@/core/search/load-localities';
 import type { Locality } from '@/core/search/types';
 import { useSheetInset } from '@/view/map/sheetInset';
 import { cameraTransition, type CameraKind } from '@/core/map/camera';
+import { parseCubicBezier } from '@/core/map/ease';
 
 // Margines (px) wokół dopasowanego obszaru, żeby mapa nie dotykała krawędzi okna.
 const FIT_PADDING = 48;
+// Największy krok postępu animacji na jedną klatkę (min. ok. 5 klatek ruchu).
+const MAX_STEP = 0.2;
 
 type Bbox = [number, number, number, number];
 // Przybliżony obrys Polski; używany tylko, gdy lista jednostek nie jest jeszcze wczytana.
@@ -54,36 +57,21 @@ function viewStateWithInset(
   };
 }
 
-function parseCubicBezier(easingStr: string): (t: number) => number {
-  const match = easingStr.match(/cubic-bezier\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*\)/);
-  if (!match) {
-    return (t: number) => t;
-  }
-  const x1 = parseFloat(match[1]);
-  const y1 = parseFloat(match[2]);
-  const x2 = parseFloat(match[3]);
-  const y2 = parseFloat(match[4]);
+/** Szerokość (px) kolumny profilu obok mapy, jeśli jest teraz widoczna. */
+function currentSideWidth(): number {
+  if (typeof document === 'undefined') return 0;
+  return document.querySelector<HTMLElement>('[data-slot="side"]')?.offsetWidth ?? 0;
+}
 
-  return function ease(x: number): number {
-    if (x <= 0) return 0;
-    if (x >= 1) return 1;
-
-    let tLo = 0;
-    let tHi = 1;
-    let t = x;
-
-    for (let i = 0; i < 12; i++) {
-      const currentX = 3 * (1 - t) * (1 - t) * t * x1 + 3 * (1 - t) * t * t * x2 + t * t * t;
-      if (currentX < x) {
-        tLo = t;
-      } else {
-        tHi = t;
-      }
-      t = (tLo + tHi) / 2;
-    }
-
-    return 3 * (1 - t) * (1 - t) * t * y1 + 3 * (1 - t) * t * t * y2 + t * t * t;
-  };
+/**
+ * Gdy kolumna profilu ma się pojawić (lub zniknąć) razem ze zmianą kamery, kontener mapy
+ * zmieni szerokość o `pendingPx`, a środek ekranu przesunie się o połowę tej wartości.
+ * Przesuwamy środek kamery o tyle samo, więc mapa nie skacze w chwili zmiany układu.
+ */
+export function shiftForLayout(view: ViewState, pendingPx: number): ViewState {
+  if (pendingPx === 0) return view;
+  const degPerPx = 360 / (512 * Math.pow(2, view.zoom));
+  return { ...view, longitude: view.longitude - (pendingPx / 2) * degPerPx };
 }
 
 export type CameraSeamState = {
@@ -128,18 +116,27 @@ function syncCameraSeam(
   };
 }
 
-export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POLAND_BBOX) {
+/**
+ * `sidePanelPx` = szerokość kolumny profilu, która ma być zajęta przy tym widoku (0, gdy jej nie będzie).
+ * Miejsce na panel jest rezerwowane już w pierwszym dopasowaniu kamery, dzięki czemu
+ * otwarcie profilu to jeden ciągły ruch, bez drugiego przesunięcia po wczytaniu panelu.
+ */
+export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POLAND_BBOX, sidePanelPx = 0) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sheetInset = useSheetInset();
   const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [localities, setLocalities] = useState<Locality[]>([]);
   const localityTargetRef = useRef<ViewState | null>(null);
+  const sideExpectedRef = useRef(sidePanelPx);
+  const lastSideRef = useRef(sidePanelPx);
 
   const fittedKeyRef = useRef<string | null>(null);
   const fittedBboxRef = useRef<string | null>(null);
   const userMovedRef = useRef(false);
   const animRef = useRef<number | null>(null);
   const isAnimatingRef = useRef(false);
+  // Cel trwającej animacji; zmiana rozmiaru w jej trakcie tylko podmienia cel, nie przerywa ruchu.
+  const animTargetRef = useRef<ViewState | null>(null);
 
   const bounds = countryBbox;
   const limits = useMemo(
@@ -174,7 +171,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
   }, []);
 
   const animateToView = useCallback(
-    (targetView: ViewState, kind: CameraKind = 'in') => {
+    (targetView: ViewState, kind: CameraKind = 'in', fromOverride?: ViewState) => {
       if (animRef.current !== null) {
         cancelAnimationFrame(animRef.current);
         animRef.current = null;
@@ -184,7 +181,12 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         typeof window !== 'undefined' &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      const fromView = { ...currentViewStateRef.current };
+      const fromView = fromOverride ? { ...fromOverride } : { ...currentViewStateRef.current };
+      if (fromOverride) {
+        // Punkt startu skorygowany o zmianę układu: ustawiamy go od razu, w tym samym renderze co układ.
+        currentViewStateRef.current = fromView;
+        setCurrentViewState(fromView);
+      }
       const { duration, easing } = cameraTransition(fromView, targetView, kind, reducedMotion);
 
       if (duration <= 0) {
@@ -197,10 +199,11 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
 
       userMovedRef.current = false;
       isAnimatingRef.current = true;
+      animTargetRef.current = targetView;
       syncCameraSeam(true, { type: 'reset', view: fromView });
 
       let startTime: number | null = null;
-      let frameCount = 0;
+      let progress = 0;
       const easeFn = parseCubicBezier(easing);
 
       const animate = (now: number) => {
@@ -215,19 +218,19 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           startTime = now;
         }
 
-        frameCount++;
         const elapsed = now - startTime;
         const timeProgress = Math.min(1, elapsed / duration);
-        const frameProgress = Math.min(1, frameCount / 6);
-        const progress = Math.min(1, Math.min(timeProgress, frameProgress));
+        // Postęp wynika z czasu: pierwsza klatka = 0 (bez skoku na starcie), a po zacięciu
+        // strony ruch nie przeskakuje na koniec, tylko rusza w krokach po najwyżej 1/5 drogi.
+        progress = Math.min(timeProgress, progress + MAX_STEP);
+        const finished = progress >= 1;
+        const eased = easeFn(progress);
 
-        const finished = timeProgress >= 1 && frameProgress >= 1;
-        const eased = easeFn(finished ? 1 : progress);
-
+        const to = animTargetRef.current ?? targetView;
         const nextView: ViewState = {
-          longitude: fromView.longitude + (targetView.longitude - fromView.longitude) * eased,
-          latitude: fromView.latitude + (targetView.latitude - fromView.latitude) * eased,
-          zoom: fromView.zoom + (targetView.zoom - fromView.zoom) * eased,
+          longitude: fromView.longitude + (to.longitude - fromView.longitude) * eased,
+          latitude: fromView.latitude + (to.latitude - fromView.latitude) * eased,
+          zoom: fromView.zoom + (to.zoom - fromView.zoom) * eased,
         };
 
         setCurrentViewState(nextView);
@@ -248,15 +251,20 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
   );
 
   const updateViewStateForBbox = useCallback(
-    (targetBbox: Bbox | null, explicitKind?: CameraKind) => {
+    (targetBbox: Bbox | null, explicitKind?: CameraKind, sideOverride?: number) => {
       const width = containerRef.current?.clientWidth ?? dimensions.width;
       const height = containerRef.current?.clientHeight ?? dimensions.height;
       if (width > 0 && height > 0) {
+        const side = sideOverride ?? sideExpectedRef.current;
+        sideExpectedRef.current = side;
+        // Dopasowujemy do szerokości, jaką mapa będzie miała po ustawieniu się układu (z panelem lub bez).
+        const sideNow = currentSideWidth();
+        const fitWidth = Math.max(1, width + sideNow - side);
         const activeBbox = targetBbox ?? bounds;
-        const newView = viewStateWithInset(activeBbox, width, height, sheetInset);
+        const newView = viewStateWithInset(activeBbox, fitWidth, height, sheetInset);
 
         const bboxKey = JSON.stringify(targetBbox ?? null);
-        const key = JSON.stringify({ bbox: targetBbox ?? null, inset: Math.round(sheetInset) });
+        const key = JSON.stringify({ bbox: targetBbox ?? null, inset: Math.round(sheetInset), side });
 
         let kind: CameraKind = explicitKind ?? 'in';
         if (!explicitKind) {
@@ -274,7 +282,8 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
 
         fittedBboxRef.current = bboxKey;
         fittedKeyRef.current = key;
-        animateToView(newView, kind);
+        const pending = side - sideNow;
+        animateToView(newView, kind, pending !== 0 ? shiftForLayout(currentViewStateRef.current, pending) : undefined);
       }
     },
     [animateToView, bounds, dimensions, sheetInset]
@@ -282,14 +291,17 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
 
   useEffect(() => {
     if (!containerRef.current) return;
+    sideExpectedRef.current = sidePanelPx;
 
     const measure = (isResizeEvent = false) => {
       if (!containerRef.current) return;
       const { clientWidth, clientHeight } = containerRef.current;
       if (clientWidth > 0 && clientHeight > 0) {
         setDimensions({ width: clientWidth, height: clientHeight });
+        const side = sideExpectedRef.current;
+        const fitWidth = Math.max(1, clientWidth + currentSideWidth() - side);
         const bboxKey = JSON.stringify(drillBbox ?? null);
-        const key = JSON.stringify({ bbox: drillBbox ?? null, inset: Math.round(sheetInset) });
+        const key = JSON.stringify({ bbox: drillBbox ?? null, inset: Math.round(sheetInset), side });
 
         if (localityTargetRef.current) {
           if (animRef.current !== null) {
@@ -305,7 +317,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           userMovedRef.current = true;
         } else if (fittedKeyRef.current === null) {
           const activeBbox = drillBbox ?? bounds;
-          const init = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
+          const init = viewStateWithInset(activeBbox, fitWidth, clientHeight, sheetInset);
           if (animRef.current !== null) {
             cancelAnimationFrame(animRef.current);
             animRef.current = null;
@@ -318,32 +330,41 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           fittedKeyRef.current = key;
         } else if (fittedKeyRef.current !== key) {
           const activeBbox = drillBbox ?? bounds;
-          const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
+          const targetView = viewStateWithInset(activeBbox, fitWidth, clientHeight, sheetInset);
           let kind: CameraKind = 'in';
           if (targetView.zoom < currentViewStateRef.current.zoom - 0.05) {
             kind = 'out';
           }
+          // Sama zmiana układu (panel profilu pojawia się lub znika, np. zmiana szerokości okna) – bez animacji.
+          if (fittedBboxRef.current === bboxKey && lastSideRef.current !== side) kind = 'instant';
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
           animateToView(targetView, kind);
         } else if (isResizeEvent && !userMovedRef.current) {
           const activeBbox = drillBbox ?? bounds;
-          const targetView = viewStateWithInset(activeBbox, clientWidth, clientHeight, sheetInset);
+          const targetView = viewStateWithInset(activeBbox, fitWidth, clientHeight, sheetInset);
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
-          animateToView(targetView, 'instant');
+          if (isAnimatingRef.current) {
+            // Zmiana rozmiaru w trakcie animacji (np. otwarcie lub zamknięcie panelu profilu)
+            // nie może jej ucinać skokiem: zmieniamy tylko cel, a ruch płynnie go dogania.
+            animTargetRef.current = targetView;
+          } else {
+            animateToView(targetView, 'instant');
+          }
         }
       }
     };
 
     measure(false);
+    lastSideRef.current = sidePanelPx;
     const resizeObserver = new ResizeObserver(() => measure(true));
     resizeObserver.observe(containerRef.current);
 
     return () => {
       resizeObserver.disconnect();
     };
-  }, [animateToView, bounds, drillBbox, setCurrentViewState, sheetInset]);
+  }, [animateToView, bounds, drillBbox, setCurrentViewState, sheetInset, sidePanelPx]);
 
   useEffect(() => {
     if (currentViewState.zoom >= 8.5) {

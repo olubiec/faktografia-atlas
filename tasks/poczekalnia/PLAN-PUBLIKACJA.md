@@ -9,3 +9,5 @@ Kolejność: P1 (telefon) → P2 (braki formalne; P2-D po P2-C, P2-F po P2-D, P2
 P2-G (PostHog) jest niezależne; zrób je przed P2-B, bo polityka prywatności opisuje jego konfigurację (POSTHOG_CONFIG). Zmienia src/core/consent/analytics.ts za zgodą wprost.
 P3-B i P4-D to zadania tylko do odczytu (raport).
 Pliki w tej katalogu pętla Jules Loop ignoruje. Zakresy pokrywają się częściowo z W18-P03 (intro) i W18-P04 (SEO): przy puszczaniu P4-B/P2-A zrezygnuj z odpowiedniego W18-*.
+
+**Zmiana 17.11.2026:** zadania **P1-A** (Rankingi), **P1-B** (Porównaj) i **P3-C** (Biblioteka) są ZASTĄPIONE planem Q (`PLAN-UWAGI-17-11.md`, prompty w `tasks/poczekalnia/Q/`) – nie puszczaj ich.

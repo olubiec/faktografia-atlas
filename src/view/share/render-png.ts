@@ -1,6 +1,7 @@
 import rough from 'roughjs';
 import tokensJson from '../../../config/tokens.json';
 import type { CardScene } from '../../core/share/card';
+import { withIntrinsicSize } from '../../core/share/logo';
 import type { MeasureFn } from '../../core/share/text-fit';
 
 let measureCanvas: HTMLCanvasElement | null = null;
@@ -37,15 +38,24 @@ function opsToPath(ops: { op: string; data: number[] }[]): string {
   return path.trim();
 }
 
-function loadImage(src: string): Promise<HTMLImageElement> {
+function decode(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = 'anonymous';
     img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error(`Failed to load image: ${src}`));
-    // Normalize path if starts with 'public/'
-    img.src = src.startsWith('public/') ? src.replace(/^public\//, '/') : src;
+    img.onerror = () => reject(new Error(`Failed to load image: ${url.slice(0, 80)}`));
+    img.src = url;
   });
+}
+
+// Pliki z public/ ładujemy z tego samego źródła; SVG dostaje wymiary własne
+// i idzie jako data: URI, dzięki czemu canvas nie jest „skażony” i działa w Safari.
+async function loadImage(src: string): Promise<HTMLImageElement> {
+  const url = src.startsWith('public/') ? src.replace(/^public\//, '/') : src;
+  if (!/\.svg(\?|$)/.test(url)) return decode(url);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch image: ${url}`);
+  const svg = withIntrinsicSize(await res.text());
+  return decode(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`);
 }
 
 export async function renderPng(scene: CardScene): Promise<Blob> {

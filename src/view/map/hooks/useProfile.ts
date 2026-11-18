@@ -10,6 +10,8 @@ const indicators = indicatorsData as Indicator[];
 export interface UseProfileResult {
   profile: UnitProfile | null;
   isOpen: boolean;
+  /** Profil ma się otworzyć (jednostka wybrana i nie zamknięta), choć dane mogą jeszcze się wczytywać. */
+  expected: boolean;
   closeProfile: () => void;
 }
 
@@ -63,6 +65,7 @@ export function useProfile(selectedTeryt: string | null, units: Unit[]): UseProf
   return {
     profile: currentProfile,
     isOpen,
+    expected: Boolean(selectedTeryt && selectedTeryt !== closedForTeryt),
     closeProfile,
   };
 }

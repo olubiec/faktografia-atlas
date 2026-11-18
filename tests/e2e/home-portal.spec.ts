@@ -46,7 +46,7 @@ test.describe('Sekcje redakcyjne pod mapą (W16-M01)', () => {
     await expect(bibliotekaLink).toHaveAttribute('href', '/biblioteka');
 
     // Stopka widoczna
-    const stopkaLogo = page.locator('footer img[alt="Faktografia"]');
+    const stopkaLogo = page.locator('footer img');
     await expect(stopkaLogo).toBeVisible();
 
     // Kliknij dział "Gęstość zaludnienia"

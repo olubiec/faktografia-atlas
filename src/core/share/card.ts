@@ -1,4 +1,5 @@
 import tokens from '../../../config/tokens.json';
+import { logoSize } from './logo';
 import { fitText, type MeasureFn } from './text-fit';
 import { SHARE_FORMATS, type ShareFormatKey } from './formats';
 import { type MapCardData, renderMapContent } from './card-map';
@@ -20,7 +21,7 @@ export type AnnotationItem = { type: 'annotation'; kind: 'circle'; x: number; y:
 export type CardItem = TextItem | RectItem | PathItem | ImageItem | AnnotationItem;
 
 export type CardScene = { width: number; height: number; background: string; items: CardItem[]; };
-export type CardSceneOptions = { measure: MeasureFn; siteUrl?: string; };
+export type CardSceneOptions = { measure: MeasureFn; siteUrl?: string; pageLabel?: string; };
 
 export type CardData = MapCardData | RankingCardData | ProfileCardData | CompareCardData;
 
@@ -35,7 +36,7 @@ export function cardScene(kind: CardKind, data: CardData, formatKey: ShareFormat
   const fmt = SHARE_FORMATS[formatKey] ?? SHARE_FORMATS.post;
   const { width, height, safe } = fmt;
   const colors = getThemeColors(theme);
-  const { measure, siteUrl = 'faktografia.pl' } = options;
+  const { measure, siteUrl = 'faktografia.pl', pageLabel = '' } = options;
 
   const scaleFactor = width / 1080;
   const fontScale = {
@@ -52,17 +53,23 @@ export function cardScene(kind: CardKind, data: CardData, formatKey: ShareFormat
   const footerFontSize = fontScale.xs;
   const footerLineHeight = Math.round(footerFontSize * 1.2);
   const yearVal = 'year' in data ? data.year : 2025;
-  const sourceText = `Źródło: GUS, Bank Danych Lokalnych, ${yearVal}`;
   const siteUrlWidth = measure(siteUrl, footerFontSize, tokens.font.weights.text);
   const footerY = height - safe.bottom - footerLineHeight;
+  const sourceMaxWidth = safeWidth - siteUrlWidth - 16 * scaleFactor;
+  // Numer strony dopisujemy do linii źródła; gdy się nie mieści, skracamy tylko „Bank Danych Lokalnych” do „BDL”.
+  let sourceText = `Źródło: GUS, Bank Danych Lokalnych, ${yearVal}`;
+  if (pageLabel) {
+    sourceText = `${sourceText} · ${pageLabel}`;
+    if (measure(sourceText, footerFontSize, tokens.font.weights.text) > sourceMaxWidth) sourceText = `Źródło: GUS, BDL, ${yearVal} · ${pageLabel}`;
+  }
 
-  items.push({ type: 'text', x: safe.left, y: footerY, maxWidth: safeWidth - siteUrlWidth - 16 * scaleFactor, fontSize: footerFontSize, fontWeight: tokens.font.weights.text, color: colors.olowek, align: 'left', lines: [sourceText], lineHeight: footerLineHeight });
+  items.push({ type: 'text', x: safe.left, y: footerY, maxWidth: sourceMaxWidth, fontSize: footerFontSize, fontWeight: tokens.font.weights.text, color: colors.olowek, align: 'left', lines: [sourceText], lineHeight: footerLineHeight });
   items.push({ type: 'text', x: width - safe.right - siteUrlWidth, y: footerY, maxWidth: siteUrlWidth, fontSize: footerFontSize, fontWeight: tokens.font.weights.text, color: colors.olowek, align: 'right', lines: [siteUrl], lineHeight: footerLineHeight });
 
   const contentBottom = footerY - 16 * scaleFactor;
   const logoSrc = theme === 'light' ? 'public/brand/faktografia-logo-granat.svg' : 'public/brand/faktografia-logo-jasne.svg';
-  const logoWidth = Math.round(180 * scaleFactor);
-  const logoHeight = Math.round(28 * scaleFactor);
+  // Proporcje jak w pliku logo (viewBox), żeby znak nie był ściśnięty.
+  const { width: logoWidth, height: logoHeight } = logoSize(Math.round(56 * scaleFactor));
   const logoY = safe.top;
 
   items.push({ type: 'image', src: logoSrc, x: safe.left, y: logoY, width: logoWidth, height: logoHeight });

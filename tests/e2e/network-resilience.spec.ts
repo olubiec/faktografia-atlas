@@ -74,7 +74,7 @@ test.describe('Odporność na błędy sieci, CORS i wyścigi kliknięć (@W17-T0
     // Główny profil gminy jest widoczny
     const sideSheet = page.locator('[data-slot="side"]');
     await expect(sideSheet).toBeVisible();
-    await expect(sideSheet.locator('h2', { hasText: 'Gmina Brzesko' })).toBeVisible();
+    await expect(sideSheet.locator('h2', { hasText: 'Gmina miejsko-wiejska Brzesko' })).toBeVisible();
 
     // Rozwinięcie bloku części miasta i wsi
     const partsTrigger = page.locator('button', { hasText: 'Miasto i obszar wiejski' });
@@ -86,7 +86,7 @@ test.describe('Odporność na błędy sieci, CORS i wyścigi kliknięć (@W17-T0
     await expect(fallbackMsg).toBeVisible();
 
     // Główny profil nie jest zablokowany i nadal jest w pełni czytelny
-    await expect(sideSheet.locator('h2', { hasText: 'Gmina Brzesko' })).toBeVisible();
+    await expect(sideSheet.locator('h2', { hasText: 'Gmina miejsko-wiejska Brzesko' })).toBeVisible();
     await expect(partsTrigger).toBeVisible();
   });
 

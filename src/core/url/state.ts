@@ -1,6 +1,7 @@
 import type { UnitIndex } from '../units/types';
 import { getUnit } from '../units/units';
 import indicators from '../../../config/indicators.json';
+import { isLibraryIndicatorId } from '../indicators/registry';
 
 export type UrlState = {
   u?: string | null;
@@ -14,8 +15,14 @@ const VALID_INDICATOR_IDS = new Set(indicators.map((ind) => ind.id));
 
 /**
  * Odczytuje stan z parametrów URL (np. ?u=, ?i=, ?y=). Nieznany TERYT, nieznany wskaźnik oraz nieliczbowy rok są ignorowane.
+ * Wskaźnik: główny albo z biblioteki (kształt `b<liczba>`); opcjonalne `isKnownIndicator` nadpisuje tę regułę
+ * (np. sprawdzenie w rejestrze po jego wczytaniu).
  */
-export function readUrlState(search: string, index?: UnitIndex): UrlState {
+export function readUrlState(
+  search: string,
+  index?: UnitIndex,
+  isKnownIndicator?: (id: string) => boolean
+): UrlState {
   if (!search) return {};
   const params = new URLSearchParams(search);
   const result: UrlState = {};
@@ -33,7 +40,8 @@ export function readUrlState(search: string, index?: UnitIndex): UrlState {
   }
 
   const iParam = params.get('i');
-  if (iParam && VALID_INDICATOR_IDS.has(iParam)) {
+  const isKnown = isKnownIndicator ?? ((id: string) => VALID_INDICATOR_IDS.has(id) || isLibraryIndicatorId(id));
+  if (iParam && isKnown(iParam)) {
     result.i = iParam;
   }
 

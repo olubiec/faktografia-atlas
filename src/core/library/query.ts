@@ -307,3 +307,42 @@ export function countByCategory(index: LibraryIndex, query: LibraryQuery): Recor
 
   return counts;
 }
+
+/** Czy zmienna ma pobrane wartości (to samo kryterium co `onlyReady`). */
+const isFetched = (v: LibraryVariable): boolean => v.has === 1 || v.has === true || v.hasReady === true;
+
+/** Lista „tylko z danymi”: jak `filterVars`, ale zawsze z `onlyReady: true`. */
+export function filterFetched(index: LibraryIndex, query: LibraryQuery): LibraryVariable[] {
+  return filterVars(index, { ...query, onlyReady: true });
+}
+
+/** Liczniki do napisu „m z n”: zmienne z danymi i wszystkie w spisie. */
+export function libraryCounts(index: LibraryIndex): { fetched: number; total: number } {
+  const { vars } = getPreparedIndex(index);
+  return { fetched: vars.filter(isFetched).length, total: vars.length };
+}
+
+const fetchedCountCache = new WeakMap<LibraryIndex, Map<string, number>>();
+
+/** Liczba pobranych zmiennych w dziale łącznie z potomkami (cache jak w spisie). */
+export function countFetchedByCategory(index: LibraryIndex): Map<string, number> {
+  const cached = fetchedCountCache.get(index);
+  if (cached) return cached;
+  const prepared = getPreparedIndex(index);
+  const counts = new Map<string, number>();
+  for (const catId of prepared.catsMap.keys()) counts.set(catId, 0);
+  for (const v of prepared.vars) {
+    const varCat = isFetched(v) ? getVarCategory(v) : null;
+    for (const id of (varCat !== null && prepared.ancestorsMap.get(varCat)) || []) {
+      counts.set(id, (counts.get(id) ?? 0) + 1);
+    }
+  }
+  fetchedCountCache.set(index, counts);
+  return counts;
+}
+
+/** Bezpośrednie podkategorie, które mają ≥ 1 pobrany wskaźnik (także w potomkach). */
+export function childCategoriesWithData(index: LibraryIndex, parent: string | null): LibraryCategory[] {
+  const counts = countFetchedByCategory(index);
+  return childCategories(index, parent).filter((c) => (counts.get(String(c.id)) ?? 0) > 0);
+}

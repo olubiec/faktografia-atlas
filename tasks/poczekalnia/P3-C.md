@@ -1,3 +1,5 @@
+> **ZASTĄPIONE 17.11.2026 planem Q (`tasks/poczekalnia/Q/`). Nie wykonuj tego zadania.**
+
 # P3-C – Biblioteka: domyślnie to, co działa
 Cel: /biblioteka domyślnie pokazuje zmienne z pobranymi wartościami; reszta po wyszukaniu lub przełączniku.
 Zmieniaj: plik(i) strony Biblioteki (znajdź: grep -rln "Biblioteka" src/view), tests/unit/library-view.test.tsx

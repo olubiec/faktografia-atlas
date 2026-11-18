@@ -1,4 +1,5 @@
 # WORKFLOW UNIWERSALNY – praca z agentami AI (v5.5)
+> **17.11.2026: pętla Jules Loop i Orkiestra usunięte.** Od tej daty obowiązuje `docs/FALE.md` (sesje Claude, scala właściciel). Opisy pętli i Julesa w §3d, §9–§10 są historyczne.
 
 > 28.10.2026 · v5.5: **pętla Jules Loop** prowadzi każde zadanie (start fali = push plików `tasks/W<n>-*.md`, kontrola zgodności z zadaniem, CI, scalenie, fala testów, dziennik) – §3d, §9, §10.6. Ręczne wklejanie promptów do Julesa odpada.
 > 22.10.2026 · v5.4: pnpm 11 z blokadami pakietów (§6, §10.5a), Antigravity jako opcja przy komputerze (§2). v5.3: **Gemini Deep Research** jako stałe wsparcie researchu + obowiązkowa weryfikacja (§8.18–8.19). v5.2: **gotowe elementy i bazy** na pierwszym miejscu (§3b), **plan: warstwy → fale** (§3c), rejestr elementów i licencji (§4), nowe tryby BAZA i WARSTWY (§8.15–8.16).
