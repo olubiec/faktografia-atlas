@@ -5,6 +5,7 @@ import type { Locality } from '@/core/search/types';
 import { useSheetInset } from '@/view/map/sheetInset';
 import type { CameraKind } from '@/core/map/camera';
 import { planCamera } from '@/core/map/camera-plan';
+import { stackStep } from '@/core/map/camera-retarget';
 import type { DriverMap } from '@/core/map/camera-driver';
 import { layersZoomBucket } from '@/core/map/localities-layer';
 import { useCameraDriver } from '@/view/map/hooks/useCameraDriver';
@@ -32,13 +33,8 @@ type Bbox = [number, number, number, number];
 // Przybliżony obrys Polski; używany tylko, gdy lista jednostek nie jest jeszcze wczytana.
 const POLAND_BBOX: Bbox = [14.12, 49.0, 24.15, 54.84];
 
-function mercatorLat(latDeg: number): number {
-  return Math.log(Math.tan(Math.PI / 4 + (latDeg * Math.PI) / 360));
-}
-
-function mercatorLatToDeg(m: number): number {
-  return (360 / Math.PI) * Math.atan(Math.exp(m)) - 90;
-}
+const mercatorLat = (latDeg: number): number => Math.log(Math.tan(Math.PI / 4 + (latDeg * Math.PI) / 360));
+const mercatorLatToDeg = (m: number): number => (360 / Math.PI) * Math.atan(Math.exp(m)) - 90;
 
 /**
  * Oblicza stan widoku kamery uwzględniając dolny margines (wysokość arkusza w px).
@@ -152,6 +148,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
   const fittedBboxRef = useRef<string | null>(null);
   const userMovedRef = useRef(false);
   const isAnimatingRef = useRef(false);
+  const viewStackRef = useRef<ViewState[]>([]);
   // Mapa niekontrolowana: kamerą steruje sterownik (jump na klatkę), bez setState.
   const mapRef = useRef<MapRef>(null);
   const bounds = countryBbox;
@@ -319,8 +316,11 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
 
         fittedBboxRef.current = bboxKey;
         fittedKeyRef.current = key;
+        // Wejście zapamiętuje widok, „Wróć” wraca do zapamiętanego (stos w core).
+        const step = stackStep(viewStackRef.current, kind, newView, currentViewStateRef.current);
+        viewStackRef.current = step.stack;
         const pending = side - sideNow;
-        animateToView(newView, kind, pending !== 0 ? shiftForLayout(currentViewStateRef.current, pending) : undefined);
+        animateToView(step.target, kind, pending !== 0 ? shiftForLayout(currentViewStateRef.current, pending) : undefined);
       }
     },
     [animateToView, bounds, dimensions, sheetInset]
