@@ -201,7 +201,7 @@ export const choroplethNoDataLayerFactory: LayerFactory = {
     if (noData.length === 0) return null;
     const lineColor = resolveTokenColor('--linia');
     return new GeoJsonLayer({
-      ...getNoDataPatternProps(),
+      ...getNoDataPatternProps(choropleth.classByTeryt),
       id: 'choropleth-nodata-layer',
       data: { type: 'FeatureCollection', features: noData } as FeatureCollection,
       filled: true,
