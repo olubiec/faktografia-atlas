@@ -16,13 +16,11 @@ import { Legend } from '@/view/legend/Legend';
 import { RankingBars } from '@/view/ranking/RankingBars';
 import { IndicatorInfo } from '@/view/explain/IndicatorInfo';
 import { LevelSwitch } from './LevelSwitch';
-import { SheetIndicatorPicker } from './MobileIndicatorBar';
+import { MyIndicatorsManager, SheetIndicatorPicker } from './MobileIndicatorBar';
 import { ContextBlock } from '@/view/explain/ContextBlock';
 import { useShareData } from '@/view/share/useShareData';
 import { LazyShareDialog } from '@/view/share/LazyShareDialog';
 import { useMyIndicators } from '@/view/hooks/useMyIndicators';
-import { MyIndicatorsBar } from '@/view/pages/Rankings';
-import { isBasic } from '@/core/my-indicators/my-indicators';
 
 export interface IndicatorPanelProps {
   view: MainView;
@@ -52,8 +50,7 @@ export function IndicatorPanel({
   children,
 }: IndicatorPanelProps) {
   const { indicator, indicators: allIndicators, year, years, level } = view;
-  const { list: mine, add, remove, reset } = useMyIndicators();
-  const [adding, setAdding] = useState(false);
+  const { list: mine } = useMyIndicators();
   // Lista wyboru: „Moje” plus bieżący wskaźnik (np. z ?i=), nawet spoza listy; link nie zmienia listy użytkownika.
   const indicators = useMemo(
     () => allIndicators.filter((ind) => mine.includes(ind.id) || ind.id === indicator.id),
@@ -111,20 +108,7 @@ export function IndicatorPanel({
           <IndicatorInfo indicatorId={indicator.id} name={indicator.name} explanation={explanation} />
         </div>
         <p className="text-sm text-olowek">{subtitle}</p>
-        <MyIndicatorsBar
-          all={allIndicators}
-          list={mine}
-          isBasic={isBasic(mine)}
-          open={adding}
-          onToggle={() => setAdding((o) => !o)}
-          onAdd={(id) => {
-            add(id);
-            setAdding(false);
-            view.setIndicator(id);
-          }}
-          onRemove={remove}
-          onReset={reset}
-        />
+        <MyIndicatorsManager all={allIndicators} onPick={view.setIndicator} />
       </div>
 
       <div className="flex flex-col gap-1.5">

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderToString } from 'react-dom/server';
 import { IndicatorPanel } from '../../src/view/main/IndicatorPanel';
+import { MyIndicatorsManager } from '../../src/view/main/MobileIndicatorBar';
 import { BASIC_INDICATORS, addIndicator, defaultMyIndicators } from '../../src/core/my-indicators/my-indicators';
 import { MY_INDICATORS_KEY } from '../../src/core/my-indicators/storage';
 import type { Indicator } from '../../src/core/profile/profile';
@@ -38,6 +39,9 @@ const render = (currentId: string) => {
   ).replace(/<!-- -->/g, '');
 };
 
+const renderManager = () =>
+  renderToString(<MyIndicatorsManager all={ALL} onPick={() => {}} defaultOpen={true} />).replace(/<!-- -->/g, '');
+
 const removeButtons = (html: string) => html.match(/aria-label="Usuń wskaźnik /g)?.length ?? 0;
 
 describe('Panel mapy: „Moje” na górze (QR01C)', () => {
@@ -52,8 +56,16 @@ describe('Panel mapy: „Moje” na górze (QR01C)', () => {
   });
   afterEach(() => vi.unstubAllGlobals());
 
-  it('czysty zapis: 7 pozycji „Moich” z ×, bez „Przywróć podstawowe”, jest „+ Dodaj wskaźnik”', () => {
+  it('start: panel ma przycisk „Moje wskaźniki”, a pasek jest zwinięty (bez ×, bez powtórzonych nazw)', () => {
     const html = render(BASIC_INDICATORS[0]);
+    expect(html).toContain('Moje wskaźniki');
+    expect(html).toContain('aria-expanded="false"');
+    expect(removeButtons(html)).toBe(0);
+    expect(html).not.toContain('Przywróć podstawowe');
+  });
+
+  it('czysty zapis: po rozwinięciu 7 pozycji z ×, bez „Przywróć podstawowe”, jest „+ Dodaj wskaźnik”', () => {
+    const html = renderManager();
     expect(removeButtons(html)).toBe(BASIC_INDICATORS.length);
     expect(html).toContain('+ Dodaj wskaźnik');
     expect(html).not.toContain('Przywróć podstawowe');
@@ -63,7 +75,7 @@ describe('Panel mapy: „Moje” na górze (QR01C)', () => {
   it('wskaźnik z adresu spoza listy jest widoczny w wyborze i nie zmienia listy użytkownika', () => {
     const html = render(outside.id);
     expect(html).toContain(outside.name);
-    expect(removeButtons(html)).toBe(BASIC_INDICATORS.length);
+    expect(removeButtons(renderManager())).toBe(BASIC_INDICATORS.length);
     expect(localStorage.getItem(MY_INDICATORS_KEY)).toBeNull();
   });
 
@@ -73,7 +85,7 @@ describe('Panel mapy: „Moje” na górze (QR01C)', () => {
 
   it('dodany wskaźnik jest w „Moich”, a „Przywróć podstawowe” jest widoczne', () => {
     localStorage.setItem(MY_INDICATORS_KEY, JSON.stringify(addIndicator(defaultMyIndicators(), outside.id)));
-    const html = render(BASIC_INDICATORS[0]);
+    const html = renderManager();
     expect(removeButtons(html)).toBe(BASIC_INDICATORS.length + 1);
     expect(html).toContain('Przywróć podstawowe');
   });

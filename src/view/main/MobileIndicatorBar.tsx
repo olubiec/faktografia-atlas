@@ -6,6 +6,9 @@ import type { MainView } from '@/view/map/hooks/useMainView';
 import type { RankedResult } from '@/core/ranking/ranking';
 import type { Indicator } from '@/core/profile/profile';
 import type { UnitIndex } from '@/core/units/types';
+import { MyIndicatorsBar } from '@/view/pages/Rankings';
+import { useMyIndicators } from '@/view/hooks/useMyIndicators';
+import { isBasic } from '@/core/my-indicators/my-indicators';
 import { IndicatorPickerContent } from '@/view/controls/IndicatorPicker';
 import { BottomSheet } from '@/view/ui/BottomSheet';
 import { Icon } from '@/view/ui/Icon';
@@ -26,16 +29,33 @@ export interface MobileIndicatorBarProps {
   children?: ReactNode;
 }
 
+/** Zarządzanie listą „Moje wskaźniki”: domyślnie zwinięte, żeby nie powtarzać nazw wskaźników w panelu. */
+export function MyIndicatorsManager({ all, onPick, defaultOpen = false }: { all: Indicator[]; onPick: (id: string) => void; defaultOpen?: boolean }) {
+  const { list, add, remove, reset } = useMyIndicators();
+  const [open, setOpen] = useState(defaultOpen);
+  const [adding, setAdding] = useState(false);
+  return (
+    <div className="flex flex-col gap-2">
+      <button type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)}
+        className="min-h-[44px] px-3 text-sm text-left text-tusz bg-arkusz border border-linia cursor-pointer hover:bg-linia/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tusz"
+      >
+        Moje wskaźniki
+      </button>
+      {open && (
+        <MyIndicatorsBar all={all} list={list} isBasic={isBasic(list)} open={adding} onToggle={() => setAdding((o) => !o)}
+          onAdd={(id) => { add(id); setAdding(false); onPick(id); }} onRemove={remove} onReset={reset} />
+      )}
+    </div>
+  );
+}
+
 /** Wybór wskaźnika w arkuszu telefonu: przycisk z bieżącym wskaźnikiem i lista („Moje” + bieżący). */
 export function SheetIndicatorPicker({ indicators, indicator, onSelect }: { indicators: Indicator[]; indicator: Indicator; onSelect: (id: string) => void }) {
   const [open, setOpen] = useState(true);
   const [query, setQuery] = useState('');
   return (
     <div className="flex flex-col">
-      <button
-        type="button"
-        aria-expanded={open}
-        onClick={() => setOpen(true)}
+      <button type="button" aria-expanded={open} onClick={() => setOpen(true)}
         className="flex items-center justify-between gap-2 px-4 py-2 min-h-[44px] w-full text-left bg-arkusz text-tusz border border-linia hover:bg-linia/10 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer rounded-none transition-colors"
       >
         <div className="flex flex-col min-w-0 pr-2">
@@ -46,17 +66,8 @@ export function SheetIndicatorPicker({ indicators, indicator, onSelect }: { indi
       </button>
       {open && (
         <div className="max-h-[220px] flex flex-col border border-t-0 border-linia bg-arkusz overflow-hidden">
-          <IndicatorPickerContent
-            indicators={indicators}
-            value={indicator.id}
-            query={query}
-            onQueryChange={setQuery}
-            onSelect={(id) => {
-              onSelect(id);
-              setOpen(false);
-              setQuery('');
-            }}
-          />
+          <IndicatorPickerContent indicators={indicators} value={indicator.id} query={query} onQueryChange={setQuery}
+            onSelect={(id) => { onSelect(id); setOpen(false); setQuery(''); }} />
         </div>
       )}
     </div>
