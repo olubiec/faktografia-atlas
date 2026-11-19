@@ -1,10 +1,12 @@
 import { useMemo, useState, type ReactNode } from 'react';
-import { NavArrowUp, ShareAndroid } from 'iconoir-react';
+import { NavArrowDown, NavArrowUp, ShareAndroid } from 'iconoir-react';
 import { classColorToken } from '@/core/map/classes';
 import type { ChoroplethData } from '@/view/map/hooks/useChoropleth';
 import type { MainView } from '@/view/map/hooks/useMainView';
 import type { RankedResult } from '@/core/ranking/ranking';
+import type { Indicator } from '@/core/profile/profile';
 import type { UnitIndex } from '@/core/units/types';
+import { IndicatorPickerContent } from '@/view/controls/IndicatorPicker';
 import { BottomSheet } from '@/view/ui/BottomSheet';
 import { Icon } from '@/view/ui/Icon';
 import { useShareData } from '@/view/share/useShareData';
@@ -22,6 +24,43 @@ export interface MobileIndicatorBarProps {
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   children?: ReactNode;
+}
+
+/** Wybór wskaźnika w arkuszu telefonu: przycisk z bieżącym wskaźnikiem i lista („Moje” + bieżący). */
+export function SheetIndicatorPicker({ indicators, indicator, onSelect }: { indicators: Indicator[]; indicator: Indicator; onSelect: (id: string) => void }) {
+  const [open, setOpen] = useState(true);
+  const [query, setQuery] = useState('');
+  return (
+    <div className="flex flex-col">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen(true)}
+        className="flex items-center justify-between gap-2 px-4 py-2 min-h-[44px] w-full text-left bg-arkusz text-tusz border border-linia hover:bg-linia/10 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer rounded-none transition-colors"
+      >
+        <div className="flex flex-col min-w-0 pr-2">
+          <span className="text-xs text-olowek">Wskaźnik</span>
+          <span className="font-semibold text-sm text-tusz truncate">{indicator.name}</span>
+        </div>
+        <Icon icon={NavArrowDown} size={20} aria-hidden={true} className="text-tusz shrink-0" />
+      </button>
+      {open && (
+        <div className="max-h-[220px] flex flex-col border border-t-0 border-linia bg-arkusz overflow-hidden">
+          <IndicatorPickerContent
+            indicators={indicators}
+            value={indicator.id}
+            query={query}
+            onQueryChange={setQuery}
+            onSelect={(id) => {
+              onSelect(id);
+              setOpen(false);
+              setQuery('');
+            }}
+          />
+        </div>
+      )}
+    </div>
+  );
 }
 
 /**
@@ -129,7 +168,8 @@ export function MobileIndicatorBar({
         snapPoints={[0, 0.55, 1]}
         initialSnap={1}
         noBackdrop
-        title="Panel wskaźnika"
+        title="Panel wskaźnika"
+
       >
         <IndicatorPanel
           view={view}

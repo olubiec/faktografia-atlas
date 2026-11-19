@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { NavArrowDown } from 'iconoir-react';
 import type { Explanation } from '@/core/explain/explanations';
 import { loadExplanations } from '@/core/explain/explanations';
 import type { ChoroplethData } from '@/view/map/hooks/useChoropleth';
@@ -11,16 +10,19 @@ import { unitLabel } from '@/core/units/label';
 import { buildLegend, LEGEND_DIRECTION_LABEL } from '@/core/legend/legend';
 import { LEVEL_LABELS } from '@/core/map/main-view';
 import { UNIT_COUNTS } from '@/core/units/counts';
-import { IndicatorPicker, IndicatorPickerContent } from '@/view/controls/IndicatorPicker';
+import { IndicatorPicker } from '@/view/controls/IndicatorPicker';
 import { YearSlider } from '@/view/controls/YearSlider';
 import { Legend } from '@/view/legend/Legend';
 import { RankingBars } from '@/view/ranking/RankingBars';
 import { IndicatorInfo } from '@/view/explain/IndicatorInfo';
 import { LevelSwitch } from './LevelSwitch';
+import { SheetIndicatorPicker } from './MobileIndicatorBar';
 import { ContextBlock } from '@/view/explain/ContextBlock';
 import { useShareData } from '@/view/share/useShareData';
 import { LazyShareDialog } from '@/view/share/LazyShareDialog';
-import { Icon } from '@/view/ui/Icon';
+import { useMyIndicators } from '@/view/hooks/useMyIndicators';
+import { MyIndicatorsBar } from '@/view/pages/Rankings';
+import { isBasic } from '@/core/my-indicators/my-indicators';
 
 export interface IndicatorPanelProps {
   view: MainView;
@@ -49,11 +51,16 @@ export function IndicatorPanel({
   inSheet = false,
   children,
 }: IndicatorPanelProps) {
-  const { indicator, indicators, year, years, level } = view;
+  const { indicator, indicators: allIndicators, year, years, level } = view;
+  const { list: mine, add, remove, reset } = useMyIndicators();
+  const [adding, setAdding] = useState(false);
+  // Lista wyboru: „Moje” plus bieżący wskaźnik (np. z ?i=), nawet spoza listy; link nie zmienia listy użytkownika.
+  const indicators = useMemo(
+    () => allIndicators.filter((ind) => mine.includes(ind.id) || ind.id === indicator.id),
+    [allIndicators, mine, indicator.id]
+  );
   const [explanation, setExplanation] = useState<Explanation | null>(null);
   const [isShareOpen, setIsShareOpen] = useState(false);
-  const [sheetPickerOpen, setSheetPickerOpen] = useState(true);
-  const [pickerQuery, setPickerQuery] = useState('');
 
   const shareData = useShareData({ view, choropleth, ranking, index, selectedTeryt });
 
@@ -96,35 +103,7 @@ export function IndicatorPanel({
         <div className="flex items-start gap-2">
           <div className="flex-1 min-w-0">
             {inSheet ? (
-              <div className="flex flex-col">
-                <button
-                  type="button"
-                  aria-expanded={sheetPickerOpen}
-                  onClick={() => setSheetPickerOpen(true)}
-                  className="flex items-center justify-between gap-2 px-4 py-2 min-h-[44px] w-full text-left bg-arkusz text-tusz border border-linia hover:bg-linia/10 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer rounded-none transition-colors"
-                >
-                  <div className="flex flex-col min-w-0 pr-2">
-                    <span className="text-xs text-olowek">Wskaźnik</span>
-                    <span className="font-semibold text-sm text-tusz truncate">{indicator.name}</span>
-                  </div>
-                  <Icon icon={NavArrowDown} size={20} aria-hidden={true} className="text-tusz shrink-0" />
-                </button>
-                {sheetPickerOpen && (
-                  <div className="max-h-[220px] flex flex-col border border-t-0 border-linia bg-arkusz overflow-hidden">
-                    <IndicatorPickerContent
-                      indicators={indicators}
-                      value={indicator.id}
-                      query={pickerQuery}
-                      onQueryChange={setPickerQuery}
-                      onSelect={(id) => {
-                        view.setIndicator(id);
-                        setSheetPickerOpen(false);
-                        setPickerQuery('');
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
+              <SheetIndicatorPicker indicators={indicators} indicator={indicator} onSelect={view.setIndicator} />
             ) : (
               <IndicatorPicker indicators={indicators} value={indicator.id} onChange={view.setIndicator} />
             )}
@@ -132,6 +111,20 @@ export function IndicatorPanel({
           <IndicatorInfo indicatorId={indicator.id} name={indicator.name} explanation={explanation} />
         </div>
         <p className="text-sm text-olowek">{subtitle}</p>
+        <MyIndicatorsBar
+          all={allIndicators}
+          list={mine}
+          isBasic={isBasic(mine)}
+          open={adding}
+          onToggle={() => setAdding((o) => !o)}
+          onAdd={(id) => {
+            add(id);
+            setAdding(false);
+            view.setIndicator(id);
+          }}
+          onRemove={remove}
+          onReset={reset}
+        />
       </div>
 
       <div className="flex flex-col gap-1.5">
