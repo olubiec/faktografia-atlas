@@ -9,6 +9,22 @@ import {
 } from '../../src/core/library/query';
 import { normalize } from '../../src/core/search/normalize';
 
+const RUNS = 5;
+const THRESHOLD_MS = 150;
+
+// Mediana z kilku przebiegów po rozgrzewce – odporna na pojedyncze skoki przy równoległych plikach.
+function medianMs<T>(fn: () => T): { result: T; median: number } {
+  let result = fn(); // rozgrzewka (nie liczona)
+  const times: number[] = [];
+  for (let i = 0; i < RUNS; i++) {
+    const start = performance.now();
+    result = fn();
+    times.push(performance.now() - start);
+  }
+  times.sort((a, b) => a - b);
+  return { result, median: times[Math.floor(RUNS / 2)] };
+}
+
 describe('W1.26 Library Query Performance (64,000 variables)', () => {
   // Setup 64,000 generated variables with 50 categories
   const categoriesRecord: Record<string, { n: string; p: string | null }> = {
@@ -41,18 +57,16 @@ describe('W1.26 Library Query Performance (64,000 variables)', () => {
 
   const index: LibraryIndex = prepare(robotIndex);
 
-  it('filtr tekstowy na 64 000 zmiennych wykonuje się w < 150 ms', () => {
+  it('filtr tekstowy na 64 000 zmiennych wykonuje się w < 150 ms (mediana z 5 przebiegów)', () => {
     const query: LibraryQuery = {
       ...emptyQuery(),
       text: 'ludnosc powiatowa',
     };
 
-    const start = performance.now();
-    const results = filterVars(index, query);
-    const duration = performance.now() - start;
+    const { result: results, median: duration } = medianMs(() => filterVars(index, query));
 
     expect(results.length).toBeGreaterThan(0);
-    expect(duration).toBeLessThan(150);
+    expect(duration).toBeLessThan(THRESHOLD_MS);
 
     // Weryfikacja poprawności wyniku: wszystkie zmienne zawierają 'ludnosc' i 'powiatowa'
     for (const item of results) {
@@ -62,18 +76,16 @@ describe('W1.26 Library Query Performance (64,000 variables)', () => {
     }
   });
 
-  it('filtr poziomu na 64 000 zmiennych wykonuje się w < 150 ms', () => {
+  it('filtr poziomu na 64 000 zmiennych wykonuje się w < 150 ms (mediana z 5 przebiegów)', () => {
     const query: LibraryQuery = {
       ...emptyQuery(),
       level: 5,
     };
 
-    const start = performance.now();
-    const results = filterVars(index, query);
-    const duration = performance.now() - start;
+    const { result: results, median: duration } = medianMs(() => filterVars(index, query));
 
     expect(results.length).toBeGreaterThan(0);
-    expect(duration).toBeLessThan(150);
+    expect(duration).toBeLessThan(THRESHOLD_MS);
     for (const item of results) {
       expect(item.level).toBe(5);
     }
