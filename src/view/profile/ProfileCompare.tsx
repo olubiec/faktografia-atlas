@@ -460,7 +460,6 @@ export function ProfileCompare({
       <ProfileCompareTable
         profileA={CompareIndicatorPicker.restrictProfile(profileA, list)}
         profileB={CompareIndicatorPicker.restrictProfile(profileB, list)}
-        onRemove={remove}
       />
 
       <div className="pt-3 flex justify-start">
