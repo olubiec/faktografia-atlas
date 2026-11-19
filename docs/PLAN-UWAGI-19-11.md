@@ -37,6 +37,7 @@ Wszystkie nowe zadania QU20–QU31 to najpierw analiza i raport (nic nie zmienia
 | **W5** (po raportach i Twoich decyzjach) | QU10 naprawa okna udostępniania · QU11 menu kategorii w Bibliotece · QU12 wskaźnik z biblioteki otwiera mapę · QU13 wykres lat · QU14 Rankingi nowy układ · QU15 Rankingi mapa | wdrożenie; QU14 i QU15 na tym samym pliku – idą po kolei |
 | **W4b** (analizy, druga tura) | QU20 kropki miejscowości i „gmina miejska” · QU21 nawigacja po powiecie (Wróć, oddalanie) · QU22 logika Moje wskaźniki / mapa / udostępnianie · QU23 warstwa z-index | tylko raporty |
 | **W4c** (analizy, trzecia tura) | QU24 pasek stron bez strzałek · QU25 menu z kategoriami i Biblioteka · QU26 wykres „zobacz wykres” z kursorem · QU27 klik miejsca otwiera mapę · QU28 nazwa „Faktografia” · QU29 zawieszenie przed przybliżeniem · QU30 mapa nawigacji · QU31 ślepe testy | tylko raporty |
+| **W4d** (analiza + prototyp) | QU32 strona startowa z animacją reagującą na kursor, mapa osobno: inwentarz adresów/testów, prototyp na `/design` · wdrożenie QU33–QU38 w W6/W7 | koncept: `docs/KONCEPT-STRONA-STARTOWA.md` |
 | **W6** (po W5) | QU16 porządki w nawigacji · QU17 aktualizacja PRODUKT.md | usunięcia stron tylko za Twoją zgodą |
 
 Uwaga: w `tasks/poczekalnia/Q/` są już zadania W4–W7 (QC4xx–QC9xx, ta sama numeracja fal). Pliki QU tylko je uzupełniają. Kolizje do sprawdzenia przed startem: QU12 z QC606/QC608, QU10 z QC915/QC917, QU11 z QC509, QU14 z QC609 (Rankingi), QU03 z QC611. Przy kolizji zostaje starsze zadanie QC, a QU się zawęża.
