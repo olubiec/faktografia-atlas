@@ -1,6 +1,6 @@
 # QC702 – Strona Biblioteka pokazuje tylko pobrane + zdanie „m z n”
 Cel: Lista na `/biblioteka` zawiera tylko wskaźniki z danymi; bez przełącznika „tylko pobrane”; nad listą zdanie z licznikami.
-Zmieniaj: src/view/pages/Library.tsx, src/view/library/LibraryFilters.tsx, tests/unit/library-page-fetched.test.tsx
+Zmieniaj: src/view/pages/Library.tsx, src/view/library/LibraryFilters.tsx, tests/unit/library-page-fetched.test.tsx, tests/e2e/library-search.spec.ts, tests/e2e/s21-library.spec.ts
 Wymagane: tests/unit/library-page-fetched.test.tsx
 Weryfikacja: pnpm lint && pnpm typecheck && pnpm test && pnpm build
 Przeczytaj najpierw: src/view/pages/Library.tsx, src/view/library/LibraryFilters.tsx, src/view/library/LibraryResults.tsx, src/core/library/query.ts (QC701: `filterFetched`, `libraryCounts`), tests/unit/library-filters.test.tsx, tests/unit/library-results.test.tsx, tests/e2e/library-page.spec.ts, tests/e2e/library-search.spec.ts, docs/PRODUKT.md §4d
@@ -40,3 +40,4 @@ Nie ruszaj: `query.ts`, istniejących testów, `LibraryResults.tsx` (QC705).
 - Aktualizacja gałęzi tylko `git merge origin/main`; przed pushem `git diff --name-status --diff-filter=D origin/main...HEAD` musi być puste.
 - PR: tytuł zaczyna się od `[W<fala>-<id>]`, opis ma sekcję „Po ludzku” (co zrobiłeś · co sprawdzić na podglądzie · czego nie zrobiłeś i dlaczego); bez `Closes #`; wymień, że wzorce zrzutów odświeża właściciel, jeśli zmieniłeś wygląd.
 - Jedno zadanie = jedno zachowanie. Czerwone testy na GitHubie poprawiasz w tym samym PR.
+Decyzja 19.11.2026 (właściciel): wolno zmienić minimalnie te cztery istniejące testy e2e, które wymagają starego zachowania; nic innego.

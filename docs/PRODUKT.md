@@ -74,6 +74,7 @@ Osoba ciekawa swojej okolicy (mieszkaniec, dziennikarz, uczeń, samorządowiec),
 Pomysł właściciela 24.10.2026: „zestawianie ze sobą różnych powiatów – dwie mapy albo okno z danymi obu”. Robimy oba, w tanim wariancie:
 - **Okno z danymi obu:** zakładka „Porównaj” w profilu – tabela: wiersz na wskaźnik, wartości obu miejsc, miejsca w rankingu, słowna różnica („wyżej o 1,2 p.p.”). Kolory neutralne (bez zieleni i czerwieni).
 - **Dwie mapy:** nad tabelą dwie małe mapki (rysunek SVG, nie druga mapa WebGL): każda pokazuje województwo z danym miejscem w kolorach bieżącego wskaźnika i obrysem w kolorze `korekta`. Na dużej mapie oba miejsca obrysowane.
+- **Na start tylko podstawowe dane (decyzja 19.11.2026):** tabela „Porównaj” otwiera się z 7 podstawowymi wskaźnikami (§4f), nie ze wszystkimi. Każdy wiersz ma ×; „+ Dodaj wskaźnik” dopisuje dowolny inny (także z biblioteki); „Przywróć podstawowe” wraca do startu. Ta sama zasada obowiązuje wszędzie, gdzie są dane: rankingi, profil, eksport, biblioteka – gotowy, mały zestaw na start, resztę użytkownik dodaje i usuwa sam.
 - Link `?c=<teryt>,<teryt>` otwiera to samo porównanie. Dowolne dwa miejsca, także różnych poziomów (wtedy dopisek „różne poziomy – porównuj ostrożnie”).
 - Poza pierwszą wersją („Później”): dwie pełne, ruchome mapy obok siebie (np. dwa wskaźniki albo dwa lata), więcej niż dwa miejsca.
 
