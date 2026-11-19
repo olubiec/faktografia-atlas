@@ -19,6 +19,9 @@ const ENTRIES: Entry[] = [
   { label: 'A vs B', hint: 'wskaźniki dwóch miejsc w parach', kind: 'versus', need: 'pair' },
 ];
 
+// Okno udostępniania leży w arkuszu (z-index 9999); popover w <body> musi być nad nim.
+export const ADD_MENU_LAYER = 'z-[10000]';
+
 const ITEM = 'flex min-h-[44px] w-full flex-col justify-center px-3 py-2 text-left hover:bg-kalka focus-visible:bg-kalka';
 
 type ListProps = {
@@ -82,7 +85,7 @@ export function AddPageMenu({ onAdd, onSplit, ...rest }: MenuProps) {
       >
         + Dodaj stronę
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-72 p-1">
+      <PopoverContent align="start" className={`${ADD_MENU_LAYER} w-72 p-1`}>
         <AddPageList
           {...rest}
           onPick={(kind, options) => {
