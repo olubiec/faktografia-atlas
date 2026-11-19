@@ -29,4 +29,5 @@ Pętla Jules Loop i Orkiestra zostały usunięte. Zadania wykonują sesje Claude
 | 🔶 | FIX7 | startowy widok mapy | PR #503, CI czerwone (testy dotykowe) |
 | ⬜ | Q2 = W2 | 19 zadań w `tasks/poczekalnia/` (6 nowych + 13 z `Q/`; QC402 i QC502 pominięte) | na „start Q2”, po sprawdzeniu kolizji plików z FIX4/FIX6/FIX7 |
 | ⬜ | Q3–Q7 = W3–W7 | 12 · 11 · 10 · 5 · 3 | po kolei; PM10 jedyne na plikach kamery w W3 – po FIX6 jego zakres do weryfikacji (kamera bez stanu Reacta zrobiona w FIX6H2) |
+| ⬜ | Uwagi 19.11 = W4-QU/W5-QU/W6-QU | 7 · 6 · 2 (`tasks/poczekalnia/`) | domknięcie Q2: okno udostępniania, Biblioteka, Rankingi, wykres lat; plan: `docs/PLAN-UWAGI-19-11.md` |
 Uwaga: zadania W17/W18 w poczekalni nadal czekają; W17-T04 i W17-T05 są zastąpione przez PF08 i PF07 (zrobione). Pełny plan: `docs/PLAN-POPRAWEK.md`; otwarte sprawy: `docs/STATUS-PRZERWANE.md`.
