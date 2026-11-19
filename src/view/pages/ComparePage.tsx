@@ -1,9 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
+import type { CompareRow } from '../../core/compare/compare';
+import { compareExtraRows } from '../../core/compare/compare-extra';
+import { loadAnyValues } from '../../core/indicators/load-any-values';
+import { loadAvailable } from '../../core/indicators/load-available';
+import { buildRegistry, isLibraryIndicatorId } from '../../core/indicators/registry';
 import { useLocation, useNavigate } from 'react-router';
 import { SiteLayout } from '../layout/SiteLayout';
 import { loadUnits } from '../../core/data/load-atlas-data';
 import { loadProfileShard, profileFromShard } from '../../core/data/load-profile';
-import type { Indicator, UnitProfile } from '../../core/profile/profile';
+import type { Indicator, IndicatorValues, UnitProfile } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import { readComparePair, writeCompareSearch, setA, setB, swapPair, clearSlot, type ComparePair } from '../../core/compare/compare-url';
 import indicatorsData from '../../../config/indicators.json';
@@ -40,6 +45,47 @@ function useComparedProfile(teryt: string | null, units: Unit[]): UnitProfile | 
   return teryt && loaded?.teryt === teryt ? loaded : null;
 }
 
+/** Wiersze dla wskaźników z biblioteki będących na liście: jedno pobranie na wskaźnik (QC604). */
+function useLibraryRows(list: readonly string[], units: Unit[], a: UnitProfile | null, b: UnitProfile | null) {
+  const [registry, setRegistry] = useState(() => buildRegistry(indicators, null));
+  const [values, setValues] = useState<Record<string, IndicatorValues>>({});
+  const ids = useMemo(() => list.filter(isLibraryIndicatorId), [list]);
+
+  useEffect(() => {
+    if (!ids.length) return;
+    let active = true;
+    loadAvailable().then((available) => {
+      if (active && available) setRegistry(buildRegistry(indicators, available));
+    });
+    return () => { active = false; };
+  }, [ids.length]);
+
+  useEffect(() => {
+    if (!units.length) return;
+    let active = true;
+    for (const id of ids) {
+      loadAnyValues(id, { units }).then((v) => {
+        if (active && v) setValues((prev) => (prev[id] ? prev : { ...prev, [id]: v }));
+      });
+    }
+    return () => { active = false; };
+  }, [ids, units]);
+
+  const shown = useMemo(
+    () => ids.map((id) => registry.byId.get(id)).filter((i): i is Indicator => !!i),
+    [ids, registry],
+  );
+  const extraRows = useMemo(() => {
+    if (!a?.unit || !b?.unit) return [] as { indicator: Indicator; row: CompareRow }[];
+    const entries = shown.filter((i) => values[i.id]).map((i) => ({ indicator: i, values: values[i.id] }));
+    return compareExtraRows(entries, a.unit, b.unit).map((row) => ({
+      row,
+      indicator: registry.byId.get(row.indicatorId)!,
+    }));
+  }, [shown, values, a, b, registry]);
+  return { shown, extraRows };
+}
+
 export function ComparePage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -57,6 +103,7 @@ export function ComparePage() {
   const { list, add, remove, reset } = useMyIndicators();
   const profileA = useComparedProfile(pair.a, units);
   const profileB = useComparedProfile(pair.b, units);
+  const library = useLibraryRows(list, units, profileA, profileB);
 
   // Każda zmiana trafia do adresu (domyślnie replace: historia nie puchnie; gotowa para to osobny krok w historii)
   const update = (next: ComparePair, replace = true) => {
@@ -117,10 +164,12 @@ export function ComparePage() {
             <h2 className="text-xl font-bold mb-4">Wynik porównania</h2>
             <CompareMaps profileA={profileA} profileB={profileB} units={units} />
             <div className="mt-4">
-              <CompareIndicatorPicker items={profileA.indicators} list={list} onAdd={add} onRemove={remove} onReset={reset} />
+              <CompareIndicatorPicker items={profileA.indicators} list={list} onAdd={add} onRemove={remove} onReset={reset} libraryShown={library.shown} />
               <ProfileCompareTable
                 profileA={CompareIndicatorPicker.restrictProfile(profileA, list)}
                 profileB={CompareIndicatorPicker.restrictProfile(profileB, list)}
+                extraRows={library.extraRows}
+                onRemove={remove}
               />
             </div>
           </div>

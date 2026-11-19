@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Xmark } from 'iconoir-react';
-import type { ProfileIndicatorItem, UnitProfile } from '../../core/profile/profile';
+import type { Indicator, ProfileIndicatorItem, UnitProfile } from '../../core/profile/profile';
 import { isBasic, type MyIndicators } from '../../core/my-indicators/my-indicators';
 import { AddIndicatorWindow } from '../profile/AddIndicatorWindow';
 import { Icon } from '../ui/Icon';
@@ -13,6 +13,8 @@ export interface CompareIndicatorPickerProps {
   onAdd: (id: string) => void;
   onRemove: (id: string) => void;
   onReset: () => void;
+  /** Wskaźniki z biblioteki, które są na liście (spoza profilu) – też z przyciskiem ×. */
+  libraryShown?: Indicator[];
 }
 
 const BTN =
@@ -27,9 +29,12 @@ function restrictProfile(profile: UnitProfile, list: MyIndicators): UnitProfile 
  * Wskaźniki w porównaniu: każdy z przyciskiem ×, „+ Dodaj wskaźnik” (także z biblioteki)
  * i „Przywróć podstawowe”. Lista jest wspólna z innymi ekranami („Moje wskaźniki”).
  */
-export function CompareIndicatorPicker({ items, list, onAdd, onRemove, onReset }: CompareIndicatorPickerProps) {
+export function CompareIndicatorPicker({ items, list, onAdd, onRemove, onReset, libraryShown = [] }: CompareIndicatorPickerProps) {
   const [open, setOpen] = useState(false);
-  const shown = items.filter((i) => list.includes(i.indicatorId));
+  const shown: { id: string; name: string }[] = [
+    ...items.filter((i) => list.includes(i.indicatorId)).map((i) => ({ id: i.indicatorId, name: i.indicator.name })),
+    ...libraryShown.filter((i) => list.includes(i.id)).map((i) => ({ id: i.id, name: i.name })),
+  ];
   const available = items.filter((i) => !list.includes(i.indicatorId));
 
   return (
@@ -39,12 +44,12 @@ export function CompareIndicatorPicker({ items, list, onAdd, onRemove, onReset }
       )}
       <ul className="flex flex-wrap gap-2">
         {shown.map((item) => (
-          <li key={item.indicatorId} className="flex items-center border border-linia bg-arkusz">
-            <span className="pl-3 text-xs text-tusz">{item.indicator.name}</span>
+          <li key={item.id} className="flex items-center border border-linia bg-arkusz">
+            <span className="pl-3 text-xs text-tusz">{item.name}</span>
             <button
               type="button"
-              onClick={() => onRemove(item.indicatorId)}
-              aria-label={`Usuń wskaźnik: ${item.indicator.name}`}
+              onClick={() => onRemove(item.id)}
+              aria-label={`Usuń wskaźnik: ${item.name}`}
               className="min-h-[44px] min-w-[44px] flex items-center justify-center text-olowek hover:text-tusz hover:bg-linia/15 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer shrink-0"
             >
               <Icon icon={Xmark} aria-hidden={true} size={16} />
