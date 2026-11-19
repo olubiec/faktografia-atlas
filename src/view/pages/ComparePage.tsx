@@ -10,6 +10,8 @@ import indicatorsData from '../../../config/indicators.json';
 import { CompareMaps } from '../profile/CompareMaps';
 import { ProfileCompareTable } from '../profile/ProfileCompareTable';
 import { PlacePicker } from '../compare/PlacePicker';
+import { CompareIndicatorPicker } from '../compare/CompareIndicatorPicker';
+import { useMyIndicators } from '../hooks/useMyIndicators';
 
 const indicators = indicatorsData as Indicator[];
 
@@ -52,6 +54,7 @@ export function ComparePage() {
     return () => { active = false; };
   }, []);
 
+  const { list, add, remove, reset } = useMyIndicators();
   const profileA = useComparedProfile(pair.a, units);
   const profileB = useComparedProfile(pair.b, units);
 
@@ -114,7 +117,11 @@ export function ComparePage() {
             <h2 className="text-xl font-bold mb-4">Wynik porównania</h2>
             <CompareMaps profileA={profileA} profileB={profileB} units={units} />
             <div className="mt-4">
-              <ProfileCompareTable profileA={profileA} profileB={profileB} />
+              <CompareIndicatorPicker items={profileA.indicators} list={list} onAdd={add} onRemove={remove} onReset={reset} />
+              <ProfileCompareTable
+                profileA={CompareIndicatorPicker.restrictProfile(profileA, list)}
+                profileB={CompareIndicatorPicker.restrictProfile(profileB, list)}
+              />
             </div>
           </div>
         )}
