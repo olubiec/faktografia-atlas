@@ -6,11 +6,12 @@ import { type MapCardData, renderMapContent } from './card-map';
 import { type RankingCardData, type RankingCardItem, renderRankingContent } from './card-ranking';
 import { type ProfileCardData, type ProfileCardIndicator, renderProfileContent } from './card-profile';
 import { type CompareCardData, type CompareCardRow, type CompareCardUnit, renderCompareContent } from './card-compare';
+import { type VersusCardData, renderVersusContent } from './card-versus';
 
-export type { MapCardData, RankingCardData, RankingCardItem, ProfileCardData, ProfileCardIndicator, CompareCardData, CompareCardRow, CompareCardUnit };
+export type { MapCardData, RankingCardData, RankingCardItem, ProfileCardData, ProfileCardIndicator, CompareCardData, CompareCardRow, CompareCardUnit, VersusCardData };
 
 
-export type CardKind = 'map' | 'ranking' | 'profile' | 'compare';
+export type CardKind = 'map' | 'ranking' | 'profile' | 'compare' | 'versus';
 export type CardTheme = 'light' | 'dark';
 
 export type TextItem = { type: 'text'; x: number; y: number; maxWidth: number; fontSize: number; fontWeight: number | string; color: string; align?: 'left' | 'center' | 'right'; lines: string[]; lineHeight: number; };
@@ -23,7 +24,7 @@ export type CardItem = TextItem | RectItem | PathItem | ImageItem | AnnotationIt
 export type CardScene = { width: number; height: number; background: string; items: CardItem[]; };
 export type CardSceneOptions = { measure: MeasureFn; siteUrl?: string; pageLabel?: string; };
 
-export type CardData = MapCardData | RankingCardData | ProfileCardData | CompareCardData;
+export type CardData = MapCardData | RankingCardData | ProfileCardData | CompareCardData | VersusCardData;
 
 export function getThemeColors(theme: CardTheme) {
   const c = tokens.color[theme];
@@ -86,6 +87,8 @@ export function cardScene(kind: CardKind, data: CardData, formatKey: ShareFormat
   } else if (kind === 'compare') {
     const d = data as CompareCardData;
     titleText = `Porównanie: ${d.unitA.name} i ${d.unitB.name}`;
+  } else if (kind === 'versus') {
+    titleText = `${(data as VersusCardData).indicator.name} – A vs B`;
   }
 
   const titleFit = fitText(titleText, { maxWidth: safeWidth, maxLines: 2, fontSize: fontScale.xl, fontWeight: tokens.font.weights.title, measure, canvasWidth: width });
@@ -98,6 +101,7 @@ export function cardScene(kind: CardKind, data: CardData, formatKey: ShareFormat
   else if (kind === 'ranking') renderRankingContent({ data: data as RankingCardData, contentTop, availableContentHeight, safe, safeWidth, fontScale, colors, items, measure, scaleFactor });
   else if (kind === 'profile') renderProfileContent({ data: data as ProfileCardData, contentTop, availableContentHeight, safe, safeWidth, fontScale, colors, items, measure, scaleFactor });
   else if (kind === 'compare') renderCompareContent({ data: data as CompareCardData, contentTop, availableContentHeight, safe, safeWidth, fontScale, colors, items, measure, scaleFactor });
+  else if (kind === 'versus') renderVersusContent({ data: data as VersusCardData, contentTop, availableContentHeight, safe, safeWidth, fontScale, colors, items, measure, scaleFactor });
 
   return { width, height, background: colors.kalka, items };
 }

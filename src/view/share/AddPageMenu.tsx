@@ -28,11 +28,13 @@ type ListProps = {
   hasPair: boolean;
   canSplitCurrent: boolean;
   splitHint?: string | null;
+  /** Gdy podane, menu pokazuje tylko te rodzaje stron (reszta nie ma danych w oknie). */
+  allowed?: readonly PageKind[];
 };
 
 // Sama lista pozycji (bez hooków), żeby dało się ją sprawdzić bez DOM.
-export function AddPageList({ onPick, onSplit, hasUnit, hasPair, canSplitCurrent, splitHint }: ListProps) {
-  const visible = ENTRIES.filter((e) => (e.need === 'unit' ? hasUnit : e.need === 'pair' ? hasPair : true));
+export function AddPageList({ onPick, onSplit, hasUnit, hasPair, canSplitCurrent, splitHint, allowed }: ListProps) {
+  const visible = ENTRIES.filter((e) => (!allowed || allowed.includes(e.kind)) && (e.need === 'unit' ? hasUnit : e.need === 'pair' ? hasPair : true));
   return (
     <div className="max-h-[70vh] overflow-y-auto">
       {visible.map((e) => (

@@ -10,6 +10,10 @@ import { loadGeoData } from '@/view/map/layers/admin';
 import { LEVEL_LABELS } from '@/core/map/main-view';
 import { formatValue } from '@/core/format/number';
 import { buildProfile } from '@/core/profile/profile';
+import { createDeck, type Deck, type NewPage } from '@/core/share/deck';
+import { indicatorTableCsv, profileCsv, compareCsv, shareFileName, toCsv } from '@/core/share/csv';
+import type { CardKind, CardData } from '@/core/share/card';
+import { pageCsv, type DeckCsvSection, type PageCsvInput } from '@/core/share/deck-csv';
 
 export interface UseShareDataProps {
   view: MainView;
@@ -230,4 +234,64 @@ export function useShareData({
     }),
     [mapData, rankingData, profileData, scopeUnits, values, indicator, level, year]
   );
+}
+
+/** Startowy zestaw stron: tylko podstawowe, dla których okno ma dane (PRODUKT §4b); resztę dodaje użytkownik. */
+export function initialDeck(data: ShareDialogData): Deck {
+  const ids = data.indicator?.id ? [data.indicator.id] : [];
+  const pages: NewPage[] = [];
+  if (data.map) pages.push({ kind: 'map', indicatorIds: ids });
+  if (data.ranking) pages.push({ kind: 'ranking', indicatorIds: ids, options: { side: 'top' } });
+  if (data.profile) pages.push({ kind: 'profile', indicatorIds: ids });
+  if (data.compare) pages.push({ kind: 'compare', indicatorIds: ids });
+  return createDeck(pages.length ? pages : [{ kind: 'map', indicatorIds: ids }]);
+}
+
+// Dane CSV jednej strony; brak danych = strona jest pomijana.
+function pageInput(kind: string, data: ShareDialogData): { input: PageCsvInput; title: string } | null {
+  if ((kind === 'map' || kind === 'ranking') && data.units && data.indicatorValues && data.indicator && data.year) {
+    return { input: { kind, units: data.units, values: data.indicatorValues, indicator: data.indicator, year: data.year }, title: data.indicator.name };
+  }
+  if (kind === 'profile' && data.unitProfile) {
+    return { input: { kind, profile: data.unitProfile }, title: data.unitProfile.unit?.name ?? 'Profil' };
+  }
+  if ((kind === 'compare' || kind === 'versus') && data.compareRows) {
+    return { input: { kind, rows: data.compareRows, a: data.compareUnitA ?? null, b: data.compareUnitB ?? null }, title: 'Porównanie' };
+  }
+  return null;
+}
+
+/** Sekcje pliku CSV zestawu – po jednej na stronę, która ma dane w oknie. */
+export function deckCsvSections(deck: Deck, data: ShareDialogData): DeckCsvSection[] {
+  const found = deck.pages.map((p) => pageInput(p.kind, data));
+  return found.flatMap((f) => (f ? [{ title: f.title, csv: pageCsv(f.input) }] : []));
+}
+
+/** Dane karty dla strony; ranking „najniżej” bierze koniec listy. */
+export function dataForPage(data: ShareDialogData, kind: CardKind, side?: 'top' | 'bottom'): CardData | undefined {
+  if (kind === 'ranking' && data.ranking && side === 'bottom') {
+    return { ...data.ranking, items: data.ranking.items.slice(-10) };
+  }
+  return data[kind];
+}
+
+/** CSV bieżącej karty („Pobierz dane (CSV)”) i nazwa pliku. */
+export function singleCsv(data: ShareDialogData, kind: CardKind): { csv: string; fileName: string } {
+  if (data.csvContent) {
+    return { csv: data.csvContent, fileName: data.csvFileName || shareFileName('faktografia', [kind, 'dane'], 'csv') };
+  }
+  if (kind === 'profile' && data.unitProfile) {
+    return { csv: profileCsv(data.unitProfile), fileName: shareFileName('faktografia', ['profil', data.unitProfile.teryt], 'csv') };
+  }
+  if (kind === 'compare' && data.compareRows) {
+    return { csv: compareCsv(data.compareRows, data.compareUnitA, data.compareUnitB), fileName: shareFileName('faktografia', ['porownanie'], 'csv') };
+  }
+  if (data.units && data.indicatorValues && data.indicator && data.year) {
+    return {
+      csv: indicatorTableCsv(data.units, data.indicatorValues, data.indicator, data.year),
+      fileName: shareFileName('faktografia', [data.indicator.id, data.indicator.minLevel, data.year], 'csv'),
+    };
+  }
+  const csv = toCsv(['Tytuł', 'Wartość', 'Źródło'], [['Faktografia Atlas', 'Dane GUS', 'GUS, Bank Danych Lokalnych (CC BY 4.0)']]);
+  return { csv, fileName: shareFileName('faktografia', ['dane'], 'csv') };
 }

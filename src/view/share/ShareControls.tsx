@@ -25,6 +25,7 @@ const KIND_LABELS: Record<CardKind, string> = {
   ranking: 'Ranking',
   profile: 'Profil',
   compare: 'Porównanie',
+  versus: 'A vs B',
 };
 
 export const ShareControls: React.FC<ShareControlsProps> = ({
@@ -42,7 +43,7 @@ export const ShareControls: React.FC<ShareControlsProps> = ({
       <div className="flex flex-col gap-1.5 max-w-full">
         <span className="text-xs font-semibold text-olowek tracking-wider">Karta</span>
         <div className="flex flex-wrap gap-1.5 max-w-full">
-          {(['map', 'ranking', 'profile', 'compare'] as CardKind[]).map((k) => {
+          {(['map', 'ranking', 'profile', 'compare', ...(availableKinds.includes('versus') ? ['versus'] : [])] as CardKind[]).map((k) => {
             const isAvailable = availableKinds.includes(k);
             const isSelected = activeKind === k;
             return (

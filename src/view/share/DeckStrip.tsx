@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { Xmark, NavArrowLeft, NavArrowRight, Plus } from 'iconoir-react';
 import { Icon } from '../ui/Icon';
 import type { PageKind } from '../../core/share/deck';
@@ -13,6 +13,8 @@ export type DeckStripProps = {
   onMove: (id: string, dir: -1 | 1) => void;
   onAdd: () => void;
   canRemove: boolean;
+  /** Zamiast własnego przycisku „Dodaj stronę” (np. menu wyboru rodzaju strony). */
+  addSlot?: ReactNode;
 };
 
 const KIND_NAMES: Record<PageKind, string> = {
@@ -40,7 +42,7 @@ const BTN = 'min-h-[44px] min-w-[44px] inline-flex items-center justify-center b
 type TilesProps = DeckStripProps;
 
 // Same kafelki (bez haków) – wydzielone, żeby dało się je sprawdzić bez DOM.
-export function StripTiles({ pages, currentId, onSelect, onRemove, onMove, onAdd, canRemove }: TilesProps) {
+export function StripTiles({ pages, currentId, onSelect, onRemove, onMove, onAdd, canRemove, addSlot }: TilesProps) {
   return (
     <>
       {pages.map((p, i) => {
@@ -88,7 +90,7 @@ export function StripTiles({ pages, currentId, onSelect, onRemove, onMove, onAdd
           </div>
         );
       })}
-      <button
+      {addSlot ? <div data-strip-add-slot="" className="shrink-0 snap-start">{addSlot}</div> : <button
         type="button"
         data-strip-add=""
         onClick={onAdd}
@@ -96,7 +98,7 @@ export function StripTiles({ pages, currentId, onSelect, onRemove, onMove, onAdd
       >
         <Icon icon={Plus} size={16} aria-hidden />
         Dodaj stronę
-      </button>
+      </button>}
     </>
   );
 }
@@ -119,7 +121,7 @@ export function DeckStrip(props: DeckStripProps) {
     const target = pendingFocus.current;
     if (!target) return;
     pendingFocus.current = null;
-    const sel = target === 'add' ? '[data-strip-add]' : `[data-strip-tile="${target}"]`;
+    const sel = target === 'add' ? '[data-strip-add], [data-strip-add-slot] button' : `[data-strip-tile="${target}"]`;
     rootRef.current?.querySelector<HTMLElement>(sel)?.focus();
   }, [pages]);
 
