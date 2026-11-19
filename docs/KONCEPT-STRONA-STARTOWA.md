@@ -1,5 +1,5 @@
 # Koncept: strona startowa z żywą animacją, mapa osobno (pomysł właściciela 19.11.2026)
-Status: **koncept do decyzji**, nic nie wdrożone. Kolejne Q, po W5 (patrz „Fale”). Wpisane też w `docs/PLAN-UWAGI-19-11.md` (W4d) i `docs/FALE.md`.
+Status: **koncept, decyzja odłożona przez właściciela (19.11.2026): najpierw research i analizy (QU32), potem wybór**. Nic nie wdrożone. Kolejne Q, po W5 (patrz „Fale”). Wpisane też w `docs/PLAN-UWAGI-19-11.md` (W4d) i `docs/FALE.md`.
 
 ## Pomysł
 Dziś `/` to od razu mapa; animacja rysowania obrysu Polski (`IntroOverlay`, 1,2 s) znika po chwili. Właściciel: animacja się podoba, więc niech będzie **stroną startową**:
@@ -25,7 +25,8 @@ Rekomendacja: **A**, a jeśli nie zgadzasz się na migrację testów – **B** j
 ## Jak ma działać animacja (pomysły do wyboru po prototypie)
 - **Obrys + granice województw** rysowane przy wejściu (jak dziś), potem „oddycha”.
 - **Reakcja na kursor** (do wyboru, można łączyć): (1) najbliższy fragment granicy się rozjaśnia/pogrubia (SVG + zmienna CSS ustawiana z `pointermove`, 1 klatka/`requestAnimationFrame`); (2) delikatny paralaks całej Polski; (3) najechane województwo wypełnia się kolorem i pokazuje nazwę + jedną liczbę (z pliku wbudowanego w stronę, nie z sieci).
-- **Telefon (bez myszy):** dotknięcie i przeciąganie palcem działa jak kursor; bez dotyku – wolny, automatyczny dryf. Pola dotykowe ≥ 44 px.
+- **Tryb samoczynny (bez kursora, decyzja właściciela 19.11):** animacja żyje sama, losowo, np. fala światła wędrująca po granicach, pulsowanie losowych województw, powolny dryf. Dopiero gdy kursor (lub palec) wejdzie w obszar, animacja **przejmuje jego położenie**: efekt „ucieka” z losowych miejsc do kursora, a po ok. 2–3 s bez ruchu płynnie wraca do trybu samoczynnego. Znany wzorzec ze stron produktowych (idle → hover). Jedna pętla `requestAnimationFrame`, wspólny „punkt zainteresowania” (losowy albo kursor), wygładzanie (lerp), pauza przy ukrytej karcie i poza ekranem (oszczędność baterii). Do ustalenia w QU32: tempo, jak mocny ma być efekt, czy losowość ma ziarno (powtarzalność w testach).
+- **Telefon (bez myszy):** dotknięcie i przeciąganie palcem działa jak kursor; bez dotyku – tryb samoczynny jak wyżej. Pola dotykowe ≥ 44 px.
 - **`prefers-reduced-motion`:** statyczny obrys, zero ruchu (zgodnie z AGENTS.md).
 - **Przejście do mapy:** klik zatrzymuje animację, obrys powiększa się do rozmiaru mapy (ta sama geometria), mapa wjeżdża pod nim (fade), potem pełna interakcja. Kliknięcie konkretnego województwa = mapa od razu wchodzi w nie. Mapa i dane doczytują się w tle (prefetch przy najechaniu na przycisk / po bezczynności), żeby przejście nie zawisło – to też lekarstwo na „zawieszenie przed przybliżeniem” (QU29).
 - **Techniki:** wystarczy SVG + CSS + mały skrypt (bez nowego pakietu). Canvas 2D tylko jeśli SVG zwolni (pomiar na telefonie). Nowy pakiet (np. do animacji) tylko po wpisie do `ELEMENTY.md` i Twojej zgodzie.
@@ -43,7 +44,7 @@ Dotyka plików ekranu (`Home.tsx`, `AtlasMap.tsx`, `Header.tsx`, routing w `App.
 ## Fale (propozycja)
 | Fala | Zadanie | Co |
 |---|---|---|
-| **W4d** (tylko raporty, od ręki po poleceniu) | **QU32** | inwentarz: które testy i linki zależą od `/`; tabela „stary adres → nowy”; pomiar wagi obrysu; szkice 390/1280 px; **prototyp animacji** na stronie `/design` (bez ruszania `/`) do obejrzenia na telefonie |
+| **W4d** (tylko raporty, od ręki po poleceniu) | **QU32** | inwentarz: które testy i linki zależą od `/`; tabela „stary adres → nowy”; pomiar wagi obrysu; szkice 390/1280 px; **prototyp animacji** (tryb samoczynny + reakcja na kursor) na stronie `/design` (bez ruszania `/`) do obejrzenia na telefonie |
 | **W6** (po W5, po Twojej decyzji A/B/C) | **QU33** | skrypt uproszczonego obrysu (zgoda na `scripts/data`) + test wagi ≤ 60 KB |
 | | **QU34** | trasa `/mapa`, przekierowania starych adresów, logo → `/`; test przekierowań |
 | | **QU35** | migracja testów e2e na `openMap()` (jednorazowa zgoda na zmianę istniejących testów) |
