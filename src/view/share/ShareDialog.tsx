@@ -281,7 +281,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
               type="button"
               disabled={isProcessing}
               onClick={handleDownloadPng}
-              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold bg-tusz text-kalka hover:opacity-90 transition-opacity flex-1 sm:flex-none"
+              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-tusz text-kalka hover:opacity-90 transition-opacity flex-1 sm:flex-none"
             >
               Pobierz obraz
             </button>
@@ -291,7 +291,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
                 type="button"
                 disabled={isProcessing}
                 onClick={handleShare}
-                className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
+                className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
               >
                 Udostępnij
               </button>
@@ -301,7 +301,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
               type="button"
               disabled={isProcessing}
               onClick={handleShareSet}
-              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
+              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
             >
               Udostępnij zestaw
             </button>
@@ -310,7 +310,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
               type="button"
               disabled={isProcessing}
               onClick={handleDownloadCsv}
-              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
+              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
             >
               Pobierz dane (CSV)
             </button>
@@ -320,7 +320,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
                 type="button"
                 disabled={isProcessing}
                 onClick={handleDownloadDeckCsv}
-                className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
+                className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
               >
                 Pobierz CSV zestawu
               </button>

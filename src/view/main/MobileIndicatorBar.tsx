@@ -37,9 +37,10 @@ export function MyIndicatorsManager({ all, onPick, defaultOpen = false }: { all:
   return (
     <div className="flex flex-col gap-2">
       <button type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)}
-        className="min-h-[44px] px-3 text-sm text-left text-tusz bg-arkusz border border-linia cursor-pointer hover:bg-linia/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tusz"
+        className="min-h-[44px] px-3 text-sm text-left text-tusz bg-arkusz border border-linia cursor-pointer hover:bg-linia/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tusz flex items-center justify-between gap-2"
       >
-        Moje wskaźniki
+        <span>Moje wskaźniki</span>
+        <Icon icon={open ? NavArrowUp : NavArrowDown} size={20} aria-hidden={true} className="text-tusz shrink-0" />
       </button>
       {open && (
         <MyIndicatorsBar all={all} list={list} isBasic={isBasic(list)} open={adding} onToggle={() => setAdding((o) => !o)}

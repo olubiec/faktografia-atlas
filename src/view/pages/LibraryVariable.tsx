@@ -19,6 +19,7 @@ import type { Unit, UnitLevel } from '../../core/units/types';
 import { cn } from '../../lib/utils';
 import { Header } from '../Header';
 import { DownloadCsv } from '../library/DownloadCsv';
+import { AddToMineButton } from '../library/AddToMineButton';
 import { OrderButton } from '../library/OrderButton';
 import { VariableStatsBar } from '../library/VariableStatsBar';
 import { RankingBars } from '../ranking/RankingBars';
@@ -302,6 +303,9 @@ export function LibraryVariable() {
                   Jednostka: {variable.unit}
                 </p>
               )}
+              <div className="pt-2">
+                <AddToMineButton varId={variable.id} name={variable.name} />
+              </div>
             </header>
 
             <div className="flex flex-wrap items-center justify-between gap-4 bg-arkusz border border-linia p-4">
