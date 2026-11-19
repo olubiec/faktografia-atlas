@@ -1,4 +1,4 @@
-# Uwagi właściciela 19.11.2026 – plan (domknięcie Q2)
+# Uwagi właściciela 19.11.2026 – plan (kolejne Q: Q4–Q6, poza Q2)
 
 Dokument planisty. Nie zmienia kodu strony. Zadania leżą w `tasks/poczekalnia/` (nic nie wystartowało). Właściciel rozbuduje i doprecyzuje; start fali = „start W4” itd.
 

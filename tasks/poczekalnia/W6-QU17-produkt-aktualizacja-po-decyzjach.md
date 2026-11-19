@@ -1,4 +1,4 @@
-# QU17 – Aktualizacja PRODUKT.md po decyzjach z Q2
+# QU17 – Aktualizacja PRODUKT.md po decyzjach z uwag 19.11 (Q6)
 Cel: docs/PRODUKT.md (§4d Biblioteka, §4e Rankingi, §4b udostępnianie) opisuje stan po zmianach QU10–QU16.
 Zmieniaj: docs/PRODUKT.md
 Wymagane: docs/PRODUKT.md
