@@ -22,6 +22,13 @@ Dziś `/` to od razu mapa; animacja rysowania obrysu Polski (`IntroOverlay`, 1,2
 
 Rekomendacja: **A**, a jeśli nie zgadzasz się na migrację testów – **B** jako rozwiązanie przejściowe.
 
+## Zasada nadrzędna: animacja ma się opierać o dzisiejszą (decyzja właściciela 19.11)
+Nie projektujemy nowego efektu od zera. Strona startowa **używa tych samych animacji co mapa**: rysowanie obrysu (`IntroOverlay`), kolejne „ładowanie się” pól po wejściu w województwo/powiat/gminę i przy cofaniu (`src/core/map/reveal.ts`: kolejność od punktu wejścia, czas łączny `revealTotal` 900 ms), płynną zmianę kolorów (`fill-blend.ts`), przybliżanie i oddalanie kamery (`cameraIn`/`cameraOut`). Te same tokeny czasu (`config/tokens.json`), ta sama krzywa.
+- **Samoczynny tryb** = te same „ładowania pól po kolei”, uruchamiane losowo (losowy początek, pola zapalają się falą od niego, ikony/pola „skaczą” i przełączają się), a nie nowa animacja.
+- **Kursor** wyznacza punkt początku fali (jak kliknięte województwo wyznacza początek ładowania pól na mapie).
+- **Klik** = to samo wejście co na mapie, więc przejście do `/mapa` wygląda jak ciąg dalszy, nie jak podmiana strony.
+- Wymóg techniczny: logika kolejności (`revealPlan`) jest czystym kodem w `src/core`, więc strona startowa ją **współdzieli**, zamiast kopiować; do ustalenia w QU32, czy da się ją uruchomić na uproszczonym obrysie (województwa) bez ładowania danych GUS.
+
 ## Jak ma działać animacja (pomysły do wyboru po prototypie)
 - **Obrys + granice województw** rysowane przy wejściu (jak dziś), potem „oddycha”.
 - **Reakcja na kursor** (do wyboru, można łączyć): (1) najbliższy fragment granicy się rozjaśnia/pogrubia (SVG + zmienna CSS ustawiana z `pointermove`, 1 klatka/`requestAnimationFrame`); (2) delikatny paralaks całej Polski; (3) najechane województwo wypełnia się kolorem i pokazuje nazwę + jedną liczbę (z pliku wbudowanego w stronę, nie z sieci).
@@ -48,7 +55,7 @@ Dotyka plików ekranu (`Home.tsx`, `AtlasMap.tsx`, `Header.tsx`, routing w `App.
 | **W6** (po W5, po Twojej decyzji A/B/C) | **QU33** | skrypt uproszczonego obrysu (zgoda na `scripts/data`) + test wagi ≤ 60 KB |
 | | **QU34** | trasa `/mapa`, przekierowania starych adresów, logo → `/`; test przekierowań |
 | | **QU35** | migracja testów e2e na `openMap()` (jednorazowa zgoda na zmianę istniejących testów) |
-| **W7** | **QU36** | komponent hero: rysowanie obrysu + reakcja na kursor/dotyk + reduced motion |
+| **W7** | **QU36** | komponent hero na bazie istniejących animacji (obrys, `revealPlan`, przejścia kolorów) + reakcja na kursor/dotyk + reduced motion |
 | | **QU37** | przejście hero → mapa (prefetch, wspólna geometria, bez zawieszenia) |
 | | **QU38** | treść strony startowej (kafelki, szybki start, źródła), przeniesienie `PortalSections`, OG/tytuły |
 Kolejność: QU34 → QU35 → QU36 → QU37 → QU38 (QU36 może iść równolegle z QU34/35, bo to osobny plik). Szacunek: 1 fala analiz + 2 fale wdrożenia.
