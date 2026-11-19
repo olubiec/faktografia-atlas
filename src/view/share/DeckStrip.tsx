@@ -37,7 +37,9 @@ function focusTargetAfterRemove(ids: string[], removedId: string): string {
   return ids[i + 1] ?? ids[i - 1] ?? 'add';
 }
 
-const BTN = 'min-h-[44px] min-w-[44px] inline-flex items-center justify-center border border-linia text-tusz focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tusz disabled:opacity-40 disabled:cursor-not-allowed';
+const BTN_BASE = 'min-h-[44px] min-w-[44px] inline-flex items-center justify-center border border-linia focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tusz disabled:opacity-40 disabled:cursor-not-allowed';
+
+const BTN = `${BTN_BASE} text-tusz`;
 
 type TilesProps = DeckStripProps;
 
@@ -56,7 +58,7 @@ export function StripTiles({ pages, currentId, onSelect, onRemove, onMove, onAdd
               data-strip-tile={p.id}
               aria-current={isCurrent ? 'true' : undefined}
               onClick={() => onSelect(p.id)}
-              className={`${BTN} px-3 text-xs font-medium whitespace-nowrap ${isCurrent ? 'bg-tusz text-kalka' : 'bg-arkusz hover:bg-kalka'}`}
+              className={`${BTN_BASE} px-3 text-xs font-medium whitespace-nowrap ${isCurrent ? 'bg-tusz text-kalka' : 'bg-arkusz text-tusz hover:bg-kalka'}`}
             >
               {`${p.label} ${name}`}
             </button>
@@ -133,7 +135,7 @@ export function DeckStrip(props: DeckStripProps) {
   return (
     <div
       ref={rootRef}
-      className="flex w-full max-w-full snap-x snap-mandatory gap-2 overflow-x-auto pb-1"
+      className={`flex w-full max-w-full gap-2 pb-1 ${pages.length > 1 ? 'snap-x snap-mandatory overflow-x-auto' : 'flex-wrap'}`}
       role="group"
       aria-label="Strony zestawu"
     >
