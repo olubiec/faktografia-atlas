@@ -90,13 +90,13 @@ export function VariableStatsBar({
         {/* Karta 2: Mediana */}
         <div
           data-testid="stats-card-median"
-          className="bg-arkusz border border-linia p-3 sm:p-4 flex flex-col justify-between"
+          className="bg-arkusz border border-linia p-3 sm:p-4 flex flex-col justify-between min-w-0"
         >
           <span className="text-xs font-semibold text-olowek uppercase tracking-wider">
             Mediana
           </span>
           <div className="mt-1">
-            <span className="text-xl md:text-2xl font-bold font-mono text-tusz truncate block">
+            <span className="text-xl md:text-2xl font-bold font-mono text-tusz break-words block">
               {median !== null ? formatValue(median, unit) : '—'}
             </span>
           </div>
@@ -105,13 +105,13 @@ export function VariableStatsBar({
         {/* Karta 3: Min-Max */}
         <div
           data-testid="stats-card-minmax"
-          className="bg-arkusz border border-linia p-3 sm:p-4 flex flex-col justify-between"
+          className="bg-arkusz border border-linia p-3 sm:p-4 flex flex-col justify-between min-w-0 col-span-2 md:col-span-1"
         >
           <span className="text-xs font-semibold text-olowek uppercase tracking-wider">
             Min-Max
           </span>
           <div className="mt-1">
-            <span className="text-sm md:text-base font-bold font-mono text-tusz truncate block">
+            <span className="text-sm md:text-base font-bold font-mono text-tusz break-words block">
               {min !== null && max !== null
                 ? `${formatValue(min, unit)} – ${formatValue(max, unit)}`
                 : '—'}
@@ -163,19 +163,19 @@ export function VariableStatsBar({
 
         {breaks.length >= 4 ? (
           <div className="grid grid-cols-2 sm:grid-cols-5 text-xs font-mono text-olowek gap-1 text-center">
-            <div className="truncate px-1 py-0.5 bg-kalka/50 border border-linia/40">
+            <div className="break-words min-w-0 px-1 py-0.5 bg-kalka/50 border border-linia/40">
               <span className="font-semibold text-tusz">Q1:</span> &lt; {formatValue(breaks[0], unit)}
             </div>
-            <div className="truncate px-1 py-0.5 bg-kalka/50 border border-linia/40">
+            <div className="break-words min-w-0 px-1 py-0.5 bg-kalka/50 border border-linia/40">
               <span className="font-semibold text-tusz">Q2:</span> {formatValue(breaks[0], unit)} – {formatValue(breaks[1], unit)}
             </div>
-            <div className="truncate px-1 py-0.5 bg-kalka/50 border border-linia/40">
+            <div className="break-words min-w-0 px-1 py-0.5 bg-kalka/50 border border-linia/40">
               <span className="font-semibold text-tusz">Q3:</span> {formatValue(breaks[1], unit)} – {formatValue(breaks[2], unit)}
             </div>
-            <div className="truncate px-1 py-0.5 bg-kalka/50 border border-linia/40">
+            <div className="break-words min-w-0 px-1 py-0.5 bg-kalka/50 border border-linia/40">
               <span className="font-semibold text-tusz">Q4:</span> {formatValue(breaks[2], unit)} – {formatValue(breaks[3], unit)}
             </div>
-            <div className="truncate px-1 py-0.5 bg-kalka/50 border border-linia/40 col-span-2 sm:col-span-1">
+            <div className="break-words min-w-0 px-1 py-0.5 bg-kalka/50 border border-linia/40 col-span-2 sm:col-span-1">
               <span className="font-semibold text-tusz">Q5:</span> &ge; {formatValue(breaks[3], unit)}
             </div>
           </div>
