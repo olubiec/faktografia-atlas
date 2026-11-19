@@ -54,7 +54,7 @@ export function Breadcrumbs({ teryt, index, onSelect, onBack }: BreadcrumbsProps
           <Icon icon={NavArrowLeft} aria-hidden={true} size={20} />
         </button>
       )}
-      <ol className="flex flex-nowrap md:flex-wrap items-center gap-0.5 sm:gap-1 min-w-0 overflow-hidden max-w-full text-xs">
+      <ol className="flex flex-nowrap items-center gap-0.5 sm:gap-1 min-w-0 overflow-hidden max-w-full text-xs">
         {items.map((item, idx) => {
           const isLast = idx === items.length - 1;
           const isMiddle = idx > 0 && !isLast;
@@ -75,6 +75,7 @@ export function Breadcrumbs({ teryt, index, onSelect, onBack }: BreadcrumbsProps
               {isLast ? (
                 <span
                   aria-current="page"
+                  title={item.label}
                   className="min-h-[44px] px-1 sm:px-2.5 flex items-center text-tusz font-semibold select-none truncate min-w-0"
                 >
                   {item.label}
@@ -82,11 +83,12 @@ export function Breadcrumbs({ teryt, index, onSelect, onBack }: BreadcrumbsProps
               ) : (
                 <button
                   type="button"
+                  title={item.label}
                   onClick={() => onSelect(item.teryt)}
                   className={cn(
                     'min-h-[44px] min-w-[44px] px-1 sm:px-2.5 flex items-center justify-center text-tusz hover:bg-linia/20 transition-colors font-medium rounded-none focus:outline-none focus-visible:ring-1 focus-visible:ring-tusz cursor-pointer truncate min-w-0',
-                    isMiddle && isDeepPath && 'max-w-[48px] sm:max-w-[80px] md:max-w-none',
-                    isMiddle && !isDeepPath && 'max-w-[80px] sm:max-w-[120px] md:max-w-none'
+                    isMiddle && isDeepPath && 'max-w-[48px] sm:max-w-[80px] md:max-w-[120px]',
+                    isMiddle && !isDeepPath && 'max-w-[80px] sm:max-w-[120px] md:max-w-[200px]'
                   )}
                 >
                   <span className="truncate min-w-0">{item.label}</span>
