@@ -1,7 +1,8 @@
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useRef, useSyncExternalStore } from 'react';
 import { Link } from 'react-router';
-import { loadDataStatus, type DataStatus } from '../../core/data/load-status';
+import type { DataStatus } from '../../core/data/load-status';
 import { DataFreshness } from './DataFreshness';
+import { useDataStatus } from './useDataStatus';
 
 function subscribeTheme(callback: () => void) {
   if (typeof window === 'undefined') return () => {};
@@ -44,23 +45,14 @@ interface SiteFooterProps {
 }
 
 export function SiteFooter({ decorativeLogo = false, initialStatus }: SiteFooterProps = {}) {
-  const [status, setStatus] = useState<DataStatus | null>(initialStatus ?? null);
-  useEffect(() => {
-    if (initialStatus !== undefined) return;
-    let alive = true;
-    // Żądanie dopiero po wejściu (po bezczynności albo 1,5 s), żeby nie liczyło się do budżetu danych na starcie.
-    const run = () => void loadDataStatus().then((s) => alive && setStatus(s));
-    const timer = setTimeout(run, 1500);
-    return () => {
-      alive = false;
-      clearTimeout(timer);
-    };
-  }, [initialStatus]);
+  const footerRef = useRef<HTMLElement>(null);
+  const status = useDataStatus(footerRef, initialStatus);
   const isDark = useSyncExternalStore(subscribeTheme, getIsDark, () => false);
   const logoSrc = isDark ? '/brand/faktografia-logo-jasne.svg' : '/brand/faktografia-logo-granat.svg';
 
   return (
     <footer
+      ref={footerRef}
       role="contentinfo"
       className="border-t border-linia bg-arkusz text-tusz mt-auto"
     >
