@@ -21,6 +21,9 @@ import type { CompareCardData, CompareCardRow } from '../../core/share/card';
 import { Icon } from '../ui/Icon';
 import { Download, Search, Xmark } from 'iconoir-react';
 import { cn } from '../../lib/utils';
+import { versusShareData } from '../../core/share/versus-data';
+import { CompareIndicatorPicker } from '../compare/CompareIndicatorPicker';
+import { useMyIndicators } from '../hooks/useMyIndicators';
 import indicatorsData from '../../../config/indicators.json';
 
 const indicators = indicatorsData as Indicator[];
@@ -69,6 +72,7 @@ export function ProfileCompare({
   onSelectUnit,
   className,
 }: ProfileCompareProps) {
+  const { list, add, remove, reset } = useMyIndicators();
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [topoData, setTopoData] = useState<any>(null);
   const [loadedUnits, setLoadedUnits] = useState<Unit[]>([]);
@@ -325,8 +329,18 @@ export function ProfileCompare({
       rows: compareCardRows,
     };
 
+    // Karta „A vs B” dla aktywnego wskaźnika (QS02c); bez niego zostaje pierwszy wspólny wiersz
+    const onlyActive = (prof: UnitProfile): UnitProfile => ({
+      ...prof,
+      indicators: prof.indicators.filter((i) => i.indicatorId === indicatorId),
+    });
+    const { versus } = versusShareData(onlyActive(profileA), onlyActive(profileB), year) as {
+      versus?: ShareDialogData['versus'];
+    };
+
     return {
       compare: compareCard,
+      ...(versus ? { versus } : {}),
       compareRows: compResult.rows,
       compareUnitA: profileA,
       compareUnitB: profileB,
@@ -336,6 +350,7 @@ export function ProfileCompare({
     profileB,
     view,
     year,
+    indicatorId,
     topoData,
     indicatorValues,
     units,
@@ -435,7 +450,18 @@ export function ProfileCompare({
         view={view}
         onSelectUnit={onSelectUnit}
       />
-      <ProfileCompareTable profileA={profileA} profileB={profileB} />
+      <CompareIndicatorPicker
+        items={profileA.indicators}
+        list={list}
+        onAdd={add}
+        onRemove={remove}
+        onReset={reset}
+      />
+      <ProfileCompareTable
+        profileA={CompareIndicatorPicker.restrictProfile(profileA, list)}
+        profileB={CompareIndicatorPicker.restrictProfile(profileB, list)}
+        onRemove={remove}
+      />
 
       <div className="pt-3 flex justify-start">
         <button
