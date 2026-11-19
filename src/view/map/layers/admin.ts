@@ -25,6 +25,8 @@ export type LayerContext = {
   onSelectUnit?: (teryt: string) => void;
   viewState?: ViewState;
   localities?: Locality[];
+  /** Szerokość mapy w px (dla wygaszania obrysu); brak = bez wygaszania. */
+  mapWidthPx?: number;
   choropleth?: ChoroplethData | null;
   /** Najechanie na jednostkę (null = kursor poza jednostkami). Współrzędne względem mapy. */
   onHoverUnit?: (hover: { teryt: string; x: number; y: number; width: number } | null) => void;
