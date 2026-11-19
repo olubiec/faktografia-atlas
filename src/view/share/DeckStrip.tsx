@@ -92,11 +92,11 @@ export function StripTiles({ pages, currentId, onSelect, onRemove, onMove, onAdd
           </div>
         );
       })}
-      {addSlot ? <div data-strip-add-slot="" className="shrink-0 snap-start sticky right-0 bg-arkusz">{addSlot}</div> : <button
+      {addSlot ? <div data-strip-add-slot="" className="shrink-0 snap-start">{addSlot}</div> : <button
         type="button"
         data-strip-add=""
         onClick={onAdd}
-        className={`${BTN} shrink-0 snap-start sticky right-0 gap-1 bg-arkusz px-3 text-xs font-medium whitespace-nowrap`}
+        className={`${BTN} shrink-0 snap-start gap-1 bg-arkusz px-3 text-xs font-medium whitespace-nowrap`}
       >
         <Icon icon={Plus} size={16} aria-hidden />
         Dodaj stronę
