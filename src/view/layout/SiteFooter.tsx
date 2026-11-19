@@ -1,5 +1,8 @@
-import { useSyncExternalStore } from 'react';
+import { useRef, useSyncExternalStore } from 'react';
 import { Link } from 'react-router';
+import type { DataStatus } from '../../core/data/load-status';
+import { DataFreshness } from './DataFreshness';
+import { useDataStatus } from './useDataStatus';
 
 function subscribeTheme(callback: () => void) {
   if (typeof window === 'undefined') return () => {};
@@ -37,14 +40,19 @@ function getIsDark(): boolean {
 interface SiteFooterProps {
   /** Na stronie głównej logo jest już w nagłówku – w stopce ma być dekoracyjne (alt=""), by nie dublować go dla czytników. */
   decorativeLogo?: boolean;
+  /** Status danych podany z góry (testy); gdy brak, stopka pobiera `status.json` po zamontowaniu. */
+  initialStatus?: DataStatus | null;
 }
 
-export function SiteFooter({ decorativeLogo = false }: SiteFooterProps = {}) {
+export function SiteFooter({ decorativeLogo = false, initialStatus }: SiteFooterProps = {}) {
+  const footerRef = useRef<HTMLElement>(null);
+  const status = useDataStatus(footerRef, initialStatus);
   const isDark = useSyncExternalStore(subscribeTheme, getIsDark, () => false);
   const logoSrc = isDark ? '/brand/faktografia-logo-jasne.svg' : '/brand/faktografia-logo-granat.svg';
 
   return (
     <footer
+      ref={footerRef}
       role="contentinfo"
       className="border-t border-linia bg-arkusz text-tusz mt-auto"
     >
@@ -189,6 +197,7 @@ export function SiteFooter({ decorativeLogo = false }: SiteFooterProps = {}) {
             </a>
           </nav>
         </div>
+        <DataFreshness status={status} className="mt-8" />
       </div>
     </footer>
   );

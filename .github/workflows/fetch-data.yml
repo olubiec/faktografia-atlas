@@ -199,3 +199,23 @@ jobs:
             gh api -X POST "repos/$GITHUB_REPOSITORY/issues" -f title="$T" \
               -f body="Przebieg: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID (zdarzenie: $GITHUB_EVENT_NAME). Przyczyna jest w kroku, który zakończył się błędem. Co zrobić: wklej ten link Planiście (TRYB: POMOC)." >/dev/null
           fi
+
+      # Status robota: zawsze (także bez zmian w danych), na gałęzi data/library (osobna historia, bez PR, bez main).
+      # Strona czyta go z tego samego adresu co resztę biblioteki. Błąd tego kroku nie psuje przebiegu.
+      - name: Zapisz status robota (library/status.json)
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          LIB=data/library
+          if ! git ls-remote --exit-code --heads origin "$LIB" >/dev/null 2>&1; then
+            echo "Brak gałęzi $LIB – status pominięty (powstanie po pierwszym przebiegu Fetch library)."; exit 0
+          fi
+          git fetch --depth 1 origin "$LIB"
+          git worktree add -B "$LIB" lib-wt "origin/$LIB"
+          node scripts/data/status.mjs --values public/data/values --library lib-wt/library --out lib-wt/library/status.json
+          cd lib-wt
+          git add -f library/status.json
+          if git diff --staged --quiet; then echo "Brak zmian."; exit 0; fi
+          git commit -m "data: status robota"
+          git push origin "HEAD:refs/heads/$LIB"

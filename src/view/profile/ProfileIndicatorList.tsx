@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Plus, Xmark } from "iconoir-react";
+import { NavArrowDown, NavArrowUp, Plus, Xmark } from "iconoir-react";
 import type { ProfileIndicatorItem } from "../../core/profile/profile";
 import type { Unit } from "../../core/units/types";
 import type { Footnote } from "../../core/profile/footnotes";
 import { isBasic } from "../../core/my-indicators/my-indicators";
+import { orderByList, stepsToNeighbor } from "../../core/profile/indicator-order";
 import { useMyIndicators } from "../hooks/useMyIndicators";
 import { Icon } from "../ui/Icon";
 import { ProfileIndicatorRow } from "./ProfileIndicatorRow";
@@ -32,6 +33,9 @@ function groupBy(
   return [...groups.entries()];
 }
 
+const MOVE_BTN =
+  "min-h-[44px] min-w-[44px] flex items-center justify-center text-olowek hover:text-tusz hover:bg-linia/15 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer shrink-0 disabled:opacity-40 disabled:cursor-default disabled:hover:bg-transparent";
+
 /**
  * Lista wskaźników w profilu: domyślnie mały zestaw „Moje wskaźniki”,
  * każdy z przyciskiem usuwania; resztę dodaje się przyciskiem „Dodaj wskaźnik”.
@@ -42,12 +46,10 @@ export function ProfileIndicatorList({
   footnotes,
   personalize = true,
 }: ProfileIndicatorListProps) {
-  const { list, add, remove, reset } = useMyIndicators();
+  const { list, add, remove, reset, move } = useMyIndicators();
   const [pickerOpen, setPickerOpen] = useState(false);
 
-  const shown = personalize
-    ? items.filter((i) => list.includes(i.indicatorId))
-    : items;
+  const shown = personalize ? orderByList(items, list) : items;
   const available = personalize
     ? items.filter((i) => !list.includes(i.indicatorId))
     : [];
@@ -66,7 +68,7 @@ export function ProfileIndicatorList({
               {groupName}
             </h3>
             <div>
-              {groupItems.map((item) => (
+              {groupItems.map((item, pos) => (
                 // Linia oddzielająca wiersze jest tu, bo „last:border-b-0” w wierszu liczy się w jego własnym opakowaniu.
                 <div key={item.indicatorId} className="flex items-start gap-1 border-b border-linia last:border-b-0">
                   <div className="flex-1 min-w-0">
@@ -77,6 +79,24 @@ export function ProfileIndicatorList({
                     />
                   </div>
                   {personalize && (
+                    <>
+                      {([-1, 1] as const).map((dir) => {
+                        const neighbor = groupItems[pos + dir]?.indicatorId;
+                        const steps = stepsToNeighbor(list, item.indicatorId, neighbor);
+                        const label = dir === -1 ? "Przesuń wyżej" : "Przesuń niżej";
+                        return (
+                          <button
+                            key={dir}
+                            type="button"
+                            disabled={steps === 0}
+                            onClick={() => move(item.indicatorId, dir, steps)}
+                            aria-label={`${label}: ${item.indicator.name}`}
+                            className={MOVE_BTN}
+                          >
+                            <Icon icon={dir === -1 ? NavArrowUp : NavArrowDown} aria-hidden={true} size={16} />
+                          </button>
+                        );
+                      })}
                     <button
                       type="button"
                       onClick={() => remove(item.indicatorId)}
@@ -85,6 +105,7 @@ export function ProfileIndicatorList({
                     >
                       <Icon icon={Xmark} aria-hidden={true} size={16} />
                     </button>
+                    </>
                   )}
                 </div>
               ))}

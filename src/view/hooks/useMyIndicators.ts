@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   addIndicator,
+  moveIndicator,
   removeIndicator,
   resetToBasic,
   type MyIndicators,
@@ -59,5 +60,16 @@ export function useMyIndicators() {
   const remove = useCallback((id: string) => update((l) => removeIndicator(l, id)), [update]);
   const reset = useCallback(() => update(() => resetToBasic()), [update]);
 
-  return { list, add, remove, reset };
+  /** Przesuwa wskaźnik o `steps` miejsc (domyślnie 1); na krawędzi lista zostaje ta sama. */
+  const move = useCallback(
+    (id: string, direction: -1 | 1, steps = 1) =>
+      update((l) => {
+        let next = l;
+        for (let i = 0; i < steps; i++) next = moveIndicator(next, id, direction);
+        return next;
+      }),
+    [update],
+  );
+
+  return { list, add, remove, reset, move };
 }

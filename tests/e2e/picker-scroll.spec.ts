@@ -36,9 +36,16 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
       await expect(popover).toBeVisible();
 
       // Verify the popover container fits within viewport bounds
-      const popoverBox = await page.locator('[role="dialog"], [data-slot="popover-content"]').boundingBox();
-      expect(popoverBox).not.toBeNull();
-      expect(popoverBox!.y + popoverBox!.height).toBeLessThanOrEqual(height + 2);
+      // Selektor zawężony: mierzymy najbliższy kontener samej listy wskaźników (okno na komputerze albo
+      // arkusz na telefonie), a nie „pierwszy pasujący” z kilku naraz otwartych okien.
+      const container = popover.locator('xpath=ancestor::*[@data-slot="popover-content" or @role="dialog"][1]');
+      // Okno przesuwa się w trakcie animacji otwierania: czekamy, aż jego dolna krawędź zmieści się w ekranie.
+      await expect
+        .poll(async () => {
+          const box = await container.boundingBox();
+          return box ? box.y + box.height : null;
+        })
+        .toBeLessThanOrEqual(height + 2);
 
       // Verify search input is visible at top before scrolling
       const searchInput = page.getByPlaceholder('Szukaj wskaźnika…');
