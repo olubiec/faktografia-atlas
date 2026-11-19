@@ -269,7 +269,10 @@ export function IndicatorPicker({
         >
           <div className="flex flex-col min-w-0 pr-2">
             <span className="text-xs text-olowek uppercase tracking-wider">Wskaźnik</span>
-            <span className="font-semibold text-sm text-tusz truncate">
+            <span
+              className="font-semibold text-sm text-tusz line-clamp-2 break-words leading-tight"
+              title={selectedIndicator?.name}
+            >
               {selectedIndicator ? selectedIndicator.name : 'Wybierz wskaźnik'}
             </span>
           </div>
