@@ -1,53 +1,148 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router';
+import { Xmark } from 'iconoir-react';
 import { SiteLayout } from '../layout/SiteLayout';
+import { RankingsFilters } from '../ranking/RankingsFilters';
+import { Icon } from '../ui/Icon';
+import { useMyIndicators } from '../hooks/useMyIndicators';
 import { loadUnits } from '../../core/data/load-atlas-data';
 import { loadIndicatorValues } from '../../core/data/load-values';
 import { rankUnits } from '../../core/ranking/ranking';
+import {
+  applyRankingsChange,
+  readRankingsState,
+  writeRankingsSearch,
+  type RankingsState,
+} from '../../core/ranking/rankings-url';
+import { allowedLevels } from '../../core/map/main-view';
+import { isBasic } from '../../core/my-indicators/my-indicators';
 import type { Unit } from '../../core/units/types';
-import type { IndicatorValues } from '../../core/profile/profile';
+import type { Indicator, IndicatorValues } from '../../core/profile/profile';
+import indicatorsData from '../../../config/indicators.json';
+
+const ALL_INDICATORS = indicatorsData as Indicator[];
+const CHIP =
+  'min-h-[44px] px-3 flex items-center gap-2 text-sm bg-arkusz text-tusz border border-linia cursor-pointer hover:bg-linia/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tusz';
+
+/** Wskaźniki w pasku: lista „Moje wskaźniki” w kolejności katalogu, plus bieżący (np. z adresu), nawet spoza listy. */
+function pickShownIndicators(all: Indicator[], list: readonly string[], currentId: string): Indicator[] {
+  return all.filter((ind) => list.includes(ind.id) || ind.id === currentId);
+}
+
+export interface MyIndicatorsBarProps {
+  all: Indicator[];
+  list: readonly string[];
+  isBasic: boolean;
+  open: boolean;
+  onToggle: () => void;
+  onAdd: (id: string) => void;
+  onRemove: (id: string) => void;
+  onReset: () => void;
+}
+
+/** Lista „Moje wskaźniki” w Rankingach: × usuwa, lista rozwijana dodaje, „Przywróć podstawowe” wraca do startu. */
+export function MyIndicatorsBar({ all, list, isBasic: basic, open, onToggle, onAdd, onRemove, onReset }: MyIndicatorsBarProps) {
+  const mine = all.filter((ind) => list.includes(ind.id));
+  const rest = all.filter((ind) => !list.includes(ind.id));
+  return (
+    <div className="flex flex-wrap items-center gap-2" data-testid="my-indicators-bar">
+      {mine.map((ind) => (
+        <button key={ind.id} type="button" aria-label={`Usuń wskaźnik ${ind.name}`} onClick={() => onRemove(ind.id)} className={CHIP}>
+          <span>{ind.name}</span>
+          <Icon icon={Xmark} size={16} aria-hidden={true} />
+        </button>
+      ))}
+      <button type="button" aria-expanded={open} onClick={onToggle} className={CHIP}>
+        + Dodaj wskaźnik
+      </button>
+      {!basic && (
+        <button type="button" onClick={onReset} className={CHIP}>
+          Przywróć podstawowe
+        </button>
+      )}
+      {open && (
+        <ul aria-label="Wskaźniki do dodania" className="basis-full flex flex-wrap gap-2 list-none p-0 m-0">
+          {rest.map((ind) => (
+            <li key={ind.id}>
+              <button type="button" onClick={() => onAdd(ind.id)} className={CHIP}>
+                {ind.name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 export function Rankings() {
+  const [params, setParams] = useSearchParams();
+  const state = useMemo(() => readRankingsState(params.toString()), [params]);
+  const { list, add, remove, reset } = useMyIndicators();
+  const [adding, setAdding] = useState(false);
   const [units, setUnits] = useState<Unit[]>([]);
-  const [values, setValues] = useState<IndicatorValues | null>(null);
+  const [loaded, setLoaded] = useState<{ id: string; values: IndicatorValues | null } | null>(null);
 
   useEffect(() => {
     let active = true;
     loadUnits().then((u) => {
       if (active) setUnits(u);
     });
-
-    loadIndicatorValues('density').then((v) => {
-      if (active) setValues(v);
-    });
     return () => { active = false; };
   }, []);
 
+  useEffect(() => {
+    let active = true;
+    loadIndicatorValues(state.i).then((v) => {
+      if (active) setLoaded({ id: state.i, values: v });
+    });
+    return () => { active = false; };
+  }, [state.i]);
+
+  const values = loaded?.id === state.i ? loaded.values : null;
+  const indicator = ALL_INDICATORS.find((i) => i.id === state.i);
+  const shown = pickShownIndicators(ALL_INDICATORS, list, state.i);
+  const voivodeships = useMemo(
+    () => units.filter((u) => u.level === 'woj').map((u) => ({ teryt: u.teryt, name: u.name })),
+    [units],
+  );
+
+  const onChange = (patch: Partial<RankingsState>) => {
+    setParams(writeRankingsSearch(applyRankingsChange(state, patch)).replace(/^\?/, ''));
+  };
+
   const ranking = useMemo(() => {
     if (!values || !units.length) return null;
-    const year = values.years[values.years.length - 1];
+    const year = state.y ?? values.years[values.years.length - 1];
     const r = rankUnits({
       values,
       units,
-      level: 'woj',
+      level: state.l,
       year,
-      higherIsBetter: true,
+      parentTeryt: state.w ?? undefined,
+      higherIsBetter: indicator?.higherIsBetter ?? true,
     });
     return {
        ...r,
        median: 50 // Mocked for test
     }
-  }, [values, units]);
+  }, [values, units, state.l, state.y, state.w, indicator]);
 
   return (
     <SiteLayout>
       <div className="container mx-auto p-4 w-full text-tusz">
         <h1 className="text-2xl font-bold mb-4">Rankingi</h1>
 
-        <div className="flex gap-4 mb-8">
-          <select aria-label="Wybierz dział" className="border p-2"><option>Dział</option></select>
-          <select aria-label="Wybierz wskaźnik" className="border p-2"><option>Wskaźnik</option></select>
-          <select aria-label="Wybierz poziom" className="border p-2"><option>Poziom</option></select>
-          <select aria-label="Wybierz rok" className="border p-2"><option>Rok</option></select>
+        <div className="flex flex-col gap-3 mb-8">
+          <RankingsFilters
+            state={state}
+            indicators={shown}
+            years={values?.years ?? []}
+            availableLevels={allowedLevels(indicator?.minLevel)}
+            voivodeships={voivodeships}
+            onChange={onChange}
+          />
+          <MyIndicatorsBar all={ALL_INDICATORS} list={list} isBasic={isBasic(list)} open={adding} onToggle={() => setAdding((o) => !o)} onAdd={(id) => { add(id); setAdding(false); onChange({ i: id }); }} onRemove={remove} onReset={reset} />
         </div>
 
         {ranking && (
