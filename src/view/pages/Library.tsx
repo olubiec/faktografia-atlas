@@ -8,6 +8,7 @@ import { CategoryTiles } from '../library/CategoryTiles';
 import { LibraryFilters } from '../library/LibraryFilters';
 import { LibraryResults } from '../library/LibraryResults';
 import { LibrarySearchBar } from '../library/LibrarySearchBar';
+import { MyIndicatorsSection } from '../library/MyIndicatorsSection';
 import { SiteFooter } from '../layout/SiteFooter';
 
 type PageStatus = 'loading' | 'error' | 'empty' | 'ready';
@@ -40,10 +41,13 @@ interface LibraryContentProps {
   query: LibraryQuery;
   onQueryChange: (query: LibraryQuery) => void;
   onPick: (id: string | number) => void;
+  /** Strona: sekcja „Moje wskaźniki”, a lista dopiero po zapytaniu lub wyborze działu. */
+  personalized?: boolean;
 }
 
 /** Treść gotowej strony: tylko wskaźniki z danymi (filterFetched) + zdanie „m z n”. */
-export function LibraryContent({ index, query, onQueryChange, onPick }: LibraryContentProps) {
+export function LibraryContent({ index, query, onQueryChange, onPick, personalized = false }: LibraryContentProps) {
+  const hasQuery = query.text.trim() !== '' || !!query.cat;
   const counts = useMemo(() => libraryCounts(index), [index]);
   const fetchedQuery = useMemo(() => ({ ...query, onlyReady: true }), [query]);
   return (
@@ -51,6 +55,12 @@ export function LibraryContent({ index, query, onQueryChange, onPick }: LibraryC
       <p role="status" className="text-sm text-olowek leading-[1.6]">
         {`${formatCount(counts.fetched)} wskaźników z danymi (z ${formatCount(counts.total)} w spisie GUS). Kolejne dane dochodzą co noc.`}
       </p>
+      {personalized && (
+        // Na telefonie pod listą (żeby wyniki zostały na pierwszym ekranie), od md na samej górze.
+        <div className="order-5 md:order-none">
+          <MyIndicatorsSection index={index} />
+        </div>
+      )}
       <div className="order-4 md:order-1">
           <CategoryTiles
             index={index}
@@ -98,7 +108,18 @@ export function LibraryContent({ index, query, onQueryChange, onPick }: LibraryC
           />
         </div>
         <div className="order-3 md:order-4">
-          <LibraryResults index={index} query={fetchedQuery} onQueryChange={onQueryChange} />
+          {personalized && !hasQuery ? (
+            <div
+              data-testid="library-results"
+              className="py-8 px-4 text-center text-olowek text-sm bg-arkusz border border-linia"
+            >
+              <ul className="m-0 p-0 list-none">
+                <li>Wpisz frazę albo wybierz dział, żeby zobaczyć wskaźniki z biblioteki.</li>
+              </ul>
+            </div>
+          ) : (
+            <LibraryResults index={index} query={fetchedQuery} onQueryChange={onQueryChange} />
+          )}
         </div>
       </div>
   );
@@ -265,6 +286,7 @@ export function Library() {
             query={query}
             onQueryChange={handleQueryChange}
             onPick={handlePick}
+            personalized
           />
         )}
       </main>
