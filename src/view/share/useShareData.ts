@@ -13,6 +13,9 @@ import { buildProfile } from '@/core/profile/profile';
 import { createDeck, type Deck, type NewPage } from '@/core/share/deck';
 import { indicatorTableCsv, profileCsv, compareCsv, shareFileName, toCsv } from '@/core/share/csv';
 import type { CardKind, CardData } from '@/core/share/card';
+import { seedIndicators } from '@/core/share/deck-page-data';
+import { loadMyIndicators } from '@/core/my-indicators/storage';
+import { useMyIndicators } from '@/view/hooks/useMyIndicators';
 import { pageCsv, type DeckCsvSection, type PageCsvInput } from '@/core/share/deck-csv';
 
 export interface UseShareDataProps {
@@ -35,6 +38,7 @@ export function useShareData({
   selectedTeryt,
 }: UseShareDataProps): ShareDialogData {
   const [topoData, setTopoData] = useState<any>(null);
+  const { list: mine } = useMyIndicators();
 
   useEffect(() => {
     let cancelled = false;
@@ -46,9 +50,7 @@ export function useShareData({
     };
   }, []);
 
-  const { level, year, indicator, values } = view;
-
-  const activeWojTeryt =
+  const { level, year, indicator, values } = view;  const activeWojTeryt =
     choropleth?.activeScope?.activeWojTeryt ??
     (selectedTeryt && selectedTeryt.length >= 2 ? selectedTeryt.slice(0, 2) : null);
   const activePowTeryt =
@@ -172,78 +174,73 @@ export function useShareData({
       });
 
     return {
-      indicator: {
-        name: indicator.name,
-        unit: indicator.unit,
-      },
+      indicator: { name: indicator.name, unit: indicator.unit },
       year,
       items,
       selectedTeryt: selectedTeryt ?? undefined,
     };
   }, [indicator, year, ranking, scopeUnits, index, selectedTeryt]);
 
-  // Karta: Profil (jeśli wybrano jednostkę)
-  const profileData = useMemo<ProfileCardData | undefined>(() => {
+  // Profil: wskaźniki z listy „Moje” (+ bieżący dla dużej liczby karty), nie cały katalog
+  const profileParts = useMemo(() => {
     if (!selectedTeryt || year == null || !values) return undefined;
-    const allUnits = Array.from(index.byTeryt.values());
-    const profile = buildProfile(
-      selectedTeryt,
-      view.indicators,
-      { [indicator.id]: values },
-      allUnits
-    );
+    const picked = mine.flatMap((id) => view.indicators.filter((i) => i.id === id));
+    const list = picked.some((i) => i.id === indicator.id) ? picked : [...picked, indicator];
+    const profile = buildProfile(selectedTeryt, list, { [indicator.id]: values }, Array.from(index.byTeryt.values()));
     if (!profile.unit) return undefined;
-
-    const currentItem = profile.indicators.find((i) => i.indicatorId === indicator.id);
-    const bigNumber =
-      currentItem && currentItem.value != null
-        ? formatValue(currentItem.value, indicator.unit)
-        : 'brak danych';
-
-    const otherIndicators = profile.indicators
-      .filter((i) => i.indicatorId !== indicator.id && i.value != null)
-      .slice(0, 5)
+    // CSV profilu: tylko wiersze z listy „Moje”
+    const unitProfile = { ...profile, indicators: profile.indicators.filter((i) => mine.includes(i.indicatorId)) };
+    return { profile, unit: profile.unit, unitProfile };
+  }, [selectedTeryt, year, index, view.indicators, indicator, values, mine]);
+  const unitProfile = profileParts?.unitProfile;
+  const profileData = useMemo<ProfileCardData | undefined>(() => {
+    if (!profileParts || year == null || !selectedTeryt) return undefined;
+    const { profile, unit } = profileParts;
+    const cur = profile.indicators.find((i) => i.indicatorId === indicator.id);
+    const others = profile.indicators
+      .filter((i) => i.indicatorId !== indicator.id && i.value != null).slice(0, 5)
       .map((i) => ({
         name: i.indicator.name,
         value: formatValue(i.value, i.indicator.unit),
         unit: i.indicator.unit,
         rankText: i.rankNational ? `${i.rankNational}. miejsce` : undefined,
       }));
-
     return {
-      unitName: profile.unit.name,
+      unitName: unit.name,
       teryt: selectedTeryt,
       indicatorName: indicator.name,
       unit: indicator.unit,
       year,
-      bigNumber,
-      rankText: currentItem?.rankNational ? `${currentItem.rankNational}. miejsce w Polsce` : undefined,
-      indicators: otherIndicators,
+      bigNumber: cur && cur.value != null ? formatValue(cur.value, indicator.unit) : 'brak danych',
+      rankText: cur?.rankNational ? `${cur.rankNational}. miejsce w Polsce` : undefined,
+      indicators: others,
     };
-  }, [selectedTeryt, year, index, view.indicators, indicator, values]);
+  }, [profileParts, selectedTeryt, indicator, year]);
 
   return useMemo<ShareDialogData>(
     () => ({
       map: mapData,
       ranking: rankingData,
       profile: profileData,
+      unitProfile,
       units: scopeUnits,
       indicatorValues: values ?? undefined,
       indicator: { ...indicator, minLevel: level },
       year: year ?? undefined,
     }),
-    [mapData, rankingData, profileData, scopeUnits, values, indicator, level, year]
+    [mapData, rankingData, profileData, unitProfile, scopeUnits, values, indicator, level, year]
   );
 }
 
 /** Startowy zestaw stron: tylko podstawowe, dla których okno ma dane (PRODUKT §4b); resztę dodaje użytkownik. */
-export function initialDeck(data: ShareDialogData): Deck {
-  const ids = data.indicator?.id ? [data.indicator.id] : [];
+export function initialDeck(data: ShareDialogData, mine: readonly string[] = loadMyIndicators()): Deck {
+  const activeId = data.indicator?.id ?? null;
+  const ids = activeId ? [activeId] : [];
   const pages: NewPage[] = [];
   if (data.map) pages.push({ kind: 'map', indicatorIds: ids });
   if (data.ranking) pages.push({ kind: 'ranking', indicatorIds: ids, options: { side: 'top' } });
-  if (data.profile) pages.push({ kind: 'profile', indicatorIds: ids });
-  if (data.compare) pages.push({ kind: 'compare', indicatorIds: ids });
+  if (data.profile) pages.push({ kind: 'profile', indicatorIds: seedIndicators('profile', mine, activeId) });
+  if (data.compare) pages.push({ kind: 'compare', indicatorIds: seedIndicators('compare', mine, activeId) });
   return createDeck(pages.length ? pages : [{ kind: 'map', indicatorIds: ids }]);
 }
 
