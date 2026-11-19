@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type KeyboardEvent } from 'react';
 import { Search, Xmark } from 'iconoir-react';
 import { Icon } from '@/view/ui/Icon';
-import { categoryPath, filterVars, type LibraryIndex, type LibraryQuery } from '@/core/library/query';
+import { categoryPath, filterFetched, type LibraryIndex, type LibraryQuery } from '@/core/library/query';
 
 export interface LibrarySearchBarProps {
   index: LibraryIndex;
@@ -32,7 +32,7 @@ export function LibrarySearchBar({
     if (!query.text.trim()) {
       return [];
     }
-    return filterVars(index, query).slice(0, 5);
+    return filterFetched(index, query).slice(0, 5);
   }, [index, query]);
 
   // Click outside listener
