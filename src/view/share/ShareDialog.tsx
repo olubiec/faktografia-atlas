@@ -9,15 +9,12 @@ import {
   type RankingCardData,
   type ProfileCardData,
   type CompareCardData,
+  type VersusCardData,
 } from '../../core/share/card';
+import { addPage, removePage, movePage, updatePage, numbering, getPage, type DeckPage, type PageKind } from '../../core/share/deck';
+import { deckCsv } from '../../core/share/deck-csv';
 import type { ShareFormatKey } from '../../core/share/formats';
-import {
-  indicatorTableCsv,
-  profileCsv,
-  compareCsv,
-  shareFileName,
-  toCsv,
-} from '../../core/share/csv';
+import { shareFileName } from '../../core/share/csv';
 import type { UnitProfile, Indicator, IndicatorValues } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import type { CompareRow } from '../../core/compare/compare';
@@ -25,12 +22,16 @@ import { CardSvg } from './CardSvg';
 import { createMeasureFn, renderPng } from './render-png';
 import { shareFiles, downloadFile } from './share-file';
 import { ShareControls } from './ShareControls';
+import { DeckStrip } from './DeckStrip';
+import { AddPageMenu } from './AddPageMenu';
+import { initialDeck, deckCsvSections, dataForPage, singleCsv } from './useShareData';
 
 export type ShareDialogData = {
   map?: MapCardData;
   ranking?: RankingCardData;
   profile?: ProfileCardData;
   compare?: CompareCardData;
+  versus?: VersusCardData;
   csvContent?: string;
   csvFileName?: string;
   units?: Unit[];
@@ -62,18 +63,25 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
     if (data.ranking) kinds.push('ranking');
     if (data.profile) kinds.push('profile');
     if (data.compare) kinds.push('compare');
+    if (data.versus) kinds.push('versus');
     if (kinds.length === 0) kinds.push('map');
     return kinds;
   }, [data]);
 
-  const [selectedKind, setSelectedKind] = useState<CardKind>(defaultKind);
+  const [deck, setDeck] = useState(() => initialDeck(data));
+  const [currentId, setCurrentId] = useState(
+    () => (initialDeck(data).pages.find((p) => p.kind === defaultKind) ?? initialDeck(data).pages[0]).id,
+  );
   const [selectedFormat, setSelectedFormat] = useState<ShareFormatKey>('post');
   const [selectedTheme, setSelectedTheme] = useState<CardTheme>('light');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const activeKind = availableKinds.includes(selectedKind)
-    ? selectedKind
+  const current = getPage(deck, currentId) ?? deck.pages[0];
+  const activeKind = availableKinds.includes(current.kind as CardKind)
+    ? (current.kind as CardKind)
     : availableKinds[0] || 'map';
+  const labels = useMemo(() => numbering(deck), [deck]);
+  const pageLabel = labels.find((l) => l.id === current.id)?.label ?? '';
 
   useEffect(() => {
     if (!isOpen) return;
@@ -90,10 +98,8 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
   const measure = useMemo(() => createMeasureFn(), []);
 
   const activeCardData = useMemo<CardData>(() => {
-    if (activeKind === 'map' && data.map) return data.map;
-    if (activeKind === 'ranking' && data.ranking) return data.ranking;
-    if (activeKind === 'profile' && data.profile) return data.profile;
-    if (activeKind === 'compare' && data.compare) return data.compare;
+    const found = dataForPage(data, activeKind, current.options?.side);
+    if (found) return found;
 
     return (
       data.map || {
@@ -101,14 +107,15 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
         year: 2025,
       }
     );
-  }, [activeKind, data]);
+  }, [activeKind, data, current.options?.side]);
 
   const scene = useMemo(() => {
     return cardScene(activeKind, activeCardData, selectedFormat, selectedTheme, {
       measure,
       siteUrl: 'faktografia.pl',
+      pageLabel,
     });
-  }, [activeKind, activeCardData, selectedFormat, selectedTheme, measure]);
+  }, [activeKind, activeCardData, selectedFormat, selectedTheme, measure, pageLabel]);
 
   const canNativeShare =
     typeof navigator !== 'undefined' &&
@@ -145,21 +152,16 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
     setIsProcessing(true);
     try {
       const files: File[] = [];
-      const kindsToShare: CardKind[] = ['map', 'ranking'];
-      if (data.profile) kindsToShare.push('profile');
-
-      for (const k of kindsToShare) {
-        const cData = data[k];
-        if (cData) {
-          const cScene = cardScene(k, cData, selectedFormat, selectedTheme, {
-            measure,
-            siteUrl: 'faktografia.pl',
-          });
-          const blob = await renderPng(cScene);
-          const year = 'year' in cData ? cData.year : 2025;
-          const fileName = shareFileName('faktografia', [k, selectedFormat, year], 'png');
-          files.push(new File([blob], fileName, { type: 'image/png' }));
-        }
+      for (const page of deck.pages) {
+        const k = page.kind as CardKind;
+        const cData = dataForPage(data, k, page.options?.side);
+        if (!cData) continue;
+        const pageLabelText = labels.find((l) => l.id === page.id)?.label ?? '';
+        const cScene = cardScene(k, cData, selectedFormat, selectedTheme, { measure, siteUrl: 'faktografia.pl', pageLabel: pageLabelText });
+        const blob = await renderPng(cScene);
+        const year = 'year' in cData ? cData.year : 2025;
+        const fileName = shareFileName('faktografia', [k, selectedFormat, year, page.id], 'png');
+        files.push(new File([blob], fileName, { type: 'image/png' }));
       }
 
       if (files.length === 0) {
@@ -175,30 +177,28 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
   };
 
   const handleDownloadCsv = () => {
-    let csvStr = '';
-    let fileName = '';
+    const { csv, fileName } = singleCsv(data, activeKind);
+    downloadFile(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), fileName);
+  };
 
-    if (data.csvContent) {
-      csvStr = data.csvContent;
-      fileName = data.csvFileName || shareFileName('faktografia', [activeKind, 'dane'], 'csv');
-    } else if (activeKind === 'profile' && data.unitProfile) {
-      csvStr = profileCsv(data.unitProfile);
-      fileName = shareFileName('faktografia', ['profil', data.unitProfile.teryt], 'csv');
-    } else if (activeKind === 'compare' && data.compareRows) {
-      csvStr = compareCsv(data.compareRows, data.compareUnitA, data.compareUnitB);
-      fileName = shareFileName('faktografia', ['porownanie'], 'csv');
-    } else if (data.units && data.indicatorValues && data.indicator && data.year) {
-      csvStr = indicatorTableCsv(data.units, data.indicatorValues, data.indicator, data.year);
-      fileName = shareFileName('faktografia', [data.indicator.id, data.indicator.minLevel, data.year], 'csv');
-    } else {
-      const cols = ['Tytuł', 'Wartość', 'Źródło'];
-      const rows = [['Faktografia Atlas', 'Dane GUS', 'GUS, Bank Danych Lokalnych (CC BY 4.0)']];
-      csvStr = toCsv(cols, rows);
-      fileName = shareFileName('faktografia', ['dane'], 'csv');
-    }
+  const csvSections = useMemo(() => deckCsvSections(deck, data), [deck, data]);
 
-    const blob = new Blob([csvStr], { type: 'text/csv;charset=utf-8;' });
-    downloadFile(blob, fileName);
+  const handleDownloadDeckCsv = () => {
+    const csv = deckCsv(csvSections);
+    downloadFile(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), shareFileName('faktografia', ['zestaw', deck.pages.length], 'csv'));
+  };
+
+  const handleAddPage = (kind: PageKind, options?: DeckPage['options']) => {
+    const next = addPage(deck, { kind, indicatorIds: current.indicatorIds, options }, current.id);
+    const created = next.pages.find((p) => !deck.pages.some((q) => q.id === p.id));
+    setDeck(next);
+    if (created) setCurrentId(created.id);
+  };
+
+  const handleRemovePage = (id: string) => {
+    const next = removePage(deck, id);
+    setDeck(next);
+    if (id === currentId) setCurrentId((next.pages[Math.min(deck.pages.findIndex((p) => p.id === id), next.pages.length - 1)] ?? next.pages[0]).id);
   };
 
   if (!isOpen) return null;
@@ -234,10 +234,35 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
             <CardSvg scene={scene} className="block w-full min-w-0 h-auto max-h-[38vh] md:max-h-[48vh]" />
           </div>
 
+          <DeckStrip
+            pages={deck.pages.map((p) => ({
+              id: p.id,
+              kind: p.kind,
+              label: labels.find((l) => l.id === p.id)?.label ?? '',
+              title: p.kind === 'ranking' ? (p.options?.side === 'bottom' ? 'Ranking – najniżej' : 'Ranking – najwyżej') : '',
+            }))}
+            currentId={current.id}
+            onSelect={setCurrentId}
+            onRemove={handleRemovePage}
+            onMove={(id, dir) => setDeck(movePage(deck, id, dir))}
+            onAdd={() => {}}
+            canRemove={deck.pages.length > 1}
+            addSlot={
+              <AddPageMenu
+                onAdd={handleAddPage}
+                onSplit={() => {}}
+                hasUnit={!!data.profile}
+                hasPair={!!data.compare || !!data.versus}
+                canSplitCurrent={false}
+                allowed={availableKinds}
+              />
+            }
+          />
+
           <ShareControls
             availableKinds={availableKinds}
             activeKind={activeKind}
-            onSelectKind={setSelectedKind}
+            onSelectKind={(k) => setDeck(updatePage(deck, current.id, { kind: k }))}
             selectedFormat={selectedFormat}
             onSelectFormat={setSelectedFormat}
             selectedTheme={selectedTheme}
@@ -289,6 +314,17 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
             >
               Pobierz dane (CSV)
             </button>
+
+            {deck.pages.length > 1 && csvSections.length > 0 && (
+              <button
+                type="button"
+                disabled={isProcessing}
+                onClick={handleDownloadDeckCsv}
+                className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
+              >
+                Pobierz CSV zestawu
+              </button>
+            )}
           </div>
         </div>
       </div>
