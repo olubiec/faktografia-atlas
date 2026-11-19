@@ -34,7 +34,8 @@ export function createMapLayers(
   onSelectUnit?: (teryt: string) => void,
   viewState?: ViewState,
   localities?: Locality[],
-  onHoverUnit?: LayerContext['onHoverUnit']
+  onHoverUnit?: LayerContext['onHoverUnit'],
+  mapWidthPx?: number
 ): Layer[] {
   if (!colors) return [];
 
@@ -46,6 +47,7 @@ export function createMapLayers(
     viewState,
     localities,
     onHoverUnit,
+    mapWidthPx,
   };
 
   const layers: Layer[] = [];

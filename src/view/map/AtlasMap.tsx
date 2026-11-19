@@ -250,6 +250,19 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
   // Fabryki warstw czytają tylko zoom, więc długość i szerokość geograficzna są tu stałe.
   const viewStateForLayers = useMemo(() => ({ longitude: 0, latitude: 0, zoom: layersZoom }), [layersZoom]);
 
+  // Szerokość mapy w px (obrys wybranej jednostki gaśnie zależnie od niej); 0 = jeszcze nie zmierzona.
+  const [mapWidthPx, setMapWidthPx] = useState(0);
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const measure = () => setMapWidthPx(el.clientWidth);
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [containerRef]);
+
   const layers = useMemo(() => {
     return createMapLayers(
       adminTopo,
@@ -258,9 +271,10 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       handleSelectUnit,
       viewStateForLayers,
       localities,
-      handleHoverUnit
+      handleHoverUnit,
+      mapWidthPx
     );
-  }, [adminTopo, colors, extendedDrillState, handleSelectUnit, viewStateForLayers, localities, handleHoverUnit]);
+  }, [adminTopo, colors, extendedDrillState, handleSelectUnit, viewStateForLayers, localities, handleHoverUnit, mapWidthPx]);
 
   const getState = useCallback((): AtlasState => {
     const compareParam = typeof window !== 'undefined' ? readUrlState(window.location.search, unitIndex).c ?? null : null;
