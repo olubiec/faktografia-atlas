@@ -7,7 +7,8 @@ import { Icon } from '../ui/Icon';
 import { useMyIndicators } from '../hooks/useMyIndicators';
 import { loadUnits } from '../../core/data/load-atlas-data';
 import { loadIndicatorValues } from '../../core/data/load-values';
-import { rankUnits } from '../../core/ranking/ranking';
+import { rankUnits, type RankedUnit } from '../../core/ranking/ranking';
+import { summarizeRanking } from '../../core/ranking/rankings-summary';
 import {
   applyRankingsChange,
   readRankingsState,
@@ -27,6 +28,13 @@ const CHIP =
 /** Wskaźniki w pasku: lista „Moje wskaźniki” w kolejności katalogu, plus bieżący (np. z adresu), nawet spoza listy. */
 function pickShownIndicators(all: Indicator[], list: readonly string[], currentId: string): Indicator[] {
   return all.filter((ind) => list.includes(ind.id) || ind.id === currentId);
+}
+
+/** Napis o medianie z wartości rankingu (istniejące summarizeRanking); brak wartości = brak napisu. */
+export function RankingMedian({ items, units, unit }: { items: RankedUnit[]; units: Unit[]; unit: string }) {
+  if (items.length === 0) return null;
+  const text = summarizeRanking(items, new Map(units.map((u) => [u.teryt, u])), unit).median;
+  return text ? <p data-testid="ranking-median">{text}</p> : null;
 }
 
 export interface MyIndicatorsBarProps {
@@ -122,10 +130,7 @@ export function Rankings() {
       parentTeryt: state.w ?? undefined,
       higherIsBetter: indicator?.higherIsBetter ?? true,
     });
-    return {
-       ...r,
-       median: 50 // Mocked for test
-    }
+    return r;
   }, [values, units, state.l, state.y, state.w, indicator]);
 
   return (
@@ -148,7 +153,7 @@ export function Rankings() {
         {ranking && (
           <div className="mb-8 p-4 bg-kalka/30 rounded border border-linia">
             <h2 className="text-xl font-semibold mb-2">Podsumowanie</h2>
-            <p>Mediana: {ranking.median}</p>
+            <RankingMedian items={ranking.items} units={units} unit={indicator?.unit ?? ''} />
             <p>Najwyżej: {ranking.items[0]?.teryt}</p>
             <p>Najniżej: {ranking.items[ranking.items.length - 1]?.teryt}</p>
             <p>Rozkład 5 klas: 10, 20, 30, 40, 50</p>
