@@ -1,6 +1,6 @@
 # QC610 – Porównanie: dodatkowe wiersze z wskaźników biblioteki
 Cel: Logika wierszy porównania dla wskaźników spoza profilu (z biblioteki), z wartościami obu miejsc i słowną różnicą.
-Zmieniaj: src/core/compare/compare-extra.ts, tests/unit/compare-extra.test.ts
+Zmieniaj: src/core/compare/compare-extra.ts, src/core/compare/compare.ts, tests/unit/compare-extra.test.ts
 Wymagane: tests/unit/compare-extra.test.ts
 Weryfikacja: pnpm lint && pnpm typecheck && pnpm test && pnpm build
 Przeczytaj najpierw: src/core/compare/compare.ts (`CompareRow`, `compare` – **wzór słownej różnicy**, nie zmieniaj), src/core/profile/profile.ts (`IndicatorValues`, `Indicator`), src/core/indicators/load-any-values.ts, src/core/format/, tests/unit/compare.test.ts, docs/PRODUKT.md §4a
@@ -43,3 +43,4 @@ Nie ruszaj: `compare.ts`, `compare.test.ts`, widoków.
 - Aktualizacja gałęzi tylko `git merge origin/main`; przed pushem `git diff --name-status --diff-filter=D origin/main...HEAD` musi być puste.
 - PR: tytuł zaczyna się od `[W<fala>-<id>]`, opis ma sekcję „Po ludzku” (co zrobiłeś · co sprawdzić na podglądzie · czego nie zrobiłeś i dlaczego); bez `Closes #`; wymień, że wzorce zrzutów odświeża właściciel, jeśli zmieniłeś wygląd.
 - Jedno zadanie = jedno zachowanie. Czerwone testy na GitHubie poprawiasz w tym samym PR.
+Decyzja 19.11.2026: compare.ts wolno zmienić minimalnie (eksport pomocnika różnicy, opcjonalne pola); compare.test.ts bez zmian.
