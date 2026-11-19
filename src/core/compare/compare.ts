@@ -5,11 +5,75 @@ export interface CompareRow {
   a: number | null;
   b: number | null;
   diffText: string;
+  // Pola opcjonalne – wypełnia compare-extra (wskaźniki z biblioteki).
+  yearA?: number | null;
+  yearB?: number | null;
+  rankA?: number | null;
+  rankB?: number | null;
 }
 
 export interface CompareResult {
   differentLevels: boolean;
   rows: CompareRow[];
+}
+
+/**
+ * Słowna różnica dwóch wartości (wspólna dla compare i compare-extra).
+ * Brak którejkolwiek wartości daje 'brak danych'.
+ */
+export function wordDiff(
+  aValue: number | null | undefined,
+  bValue: number | null | undefined,
+  unitText: string,
+): string {
+  let diffText = 'brak danych';
+
+  if (aValue !== null && aValue !== undefined && bValue !== null && bValue !== undefined) {
+    if (aValue === bValue) {
+      diffText = 'bez zmian';
+    } else {
+      const isPercentUnit = unitText.trim() === '%';
+
+      if (isPercentUnit) {
+        const diff = aValue - bValue;
+        const absDiff = Math.abs(diff);
+        const formattedDiff = absDiff.toFixed(1).replace('.', ',');
+
+        if (diff > 0) {
+          diffText = `wyżej o ${formattedDiff} p.p.`;
+        } else {
+          diffText = `niżej o ${formattedDiff} p.p.`;
+        }
+      } else if (bValue !== 0 && (aValue < 0 || bValue < 0)) {
+        // Wartości ujemne lub o różnych znakach: procent z bliskiego zera
+        // wprowadza w błąd (np. „o 1883%”), więc podajemy różnicę bezwzględną.
+        const diff = aValue - bValue;
+        const formattedDiff = Math.abs(diff).toFixed(1).replace('.', ',');
+        const unit = unitText.trim();
+        const suffix = unit ? ` ${unit}` : '';
+        diffText = `${diff > 0 ? 'wyżej' : 'niżej'} o ${formattedDiff}${suffix}`;
+      } else {
+        if (bValue === 0) {
+          if (aValue > bValue) {
+            diffText = 'wyżej';
+          } else {
+            diffText = 'niżej';
+          }
+        } else {
+          const relDiff = ((aValue - bValue) / Math.abs(bValue)) * 100;
+          const absRelDiff = Math.abs(relDiff);
+          const formattedDiff = absRelDiff.toFixed(1).replace('.', ',');
+
+          if (relDiff > 0) {
+            diffText = `wyżej o ${formattedDiff}%`;
+          } else {
+            diffText = `niżej o ${formattedDiff}%`;
+          }
+        }
+      }
+    }
+  }
+  return diffText;
 }
 
 /**
@@ -40,56 +104,10 @@ export function compare(profileA: UnitProfile, profileB: UnitProfile): CompareRe
   for (const itemA of profileA.indicators) {
     const itemB = bIndicatorsMap.get(itemA.indicatorId);
 
-    let aValue = itemA.value;
-    let bValue = itemB ? itemB.value : null;
+    const aValue = itemA.value;
+    const bValue = itemB ? itemB.value : null;
 
-    let diffText = 'brak danych';
-
-    if (aValue !== null && aValue !== undefined && bValue !== null && bValue !== undefined) {
-      if (aValue === bValue) {
-        diffText = 'bez zmian';
-      } else {
-        const isPercentUnit = itemA.indicator.unit.trim() === '%';
-
-        if (isPercentUnit) {
-          const diff = aValue - bValue;
-          const absDiff = Math.abs(diff);
-          const formattedDiff = absDiff.toFixed(1).replace('.', ',');
-
-          if (diff > 0) {
-            diffText = `wyżej o ${formattedDiff} p.p.`;
-          } else {
-            diffText = `niżej o ${formattedDiff} p.p.`;
-          }
-        } else if (bValue !== 0 && (aValue < 0 || bValue < 0)) {
-          // Wartości ujemne lub o różnych znakach: procent z bliskiego zera
-          // wprowadza w błąd (np. „o 1883%”), więc podajemy różnicę bezwzględną.
-          const diff = aValue - bValue;
-          const formattedDiff = Math.abs(diff).toFixed(1).replace('.', ',');
-          const unit = itemA.indicator.unit.trim();
-          const suffix = unit ? ` ${unit}` : '';
-          diffText = `${diff > 0 ? 'wyżej' : 'niżej'} o ${formattedDiff}${suffix}`;
-        } else {
-          if (bValue === 0) {
-            if (aValue > bValue) {
-              diffText = 'wyżej';
-            } else {
-              diffText = 'niżej';
-            }
-          } else {
-            const relDiff = ((aValue - bValue) / Math.abs(bValue)) * 100;
-            const absRelDiff = Math.abs(relDiff);
-            const formattedDiff = absRelDiff.toFixed(1).replace('.', ',');
-
-            if (relDiff > 0) {
-              diffText = `wyżej o ${formattedDiff}%`;
-            } else {
-              diffText = `niżej o ${formattedDiff}%`;
-            }
-          }
-        }
-      }
-    }
+    const diffText = wordDiff(aValue, bValue, itemA.indicator.unit);
 
     rows.push({
       indicatorId: itemA.indicatorId,
