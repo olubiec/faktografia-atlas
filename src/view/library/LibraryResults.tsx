@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import { categoryPath, filterVars, type LibraryIndex, type LibraryQuery, type LibraryVariable } from '@/core/library/query';
 import { Button } from '@/components/ui/button';
+import { AddToMineButton } from './AddToMineButton';
 
 export interface LibraryResultsProps {
   index: LibraryIndex;
@@ -111,6 +112,11 @@ export function LibraryResults({
                   </div>
                 </div>
               </Link>
+              {ready && (
+                <div className="border border-t-0 border-linia bg-arkusz px-4 py-2">
+                  <AddToMineButton varId={v.id} name={v.name} />
+                </div>
+              )}
             </li>
           );
         })}
