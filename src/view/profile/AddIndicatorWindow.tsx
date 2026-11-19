@@ -10,6 +10,8 @@ import {
   libraryPickResults,
 } from "../../core/library/picker-results";
 import { libraryCounts, type LibraryIndex } from "../../core/library/query";
+import { libraryIndicatorId } from "../../core/indicators/registry";
+import { useMyIndicators } from "../hooks/useMyIndicators";
 import { Icon } from "../ui/Icon";
 
 export interface AddIndicatorWindowProps {
@@ -42,10 +44,53 @@ function Header({ label, count, open, onClick }: { label: string; count: number;
   );
 }
 
+const SIDE_ACTION =
+  "min-h-[44px] min-w-[44px] px-3 py-2 flex items-center justify-center text-sm text-tusz hover:bg-linia/15 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer";
+
+export interface LibraryRowsProps {
+  items: { id: string | number; name: string }[];
+  /** Id wskaźników już na liście „Moje”. */
+  list: readonly string[];
+  onAdd: (indicatorId: string) => void;
+  onRemove: (indicatorId: string) => void;
+}
+
+/** Wiersze pobranych wskaźników z biblioteki: Dodaj / Dodano + usuń, link do strony wskaźnika jako druga akcja. */
+export function LibraryRows({ items, list, onAdd, onRemove }: LibraryRowsProps) {
+  return (
+    <>
+      {items.map((v) => {
+        const id = libraryIndicatorId(v.id);
+        const added = list.includes(id);
+        return (
+          <div key={id} className="flex items-stretch">
+            <Link to={`/biblioteka/${v.id}`} className={`${ROW} flex-1`}>
+              {`Otwórz: ${v.name}`}
+            </Link>
+            {added ? (
+              <>
+                <span className="min-h-[44px] px-3 flex items-center text-sm text-olowek">Dodano</span>
+                <button type="button" aria-label={`Usuń wskaźnik: ${v.name}`} onClick={() => onRemove(id)} className={SIDE_ACTION}>
+                  Usuń
+                </button>
+              </>
+            ) : (
+              <button type="button" aria-label={`Dodaj: ${v.name}`} onClick={() => onAdd(id)} className={SIDE_ACTION}>
+                Dodaj
+              </button>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
 /** Wskaźniki z biblioteki GUS: działy, w środku wyniki (najwyżej 50), wyszukiwanie po tekście. */
 function LibrarySection({ index }: { index: LibraryIndex }) {
   const [cat, setCat] = useState<string | null>(null);
   const [text, setText] = useState("");
+  const { list: mine, add, remove } = useMyIndicators();
   const categories = useMemo(() => libraryPickCategories(index), [index]);
   const searching = text.trim() !== "";
   const results = useMemo(
@@ -55,11 +100,7 @@ function LibrarySection({ index }: { index: LibraryIndex }) {
 
   const list = results && (
     <div aria-label="Wskaźniki z biblioteki">
-      {results.items.map((v) => (
-        <Link key={String(v.id)} to={`/biblioteka/${v.id}`} className={ROW}>
-          {`Otwórz: ${v.name}`}
-        </Link>
-      ))}
+      <LibraryRows items={results.items} list={mine} onAdd={add} onRemove={remove} />
       {results.total === 0 && <p className="px-3 py-2 text-sm text-olowek">Brak wyników.</p>}
       {results.total > LIBRARY_PICK_LIMIT && (
         <p className="px-3 py-2 text-xs text-olowek">{`Pokazano ${LIBRARY_PICK_LIMIT} z ${results.total}. Zawęź wyszukiwanie.`}</p>
