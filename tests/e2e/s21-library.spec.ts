@@ -118,8 +118,9 @@ test.describe('Test całej ścieżki „Biblioteka GUS” (@S21)', () => {
     const unreadyRow = page
       .getByTestId('library-results')
       .getByText('Struktura ludności: Ludność w wieku poprodukcyjnym');
-    await expect(unreadyRow).toBeVisible();
-    await unreadyRow.click();
+    // QC702: wskaźnika niepobranego nie ma na liście; wchodzimy na niego bezpośrednim adresem
+    await expect(unreadyRow).toBeHidden();
+    await page.goto('/biblioteka/103');
 
     await expect(page).toHaveURL(/\/biblioteka\/103$/);
 
@@ -217,8 +218,9 @@ test.describe('Test całej ścieżki „Biblioteka GUS” (@S21)', () => {
     const unreadyRow = page
       .getByTestId('library-results')
       .getByText('Struktura ludności: Ludność w wieku poprodukcyjnym');
-    await expect(unreadyRow).toBeVisible();
-    await unreadyRow.click();
+    // QC702: wskaźnika niepobranego nie ma na liście; wchodzimy na niego bezpośrednim adresem
+    await expect(unreadyRow).toBeHidden();
+    await page.goto('/biblioteka/103');
 
     await expect(page).toHaveURL(/\/biblioteka\/103$/);
 
