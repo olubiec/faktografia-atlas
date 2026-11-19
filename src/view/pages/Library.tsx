@@ -52,7 +52,12 @@ export function LibraryContent({ index, query, onQueryChange, onPick }: LibraryC
         {`${formatCount(counts.fetched)} wskaźników z danymi (z ${formatCount(counts.total)} w spisie GUS). Kolejne dane dochodzą co noc.`}
       </p>
       <div className="order-4 md:order-1">
-          <CategoryTiles index={index} query={query} onQueryChange={onQueryChange} />
+          <CategoryTiles
+            index={index}
+            query={query}
+            onQueryChange={onQueryChange}
+            onlyWithData
+          />
         </div>
         <div className="order-1 md:order-2 space-y-3">
           <LibrarySearchBar
