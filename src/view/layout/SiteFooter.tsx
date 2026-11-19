@@ -1,5 +1,7 @@
-import { useSyncExternalStore } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { Link } from 'react-router';
+import { loadDataStatus, type DataStatus } from '../../core/data/load-status';
+import { DataFreshness } from './DataFreshness';
 
 function subscribeTheme(callback: () => void) {
   if (typeof window === 'undefined') return () => {};
@@ -37,9 +39,23 @@ function getIsDark(): boolean {
 interface SiteFooterProps {
   /** Na stronie głównej logo jest już w nagłówku – w stopce ma być dekoracyjne (alt=""), by nie dublować go dla czytników. */
   decorativeLogo?: boolean;
+  /** Status danych podany z góry (testy); gdy brak, stopka pobiera `status.json` po zamontowaniu. */
+  initialStatus?: DataStatus | null;
 }
 
-export function SiteFooter({ decorativeLogo = false }: SiteFooterProps = {}) {
+export function SiteFooter({ decorativeLogo = false, initialStatus }: SiteFooterProps = {}) {
+  const [status, setStatus] = useState<DataStatus | null>(initialStatus ?? null);
+  useEffect(() => {
+    if (initialStatus !== undefined) return;
+    let alive = true;
+    // Żądanie dopiero po wejściu (po bezczynności albo 1,5 s), żeby nie liczyło się do budżetu danych na starcie.
+    const run = () => void loadDataStatus().then((s) => alive && setStatus(s));
+    const timer = setTimeout(run, 1500);
+    return () => {
+      alive = false;
+      clearTimeout(timer);
+    };
+  }, [initialStatus]);
   const isDark = useSyncExternalStore(subscribeTheme, getIsDark, () => false);
   const logoSrc = isDark ? '/brand/faktografia-logo-jasne.svg' : '/brand/faktografia-logo-granat.svg';
 
@@ -189,6 +205,7 @@ export function SiteFooter({ decorativeLogo = false }: SiteFooterProps = {}) {
             </a>
           </nav>
         </div>
+        <DataFreshness status={status} className="mt-8" />
       </div>
     </footer>
   );
