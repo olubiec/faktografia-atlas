@@ -7,11 +7,17 @@ import { type RankingCardData, type RankingCardItem, renderRankingContent } from
 import { type ProfileCardData, type ProfileCardIndicator, renderProfileContent } from './card-profile';
 import { type CompareCardData, type CompareCardRow, type CompareCardUnit, renderCompareContent } from './card-compare';
 import { type VersusCardData, renderVersusContent } from './card-versus';
+import { type TableCardData, renderTableContent } from './card-table';
+import { type BigNumberCardData, renderBigNumberContent } from './card-bignumber';
+import { type TrendCardData, renderTrendContent } from './card-trend';
+import { type HistogramCardData, renderHistogramContent } from './card-histogram';
 
-export type { MapCardData, RankingCardData, RankingCardItem, ProfileCardData, ProfileCardIndicator, CompareCardData, CompareCardRow, CompareCardUnit, VersusCardData };
+export type { MapCardData, RankingCardData, RankingCardItem, ProfileCardData, ProfileCardIndicator, CompareCardData, CompareCardRow, CompareCardUnit, VersusCardData, TableCardData, BigNumberCardData, TrendCardData, HistogramCardData };
 
 
 export type CardKind = 'map' | 'ranking' | 'profile' | 'compare' | 'versus';
+// Rodzaje sceny: CardKind (okno udostępniania) plus nowe karty zestawu; osobny typ, by nie zmieniać plików widoku.
+export type SceneKind = CardKind | 'table' | 'bignumber' | 'trend' | 'histogram';
 export type CardTheme = 'light' | 'dark';
 
 export type TextItem = { type: 'text'; x: number; y: number; maxWidth: number; fontSize: number; fontWeight: number | string; color: string; align?: 'left' | 'center' | 'right'; lines: string[]; lineHeight: number; };
@@ -24,7 +30,7 @@ export type CardItem = TextItem | RectItem | PathItem | ImageItem | AnnotationIt
 export type CardScene = { width: number; height: number; background: string; items: CardItem[]; };
 export type CardSceneOptions = { measure: MeasureFn; siteUrl?: string; pageLabel?: string; };
 
-export type CardData = MapCardData | RankingCardData | ProfileCardData | CompareCardData | VersusCardData;
+export type CardData = MapCardData | RankingCardData | ProfileCardData | CompareCardData | VersusCardData | TableCardData | BigNumberCardData | TrendCardData | HistogramCardData;
 
 export function getThemeColors(theme: CardTheme) {
   const c = tokens.color[theme];
@@ -33,7 +39,7 @@ export function getThemeColors(theme: CardTheme) {
   return { kalka: c.kalka, arkusz: c.arkusz, linia: c.linia, tusz: c.tusz, olowek: c.olowek, korekta: c.korekta, korektaTekst: c.korektaTekst, seq, noDataColor };
 }
 
-export function cardScene(kind: CardKind, data: CardData, formatKey: ShareFormatKey, theme: CardTheme, options: CardSceneOptions): CardScene {
+export function cardScene(kind: SceneKind, data: CardData, formatKey: ShareFormatKey, theme: CardTheme, options: CardSceneOptions): CardScene {
   const fmt = SHARE_FORMATS[formatKey] ?? SHARE_FORMATS.post;
   const { width, height, safe } = fmt;
   const colors = getThemeColors(theme);
@@ -53,7 +59,9 @@ export function cardScene(kind: CardKind, data: CardData, formatKey: ShareFormat
 
   const footerFontSize = fontScale.xs;
   const footerLineHeight = Math.round(footerFontSize * 1.2);
-  const yearVal = 'year' in data ? data.year : 2025;
+  // Wykres lat nie ma pola `year`: w stopce jest ostatni rok z danymi.
+  const lastTrendYear = 'series' in data ? Math.max(0, ...data.series.filter((p) => p.value != null).map((p) => p.year)) : 0;
+  const yearVal = 'year' in data ? data.year : lastTrendYear || 2025;
   const siteUrlWidth = measure(siteUrl, footerFontSize, tokens.font.weights.text);
   const footerY = height - safe.bottom - footerLineHeight;
   const sourceMaxWidth = safeWidth - siteUrlWidth - 16 * scaleFactor;
@@ -88,7 +96,17 @@ export function cardScene(kind: CardKind, data: CardData, formatKey: ShareFormat
     const d = data as CompareCardData;
     titleText = `Porównanie: ${d.unitA.name} i ${d.unitB.name}`;
   } else if (kind === 'versus') {
-    titleText = `${(data as VersusCardData).indicator.name} – A vs B`;
+    const d = data as VersusCardData;
+    titleText = `${d.a.name} i ${d.b.name}: ${d.indicator.name}`;
+  } else if (kind === 'table') {
+    titleText = `${(data as TableCardData).unitName} – wskaźniki`;
+  } else if (kind === 'bignumber') {
+    titleText = (data as BigNumberCardData).indicator.name;
+  } else if (kind === 'trend') {
+    const d = data as TrendCardData;
+    titleText = `${d.indicator.name} – ${d.unitName}, lata`;
+  } else if (kind === 'histogram') {
+    titleText = `${(data as HistogramCardData).indicator.name} – rozkład`;
   }
 
   const titleFit = fitText(titleText, { maxWidth: safeWidth, maxLines: 2, fontSize: fontScale.xl, fontWeight: tokens.font.weights.title, measure, canvasWidth: width });
@@ -102,6 +120,10 @@ export function cardScene(kind: CardKind, data: CardData, formatKey: ShareFormat
   else if (kind === 'profile') renderProfileContent({ data: data as ProfileCardData, contentTop, availableContentHeight, safe, safeWidth, fontScale, colors, items, measure, scaleFactor });
   else if (kind === 'compare') renderCompareContent({ data: data as CompareCardData, contentTop, availableContentHeight, safe, safeWidth, fontScale, colors, items, measure, scaleFactor });
   else if (kind === 'versus') renderVersusContent({ data: data as VersusCardData, contentTop, availableContentHeight, safe, safeWidth, fontScale, colors, items, measure, scaleFactor });
+  else if (kind === 'table') renderTableContent({ data: data as TableCardData, contentTop, availableContentHeight, safe, safeWidth, fontScale, colors, items, measure, scaleFactor });
+  else if (kind === 'bignumber') renderBigNumberContent({ data: data as BigNumberCardData, contentTop, availableContentHeight, safe, safeWidth, fontScale, colors, items, measure, scaleFactor });
+  else if (kind === 'trend') renderTrendContent({ data: data as TrendCardData, contentTop, availableContentHeight, safe, safeWidth, fontScale, colors, items, measure, scaleFactor });
+  else if (kind === 'histogram') renderHistogramContent({ data: data as HistogramCardData, contentTop, availableContentHeight, safe, safeWidth, fontScale, colors, items, measure, scaleFactor });
 
   return { width, height, background: colors.kalka, items };
 }
