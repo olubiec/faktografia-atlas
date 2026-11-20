@@ -1,0 +1,964 @@
+{
+ "version": 1,
+ "subjects": {
+  "P2425": {
+   "id": "P2425",
+   "name": "Gęstość zaludnienia oraz wskaźniki",
+   "parent": "G7",
+   "path": [
+    "LUDNOŚĆ",
+    "STAN LUDNOŚCI",
+    "Gęstość zaludnienia oraz wskaźniki"
+   ]
+  },
+  "G7": {
+   "id": "G7",
+   "name": "STAN LUDNOŚCI",
+   "parent": "K3",
+   "path": [
+    "LUDNOŚĆ",
+    "STAN LUDNOŚCI"
+   ]
+  },
+  "K3": {
+   "id": "K3",
+   "name": "LUDNOŚĆ",
+   "parent": null,
+   "path": [
+    "LUDNOŚĆ"
+   ]
+  },
+  "P2426": {
+   "id": "P2426",
+   "name": "Wskaźniki obciążenia demograficznego",
+   "parent": "G7",
+   "path": [
+    "LUDNOŚĆ",
+    "STAN LUDNOŚCI",
+    "Wskaźniki obciążenia demograficznego"
+   ]
+  },
+  "P2137": {
+   "id": "P2137",
+   "name": "Ludność wg grup wieku i płci",
+   "parent": "G7",
+   "path": [
+    "LUDNOŚĆ",
+    "STAN LUDNOŚCI",
+    "Ludność wg grup wieku i płci"
+   ]
+  },
+  "P1876": {
+   "id": "P1876",
+   "name": "Migracje na pobyt stały wewnątrzpowiatowe wg kierunku, typu i płci migrantów",
+   "parent": "G564",
+   "path": [
+    "LUDNOŚĆ",
+    "DANE ARCHIWALNE",
+    "Migracje na pobyt stały wewnątrzpowiatowe wg kierunku, typu i płci migrantów"
+   ]
+  },
+  "G564": {
+   "id": "G564",
+   "name": "DANE ARCHIWALNE",
+   "parent": "K3",
+   "path": [
+    "LUDNOŚĆ",
+    "DANE ARCHIWALNE"
+   ]
+  },
+  "P2671": {
+   "id": "P2671",
+   "name": "Bezrobotni zarejestrowani pozostający bez pracy dłużej niż 1 rok",
+   "parent": "G12",
+   "path": [
+    "RYNEK PRACY",
+    "BEZROBOCIE REJESTROWANE",
+    "Bezrobotni zarejestrowani pozostający bez pracy dłużej niż 1 rok"
+   ]
+  },
+  "G12": {
+   "id": "G12",
+   "name": "BEZROBOCIE REJESTROWANE",
+   "parent": "K4",
+   "path": [
+    "RYNEK PRACY",
+    "BEZROBOCIE REJESTROWANE"
+   ]
+  },
+  "K4": {
+   "id": "K4",
+   "name": "RYNEK PRACY",
+   "parent": null,
+   "path": [
+    "RYNEK PRACY"
+   ]
+  },
+  "P1363": {
+   "id": "P1363",
+   "name": "Pracujący wg sektorów ekonomicznych i płci w gminach (PKD 2004)",
+   "parent": "G570",
+   "path": [
+    "RYNEK PRACY",
+    "DANE ARCHIWALNE",
+    "Pracujący wg sektorów ekonomicznych i płci w gminach (PKD 2004)"
+   ]
+  },
+  "G570": {
+   "id": "G570",
+   "name": "DANE ARCHIWALNE",
+   "parent": "K4",
+   "path": [
+    "RYNEK PRACY",
+    "DANE ARCHIWALNE"
+   ]
+  },
+  "P1781": {
+   "id": "P1781",
+   "name": "Szkoły podstawowe dla dzieci, młodzieży i dorosłych wg gestora",
+   "parent": "G252",
+   "path": [
+    "SZKOLNICTWO",
+    "SZKOLNICTWO PODSTAWOWE",
+    "Szkoły podstawowe dla dzieci, młodzieży i dorosłych wg gestora"
+   ]
+  },
+  "G252": {
+   "id": "G252",
+   "name": "SZKOLNICTWO PODSTAWOWE",
+   "parent": "K20",
+   "path": [
+    "SZKOLNICTWO",
+    "SZKOLNICTWO PODSTAWOWE"
+   ]
+  },
+  "K20": {
+   "id": "K20",
+   "name": "SZKOLNICTWO",
+   "parent": null,
+   "path": [
+    "SZKOLNICTWO"
+   ]
+  },
+  "P3111": {
+   "id": "P3111",
+   "name": "NSRO WNIOSKI O DOFINANSOWANIE - 2007-2013 - Wnioski o dofinansowanie według programów operacyjnych",
+   "parent": "G608",
+   "path": [
+    "FUNDUSZE UNIJNE (DANE PÓŁROCZNE)",
+    "DANE ARCHIWALNE",
+    "NSRO WNIOSKI O DOFINANSOWANIE - 2007-2013 - Wnioski o dofinansowanie według programów operacyjnych"
+   ]
+  },
+  "G608": {
+   "id": "G608",
+   "name": "DANE ARCHIWALNE",
+   "parent": "K47",
+   "path": [
+    "FUNDUSZE UNIJNE (DANE PÓŁROCZNE)",
+    "DANE ARCHIWALNE"
+   ]
+  },
+  "K47": {
+   "id": "K47",
+   "name": "FUNDUSZE UNIJNE (DANE PÓŁROCZNE)",
+   "parent": null,
+   "path": [
+    "FUNDUSZE UNIJNE (DANE PÓŁROCZNE)"
+   ]
+  },
+  "P2115": {
+   "id": "P2115",
+   "name": "Gospodarstwa domowe ogółem",
+   "parent": "G332",
+   "path": [
+    "NARODOWE SPISY POWSZECHNE",
+    "NSP 2002 - GOSPODARSTWA DOMOWE I RODZINY",
+    "Gospodarstwa domowe ogółem"
+   ]
+  },
+  "G332": {
+   "id": "G332",
+   "name": "NSP 2002 - GOSPODARSTWA DOMOWE I RODZINY",
+   "parent": "K31",
+   "path": [
+    "NARODOWE SPISY POWSZECHNE",
+    "NSP 2002 - GOSPODARSTWA DOMOWE I RODZINY"
+   ]
+  },
+  "K31": {
+   "id": "K31",
+   "name": "NARODOWE SPISY POWSZECHNE",
+   "parent": null,
+   "path": [
+    "NARODOWE SPISY POWSZECHNE"
+   ]
+  },
+  "P1523": {
+   "id": "P1523",
+   "name": "Dochody własne budżetów powiatów",
+   "parent": "G195",
+   "path": [
+    "FINANSE PUBLICZNE",
+    "DOCHODY BUDŻETÓW POWIATÓW",
+    "Dochody własne budżetów powiatów"
+   ]
+  },
+  "G195": {
+   "id": "G195",
+   "name": "DOCHODY BUDŻETÓW POWIATÓW",
+   "parent": "K27",
+   "path": [
+    "FINANSE PUBLICZNE",
+    "DOCHODY BUDŻETÓW POWIATÓW"
+   ]
+  },
+  "K27": {
+   "id": "K27",
+   "name": "FINANSE PUBLICZNE",
+   "parent": null,
+   "path": [
+    "FINANSE PUBLICZNE"
+   ]
+  },
+  "P1721": {
+   "id": "P1721",
+   "name": "Zasoby mieszkaniowe - Budynki mieszkalne sprzedane osobom fizycznym",
+   "parent": "G562",
+   "path": [
+    "GOSPODARKA MIESZKANIOWA I KOMUNALNA",
+    "DANE ARCHIWALNE",
+    "Zasoby mieszkaniowe - Budynki mieszkalne sprzedane osobom fizycznym"
+   ]
+  },
+  "G562": {
+   "id": "G562",
+   "name": "DANE ARCHIWALNE",
+   "parent": "K11",
+   "path": [
+    "GOSPODARKA MIESZKANIOWA I KOMUNALNA",
+    "DANE ARCHIWALNE"
+   ]
+  },
+  "K11": {
+   "id": "K11",
+   "name": "GOSPODARKA MIESZKANIOWA I KOMUNALNA",
+   "parent": null,
+   "path": [
+    "GOSPODARKA MIESZKANIOWA I KOMUNALNA"
+   ]
+  },
+  "P1728": {
+   "id": "P1728",
+   "name": "Mieszkania w budynkach (gminnych) zwrócone dawnym indywidualnym właścicielom bądź spadkobiercom",
+   "parent": "G231",
+   "path": [
+    "GOSPODARKA MIESZKANIOWA I KOMUNALNA",
+    "ZASOBY MIESZKANIOWE",
+    "Mieszkania w budynkach (gminnych) zwrócone dawnym indywidualnym właścicielom bądź spadkobiercom"
+   ]
+  },
+  "G231": {
+   "id": "G231",
+   "name": "ZASOBY MIESZKANIOWE",
+   "parent": "K11",
+   "path": [
+    "GOSPODARKA MIESZKANIOWA I KOMUNALNA",
+    "ZASOBY MIESZKANIOWE"
+   ]
+  },
+  "P1635": {
+   "id": "P1635",
+   "name": "Drogi publiczne gminne",
+   "parent": "G577",
+   "path": [
+    "TRANSPORT I ŁĄCZNOŚĆ",
+    "DANE ARCHIWALNE",
+    "Drogi publiczne gminne"
+   ]
+  },
+  "G577": {
+   "id": "G577",
+   "name": "DANE ARCHIWALNE",
+   "parent": "K8",
+   "path": [
+    "TRANSPORT I ŁĄCZNOŚĆ",
+    "DANE ARCHIWALNE"
+   ]
+  },
+  "K8": {
+   "id": "K8",
+   "name": "TRANSPORT I ŁĄCZNOŚĆ",
+   "parent": null,
+   "path": [
+    "TRANSPORT I ŁĄCZNOŚĆ"
+   ]
+  },
+  "P1688": {
+   "id": "P1688",
+   "name": "Biblioteki publiczne",
+   "parent": "G226",
+   "path": [
+    "KULTURA ",
+    "BIBLIOTEKI",
+    "Biblioteki publiczne"
+   ]
+  },
+  "G226": {
+   "id": "G226",
+   "name": "BIBLIOTEKI",
+   "parent": "K23",
+   "path": [
+    "KULTURA ",
+    "BIBLIOTEKI"
+   ]
+  },
+  "K23": {
+   "id": "K23",
+   "name": "KULTURA ",
+   "parent": null,
+   "path": [
+    "KULTURA "
+   ]
+  },
+  "P2017": {
+   "id": "P2017",
+   "name": "Turystyczne obiekty noclegowe wg rodzajów",
+   "parent": "G240",
+   "path": [
+    "TURYSTYKA",
+    "TURYSTYCZNE OBIEKTY NOCLEGOWE I ICH WYKORZYSTANIE",
+    "Turystyczne obiekty noclegowe wg rodzajów"
+   ]
+  },
+  "G240": {
+   "id": "G240",
+   "name": "TURYSTYCZNE OBIEKTY NOCLEGOWE I ICH WYKORZYSTANIE",
+   "parent": "K18",
+   "path": [
+    "TURYSTYKA",
+    "TURYSTYCZNE OBIEKTY NOCLEGOWE I ICH WYKORZYSTANIE"
+   ]
+  },
+  "K18": {
+   "id": "K18",
+   "name": "TURYSTYKA",
+   "parent": null,
+   "path": [
+    "TURYSTYKA"
+   ]
+  },
+  "P1735": {
+   "id": "P1735",
+   "name": "Mieszkania oddane do użytkowania wg form budownictwa",
+   "parent": "G573",
+   "path": [
+    "PRZEMYSŁ I BUDOWNICTWO",
+    "DANE ARCHIWALNE",
+    "Mieszkania oddane do użytkowania wg form budownictwa"
+   ]
+  },
+  "G573": {
+   "id": "G573",
+   "name": "DANE ARCHIWALNE",
+   "parent": "K12",
+   "path": [
+    "PRZEMYSŁ I BUDOWNICTWO",
+    "DANE ARCHIWALNE"
+   ]
+  },
+  "K12": {
+   "id": "K12",
+   "name": "PRZEMYSŁ I BUDOWNICTWO",
+   "parent": null,
+   "path": [
+    "PRZEMYSŁ I BUDOWNICTWO"
+   ]
+  },
+  "P1878": {
+   "id": "P1878",
+   "name": "Gospodarstwa",
+   "parent": "G281",
+   "path": [
+    "POWSZECHNE SPISY ROLNE",
+    "PSR 1996 - POWIERZCHNIA, UŻYTKOWANIE GRUNTÓW I ZWIERZĘTA GOSPODARSKIE",
+    "Gospodarstwa"
+   ]
+  },
+  "G281": {
+   "id": "G281",
+   "name": "PSR 1996 - POWIERZCHNIA, UŻYTKOWANIE GRUNTÓW I ZWIERZĘTA GOSPODARSKIE",
+   "parent": "K34",
+   "path": [
+    "POWSZECHNE SPISY ROLNE",
+    "PSR 1996 - POWIERZCHNIA, UŻYTKOWANIE GRUNTÓW I ZWIERZĘTA GOSPODARSKIE"
+   ]
+  },
+  "K34": {
+   "id": "K34",
+   "name": "POWSZECHNE SPISY ROLNE",
+   "parent": null,
+   "path": [
+    "POWSZECHNE SPISY ROLNE"
+   ]
+  },
+  "P1874": {
+   "id": "P1874",
+   "name": "Powierzchnia i użytkowanie gruntów",
+   "parent": "G281",
+   "path": [
+    "POWSZECHNE SPISY ROLNE",
+    "PSR 1996 - POWIERZCHNIA, UŻYTKOWANIE GRUNTÓW I ZWIERZĘTA GOSPODARSKIE",
+    "Powierzchnia i użytkowanie gruntów"
+   ]
+  },
+  "P1597": {
+   "id": "P1597",
+   "name": "Podmioty gospodarki narodowej wpisane do rejestru REGON wg sekcji PKD 2004",
+   "parent": "G565",
+   "path": [
+    "PODMIOTY GOSPODARKI NARODOWEJ, PRZEKSZTAŁCENIA WŁASNOŚCIOWE I STRUKTURALNE",
+    "DANE ARCHIWALNE",
+    "Podmioty gospodarki narodowej wpisane do rejestru REGON wg sekcji PKD 2004"
+   ]
+  },
+  "G565": {
+   "id": "G565",
+   "name": "DANE ARCHIWALNE",
+   "parent": "K25",
+   "path": [
+    "PODMIOTY GOSPODARKI NARODOWEJ, PRZEKSZTAŁCENIA WŁASNOŚCIOWE I STRUKTURALNE",
+    "DANE ARCHIWALNE"
+   ]
+  },
+  "K25": {
+   "id": "K25",
+   "name": "PODMIOTY GOSPODARKI NARODOWEJ, PRZEKSZTAŁCENIA WŁASNOŚCIOWE I STRUKTURALNE",
+   "parent": null,
+   "path": [
+    "PODMIOTY GOSPODARKI NARODOWEJ, PRZEKSZTAŁCENIA WŁASNOŚCIOWE I STRUKTURALNE"
+   ]
+  },
+  "P1692": {
+   "id": "P1692",
+   "name": "Oczyszczalnie komunalne",
+   "parent": "G222",
+   "path": [
+    "STAN I OCHRONA ŚRODOWISKA",
+    "OCZYSZCZANIE ŚCIEKÓW KOMUNALNYCH",
+    "Oczyszczalnie komunalne"
+   ]
+  },
+  "G222": {
+   "id": "G222",
+   "name": "OCZYSZCZANIE ŚCIEKÓW KOMUNALNYCH",
+   "parent": "K9",
+   "path": [
+    "STAN I OCHRONA ŚRODOWISKA",
+    "OCZYSZCZANIE ŚCIEKÓW KOMUNALNYCH"
+   ]
+  },
+  "K9": {
+   "id": "K9",
+   "name": "STAN I OCHRONA ŚRODOWISKA",
+   "parent": null,
+   "path": [
+    "STAN I OCHRONA ŚRODOWISKA"
+   ]
+  },
+  "P3771": {
+   "id": "P3771",
+   "name": "Liczba transakcji kupna/sprzedaży lokali mieszkalnych",
+   "parent": "G596",
+   "path": [
+    "RYNEK NIERUCHOMOŚCI",
+    "SPRZEDAŻ LOKALI MIESZKALNYCH WG FORMY OBROTU",
+    "Liczba transakcji kupna/sprzedaży lokali mieszkalnych"
+   ]
+  },
+  "G596": {
+   "id": "G596",
+   "name": "SPRZEDAŻ LOKALI MIESZKALNYCH WG FORMY OBROTU",
+   "parent": "K48",
+   "path": [
+    "RYNEK NIERUCHOMOŚCI",
+    "SPRZEDAŻ LOKALI MIESZKALNYCH WG FORMY OBROTU"
+   ]
+  },
+  "K48": {
+   "id": "K48",
+   "name": "RYNEK NIERUCHOMOŚCI",
+   "parent": null,
+   "path": [
+    "RYNEK NIERUCHOMOŚCI"
+   ]
+  },
+  "P2497": {
+   "id": "P2497",
+   "name": "Przeciętne miesięczne wynagrodzenia brutto",
+   "parent": "G403",
+   "path": [
+    "WYNAGRODZENIA I ŚWIADCZENIA SPOŁECZNE",
+    "WYNAGRODZENIA",
+    "Przeciętne miesięczne wynagrodzenia brutto"
+   ]
+  },
+  "G403": {
+   "id": "G403",
+   "name": "WYNAGRODZENIA",
+   "parent": "K40",
+   "path": [
+    "WYNAGRODZENIA I ŚWIADCZENIA SPOŁECZNE",
+    "WYNAGRODZENIA"
+   ]
+  },
+  "K40": {
+   "id": "K40",
+   "name": "WYNAGRODZENIA I ŚWIADCZENIA SPOŁECZNE",
+   "parent": null,
+   "path": [
+    "WYNAGRODZENIA I ŚWIADCZENIA SPOŁECZNE"
+   ]
+  },
+  "P1364": {
+   "id": "P1364",
+   "name": "Bezrobotni zarejestrowani wg płci i typu",
+   "parent": "G12",
+   "path": [
+    "RYNEK PRACY",
+    "BEZROBOCIE REJESTROWANE",
+    "Bezrobotni zarejestrowani wg płci i typu"
+   ]
+  }
+ },
+ "variables": {
+  "324": {
+   "id": 324,
+   "subjectId": "P1635",
+   "n1": "ogółem",
+   "level": 6,
+   "unit": "km"
+  },
+  "325": {
+   "id": 325,
+   "subjectId": "P1635",
+   "n1": "o nawierzchni twardej",
+   "level": 6,
+   "unit": "km"
+  },
+  "346": {
+   "id": 346,
+   "subjectId": "P1692",
+   "n1": "mechaniczne",
+   "level": 6,
+   "unit": "szt."
+  },
+  "347": {
+   "id": 347,
+   "subjectId": "P1692",
+   "n1": "mechaniczno-chemiczne",
+   "level": 6,
+   "unit": "szt."
+  },
+  "396": {
+   "id": 396,
+   "subjectId": "P1721",
+   "n1": "mieszkania",
+   "level": 6,
+   "unit": "-"
+  },
+  "397": {
+   "id": 397,
+   "subjectId": "P1721",
+   "n1": "powierzchnia użytkowa mieszkań",
+   "level": 6,
+   "unit": "m2"
+  },
+  "404": {
+   "id": 404,
+   "subjectId": "P1728",
+   "n1": "mieszkania",
+   "level": 6,
+   "unit": "-"
+  },
+  "415": {
+   "id": 415,
+   "subjectId": "P1735",
+   "n1": "ogółem",
+   "n2": "mieszkania",
+   "level": 7,
+   "unit": "-"
+  },
+  "416": {
+   "id": 416,
+   "subjectId": "P1735",
+   "n1": "ogółem",
+   "n2": "izby",
+   "level": 7,
+   "unit": "-"
+  },
+  "838": {
+   "id": 838,
+   "subjectId": "P1781",
+   "n1": "szkoły podstawowe dla dzieci i młodzieży bez specjalnych",
+   "n2": "ogółem",
+   "n3": "ogółem",
+   "level": 7,
+   "unit": "ob."
+  },
+  "839": {
+   "id": 839,
+   "subjectId": "P1781",
+   "n1": "szkoły podstawowe dla dzieci i młodzieży bez specjalnych",
+   "n2": "ogółem",
+   "n3": "prowadzone przez organy samorządowe",
+   "level": 6,
+   "unit": "ob."
+  },
+  "840": {
+   "id": 840,
+   "subjectId": "P1781",
+   "n1": "szkoły podstawowe dla dzieci i młodzieży bez specjalnych",
+   "n2": "ogółem",
+   "n3": "prowadzone przez jednostki administracji rządowej (centralnej)",
+   "level": 7,
+   "unit": "ob."
+  },
+  "1230": {
+   "id": 1230,
+   "subjectId": "P1688",
+   "n1": "biblioteki i filie",
+   "level": 7,
+   "unit": "ob."
+  },
+  "1232": {
+   "id": 1232,
+   "subjectId": "P1688",
+   "n1": "pracownicy bibliotek (działalności podstawowej)",
+   "level": 7,
+   "unit": "osoba"
+  },
+  "1259": {
+   "id": 1259,
+   "subjectId": "P1597",
+   "n1": "w sekcji A",
+   "n2": "ogółem",
+   "level": 6,
+   "unit": "-"
+  },
+  "1260": {
+   "id": 1260,
+   "subjectId": "P1597",
+   "n1": "w sekcji A",
+   "n2": "sektor publiczny",
+   "level": 6,
+   "unit": "-"
+  },
+  "1584": {
+   "id": 1584,
+   "subjectId": "P1878",
+   "n1": "ogółem",
+   "level": 6,
+   "unit": "-"
+  },
+  "1585": {
+   "id": 1585,
+   "subjectId": "P1878",
+   "n1": "indywidualne gospodarstwa rolne",
+   "level": 6,
+   "unit": "-"
+  },
+  "1586": {
+   "id": 1586,
+   "subjectId": "P1874",
+   "n1": "grunty ogółem",
+   "n2": "ogółem",
+   "level": 6,
+   "unit": "ha"
+  },
+  "2177": {
+   "id": 2177,
+   "subjectId": "P1363",
+   "n1": "sektor rolniczy",
+   "n2": "ogółem",
+   "level": 6,
+   "unit": "osoba"
+  },
+  "2178": {
+   "id": 2178,
+   "subjectId": "P1363",
+   "n1": "sektor rolniczy",
+   "n2": "kobiety",
+   "level": 6,
+   "unit": "osoba"
+  },
+  "2179": {
+   "id": 2179,
+   "subjectId": "P1363",
+   "n1": "sektor przemysłowy",
+   "n2": "ogółem",
+   "level": 6,
+   "unit": "osoba"
+  },
+  "3220": {
+   "id": 3220,
+   "subjectId": "P1876",
+   "n1": "miasta",
+   "n2": "zameldowania",
+   "n3": "mężczyźni",
+   "level": 5,
+   "unit": "osoba"
+  },
+  "3221": {
+   "id": 3221,
+   "subjectId": "P1876",
+   "n1": "miasta",
+   "n2": "zameldowania",
+   "n3": "kobiety",
+   "level": 5,
+   "unit": "osoba"
+  },
+  "3509": {
+   "id": 3509,
+   "subjectId": "P1523",
+   "n1": "udziały w podatkach stanowiących dochody budżetu państwa podatek dochodowy od osób fizycznych",
+   "level": 5,
+   "unit": "zł"
+  },
+  "3510": {
+   "id": 3510,
+   "subjectId": "P1523",
+   "n1": "dochody z majątku",
+   "level": 5,
+   "unit": "zł"
+  },
+  "3511": {
+   "id": 3511,
+   "subjectId": "P1523",
+   "n1": "pozostałe dochody",
+   "level": 5,
+   "unit": "zł"
+  },
+  "9199": {
+   "id": 9199,
+   "subjectId": "P2115",
+   "n1": "ogółem",
+   "level": 6,
+   "unit": "gosp."
+  },
+  "9200": {
+   "id": 9200,
+   "subjectId": "P2115",
+   "n1": "jednorodzinne ogółem",
+   "level": 6,
+   "unit": "gosp."
+  },
+  "9201": {
+   "id": 9201,
+   "subjectId": "P2115",
+   "n1": "jednorodzinne 2 osobowe",
+   "level": 6,
+   "unit": "gosp."
+  },
+  "9202": {
+   "id": 9202,
+   "subjectId": "P2115",
+   "n1": "jednorodzinne 3 osobowe",
+   "level": 6,
+   "unit": "gosp."
+  },
+  "10142": {
+   "id": 10142,
+   "subjectId": "P2017",
+   "n1": "domy wycieczkowe",
+   "n2": "obiekty ogółem lipiec",
+   "level": 7,
+   "unit": "ob."
+  },
+  "10143": {
+   "id": 10143,
+   "subjectId": "P2017",
+   "n1": "domy wycieczkowe",
+   "n2": "obiekty całoroczne lipiec",
+   "level": 7,
+   "unit": "ob."
+  },
+  "47693": {
+   "id": 47693,
+   "subjectId": "P2137",
+   "n1": "60-64",
+   "n2": "kobiety",
+   "level": 6,
+   "unit": "osoba"
+  },
+  "47694": {
+   "id": 47694,
+   "subjectId": "P2137",
+   "n1": "25-29",
+   "n2": "ogółem",
+   "level": 6,
+   "unit": "osoba"
+  },
+  "47696": {
+   "id": 47696,
+   "subjectId": "P2137",
+   "n1": "25-29",
+   "n2": "kobiety",
+   "level": 6,
+   "unit": "osoba"
+  },
+  "47706": {
+   "id": 47706,
+   "subjectId": "P2137",
+   "n1": "50-54",
+   "n2": "mężczyźni",
+   "level": 6,
+   "unit": "osoba"
+  },
+  "47711": {
+   "id": 47711,
+   "subjectId": "P2137",
+   "n1": "20-24",
+   "n2": "mężczyźni",
+   "level": 6,
+   "unit": "osoba"
+  },
+  "60559": {
+   "id": 60559,
+   "subjectId": "P2425",
+   "n1": "ludność na 1 km2",
+   "level": 6,
+   "unit": "osoba"
+  },
+  "60562": {
+   "id": 60562,
+   "subjectId": "P2426",
+   "n1": "ludność w wieku poprodukcyjnym na 100 osób w wieku produkcyjnym",
+   "level": 6,
+   "unit": "osoba"
+  },
+  "64428": {
+   "id": 64428,
+   "subjectId": "P2497",
+   "n1": "ogółem",
+   "level": 5,
+   "unit": "zł"
+  },
+  "64429": {
+   "id": 64429,
+   "subjectId": "P2497",
+   "n1": "przeciętne miesięczne wynagrodzenia brutto w relacji do średniej krajowej (Polska=100)",
+   "level": 5,
+   "unit": "%"
+  },
+  "72305": {
+   "id": 72305,
+   "subjectId": "P2137",
+   "n1": "ogółem",
+   "n2": "ogółem",
+   "level": 6,
+   "unit": "osoba"
+  },
+  "79228": {
+   "id": 79228,
+   "subjectId": "P2671",
+   "n1": "ogółem w % bezrobotnych ogółem",
+   "level": 5,
+   "unit": "%"
+  },
+  "106021": {
+   "id": 106021,
+   "subjectId": "P1364",
+   "n1": "ogółem",
+   "n2": "bezrobotni wyrejestrowani z tytułu podjęcia pracy",
+   "level": 5,
+   "unit": "osoba"
+  },
+  "278878": {
+   "id": 278878,
+   "subjectId": "P3111",
+   "n1": "liczba wniosków po weryfikacji formalnej",
+   "n2": "RPO Województwa Kujawsko-Pomorskiego",
+   "n3": "30 czerwca",
+   "level": 6,
+   "unit": "szt."
+  },
+  "278881": {
+   "id": 278881,
+   "subjectId": "P3111",
+   "n1": "liczba wniosków o płatność końcową",
+   "n2": "Program Operacyjny Pomoc Techniczna",
+   "n3": "30 czerwca",
+   "level": 6,
+   "unit": "szt."
+  },
+  "278883": {
+   "id": 278883,
+   "subjectId": "P3111",
+   "n1": "liczba wniosków o płatność końcową",
+   "n2": "RPO Województwa Kujawsko-Pomorskiego",
+   "n3": "30 czerwca",
+   "level": 6,
+   "unit": "szt."
+  },
+  "278884": {
+   "id": 278884,
+   "subjectId": "P3111",
+   "n1": "liczba wniosków po weryfikacji formalnej",
+   "n2": "RPO Województwa Lubelskiego",
+   "n3": "30 czerwca",
+   "level": 6,
+   "unit": "szt."
+  },
+  "278885": {
+   "id": 278885,
+   "subjectId": "P3111",
+   "n1": "liczba wniosków po weryfikacji formalnej",
+   "n2": "Program Operacyjny Rozwój Polski Wschodniej",
+   "n3": "30 czerwca",
+   "level": 6,
+   "unit": "szt."
+  },
+  "278887": {
+   "id": 278887,
+   "subjectId": "P3111",
+   "n1": "liczba wniosków po weryfikacji formalnej",
+   "n2": "RPO Województwa Łódzkiego",
+   "n3": "30 czerwca",
+   "level": 6,
+   "unit": "szt."
+  },
+  "278890": {
+   "id": 278890,
+   "subjectId": "P3111",
+   "n1": "liczba wniosków o płatność końcową",
+   "n2": "Program Operacyjny Kapitał Ludzki",
+   "n3": "30 czerwca",
+   "level": 6,
+   "unit": "szt."
+  },
+  "278891": {
+   "id": 278891,
+   "subjectId": "P3111",
+   "n1": "liczba wniosków po weryfikacji formalnej",
+   "n2": "Program Operacyjny Kapitał Ludzki",
+   "n3": "30 czerwca",
+   "level": 6,
+   "unit": "szt."
+  },
+  "633097": {
+   "id": 633097,
+   "subjectId": "P3771",
+   "n1": "ogółem",
+   "level": 5,
+   "unit": "szt."
+  },
+  "633098": {
+   "id": 633098,
+   "subjectId": "P3771",
+   "n1": "sprzedaż na wolnym rynku",
+   "level": 5,
+   "unit": "szt."
+  }
+ }
+}

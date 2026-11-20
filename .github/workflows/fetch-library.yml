@@ -2,8 +2,10 @@ name: Fetch library
 
 # Robot „Biblioteka GUS”: co 12 godzin pobiera kolejną porcję całego BDL (katalog działów i zmiennych, potem wartości
 # na poziomie powiatów i gmin) i zapisuje ją na gałęzi `data/library` (NIGDY na main).
-# Limity API: z kluczem 5000 zapytań / 12 h. Budżet jednego przebiegu = 2500 zapytań (50%), nocny „Fetch data”
-# zużywa ok. 750, więc razem zostaje duży zapas także względem limitu tygodniowego (50 000).
+# Limity API: z kluczem 10/s, 500 / 15 min, 5000 / 12 h, 50 000 / 7 dni. Budżet jednego przebiegu = 3000 zapytań
+# (2 przebiegi dziennie = 6000; nocny „Fetch data” ok. 750; razem 47 250 / 7 dni = 94,5% limitu, patrz checkWindows
+# w scripts/data/library-priority.mjs). Tempo 1 zapytanie / 2 s: 3000 zapytań to ok. 100 min.
+# Kolejność pobierania: config/library-priority.json (najpierw wskaźniki podstawowe i popularne).
 # Grupa `fetch-data` jest wspólna z nocnym pobieraniem: oba roboty nigdy nie biją w API jednocześnie.
 # Wznawianie: stan w library/state.json; uruchomienie pobiera tylko to, czego jeszcze nie ma.
 on:
@@ -12,7 +14,7 @@ on:
       budget:
         description: 'Maks. liczba zapytań do API w tym przebiegu'
         required: false
-        default: '2500'
+        default: '3000'
   schedule:
     - cron: '40 4,16 * * *'
 
@@ -30,7 +32,7 @@ jobs:
     timeout-minutes: 170
     env:
       BRANCH: data/library
-      LIBRARY_BUDGET: ${{ github.event.inputs.budget || '2500' }}
+      LIBRARY_BUDGET: ${{ github.event.inputs.budget || '3000' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -65,7 +67,8 @@ jobs:
         env:
           BDL_CLIENT_ID: ${{ secrets.BDL_CLIENT_ID }}
           LIBRARY_DIR: lib-wt/library
-          LIBRARY_MINUTES: '140'
+          LIBRARY_MINUTES: '130'
+          LIBRARY_SUMMARY_FILE: ${{ runner.temp }}/library-sections.md
         run: node scripts/data/library.mjs 2>&1 | tee "$RUNNER_TEMP/library.txt"
 
       - name: Zbuduj spis biblioteki (index.json)
@@ -100,7 +103,7 @@ jobs:
       - name: Podsumowanie
         if: always()
         run: |
-          { echo '### Biblioteka GUS'; echo; tail -n 3 "$RUNNER_TEMP/library.txt" 2>/dev/null; echo; du -sh lib-wt/library 2>/dev/null; } >> "$GITHUB_STEP_SUMMARY"
+          { echo '### Biblioteka GUS'; echo; tail -n 3 "$RUNNER_TEMP/library.txt" 2>/dev/null; echo; cat "$RUNNER_TEMP/library-sections.md" 2>/dev/null; echo; du -sh lib-wt/library 2>/dev/null; } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Zapisz na gałęzi data/library
         if: always()
