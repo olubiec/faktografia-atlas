@@ -36,7 +36,7 @@ function groupBy(
 }
 
 const GRIP_BTN =
-  "min-h-[44px] min-w-[44px] flex items-center justify-center text-olowek hover:text-tusz hover:bg-linia/15 focus:outline-none focus:ring-2 focus:ring-tusz cursor-grab touch-none select-none shrink-0";
+  "min-h-[44px] min-w-[44px] flex items-center justify-center text-olowek hover:text-tusz hover:bg-linia/15 focus:outline-none focus:ring-2 focus:ring-tusz cursor-move touch-none select-none shrink-0";
 
 /**
  * Lista wskaźników w profilu: domyślnie mały zestaw „Moje wskaźniki”,
