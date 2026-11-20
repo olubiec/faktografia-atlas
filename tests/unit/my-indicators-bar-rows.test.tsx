@@ -22,7 +22,7 @@ describe('Moje wskaźniki: wiersz z uchwytem i ×', () => {
   it('uchwyt jest tylko z reorder, a usuwa wyłącznie przycisk ×', () => {
     const withoutGrip = renderToString(<MyIndicatorsBar {...base} list={['a']} />);
     expect(withoutGrip).not.toContain('Przeciągnij, aby zmienić kolejność');
-    const reorder = { drag: null, handlers, move: vi.fn() };
+    const reorder = { drag: null, handlers, move: vi.fn<() => void>() };
     const html = renderToString(<MyIndicatorsBar {...base} list={['a']} reorder={reorder} />);
     expect(html).toContain('Przeciągnij, aby zmienić kolejność: Nazwa a');
     expect(html.match(/<button[^>]*aria-label="Usuń wskaźnik Nazwa a"/g)?.length).toBe(1);
