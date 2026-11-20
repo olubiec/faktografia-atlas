@@ -51,12 +51,12 @@ export function MyIndicatorsManager({ all, onPick, defaultOpen = false }: { all:
 }
 
 /** Wybór wskaźnika w arkuszu telefonu: przycisk z bieżącym wskaźnikiem i lista („Moje” + bieżący). */
-export function SheetIndicatorPicker({ indicators, indicator, onSelect }: { indicators: Indicator[]; indicator: Indicator; onSelect: (id: string) => void }) {
-  const [open, setOpen] = useState(true);
+export function SheetIndicatorPicker({ indicators, indicator, onSelect, defaultOpen = true }: { indicators: Indicator[]; indicator: Indicator; onSelect: (id: string) => void; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
   const [query, setQuery] = useState('');
   return (
     <div className="flex flex-col">
-      <button type="button" aria-expanded={open} onClick={() => setOpen(true)}
+      <button type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)}
         className="flex items-center justify-between gap-2 px-4 py-2 min-h-[44px] w-full text-left bg-arkusz text-tusz border border-linia hover:bg-linia/10 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer rounded-none transition-colors"
       >
         <div className="flex flex-col min-w-0 pr-2">
@@ -65,7 +65,7 @@ export function SheetIndicatorPicker({ indicators, indicator, onSelect }: { indi
             {indicator.name}
           </span>
         </div>
-        <Icon icon={NavArrowDown} size={20} aria-hidden={true} className="text-tusz shrink-0" />
+        <Icon icon={open ? NavArrowUp : NavArrowDown} size={20} aria-hidden={true} className="text-tusz shrink-0" />
       </button>
       {open && (
         <div className="max-h-[220px] flex flex-col border border-t-0 border-linia bg-arkusz overflow-hidden">
