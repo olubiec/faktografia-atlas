@@ -109,7 +109,7 @@ export function IndicatorPanel({
           <IndicatorInfo indicatorId={indicator.id} name={indicator.name} explanation={explanation} />
         </div>
         <p className="text-sm text-olowek">{subtitle}</p>
-        <MyIndicatorsManager all={allIndicators} onPick={view.setIndicator} />
+        <MyIndicatorsManager all={allIndicators} onPick={view.setIndicator} activeId={indicator.id} />
       </div>
 
       <div className="flex flex-col gap-1.5">
