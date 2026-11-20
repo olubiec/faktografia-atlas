@@ -30,7 +30,7 @@ export interface MobileIndicatorBarProps {
 }
 
 /** Zarządzanie listą „Moje wskaźniki”: domyślnie zwinięte, żeby nie powtarzać nazw wskaźników w panelu. */
-export function MyIndicatorsManager({ all, onPick, defaultOpen = false }: { all: Indicator[]; onPick: (id: string) => void; defaultOpen?: boolean }) {
+export function MyIndicatorsManager({ all, onPick, defaultOpen = false, activeId }: { all: Indicator[]; onPick: (id: string) => void; defaultOpen?: boolean; activeId?: string | null }) {
   const { list, add, remove, reset, move } = useMyIndicators();
   const reorder = useIndicatorReorder(list, move);
   const [open, setOpen] = useState(defaultOpen);
@@ -45,7 +45,7 @@ export function MyIndicatorsManager({ all, onPick, defaultOpen = false }: { all:
       </button>
       {open && (
         <MyIndicatorsBar all={all} list={list} isBasic={isBasic(list)} open={adding} onToggle={() => setAdding((o) => !o)}
-          onAdd={(id) => { add(id); setAdding(false); onPick(id); }} onRemove={remove} onReset={reset} reorder={reorder} />
+          onAdd={(id) => { add(id); setAdding(false); onPick(id); }} onRemove={remove} onReset={reset} reorder={reorder} activeId={activeId} />
       )}
     </div>
   );
