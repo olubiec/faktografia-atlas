@@ -31,4 +31,5 @@ Pętla Jules Loop i Orkiestra zostały usunięte. Zadania wykonują sesje Claude
 | ⬜ | Q3–Q7 = W3–W7 | 12 · 11 · 10 · 5 · 3 | po kolei; PM10 jedyne na plikach kamery w W3 – po FIX6 jego zakres do weryfikacji (kamera bez stanu Reacta zrobiona w FIX6H2) |
 | ⬜ | Uwagi 19.11 = W4-QU/W5-QU/W6-QU | 7 · 6 · 2 (`tasks/poczekalnia/`) | kolejne Q (Q4–Q6), nie Q2: okno udostępniania, Biblioteka, Rankingi, wykres lat; plan: `docs/PLAN-UWAGI-19-11.md` |
 | ⬜ | Strona startowa (koncept 19.11) = QU32 (W4d) + QU33–QU38 (W6/W7) | 1 + 6 | czeka na decyzje A/B/C; plan: `docs/KONCEPT-STRONA-STARTOWA.md` |
+| 🔷 **najpierw** | Plan uproszczenia (20.11) = W22-U00–U08, U10, U11 (badania, ukrycie „Pobierz i udostępnij”, priorytet robota biblioteki; równolegle) → W23-U09 (synteza) → etap B (~12) | 11 · 1 | idzie PRZED wszystkim powyżej; reszta poczekalni zamrożona do werdyktu U09; „Pobierz i udostępnij” → `tasks/wstrzymane/`; plan: `docs/PLAN-UPROSZCZENIE.md` |
 Uwaga: zadania W17/W18 w poczekalni nadal czekają; W17-T04 i W17-T05 są zastąpione przez PF08 i PF07 (zrobione). Pełny plan: `docs/PLAN-POPRAWEK.md`; otwarte sprawy: `docs/STATUS-PRZERWANE.md`.

@@ -11,6 +11,7 @@ import { LibraryVariable } from './view/pages/LibraryVariable';
 import { AnnotationTestPage } from './view/test/AnnotationTestPage';
 import UiTestPage from './view/test/UiTestPage';
 import { InteractiveTestPage } from './view/test/InteractiveTestPage';
+import { PrototypePage } from './view/test/PrototypePage';
 import { DesignPage } from './view/design/DesignPage';
 import { ConsentBar } from './view/consent/ConsentBar';
 
@@ -31,6 +32,8 @@ export function App() {
         <Route path="/__test/ui" element={<UiTestPage />} />
         <Route path="/__test/annotation" element={<AnnotationTestPage />} />
         <Route path="/__test/interactive" element={<InteractiveTestPage />} />
+        <Route path="/__test/proto" element={<PrototypePage />} />
+        <Route path="/__test/proto/:name" element={<PrototypePage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
