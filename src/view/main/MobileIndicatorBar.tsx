@@ -6,7 +6,8 @@ import type { MainView } from '@/view/map/hooks/useMainView';
 import type { RankedResult } from '@/core/ranking/ranking';
 import type { Indicator } from '@/core/profile/profile';
 import type { UnitIndex } from '@/core/units/types';
-import { MyIndicatorsBar } from '@/view/pages/Rankings';
+import { MyIndicatorsBar } from '@/view/pages/MyIndicatorsBar';
+import { useIndicatorReorder } from '@/view/pages/useIndicatorReorder';
 import { useMyIndicators } from '@/view/hooks/useMyIndicators';
 import { isBasic } from '@/core/my-indicators/my-indicators';
 import { BottomSheet } from '@/view/ui/BottomSheet';
@@ -30,7 +31,8 @@ export interface MobileIndicatorBarProps {
 
 /** Zarządzanie listą „Moje wskaźniki”: domyślnie zwinięte, żeby nie powtarzać nazw wskaźników w panelu. */
 export function MyIndicatorsManager({ all, onPick, defaultOpen = false }: { all: Indicator[]; onPick: (id: string) => void; defaultOpen?: boolean }) {
-  const { list, add, remove, reset } = useMyIndicators();
+  const { list, add, remove, reset, move } = useMyIndicators();
+  const reorder = useIndicatorReorder(list, move);
   const [open, setOpen] = useState(defaultOpen);
   const [adding, setAdding] = useState(false);
   return (
@@ -43,7 +45,7 @@ export function MyIndicatorsManager({ all, onPick, defaultOpen = false }: { all:
       </button>
       {open && (
         <MyIndicatorsBar all={all} list={list} isBasic={isBasic(list)} open={adding} onToggle={() => setAdding((o) => !o)}
-          onAdd={(id) => { add(id); setAdding(false); onPick(id); }} onRemove={remove} onReset={reset} />
+          onAdd={(id) => { add(id); setAdding(false); onPick(id); }} onRemove={remove} onReset={reset} reorder={reorder} />
       )}
     </div>
   );
