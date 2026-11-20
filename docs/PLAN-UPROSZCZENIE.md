@@ -1,6 +1,19 @@
 # Plan uproszczenia – Faktografia (20.11.2026)
 Ten plan idzie **przed wszystkimi** zadaniami z `tasks/poczekalnia/`. Powód: przebudowa wyklucza dużą część starych zadań. Najpierw badania i analizy (etap R), potem jedna synteza z krótką listą decyzji (etap D), na końcu krótka budowa (etap B).
 
+## 0. Decyzje zatwierdzone przez właściciela (20.11.2026)
+| # | Decyzja | Gdzie działa |
+|---|---|---|
+| D1 | Dwie mapy na telefonie: start od „jedna pod drugą”, rozstrzygnie praktyka na prototypie (U06 pokazuje oba układy). | U06, B09 |
+| D2 | Niepobrane wskaźniki są ukryte w wyborze danych. Robot pobiera wg popularności i codziennie do limitu API (podstawowe i najczęściej potrzebne najpierw). | U04, **U11**, B05 |
+| D3 | Strona Porównaj znika. Porównanie dwóch miejsc zostaje w profilu miejsca; dwa wskaźniki = druga mapa. | U01, B09, B11 |
+| D4 | Stare linki (`/?u=…`, `/rankingi`, `/biblioteka`, `/porownaj`) działają dalej i przekierowują na `/mapa`. | B02, U08 |
+| D5 | Skracamy `docs/STAN.md` do 110 linii (starsze wpisy do `STAN-ARCHIWUM.md`), testu nie zmieniamy. | U00 |
+| D6 | Właściciel sam gubi się na stronie, więc jest testerem nr 0 (ma swoją sekcję w U02). Test z innymi osobami jest opcjonalny. | U02, B12 |
+| D7 | Najpierw plan (ten dokument), potem start fali W22. | – |
+| D8 | Tło strony startowej: badamy oba warianty: zmieniające się wskaźniki z animacją powiązaną z przybliżaniem albo jeden stały (np. liczba ludności). | U07 |
+| D9 | „Pobierz i udostępnij” znika ze strony od razu (zostaje „Kopiuj link”); kod wraca z `?share=1`. | **U10** |
+
 ## 1. Cel w słowach właściciela
 - **Prosto, bardzo prosto.** Dziś jest bałagan: za dużo ekranów, przycisków i funkcji, które robią to samo.
 - **Strona startowa** na `/` tłumaczy koncept i daje krótką instrukcję. W tle jest animowana mapa Polski. Gdy nikt nic nie robi, rusza się losowo. Gdy rusza się mysz (lub palec), reaguje na nią. Animacja opiera się na aktualnych danych. Dopiero kliknięcie otwiera działającą mapę.
@@ -23,10 +36,10 @@ Stopka       O projekcie · Źródła · Prywatność
 ```
 Menu ma 2 pozycje (Start, Mapa) i szukajkę miejsca. Tyle.
 
-Do weryfikacji w badaniach:
+Do weryfikacji w badaniach (kierunek zatwierdzony, sprawdzamy koszt i szczegóły):
 - `/rankingi` → `/mapa?v=ranking`;
 - `/biblioteka` → `/mapa` z otwartym wyborem danych;
-- `/porownaj` → `/mapa` z drugą mapą (porównanie miejsc może zostać w profilu miejsca);
+- `/porownaj` → `/mapa` z drugą mapą (decyzja D3: porównanie dwóch miejsc zostaje w profilu miejsca);
 - stare linki `/?u=…&i=…` przekierowują na `/mapa?…`.
 
 ## 3. Co zatrzymujemy od razu
@@ -34,8 +47,8 @@ Do weryfikacji w badaniach:
 - **Zamrożone do syntezy (U09):** wszystkie pozostałe pliki w `tasks/poczekalnia/`. Po etapie R każdy plik dostaje werdykt „zostaje / zmienić / skreślić”. Przewidywane skreślenia to zadania o Rankingach jako stronie, Bibliotece jako stronie i „Moich wskaźnikach”. Przykłady: QU11, QU12, QU14, QU15, QU16, QC205, QC507, QC509, QC608, QC609, QC611, QC806. Część W17, W18, W20 i W21 też może wypaść.
 - **Wyjątek: zdrowie `main`.** Czerwone testy po W4 i niedokończone FIX7 trzeba zamknąć, żeby badania i budowa nie dziedziczyły błędów (zadanie U00).
 
-## 4. Etap R – badania, analizy, testy (9 sesji, równolegle)
-Każda sesja kończy się raportem w `docs/research/u/U<nn>.md`. Na ekranach nic się nie zmienia, z jednym wyjątkiem: prototypy idą tylko pod `/__test/proto/<nazwa>` (jeden plik w `src/view/test/proto/`, trasa powstaje sama). Każdy raport kończy się sekcjami **„Rekomendacja”** i **„Pytania do właściciela”** (najwyżej 3, z gotowymi odpowiedziami do wyboru). Pliki zadań: `tasks/poczekalnia/W22-U*.md`.
+## 4. Etap R – badania, analizy, testy i dwie małe zmiany (11 sesji, równolegle)
+Każda sesja kończy się raportem w `docs/research/u/U<nn>.md`. Na ekranach nic się nie zmienia, z jednym wyjątkiem: prototypy idą tylko pod `/__test/proto/<nazwa>` (jeden plik w `src/view/test/proto/`, trasa powstaje sama). Każdy raport kończy się sekcjami **„Rekomendacja”** i **„Pytania do właściciela”** (najwyżej 3, z gotowymi odpowiedziami do wyboru). Pliki zadań: `tasks/poczekalnia/W22-U*.md`. Wspólne zasady wszystkich sesji: `docs/research/u/WYTYCZNE.md`; prompt startowy: `docs/prompty/START-W22.md`.
 
 | Sesja | Co bada | Co właściciel dostaje | Czy coś widać na stronie |
 |---|---|---|---|
@@ -49,9 +62,10 @@ Każda sesja kończy się raportem w `docs/research/u/U<nn>.md`. Na ekranach nic
 | **U07** Strona startowa | Bazuje na `docs/KONCEPT-STRONA-STARTOWA.md`. Wariant A (`/` startowa, `/mapa` mapa) wynika z decyzji właściciela. Bada lekką animację (SVG lub canvas, bez pełnej mapy WebGL): tryb losowy, gdy nic się nie dzieje, reakcja na kursor, kolory z aktualnych danych, telefon bez kursora, reduced-motion, wydajność. Treść: 1 zdanie o koncepcie i 3 kroki instrukcji. Przejście kliknięciem do `/mapa`. | Specyfikacja, budżety (rozmiar, klatki) i lista testów do zmiany przy przeniesieniu mapy na `/mapa`. | Prototyp pod `/__test/proto/start` |
 | **U08** Testy i sprzątanie | Audyt 89 e2e i 221 testów jednostkowych: które są przywiązane do funkcji przewidzianych do usunięcia. Strategia: 6–8 nowych „testów ścieżek” jako strażnik przebudowy. Kolejność wycinania starych testów razem z funkcją. Lista zgód potrzebnych od właściciela. | Mapa testów „zostaje / do usunięcia z funkcją / do zmiany” i projekt testów ścieżek. | Nie |
 
-U10 (ukrycie „Pobierz i udostępnij”) to mała zmiana na stronie, niezależna od badań; zmienia tylko pięć plików z przyciskiem i testy udostępniania (zgoda właściciela: tylko sposób włączenia przycisku).
+| **U10** Ukryj udostępnianie | Jeden przełącznik `isShareEnabled()` (domyślnie wyłączony, włącza go `?share=1`) w 5 plikach z przyciskiem. Testy udostępniania: zmiana tylko sposobu włączenia. | Na stronie nie ma „Pobierz i udostępnij”; „Kopiuj link” zostaje. | **Tak**, w całej aplikacji |
+| **U11** Robot biblioteki: priorytet i limit | Katalog: 172 740 zmiennych, 63 960 z powiatami lub gminami, pobrane 2 436 (3,8%), kolejność po numerze id. Nowa kolejka wg popularności (wagi działów, słowa kluczowe, płytkie rozbicia, gminy), limit udziału jednego działu w przebiegu, 2 × 3 000 zapytań na dobę (≈ 95% limitu 7-dniowego razem z nocnym robotem) i test przesuwnych okien limitu. | Raport z kolejnością i prognozą „ile wskaźników po 7 / 30 / 90 dniach”; w Actions tabela „co pobrano wg działów”. | Pośrednio: z dnia na dzień więcej podstawowych wskaźników w wyborze danych |
 
-Kolejność: U00–U08 i U10 idą równolegle. Tylko U00 może zmieniać istniejące testy (w zakresie FIX7, na który właściciel już się zgodził).
+Kolejność: U00–U08, U10 i U11 idą równolegle (nie dzielą plików). Istniejące testy mogą zmieniać tylko U00 (miejsce kliknięcia w testach dotykowych, FIX7) i U10 (sposób włączania przycisku udostępniania); w obu przypadkach asercji nie wolno zmieniać, a zgoda właściciela jest zapisana w pliku zadania. U10 i U11 są małymi zmianami w kodzie lub robocie, a nie badaniami.
 
 ## 5. Etap D – synteza i decyzje (1 sesja + właściciel)
 - **U09 Synteza** (`tasks/poczekalnia/W23-U09-synteza-plan-docelowy.md`), po scaleniu raportów U01–U08. Pisze `docs/PLAN-DOCELOWY.md`, który zawiera:
@@ -79,7 +93,7 @@ Liczby i kolejność potwierdzi U09. Każde zadanie kończy się czymś, co wida
 | B11 Sprzątanie | Usunięte stare ekrany (Rankingi, Biblioteka, Porównaj, Moje wskaźniki) razem z ich testami, za zgodą właściciela. Przycisk udostępniania ukryty (wg decyzji D). |
 | B12 Testy ścieżek i odbiór | 6–8 testów e2e całych ścieżek, porównanie liczb z U02 (przed/po), test z ludźmi. |
 
-**Razem: ok. 10 (R, razem z U10) + 1 (D) + 12 (B) = 23 sesje**, zamiast ok. 44 ze starego planu. Zadania wydajności (PM12, PM13, PM20, PM14) i strażniki (QC406, PC01) mogą zostać, jeśli synteza uzna, że nadal mają sens. Wtedy dochodzi kilka sesji.
+**Razem: 11 (R, razem z U10 i U11) + 1 (D) + ok. 12 (B) = ok. 24 sesje**, zamiast ok. 44 ze starego planu. Zadania wydajności (PM12, PM13, PM20, PM14) i strażniki (QC406, PC01) mogą zostać, jeśli synteza uzna, że nadal mają sens. Wtedy dochodzi kilka sesji.
 
 ## 7. Zasady prostoty (obowiązują w etapie B)
 1. Jeden ekran pracy (`/mapa`). Nowa funkcja nie dostaje własnej strony.

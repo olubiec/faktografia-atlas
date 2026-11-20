@@ -3,7 +3,7 @@ Cel: na stronie nie ma żadnego przycisku „Pobierz i udostępnij”. Kod okna 
 Zmieniaj: src/core/share/share-flag.ts, src/view/share/ShareBar.tsx, src/view/main/IndicatorPanel.tsx, src/view/main/MobileIndicatorBar.tsx, src/view/profile/ProfileCompare.tsx, src/view/profile/ProfileOverview.tsx, tests/unit/u10-share-hidden.test.ts, tests/e2e/u10-share-hidden.spec.ts, oraz istniejące testy udostępniania wymienione niżej (tylko jak w pkt 4)
 Wymagane: tests/unit/u10-share-hidden.test.ts, tests/e2e/u10-share-hidden.spec.ts
 Weryfikacja: pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e
-Przeczytaj najpierw: docs/PLAN-UPROSZCZENIE.md (§3), AGENTS.md, tasks/wstrzymane/README.md
+Przeczytaj najpierw: docs/PLAN-UPROSZCZENIE.md (§3), AGENTS.md, tasks/wstrzymane/README.md, docs/research/u/WYTYCZNE.md, docs/PLAN-UPROSZCZENIE.md §0 (decyzje zatwierdzone)
 Decyzja właściciela (20.11): „na razie wycofać Pobierz i udostępnij”. Przycisk znika z całej strony; „Kopiuj link” zostaje.
 Zadanie:
 1. Jeden przełącznik w src/core/share/share-flag.ts: `isShareEnabled()`; domyślnie false. Włącza go tylko adres z `?share=1` (do testów i ewentualnego powrotu).

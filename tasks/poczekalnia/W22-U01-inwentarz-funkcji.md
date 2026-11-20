@@ -3,10 +3,10 @@ Cel: jedna tabela wszystkiego, co jest na stronie, z oceną „zostaje / scalamy
 Zmieniaj: docs/research/u/U01.md
 Wymagane: docs/research/u/U01.md
 Weryfikacja: pnpm lint
-Przeczytaj najpierw: docs/PLAN-UPROSZCZENIE.md (cel właściciela 20.11), AGENTS.md, docs/PRODUKT.md, src/App.tsx, src/view/Header.tsx, docs/research/qu/QU03*.md, docs/research/qu/QU07*.md
+Przeczytaj najpierw: docs/PLAN-UPROSZCZENIE.md (cel właściciela 20.11), AGENTS.md, docs/PRODUKT.md, src/App.tsx, src/view/Header.tsx, docs/research/qu/QU03*.md, docs/research/qu/QU07*.md, docs/research/u/WYTYCZNE.md, docs/PLAN-UPROSZCZENIE.md §0 (decyzje zatwierdzone)
 Zadanie:
 1. Wypisz każdą trasę (src/App.tsx), każdą pozycję menu, każde okno lub arkusz i każdy przycisk akcji. Dla każdego: co robi dla użytkownika, pliki, liczba linii, testy (unit/e2e), od czego zależy.
-2. Zaznacz duplikaty funkcji, czyli dwa miejsca robiące to samo dla użytkownika: ranking w panelu i /rankingi, picker i /biblioteka, /porownaj, porównanie w profilu i CompareMaps, „Moje wskaźniki” (Biblioteka, panel, okno dodawania, arkusz), udostępnianie w 6 miejscach.
+2. Zaznacz duplikaty funkcji, czyli dwa miejsca robiące to samo dla użytkownika: ranking w panelu i /rankingi, picker i /biblioteka, /porownaj, porównanie w profilu i CompareMaps, „Moje wskaźniki” (Biblioteka, panel, okno dodawania, arkusz), udostępnianie w 6 miejscach. Sprawdź też, czy gdziekolwiek jest nazwa „Moje dane” (menu, napisy, adresy); wypisz każde miejsce. Werdykty już zatwierdzone: /porownaj znika (porównanie dwóch miejsc zostaje w profilu miejsca), /rankingi i /biblioteka znikają jako strony, „Moje wskaźniki” znikają.
 3. Dla każdej pozycji podaj werdykt wg docs/PLAN-UPROSZCZENIE.md §2 i koszt: pliki do usunięcia lub zmiany, testy do usunięcia lub zmiany, ryzyko.
 4. Na koniec liczby: dziś N tras, M przycisków; po uproszczeniu X i Y.
 Gotowe, gdy:

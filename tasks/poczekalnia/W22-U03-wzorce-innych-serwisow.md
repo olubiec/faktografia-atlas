@@ -3,7 +3,7 @@ Cel: przejąć sprawdzone pomysły na proste przeglądanie danych, przełącznik
 Zmieniaj: docs/research/u/U03.md
 Wymagane: docs/research/u/U03.md
 Weryfikacja: pnpm lint
-Przeczytaj najpierw: docs/PLAN-UPROSZCZENIE.md (cel właściciela 20.11), AGENTS.md, docs/PRODUKT.md, docs/INSPIRACJE.md, docs/KONCEPT-STRONA-STARTOWA.md
+Przeczytaj najpierw: docs/PLAN-UPROSZCZENIE.md (cel właściciela 20.11), AGENTS.md, docs/PRODUKT.md, docs/INSPIRACJE.md, docs/KONCEPT-STRONA-STARTOWA.md, docs/research/u/WYTYCZNE.md, docs/PLAN-UPROSZCZENIE.md §0 (decyzje zatwierdzone)
 Zadanie:
 1. Przejrzyj (strony publiczne, bez logowania): Our World in Data (grapher: Mapa/Wykres/Tabela), Datawrapper (mapy i tabele), Eurostat Regions/Statistical Atlas, Gapminder Tools, GUS „Polska w liczbach” i Portal Geostatystyczny, USAFacts oraz 2–3 strony startowe z animowanym, interaktywnym tłem.
 2. Dla każdego: jak wybiera się dane (kategorie, szukaj), jak przełącza się widok, jak zestawia się dwa wskaźniki, ile jest pozycji menu, co działa na telefonie.

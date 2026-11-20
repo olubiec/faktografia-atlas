@@ -3,7 +3,7 @@ Cel: wybrać jedną prostą bibliotekę wykresów i zaprojektować przełącznik
 Zmieniaj: docs/research/u/U05.md, src/view/test/proto/widoki.tsx
 Wymagane: docs/research/u/U05.md
 Weryfikacja: pnpm lint && pnpm typecheck && pnpm test && pnpm build
-Przeczytaj najpierw: docs/PLAN-UPROSZCZENIE.md (cel właściciela 20.11), AGENTS.md, docs/PRODUKT.md, docs/research/qu/QU05*.md, docs/research/qu/QU26*.md (jeśli jest), docs/ELEMENTY.md, src/view/profile/TrendChart.tsx, src/view/ranking/*
+Przeczytaj najpierw: docs/PLAN-UPROSZCZENIE.md (cel właściciela 20.11), AGENTS.md, docs/PRODUKT.md, docs/research/qu/QU05*.md, docs/research/qu/QU26*.md (jeśli jest), docs/ELEMENTY.md, src/view/profile/TrendChart.tsx, src/view/ranking/*, docs/research/u/WYTYCZNE.md, docs/PLAN-UPROSZCZENIE.md §0 (decyzje zatwierdzone)
 Zadanie:
 1. Porównaj: Observable Plot, visx, uPlot, Recharts, Apache ECharts i własny SVG. Kryteria: rozmiar po kompresji, licencja, data ostatniego wydania, pobrania tygodniowo (sprawdź w rejestrze npm), działanie dotykiem, dostępność (klawiatura, czytnik), kolory z tokenów, tryb ciemny. Bez instalacji pakietów w tym zadaniu.
 2. Zaprojektuj 4 widoki dla jednego wskaźnika: mapa (jest), wykres (lata dla wybranego miejsca i Polski lub rozkład), tabela (sortowanie, szukaj), ranking (słupki). Opisz też, co pokazuje każdy przy dwóch wskaźnikach.
