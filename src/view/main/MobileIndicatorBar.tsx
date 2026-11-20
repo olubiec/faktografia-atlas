@@ -9,7 +9,6 @@ import type { UnitIndex } from '@/core/units/types';
 import { MyIndicatorsBar } from '@/view/pages/Rankings';
 import { useMyIndicators } from '@/view/hooks/useMyIndicators';
 import { isBasic } from '@/core/my-indicators/my-indicators';
-import { IndicatorPickerContent } from '@/view/controls/IndicatorPicker';
 import { BottomSheet } from '@/view/ui/BottomSheet';
 import { Icon } from '@/view/ui/Icon';
 import { useShareData } from '@/view/share/useShareData';
@@ -45,33 +44,6 @@ export function MyIndicatorsManager({ all, onPick, defaultOpen = false }: { all:
       {open && (
         <MyIndicatorsBar all={all} list={list} isBasic={isBasic(list)} open={adding} onToggle={() => setAdding((o) => !o)}
           onAdd={(id) => { add(id); setAdding(false); onPick(id); }} onRemove={remove} onReset={reset} />
-      )}
-    </div>
-  );
-}
-
-/** Wybór wskaźnika w arkuszu telefonu: przycisk z bieżącym wskaźnikiem i lista („Moje” + bieżący). */
-export function SheetIndicatorPicker({ indicators, indicator, onSelect, defaultOpen = false }: { indicators: Indicator[]; indicator: Indicator; onSelect: (id: string) => void; defaultOpen?: boolean }) {
-  const [open, setOpen] = useState(defaultOpen);
-  const [query, setQuery] = useState('');
-  return (
-    <div className="flex flex-col">
-      <button type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)}
-        className="flex items-center justify-between gap-2 px-4 py-2 min-h-[44px] w-full text-left bg-arkusz text-tusz border border-linia hover:bg-linia/10 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer rounded-none transition-colors"
-      >
-        <div className="flex flex-col min-w-0 pr-2">
-          <span className="text-xs text-olowek">Wskaźnik</span>
-          <span className="font-semibold text-sm text-tusz line-clamp-2 break-words leading-tight" title={indicator.name}>
-            {indicator.name}
-          </span>
-        </div>
-        <Icon icon={open ? NavArrowUp : NavArrowDown} size={20} aria-hidden={true} className="text-tusz shrink-0" />
-      </button>
-      {open && (
-        <div className="max-h-[220px] flex flex-col border border-t-0 border-linia bg-arkusz overflow-hidden">
-          <IndicatorPickerContent indicators={indicators} value={indicator.id} query={query} onQueryChange={setQuery}
-            onSelect={(id) => { onSelect(id); setOpen(false); setQuery(''); }} />
-        </div>
       )}
     </div>
   );
