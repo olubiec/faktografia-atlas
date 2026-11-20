@@ -51,7 +51,7 @@ export function MyIndicatorsManager({ all, onPick, defaultOpen = false }: { all:
 }
 
 /** Wybór wskaźnika w arkuszu telefonu: przycisk z bieżącym wskaźnikiem i lista („Moje” + bieżący). */
-export function SheetIndicatorPicker({ indicators, indicator, onSelect, defaultOpen = true }: { indicators: Indicator[]; indicator: Indicator; onSelect: (id: string) => void; defaultOpen?: boolean }) {
+export function SheetIndicatorPicker({ indicators, indicator, onSelect, defaultOpen = false }: { indicators: Indicator[]; indicator: Indicator; onSelect: (id: string) => void; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
   const [query, setQuery] = useState('');
   return (
