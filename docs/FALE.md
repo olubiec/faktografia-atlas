@@ -18,7 +18,7 @@ Pętla Jules Loop i Orkiestra zostały usunięte. Zadania wykonują sesje Claude
 - Aktualizacja gałęzi: tylko `git merge origin/main`.
 - Zielone `pnpm lint && pnpm typecheck && pnpm test && pnpm build`, e2e z `@S<n>` w nazwie, jeśli zadanie je ma.
 
-## Stan fal na 18.11.2026
+## Stan fal na 20.11.2026
 | Status | Fala | Zadania | PR / uwagi |
 |---|---|---|---|
 | ✅ | F1–F13 (stary plan S14–S21) | – | zamknięte do 28.10.2026 (szczegóły: `docs/STAN.md`) |
@@ -27,8 +27,9 @@ Pętla Jules Loop i Orkiestra zostały usunięte. Zadania wykonują sesje Claude
 | ✅ | P1 = W19 (PF01–PF09) | 9/9 | #482–#491 |
 | ✅ | FIX6 (A–I) | 10/10 | #493–#502 (plan: `tasks/poczekalnia/FIX6-KOLEJNOSC.md`) |
 | 🔶 | FIX7 | startowy widok mapy | PR #503, CI czerwone (testy dotykowe) |
-| ⬜ | Q2 = W2 | 19 zadań w `tasks/poczekalnia/` (6 nowych + 13 z `Q/`; QC402 i QC502 pominięte) | na „start Q2”, po sprawdzeniu kolizji plików z FIX4/FIX6/FIX7 |
-| ⬜ | Q3–Q7 = W3–W7 | 12 · 11 · 10 · 5 · 3 | po kolei; PM10 jedyne na plikach kamery w W3 – po FIX6 jego zakres do weryfikacji (kamera bez stanu Reacta zrobiona w FIX6H2) |
+| ✅ | Q2 = W2 | 19 zadań | zamknięta: #511–#520, #553 (+ [W2-UX] #554, #555) |
+| ✅ | Q3 = W3 | 21 plików `tasks/W3-*` (20 scalonych) | #521–#548; otwarte tylko `W3-QS04` (szukajka biblioteki tylko pobrane). Z pierwotnego planu Q3 nie weszły: PM10 (czeka na D4), QC606, QC204, QC903/904/916 – do decyzji przy starcie Q4 |
+| ⬜ | Q4–Q7 = W4–W7 | 11 · 10 · 5 · 3 | po kolei; Q4 nie ruszone |
 | ⬜ | Uwagi 19.11 = W4-QU/W5-QU/W6-QU | 7 · 6 · 2 (`tasks/poczekalnia/`) | kolejne Q (Q4–Q6), nie Q2: okno udostępniania, Biblioteka, Rankingi, wykres lat; plan: `docs/PLAN-UWAGI-19-11.md` |
 | ⬜ | Strona startowa (koncept 19.11) = QU32 (W4d) + QU33–QU38 (W6/W7) | 1 + 6 | czeka na decyzje A/B/C; plan: `docs/KONCEPT-STRONA-STARTOWA.md` |
 Uwaga: zadania W17/W18 w poczekalni nadal czekają; W17-T04 i W17-T05 są zastąpione przez PF08 i PF07 (zrobione). Pełny plan: `docs/PLAN-POPRAWEK.md`; otwarte sprawy: `docs/STATUS-PRZERWANE.md`.

@@ -1,4 +1,12 @@
-# Stan – 18.11.2026
+# Stan – 20.11.2026
+
+## Aktualizacja 20.11.2026 (Q2 i Q3 zamknięte; Q4 nie ruszone)
+`main` = commit 1a54912 ([W2-UX] #555). Stan z historii `main`; testów przy tej aktualizacji nie uruchamiano.
+- ✅ **Q2 = W2** zamknięta: wpięcia i logika (QC106 #520, QC302 #511, QC303 #519, QC610 #517, QC611 #518, QC702 #513, QC203 #514, QC913 #515, QC914 #516 i in.) oraz „Domknięcie Q2” #553 (PX01, PX02, PD01, PU01, PD02, PU02, PM01, test QC405). Potem [W2-UX] #554, #555 (przeciąganie wskaźników i stron zestawu, usuwanie Moich tylko przez ×).
+- ✅ **Q3 = W3** zamknięta, 20 z 21 plików `tasks/W3-*`: QC705 #521, QC612 #522, QC915 #523, QR01–QR07 (raporty w `docs/research/q2-*.md`, #524–#530), QS01 #529, QS02 #534, QS03 #535, QS05 #540, QS06 #539, QS07 #538, QT01 #532, QT02 #528, QT03 #536, QT04 #533 oraz poprawki z raportów QR01B–F, QR02c, QR04A (#542–#548). Efekt: wskaźniki z biblioteki dodają się do „Moich” i widać je w Porównaj, kafelki i lista Biblioteki tylko z pobranymi, pasek stron i CSV zestawu w oknie udostępniania, mediana Rankingów z danych, poprawki telefonu 390 px.
+- ⬜ **Q3 otwarte: tylko `W3-QS04`** (podpowiedzi szukajki biblioteki tylko z pobranych; brak filtra i testu `library-search-fetched`).
+- ⬜ **Zadania z pierwotnego planu Q3, których nie ma na main:** PM10 (kamera bez stanu Reacta, czeka na zgodę D4, `tasks/poczekalnia/W3-PM10-…`), QC503 (prawdopodobnie zastąpione przez QS07), QC606 (mapa na wskaźniku z biblioteki), QC204, QC903, QC904, QC916 (`tasks/poczekalnia/Q/`). Do decyzji przy starcie Q4.
+- ⬜ **Q4 (W4) – nie ruszone.** Sekcje niżej opisują stan z 18.11 i są częściowo nieaktualne (m.in. „Fala Q2” w „Do zrobienia”, status FIX7: do sprawdzenia).
 
 ## Stan na 18.11.2026 (aktualizacja D10; reszta pliku niżej to opis z 28.10 – tam, gdzie się różni, obowiązuje ta sekcja)
 `main` = commit f22ee8c ([W2-FIX6G] #502). Pełny wykaz prac przerwanych i otwartych: `docs/STATUS-PRZERWANE.md`; plan fal: `docs/PLAN-POPRAWEK.md`; kolejność animacji kamery: `tasks/poczekalnia/FIX6-KOLEJNOSC.md`. Liczby i odczyt na telefonie: „do weryfikacji” przez właściciela.
@@ -27,8 +35,8 @@
 
 ### Do zrobienia (⬜)
 - ⬜ Dokończyć FIX7 (testy dotykowe, zielone CI, scalenie squashem; zrzuty – workflow „Update snapshots”, jeśli się zmienią).
-- ⬜ Fala Q2 = W2 (19 zadań w `tasks/poczekalnia/`: 6 nowych PD01, PM01, PM02, PU01, PX01, PX02 + 13 z `Q/`): tylko na „start Q2”, po sprawdzeniu kolizji plików z FIX4/FIX6/FIX7 (`AtlasMap.tsx`, `useMapViewState.ts`, `ProfileIndicatorList.tsx`, `AddIndicatorWindow.tsx`, `localities-layer.ts`, `picker-results.ts`). PX02 (decyzja D3) dopiero po sprawdzeniu przyczyny na kodzie po FIX4.
-- ⬜ Fale Q3–Q7 (W3–W7, PLAN-POPRAWEK §3).
+- ✅ [zamknięte 20.11, patrz wyżej] Fala Q2 = W2 (19 zadań w `tasks/poczekalnia/`: 6 nowych PD01, PM01, PM02, PU01, PX01, PX02 + 13 z `Q/`): tylko na „start Q2”, po sprawdzeniu kolizji plików z FIX4/FIX6/FIX7 (`AtlasMap.tsx`, `useMapViewState.ts`, `ProfileIndicatorList.tsx`, `AddIndicatorWindow.tsx`, `localities-layer.ts`, `picker-results.ts`). PX02 (decyzja D3) dopiero po sprawdzeniu przyczyny na kodzie po FIX4.
+- ✅ Q3 (W3) zamknięta poza QS04 (patrz „Aktualizacja 20.11.2026”). ⬜ Fale Q4–Q7 (W4–W7, PLAN-POPRAWEK §3).
 - ⬜ Reduced motion: bezwładność `scrollZoom`/`dragPan` nie jest wyłączona (konfiguracja w `AtlasMap.tsx`).
 - ⬜ Wskaźniki biblioteki (1773 w `available.json`) niepodpięte do UI mapy (QC603, QC606, QC607 w W2–W4).
 - ⬜ Skrypt GUS (host wewnętrzny) – do weryfikacji; 155 nieudanych pobrań + 375 wskaźników poza `available.json` – do weryfikacji (patrz `docs/AUDYT-DANYCH.md`).
