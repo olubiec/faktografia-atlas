@@ -30,7 +30,7 @@ Do weryfikacji w badaniach:
 - stare linki `/?u=…&i=…` przekierowują na `/mapa?…`.
 
 ## 3. Co zatrzymujemy od razu
-- **Wstrzymane (przeniesione do `tasks/wstrzymane/`):** wszystko z „Pobierz i udostępnij”: W4-QU01, W4-QU02, W5-QU10, W5-QC915, W6-QC804, W6-QC917, W7-QC918, W7-QC919, W7-QC920, W18-P05. Kod na stronie zostaje bez zmian, dopóki etap D nie zdecyduje, czy przycisk ukryć.
+- **Wstrzymane (przeniesione do `tasks/wstrzymane/`):** wszystko z „Pobierz i udostępnij”: W4-QU01, W4-QU02, W5-QU10, W5-QC915, W6-QC804, W6-QC917, W7-QC918, W7-QC919, W7-QC920, W18-P05. Przycisk znika ze strony od razu (zadanie U10, jedna krótka sesja); kod okna zostaje i wraca z `?share=1`. Ostateczny los kodu rozstrzyga etap D.
 - **Zamrożone do syntezy (U09):** wszystkie pozostałe pliki w `tasks/poczekalnia/`. Po etapie R każdy plik dostaje werdykt „zostaje / zmienić / skreślić”. Przewidywane skreślenia to zadania o Rankingach jako stronie, Bibliotece jako stronie i „Moich wskaźnikach”. Przykłady: QU11, QU12, QU14, QU15, QU16, QC205, QC507, QC509, QC608, QC609, QC611, QC806. Część W17, W18, W20 i W21 też może wypaść.
 - **Wyjątek: zdrowie `main`.** Czerwone testy po W4 i niedokończone FIX7 trzeba zamknąć, żeby badania i budowa nie dziedziczyły błędów (zadanie U00).
 
@@ -49,7 +49,9 @@ Każda sesja kończy się raportem w `docs/research/u/U<nn>.md`. Na ekranach nic
 | **U07** Strona startowa | Bazuje na `docs/KONCEPT-STRONA-STARTOWA.md`. Wariant A (`/` startowa, `/mapa` mapa) wynika z decyzji właściciela. Bada lekką animację (SVG lub canvas, bez pełnej mapy WebGL): tryb losowy, gdy nic się nie dzieje, reakcja na kursor, kolory z aktualnych danych, telefon bez kursora, reduced-motion, wydajność. Treść: 1 zdanie o koncepcie i 3 kroki instrukcji. Przejście kliknięciem do `/mapa`. | Specyfikacja, budżety (rozmiar, klatki) i lista testów do zmiany przy przeniesieniu mapy na `/mapa`. | Prototyp pod `/__test/proto/start` |
 | **U08** Testy i sprzątanie | Audyt 89 e2e i 221 testów jednostkowych: które są przywiązane do funkcji przewidzianych do usunięcia. Strategia: 6–8 nowych „testów ścieżek” jako strażnik przebudowy. Kolejność wycinania starych testów razem z funkcją. Lista zgód potrzebnych od właściciela. | Mapa testów „zostaje / do usunięcia z funkcją / do zmiany” i projekt testów ścieżek. | Nie |
 
-Kolejność: U00–U08 idą równolegle. Tylko U00 może zmieniać istniejące testy (w zakresie FIX7, na który właściciel już się zgodził).
+U10 (ukrycie „Pobierz i udostępnij”) to mała zmiana na stronie, niezależna od badań; zmienia tylko pięć plików z przyciskiem i testy udostępniania (zgoda właściciela: tylko sposób włączenia przycisku).
+
+Kolejność: U00–U08 i U10 idą równolegle. Tylko U00 może zmieniać istniejące testy (w zakresie FIX7, na który właściciel już się zgodził).
 
 ## 5. Etap D – synteza i decyzje (1 sesja + właściciel)
 - **U09 Synteza** (`tasks/poczekalnia/W23-U09-synteza-plan-docelowy.md`), po scaleniu raportów U01–U08. Pisze `docs/PLAN-DOCELOWY.md`, który zawiera:
@@ -77,7 +79,7 @@ Liczby i kolejność potwierdzi U09. Każde zadanie kończy się czymś, co wida
 | B11 Sprzątanie | Usunięte stare ekrany (Rankingi, Biblioteka, Porównaj, Moje wskaźniki) razem z ich testami, za zgodą właściciela. Przycisk udostępniania ukryty (wg decyzji D). |
 | B12 Testy ścieżek i odbiór | 6–8 testów e2e całych ścieżek, porównanie liczb z U02 (przed/po), test z ludźmi. |
 
-**Razem: ok. 9 (R) + 1 (D) + 12 (B) = 22 sesje**, zamiast ok. 44 ze starego planu. Zadania wydajności (PM12, PM13, PM20, PM14) i strażniki (QC406, PC01) mogą zostać, jeśli synteza uzna, że nadal mają sens. Wtedy dochodzi kilka sesji.
+**Razem: ok. 10 (R, razem z U10) + 1 (D) + 12 (B) = 23 sesje**, zamiast ok. 44 ze starego planu. Zadania wydajności (PM12, PM13, PM20, PM14) i strażniki (QC406, PC01) mogą zostać, jeśli synteza uzna, że nadal mają sens. Wtedy dochodzi kilka sesji.
 
 ## 7. Zasady prostoty (obowiązują w etapie B)
 1. Jeden ekran pracy (`/mapa`). Nowa funkcja nie dostaje własnej strony.

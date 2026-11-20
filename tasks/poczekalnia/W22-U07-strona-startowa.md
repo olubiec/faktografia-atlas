@@ -5,7 +5,7 @@ Wymagane: docs/research/u/U07.md, tests/unit/u07-idle-motion.test.ts
 Weryfikacja: pnpm lint && pnpm typecheck && pnpm test && pnpm build
 Przeczytaj najpierw: docs/PLAN-UPROSZCZENIE.md (cel właściciela 20.11), AGENTS.md, docs/PRODUKT.md, docs/KONCEPT-STRONA-STARTOWA.md (decyzja właściciela 20.11: wariant A, / = startowa, mapa po kliknięciu), docs/research/qu/QU32*.md (jeśli jest), docs/STYL.md
 Zadanie:
-1. Animacja: lekki SVG lub canvas z uproszczonym obrysem (bez pełnej mapy WebGL). Kolory z aktualnego domyślnego wskaźnika. Tryb losowy, gdy brak ruchu przez N s. Reakcja na kursor (np. podświetlenie i fala wokół kursora). Telefon: losowo i reakcja na dotyk. prefers-reduced-motion = obraz statyczny.
+1. Animacja: lekki SVG lub canvas z uproszczonym obrysem (bez pełnej mapy WebGL). Kolory z aktualnych danych. Pomysł właściciela (20.11): albo animacja zmieniająca wskaźniki (efektowny pokaz powiązany z przybliżaniem), albo jeden stały wskaźnik, np. liczba ludności. Zbadaj oba, porównaj koszt, czytelność i wrażenie, i zarekomenduj jeden. Tryb losowy, gdy brak ruchu przez N s. Reakcja na kursor (np. podświetlenie i fala wokół kursora). Telefon: losowo i reakcja na dotyk. prefers-reduced-motion = obraz statyczny.
 2. Budżety: rozmiar obrysu, czas do pierwszego obrazu, p95 klatki na SwiftShader.
 3. Treść: 1 zdanie „co to jest”, 3 kroki „jak używać”, przycisk „Otwórz mapę”, źródło danych (GUS). Szkic tekstów w raporcie.
 4. Przejście do /mapa: co trzeba zmienić (trasy, stare linki /?u=…, ok. 100 testów e2e na „/”). Lista z liczbami z kodu.
