@@ -1,0 +1,46 @@
+{
+  "sectionWeights": {
+    "LUDNOŚĆ": 100,
+    "RYNEK PRACY": 100,
+    "WYNAGRODZENIA I ŚWIADCZENIA SPOŁECZNE": 100,
+    "SZKOLNICTWO": 100,
+    "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY": 100,
+    "FINANSE PUBLICZNE": 100,
+    "GOSPODARKA MIESZKANIOWA I KOMUNALNA": 100,
+    "STAN I OCHRONA ŚRODOWISKA": 100,
+    "TRANSPORT I ŁĄCZNOŚĆ": 100,
+    "KULTURA": 50,
+    "TURYSTYKA": 50,
+    "ORGANIZACJA PAŃSTWA I WYMIAR SPRAWIEDLIWOŚCI": 50,
+    "ROLNICTWO": 50,
+    "PODMIOTY GOSPODARKI NARODOWEJ, PRZEKSZTAŁCENIA WŁASNOŚCIOWE I STRUKTURALNE": 50,
+    "CENY": 50,
+    "SZKOLNICTWO WYŻSZE": 50,
+    "PRZEMYSŁ I BUDOWNICTWO": 50,
+    "WYCHOWANIE PRZEDSZKOLNE": 50,
+    "NARODOWE SPISY POWSZECHNE": 10,
+    "POWSZECHNE SPISY ROLNE": 10,
+    "FINANSE PRZEDSIĘBIORSTW (DANE KWARTALNE)": 10,
+    "FUNDUSZE UNIJNE (DANE PÓŁROCZNE)": 1
+  },
+  "defaultSectionWeight": 20,
+  "keywordBoosts": [
+    { "match": "ogółem", "points": 10 },
+    { "match": "na 1000", "points": 15 },
+    { "match": "%", "points": 10 },
+    { "match": "bezrobot", "points": 15 },
+    { "match": "wynagrodzen", "points": 15 },
+    { "match": "liczba ludności", "points": 20 },
+    { "match": "dochody", "points": 10 },
+    { "match": "mieszkań", "points": 10 }
+  ],
+  "depthPenalty": -8,
+  "levelBonus": { "6": 20, "5": 0 },
+  "pinnedIds": [
+    72305, 60559, 450551, 453193, 634989, 1650633, 461691, 79214, 64428, 76973,
+    76964, 60530, 747060, 60573, 194828, 79130, 1617169, 60191, 60298, 60533
+  ],
+  "popularIds": [],
+  "popularBonus": 40,
+  "maxSectionShareInRun": 0.4
+}
