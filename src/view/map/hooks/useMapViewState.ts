@@ -273,7 +273,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     [driverRef, setCurrentViewState]
   );
 
-  // Miejscowość: znacznik „nie dopasowuj do bbox” + płynny przelot (bez wcześniejszego skoku).
+  // Miejscowość: znacznik „nie dopasowuj do bbox” (efekt measure tylko zapisuje dopasowanie) + płynny przelot.
   const flyToLocality = useCallback((view: ViewState) => {
     localityTargetRef.current = view; animateToView(view, 'in');
     userMovedRef.current = true; // po starcie: resize (panel profilu) nie cofa lotu do bbox
@@ -336,7 +336,6 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         const key = JSON.stringify({ bbox: drillBbox ?? null, inset: Math.round(sheetInset), side });
 
         if (localityTargetRef.current) {
-          // Ruch do miejscowości prowadzi flyToLocality: tu tylko zapisujemy dopasowanie, bez przerywania animacji.
           localityTargetRef.current = null;
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
