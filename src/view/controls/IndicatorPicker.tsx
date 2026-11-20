@@ -2,7 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { NavArrowDown, Check, Search } from 'iconoir-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Icon } from '@/view/ui/Icon';
-import { normalize } from '@/core/search/normalize';
+import { searchIndicators } from '@/core/indicators/reachability';
+import { isLibraryIndicatorId } from '@/core/indicators/registry';
+import { LibraryGroup } from './LibraryGroup';
 import type { Indicator } from '@/core/profile/profile';
 import { cn } from '@/lib/utils';
 
@@ -41,17 +43,6 @@ function groupIndicators(indicators: Indicator[]): Record<string, Indicator[]> {
     groups[ind.group].push(ind);
   }
   return groups;
-}
-
-/**
- * Filtruje wskaźniki po nazwie z wykorzystaniem normalizacji tekstu (bez polskich znaków).
- */
-function filterIndicators(indicators: Indicator[], query: string): Indicator[] {
-  if (!query || !query.trim()) {
-    return indicators;
-  }
-  const normalizedQuery = normalize(query);
-  return indicators.filter((ind) => normalize(ind.name).includes(normalizedQuery));
 }
 
 /**
@@ -104,8 +95,13 @@ export function IndicatorPickerContent({
   setActiveIndex,
   className,
 }: IndicatorPickerContentProps) {
+  // Główne wskaźniki jak dotąd; wskaźniki z biblioteki w osobnej grupie pod nimi
   const filteredIndicators = useMemo(
-    () => filterIndicators(indicators, query),
+    () => searchIndicators(indicators.filter((i) => !isLibraryIndicatorId(i.id)), query),
+    [indicators, query]
+  );
+  const filteredLibrary = useMemo(
+    () => searchIndicators(indicators.filter((i) => isLibraryIndicatorId(i.id)), query),
     [indicators, query]
   );
 
@@ -139,7 +135,7 @@ export function IndicatorPickerContent({
         aria-label="Lista wskaźników"
         className="flex-1 overflow-y-auto p-1 divide-y divide-linia/20 min-h-0"
       >
-        {filteredIndicators.length === 0 ? (
+        {filteredIndicators.length === 0 && filteredLibrary.length === 0 ? (
           <div role="status" className="p-6 text-center text-olowek text-sm">
             Brak wskaźnika o tej nazwie
           </div>
@@ -192,6 +188,7 @@ export function IndicatorPickerContent({
             </div>
           ))
         )}
+        <LibraryGroup key={query} items={filteredLibrary} value={value} onSelect={onSelect} />
       </div>
     </div>
   );
@@ -235,8 +232,9 @@ export function IndicatorPicker({
     [indicators, value]
   );
 
+  // Strzałki obejmują wyłącznie główne wskaźniki
   const filteredIndicators = useMemo(
-    () => filterIndicators(indicators, query),
+    () => searchIndicators(indicators.filter((i) => !isLibraryIndicatorId(i.id)), query),
     [indicators, query]
   );
 
