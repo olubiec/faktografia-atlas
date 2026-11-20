@@ -25,6 +25,7 @@ import type { Unit, UnitLevel } from '@/core/units/types';
 
 import { useMapSelection } from './hooks/useMapSelection';
 import { useMapViewState } from './hooks/useMapViewState';
+import { ZoomButtons } from './ZoomButtons';
 import { useMapColors } from './hooks/useMapColors';
 import { useChoropleth } from './hooks/useChoropleth';
 import { useMainView } from './hooks/useMainView';
@@ -140,6 +141,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     updateViewStateForBbox,
     markUserMoved,
     handleKeyDown,
+    zoomBy,
     mapRef,
     syncMap,
     handleMapMove,
@@ -416,6 +418,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
         >
           <DeckGLOverlay layers={layers} useDevicePixels={pixelRatio} />
         </Map>
+        <ZoomButtons onZoom={zoomBy} canZoomIn={currentViewState.zoom < limits.maxZoom} canZoomOut={currentViewState.zoom > limits.minZoom} />
 
         {!isMobile && hover && hoverUnit && (
           <UnitTooltip
