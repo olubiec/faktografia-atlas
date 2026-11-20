@@ -119,10 +119,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       // Wybór jednostki od razu rezerwuje miejsce na panel profilu (jeden ciągły ruch kamery).
       updateViewStateForBbox(bbox, undefined, !isMobile && bbox ? SIDE_PANEL_PX : 0);
     },
-    onLocalitySelectView: (targetView) => {
-      localityTargetRef.current = targetView;
-      setCurrentViewState(targetView);
-    },
+    onLocalitySelectView: (targetView) => flyToLocality(targetView),
   });
 
   const { profile, isOpen: profileOpen, expected: profileExpected, closeProfile } = useProfile(selectedTeryt, units);
@@ -133,10 +130,9 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     containerRef,
     currentViewState,
     currentViewStateRef,
-    setCurrentViewState,
     limits,
     localities,
-    localityTargetRef,
+    flyToLocality,
     updateViewStateForBbox,
     markUserMoved,
     handleKeyDown,

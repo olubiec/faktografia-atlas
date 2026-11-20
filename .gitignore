@@ -32,3 +32,6 @@ lerna-debug.log*
 
 __pycache__/
 *.pyc
+
+# Katalogi robocze subagentów Claude
+.claude/worktrees/

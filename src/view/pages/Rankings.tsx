@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router';
 import { SiteLayout } from '../layout/SiteLayout';
 import { RankingsFilters } from '../ranking/RankingsFilters';
 import { MyIndicatorsBar } from './MyIndicatorsBar';
+import { RankingsShare } from './RankingsShare';
 import { useIndicatorReorder } from './useIndicatorReorder';
 import { useMyIndicators } from '../hooks/useMyIndicators';
 import { loadUnits } from '../../core/data/load-atlas-data';
@@ -104,6 +105,10 @@ export function Rankings() {
           />
           <MyIndicatorsBar all={ALL_INDICATORS} list={list} isBasic={isBasic(list)} open={adding} onToggle={() => setAdding((o) => !o)} onAdd={(id) => { add(id); setAdding(false); onChange({ i: id }); }} onRemove={remove} onReset={reset} reorder={reorder} />
         </div>
+
+        {ranking && indicator && (
+          <RankingsShare state={state} ranking={ranking.items} units={units} indicator={indicator} year={state.y ?? values?.years[values.years.length - 1] ?? null} />
+        )}
 
         {ranking && (
           <div className="mb-8 p-4 bg-kalka/30 rounded border border-linia">

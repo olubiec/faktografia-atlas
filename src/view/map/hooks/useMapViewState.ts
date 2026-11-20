@@ -1,11 +1,12 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { fitViewState, TOP_OVERLAY_PX } from '@/core/map/fit';
 import { mapLimits, type MapLimits, type ViewState } from '@/core/map/view';
+import { keyZoomDelta, zoomByTarget } from '@/core/map/zoom-by';
 import { loadLocalities } from '@/core/search/load-localities';
 import type { Locality } from '@/core/search/types';
 import { useSheetInset } from '@/view/map/sheetInset';
 import type { CameraKind } from '@/core/map/camera';
-import { planCamera } from '@/core/map/camera-plan';
+import { isSameView, planCamera } from '@/core/map/camera-plan';
 import { stackStep } from '@/core/map/camera-retarget';
 import type { DriverMap } from '@/core/map/camera-driver';
 import { layersZoomBucket } from '@/core/map/localities-layer';
@@ -272,6 +273,12 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     [driverRef, setCurrentViewState]
   );
 
+  // Miejscowość: znacznik „nie dopasowuj do bbox” (efekt measure tylko zapisuje dopasowanie) + płynny przelot.
+  const flyToLocality = useCallback((view: ViewState) => {
+    localityTargetRef.current = view; animateToView(view, 'in');
+    userMovedRef.current = true; // po starcie: resize (panel profilu) nie cofa lotu do bbox
+  }, [animateToView]);
+
   const updateViewStateForBbox = useCallback(
     (targetBbox: Bbox | null, explicitKind?: CameraKind, sideOverride?: number) => {
       const width = containerRef.current?.clientWidth ?? dimensions.width;
@@ -292,7 +299,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         if (!explicitKind) {
           if (newView.zoom < currentViewStateRef.current.zoom - 0.05) {
             kind = 'out';
-          } else if (Math.abs(newView.zoom - currentViewStateRef.current.zoom) < 0.05) {
+          } else if (isSameView(currentViewStateRef.current, newView)) {
             kind = 'instant';
           }
         }
@@ -329,14 +336,9 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         const key = JSON.stringify({ bbox: drillBbox ?? null, inset: Math.round(sheetInset), side });
 
         if (localityTargetRef.current) {
-          driverRef.current?.cancel();
-          isAnimatingRef.current = false;
-          syncCameraSeam(false);
-          setCurrentViewState(localityTargetRef.current);
           localityTargetRef.current = null;
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
-          userMovedRef.current = true;
         } else if (fittedKeyRef.current === null) {
           const activeBbox = drillBbox ?? bounds;
           const init = viewStateWithInset(activeBbox, fitWidth, clientHeight, sheetInset);
@@ -393,13 +395,23 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     }
   }, [needsLocalities]);
 
+  /** Animowana zmiana zoomu o `delta` poziomów (przyciski, klawisze); na granicy nic nie robi. */
+  const zoomBy = useCallback(
+    (delta: number) => {
+      const target = zoomByTarget(currentViewStateRef.current, delta, limits);
+      if (!target) return;
+      markUserMoved();
+      animateToView(target, delta > 0 ? 'in' : 'out');
+    },
+    [animateToView, limits, markUserMoved]
+  );
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', '+', '=', '-'].includes(e.key)) {
-        markUserMoved();
-      }
+      const zoomDelta = keyZoomDelta(e.key);
+      if (zoomDelta !== null) return e.preventDefault(), zoomBy(zoomDelta);
+      if (e.key.startsWith('Arrow')) markUserMoved();
       const panStep = 0.5 / Math.pow(2, currentViewStateRef.current.zoom - 5);
-      const zoomStep = 0.5;
 
       const move = (patch: (prev: ViewState) => Partial<ViewState>) => {
         e.preventDefault();
@@ -409,10 +421,8 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
       else if (e.key === 'ArrowLeft') move((p) => ({ longitude: p.longitude - panStep }));
       else if (e.key === 'ArrowUp') move((p) => ({ latitude: p.latitude + panStep }));
       else if (e.key === 'ArrowDown') move((p) => ({ latitude: p.latitude - panStep }));
-      else if (e.key === '+' || e.key === '=') move((p) => ({ zoom: Math.min(limits.maxZoom, p.zoom + zoomStep) }));
-      else if (e.key === '-') move((p) => ({ zoom: Math.max(limits.minZoom, p.zoom - zoomStep) }));
     },
-    [limits.maxZoom, limits.minZoom, markUserMoved, setCurrentViewState]
+    [markUserMoved, setCurrentViewState, zoomBy]
   );
 
   return {
@@ -425,9 +435,11 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     localities,
     setLocalities,
     localityTargetRef,
+    flyToLocality,
     updateViewStateForBbox,
     markUserMoved,
     handleKeyDown,
+    zoomBy,
     isAnimatingRef,
     mapRef,
     syncMap,

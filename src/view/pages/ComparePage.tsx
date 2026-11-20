@@ -16,6 +16,7 @@ import { CompareMaps } from '../profile/CompareMaps';
 import { ProfileCompareTable } from '../profile/ProfileCompareTable';
 import { PlacePicker } from '../compare/PlacePicker';
 import { CompareIndicatorPicker } from '../compare/CompareIndicatorPicker';
+import { CompareShare } from './CompareShare';
 import { useMyIndicators } from '../hooks/useMyIndicators';
 
 const indicators = indicatorsData as Indicator[];
@@ -172,6 +173,7 @@ export function ComparePage() {
                 onRemove={remove}
               />
             </div>
+            <CompareShare pair={pair} profileA={profileA} profileB={profileB} list={list} />
           </div>
         )}
       </div>

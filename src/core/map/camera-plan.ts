@@ -58,6 +58,20 @@ export function planDuration(
   return Math.min(max, Math.max(min, Number.isFinite(ms) ? ms : min));
 }
 
+/** Przesunięcie środka poniżej tylu pikseli ekranu = praktycznie ten sam widok. */
+export const SAME_VIEW_PX = 0.5;
+/** Różnica zoomu poniżej tej wartości nie liczy się jako zmiana skali. */
+const SAME_VIEW_ZOOM = 0.05;
+
+/** Czy ruch między widokami jest pomijalny (zoom i środek prawie bez zmian)? */
+export function isSameView(from: ViewState, to: ViewState): boolean {
+  if (Math.abs(to.zoom - from.zoom) >= SAME_VIEW_ZOOM) return false;
+  const degPerPx = 360 / (WORLD_PX_AT_ZOOM_0 * 2 ** from.zoom);
+  const dx = to.longitude - from.longitude;
+  const dy = mercatorY(to.latitude) - mercatorY(from.latitude);
+  return Math.hypot(dx, dy) / degPerPx < SAME_VIEW_PX;
+}
+
 export function planCamera(
   from: ViewState,
   to: ViewState,
