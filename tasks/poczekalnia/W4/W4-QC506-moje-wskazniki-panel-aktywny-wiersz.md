@@ -18,7 +18,7 @@ Audyt (docs/AUDYT-W4-20-11.md): katalog `src/view/my-indicators/` nie istnieje; 
 ## Testy (`tests/unit/indicator-panel-my.test.tsx`, `renderToString`, wzór z `indicator-panel-basic.test.tsx`)
 1. `MyIndicatorsManager` z `defaultOpen`, `activeId` = pierwszy z `BASIC_INDICATORS` → dokładnie jeden wiersz ma `aria-current="true"` i jest to wiersz tego wskaźnika (`data-row-id`).
 2. Bez `activeId` (lub `null`) żaden wiersz nie ma `aria-current`.
-3. `activeId` spoza listy „moich” (wskaźnik niebędący w `BASIC_INDICATORS`, ale dodany do `localStorage` przez `MY_INDICATORS_KEY` nie – zostaw poza listą) → brak `aria-current` i brak wyjątku.
+3. `activeId` spoza listy „moich” (id, którego nie ma w `BASIC_INDICATORS`, np. `'b999'`) → brak `aria-current` i brak wyjątku.
 4. Cały `IndicatorPanel` (render jak w `indicator-panel-basic`) z bieżącym wskaźnikiem z bazowych i rozwiniętą sekcją: wiersz bieżącego wskaźnika ma `aria-current`. Jeśli sekcja jest domyślnie zwinięta (renderToString nie klika), sprawdź to testem 1 i opisz w PR, że panel przekazuje `activeId` (np. przez spy na `MyIndicatorsManager` zamockowany w `vi.mock`).
 5. Istniejące `indicator-panel*.test.tsx` zielone bez zmian.
 
