@@ -12,7 +12,7 @@ Zapisane (21 plików, każdy z blokiem „Zasady wspólne”), oparte na `main` 
 ## Brak (agenci przerwani limitem API do 23.11, 5:00 UTC)
 - QC912, oceny QC503/QC606/QC916/QC204 (wytyczne: `docs/AUDYT-W4-20-11.md`)
 - badania QU21, 23, 24, 26, 27, 29–32 (część scalona w QU20/22/25/28 – sprawdzić)
-- Oryginały w `tasks/poczekalnia/Q/` i `tasks/poczekalnia/W4-QU*.md` zostają, dopóki te pliki ich nie zastąpią.
+- Zastąpione oryginały są w `tasks/poczekalnia/archiwum/W4-zastapione/` (22 pliki; QC503 zrobione na main). Obowiązują pliki z tego katalogu.
 
 ## Decyzje przyjęte
 Rankingi osobną stroną; QU03 wariant A; #531 porzucone; wykresy lat własnym SVG; QC403 może ruszyć `useMapViewState.ts` (tylko `zoomBy`) i 1 linię w `AtlasMap.tsx`; krok zoomu: przyciski 1 poziom, klawisze 0,5; PM10 zrobione przez FIX6; PM12 zbędne.
