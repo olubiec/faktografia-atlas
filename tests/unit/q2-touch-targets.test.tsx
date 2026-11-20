@@ -46,7 +46,7 @@ describe('pola dotykowe min. 44 px (Q2)', () => {
     expectTouchable(list, true);
   });
 
-  it('DeckStrip: kafelek, strzałki, usuń i własny „Dodaj stronę” mają min. 44 px', () => {
+  it('DeckStrip: kafelek, uchwyt, usuń i własny „Dodaj stronę” mają min. 44 px', () => {
     const pages = [
       { id: 'p1', kind: 'map' as const, label: '1', title: '' },
       { id: 'p2', kind: 'ranking' as const, label: '2', title: '' },
@@ -54,7 +54,7 @@ describe('pola dotykowe min. 44 px (Q2)', () => {
     const props = { pages, currentId: 'p1', onSelect() {}, onRemove() {}, onMove() {}, onAdd() {}, canRemove: true };
     const list = buttons(renderToString(<StripTiles {...props} />));
     // 2 strony × (kafelek + w lewo + w prawo + usuń) + „Dodaj stronę”
-    expect(list).toHaveLength(9);
+    expect(list).toHaveLength(7);
     expectTouchable(list, true);
   });
 

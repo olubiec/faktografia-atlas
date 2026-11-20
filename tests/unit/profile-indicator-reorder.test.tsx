@@ -2,7 +2,7 @@ import { describe, expect, it, vi, afterEach } from 'vitest';
 import { renderToString } from 'react-dom/server';
 import { buildProfile } from '../../src/core/profile/profile';
 import { ProfileIndicatorList } from '../../src/view/profile/ProfileIndicatorList';
-import { orderByList, stepsToNeighbor } from '../../src/core/profile/indicator-order';
+import { dropIndex, orderByList, stepsToNeighbor } from '../../src/core/profile/indicator-order';
 import { MY_INDICATORS_KEY } from '../../src/core/my-indicators/storage';
 import indicators from '../../config/indicators.json';
 import profileSample from '../fixtures/synthetic/profile-sample.json';
@@ -28,14 +28,18 @@ describe('przesuwanie wskaźników w profilu (PX01)', () => {
     );
     expect(orderByList(items as never, ['avg-wage', 'population']).map((i) => i.indicatorId)).toEqual(['avg-wage', 'population']);
   });
-  it('każdy wiersz ma „Przesuń wyżej/niżej”; skrajne są wyłączone', () => {
-    const list = ['population', 'density'];
-    const html = render(list);
-    expect((html.match(/aria-label="Przesuń wyżej:/g) ?? []).length).toBe(2);
-    expect((html.match(/aria-label="Przesuń niżej:/g) ?? []).length).toBe(2);
-    // population i density są w jednej grupie: pierwszy ma „wyżej” wyłączone, ostatni „niżej”.
-    expect((html.match(/disabled=""[^>]*aria-label="Przesuń wyżej/g) ?? []).length).toBe(1);
-    expect((html.match(/disabled=""[^>]*aria-label="Przesuń niżej/g) ?? []).length).toBe(1);
+  it('każdy wiersz ma uchwyt do przeciągania, a przycisków ▲▼ już nie ma', () => {
+    const html = render(['population', 'density']);
+    expect((html.match(/aria-label="Przeciągnij, aby zmienić kolejność:/g) ?? []).length).toBe(2);
+    expect(html).not.toContain('Przesuń wyżej');
+    expect(html).toContain('touch-none');
+  });
+  it('miejsce upuszczenia liczy się ze środków wierszy, z pominięciem przeciąganego', () => {
+    const mids = [10, 30, 50];
+    expect(dropIndex(mids, 0, 100)).toBe(2);
+    expect(dropIndex(mids, 2, 0)).toBe(0);
+    expect(dropIndex(mids, 1, 31)).toBe(1);
+    expect(dropIndex(mids, 1, 5)).toBe(0);
   });
   it('sąsiad liczony jest wśród widocznych: ukryty wskaźnik z listy jest pomijany', () => {
     const list = ['population', 'b60614', 'density'];
@@ -46,7 +50,7 @@ describe('przesuwanie wskaźników w profilu (PX01)', () => {
   });
   it('przyciski mają cel dotykowy 44 px, a bez personalizacji ich nie ma', () => {
     expect(render(['population', 'density'])).toContain('min-h-[44px] min-w-[44px]');
-    expect(render(['population', 'density'], false)).not.toContain('Przesuń wyżej');
+    expect(render(['population', 'density'], false)).not.toContain('Przeciągnij');
   });
   it('zapis klucza listy nie jest tu ruszany (klucz stały)', () => {
     expect(MY_INDICATORS_KEY).toBe('faktografia-my-indicators');

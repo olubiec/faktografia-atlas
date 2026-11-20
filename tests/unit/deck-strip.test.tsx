@@ -52,15 +52,10 @@ describe('pasek stron eksportu (QC913)', () => {
     expect(off.byLabel('Usuń stronę 2 (Tabela)').props.disabled).toBe(true);
   });
 
-  it('‹ › wołają onMove, krawędzie są wyłączone', () => {
-    const { fn, byLabel } = setup();
-    (byLabel('Przesuń stronę 2 (Tabela) w lewo').props.onClick as () => void)();
-    (byLabel('Przesuń stronę 2 (Tabela) w prawo').props.onClick as () => void)();
-    expect(fn.onMove).toHaveBeenNthCalledWith(1, 'p2', -1);
-    expect(fn.onMove).toHaveBeenNthCalledWith(2, 'p2', 1);
-    expect(byLabel('Przesuń stronę 1 (Mapa) w lewo').props.disabled).toBe(true);
-    expect(byLabel('Przesuń stronę 4 (A vs B) w prawo').props.disabled).toBe(true);
-    expect(byLabel('Przesuń stronę 2 (Tabela) w lewo').props.disabled).toBe(false);
+  it('każda strona ma uchwyt do przeciągania zamiast strzałek ‹ ›', () => {
+    const { byLabel, html } = setup();
+    expect(byLabel('Przeciągnij, aby zmienić kolejność: strona 2 (Tabela)').props.type).toBe('button');
+    expect(html).not.toContain('Przesuń stronę');
   });
 
   it('„+ Dodaj stronę” woła onAdd', () => {
@@ -84,7 +79,7 @@ describe('pasek stron eksportu (QC913)', () => {
   it('wszystkie przyciski mają min. 44 px i nazwę dostępną', () => {
     const { els } = setup();
     const buttons = els.filter((e) => e.type === 'button');
-    expect(buttons.length).toBe(4 * 4 + 1);
+    expect(buttons.length).toBe(4 * 3 + 1);
     for (const b of buttons) {
       expect(String(b.props.className)).toMatch(/min-h-\[44px\]/);
       expect(String(b.props.className)).toMatch(/min-w-\[44px\]/);

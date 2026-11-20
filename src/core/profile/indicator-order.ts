@@ -22,3 +22,11 @@ export function stepsToNeighbor(list: readonly string[], id: string, neighborId?
   return Math.abs(list.indexOf(neighborId) - list.indexOf(id));
 }
 
+
+/**
+ * Na którym miejscu grupy wylądowałby przeciągany wiersz.
+ * `mids` = środki wierszy (oś Y) w kolejności grupy, `from` = miejsce przeciąganego, `y` = położenie palca/myszy.
+ */
+export function dropIndex(mids: readonly number[], from: number, y: number): number {
+  return mids.filter((m, i) => i !== from && m < y).length;
+}

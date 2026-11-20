@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { NavArrowDown, NavArrowUp, Plus, Xmark } from "iconoir-react";
+import type { KeyboardEvent } from "react";
+import { MoreVert, Plus, Xmark } from "iconoir-react";
 import type { ProfileIndicatorItem } from "../../core/profile/profile";
 import type { Unit } from "../../core/units/types";
 import type { Footnote } from "../../core/profile/footnotes";
@@ -7,6 +8,7 @@ import { isBasic } from "../../core/my-indicators/my-indicators";
 import { orderByList, stepsToNeighbor } from "../../core/profile/indicator-order";
 import { useMyIndicators } from "../hooks/useMyIndicators";
 import { Icon } from "../ui/Icon";
+import { useDragReorder } from "../ui/useDragReorder";
 import { ProfileIndicatorRow } from "./ProfileIndicatorRow";
 import { AddIndicatorWindow } from "./AddIndicatorWindow";
 
@@ -33,8 +35,8 @@ function groupBy(
   return [...groups.entries()];
 }
 
-const MOVE_BTN =
-  "min-h-[44px] min-w-[44px] flex items-center justify-center text-olowek hover:text-tusz hover:bg-linia/15 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer shrink-0 disabled:opacity-40 disabled:cursor-default disabled:hover:bg-transparent";
+const GRIP_BTN =
+  "min-h-[44px] min-w-[44px] flex items-center justify-center text-olowek hover:text-tusz hover:bg-linia/15 focus:outline-none focus:ring-2 focus:ring-tusz cursor-move touch-none select-none shrink-0";
 
 /**
  * Lista wskaźników w profilu: domyślnie mały zestaw „Moje wskaźniki”,
@@ -48,6 +50,12 @@ export function ProfileIndicatorList({
 }: ProfileIndicatorListProps) {
   const { list, add, remove, reset, move } = useMyIndicators();
   const [pickerOpen, setPickerOpen] = useState(false);
+
+  const { drag, handlers } = useDragReorder((id, from, to) => {
+    const group = groupBy(orderByList(items, list)).find(([, g]) => g.some((i) => i.indicatorId === id))?.[1];
+    const neighbor = group?.[to]?.indicatorId;
+    if (neighbor) move(id, to < from ? -1 : 1, stepsToNeighbor(list, id, neighbor));
+  });
 
   const shown = personalize ? orderByList(items, list) : items;
   const available = personalize
@@ -67,10 +75,40 @@ export function ProfileIndicatorList({
             <h3 className="text-xs font-bold tracking-wider text-olowek mb-2">
               {groupName}
             </h3>
-            <div>
-              {groupItems.map((item, pos) => (
+            <div data-drag-group="">
+              {groupItems.map((item, pos) => {
+                const dragged = drag?.id === item.indicatorId;
+                const target = drag && !dragged && drag.to === pos;
+                const key = (e: KeyboardEvent<HTMLElement>) => {
+                  if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+                  const dir = e.key === "ArrowUp" ? -1 : 1;
+                  const steps = stepsToNeighbor(list, item.indicatorId, groupItems[pos + dir]?.indicatorId);
+                  if (steps) {
+                    e.preventDefault();
+                    move(item.indicatorId, dir, steps);
+                  }
+                };
+                return (
                 // Linia oddzielająca wiersze jest tu, bo „last:border-b-0” w wierszu liczy się w jego własnym opakowaniu.
-                <div key={item.indicatorId} className="flex items-start gap-1 border-b border-linia last:border-b-0">
+                <div
+                  key={item.indicatorId}
+                  data-row-id={item.indicatorId}
+                  style={dragged ? { transform: `translateY(${drag.offset}px)` } : undefined}
+                  className={`flex items-start gap-1 border-b border-linia last:border-b-0 ${
+                    dragged ? "relative z-10 bg-arkusz opacity-80" : target ? "bg-linia/15" : ""
+                  }`}
+                >
+                  {personalize && (
+                    <button
+                      type="button"
+                      aria-label={`Przeciągnij, aby zmienić kolejność: ${item.indicator.name}`}
+                      onKeyDown={key}
+                      className={GRIP_BTN}
+                      {...handlers(item.indicatorId, pos)}
+                    >
+                      <Icon icon={MoreVert} aria-hidden={true} size={16} />
+                    </button>
+                  )}
                   <div className="flex-1 min-w-0">
                     <ProfileIndicatorRow
                       item={item}
@@ -79,24 +117,6 @@ export function ProfileIndicatorList({
                     />
                   </div>
                   {personalize && (
-                    <>
-                      {([-1, 1] as const).map((dir) => {
-                        const neighbor = groupItems[pos + dir]?.indicatorId;
-                        const steps = stepsToNeighbor(list, item.indicatorId, neighbor);
-                        const label = dir === -1 ? "Przesuń wyżej" : "Przesuń niżej";
-                        return (
-                          <button
-                            key={dir}
-                            type="button"
-                            disabled={steps === 0}
-                            onClick={() => move(item.indicatorId, dir, steps)}
-                            aria-label={`${label}: ${item.indicator.name}`}
-                            className={MOVE_BTN}
-                          >
-                            <Icon icon={dir === -1 ? NavArrowUp : NavArrowDown} aria-hidden={true} size={16} />
-                          </button>
-                        );
-                      })}
                     <button
                       type="button"
                       onClick={() => remove(item.indicatorId)}
@@ -105,10 +125,10 @@ export function ProfileIndicatorList({
                     >
                       <Icon icon={Xmark} aria-hidden={true} size={16} />
                     </button>
-                    </>
                   )}
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ))}
