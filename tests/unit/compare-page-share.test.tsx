@@ -69,7 +69,7 @@ beforeEach(() => {
   captured.dialogs.length = 0;
   writeText = vi.fn<(text: string) => Promise<void>>(() => Promise.resolve());
   vi.stubGlobal('navigator', { clipboard: { writeText } });
-  vi.stubGlobal('window', { location: { origin: 'https://atlas.test', pathname: '/porownaj' } });
+  vi.stubGlobal('window', { location: { origin: 'https://atlas.test', pathname: '/porownaj', search: '?share=1' } });
 });
 afterEach(() => {
   vi.unstubAllGlobals();

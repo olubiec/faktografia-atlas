@@ -124,6 +124,7 @@ test.describe('Test całej ścieżki Pobierz i udostępnij W2.23 (@S19)', () => 
         { width: 390, height: 844 },
       ]) {
         await page.setViewportSize(viewport);
+        await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
         await page.goto('/?e2e=1&i=density&l=pow');
 
         const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
@@ -191,6 +192,7 @@ test.describe('Test całej ścieżki Pobierz i udostępnij W2.23 (@S19)', () => 
       // 2. ŚCIEŻKA PROFILU (?u=3217)
       // -------------------------------------------------------------
       await page.setViewportSize({ width: 1440, height: 900 });
+      await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
       await page.goto('/?e2e=1&u=3217');
 
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
@@ -248,6 +250,7 @@ test.describe('Test całej ścieżki Pobierz i udostępnij W2.23 (@S19)', () => 
       // 3. ŚCIEŻKA PORÓWNANIA (ProfileCompare)
       // -------------------------------------------------------------
       await page.setViewportSize({ width: 1440, height: 900 });
+      await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
       await page.goto('/design');
       await page.waitForLoadState('networkidle');
 
@@ -321,6 +324,7 @@ test.describe('Test całej ścieżki Pobierz i udostępnij W2.23 (@S19)', () => 
       { width: 390, height: 844 },
     ]) {
       await page.setViewportSize(viewport);
+      await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
       await page.goto('/?e2e=1&i=density');
 
       const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
@@ -366,6 +370,7 @@ test.describe('Test całej ścieżki Pobierz i udostępnij W2.23 (@S19)', () => 
     // 2. Reduced motion oraz ograniczenie do najwyżej 1 czerwonego zakreślenia na ekranie
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 1440, height: 900 });
+    await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
     await page.goto('/?e2e=1&u=12&c=12,24');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);

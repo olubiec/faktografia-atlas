@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import type { UnitProfile, IndicatorValues, Indicator } from '../../core/profile/profile';
-import { buildProfile } from '../../core/profile/profile';
+import { buildProfile, type UnitProfile, type IndicatorValues, type Indicator } from '../../core/profile/profile';
 import type { Unit, UnitLevel } from '../../core/units/types';
 import type { MainView } from '../map/hooks/useMainView';
 import { CompareMaps } from './CompareMaps';
@@ -25,6 +24,7 @@ import { versusShareData } from '../../core/share/versus-data';
 import { CompareIndicatorPicker } from '../compare/CompareIndicatorPicker';
 import { useMyIndicators } from '../hooks/useMyIndicators';
 import indicatorsData from '../../../config/indicators.json';
+import { isShareEnabled } from '../../core/share/share-flag';
 
 const indicators = indicatorsData as Indicator[];
 
@@ -461,7 +461,7 @@ export function ProfileCompare({
         profileA={CompareIndicatorPicker.restrictProfile(profileA, list)}
         profileB={CompareIndicatorPicker.restrictProfile(profileB, list)}
       />
-
+      {isShareEnabled() ? (
       <div className="pt-3 flex justify-start">
         <button
           type="button"
@@ -472,6 +472,7 @@ export function ProfileCompare({
           <span>Pobierz i udostępnij</span>
         </button>
       </div>
+      ) : null}
 
       <LazyShareDialog
         isOpen={isShareOpen}

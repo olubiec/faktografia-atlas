@@ -15,6 +15,7 @@ import { Icon } from '@/view/ui/Icon';
 import { useShareData } from '@/view/share/useShareData';
 import { LazyShareDialog } from '@/view/share/LazyShareDialog';
 import { IndicatorPanel } from './IndicatorPanel';
+import { isShareEnabled } from '../../core/share/share-flag';
 
 export interface MobileIndicatorBarProps {
   view: MainView;
@@ -136,6 +137,7 @@ export function MobileIndicatorBar({
           </div>
         </button>
 
+        {isShareEnabled() ? (
         <button
           type="button"
           onClick={() => setIsShareOpen(true)}
@@ -144,6 +146,7 @@ export function MobileIndicatorBar({
         >
           <Icon icon={ShareAndroid} size={18} aria-hidden={true} />
         </button>
+        ) : null}
 
         <span className="sr-only">
           Źródło: GUS, Bank Danych Lokalnych{view.year != null ? `, ${view.year}` : ''}.

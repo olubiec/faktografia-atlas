@@ -12,6 +12,7 @@ test.describe('Mobile BottomSheet Scroll W15-M02', () => {
     }) => {
       await page.setViewportSize(viewport);
       // Otwarcie profilu powiatu wałeckiego (3217) bez parametru ?sheet=full
+      await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
       await page.goto('/?e2e&u=3217');
 
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
@@ -55,6 +56,7 @@ test.describe('Mobile BottomSheet Scroll W15-M02', () => {
   test('clicking "Rozwiń" expands sheet to >= 90% and "Zwiń" returns to ~40%', async ({ page }) => {
     page.on('console', (msg) => console.log('BROWSER LOG:', msg.text()));
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
     await page.goto('/?e2e&u=3217');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
@@ -100,6 +102,7 @@ test.describe('Mobile BottomSheet Scroll W15-M02', () => {
 
   test('exactly one close button (x) is present in mobile profile sheet', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
     await page.goto('/?e2e&u=3217');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);

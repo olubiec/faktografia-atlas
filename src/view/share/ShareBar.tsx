@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Copy, Download } from 'iconoir-react';
 import { Icon } from '../ui/Icon';
+import { isShareEnabled } from '../../core/share/share-flag';
 
 export interface ShareBarProps {
   /** Adres do skopiowania; domyślnie bieżący `window.location.href`. */
@@ -68,7 +69,7 @@ export function ShareBar({ url, onOpenDialog, showDownload = true, label }: Shar
             {state === 'copied' ? 'Skopiowano' : 'Kopiuj link'}
           </span>
         </button>
-        {showDownload && onOpenDialog ? (
+        {showDownload && onOpenDialog && isShareEnabled() ? (
           <button type="button" onClick={onOpenDialog} className={BUTTON_CLASS}>
             <Icon icon={Download} size={16} aria-hidden={true} />
             <span>Pobierz i udostępnij</span>

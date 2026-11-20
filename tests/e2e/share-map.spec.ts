@@ -6,6 +6,7 @@ test.describe('Udostępnianie z panelu wskaźnika (W2.19 @S19)', () => {
   test('?i=density&l=pow -> podgląd z tytułem, rokiem i powiaty, CSV 380 wierszy, zero nowych żądań', async ({
     page,
   }) => {
+    await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
     await page.goto('/?i=density&l=pow');
 
     const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
@@ -61,6 +62,7 @@ test.describe('Udostępnianie z panelu wskaźnika (W2.19 @S19)', () => {
   test('po wejściu w małopolskie (?u=12) -> 22 kształty w scenie mapy i CSV z 22 wierszami', async ({
     page,
   }) => {
+    await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
     await page.goto('/?i=density&u=12');
 
     const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
@@ -100,6 +102,7 @@ test.describe('Udostępnianie z panelu wskaźnika (W2.19 @S19)', () => {
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
     await page.goto('/?i=density');
 
     const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
