@@ -1,6 +1,7 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { fitViewState, TOP_OVERLAY_PX } from '@/core/map/fit';
 import { mapLimits, type MapLimits, type ViewState } from '@/core/map/view';
+import { keyZoomDelta, zoomByTarget } from '@/core/map/zoom-by';
 import { loadLocalities } from '@/core/search/load-localities';
 import type { Locality } from '@/core/search/types';
 import { useSheetInset } from '@/view/map/sheetInset';
@@ -393,13 +394,23 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     }
   }, [needsLocalities]);
 
+  /** Animowana zmiana zoomu o `delta` poziomów (przyciski, klawisze); na granicy nic nie robi. */
+  const zoomBy = useCallback(
+    (delta: number) => {
+      const target = zoomByTarget(currentViewStateRef.current, delta, limits);
+      if (!target) return;
+      markUserMoved();
+      animateToView(target, delta > 0 ? 'in' : 'out');
+    },
+    [animateToView, limits, markUserMoved]
+  );
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', '+', '=', '-'].includes(e.key)) {
-        markUserMoved();
-      }
+      const zoomDelta = keyZoomDelta(e.key);
+      if (zoomDelta !== null) return e.preventDefault(), zoomBy(zoomDelta);
+      if (e.key.startsWith('Arrow')) markUserMoved();
       const panStep = 0.5 / Math.pow(2, currentViewStateRef.current.zoom - 5);
-      const zoomStep = 0.5;
 
       const move = (patch: (prev: ViewState) => Partial<ViewState>) => {
         e.preventDefault();
@@ -409,10 +420,8 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
       else if (e.key === 'ArrowLeft') move((p) => ({ longitude: p.longitude - panStep }));
       else if (e.key === 'ArrowUp') move((p) => ({ latitude: p.latitude + panStep }));
       else if (e.key === 'ArrowDown') move((p) => ({ latitude: p.latitude - panStep }));
-      else if (e.key === '+' || e.key === '=') move((p) => ({ zoom: Math.min(limits.maxZoom, p.zoom + zoomStep) }));
-      else if (e.key === '-') move((p) => ({ zoom: Math.max(limits.minZoom, p.zoom - zoomStep) }));
     },
-    [limits.maxZoom, limits.minZoom, markUserMoved, setCurrentViewState]
+    [markUserMoved, setCurrentViewState, zoomBy]
   );
 
   return {
@@ -428,6 +437,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     updateViewStateForBbox,
     markUserMoved,
     handleKeyDown,
+    zoomBy,
     isAnimatingRef,
     mapRef,
     syncMap,
