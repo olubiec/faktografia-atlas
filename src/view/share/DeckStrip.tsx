@@ -1,5 +1,7 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import { Xmark, NavArrowLeft, NavArrowRight, Plus } from 'iconoir-react';
+import { Xmark, MoreHoriz, Plus } from 'iconoir-react';
+import type { KeyboardEvent, PointerEvent } from 'react';
+import { useDragReorder, type DragState } from '../ui/useDragReorder';
 import { Icon } from '../ui/Icon';
 import type { PageKind } from '../../core/share/deck';
 
@@ -10,7 +12,8 @@ export type DeckStripProps = {
   currentId: string;
   onSelect: (id: string) => void;
   onRemove: (id: string) => void;
-  onMove: (id: string, dir: -1 | 1) => void;
+  /** Przesunięcie strony o `steps` miejsc (domyślnie 1) w lewo (-1) lub w prawo (1). */
+  onMove: (id: string, dir: -1 | 1, steps?: number) => void;
   onAdd: () => void;
   canRemove: boolean;
   /** Zamiast własnego przycisku „Dodaj stronę” (np. menu wyboru rodzaju strony). */
@@ -41,18 +44,37 @@ const BTN_BASE = 'min-h-[44px] min-w-[44px] inline-flex items-center justify-cen
 
 const BTN = `${BTN_BASE} text-tusz`;
 
-type TilesProps = DeckStripProps;
+type Reorder = {
+  drag: DragState | null;
+  handlers: (id: string, from: number) => Record<string, (e: PointerEvent<HTMLElement>) => void>;
+};
+
+type TilesProps = DeckStripProps & { reorder?: Reorder };
 
 // Same kafelki (bez haków) – wydzielone, żeby dało się je sprawdzić bez DOM.
-export function StripTiles({ pages, currentId, onSelect, onRemove, onMove, onAdd, canRemove, addSlot }: TilesProps) {
+export function StripTiles({ pages, currentId, onSelect, onRemove, onMove, onAdd, canRemove, addSlot, reorder }: TilesProps) {
   return (
     <>
       {pages.map((p, i) => {
         const name = p.title || KIND_NAMES[p.kind];
         const ref = `${i + 1} (${name})`;
         const isCurrent = p.id === currentId;
+        const dragged = reorder?.drag?.id === p.id;
+        const target = !!reorder?.drag && !dragged && reorder.drag.to === i;
+        const onKey = (e: KeyboardEvent<HTMLElement>) => {
+          if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+          const dir = e.key === 'ArrowLeft' ? -1 : 1;
+          if (i + dir < 0 || i + dir >= pages.length) return;
+          e.preventDefault();
+          onMove(p.id, dir);
+        };
         return (
-          <div key={p.id} className="flex shrink-0 snap-start items-stretch">
+          <div
+            key={p.id}
+            data-row-id={p.id}
+            style={dragged ? { transform: `translateX(${reorder!.drag!.offset}px)` } : undefined}
+            className={`flex shrink-0 snap-start items-stretch ${dragged ? 'relative z-10 opacity-80' : target ? 'outline outline-2 outline-tusz' : ''}`}
+          >
             <button
               type="button"
               data-strip-tile={p.id}
@@ -64,21 +86,12 @@ export function StripTiles({ pages, currentId, onSelect, onRemove, onMove, onAdd
             </button>
             <button
               type="button"
-              disabled={i === 0}
-              aria-label={`Przesuń stronę ${ref} w lewo`}
-              onClick={() => onMove(p.id, -1)}
-              className={`${BTN} bg-arkusz`}
+              aria-label={`Przeciągnij, aby zmienić kolejność: strona ${ref}`}
+              onKeyDown={onKey}
+              className={`${BTN} bg-arkusz cursor-grab touch-none select-none`}
+              {...reorder?.handlers(p.id, i)}
             >
-              <Icon icon={NavArrowLeft} size={16} aria-hidden />
-            </button>
-            <button
-              type="button"
-              disabled={i === pages.length - 1}
-              aria-label={`Przesuń stronę ${ref} w prawo`}
-              onClick={() => onMove(p.id, 1)}
-              className={`${BTN} bg-arkusz`}
-            >
-              <Icon icon={NavArrowRight} size={16} aria-hidden />
+              <Icon icon={MoreHoriz} size={16} aria-hidden />
             </button>
             <button
               type="button"
@@ -106,7 +119,8 @@ export function StripTiles({ pages, currentId, onSelect, onRemove, onMove, onAdd
 }
 
 export function DeckStrip(props: DeckStripProps) {
-  const { pages, currentId, onRemove } = props;
+  const { pages, currentId, onRemove, onMove } = props;
+  const reorder = useDragReorder((id, from, to) => onMove(id, to < from ? -1 : 1, Math.abs(to - from)), 'x');
   const rootRef = useRef<HTMLDivElement>(null);
   const pendingFocus = useRef<string | null>(null);
 
@@ -138,8 +152,9 @@ export function DeckStrip(props: DeckStripProps) {
       className={`flex w-full max-w-full gap-2 pb-1 ${pages.length > 1 ? 'snap-x snap-mandatory overflow-x-auto' : 'flex-wrap'}`}
       role="group"
       aria-label="Strony zestawu"
+      data-drag-group=""
     >
-      <StripTiles {...props} onRemove={handleRemove} />
+      <StripTiles {...props} onRemove={handleRemove} reorder={reorder} />
     </div>
   );
 }

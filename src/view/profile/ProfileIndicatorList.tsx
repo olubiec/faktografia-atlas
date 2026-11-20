@@ -8,7 +8,7 @@ import { isBasic } from "../../core/my-indicators/my-indicators";
 import { orderByList, stepsToNeighbor } from "../../core/profile/indicator-order";
 import { useMyIndicators } from "../hooks/useMyIndicators";
 import { Icon } from "../ui/Icon";
-import { useRowDrag } from "./useRowDrag";
+import { useDragReorder } from "../ui/useDragReorder";
 import { ProfileIndicatorRow } from "./ProfileIndicatorRow";
 import { AddIndicatorWindow } from "./AddIndicatorWindow";
 
@@ -51,7 +51,7 @@ export function ProfileIndicatorList({
   const { list, add, remove, reset, move } = useMyIndicators();
   const [pickerOpen, setPickerOpen] = useState(false);
 
-  const { drag, handlers } = useRowDrag((id, from, to) => {
+  const { drag, handlers } = useDragReorder((id, from, to) => {
     const group = groupBy(orderByList(items, list)).find(([, g]) => g.some((i) => i.indicatorId === id))?.[1];
     const neighbor = group?.[to]?.indicatorId;
     if (neighbor) move(id, to < from ? -1 : 1, stepsToNeighbor(list, id, neighbor));
@@ -93,7 +93,7 @@ export function ProfileIndicatorList({
                 <div
                   key={item.indicatorId}
                   data-row-id={item.indicatorId}
-                  style={dragged ? { transform: `translateY(${drag.dy}px)` } : undefined}
+                  style={dragged ? { transform: `translateY(${drag.offset}px)` } : undefined}
                   className={`flex items-start gap-1 border-b border-linia last:border-b-0 ${
                     dragged ? "relative z-10 bg-arkusz opacity-80" : target ? "bg-linia/15" : ""
                   }`}

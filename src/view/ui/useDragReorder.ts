@@ -2,10 +2,10 @@ import { useRef, useState } from "react";
 import type { PointerEvent } from "react";
 import { dropIndex } from "../../core/profile/indicator-order";
 
-export interface RowDrag {
+export interface DragState {
   id: string;
-  /** Przesunięcie wiersza za palcem (px, oś Y). */
-  dy: number;
+  /** Przesunięcie elementu za palcem (px, w osi przeciągania). */
+  offset: number;
   /** Miejsce w grupie, na którym wiersz wylądowałby po puszczeniu. */
   to: number;
 }
@@ -13,16 +13,20 @@ export interface RowDrag {
 interface Start {
   id: string;
   from: number;
-  startY: number;
+  start0: number;
   mids: number[];
 }
 
 /**
- * Przeciąganie wiersza za uchwyt (mysz i dotyk) w obrębie jednej grupy.
+ * Przeciąganie elementu za uchwyt (mysz i dotyk) w obrębie jednej grupy ([data-drag-group] > [data-row-id]).
  * Uchwyt ma `touch-action: none`, więc palec na nim nie przewija strony, a reszta wiersza przewija jak zwykle.
  */
-export function useRowDrag(onDrop: (id: string, from: number, to: number) => void) {
-  const [drag, setDrag] = useState<RowDrag | null>(null);
+export function useDragReorder(
+  onDrop: (id: string, from: number, to: number) => void,
+  axis: "x" | "y" = "y",
+) {
+  const [drag, setDrag] = useState<DragState | null>(null);
+  const pos = (e: PointerEvent<HTMLElement>) => (axis === "x" ? e.clientX : e.clientY);
   const start = useRef<Start | null>(null);
 
   const begin = (e: PointerEvent<HTMLElement>, id: string, from: number) => {
@@ -31,17 +35,17 @@ export function useRowDrag(onDrop: (id: string, from: number, to: number) => voi
     if (!group) return;
     const mids = [...group.querySelectorAll<HTMLElement>("[data-row-id]")].map((row) => {
       const b = row.getBoundingClientRect();
-      return b.top + b.height / 2;
+      return axis === "x" ? b.left + b.width / 2 : b.top + b.height / 2;
     });
-    start.current = { id, from, startY: e.clientY, mids };
+    start.current = { id, from, start0: pos(e), mids };
     e.currentTarget.setPointerCapture(e.pointerId);
-    setDrag({ id, dy: 0, to: from });
+    setDrag({ id, offset: 0, to: from });
   };
 
   const track = (e: PointerEvent<HTMLElement>) => {
     const s = start.current;
     if (!s) return;
-    setDrag({ id: s.id, dy: e.clientY - s.startY, to: dropIndex(s.mids, s.from, e.clientY) });
+    setDrag({ id: s.id, offset: pos(e) - s.start0, to: dropIndex(s.mids, s.from, pos(e)) });
   };
 
   const finish = (e: PointerEvent<HTMLElement>, commit: boolean) => {
@@ -49,7 +53,7 @@ export function useRowDrag(onDrop: (id: string, from: number, to: number) => voi
     start.current = null;
     setDrag(null);
     if (!s || !commit) return;
-    const to = dropIndex(s.mids, s.from, e.clientY);
+    const to = dropIndex(s.mids, s.from, pos(e));
     if (to !== s.from) onDrop(s.id, s.from, to);
   };
 

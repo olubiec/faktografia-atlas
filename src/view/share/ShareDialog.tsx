@@ -244,7 +244,11 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
             currentId={current.id}
             onSelect={setCurrentId}
             onRemove={handleRemovePage}
-            onMove={(id, dir) => setDeck(movePage(deck, id, dir))}
+            onMove={(id, dir, steps = 1) => {
+              let next = deck;
+              for (let i = 0; i < steps; i++) next = movePage(next, id, dir);
+              setDeck(next);
+            }}
             onAdd={() => {}}
             canRemove={deck.pages.length > 1}
             addSlot={
@@ -276,12 +280,12 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
 
         {/* Sticky Bottom Actions */}
         <div className="sticky bottom-0 z-10 bg-arkusz border-t border-linia p-3 md:p-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shrink-0 flex flex-wrap gap-2 items-center justify-between">
-          <div className="flex flex-wrap gap-2 w-full max-w-full">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 w-full max-w-full">
             <button
               type="button"
               disabled={isProcessing}
               onClick={handleDownloadPng}
-              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-tusz text-kalka hover:opacity-90 transition-opacity flex-1 sm:flex-none"
+              className="min-h-[44px] px-4 py-2 text-sm font-semibold text-center leading-tight bg-tusz text-kalka hover:opacity-90 transition-opacity col-span-2 sm:flex-none"
             >
               Pobierz obraz
             </button>
@@ -291,7 +295,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
                 type="button"
                 disabled={isProcessing}
                 onClick={handleShare}
-                className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
+                className="min-h-[44px] px-4 py-2 text-sm font-semibold text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors sm:flex-none"
               >
                 Udostępnij
               </button>
@@ -301,7 +305,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
               type="button"
               disabled={isProcessing}
               onClick={handleShareSet}
-              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
+              className="min-h-[44px] px-4 py-2 text-sm font-semibold text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors sm:flex-none"
             >
               Udostępnij zestaw
             </button>
@@ -310,7 +314,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
               type="button"
               disabled={isProcessing}
               onClick={handleDownloadCsv}
-              className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
+              className="min-h-[44px] px-4 py-2 text-sm font-semibold text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors sm:flex-none"
             >
               Pobierz dane (CSV)
             </button>
@@ -320,7 +324,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
                 type="button"
                 disabled={isProcessing}
                 onClick={handleDownloadDeckCsv}
-                className="min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-semibold whitespace-normal break-words text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors flex-1 sm:flex-none"
+                className="min-h-[44px] px-4 py-2 text-sm font-semibold text-center leading-tight bg-arkusz text-tusz border border-linia hover:bg-kalka transition-colors sm:flex-none"
               >
                 Pobierz CSV zestawu
               </button>
