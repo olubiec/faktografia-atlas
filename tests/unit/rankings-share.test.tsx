@@ -77,7 +77,7 @@ beforeEach(() => {
   captured.forceOpen = false;
   writeText = vi.fn<(text: string) => Promise<void>>(() => Promise.resolve());
   vi.stubGlobal('navigator', { clipboard: { writeText } });
-  vi.stubGlobal('window', { location: { origin: 'https://atlas.test', pathname: '/rankingi' } });
+  vi.stubGlobal('window', { location: { origin: 'https://atlas.test', pathname: '/rankingi', search: '?share=1' } });
 });
 afterEach(() => {
   vi.unstubAllGlobals();

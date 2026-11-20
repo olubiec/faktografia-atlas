@@ -20,6 +20,7 @@ import type { ShareDialogData } from '../share/ShareDialog';
 import type { ProfileCardData, RankingCardData } from '../../core/share/card';
 import { Icon } from '../ui/Icon';
 import { NavArrowDown, NavArrowUp, Download } from 'iconoir-react';
+import { isShareEnabled } from '../../core/share/share-flag';
 
 export interface ProfileOverviewProps {
   profile: UnitProfile;
@@ -334,6 +335,7 @@ export function ProfileOverview({
       )}
 
       {/* Przycisk Pobierz i udostępnij */}
+      {isShareEnabled() ? (
       <div className="pt-2 flex justify-start">
         <button
           type="button"
@@ -344,6 +346,7 @@ export function ProfileOverview({
           <span>Pobierz i udostępnij</span>
         </button>
       </div>
+      ) : null}
 
       <LazyShareDialog
         isOpen={isShareOpen}

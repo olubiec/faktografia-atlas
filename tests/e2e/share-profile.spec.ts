@@ -8,6 +8,7 @@ test.describe('Udostępnianie z profilu (W2.20 @S19)', () => {
   }) => {
     test.setTimeout(90000);
     await page.setViewportSize({ width: 1440, height: 900 });
+    await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
     await page.goto('/?e2e&u=3217');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
@@ -79,6 +80,7 @@ test.describe('Udostępnianie z profilu (W2.20 @S19)', () => {
       { width: 390, height: 844 },
     ]) {
       await page.setViewportSize(viewport);
+      await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
       await page.goto('/?e2e&u=3217');
 
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);

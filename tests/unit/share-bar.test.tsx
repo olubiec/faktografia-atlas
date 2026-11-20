@@ -70,7 +70,7 @@ beforeEach(() => {
   hooks.slots = [];
   hooks.idx = 0;
   vi.useFakeTimers();
-  vi.stubGlobal('window', { location: { href: 'https://atlas.test/mapa?x=1' } });
+  vi.stubGlobal('window', { location: { href: 'https://atlas.test/mapa?x=1', search: '?share=1' } });
 });
 
 afterEach(() => {

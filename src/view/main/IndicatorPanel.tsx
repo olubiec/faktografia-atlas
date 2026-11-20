@@ -22,6 +22,7 @@ import { ContextBlock } from '@/view/explain/ContextBlock';
 import { useShareData } from '@/view/share/useShareData';
 import { LazyShareDialog } from '@/view/share/LazyShareDialog';
 import { useMyIndicators } from '@/view/hooks/useMyIndicators';
+import { isShareEnabled } from '../../core/share/share-flag';
 
 export interface IndicatorPanelProps {
   view: MainView;
@@ -156,6 +157,7 @@ export function IndicatorPanel({
         </div>
       )}
 
+      {isShareEnabled() ? (
       <button
         type="button"
         onClick={() => setIsShareOpen(true)}
@@ -164,6 +166,7 @@ export function IndicatorPanel({
       >
         Pobierz i udostępnij
       </button>
+      ) : null}
 
       {children}
 
