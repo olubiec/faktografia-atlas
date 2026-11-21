@@ -87,17 +87,17 @@ export function StartPage() {
       }}
     >
       <div className="relative isolate">
-        {/* Mapa na górze, w całości widoczna; logo na półprzezroczystym banerze nad nią. */}
-        <div className="relative mx-auto w-full max-w-3xl px-4 pt-6 md:px-8">
-          <StartBackground onPick={pickRegion} />
-          <div className="pointer-events-none absolute inset-x-4 top-1/2 flex -translate-y-1/2 justify-center bg-kalka/70 px-4 py-6 md:inset-x-8">
-            <h1 className="m-0 font-extrabold tracking-[-0.02em] text-tusz">
-              <img src={logoSrc} alt="" aria-hidden="true" className="h-10 w-auto md:h-14" />
-              <span className="sr-only">Faktografia</span>
-            </h1>
+        {/* Mapa w całości widoczna; na jej dole baner z logo, bez przerwy łączy się z treścią pod spodem. */}
+        <div className="mx-auto w-full max-w-3xl px-4 pb-12 pt-6 md:px-8 md:pb-16">
+          <div className="relative">
+            <StartBackground onPick={pickRegion} />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-start bg-kalka/70 px-4 py-4">
+              <h1 className="m-0 font-extrabold tracking-[-0.02em] text-tusz">
+                <img src={logoSrc} alt="" aria-hidden="true" className="h-10 w-auto md:h-14" />
+                <span className="sr-only">Faktografia</span>
+              </h1>
+            </div>
           </div>
-        </div>
-        <div className="mx-auto w-full max-w-3xl px-4 pb-12 md:px-8 md:pb-16">
           <div className="flex flex-col gap-6 bg-kalka/95 p-4">
             <p className="text-md font-medium text-tusz md:text-lg">
               Zobacz, jak wypada Twoja gmina na tle całej Polski, na danych GUS.

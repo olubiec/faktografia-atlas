@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { buildProfile, type UnitProfile, type IndicatorValues, type Indicator } from '../../core/profile/profile';
+import { buildProfile, type UnitProfile, type ProfileIndicatorItem, type IndicatorValues, type Indicator } from '../../core/profile/profile';
 import type { Unit, UnitLevel } from '../../core/units/types';
 import type { MainView } from '../map/hooks/useMainView';
 import { CompareMaps } from './CompareMaps';
@@ -23,6 +23,7 @@ import { cn } from '../../lib/utils';
 import { versusShareData } from '../../core/share/versus-data';
 import { BASIC_INDICATORS } from '../../core/indicators/basic';
 import { ChangeIndicatorWindow } from './ProfileIndicatorList';
+import { useExtraItems } from './useExtraItems'; import { ExtraIndicatorList } from './ExtraIndicatorList';
 import indicatorsData from '../../../config/indicators.json';
 import { isShareEnabled } from '../../core/share/share-flag';
 
@@ -74,7 +75,7 @@ export function ProfileCompare({
 }: ProfileCompareProps) {
   const [extra, setExtra] = useState<string[]>([]);
   const list = [...BASIC_INDICATORS, ...extra.filter((id) => !BASIC_INDICATORS.includes(id))];
-  const restrict = (p: UnitProfile): UnitProfile => ({ ...p, indicators: p.indicators.filter((i) => list.includes(i.indicatorId)) });
+  const restrict = (p: UnitProfile, add: ProfileIndicatorItem[] = []): UnitProfile => ({ ...p, indicators: [...p.indicators, ...add].filter((i) => list.includes(i.indicatorId)) });
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [topoData, setTopoData] = useState<any>(null);
   const [loadedUnits, setLoadedUnits] = useState<Unit[]>([]);
@@ -195,6 +196,8 @@ export function ProfileCompare({
   }, []);
 
   const profileB = cleared ? null : (profileBProp ?? loadedProfileB);
+  const extraA = useExtraItems(profileA.teryt, extra, units, new Set(profileA.indicators.map((i) => i.indicatorId)));
+  const extraB = useExtraItems(profileB?.teryt ?? '', profileB ? extra : [], units, new Set((profileB?.indicators ?? []).map((i) => i.indicatorId)));
 
   // Wyszukiwanie drugiego miejsca
   const { results: searchResultsRaw } = useSearch(searchQuery);
@@ -456,7 +459,8 @@ export function ProfileCompare({
         <ChangeIndicatorWindow label="Dodaj wskaźnik do porównania" selectedId={null} onSelect={(id) => setExtra((p) => (p.includes(id) ? p : [...p, id]))} />
         {extra.length > 0 && <button type="button" onClick={() => setExtra([])} className="min-h-[44px] px-4 py-2 border border-linia bg-arkusz text-xs font-semibold cursor-pointer">Tylko podstawowe</button>}
       </div>
-      <ProfileCompareTable profileA={restrict(profileA)} profileB={restrict(profileB)} />
+      <ExtraIndicatorList ids={extra} names={new Map([...extraA, ...profileA.indicators].map((i) => [i.indicatorId, i.indicator.name]))} onRemove={(id) => setExtra((p) => p.filter((x) => x !== id))} />
+      <ProfileCompareTable profileA={restrict(profileA, extraA)} profileB={restrict(profileB, extraB)} />
       {isShareEnabled() ? (
       <div className="pt-3 flex justify-start">
         <button
