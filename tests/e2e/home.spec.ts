@@ -74,9 +74,9 @@ test.describe('Home Page', () => {
     await expect(menuBtn).toBeVisible();
 
     await menuBtn.click();
-    const mapLink = page.locator('header').getByRole('link', { name: 'Mapa' });
+    const mapLink = page.getByRole('dialog').getByRole('link', { name: 'Mapa' });
     await expect(mapLink).toBeVisible();
-    await expect(page.locator('header').getByRole('link', { name: 'Start' })).toBeVisible();
+    await expect(page.getByRole('dialog').getByRole('link', { name: 'Start' })).toBeVisible();
 
     // Close on Escape
     await page.keyboard.press('Escape');

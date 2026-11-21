@@ -1,7 +1,10 @@
 import { lazy, Suspense, useEffect, useState, useSyncExternalStore } from 'react';
 import { Link, useLocation } from 'react-router';
-import { Menu, Search, Xmark } from 'iconoir-react';
-import { Sheet } from '@/view/ui/Sheet';
+import type { MouseEvent } from 'react';
+import { Menu, Search } from 'iconoir-react';
+import { DialogTrigger } from '@/components/ui/dialog';
+import { Window } from '@/view/ui/Window';
+import { LinkList } from '@/view/ui/LinkList';
 import { Icon } from '@/view/ui/Icon';
 import { CopyLinkButton } from '@/view/layout/CopyLinkButton';
 import { ATLAS_RESET_EVENT, homeSearch } from '@/core/url/home';
@@ -48,10 +51,6 @@ export function Header() {
   // Start i Mapa niosą tylko parametry techniczne (e2e, tune, logo); stan widoku zostaje na mapie.
   const startTo = `/${homeSearch(location.search)}`;
   const mapTo = `/mapa${homeSearch(location.search)}`;
-  const onMapClick = () => {
-    setMobileMenuOpen(false);
-    if (isMapActive) window.dispatchEvent(new Event(ATLAS_RESET_EVENT));
-  };
 
   const systemIsDark = useSyncExternalStore(subscribeSystemTheme, getSystemIsDark, () => false);
 
@@ -77,17 +76,6 @@ export function Header() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  useEffect(() => {
-    if (!mobileMenuOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setMobileMenuOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [mobileMenuOpen]);
-
   const cycleTheme = () => {
     const next: Theme = theme === 'system' ? 'light' : theme === 'light' ? 'dark' : 'system';
     setTheme(next);
@@ -99,119 +87,91 @@ export function Header() {
   const themeText = theme === 'system' ? 'Systemowy' : theme === 'light' ? 'Jasny' : 'Ciemny';
 
   let logoSrc = activeIsDark ? '/brand/faktografia-logo-jasne.svg' : '/brand/faktografia-logo-granat.svg';
-  let logoClass = 'h-[28px] md:h-[36px] w-auto';
+  // STYL §4: logo w nagłówku 28–32 px (telefon) i 36–40 px (komputer); klasy ze skali odstępów.
+  let logoClass = 'h-7 md:h-9 w-auto';
 
   if (isZnakLogo) {
     logoSrc = activeIsDark ? '/brand/faktografia-znak-jasne.svg' : '/brand/faktografia-znak-granat.svg';
-    logoClass = 'h-[40px] md:h-[48px] w-auto';
+    logoClass = 'h-10 md:h-12 w-auto';
   }
 
+  // Menu telefonu: Start i Mapa jak na komputerze + strony opisowe; każdy link raz.
+  const desktopItems = [
+    { to: startTo, label: 'Start' },
+    { to: mapTo, label: 'Mapa' },
+  ];
+  const menuItems = [...desktopItems, { to: '/o-projekcie', label: 'O projekcie' }, { to: '/zrodla', label: 'Skąd są dane' }];
+  const activePath = isStartActive ? startTo : isMapActive ? mapTo : location.pathname;
+  // Ponowne „Mapa” na mapie zeruje widok; w menu telefonu dodatkowo zamyka okno.
+  const onNavClick = (e: MouseEvent<HTMLElement>) => {
+    const link = (e.target as HTMLElement).closest('a');
+    if (!link) return;
+    setMobileMenuOpen(false);
+    if (isMapActive && link.getAttribute('href') === mapTo) window.dispatchEvent(new Event(ATLAS_RESET_EVENT));
+  };
+  const themeButton = (className: string) => (
+    <button
+      type="button"
+      onClick={cycleTheme}
+      className={`min-w-11 min-h-11 px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs flex items-center cursor-pointer rounded-none ${className}`}
+    >
+      Motyw: {themeText}
+    </button>
+  );
+
   return (
-    <header className="h-[56px] md:h-[72px] flex justify-between items-center px-4 md:px-8 border-b border-linia bg-kalka text-tusz relative z-20 shrink-0">
-      <Link
-        to={startTo}
-        aria-label="Faktografia – strona główna"
-        className="flex items-center min-h-[44px]"
-      >
-        <img
-          src={logoSrc}
-          alt="Faktografia"
-          className={logoClass}
-        />
+    <header className="h-14 md:h-18 flex justify-between items-center gap-2 px-4 md:px-8 border-b border-linia bg-kalka text-tusz relative z-20 shrink-0">
+      <Link to={startTo} aria-label="Faktografia – strona główna" className="flex items-center min-h-11 shrink-0">
+        <img src={logoSrc} alt="Faktografia" className={logoClass} />
       </Link>
 
-      {/* Desktop Header Search Trigger Button */}
-      <button
-        type="button"
-        onClick={() => changeSearchOpen(true)}
-        className="hidden md:flex items-center gap-2 px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs md:text-sm min-h-[44px] cursor-pointer rounded-none"
-      >
-        <Icon icon={Search} aria-hidden={true} size={20} />
-        <span className="hidden sm:inline text-olowek">Szukaj miejsca...</span>
-        <span className="hidden md:inline-block px-1.5 py-0.5 border border-linia bg-kalka text-olowek text-xs font-mono ml-1">
-          Ctrl K
-        </span>
-      </button>
-
-      {/* Desktop Navigation: tylko Start i Mapa */}
-      <nav aria-label="Menu główne" className="hidden md:flex items-center gap-6 text-sm font-[500]">
-        <Link
-          to={startTo}
-          className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${isStartActive ? 'font-bold text-korekta-tekst' : ''}`}
-          aria-current={isStartActive ? 'page' : undefined}
-        >
-          Start
-        </Link>
-        <Link
-          to={mapTo}
-          onClick={onMapClick}
-          className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${isMapActive ? 'font-bold text-korekta-tekst' : ''}`}
-          aria-current={isMapActive ? 'page' : undefined}
-        >
-          Mapa
-        </Link>
+      <div className="flex items-center gap-2 md:gap-4">
+        {/* Komputer: nawigacja (Start, Mapa) */}
+        <div className="hidden md:block" onClick={onNavClick}>
+          <LinkList items={desktopItems} activePath={activePath} label="Menu główne" />
+        </div>
+        {/* „Kopiuj link”: jedno miejsce na komputerze i telefonie */}
         {isMapActive && <CopyLinkButton />}
-        <button
-          type="button"
-          onClick={cycleTheme}
-          className="min-w-[44px] min-h-[44px] px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs flex items-center justify-center cursor-pointer rounded-none"
-        >
-          Motyw: {themeText}
-        </button>
-      </nav>
-
-      {/* Mobile Controls: Search (lupa) + Menu */}
-      <div className="flex md:hidden items-center gap-2">
-        {isMapActive && <CopyLinkButton className="!px-2" />}
         <button
           type="button"
           onClick={() => changeSearchOpen(true)}
           aria-label="Szukaj miejsca"
-          className="min-w-[44px] min-h-[44px] border border-linia bg-arkusz flex items-center justify-center text-tusz cursor-pointer rounded-none hover:bg-linia/20 transition-colors"
+          className="min-w-11 min-h-11 gap-2 px-3 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-sm flex items-center justify-center cursor-pointer rounded-none"
         >
           <Icon icon={Search} aria-hidden={true} size={20} />
+          <span className="hidden lg:inline text-olowek">Szukaj miejsca...</span>
+          <span className="hidden lg:inline-block px-1.5 py-0.5 border border-linia bg-kalka text-olowek text-xs font-mono">Ctrl K</span>
         </button>
-        <button
-          type="button"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Menu"
-          aria-expanded={mobileMenuOpen}
-          className="min-w-[44px] min-h-[44px] border border-linia bg-arkusz flex items-center justify-center text-tusz cursor-pointer rounded-none hover:bg-linia/20 transition-colors"
-        >
-          <Icon icon={mobileMenuOpen ? Xmark : Menu} aria-hidden={true} size={20} />
-        </button>
-      </div>
-
-      {/* Mobile Menu Sheet */}
-      {mobileMenuOpen && (
-        <Sheet className="absolute top-[56px] md:top-[72px] left-0 right-0 z-30 flex flex-col gap-4 border-t-0 shadow-none md:hidden">
-          <button
-            type="button"
-            onClick={cycleTheme}
-            className="min-w-[44px] min-h-[44px] px-3 py-2 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-xs flex items-center justify-start cursor-pointer rounded-none text-left"
+        {themeButton('hidden md:flex')}
+        {/* Telefon: menu w oknie (wspólny Window + LinkList) */}
+        <div className="md:hidden">
+          <Window
+            open={mobileMenuOpen}
+            onOpenChange={setMobileMenuOpen}
+            title="Menu"
+            description="Strony serwisu i motyw"
+            mode="dialog"
+            slot="mobile-menu"
+            trigger={
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Menu"
+                  aria-haspopup="dialog"
+                  className="min-w-11 min-h-11 border border-linia bg-arkusz flex items-center justify-center text-tusz cursor-pointer rounded-none hover:bg-linia/20 transition-colors"
+                >
+                  <Icon icon={Menu} aria-hidden={true} size={20} />
+                </button>
+              </DialogTrigger>
+            }
           >
-            Motyw: {themeText}
-          </button>
-          <nav aria-label="Menu główne (telefon)" className="flex flex-col gap-4">
-            <Link
-              to={startTo}
-              onClick={() => setMobileMenuOpen(false)}
-              className={`text-sm font-[500] py-2 hover:underline min-h-[44px] flex items-center ${isStartActive ? 'font-bold text-korekta-tekst' : ''}`}
-              aria-current={isStartActive ? 'page' : undefined}
-            >
-              Start
-            </Link>
-            <Link
-              to={mapTo}
-              onClick={onMapClick}
-              className={`text-sm font-[500] py-2 hover:underline min-h-[44px] flex items-center ${isMapActive ? 'font-bold text-korekta-tekst' : ''}`}
-              aria-current={isMapActive ? 'page' : undefined}
-            >
-              Mapa
-            </Link>
-          </nav>
-        </Sheet>
-      )}
+            <div className="flex flex-col gap-4" onClick={onNavClick}>
+              <LinkList items={menuItems} variant="menu" activePath={activePath} label="Menu główne (telefon)" />
+              {themeButton('justify-start')}
+            </div>
+          </Window>
+        </div>
+      </div>
 
       {/* Search Modal */}
       {searchMounted && (
