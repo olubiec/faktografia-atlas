@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Profile Overview (@S14)', () => {
   test('powiat 3217 shows header "Powiat wałecki" without duplicated prefix', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=3217');
+    await openMap(page, '?e2e&u=3217');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -20,7 +21,7 @@ test.describe('Profile Overview (@S14)', () => {
 
   test('gmina 3217011 shows header "Gmina miejska Wałcz"', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=3217011');
+    await openMap(page, '?e2e&u=3217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -32,7 +33,7 @@ test.describe('Profile Overview (@S14)', () => {
 
   test('indicator change in panel updates profile overview without page reload', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -67,7 +68,7 @@ test.describe('Profile Overview (@S14)', () => {
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -93,7 +94,7 @@ test.describe('Profile Overview (@S14)', () => {
 
   test('county profile ?u=1217 shows ranking with all counties in the voivodeship', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217');
+    await openMap(page, '?e2e&u=1217');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -116,7 +117,7 @@ test.describe('Profile Overview (@S14)', () => {
   test('clicking an item in ranking changes ?u=, header and window.__atlas', async ({ page }) => {
     test.setTimeout(60000);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -144,7 +145,7 @@ test.describe('Profile Overview (@S14)', () => {
 
   test('exactly one .rough-annotation exists on screen in profile overview', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -159,7 +160,7 @@ test.describe('Profile Overview (@S14)', () => {
   }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -191,7 +192,7 @@ test.describe('Profile Overview (@S14)', () => {
     });
 
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -212,7 +213,7 @@ test.describe('Profile Overview (@S14)', () => {
 
   test('no layout overlap at 1440x900 viewport', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);

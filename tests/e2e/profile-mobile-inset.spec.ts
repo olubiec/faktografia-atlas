@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Mobile Profile Sheet Inset W2.7 (@S15)', () => {
   test.setTimeout(60000);
@@ -7,7 +8,7 @@ test.describe('Mobile Profile Sheet Inset W2.7 (@S15)', () => {
 
   test('selecting a powiat positions unit bbox above 40% bottom sheet top edge (@S15)', async ({ page }) => {
     // TERYT 1208 = powiat miechowski w woj. małopolskim
-    await page.goto('/?e2e&u=1208');
+    await openMap(page, '?e2e&u=1208');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -53,7 +54,7 @@ test.describe('Mobile Profile Sheet Inset W2.7 (@S15)', () => {
   });
 
   test('closing profile sheet leaves map view stable without jumping (@S15)', async ({ page }) => {
-    await page.goto('/?e2e&u=1208');
+    await openMap(page, '?e2e&u=1208');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -85,7 +86,7 @@ test.describe('Mobile Profile Sheet Inset W2.7 (@S15)', () => {
 
   test('desktop view is unchanged when profile sheet is present (@S15)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto('/?e2e&u=1208');
+    await openMap(page, '?e2e&u=1208');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -98,7 +99,7 @@ test.describe('Mobile Profile Sheet Inset W2.7 (@S15)', () => {
   test('no horizontal scroll at 360px and 390px, touch targets >= 44px (@S15)', async ({ page }) => {
     for (const width of [360, 390]) {
       await page.setViewportSize({ width, height: 800 });
-      await page.goto('/?e2e&u=1208');
+      await openMap(page, '?e2e&u=1208');
 
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
       await page.waitForFunction(() => {
@@ -129,7 +130,7 @@ test.describe('Mobile Profile Sheet Inset W2.7 (@S15)', () => {
   });
 
   test('passes axe accessibility scan with no violations (@S15)', async ({ page }) => {
-    await page.goto('/?e2e&u=1208');
+    await openMap(page, '?e2e&u=1208');
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const results = await new AxeBuilder({ page }).analyze();
@@ -137,7 +138,7 @@ test.describe('Mobile Profile Sheet Inset W2.7 (@S15)', () => {
   });
 
   test('renders at most one red annotation on screen (@S15)', async ({ page }) => {
-    await page.goto('/?e2e&u=1208');
+    await openMap(page, '?e2e&u=1208');
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const annotations = page.locator('.rough-annotation');
@@ -147,7 +148,7 @@ test.describe('Mobile Profile Sheet Inset W2.7 (@S15)', () => {
 
   test('respects prefers-reduced-motion (@S15)', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/?e2e&u=1208');
+    await openMap(page, '?e2e&u=1208');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 

@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 // U10: „Pobierz i udostępnij” jest ukryte; „Kopiuj link” zostaje. ?share=1 przywraca przycisk.
 const VIEWPORTS = [
@@ -13,14 +14,14 @@ for (const vp of VIEWPORTS) {
     test.use({ viewport: vp });
 
     test('mapa: panel wskaźnika nie ma przycisku „Pobierz i udostępnij”', async ({ page }) => {
-      await page.goto('/?e2e&i=density&l=pow');
+      await openMap(page, '?e2e&i=density&l=pow');
       await expect(page.locator('main, #root').first()).toBeVisible();
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
       await expect(shareButton(page)).toHaveCount(0);
     });
 
     test('profil miejsca: brak „Pobierz i udostępnij”, jest „Kopiuj link”', async ({ page }) => {
-      await page.goto('/?e2e&u=12&sheet=full');
+      await openMap(page, '?e2e&u=12&sheet=full');
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
       await expect(page.getByText('Kopiuj link').first()).toBeVisible();
       await expect(shareButton(page)).toHaveCount(0);

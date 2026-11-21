@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 // Na telefonie (< 768 px) panel wskaźnika jest dolnym arkuszem: najpierw trzeba go otworzyć dolnym paskiem.
 // Zwraca panel, w którym są wskaźnik i stopka (arkusz na telefonie, kolumna na komputerze).
@@ -24,7 +25,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
   for (const { name, width, height } of viewports) {
     test(`@S14 indicator picker fits in viewport and scrolls internally to select last indicator on ${name}`, async ({ page }) => {
       await page.setViewportSize({ width, height });
-      await page.goto('/');
+      await openMap(page);
       await openPanelIfMobile(page);
 
       // Open indicator picker button
@@ -73,7 +74,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
 
     test(`@S14 indicator panel scrolls completely so ranking and footer are visible on ${name}`, async ({ page }) => {
       await page.setViewportSize({ width, height });
-      await page.goto('/');
+      await openMap(page);
       const panel = await openPanelIfMobile(page);
       await expect(panel).toBeVisible();
 
@@ -88,7 +89,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
 
   test('@S14 search input field remains visible while list is scrolled', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 600 });
-    await page.goto('/');
+    await openMap(page);
 
     const triggerButton = page.locator('button', { hasText: 'Wskaźnik' }).first();
     await triggerButton.click();
@@ -107,7 +108,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
 
   test('@S14 no horizontal scroll at 390px and touch targets are at least 44px', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
+    await openMap(page);
     await openPanelIfMobile(page);
 
     const isNotHorizontallyScrollable = await page.evaluate(() => {
@@ -129,7 +130,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
 
   test('@S14 axe accessibility audit passes with indicator picker open', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/');
+    await openMap(page);
 
     const triggerButton = page.locator('button', { hasText: 'Wskaźnik' }).first();
     await triggerButton.click();

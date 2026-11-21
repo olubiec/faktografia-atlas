@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 // Okno udostępniania z panelu wskaźnika: dane mają tylko mapa i ranking, więc menu „Dodaj stronę” oferuje tylko te rodzaje.
 async function openShare(page: import('@playwright/test').Page) {
   await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
-  await page.goto('/?i=density&l=pow');
+  await openMap(page, '?i=density&l=pow');
   const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
   await expect(panel).toBeVisible({ timeout: 15000 });
   await panel.getByRole('button', { name: 'Pobierz i udostępnij mapę' }).click();

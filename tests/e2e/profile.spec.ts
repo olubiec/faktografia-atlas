@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 test.describe('Unit Profile Sheet (CC7.2b)', () => {
   test('selecting unit via ?u=1217011 opens profile sheet with Zakopane and sets profileOpen seam', async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -21,7 +22,7 @@ test.describe('Unit Profile Sheet (CC7.2b)', () => {
   test('close button and Escape key close sheet while ?u= parameter remains', async ({ page }) => {
     test.setTimeout(60000);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -38,7 +39,7 @@ test.describe('Unit Profile Sheet (CC7.2b)', () => {
     expect(urlSearch).toContain('u=1217011');
 
     // Ponowne otwarcie wybranego TERYT poprzez ponowne nawigowanie
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     // Test 2: Zamknięcie klawiszem Escape
@@ -57,7 +58,7 @@ test.describe('Unit Profile Sheet (CC7.2b)', () => {
   }) => {
     // Wersja mobilna (390 px)
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
     // Wersja mobilna używa ProfileSheetMobile w react-modal-sheet
@@ -94,7 +95,7 @@ test.describe('Unit Profile Sheet (CC7.2b)', () => {
     });
 
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 

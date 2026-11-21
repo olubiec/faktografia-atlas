@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 test.describe('Full Desktop Profile Flow (@S14)', () => {
   test('@s14 profil – komputer', async ({ page }) => {
@@ -19,7 +20,7 @@ test.describe('Full Desktop Profile Flow (@S14)', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
 
     // 1. Wejście na stronę główną / z ?e2e
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const initialProfileReqCount = profileRequests.length;

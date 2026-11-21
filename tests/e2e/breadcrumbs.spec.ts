@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
   test('displays full breadcrumb path and last item has aria-current="page"', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=0201011&e2e');
+    await openMap(page, '?u=0201011&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const nav = page.locator('nav[aria-label="Ścieżka"]');
@@ -23,7 +24,7 @@ test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
   test('clicking parent breadcrumbs updates selected unit and ?u= URL parameter', async ({ page }) => {
     test.setTimeout(60000);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=0201011&e2e');
+    await openMap(page, '?u=0201011&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const nav = page.locator('nav[aria-label="Ścieżka"]');
@@ -51,7 +52,7 @@ test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
 
   test('parent breadcrumb buttons have minimum 44px touch target', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=0201&e2e');
+    await openMap(page, '?u=0201&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const nav = page.locator('nav[aria-label="Ścieżka"]');
@@ -69,7 +70,7 @@ test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
   test('sub-unit list shows children and supports mouse and keyboard navigation', async ({ page }) => {
     test.setTimeout(60000);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=02&e2e');
+    await openMap(page, '?u=02&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const unitList = page.locator('ul[aria-label="Jednostki podrzędne"]');
@@ -86,7 +87,7 @@ test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
     expect(atlasState.selected).toBe('0201');
 
     // Keyboard selection via Enter/Space
-    await page.goto('/?u=02&e2e');
+    await openMap(page, '?u=02&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const powButton2 = page.locator('ul[aria-label="Jednostki podrzędne"]').locator('button', { hasText: 'powiat bolesławiecki' });
@@ -101,7 +102,7 @@ test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
 
   test('focus order follows breadcrumbs -> Back button -> map (sub-unit list is in the indicator panel)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=02&e2e');
+    await openMap(page, '?u=02&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const navPolskaButton = page.locator('nav[aria-label="Ścieżka"]').locator('button', { hasText: 'Polska' });
@@ -127,7 +128,7 @@ test.describe('Breadcrumbs, URL ?u= and Keyboard Sub-Unit List (CC4.3)', () => {
 
   test('axe accessibility audit passes on voivodeship view', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=02&e2e');
+    await openMap(page, '?u=02&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const results = await new AxeBuilder({ page }).analyze();

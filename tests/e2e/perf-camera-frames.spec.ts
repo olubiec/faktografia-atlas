@@ -1,5 +1,6 @@
 import { test, expect, type Browser, type CDPSession, type Page } from '@playwright/test';
 import { summarizeFrames, type FrameSummary } from '../../src/core/map/frame-stats';
+import { openMap } from './helpers/open-map';
 
 // Pomiar płynności kamery przy dławieniu procesora ×4 (≈ średni telefon).
 // Liczby zależą od maszyny i od programowego WebGL (SwiftShader) – to pomiar względny.
@@ -48,7 +49,7 @@ async function openPage(browser: Browser, query: string) {
     deviceScaleFactor: 3,
   });
   const page = await context.newPage();
-  await page.goto(`/${query}`);
+  await openMap(page, query);
   await page.waitForFunction(() => (window as unknown as { __atlas?: { ready: boolean } }).__atlas?.ready === true);
   // Baner zgody zasłania dół ekranu – odrzucamy go, żeby nie zakłócał ruchu
   const decline = page.getByRole('button', { name: 'Nie', exact: true });

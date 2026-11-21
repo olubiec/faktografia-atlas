@@ -1,12 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Profile Tabs W2.2 (@S14)', () => {
   test('displays profile tabs correctly for voivodeship and county, omits for gmina (@S14)', async ({
     page,
   }) => {
     // 1. Małopolskie (województwo - TERYT 12)
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
     await page.waitForSelector('[data-slot="side"]');
 
     const tabList = page.getByRole('tablist');
@@ -56,7 +57,7 @@ test.describe('Profile Tabs W2.2 (@S14)', () => {
     await expect(overviewTab).toHaveAttribute('aria-selected', 'true');
 
     // 2. Gmina (np. Kraków - TERYT 1261011) - brak zakładki z listą
-    await page.goto('/?e2e&u=1261011');
+    await openMap(page, '?e2e&u=1261011');
     await page.waitForSelector('[data-slot="side"]');
 
     await expect(page.getByRole('tab', { name: 'Przegląd' })).toBeVisible();
@@ -64,7 +65,7 @@ test.describe('Profile Tabs W2.2 (@S14)', () => {
   });
 
   test('supports keyboard navigation between tabs (@S14)', async ({ page }) => {
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
     await page.waitForSelector('[data-slot="side"]');
 
     const overviewTab = page.getByRole('tab', { name: 'Przegląd' });
@@ -86,7 +87,7 @@ test.describe('Profile Tabs W2.2 (@S14)', () => {
   }) => {
     for (const width of [360, 390]) {
       await page.setViewportSize({ width, height: 800 });
-      await page.goto('/?e2e&u=12&sheet=full');
+      await openMap(page, '?e2e&u=12&sheet=full');
       await page.getByRole('tablist').waitFor();
 
       const scrollWidth = await page.evaluate(
@@ -109,7 +110,7 @@ test.describe('Profile Tabs W2.2 (@S14)', () => {
   });
 
   test('passes axe accessibility checks (@S14)', async ({ page }) => {
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
     await page.waitForSelector('[data-slot="side"]');
 
     const results = await new AxeBuilder({ page }).analyze();
@@ -118,7 +119,7 @@ test.describe('Profile Tabs W2.2 (@S14)', () => {
 
   test('respects prefers-reduced-motion (@S14)', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
     await page.waitForSelector('[data-slot="side"]');
 
     const powiatyTab = page.getByRole('tab', { name: /Powiaty/ });

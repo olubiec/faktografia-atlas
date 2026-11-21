@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 import fs from 'node:fs';
+import { openMap } from './helpers/open-map';
 
 test.describe('Udostępnianie z profilu (W2.20 @S19)', () => {
   test('profil powiatu 3217 -> karta z Powiat wałecki i liczbą z przeglądu; CSV z wierszami; zero nowych żądań', async ({
@@ -9,7 +10,7 @@ test.describe('Udostępnianie z profilu (W2.20 @S19)', () => {
     test.setTimeout(90000);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
-    await page.goto('/?e2e&u=3217');
+    await openMap(page, '?e2e&u=3217');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -81,7 +82,7 @@ test.describe('Udostępnianie z profilu (W2.20 @S19)', () => {
     ]) {
       await page.setViewportSize(viewport);
       await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
-      await page.goto('/?e2e&u=3217');
+      await openMap(page, '?e2e&u=3217');
 
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);

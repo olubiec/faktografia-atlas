@@ -1,9 +1,10 @@
 import { test, expect, type Page } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 // Ekran główny (PRODUKT.md §3, makieta 02): panel wskaźnika po lewej, mapa na resztę szerokości.
 
 async function ready(page: Page, url: string) {
-  await page.goto(url);
+  await openMap(page, url.slice(1));
   await page.waitForFunction(() => (window as any).__atlas?.ready === true);
   await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 }

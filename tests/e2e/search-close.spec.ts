@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 test.describe('Search Dialog Close and Focus behavior (CC13.5a)', () => {
   test('klik w przycisk wyszukiwania -> okno otwarte; klik w krzyżyk -> zamknięte i nadal zamknięte po 1 s, fokus wraca na przycisk wyszukiwania', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     const homeSearchInput = page.getByRole('button', { name: 'Szukaj miejsca' });
@@ -26,7 +27,7 @@ test.describe('Search Dialog Close and Focus behavior (CC13.5a)', () => {
   });
 
   test('Escape zamyka okno, pozostaje zamknięte po 1 s, fokus wraca na przycisk wyszukiwania', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     const homeSearchInput = page.getByRole('button', { name: 'Szukaj miejsca' });
@@ -48,7 +49,7 @@ test.describe('Search Dialog Close and Focus behavior (CC13.5a)', () => {
   });
 
   test('klik w tło (overlay) zamyka okno, pozostaje zamknięte po 1 s, fokus wraca na przycisk wyszukiwania', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     const homeSearchInput = page.getByRole('button', { name: 'Szukaj miejsca' });
@@ -71,7 +72,7 @@ test.describe('Search Dialog Close and Focus behavior (CC13.5a)', () => {
   });
 
   test('fokus na przycisku nie otwiera okna; Enter i Spacja otwierają okno', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     const homeSearchInput = page.getByRole('button', { name: 'Szukaj miejsca' });
@@ -100,7 +101,7 @@ test.describe('Search Dialog Close and Focus behavior (CC13.5a)', () => {
   });
 
   test('Ctrl+K otwiera i zamyka wyszukiwarkę', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     const dialogSearchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
@@ -116,7 +117,7 @@ test.describe('Search Dialog Close and Focus behavior (CC13.5a)', () => {
 
   test('na telefonie (390px) krzyżyk zamyka okno pełnoekranowe', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     const homeSearchInput = page.getByRole('button', { name: 'Szukaj miejsca' });

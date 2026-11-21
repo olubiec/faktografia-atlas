@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Compare Map Outlines (@S18)', () => {
   test('with ?c=12,14 window.__atlas shows two outlined units', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?c=12,14&e2e');
+    await openMap(page, '?c=12,14&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const atlasState = await page.evaluate(() => (window as any).__atlas);
@@ -25,7 +26,7 @@ test.describe('Compare Map Outlines (@S18)', () => {
 
   test('without ?c= shows single outlined unit when selected', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=12&e2e');
+    await openMap(page, '?u=12&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const atlasState = await page.evaluate(() => (window as any).__atlas);
@@ -37,7 +38,7 @@ test.describe('Compare Map Outlines (@S18)', () => {
   test('no horizontal scroll at 360px and 390px viewports with ?c=12,14', async ({ page }) => {
     for (const width of [360, 390]) {
       await page.setViewportSize({ width, height: 844 });
-      await page.goto('/?c=12,14&e2e');
+      await openMap(page, '?c=12,14&e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
       const isNotHorizontallyScrollable = await page.evaluate(() => {
@@ -49,7 +50,7 @@ test.describe('Compare Map Outlines (@S18)', () => {
 
   test('respects prefers-reduced-motion with ?c=12,14', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/?c=12,14&e2e');
+    await openMap(page, '?c=12,14&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const atlasState = await page.evaluate(() => (window as any).__atlas);

@@ -2,6 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import sampleFixture from '../fixtures/prng/sample.json' with { type: 'json' };
 import realUnits from '../../public/data/units.json' with { type: 'json' };
 import { buildLocalities } from '../../scripts/geo/localities-parse.mjs';
+import { openMap } from './helpers/open-map';
 
 // Ruch kamery przy wejściu w głąb i powrocie – @Q404.
 
@@ -20,7 +21,7 @@ async function open(page: Page, url = '/?e2e') {
   await page.route('/data/localities.json', (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockLocalities) })
   );
-  await page.goto(url);
+  await openMap(page, url.slice(1));
   await page.waitForFunction(() => (window as unknown as { __atlas?: Atlas }).__atlas?.ready === true);
 }
 

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 test.describe('Rankings and Compare pages (@W16-M02)', () => {
   const viewports = [
@@ -10,7 +11,7 @@ test.describe('Rankings and Compare pages (@W16-M02)', () => {
     test(`nawigacja miedzy stronami dziala poprawnie (${vp.name})`, async ({ page }) => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
 
-      await page.goto('/');
+      await openMap(page);
 
       const openMenu = async () => {
         if (vp.name === 'mobile') {
@@ -31,7 +32,7 @@ test.describe('Rankings and Compare pages (@W16-M02)', () => {
       await expect(page).toHaveURL(/\/biblioteka/);
 
       await openMenu();
-      await page.goto('/');
+      await openMap(page);
       await expect(page).toHaveURL(/\/(\?.*)?$/); // Match home with or without search params
     });
   }

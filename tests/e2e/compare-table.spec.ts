@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Profile Compare Table W2.15 (@S18)', () => {
   test('desktop (1440x900): 4-column table renders valid indicator rows with diffText matching compare() and no level notice for same level (@S18)', async ({
@@ -8,7 +9,7 @@ test.describe('Profile Compare Table W2.15 (@S18)', () => {
     test.setTimeout(60000);
 
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e=1&u=12&c=12,14');
+    await openMap(page, '?e2e=1&u=12&c=12,14');
 
     await page.waitForFunction(
       () =>
@@ -49,7 +50,7 @@ test.describe('Profile Compare Table W2.15 (@S18)', () => {
     test.setTimeout(60000);
 
     await page.setViewportSize({ width: 360, height: 740 });
-    await page.goto('/?e2e=1&u=12&c=12,14');
+    await openMap(page, '?e2e=1&u=12&c=12,14');
 
     await page.waitForFunction(
       () =>
@@ -99,7 +100,7 @@ test.describe('Profile Compare Table W2.15 (@S18)', () => {
 
     await page.setViewportSize({ width: 1440, height: 900 });
     // Porównanie województwa 12 z powiatem krakowskim 1206
-    await page.goto('/?e2e=1&u=12&c=12,1206');
+    await openMap(page, '?e2e=1&u=12&c=12,1206');
 
     await page.waitForFunction(
       () =>
@@ -118,7 +119,7 @@ test.describe('Profile Compare Table W2.15 (@S18)', () => {
     test.setTimeout(60000);
 
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e=1&u=12&c=12,14');
+    await openMap(page, '?e2e=1&u=12&c=12,14');
 
     await page.waitForFunction(
       () =>
@@ -144,7 +145,7 @@ test.describe('Profile Compare Table W2.15 (@S18)', () => {
 
     await page.setViewportSize({ width: 360, height: 740 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/?e2e=1&u=12&c=12,14');
+    await openMap(page, '?e2e=1&u=12&c=12,14');
 
     await page.waitForFunction(
       () =>

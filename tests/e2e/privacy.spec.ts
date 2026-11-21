@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Privacy Page (/prywatnosc)', () => {
   test('loads properly with h1 Privacy and required information', async ({ page }) => {
@@ -61,7 +62,7 @@ test.describe('Privacy Page (/prywatnosc)', () => {
   });
 
   test('ConsentBar contains working "Więcej" link pointing to /prywatnosc with min 44x44px touch target and keyboard accessibility', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
 
     const consentBar = page.locator('div[role="region"][aria-label="Zgoda na analitykę"]');
     await expect(consentBar).toBeVisible();

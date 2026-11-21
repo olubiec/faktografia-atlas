@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 import fs from 'node:fs';
 import path from 'node:path';
+import { openMap } from './helpers/open-map';
 
 const explanationsFixture = JSON.parse(
   fs.readFileSync(path.join(process.cwd(), 'tests/fixtures/explanations.json'), 'utf-8')
@@ -23,7 +24,7 @@ test.describe('Profile Indicator Row Expansion @S14', () => {
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -46,7 +47,7 @@ test.describe('Profile Indicator Row Expansion @S14', () => {
 
   test('expanded row displays chart with labeled years and min/max', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -71,7 +72,7 @@ test.describe('Profile Indicator Row Expansion @S14', () => {
   }) => {
     test.setTimeout(60000);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -126,7 +127,7 @@ test.describe('Profile Indicator Row Expansion @S14', () => {
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -165,7 +166,7 @@ test.describe('Profile Indicator Row Expansion @S14', () => {
     });
 
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     // Czyścimy żądania zrobione podczas wstępnego ładowania strony
@@ -188,7 +189,7 @@ test.describe('Profile Indicator Row Expansion @S14', () => {
 
   test('no axe accessibility errors on open profile with expanded row', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 

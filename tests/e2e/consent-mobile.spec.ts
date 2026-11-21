@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 test.describe('Consent Bar Mobile', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
   test('bar height is max 15% of window and buttons are on one line', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
 
     const consentBar = page.getByRole('region', { name: 'Zgoda na analitykę' });
     await expect(consentBar).toBeVisible();

@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Comparison and Mobile View Flow W2.17 (@S18)', () => {
   test('@s18 compare flow on desktop and mobile: URL c=, two outlines, copy link', async ({
@@ -7,7 +8,7 @@ test.describe('Comparison and Mobile View Flow W2.17 (@S18)', () => {
   }) => {
     // 1. Desktop (1440x900)
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e=1&u=12&c=12,14');
+    await openMap(page, '?e2e=1&u=12&c=12,14');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     expect(page.url()).toContain('c=12,14');
@@ -40,7 +41,7 @@ test.describe('Comparison and Mobile View Flow W2.17 (@S18)', () => {
 
     // 2. Mobile (360x740)
     await page.setViewportSize({ width: 360, height: 740 });
-    await page.goto('/?e2e=1&u=12&c=12,14');
+    await openMap(page, '?e2e=1&u=12&c=12,14');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const atlasStateMobile360: any = await page.evaluate(() => (window as any).__atlas);
@@ -63,7 +64,7 @@ test.describe('Comparison and Mobile View Flow W2.17 (@S18)', () => {
       { width: 390, height: 844 },
     ]) {
       await page.setViewportSize(viewport);
-      await page.goto('/?e2e=1&u=12&c=12,14');
+      await openMap(page, '?e2e=1&u=12&c=12,14');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
       const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
@@ -77,7 +78,7 @@ test.describe('Comparison and Mobile View Flow W2.17 (@S18)', () => {
   }) => {
     await page.setViewportSize({ width: 360, height: 740 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/?e2e=1&u=12&c=12,14');
+    await openMap(page, '?e2e=1&u=12&c=12,14');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     await expect(page.locator('[data-slot="profile-compare"]')).toBeVisible();

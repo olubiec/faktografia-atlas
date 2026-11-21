@@ -1,4 +1,5 @@
 import { test, expect, type CDPSession, type Page } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 // Pinch i dotyk przerywają animację kamery – @FIX6D.
 
@@ -18,7 +19,7 @@ test.use({
 });
 
 async function open(page: Page) {
-  await page.goto('/?e2e');
+  await openMap(page, '?e2e');
   await page.waitForFunction(() => (window as unknown as { __atlas?: Atlas }).__atlas?.ready === true);
   const decline = page.getByRole('button', { name: 'Nie', exact: true });
   if (await decline.isVisible().catch(() => false)) await decline.click({ timeout: 5000 }).catch(() => undefined);

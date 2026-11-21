@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 // Płynne kółko myszy – @FIX6C.
 
@@ -11,7 +12,7 @@ test.describe('Kółko myszy (@FIX6C)', () => {
 
   test('3 zdarzenia kółka: płynny, monotoniczny dojazd bez skoków (@FIX6C)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as unknown as { __atlas?: Atlas }).__atlas?.ready === true);
     await page.waitForTimeout(1000);
     await page.mouse.move(720, 450);

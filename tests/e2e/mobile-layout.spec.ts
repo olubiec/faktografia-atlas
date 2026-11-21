@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Mobile Layout & Fullscreen Map (@S15)', () => {
   const viewports = [
@@ -19,7 +20,7 @@ test.describe('Mobile Layout & Fullscreen Map (@S15)', () => {
         );
       });
 
-      await page.goto('/?e2e');
+      await openMap(page, '?e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
       await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 
@@ -79,7 +80,7 @@ test.describe('Mobile Layout & Fullscreen Map (@S15)', () => {
       });
 
       // 3 poziomy zagłębienia (województwo -> powiat -> gmina)
-      await page.goto('/?u=0201011&e2e');
+      await openMap(page, '?u=0201011&e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
       // Nad mapą widoczny jest tylko jeden przycisk "Wróć" (w okruszkach, osobny BackButton jest ukryty)
@@ -111,7 +112,7 @@ test.describe('Mobile Layout & Fullscreen Map (@S15)', () => {
 
   test('passes axe accessibility audit on mobile layout (@S15)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const results = await new AxeBuilder({ page }).analyze();

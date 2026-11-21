@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 import shard12Fixture from '../fixtures/parts/shard-12.json' with { type: 'json' };
+import { openMap } from './helpers/open-map';
 
 test.describe('Full Urban-Rural Parts Flow (@S20)', () => {
   test.setTimeout(90000);
@@ -22,7 +23,7 @@ test.describe('Full Urban-Rural Parts Flow (@S20)', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
 
     // 1. Enter main page
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     // 2. Search urban-rural gmina "Brzesko"
@@ -119,7 +120,7 @@ test.describe('Full Urban-Rural Parts Flow (@S20)', () => {
       });
 
       // 1. Enter main page without ?sheet=full (starts from 40% height)
-      await page.goto('/?e2e');
+      await openMap(page, '?e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
       // Check no horizontal overflow
@@ -226,7 +227,7 @@ test.describe('Full Urban-Rural Parts Flow (@S20)', () => {
     await page.setViewportSize({ width: 390, height: 844 });
 
     // 1. Enter main page without ?sheet=full
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     // 2. Search urban-rural gmina "Brzesko" via visible search button

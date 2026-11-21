@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Mobile Indicator Bar & Sheet (@S15)', () => {
   test.beforeEach(async ({ page }) => {
@@ -10,7 +11,7 @@ test.describe('Mobile Indicator Bar & Sheet (@S15)', () => {
         JSON.stringify({ value: 'denied', at: new Date().toISOString() })
       );
     });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
   });

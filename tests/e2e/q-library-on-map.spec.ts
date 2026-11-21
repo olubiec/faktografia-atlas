@@ -2,6 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { canvasPoint, VOIVODESHIP_CENTROIDS } from './helpers/map-tap';
 import availableFixture from '../fixtures/library/available.json' with { type: 'json' };
 import valuesSampleFixture from '../fixtures/library/values-sample.json' with { type: 'json' };
+import { openMap } from './helpers/open-map';
 
 // Wskaźnik z biblioteki (b101, tylko powiaty) na mapie głównej (QC606, @Q).
 
@@ -26,7 +27,7 @@ async function mockLibrary(page: Page, opts: { available404?: boolean } = {}): P
 }
 
 async function ready(page: Page, url: string) {
-  await page.goto(url);
+  await openMap(page, url.slice(1));
   await page.waitForFunction(() => (window as any).__atlas?.ready === true);
   await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 }

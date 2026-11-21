@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 test.describe('Map Component (CC4.1b)', () => {
   test('empty MapLibre style with kalka background color - no external tile requests', async ({ page }) => {
@@ -17,18 +18,18 @@ test.describe('Map Component (CC4.1b)', () => {
       }
     });
 
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     expect(externalRequests).toEqual([]);
   });
 
   test('test seam window.__atlas exists only with ?e2e and reports correct state', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
     const atlasWithoutE2e = await page.evaluate(() => (window as any).__atlas);
     expect(atlasWithoutE2e).toBeUndefined();
 
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const atlasState = await page.evaluate(() => (window as any).__atlas);
@@ -44,7 +45,7 @@ test.describe('Map Component (CC4.1b)', () => {
 
   test('theme toggle updates window.__atlas.theme without page reload', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const initialTheme = await page.evaluate(() => (window as any).__atlas.theme);
@@ -67,7 +68,7 @@ test.describe('Map Component (CC4.1b)', () => {
 
   test('keyboard controls (+, -, arrows) pan and zoom map, aria-label="Mapa Polski"', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const mapContainer = page.locator('[aria-label="Mapa Polski"]');
@@ -98,7 +99,7 @@ test.describe('Map Component (CC4.1b)', () => {
 
   test('no horizontal scroll at 390px viewport width', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const isNotHorizontallyScrollable = await page.evaluate(() => {

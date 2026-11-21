@@ -1,12 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Header Library link (@S21)', () => {
   test('odnośnik "Biblioteka" jest widoczny na / i /biblioteka na komputerze, a kliknięcie prowadzi do /biblioteka', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
 
     // Strona główna
-    await page.goto('/');
+    await openMap(page);
     const desktopLinkOnHome = page.locator('header nav').getByRole('link', { name: 'Biblioteka' });
     await expect(desktopLinkOnHome).toBeVisible();
     await expect(desktopLinkOnHome).not.toHaveAttribute('aria-current', 'page');
@@ -32,7 +33,7 @@ test.describe('Header Library link (@S21)', () => {
 
   test('odnośnik "Biblioteka" jest widoczny w menu mobilnym i działa na telefonie', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
+    await openMap(page);
 
     const menuBtn = page.locator('header button[aria-label="Menu"]');
     await expect(menuBtn).toBeVisible();
@@ -55,7 +56,7 @@ test.describe('Header Library link (@S21)', () => {
   test('na 390 px nagłówek bez zmiany wysokości (56 px) i brak poziomego przewijania przy 360 i 390 px', async ({ page }) => {
     // Test 390px
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
+    await openMap(page);
 
     const header = page.locator('header');
     const box = await header.boundingBox();
@@ -69,7 +70,7 @@ test.describe('Header Library link (@S21)', () => {
 
     // Test 360px
     await page.setViewportSize({ width: 360, height: 800 });
-    await page.goto('/');
+    await openMap(page);
     isNotHorizontallyScrollable = await page.evaluate(() => {
       return document.documentElement.scrollWidth <= document.documentElement.clientWidth;
     });
@@ -79,7 +80,7 @@ test.describe('Header Library link (@S21)', () => {
   test('pole dotykowe odnośnika "Biblioteka" ma wymiary co najmniej 44x44 px', async ({ page }) => {
     // Komputer
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/');
+    await openMap(page);
     const desktopLink = page.locator('header nav').getByRole('link', { name: 'Biblioteka' });
     const desktopBox = await desktopLink.boundingBox();
     expect(desktopBox).not.toBeNull();
@@ -88,7 +89,7 @@ test.describe('Header Library link (@S21)', () => {
 
     // Telefon
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
+    await openMap(page);
     await page.locator('header button[aria-label="Menu"]').click();
     const mobileLink = page.locator('header').getByRole('link', { name: 'Biblioteka' });
     const mobileBox = await mobileLink.boundingBox();
@@ -125,7 +126,7 @@ test.describe('Header Library link (@S21)', () => {
 
   test('działa poprawnie przy prefers-reduced-motion', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/');
+    await openMap(page);
     const link = page.locator('header nav').getByRole('link', { name: 'Biblioteka' });
     await expect(link).toBeVisible();
     await link.click();

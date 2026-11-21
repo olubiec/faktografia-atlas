@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import indexFixture from '../fixtures/library/index.json' with { type: 'json' };
+import { openMap } from './helpers/open-map';
 
 async function routeLibrary(page: Page, body: unknown) {
   await page.route('**/index.json', (route) =>
@@ -9,7 +10,7 @@ async function routeLibrary(page: Page, body: unknown) {
 
 async function openAddWindow(page: Page) {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/?e2e&u=12');
+  await openMap(page, '?e2e&u=12');
   await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
   const side = page.locator('[data-slot="side"]');
   await side.getByRole('button', { name: 'Dodaj wskaźnik' }).click();
@@ -64,7 +65,7 @@ test.describe('FIX4: okno dodawania wskaźników po kategoriach (@FIX4)', () => 
 test.describe('FIX4: zoom mapy (@FIX4)', () => {
   test('@FIX4 klawisz „+” przybliża mapę, a „-” oddala (po zmianie obsługi klawiatury)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     const zoom = () => page.evaluate(() => (window as any).__atlas.viewState.zoom as number);
     const before = await zoom();

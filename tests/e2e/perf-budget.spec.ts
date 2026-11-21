@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 // Progi szybkości z docs/PRODUKT.md §7. Test liczy żądania i rozmiar kodu, nie milisekundy
 // (czas zależy od maszyny CI), dlatego jest stabilny.
@@ -31,7 +32,7 @@ test.describe('Budżet szybkości (PRODUKT.md §7)', () => {
 
   test('na wejściu: bez profili, najwyżej jeden plik wskaźnika, żaden skrypt > 2,5 MB', async ({ page }) => {
     const t = track(page);
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await ready(page);
     await page.waitForLoadState('networkidle');
 
@@ -49,7 +50,7 @@ test.describe('Budżet szybkości (PRODUKT.md §7)', () => {
 
   test('wybór jednostki: dokładnie jedno żądanie profili', async ({ page }) => {
     const t = track(page);
-    await page.goto('/?u=3217011&e2e');
+    await openMap(page, '?u=3217011&e2e');
     await ready(page);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
     await page.waitForLoadState('networkidle');
@@ -62,7 +63,7 @@ test.describe('Budżet szybkości (PRODUKT.md §7)', () => {
 
   test('wskaźnik z adresu: jedno żądanie pliku wartości', async ({ page }) => {
     const t = track(page);
-    await page.goto('/?i=density&e2e');
+    await openMap(page, '?i=density&e2e');
     await ready(page);
     await page.waitForLoadState('networkidle');
 

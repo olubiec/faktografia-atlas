@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Profile Trend Text in Collapsed Row @S14', () => {
   test('county profile shows trend text in "Ludność ogółem" row and p.p. in % unit row', async ({
@@ -7,7 +8,7 @@ test.describe('Profile Trend Text in Collapsed Row @S14', () => {
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     // Powiat tatrzański (1217)
-    await page.goto('/?e2e&u=1217');
+    await openMap(page, '?e2e&u=1217');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -47,7 +48,7 @@ test.describe('Profile Trend Text in Collapsed Row @S14', () => {
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217');
+    await openMap(page, '?e2e&u=1217');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -73,7 +74,7 @@ test.describe('Profile Trend Text in Collapsed Row @S14', () => {
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217');
+    await openMap(page, '?e2e&u=1217');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 

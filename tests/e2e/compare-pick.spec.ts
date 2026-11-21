@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsca (W15-M03)', () => {
   test.beforeEach(async ({ page }) => {
@@ -15,7 +16,7 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=12&e2e=1');
+    await openMap(page, '?u=12&e2e=1');
     await page.waitForFunction(
       () => (window as any).__atlas?.ready === true && (window as any).__atlas?.profileOpen === true
     );
@@ -78,7 +79,7 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     page,
   }) => {
     await page.setViewportSize({ width: 360, height: 740 });
-    await page.goto('/?u=12&e2e=1&sheet=full');
+    await openMap(page, '?u=12&e2e=1&sheet=full');
     await page.waitForFunction(
       () => (window as any).__atlas?.ready === true && (window as any).__atlas?.profileOpen === true
     );
@@ -139,7 +140,7 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=12&e2e=1');
+    await openMap(page, '?u=12&e2e=1');
     await page.waitForFunction(
       () => (window as any).__atlas?.ready === true && (window as any).__atlas?.profileOpen === true
     );
@@ -157,7 +158,7 @@ test.describe('Profil: odblokowanie zakładki Porównaj i wybór drugiego miejsc
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=12&c=12,14&e2e=1');
+    await openMap(page, '?u=12&c=12,14&e2e=1');
     await page.waitForFunction(
       () => (window as any).__atlas?.ready === true && (window as any).__atlas?.profileOpen === true
     );

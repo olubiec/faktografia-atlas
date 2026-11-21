@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 test.describe('Consent Bar and PostHog Analytics (CC11.1b)', () => {
   test.beforeEach(async ({ context }) => {
@@ -14,7 +15,7 @@ test.describe('Consent Bar and PostHog Analytics (CC11.1b)', () => {
       }
     });
 
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     // Weryfikacja paska zgody
@@ -39,7 +40,7 @@ test.describe('Consent Bar and PostHog Analytics (CC11.1b)', () => {
   });
 
   test('przycisk "Nie" zamyka pasek na stałe i zapamiętuje decyzję w localStorage', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     const consentBar = page.locator('div[role="region"][aria-label="Zgoda na analitykę"]');
@@ -67,7 +68,7 @@ test.describe('Consent Bar and PostHog Analytics (CC11.1b)', () => {
 
   test('pasek nie zasłania wyszukiwarki ani mapy na telefonie (390 px) i przyciski mają min. 44 px', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     const consentBar = page.locator('div[role="region"][aria-label="Zgoda na analitykę"]');
@@ -111,7 +112,7 @@ test.describe('Consent Bar and PostHog Analytics (CC11.1b)', () => {
       if (req.url().includes('posthog')) posthogRequests.push(req.url());
     });
 
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     const consentBar = page.locator('div[role="region"][aria-label="Zgoda na analitykę"]');
