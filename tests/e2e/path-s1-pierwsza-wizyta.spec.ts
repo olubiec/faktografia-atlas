@@ -27,7 +27,7 @@ for (const width of [390, 1280]) {
       });
 
       await page.goto('/?e2e');
-      await expect(page.getByText('Sprawdź dane swojej miejscowości i okolicy. Zobacz, jak wypadają na tle całej Polski.')).toBeVisible();
+      await expect(page.getByText('Sprawdź swoją miejscowość i okolicę.')).toBeVisible();
       for (const step of ['1. Wybierz dane', '2. Dotknij miejsca', '3. Zobacz profil']) {
         await expect(page.getByText(step)).toBeVisible();
       }

@@ -20,7 +20,7 @@ const STEPS = [
 ];
 
 /** Hasło na banerze: o miejscowości i okolicy użytkownika. */
-const TAGLINE = 'Sprawdź dane swojej miejscowości i okolicy. Zobacz, jak wypadają na tle całej Polski.';
+const TAGLINE = 'Sprawdź swoją miejscowość i okolicę.';
 
 const CHIP = 'pointer-events-auto';
 
@@ -83,18 +83,18 @@ export function StartPage() {
     <SiteLayout
       meta={{
         title: 'Faktografia',
-        description: TAGLINE,
+        description: 'Sprawdź dane swojej miejscowości i okolicy na tle całej Polski, na danych GUS.',
       }}
     >
       <div className="relative isolate">
-        {/* Mapa w całości widoczna; na jej dole półprzezroczysty baner (ok. 2/5 wysokości) z hasłem, bez przerwy łączy się z treścią pod spodem. */}
+        {/* Mapa w całości widoczna; na jej dole półprzezroczysty baner (ok. 1/3 wysokości) z hasłem, bez przerwy łączy się z treścią pod spodem. */}
         <div className="mx-auto w-full max-w-3xl px-4 pb-12 pt-6 md:px-8 md:pb-16">
           <div className="relative">
             <StartBackground onPick={pickRegion} />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-2/5 items-center bg-kalka/70 px-4 md:px-8">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-1/3 items-center bg-kalka/70 px-4 md:px-8">
               <h1 className="m-0 font-extrabold tracking-[-0.02em] text-tusz">
                 <span className="sr-only">Faktografia</span>{' '}
-                <span className="text-xl md:text-3xl">{TAGLINE}</span>
+                <span className="text-lg md:text-2xl">{TAGLINE}</span>
               </h1>
             </div>
           </div>
