@@ -51,8 +51,34 @@ export function buildAvailable(indexFile, valuesFiles, generatedAt = new Date().
   return { version: 1, generatedAt, variables };
 }
 
+/** Czy plik wartości ma jakąkolwiek daną na którymkolwiek poziomie. */
+function hasData(file) {
+  return LEVELS.some(([key]) => Object.keys(file?.[key]?.d ?? {}).length > 0);
+}
+
+/**
+ * Czysta funkcja: kontrola spisu względem pobranych plików.
+ * fetched = pliki z jakąkolwiek daną, listed = wpisy w spisie, empty = pliki bez danych (nie luka),
+ * missing = id plików z danymi, których nie ma w spisie (powinno być puste).
+ */
+export function countGap(indexFile, valuesFiles) {
+  const listedIds = new Set(buildAvailable(indexFile, valuesFiles).variables.map((v) => v.id));
+  const withData = valuesFiles.filter(hasData);
+  return {
+    fetched: withData.length,
+    listed: listedIds.size,
+    empty: valuesFiles.filter((f) => !hasData(f)).map((f) => String(f?.v)),
+    missing: withData.map((f) => String(f.v)).filter((id) => !listedIds.has(id)),
+  };
+}
+
+/** Linia do podsumowania przebiegu w Actions. */
+export function formatGapLine(gap) {
+  return `Pobrane: ${gap.fetched} · w spisie wyboru: ${gap.listed} · puste (bez danych): ${gap.empty.length} · brakuje: ${gap.missing.length}`;
+}
+
 /** Cienka nakładka: czyta katalog, woła buildAvailable, zapisuje atomowo. Błąd = wyjątek (nic nie zapisujemy). */
-export async function writeAvailable(dir) {
+export async function writeAvailable(dir, onGap) {
   let index;
   try {
     index = JSON.parse(await readFile(path.join(dir, 'index.json'), 'utf8'));
@@ -70,6 +96,7 @@ export async function writeAvailable(dir) {
     files.push(JSON.parse(await readFile(path.join(dir, 'values', name), 'utf8')));
   }
   const out = buildAvailable(index, files);
+  if (onGap) onGap(countGap(index, files));
   const target = path.join(dir, 'available.json');
   await mkdir(dir, { recursive: true });
   await writeFile(`${target}.tmp`, JSON.stringify(out));
@@ -83,8 +110,14 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     console.error('Użycie: node scripts/data/library-available.mjs <katalog-library>');
     process.exit(1);
   }
-  writeAvailable(dir)
-    .then((out) => console.log(`available.json: ${out.variables.length} wskaźników.`))
+  let line = '';
+  writeAvailable(dir, (gap) => {
+    line = formatGapLine(gap);
+  })
+    .then((out) => {
+      console.log(`available.json: ${out.variables.length} wskaźników.`);
+      console.log(line);
+    })
     .catch((err) => {
       console.error(err.message);
       process.exit(1);
