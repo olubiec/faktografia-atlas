@@ -1,6 +1,7 @@
-import type { MouseEvent } from 'react';
+import { useEffect, type MouseEvent } from 'react';
 import { flushSync } from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router';
+import { isMapPreloaded, preloadMap } from './preloadMap';
 import { StartBackground } from './StartBackground';
 import { useReducedMotion } from '@/view/map/hooks/useReducedMotion';
 import { SiteLayout } from '../layout/SiteLayout';
@@ -39,25 +40,28 @@ export function StartPage() {
   const reduced = useReducedMotion();
   const to = (href: string) => withTech(href, search);
 
+  // Po wczytaniu strony (w wolnej chwili) pobieramy kod mapy w tle.
+  useEffect(() => {
+    const id = window.setTimeout(preloadMap, 600);
+    return () => window.clearTimeout(id);
+  }, []);
+
   const openMap = (e: MouseEvent<HTMLAnchorElement>) => {
     // Kliknięcie z klawiszem (nowa karta) i brak animacji (reduced-motion): zwykła nawigacja linku.
     if (reduced.current || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
     const go = () => navigate(to('/mapa'));
     if (typeof document.startViewTransition !== 'function') return go();
-    // Kod mapy (Home i leniwy AtlasMap) ładujemy przed przejściem: inaczej nowy widok to pusta powłoka (przeskok).
-    Promise.all([import('../Home'), import('../map/AtlasMap')])
-      .then(() => {
-        // Ten sam obrys Polski co w tle „rośnie” w mapę: wspólna nazwa przejścia (opis w global.css).
-        nameForTransition('[data-slot="start-background"] svg');
-        return document.startViewTransition(async () => {
-          flushSync(go);
-          nameForTransition('main');
-          // Dajemy mapie dwie klatki na pierwszy render, zanim przeglądarka zrobi „zdjęcie” nowego widoku.
-          await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
-        });
-      })
-      .catch(go);
+    // Kod mapy jeszcze się pobiera: nie każemy czekać, wchodzimy od razu (zwykła nawigacja).
+    if (!isMapPreloaded()) return go();
+    // Ten sam obrys Polski co w tle „rośnie” w mapę: wspólna nazwa przejścia (opis w global.css).
+    nameForTransition('[data-slot="start-background"] svg');
+    document.startViewTransition(async () => {
+      flushSync(go);
+      nameForTransition('main');
+      // Dajemy mapie dwie klatki na pierwszy render, zanim przeglądarka zrobi „zdjęcie” nowego widoku.
+      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+    });
   };
 
   return (
@@ -89,6 +93,9 @@ export function StartPage() {
           <Link
             to={to('/mapa')}
             onClick={openMap}
+            onPointerEnter={preloadMap}
+            onTouchStart={preloadMap}
+            onFocus={preloadMap}
             className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-6 py-3 border border-tusz bg-tusz text-arkusz font-bold hover:bg-tusz/90 transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz focus:ring-offset-2 focus:ring-offset-kalka"
           >
             Otwórz mapę
