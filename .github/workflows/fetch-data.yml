@@ -151,12 +151,19 @@ jobs:
         if: steps.checks.outcome == 'success'
         run: node scripts/data/build-parts.mjs
 
+      # (B04) Wartości czterech wskaźników strony startowej (public/data/start.json) z świeżych values.
+      - name: Zbuduj dane strony startowej (public/data/start.json)
+        id: start
+        if: steps.checks.outcome == 'success'
+        run: node scripts/data/start.mjs
+
       - name: Zatwierdź i wypchnij dane (values, profiles, parts)
         id: push
         if: always() && (env.MANUAL == 'true' || steps.checks.outcome == 'success')
         shell: bash
         run: |
           git add public/data/values/ public/data/profiles/
+          [ -f public/data/start.json ] && git add public/data/start.json
           for d in data/parts public/data/parts; do [ -d "$d" ] && git add "$d"; done
           if git diff --staged --quiet; then
             echo "Brak zmian w danych."
