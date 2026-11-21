@@ -110,7 +110,7 @@ export function MobileIndicatorBar({
       <aside
         aria-label="Panel wskaźnika"
         data-slot="mobile-indicator-bar"
-        className="w-full shrink-0 bg-arkusz text-tusz border-t border-linia z-20 min-h-[48px] pb-[env(safe-area-inset-bottom)] flex items-center"
+        className="w-full shrink-0 bg-arkusz text-tusz border-t border-linia z-20 min-h-[48px] mb-3 pb-[env(safe-area-inset-bottom)] flex items-center"
       >
         <button
           type="button"
