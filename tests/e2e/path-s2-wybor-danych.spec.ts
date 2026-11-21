@@ -50,7 +50,7 @@ test.describe('@PATH-2 wybór danych (1280 px)', () => {
     await expect(dialog).toBeVisible();
 
     await dialog.getByRole('navigation', { name: 'Działy' }).getByRole('button', { name: /^Rynek pracy/ }).click();
-    await dialog.getByRole('button', { name: /^★ Najważniejsze/ }).click();
+    await dialog.getByRole('button', { name: /^Pozostałe/ }).click();
     await dialog.getByRole('button', { name: /Stopa bezrobocia rejestrowanego/ }).click();
 
     await expect(dialog).toBeHidden();

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import indicatorsData from '../../config/indicators.json' with { type: 'json' };
 import priority from '../../config/library-priority.json' with { type: 'json' };
 import fixture from '../fixtures/catalog/search-queries.json' with { type: 'json' };
-import { BASIC_GROUP, buildCatalogTree, flattenTree, sectionWeight, titleCase } from '../../src/core/catalog/tree';
+import { OTHER_GROUP, buildCatalogTree, flattenTree, sectionWeight, titleCase } from '../../src/core/catalog/tree';
 import type { AvailableFile } from '../../src/core/indicators/registry';
 import type { Indicator } from '../../src/core/profile/profile';
 
@@ -34,13 +34,18 @@ describe('B05 – drzewo Dział › Grupa › Wskaźnik', () => {
     expect(tree.total).toBe(expected);
   });
 
-  it('„★ Najważniejsze” jest pierwszą grupą działu i ma tylko wbudowane', () => {
-    for (const s of tree.sections.filter((x) => x.groups.some((g) => g.name === BASIC_GROUP))) {
-      expect(s.groups[0]!.name).toBe(BASIC_GROUP);
-      expect(s.groups[0]!.entries.every((e) => e.builtin)).toBe(true);
-    }
+  it('nie ma grupy „Najważniejsze”: wbudowany wskaźnik leży w grupie swojego odpowiednika z biblioteki', () => {
+    const groups = tree.sections.flatMap((s) => s.groups.map((g) => g.name));
+    expect(groups).not.toContain('Najważniejsze');
     const people = tree.sections.find((s) => s.name === 'Ludność')!;
-    expect(people.groups[0]!.entries.map((e) => e.id)).toContain('population');
+    const home = people.groups.find((g) => g.entries.some((e) => e.id === 'population'))!;
+    expect(home.name).not.toBe(OTHER_GROUP);
+  });
+
+  it('„Pozostałe” (wbudowane bez odpowiednika) jest zawsze ostatnią grupą działu', () => {
+    for (const s of tree.sections.filter((x) => x.groups.some((g) => g.name === OTHER_GROUP))) {
+      expect(s.groups.at(-1)!.name).toBe(OTHER_GROUP);
+    }
   });
 
   it('wbudowany wskaźnik z tym samym bdlVarId co pozycja z biblioteki nie dubluje wpisu', () => {
@@ -64,7 +69,7 @@ describe('B05 – drzewo Dział › Grupa › Wskaźnik', () => {
 
   it('działy z wbudowanych wskaźników bez odpowiednika w spisie też powstają', () => {
     const tourism = tree.sections.find((s) => s.name === 'Turystyka');
-    expect(tourism?.groups.map((g) => g.name)).toEqual([BASIC_GROUP]);
+    expect(tourism?.groups.map((g) => g.name)).toEqual([OTHER_GROUP]);
   });
 
   it('nazwy WIELKIMI LITERAMI dostają zwykłą pisownię, skróty zostają', () => {

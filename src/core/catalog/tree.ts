@@ -23,7 +23,8 @@ export type CatalogGroup = { id: string; name: string; entries: CatalogEntry[] }
 export type CatalogSection = { id: string; name: string; weight: number; groups: CatalogGroup[]; count: number };
 export type CatalogTree = { sections: CatalogSection[]; total: number };
 
-export const BASIC_GROUP = 'Najważniejsze';
+/** Grupa dla wbudowanego wskaźnika, którego nie ma w spisie pobranych (nie ma „ważniejszych” danych). */
+export const OTHER_GROUP = 'Pozostałe';
 /** Grupy archiwalne nie wchodzą do menu (decyzja właściciela: bez danych archiwalnych). */
 const ARCHIVE_NAME = 'dane archiwalne';
 const ACRONYMS = new Set(['PSR', 'GUGIK']);
@@ -97,8 +98,8 @@ function sectionKey(draft: Draft, key: string): string {
 }
 
 function groupOrder(a: CatalogGroup, b: CatalogGroup): number {
-  const weight = (g: CatalogGroup) => (g.name === BASIC_GROUP ? 0 : 1);
-  return weight(a) - weight(b) || b.entries.length - a.entries.length || a.name.localeCompare(b.name, 'pl');
+  const last = (g: CatalogGroup) => (g.name === OTHER_GROUP ? 1 : 0);
+  return last(a) - last(b) || b.entries.length - a.entries.length || a.name.localeCompare(b.name, 'pl');
 }
 
 function levelsOf(i: Indicator): UnitLevel[] {
@@ -107,12 +108,13 @@ function levelsOf(i: Indicator): UnitLevel[] {
 
 /**
  * Buduje drzewo: każdy wskaźnik trafia do dokładnie jednej grupy (powtórzone id i bdlVarId pomijamy).
- * Bez grupy „Dane archiwalne”; wbudowane w grupie „Najważniejsze” swojego działu; działy wg wag z configu.
+ * Bez grupy „Dane archiwalne”; wbudowane w grupie i temacie swojego odpowiednika z biblioteki (bez odpowiednika: „Pozostałe”); działy wg wag z configu.
  */
 export function buildCatalogTree(main: Indicator[], available: AvailableFile | null): CatalogTree {
   const draft: Draft = new Map();
   const seen = new Set<string>();
   const seenBdl = new Set<number>();
+  const place = new Map<number, { group: string; topic: string }>();
   const lib = (available?.variables ?? []).filter((v) => v.id && v.n && v.c && v.lv.length > 0);
   for (const v of lib) {
     const [rawSection = '', rawGroup = '', rawTopic = ''] = (v.c ?? '').split(' > ').map((p) => p.trim());
@@ -120,6 +122,7 @@ export function buildCatalogTree(main: Indicator[], available: AvailableFile | n
     seen.add(`b${v.id}`);
     const section = titleCase(rawSection);
     const group = titleCase(rawGroup);
+    place.set(Number(v.id), { group, topic: titleCase(rawTopic) });
     put(draft, section, group, {
       id: `b${v.id}`, name: v.n, section, group, topic: titleCase(rawTopic),
       unit: v.u ?? '', levels: v.lv, builtin: false,
@@ -131,8 +134,9 @@ export function buildCatalogTree(main: Indicator[], available: AvailableFile | n
     seen.add(i.id);
     seenBdl.add(i.bdlVarId);
     const section = sectionKey(draft, BUILTIN_SECTION[i.id] ?? i.group);
-    put(draft, section, BASIC_GROUP, {
-      id: i.id, name: i.name, section, group: BASIC_GROUP, topic: '', unit: i.unit,
+    const where = place.get(i.bdlVarId) ?? { group: OTHER_GROUP, topic: '' };
+    put(draft, section, where.group, {
+      id: i.id, name: i.name, section, group: where.group, topic: where.topic, unit: i.unit,
       levels: levelsOf(i), builtin: true,
     });
   }
