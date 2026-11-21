@@ -51,22 +51,4 @@ describe('okno udostępniania: dane z „Moich wskaźników”', () => {
     const profilePage = initialDeck(data).pages.find((p) => p.kind === 'profile');
     expect(profilePage?.indicatorIds).toEqual([...BASIC_INDICATORS]);
   });
-
-  it('usunięty wskaźnik znika z CSV profilu i z initialDeck', () => {
-    setStorage(BASIC_INDICATORS.filter((id) => id !== 'density'));
-    const data = shareData();
-    expect(dataRows(singleCsv(data, 'profile').csv)).toBe(6);
-    expect(data.unitProfile?.indicators.map((i) => i.indicatorId)).not.toContain('density');
-    const ids = initialDeck(data).pages.find((p) => p.kind === 'profile')?.indicatorIds;
-    expect(ids).not.toContain('density');
-    expect(ids).toHaveLength(6);
-  });
-
-  it('bieżący wskaźnik spoza listy daje kartę Profil, ale nie wiersz CSV', () => {
-    setStorage(['density']);
-    const data = shareData();
-    expect(data.profile?.indicatorName).toBe(data.indicator?.name);
-    expect(data.profile?.bigNumber).not.toBe('brak danych');
-    expect(data.unitProfile?.indicators.map((i) => i.indicatorId)).toEqual(['density']);
-  });
 });

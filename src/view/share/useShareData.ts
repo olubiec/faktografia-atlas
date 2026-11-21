@@ -14,8 +14,7 @@ import { createDeck, type Deck, type NewPage } from '@/core/share/deck';
 import { indicatorTableCsv, profileCsv, compareCsv, shareFileName, toCsv } from '@/core/share/csv';
 import type { CardKind, CardData } from '@/core/share/card';
 import { seedIndicators } from '@/core/share/deck-page-data';
-import { loadMyIndicators } from '@/core/my-indicators/storage';
-import { useMyIndicators } from '@/view/hooks/useMyIndicators';
+import { BASIC_INDICATORS } from '@/core/indicators/basic';
 import { pageCsv, type DeckCsvSection, type PageCsvInput } from '@/core/share/deck-csv';
 
 export interface UseShareDataProps {
@@ -38,7 +37,7 @@ export function useShareData({
   selectedTeryt,
 }: UseShareDataProps): ShareDialogData {
   const [topoData, setTopoData] = useState<any>(null);
-  const { list: mine } = useMyIndicators();
+  const mine = BASIC_INDICATORS;
 
   useEffect(() => {
     let cancelled = false;
@@ -233,7 +232,7 @@ export function useShareData({
 }
 
 /** Startowy zestaw stron: tylko podstawowe, dla których okno ma dane (PRODUKT §4b); resztę dodaje użytkownik. */
-export function initialDeck(data: ShareDialogData, mine: readonly string[] = loadMyIndicators()): Deck {
+export function initialDeck(data: ShareDialogData, mine: readonly string[] = BASIC_INDICATORS): Deck {
   const activeId = data.indicator?.id ?? null;
   const ids = activeId ? [activeId] : [];
   const pages: NewPage[] = [];

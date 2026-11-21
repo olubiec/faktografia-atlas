@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router';
 import { Menu, Search, Xmark } from 'iconoir-react';
 import { Sheet } from '@/view/ui/Sheet';
 import { Icon } from '@/view/ui/Icon';
+import { CopyLinkButton } from '@/view/layout/CopyLinkButton';
 import { ATLAS_RESET_EVENT, homeSearch } from '@/core/url/home';
 const SearchDialog = lazy(() => import('@/view/search/SearchDialog').then((m) => ({ default: m.SearchDialog })));
 
@@ -149,6 +150,7 @@ export function Header() {
         >
           Mapa
         </Link>
+        {isMapActive && <CopyLinkButton />}
         <button
           type="button"
           onClick={cycleTheme}
@@ -160,6 +162,7 @@ export function Header() {
 
       {/* Mobile Controls: Search (lupa) + Menu */}
       <div className="flex md:hidden items-center gap-2">
+        {isMapActive && <CopyLinkButton className="!px-2" />}
         <button
           type="button"
           onClick={() => changeSearchOpen(true)}

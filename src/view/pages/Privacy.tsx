@@ -69,9 +69,6 @@ export function Privacy() {
             <li>
               <code className="font-mono bg-arkusz px-1.5 py-0.5 border border-linia">fa-consent-v1</code> – zapis Twojej decyzji o wyrażeniu lub odmowie zgody na anonimowe statystyki.
             </li>
-            <li>
-              <strong>Moje wskaźniki.</strong> Lista wskaźników, które wybierasz, zapisuje się tylko w pamięci Twojej przeglądarki (klucz <code className="font-mono bg-arkusz px-1.5 py-0.5 border border-linia">faktografia-my-indicators</code>). To wyłącznie lista nazw wskaźników; nie wysyłamy jej do nas ani do nikogo innego. Usuniesz ją, czyszcząc dane strony w przeglądarce.
-            </li>
           </ul>
         </section>
 
