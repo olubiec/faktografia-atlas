@@ -231,7 +231,7 @@ export function ProfileSheet({
   }, [onClose]);
 
   return (
-    <Sheet className={cn('w-full max-w-[440px]', className)}>
+    <Sheet className={cn('w-full md:max-w-[300px] lg:max-w-[440px]', className)}>
       <ProfileBody
         profile={profile}
         units={units}

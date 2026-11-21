@@ -44,7 +44,7 @@ test.describe('FIX4: okno dodawania wskaźników po kategoriach (@FIX4)', () => 
     const links = win.getByRole('link', { name: /^Otwórz: / });
     await expect(links.first()).toBeVisible();
     await links.first().click();
-    await expect(page).toHaveURL(/\/biblioteka\/\d+/);
+    await expect(page).toHaveURL(/\/mapa\?i=b\d+/);
   });
 
   test('@FIX4 wyniki z biblioteki są ograniczone do 50', async ({ page }) => {

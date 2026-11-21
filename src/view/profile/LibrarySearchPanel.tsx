@@ -28,7 +28,7 @@ export function LibraryRows({ items, list, onAdd, onRemove }: LibraryRowsProps) 
         const added = list.includes(id);
         return (
           <div key={id} className="flex items-stretch">
-            <Link to={`/biblioteka/${v.id}`} className={`${ROW} flex-1`}>
+            <Link to={`/mapa?${new URLSearchParams({ i: id })}`} className={`${ROW} flex-1`}>
               {`Otwórz: ${v.name}`}
             </Link>
             {added ? (

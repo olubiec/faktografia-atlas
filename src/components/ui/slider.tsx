@@ -48,7 +48,7 @@ function Slider({
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
           aria-valuetext={ariaValueText}
-          className="relative block h-[20px] w-[20px] shrink-0 rounded-none bg-[var(--tusz)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--tusz)] disabled:pointer-events-none disabled:opacity-50 before:absolute before:-inset-3 before:content-['']"
+          className="relative block h-[44px] w-[44px] shrink-0 rounded-none bg-transparent focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 after:absolute after:left-1/2 after:top-1/2 after:h-[20px] after:w-[20px] after:-translate-x-1/2 after:-translate-y-1/2 after:bg-[var(--tusz)] after:transition-colors after:content-[''] focus-visible:after:ring-1 focus-visible:after:ring-[var(--tusz)] focus-visible:after:ring-offset-1"
         />
       ))}
     </SliderPrimitive.Root>

@@ -91,7 +91,7 @@ export function Header() {
   let logoClass = 'relative -top-1.5 md:-top-2 h-10 md:h-12 w-auto -ml-3 md:-ml-3.5';
 
   if (isZnakLogo) {
-    logoSrc = activeIsDark ? '/brand/faktografia-znak-jasne.svg' : '/brand/faktografia-znak-granat.svg';
+    logoSrc = activeIsDark ? '/brand/faktografia-znak-jasny.svg' : '/brand/faktografia-znak-granat.svg';
     logoClass = 'h-10 md:h-12 w-auto';
   }
 
