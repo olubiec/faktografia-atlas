@@ -30,7 +30,7 @@ for (const width of [390, 1280]) {
       await page.goto('/?e2e');
       await expect(page).toHaveTitle('Faktografia');
       await expect(page.getByRole('heading', { level: 1, name: 'Faktografia' })).toBeVisible();
-      await expect(page.getByText('Zobacz, jak wypada Twoja gmina na tle całej Polski, na danych GUS.')).toBeVisible();
+      await expect(page.getByText('Sprawdź dane swojej miejscowości i okolicy. Zobacz, jak wypadają na tle całej Polski.')).toBeVisible();
       await expect(page.getByText('1. Wybierz dane, np. bezrobocie albo ludność.')).toBeVisible();
       await expect(page.getByText('2. Dotknij miejsca na mapie.')).toBeVisible();
       await expect(page.getByText('3. Zobacz profil i porównaj z innym miejscem.')).toBeVisible();

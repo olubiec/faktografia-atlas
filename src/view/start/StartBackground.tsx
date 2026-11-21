@@ -3,7 +3,7 @@ import {
   bindVisibility, createStartLoop, loadOutline, outlineCells, type Frame, type OutlineFile,
 } from '@/core/start/outline';
 import {
-  captionFor, indicatorLabel, loadStart, startFields, type StartFile,
+  indicatorLabel, loadStart, startFields, type StartFile,
 } from '@/core/start/start-data';
 import { useReducedMotion } from '@/view/map/hooks/useReducedMotion';
 
@@ -86,10 +86,9 @@ export function StartBackground({ initial, onPick }: { initial?: StartBackground
 
   const active = indicators[ui.index] ?? indicators[0];
   const colors = useMemo(() => new Map(active ? startFields(active).map((f) => [f.teryt, f.color]) : []), [active]);
-  const caption = ui.mode === 'react' && ui.nearest && active ? captionFor(active, ui.nearest) : null;
 
   return (
-    <div className="pointer-events-none flex w-full flex-col items-center gap-2" data-slot="start-background">
+    <div className="pointer-events-none flex w-full flex-col items-center" data-slot="start-background">
       <div className="w-full">
         <svg
           ref={svgRef}
@@ -126,9 +125,6 @@ export function StartBackground({ initial, onPick }: { initial?: StartBackground
           ))}
         </svg>
       </div>
-      <p className="min-h-[1.5em] text-sm text-olowek" aria-live="off" data-testid="start-caption">
-        {caption}
-      </p>
     </div>
   );
 }

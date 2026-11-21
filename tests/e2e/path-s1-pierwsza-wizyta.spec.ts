@@ -27,7 +27,7 @@ for (const width of [390, 1280]) {
       });
 
       await page.goto('/?e2e');
-      await expect(page.getByText('Zobacz, jak wypada Twoja gmina na tle całej Polski, na danych GUS.')).toBeVisible();
+      await expect(page.getByText('Sprawdź dane swojej miejscowości i okolicy. Zobacz, jak wypadają na tle całej Polski.')).toBeVisible();
       for (const step of ['1. Wybierz dane', '2. Dotknij miejsca', '3. Zobacz profil']) {
         await expect(page.getByText(step)).toBeVisible();
       }
@@ -92,7 +92,7 @@ test.describe('@PATH-1 prefers-reduced-motion', () => {
 });
 
 test.describe('@PATH-1 zmiana wskaźnika i reakcja na ruch', () => {
-  test('@PATH-1 po 5 s tło pokazuje inny wskaźnik; ruch myszy daje podpis z województwem', async ({ page }) => {
+  test('@PATH-1 po 5 s tło pokazuje inny wskaźnik; ruch myszy przełącza tło w tryb reakcji, bez podpisu', async ({ page }) => {
     await consent(page);
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/?e2e');
@@ -102,7 +102,8 @@ test.describe('@PATH-1 zmiana wskaźnika i reakcja na ruch', () => {
     const b = (await bg.boundingBox())!;
     await page.mouse.move(b.x + b.width * 0.5, b.y + b.height * 0.4);
     await page.mouse.move(b.x + b.width * 0.52, b.y + b.height * 0.42);
-    await expect(page.getByTestId('start-caption')).toContainText(/ · .+: /);
+    // Podpisu z wartościami już nie ma: tło jest tylko ozdobą.
+    await expect(page.getByTestId('start-caption')).toHaveCount(0);
     await expect(bg).toHaveAttribute('data-mode', 'react');
   });
 });

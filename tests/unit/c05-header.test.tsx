@@ -35,10 +35,10 @@ describe('C05 nagłówek: logo (STYL §4)', () => {
     expect(img).toContain('alt="Faktografia"');
     expect(fs.existsSync(path.join(root, 'public', img.match(/src="([^"]+)"/)![1]!))).toBe(true);
   });
-  it('wysokość: 28 px (h-7) na telefonie i 36 px (h-9) na komputerze, w zakresie STYL §4', () => {
+  it('wysokość: 40 px (h-10) na telefonie i 48 px (h-12) na komputerze, zgodnie ze STYL §4', () => {
     const cls = img.match(/class="([^"]+)"/)![1]!.split(' ');
-    expect(cls).toContain('h-7');
-    expect(cls).toContain('md:h-9');
+    expect(cls).toContain('h-10');
+    expect(cls).toContain('md:h-12');
   });
   it('wysokość nagłówka i pole dotykowe logo są z klas skali, bez px', () => {
     expect(out).toMatch(/<header[^>]*class="[^"]*\bh-14\b[^"]*\bmd:h-18\b/);
