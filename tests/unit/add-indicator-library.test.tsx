@@ -45,7 +45,7 @@ describe('okno Dodaj wskaźnik: biblioteka dodaje do „Moich” (QS01)', () => 
     expect(onAdd).toHaveBeenCalledExactlyOnceWith('b4242');
     const html = render(defaultMyIndicators());
     expect(html).toContain('min-h-[44px]');
-    expect(html).toContain('href="/biblioteka/4242"');
+    expect(html).toContain('href="/mapa?i=b4242"');
   });
 
   it('już dodany wskaźnik ma stan „Dodano”, przycisk usuń i nie dubluje się', () => {
@@ -55,7 +55,7 @@ describe('okno Dodaj wskaźnik: biblioteka dodaje do „Moich” (QS01)', () => 
     expect(html).toContain('Dodano');
     expect(html).toContain('aria-label="Usuń wskaźnik: Pobrany wskaźnik"');
     expect(html).not.toContain('aria-label="Dodaj: Pobrany wskaźnik"');
-    expect(html).toContain('href="/biblioteka/4242"');
+    expect(html).toContain('href="/mapa?i=b4242"');
     const onRemove = vi.fn<(id: string) => void>();
     findButtons(LibraryRows({ items, list, onAdd: () => {}, onRemove }), 'Usuń wskaźnik: Pobrany wskaźnik')[0].onClick();
     expect(onRemove).toHaveBeenCalledWith('b4242');

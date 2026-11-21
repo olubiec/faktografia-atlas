@@ -111,7 +111,7 @@ export function Rankings() {
         )}
 
         {ranking && (
-          <div className="mb-8 p-4 bg-kalka/30 rounded border border-linia">
+          <div className="mb-8 p-4 bg-kalka/30 rounded-none border border-linia">
             <h2 className="text-xl font-semibold mb-2">Podsumowanie</h2>
             <RankingMedian items={ranking.items} units={units} unit={indicator?.unit ?? ''} />
             <p>Najwyżej: {ranking.items[0]?.teryt}</p>

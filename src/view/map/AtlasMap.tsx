@@ -458,7 +458,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
       {/* Profil miejsca: osobna kolumna obok mapy, nic nie jest nałożone na mapę (PRODUKT.md §4). */}
       <div
         data-slot="side"
-        className={`hidden md:block md:w-[440px] md:shrink-0 md:border-l border-linia bg-arkusz overflow-y-auto${profileExpected ? '' : ' empty:hidden'}`}
+        className={`hidden md:block md:w-[300px] lg:w-[440px] md:shrink-0 md:border-l border-linia bg-arkusz overflow-y-auto${profileExpected ? '' : ' empty:hidden'}`}
       />
 
       {isMobile && (

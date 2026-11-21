@@ -64,7 +64,7 @@ export function Breadcrumbs({ teryt, index, onSelect, onBack }: BreadcrumbsProps
               key={item.teryt ?? 'polska'}
               className={cn(
                 'flex items-center gap-0.5 sm:gap-1 min-w-0 overflow-hidden',
-                idx === 0 ? 'shrink-0' : 'shrink max-w-full'
+                !isLast ? 'shrink-0' : 'shrink max-w-full'
               )}
             >
               {idx > 0 && (
@@ -86,7 +86,7 @@ export function Breadcrumbs({ teryt, index, onSelect, onBack }: BreadcrumbsProps
                   title={item.label}
                   onClick={() => onSelect(item.teryt)}
                   className={cn(
-                    'min-h-[44px] min-w-[44px] px-1 sm:px-2.5 flex items-center justify-center text-tusz hover:bg-linia/20 transition-colors font-medium rounded-none focus:outline-none focus-visible:ring-1 focus-visible:ring-tusz cursor-pointer truncate min-w-0',
+                    'min-h-[44px] min-w-[44px] px-1 sm:px-2.5 flex items-center justify-center text-tusz hover:bg-linia/20 transition-colors font-medium rounded-none focus:outline-none focus-visible:ring-1 focus-visible:ring-tusz cursor-pointer truncate',
                     isMiddle && isDeepPath && 'max-w-[48px] sm:max-w-[80px] md:max-w-[120px]',
                     isMiddle && !isDeepPath && 'max-w-[80px] sm:max-w-[120px] md:max-w-[200px]'
                   )}
