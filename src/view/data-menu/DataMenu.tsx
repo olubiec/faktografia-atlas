@@ -57,7 +57,9 @@ export function DataMenuBody({ tree, loading = false, failed = false, selectedId
 
   return (
     <div className="flex min-h-0 flex-col gap-3 text-tusz" data-layout={layout}>
-      <DataMenuSearchField value={text} onChange={(t) => { setText(t); setLimit(PAGE_SIZE); }} />
+      <div className="sticky top-0 z-10 bg-arkusz pb-1">
+        <DataMenuSearchField value={text} onChange={(t) => { setText(t); setLimit(PAGE_SIZE); }} />
+      </div>
       <p className="text-xs text-olowek" role="status">
         {loading ? 'Wczytuję spis…' : `${tree.total} wskaźników z danymi w ${tree.sections.length} działach.`}
         {failed && ' Spisu pobranych danych nie udało się wczytać – widać tylko wskaźniki wbudowane.'}
