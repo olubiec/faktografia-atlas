@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { announceAtlasReady, createReadyGate } from '@/core/map/ready-gate';
 
 /**
@@ -6,17 +6,18 @@ import { announceAtlasReady, createReadyGate } from '@/core/map/ready-gate';
  * Zwraca funkcję dla `onIdle` mapy. `onReady` woła się raz, razem ze zdarzeniem.
  */
 export function useAtlasReady(colored: boolean, onReady: () => void): () => void {
-  const onReadyRef = useRef(onReady);
-  onReadyRef.current = onReady;
-  // Bramka jest jedna na egzemplarz mapy; najnowsze onReady czytamy z refa.
-  const gate = useMemo(
-    () =>
-      createReadyGate(() => {
-        announceAtlasReady(window);
-        onReadyRef.current();
-      }),
-    []
+  // Bramka jest jedna na egzemplarz mapy; gotowość przechodzi przez stan, więc onReady woła efekt.
+  const [ready, setReady] = useState(false);
+  const [gate] = useState(() =>
+    createReadyGate(() => {
+      announceAtlasReady(window);
+      setReady(true);
+    })
   );
+  const callReady = useEffectEvent(onReady);
+  useEffect(() => {
+    if (ready) callReady();
+  }, [ready]);
 
   // Flaga gotowości dotyczy tylko tego egzemplarza mapy: przy wyjściu znika.
   useEffect(() => () => document.documentElement.removeAttribute('data-atlas-ready'), []);
