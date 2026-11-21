@@ -14,6 +14,3 @@ export function preloadMap(): void {
       pending = null;
     });
 }
-
-/** Czy kod mapy jest już pobrany (wtedy przejście widoku ma co pokazać). */
-export const isMapPreloaded = (): boolean => loaded;

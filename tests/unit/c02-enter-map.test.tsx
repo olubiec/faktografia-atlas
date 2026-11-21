@@ -5,9 +5,8 @@ import { renderToString } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const navigate = vi.fn<(...a: unknown[]) => void>();
+const cover = vi.fn<(src: unknown, animate: boolean) => void>();
 let reduced = false;
-let preloaded = true;
-vi.mock('../../src/view/start/preloadMap', () => ({ preloadMap: () => undefined, isMapPreloaded: () => preloaded }));
 const handlers: Record<string, (e: unknown) => void> = {};
 vi.mock('react-router', () => ({
   useNavigate: () => navigate,
@@ -19,9 +18,9 @@ vi.mock('react-router', () => ({
 }));
 vi.mock('../../src/view/map/hooks/useReducedMotion', () => ({ useReducedMotion: () => ({ current: reduced }) }));
 vi.mock('../../src/view/layout/SiteLayout', () => ({ SiteLayout: ({ children }: { children: React.ReactNode }) => <div>{children}</div> }));
-vi.mock('../../src/view/Home', () => ({ Home: () => null }));
-vi.mock('../../src/view/map/AtlasMap', () => ({ AtlasMap: () => null }));
 vi.mock('../../src/view/start/StartBackground', () => ({ StartBackground: () => null }));
+vi.mock('../../src/view/start/preloadMap', () => ({ preloadMap: () => undefined }));
+vi.mock('../../src/view/start/mapCover', () => ({ coverForMap: (s: unknown, a: boolean) => cover(s, a) }));
 
 import { StartPage } from '../../src/view/start/StartPage';
 
@@ -35,63 +34,43 @@ function click(init: Record<string, unknown> = {}) {
   return ev;
 }
 
-afterEach(() => { navigate.mockClear(); reduced = false; preloaded = true; });
+afterEach(() => { navigate.mockClear(); cover.mockClear(); reduced = false; vi.unstubAllGlobals(); });
 
 describe('C02 wejście do mapy', () => {
-  it('klik przy pobranym kodzie mapy: nawigacja wewnątrz przejścia widoku', async () => {
-    const start = vi.fn<(cb: () => Promise<void>) => void>((cb) => { void cb(); });
-    vi.stubGlobal('document', { startViewTransition: start, querySelector: () => null });
-    vi.stubGlobal('requestAnimationFrame', (f: () => void) => { f(); return 0; });
+  it('klik: okładka z animacją i od razu nawigacja do /mapa', () => {
+    vi.stubGlobal('document', { querySelector: () => null });
     const ev = click();
     expect(ev.defaultPrevented).toBe(true);
-    await vi.waitFor(() => expect(start).toHaveBeenCalledTimes(1));
+    expect(cover).toHaveBeenCalledWith(null, true);
     expect(navigate).toHaveBeenCalledWith('/mapa');
-    vi.unstubAllGlobals();
   });
-  it('klik gdy kod mapy jeszcze się pobiera: wejście od razu, bez czekania i bez przejścia', () => {
-    preloaded = false;
-    const start = vi.fn<(cb: () => Promise<void>) => void>();
-    vi.stubGlobal('document', { startViewTransition: start, querySelector: () => null });
+  it('reduced-motion: okładka bez animacji, nawigacja nadal od razu', () => {
+    reduced = true;
+    vi.stubGlobal('document', { querySelector: () => null });
     click();
+    expect(cover).toHaveBeenCalledWith(null, false);
     expect(navigate).toHaveBeenCalledWith('/mapa');
-    expect(start).not.toHaveBeenCalled();
-    vi.unstubAllGlobals();
   });
-  it('bez obsługi przejść widoku: zwykła nawigacja', () => {
-    vi.stubGlobal('document', {});
-    const ev = click();
-    expect(ev.defaultPrevented).toBe(true);
-    expect(navigate).toHaveBeenCalledWith('/mapa');
-    vi.unstubAllGlobals();
-  });
-  it('z klawiszem modyfikującym: zwykły link, bez navigate', () => {
+  it('z klawiszem modyfikującym: zwykły link, bez okładki i navigate', () => {
     const ev = click({ ctrlKey: true });
     expect(ev.defaultPrevented).toBe(false);
     expect(navigate).not.toHaveBeenCalled();
+    expect(cover).not.toHaveBeenCalled();
   });
-  it('przy reduced-motion: zwykły link, bez navigate z animacją', () => {
-    reduced = true;
-    const ev = click();
-    expect(ev.defaultPrevented).toBe(false);
-    expect(navigate).not.toHaveBeenCalled();
+  it('okładka: czas i krzywa z tokenów, kopia obrysu w tym samym miejscu, zdejmowana po gotowości mapy', () => {
+    const src = read('src/view/start/mapCover.ts');
+    expect(src).toMatch(/var\(--motion-slow\) var\(--easing\)/);
+    expect(src).toContain('getBoundingClientRect');
+    expect(src).toContain('maplibregl-canvas');
+    expect(src).toContain('cover.remove()');
+    const scales = [...src.matchAll(/scale\(([\d.]+)\)/g)].map((m) => Number(m[1]));
+    expect(Math.max(...scales)).toBeLessThanOrEqual(1.1);
   });
-  it('StartBackground nie ma skali > 1,1 ani propa leaving', () => {
+  it('StartBackground nie ma skali > 1,1 ani propa leaving; kod mapy ładuje się w tle', () => {
     const src = read('src/view/start/StartBackground.tsx');
     expect(src).not.toMatch(/leaving/);
-    const scales = [...src.matchAll(/scale\(([\d.]+)\)/g)].map((m) => Number(m[1]));
-    expect(scales.every((n) => n <= 1.1)).toBe(true);
-  });
-  it('global.css: wspólny element poland-map, bez skali, czas i krzywa z tokenów', () => {
-    const css = read('src/styles/global.css');
-    const block = css.slice(css.indexOf('start-fade-out'));
-    expect(block).toMatch(/view-transition-old\(poland-map\)/);
-    expect(block).not.toMatch(/scale\(/);
-    expect(block).toMatch(/var\(--motion-slow\) var\(--easing\)/);
-    const tokens = JSON.parse(read('config/tokens.json'));
-    expect(tokens.motion.cameraIn).toBe(tokens.motion.slow);
-  });
-  it('preloadMap pobiera Home i AtlasMap, a StartPage nadaje wspólną nazwę przejścia', () => {
+    expect([...src.matchAll(/scale\(([\d.]+)\)/g)].every((m) => Number(m[1]) <= 1.1)).toBe(true);
     expect(read('src/view/start/preloadMap.ts')).toMatch(/import\('..\/map\/AtlasMap'\)/);
-    expect(read('src/view/start/StartPage.tsx')).toMatch(/poland-map/);
+    expect(read('config/tokens.json')).toContain('cameraIn');
   });
 });
