@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import type { MouseEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
-import tokens from '@/../config/tokens.json';
 import { StartBackground } from './StartBackground';
 import { useReducedMotion } from '@/view/map/hooks/useReducedMotion';
 import { SiteLayout } from '../layout/SiteLayout';
@@ -26,27 +25,19 @@ function withTech(href: string, search: string): string {
 /**
  * Prosty ekran startowy (`/`): tytuł, jedno zdanie, 3 kroki, przycisk „Otwórz mapę” i przykłady.
  * Tło: animowany obrys Polski (dwa małe pliki: obrys i start.json), bez kodu mapy i bez wartości wskaźników.
- * „Otwórz mapę”: obrys płynnie powiększa się i zanika (czas `motion.cameraIn`), potem `/mapa`.
+ * „Otwórz mapę”: od razu nawigacja z przejściem widoku (lekkie przybliżenie opisane w global.css).
  */
 export function StartPage() {
   const { search } = useLocation();
   const navigate = useNavigate();
   const reduced = useReducedMotion();
-  const [leaving, setLeaving] = useState(false);
-  const timer = useRef<number | null>(null);
   const to = (href: string) => withTech(href, search);
-
-  useEffect(() => () => {
-    if (timer.current !== null) window.clearTimeout(timer.current);
-  }, []);
 
   const openMap = (e: MouseEvent<HTMLAnchorElement>) => {
     // Kliknięcie z klawiszem (nowa karta) i brak animacji (reduced-motion): zwykła nawigacja linku.
     if (reduced.current || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
-    if (leaving) return;
-    setLeaving(true);
-    timer.current = window.setTimeout(() => navigate(to('/mapa')), tokens.motion.cameraIn);
+    navigate(to('/mapa'), { viewTransition: true });
   };
 
   return (
@@ -58,7 +49,7 @@ export function StartPage() {
     >
       <div className="relative isolate overflow-hidden">
         <div className="absolute inset-x-0 top-0 -z-10 mx-auto flex w-full max-w-3xl justify-center px-4 pt-6 md:px-8">
-          <StartBackground leaving={leaving} />
+          <StartBackground />
         </div>
       <div className="max-w-3xl mx-auto w-full px-4 md:px-8 py-10 md:py-16 flex flex-col gap-10">
         <section className="flex flex-col gap-4 bg-kalka/80 p-4">
