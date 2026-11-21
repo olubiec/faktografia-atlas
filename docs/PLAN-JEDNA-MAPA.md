@@ -1,6 +1,10 @@
 # Plan „Jedna mapa” – tło strony startowej staje się mapą (21.11.2026)
 Polecenie właściciela: „żeby to była jedna mapa, nie dwie różne; na tło nałożona animacja, a po otwarciu zmienia się w zwykłą mapę”. Właściciel wybrał wariant A: **jedna mapa pod stronami `/` i `/mapa`**. Plan zastępuje okładkę z PR #603 (`src/view/start/mapCover.ts`).
 
+## 0. Stan wdrożenia (21.11.2026)
+Zrobione: M1 (wspólny kadr plakatu i mapy, PR #605), M2 (sygnał `atlas:ready`, #606), M3 (wariant bezpieczny, #607), M4 (dotyk w trakcie dojazdu, #608), M4b (reakcja tła na dotyk i mysz, #609), M5 (test `@PATH-1b`, PRODUKT §3.1/§7).
+**Odstępstwo:** zamiast jednego płótna trwale pod `/` zbudowano wariant z sekcji „Ryzyka”: mapa montuje się po kliknięciu pod okładką, startuje w kadrze plakatu (`entry-frame.ts`) i po `atlas:ready` płynnie dojeżdża do widoku mapy; dane mapy rozgrzewają się w tle (D1). `MapStage` i usunięcie `mapCover.ts` odłożone: warto wrócić do nich, jeśli ten wariant nie wystarczy na telefonie właściciela.
+
 ## 1. Cel (co ma widzieć właściciel)
 - `/`: w tle Polska w tym samym miejscu, wielkości i kolorach, w jakich za chwilę pokaże ją mapa. Obrys nadal się animuje, a cztery wskaźniki zmieniają się co 5 s.
 - „Otwórz mapę” albo stuknięcie w Polskę w tle: tekst startu płynnie znika, ta sama Polska lekko się przybliża do kadru `/mapa`, a panele mapy płynnie się pojawiają. Bez pustego ekranu, bez drugiej Polski i bez przeładowania.
