@@ -57,7 +57,8 @@ describe('B07 StartBackground', () => {
     expect(html).toContain('aria-label="Mapa Polski: Liczba ludności"');
     expect(html).toContain('data-indicator="population"');
     expect(html.match(/<path /g)).toHaveLength(16);
-    expect(html).toContain('touch-none');
+    // M4b: pionowe przewijanie palcem nad obrysem działa (touch-action: pan-y), wcześniej było touch-none.
+    expect(html).toContain('touch-pan-y');
     // Bez reakcji nie ma podpisu z województwem.
     expect(html).not.toContain('mazowieckie');
   });

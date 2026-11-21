@@ -15,9 +15,11 @@ type Ui = { index: number; mode: Frame['mode']; nearest: string | null };
  * Kolory: 5 klas z start.json (`--seq-1…5`, `--no-data`). Pierwszy kadr, `prefers-reduced-motion`
  * i brak ruchu = ludność. Dane przychodzą z propsa `initial` (testy) albo z dwóch małych plików.
  */
-export function StartBackground({ initial }: { initial?: StartBackgroundData }) {
+export function StartBackground({ initial, onPick }: { initial?: StartBackgroundData; onPick?: (teryt: string, indicatorId: string) => void }) {
   const [data, setData] = useState<StartBackgroundData | null>(initial ?? null);
   const [ui, setUi] = useState<Ui>({ index: 0, mode: 'random', nearest: null });
+  // Województwo pod kursorem lub palcem (bez efektów przy reduced-motion).
+  const [hot, setHot] = useState<string | null>(null);
   const reduced = useReducedMotion();
   const svgRef = useRef<SVGSVGElement>(null);
   const pathRefs = useRef<(SVGPathElement | null)[]>([]);
@@ -97,7 +99,10 @@ export function StartBackground({ initial }: { initial?: StartBackgroundData }) 
           data-indicator={active?.id ?? ''}
           data-bbox={data ? data.outline.bbox.join(',') : undefined}
           data-mode={ui.mode}
-          className="h-auto w-full touch-none"
+          className="h-auto w-full touch-pan-y"
+          onPointerLeave={() => setHot(null)}
+          onPointerUp={(e) => e.pointerType === 'touch' && setHot(null)}
+          onPointerCancel={() => setHot(null)}
         >
           {cells.map((c, i) => (
             <path
@@ -107,9 +112,14 @@ export function StartBackground({ initial }: { initial?: StartBackgroundData }) 
               }}
               d={c.d}
               data-teryt={c.teryt}
-              className="pointer-events-auto stroke-tusz"
+              data-hot={hot === c.teryt ? '1' : undefined}
+              className="pointer-events-auto cursor-pointer stroke-tusz"
+              onPointerEnter={() => !reduced.current && setHot(c.teryt)}
+              onPointerDown={() => !reduced.current && setHot(c.teryt)}
+              onClick={() => active && onPick?.(c.teryt, active.id)}
               style={{
                 fill: colors.get(c.teryt) ?? 'var(--no-data)',
+                fillOpacity: hot && hot !== c.teryt ? 0.6 : 1,
                 transition: reduced.current ? 'none' : 'fill var(--motion-slow) var(--easing)',
               }}
             />
