@@ -71,7 +71,7 @@ export function SiteFooter({ decorativeLogo = false, initialStatus }: SiteFooter
         <img
           src={logoSrc}
           alt={decorativeLogo ? '' : 'Faktografia'}
-          className="h-[28px] md:h-[32px] w-auto"
+          className="h-10 md:h-12 w-auto -ml-3"
           width={160}
           height={32}
         />

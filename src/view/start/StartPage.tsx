@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { coverForMap } from './mapCover';
 import { isFrugalNetwork, preloadMap, preloadMapData } from './preloadMap';
 import { StartBackground } from './StartBackground';
-import { useIsDark } from '@/view/hooks/useIsDark';
 import { useReducedMotion } from '@/view/map/hooks/useReducedMotion';
 import { SiteLayout } from '../layout/SiteLayout';
 import { Button } from '@/components/ui/button';
@@ -20,6 +19,9 @@ const STEPS = [
   '3. Zobacz profil i porównaj z innym miejscem.',
 ];
 
+/** Hasło na banerze: o miejscowości i okolicy użytkownika. */
+const TAGLINE = 'Sprawdź dane swojej miejscowości i okolicy. Zobacz, jak wypadają na tle całej Polski.';
+
 const CHIP = 'pointer-events-auto';
 
 /** Dopisuje do linku parametry techniczne (`e2e`, `logo`, `tune`) z bieżącego adresu. */
@@ -30,7 +32,7 @@ function withTech(href: string, search: string): string {
 }
 
 /**
- * Prosty ekran startowy (`/`): tytuł, jedno zdanie, 3 kroki, przycisk „Otwórz mapę” i przykłady.
+ * Prosty ekran startowy (`/`): baner z hasłem na dole mapy, 3 kroki, przycisk „Otwórz mapę” i przykłady.
  * Tło: animowany obrys Polski (dwa małe pliki: obrys i start.json), bez kodu mapy i bez wartości wskaźników.
  * „Otwórz mapę”: okładka z kopią obrysu przykrywa ekran na czas ładowania mapy (mapCover.ts).
  */
@@ -39,8 +41,6 @@ export function StartPage() {
   const navigate = useNavigate();
   const reduced = useReducedMotion();
   const to = (href: string) => withTech(href, search);
-  const isDark = useIsDark();
-  const logoSrc = isDark ? '/brand/faktografia-logo-jasne.svg' : '/brand/faktografia-logo-granat.svg';
 
   // Po wczytaniu strony (w wolnej chwili) pobieramy kod mapy, a chwilę później jej dane (nie przy oszczędzaniu danych).
   useEffect(() => {
@@ -83,25 +83,22 @@ export function StartPage() {
     <SiteLayout
       meta={{
         title: 'Faktografia',
-        description: 'Zobacz, jak wypada Twoja gmina na tle całej Polski, na danych GUS.',
+        description: TAGLINE,
       }}
     >
       <div className="relative isolate">
-        {/* Mapa w całości widoczna; na jej dole baner z logo, bez przerwy łączy się z treścią pod spodem. */}
+        {/* Mapa w całości widoczna; na jej dole półprzezroczysty baner (ok. 2/5 wysokości) z hasłem, bez przerwy łączy się z treścią pod spodem. */}
         <div className="mx-auto w-full max-w-3xl px-4 pb-12 pt-6 md:px-8 md:pb-16">
           <div className="relative">
             <StartBackground onPick={pickRegion} />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-start bg-kalka/70 px-4 py-4">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-2/5 items-center bg-kalka/70 px-4 md:px-8">
               <h1 className="m-0 font-extrabold tracking-[-0.02em] text-tusz">
-                <img src={logoSrc} alt="" aria-hidden="true" className="h-10 w-auto md:h-14" />
-                <span className="sr-only">Faktografia</span>
+                <span className="sr-only">Faktografia</span>{' '}
+                <span className="text-xl md:text-3xl">{TAGLINE}</span>
               </h1>
             </div>
           </div>
           <div className="flex flex-col gap-6 bg-kalka/95 p-4">
-            <p className="text-md font-medium text-tusz md:text-lg">
-              Zobacz, jak wypada Twoja gmina na tle całej Polski, na danych GUS.
-            </p>
             <ol className="m-0 flex list-none flex-col gap-2 p-0 text-sm text-tusz">
               {STEPS.map((step) => (
                 <li key={step}>{step}</li>

@@ -87,8 +87,8 @@ export function Header() {
   const themeText = theme === 'system' ? 'Systemowy' : theme === 'light' ? 'Jasny' : 'Ciemny';
 
   let logoSrc = activeIsDark ? '/brand/faktografia-logo-jasne.svg' : '/brand/faktografia-logo-granat.svg';
-  // STYL §4: logo w nagłówku 28–32 px (telefon) i 36–40 px (komputer); klasy ze skali odstępów.
-  let logoClass = 'h-7 md:h-9 w-auto';
+  // STYL §4: logo w nagłówku 40 px (telefon) i 48 px (komputer); -ml-3 wyrównuje margines wewnątrz pliku SVG do lewej krawędzi treści.
+  let logoClass = 'h-10 md:h-12 w-auto -ml-3';
 
   if (isZnakLogo) {
     logoSrc = activeIsDark ? '/brand/faktografia-znak-jasne.svg' : '/brand/faktografia-znak-granat.svg';
