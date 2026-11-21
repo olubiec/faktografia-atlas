@@ -81,7 +81,7 @@ Pliki w `public/brand/`, wszystkie bez tła, tekst zamieniony na krzywe (nie zal
 | faktografia-znak-jasny.svg | duży znak na ciemnym tle: avatar IG/TikTok, okładki karuzel |
 
 Zasady:
-- Logo w nagłówku i stopce: wysokość 40 px na telefonie, 48 px na komputerze (plik ma własny margines, więc litery są mniejsze); lekko cofnięte w lewo (-ml-3), by litery stały równo z lewą krawędzią treści.
+- Logo w nagłówku i stopce: wysokość 40 px na telefonie, 48 px na komputerze (plik ma własny margines, więc litery są mniejsze); cofnięte w lewo i do góry o margines pliku, by litery stały równo z krawędzią treści i były wyśrodkowane w pionie.
 - Pole ochronne: wokół logo wolne miejsce co najmniej wysokości litery F.
 - Duży znak z zarysami granic nie schodzi poniżej 120 px (granice znikają). Poniżej używaj favicony.
 - Nie zmieniaj kolorów, proporcji ani kąta F. Nie dodawaj cieni ani obrysów.
