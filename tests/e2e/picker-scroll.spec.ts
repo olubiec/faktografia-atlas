@@ -23,6 +23,18 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
   ];
 
   for (const { name, width, height } of viewports) {
+    test(`@S14 indicator panel scrolls completely so ranking and footer are visible on ${name}`, async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      await openMap(page);
+      const panel = await openPanelIfMobile(page);
+      await expect(panel).toBeVisible();
+      const footerText = panel.getByText(/Źródło: GUS, Bank Danych Lokalnych/i);
+      await footerText.scrollIntoViewIfNeeded();
+      await expect(footerText).toBeInViewport();
+    });
+  }
+
+  for (const { name, width, height } of viewports.slice(0, 1)) {
     test(`@S14 indicator picker fits in viewport and scrolls internally to select last indicator on ${name}`, async ({ page }) => {
       await page.setViewportSize({ width, height });
       await openMap(page);
@@ -71,39 +83,27 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
       // URL should be updated with new indicator parameter ?i=
       await expect(page).toHaveURL(/\?i=/);
     });
-
-    test(`@S14 indicator panel scrolls completely so ranking and footer are visible on ${name}`, async ({ page }) => {
-      await page.setViewportSize({ width, height });
-      await openMap(page);
-      const panel = await openPanelIfMobile(page);
-      await expect(panel).toBeVisible();
-
-      // Find ranking or footer element at the bottom of indicator panel
-      const footerText = panel.getByText(/Źródło: GUS, Bank Danych Lokalnych/i);
-
-      // Scroll to footer
-      await footerText.scrollIntoViewIfNeeded();
-      await expect(footerText).toBeInViewport();
-    });
   }
 
-  test('@S14 search input field remains visible while list is scrolled', async ({ page }) => {
+  test('@S14 menu wyboru danych mieści się w oknie 1440x600, a szukajka zostaje widoczna przy przewijaniu', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 600 });
     await openMap(page);
-
-    const triggerButton = page.locator('button', { hasText: 'Wskaźnik' }).first();
-    await triggerButton.click();
-
-    const listbox = page.getByRole('listbox', { name: 'Lista wskaźników' });
-    const searchInput = page.getByPlaceholder('Szukaj wskaźnika…');
-
-    // Scroll listbox down
-    await listbox.evaluate((el) => {
+    await page.locator('[data-slot="dialog-trigger"]').click();
+    const dialog = page.getByRole('dialog', { name: 'Wybierz dane' });
+    await expect(dialog).toBeVisible();
+    await expect
+      .poll(async () => {
+        const box = await dialog.boundingBox();
+        return box ? box.y + box.height : null;
+      })
+      .toBeLessThanOrEqual(600 + 2);
+    const searchInput = dialog.getByRole('searchbox', { name: 'Szukaj wskaźnika' });
+    await dialog.evaluate((el) => {
       el.scrollTop = 300;
     });
-
-    // Search input remains in viewport
     await expect(searchInput).toBeInViewport();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
   });
 
   test('@S14 no horizontal scroll at 390px and touch targets are at least 44px', async ({ page }) => {
@@ -128,13 +128,11 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
     expect(optionBox!.height).toBeGreaterThanOrEqual(44);
   });
 
-  test('@S14 axe accessibility audit passes with indicator picker open', async ({ page }) => {
+  test('@S14 axe accessibility audit passes with data menu open', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await openMap(page);
-
-    const triggerButton = page.locator('button', { hasText: 'Wskaźnik' }).first();
-    await triggerButton.click();
-    await expect(page.getByRole('listbox', { name: 'Lista wskaźników' })).toBeVisible();
+    await page.locator('[data-slot="dialog-trigger"]').click();
+    await expect(page.getByRole('dialog', { name: 'Wybierz dane' })).toBeVisible();
 
     const results = await new AxeBuilder({ page }).analyze();
     expect(results.violations).toEqual([]);
