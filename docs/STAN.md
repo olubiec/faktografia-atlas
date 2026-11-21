@@ -1,4 +1,22 @@
-# Stan – 21.11.2026
+# Stan – 21.11.2026 (wieczór)
+
+## Stan na 21.11.2026 wieczór (fale 2 i 3 etapu C scalone; poniższe sekcje są starsze – tam, gdzie się różnią, obowiązuje ta)
+`main` = commit fca10e1 (#624). Fala 2 i fala 3 `docs/PLAN-FALE-C.md` są scalone; fala 4 (B14, C09) czeka na polecenie właściciela. Wygląd i zachowanie na telefonie: „do sprawdzenia” przez właściciela na podglądzie. Stan CI na `main` po scaleniach #617–#624: **do sprawdzenia** (scalane na polecenie „scal”, bez czekania na CI).
+
+| Status | Praca | PR | Co dało |
+|---|---|---|---|
+| ✅ scalone | W23-B13 profil: stałe 7 wskaźników + „Dodaj wskaźnik”, „Kopiuj link” w nagłówku | #615 | wspólne menu wyboru wskaźnika |
+| ✅ scalone | W24-C04 wspólne moduły okien, sekcji i list linków | #616 | `Window`, `PageSection`, `LinkList` |
+| ✅ scalone | W24-C05 nagłówek · C06 stopka · C08 okna · C07 strona `/` według STYL | #617–#620 | jednolity nagłówek i stopka, strona startowa z krokami i przykładami |
+| ✅ scalone | Poprawki z podglądu: przełącznik powiat/województwo według realnych poziomów danych; dodawanie wskaźników w profilu (wartości, X); kategorie w pełnym oknie na telefonie | #621 | `LevelSwitch`, `useExtraItems` |
+| ✅ scalone | Porównaj: dodane wskaźniki z X i pobieraniem wartości; `/` z banerem na dole mapy | #622 | `ExtraIndicatorList` |
+| ✅ scalone | `/`: baner 1/3 mapy z hasłem „Sprawdź swoją miejscowość i okolicę.”, bez podpisu z danymi pod mapą; logo w nagłówku i stopce większe (40/48 px) i wyrównane | #623, #624 | `StartPage`, `Header`, `SiteFooter`, STYL §4 |
+
+**Do sprawdzenia przez właściciela:** `/` na telefonie (baner, hasło, brak podpisu); logo w nagłówku i stopce; mapa: przełącznik powiat/województwo przy wskaźnikach z danymi na obu poziomach; profil: dodanie wskaźnika i X; Porównaj: dodanie wskaźnika, X, wartości; kategorie wskaźników w pełnym oknie na telefonie.
+
+**Znane ograniczenia:** czerwone testy niezwiązane z tą pracą: jednostkowe `docs-no-conflict-markers` (STAN.md – naprawione tym wpisem), `indicator-panel-basic`, `indicator-panel-my`; e2e wyboru danych na telefonie; `map-zoom-out`, `path-s3`. Zrzuty pikselowe `/design` odświeżone workflowem „Update snapshots” (21.11, bez zmian). Zmiany z #621–#624 nie były oglądane w przeglądarce (tylko testy jednostkowe, lint, typy i jeden pomiar logo).
+
+**Dalej:** fala 4 (B14 sprzątanie, C09 strażnik spójności); za zgodą: dokończenie punktu 1 z C08 (profil w tym samym oknie co reszta, dotyka plików ekranu); naprawa czerwonych testów.
 
 ## Stan na 21.11.2026 (fala 1 etapu C i „Jedna mapa” scalone; sekcje niżej są starsze – tam, gdzie się różnią, obowiązuje ta)
 `main` = commit ccc3ab1 ([M7] #613). Fala 1 etapu C (`docs/PLAN-FALE-C.md`) jest scalona; fale 2–4 czekają na polecenie właściciela. Wygląd i zachowanie na telefonie: „do sprawdzenia” przez właściciela na faktografia.eu.
@@ -52,47 +70,10 @@ Fala W4 (15 zadań QC + poprawka #571) scalona do `main` przez właściciela-zle
 
 **Znane ograniczenia W4:** kliknięcia nie są testowane automatycznie (Vitest bez DOM); trzy specyfikacje e2e z QC403 (`drill`, `fix6-camera-driver`, `localities-map`) mogą być czerwone na CI; zrzuty pikselowe do odświeżenia workflowem „Update snapshots” (uruchamia właściciel); testy czasowe (`library-query-perf` i inne) nie były sprawdzone na czystym `main`.
 
-## Stan na 18.11.2026 (aktualizacja D10; reszta pliku niżej to opis z 28.10 – tam, gdzie się różni, obowiązuje ta sekcja)
-`main` = commit f22ee8c ([W2-FIX6G] #502). Pełny wykaz prac przerwanych i otwartych: `docs/STATUS-PRZERWANE.md`; plan fal: `docs/PLAN-POPRAWEK.md`; kolejność animacji kamery: `tasks/poczekalnia/FIX6-KOLEJNOSC.md`. Liczby i odczyt na telefonie: „do weryfikacji” przez właściciela.
-
-### Co zostało scalone od 28.10 (✅)
-| Status | Praca | PR | Co dało |
-|---|---|---|---|
-| ✅ | Fala Q1 = W1-QC* (22 zadania z `tasks/`, wszystkie scalone) | #453–#472, #474–#476 | logika Rankingów (adres, filtr, podsumowanie, lista), stan pary Porównaj i PlacePicker, reguła obrysu, model „Moich wskaźników”, wspólny rejestr wskaźników i jeden loader wartości, spis pobranych biblioteki, karty eksportu (tabela, duża liczba, rozkład, wykres lat, numer strony), pasek udostępniania, „Zamów dane na temat…”, adres `?i=b60614`, raport ruchu mapy. Dodatkowo robot spisu pobranych `available.json` (QC601, #459) |
-| ✅ | Naprawa helpera e2e | #473 | brakujący eksport `expectTouchTargets` |
-| ✅ | [FIX], [FIX2] | #477, #478 | czerwone testy e2e na main (dostępność, podwójne logo, reszta) |
-| ✅ | [FIX3] uwagi właściciela | #479 | logo w eksporcie, płynniejsza kamera, logo = strona główna, wybór wskaźników |
-| ✅ | [PLAN] plan poprawek | #480 | `docs/PLAN-POPRAWEK.md`, zadania W2–W7 i W19 w poczekalni |
-| ✅ | [FIX5] audyt automatu danych | #481 | audyt pokrycia i robotów (`docs/AUDYT-DANYCH.md`) |
-| ✅ | [FIX4] okno dodawania wskaźników po kategoriach (także z biblioteki), mniej przebudów warstw przy zoomie | #485 | picker/okno dodawania |
-| ✅ | Fala P1 = W19-PF01–PF09 (9/9) | #482–#491 | PF04 #482 · PF05 #483 · PF06 #484 · PF07 #486 · PF02 #487 · PF03 #488 · PF01 #489 · PF08 #490 · PF09 #491 (pomiar klatek, strażnicy osiągalności i workflowów, świeżość danych, stabilizacja testów) |
-| ✅ | Dane wartości BDL | #451 | `data: wartości wskaźników BDL (public/data/values)` jest już na main (commit 40c3f27); czerwony gitleaks i wynik „Fetch data” #31 – do weryfikacji, patrz „Do zrobienia” |
-| ✅ | FIX6 – płynna kamera, całość (A–I, 10 PR) | #492–#502 | opis niżej |
-
-**FIX6 szczegółowo** (research: `docs/research/p-animacja-kamery.md`; pomiar: `p-animacja-kamery-pomiar.md`):
-- A #494 wachlarze w wielokątach (wzór tylko dla braku danych) · B #493 czysty planer kamery (`camera-plan.ts`: easing, czas, zoom log) · I #495 pomiar klatek przed/po z progami · H1 #496 sterownik rAF + `jumpTo` (niepodłączony) · H2 #497 mapa niekontrolowana, kamera bez `setState` na klatkę.
-- C #498 płynne kółko (tempo `scrollZoom` ze stałych) · D #499 dotyk i pinch przerywają animację · E #500 „Cofnij”/„Wróć” tym samym planerem (stos widoków, miękkie lądowanie) · F #501 warstwa miejscowości bez „pop” (od zoomu 8,5, znika poniżej 8,0) · G #502 reduced motion (plan o czasie 0 = jedno `jumpTo`) i tabela „po”.
-- **Pomiary:** środowisko to SwiftShader (programowy WebGL, dławienie CPU ×4), nie telefon. Progi (p95 ≤ 33 ms, zgubione < 10%, max ≤ 100 ms, skok zoomu ≤ 0,25) **nie zostały spełnione w żadnym z 5 scenariuszy**. Poprawa widoczna w pinch (p95 1833→567 ms), „cofnij” (3700→983 ms), zoom do gminy (1717→733 ms); `wheel×3` wyszło gorzej (367→717 ms, duży rozrzut). Liczby są orientacyjne; **werdykt wymaga telefonu właściciela**.
-
-### W toku (🔶)
-- ✅ **[W2-FIX7] PR #503** (stan 20.11 – U00: `fitViewState` i `__atlas.mapView` są na main, FIX7 scalone; zob. `docs/research/u/U00.md`) – opis z 18.11: mapa startuje za blisko na telefonie (widać tylko środek Polski). Przyczyna: pusta referencja mapy w `onLoad`, więc `syncMap` nic nie ustawiał i zoom zostawał 5,5. Na gałęzi: `fitViewState` w `src/core/map/fit.ts` (margines 48 px, 64 px u góry na pasek „Polska”; „Wróć” używa tej samej funkcji), `pixelRatio` MapLibre i `useDevicePixels` deck.gl ≤ 2, `__atlas.mapView`, testy `fix7-fit-view.test.ts` i `fix7-start-view.spec.ts`. **CI czerwone:** stały punkt kliknięcia w testach trafia teraz w pustkę – `s15-mobile.spec.ts` poprawiony (zgoda właściciela, tylko miejsce kliknięcia), `mobile-tooltip.spec.ts` (6 testów) w połowie zmiany (WIP, niesprawdzone), `profile-mobile.spec.ts:114` nieruszony. Uwaga: `playwright.config.ts` ma `reuseExistingServer` poza CI – przed testami lokalnymi `pkill -f "vite preview"` i `pnpm build`.
-
-### Do zrobienia (⬜)
-- ✅ (20.11, U00) Dokończyć FIX7 (testy dotykowe, zielone CI, scalenie squashem; zrzuty – workflow „Update snapshots”, jeśli się zmienią).
-- ⬜ Fala Q2 = W2 (19 zadań w `tasks/poczekalnia/`: 6 nowych PD01, PM01, PM02, PU01, PX01, PX02 + 13 z `Q/`): tylko na „start Q2”, po sprawdzeniu kolizji plików z FIX4/FIX6/FIX7 (`AtlasMap.tsx`, `useMapViewState.ts`, `ProfileIndicatorList.tsx`, `AddIndicatorWindow.tsx`, `localities-layer.ts`, `picker-results.ts`). PX02 (decyzja D3) dopiero po sprawdzeniu przyczyny na kodzie po FIX4.
-- ⬜ Fale Q3–Q7 (W3–W7, PLAN-POPRAWEK §3).
-- ⬜ Reduced motion: bezwładność `scrollZoom`/`dragPan` nie jest wyłączona (konfiguracja w `AtlasMap.tsx`).
-- ⬜ Wskaźniki biblioteki (1773 w `available.json`) niepodpięte do UI mapy (QC603, QC606, QC607 w W2–W4).
-- ⬜ Skrypt GUS (host wewnętrzny) – do weryfikacji; 155 nieudanych pobrań + 375 wskaźników poza `available.json` – do weryfikacji (patrz `docs/AUDYT-DANYCH.md`).
-- ⬜ Czerwony gitleaks w PR #451 i wynik „Fetch data” #31 – do weryfikacji.
-- ⬜ Odświeżenie reszty STAN.md (D10): sekcje niżej opisują stan z 28.10.
-- ⬜ Nie scalać Dependabot #450 w trakcie W3–W5.
-- ⬜ Stare gałęzie `claude/FIX6A` i `claude/FIX6I` (obce commity, nieszkodliwe) – usunąć (Claude nie może: proxy blokuje usuwanie gałęzi).
-- ⬜ **Do sprawdzenia przez właściciela na telefonie (FIX6):** płynny zoom kółkiem i pinchem · „Cofnij”/„Wróć” (miękkie lądowanie) · warstwa miejscowości bez skoku (pojawia się od 8,5, znika poniżej 8,0) · wachlarze przy zoomie 11–12 · przerwanie animacji dotykiem · tryb ograniczonego ruchu · po FIX7: start mapy pokazuje całą Polskę.
-
-- Starsze sekcje (Co działa, Sesja teraz, Plan, Przypomnienia, Znane problemy / dług – stan z 28.10) przeniesione do `docs/STAN-ARCHIWUM.md` 20.11.2026 (U00).
+- Sekcje z 18.11.2026 i wcześniejsze: `docs/STAN-ARCHIWUM.md` (przeniesione 21.11.2026).
 
 ## Decyzje (najnowsze na górze, 1 linia, kto)
+- 21.11.2026 · **Fale 2–3 etapu C scalone (#615–#624)** i poprawki z podglądu właściciela (#621–#624); baner `/` z krótkim hasłem o miejscowości, logo 40/48 px; zmiany `STYL.md` §4 i `PRODUKT.md` za wyraźną prośbą właściciela (Claude)
 - 21.11.2026 · **Plan odchudzony:** po B01–B07 w kolejce tylko B13 i B14 (zmniejszone); B08–B12, B15, U03b, U11b odłożone do `tasks/odlozone/`; zadania historyczne w `tasks/zrobione/` (Claude, na polecenie właściciela „usuńmy zbędne, odłóżmy na przyszłość”)
 - 21.11.2026 · **Etap C rozplanowany** (`docs/PLAN-FALE-C.md`): 4 fale, zadania `tasks/W24-C01…C09` + B13/B14 dostosowane: okno „Wybierz dane” na cały ekran, „Moje wskaźniki” tylko w Porównaj, płynne wejście do mapy, audyt i wspólne moduły okien/menu/stopki, strona `/` według STYL, testy-strażnicy (Claude, na polecenie właściciela)
 - 20.11.2026 · **W4 scalona do `main` (#556–#570) mimo nieukończonego CI** (na polecenie właściciela „scalaj”); pasek +/− zoomu usunięty (#571, na polecenie właściciela); `.gitignore` dla `.claude/worktrees/` nadal czeka na decyzję (Claude, z polecenia właściciela)
