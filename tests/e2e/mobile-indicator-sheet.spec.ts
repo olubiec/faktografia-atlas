@@ -38,7 +38,10 @@ test.describe('Mobile Indicator Bar & Sheet (@S15)', () => {
     await expect(pickerButton).toBeVisible();
     await pickerButton.click();
 
-    const option = page.getByRole('option', { name: /Stopa bezrobocia rejestrowanego/ });
+    // Menu danych (DataMenu, układ stack): szukamy i wybieramy wynik
+    const menu = sheet.locator('[data-slot="sheet-indicator-picker"]');
+    await menu.getByRole('searchbox', { name: 'Szukaj wskaźnika' }).fill('bezrobocie');
+    const option = menu.getByRole('button', { name: /Stopa bezrobocia rejestrowanego/ }).first();
     await expect(option).toBeVisible();
     await option.click();
 

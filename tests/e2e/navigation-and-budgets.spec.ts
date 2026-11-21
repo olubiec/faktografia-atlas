@@ -45,7 +45,8 @@ for (const vp of VIEWPORTS) {
 
       // 5. Przejście do /biblioteka
       await page.goto('/biblioteka');
-      await expect(page).toHaveURL(/\/biblioteka/);
+      // Strony Biblioteki nie ma: stary adres przenosi na mapę z otwartym menu danych.
+      await expect(page).toHaveURL(/\/mapa\?menu=dane/);
 
       // 6. Seria Wstecz w historii przeglądarki
       await page.goBack();

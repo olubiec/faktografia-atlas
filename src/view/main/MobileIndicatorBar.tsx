@@ -171,7 +171,14 @@ export function MobileIndicatorBar({
 
       >
         <IndicatorPanel
-          view={view}
+          view={{
+            ...view,
+            // Po wyborze wskaźnika arkusz się zamyka, żeby od razu widać było nową mapę.
+            setIndicator: (id: string) => {
+              view.setIndicator(id);
+              setSheetOpen(false);
+            },
+          }}
           choropleth={choropleth}
           ranking={ranking}
           index={index}

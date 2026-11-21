@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-import indexFixture from '../fixtures/library/index.json' with { type: 'json' };
 import { openMap } from './helpers/open-map';
 
 test.describe('Odporność na błędy sieci, CORS i wyścigi kliknięć (@W17-T04)', () => {
@@ -93,48 +92,6 @@ test.describe('Odporność na błędy sieci, CORS i wyścigi kliknięć (@W17-T0
 
     // Główny profil nie jest zablokowany i nadal jest w pełni czytelny
     await expect(sideSheet.locator('h2', { hasText: 'Gmina miejsko-wiejska Brzesko' })).toBeVisible();
-  });
-
-  test('symulacja błędu sieciowego / CORS na index.json biblioteki: strona /biblioteka wyświetla komunikat z ponowieniem próby', async ({
-    page,
-  }) => {
-    let failRequest = true;
-
-    await page.route('**/index.json', async (route) => {
-      if (failRequest) {
-        await route.abort('failed');
-      } else {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(indexFixture),
-        });
-      }
-    });
-
-    await page.goto('/biblioteka');
-
-    // Komunikat błędu pobierania
-    const errorMsg = page.getByText('Wystąpił błąd podczas pobierania spisu biblioteki.');
-    await expect(errorMsg).toBeVisible();
-
-    // Przycisk „Spróbuj ponownie” jest widoczny i ma min. 44x44 px
-    const retryButton = page.getByRole('button', { name: 'Spróbuj ponownie' });
-    await expect(retryButton).toBeVisible();
-    const box = await retryButton.boundingBox();
-    expect(box).not.toBeNull();
-    expect(box!.width).toBeGreaterThanOrEqual(44);
-    expect(box!.height).toBeGreaterThanOrEqual(44);
-
-    // Ponowienie próby po usunięciu awarii sieci
-    failRequest = false;
-    await retryButton.click();
-
-    // Spis załadowany pomyślnie, komunikat błędu znika
-    await expect(errorMsg).not.toBeVisible();
-    const counter = page.getByText('12 wskaźników GUS, z czego 6 można już przeglądać');
-    await expect(counter).toBeVisible();
-    await expect(page.getByTestId('category-tiles')).toBeVisible();
   });
 
   test('szybkie kliknięcie 5 jednostek z rzędu z opóźnioną odpowiedzią sieciową: wygrywa ostatnio kliknięta jednostka (brak race conditions)', async ({

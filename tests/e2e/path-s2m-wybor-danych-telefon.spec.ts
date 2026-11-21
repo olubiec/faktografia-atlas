@@ -65,8 +65,8 @@ for (const size of SIZES) {
       await page.waitForFunction(
         () => (window as unknown as { __atlas: { choropleth?: { indicatorId?: string } } }).__atlas.choropleth?.indicatorId === 'unemployment-rate',
       );
-      await expect(menu.getByRole('navigation', { name: 'Ścieżka' })).toHaveCount(0);
-      await expect(picker(page)).toContainText(/Stopa bezrobocia rejestrowanego/);
+      // Po wyborze arkusz się zamyka i widać nową mapę.
+      await expect(sheet(page)).toBeHidden();
       // Pasek pod mapą pokazuje nowy wskaźnik.
       await expect(bar(page)).toContainText(/Stopa bezrobocia rejestrowanego/);
     });
