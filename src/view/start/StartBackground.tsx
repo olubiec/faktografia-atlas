@@ -95,6 +95,7 @@ export function StartBackground({ initial }: { initial?: StartBackgroundData }) 
           role="img"
           aria-label={`Mapa Polski: ${active ? indicatorLabel(active) : 'ładowanie'}`}
           data-indicator={active?.id ?? ''}
+          data-bbox={data ? data.outline.bbox.join(',') : undefined}
           data-mode={ui.mode}
           className="h-auto w-full touch-none"
         >

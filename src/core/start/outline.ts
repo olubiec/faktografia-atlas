@@ -12,7 +12,12 @@ const GLOW_RADIUS = 0.4;
 const WAVE_PERIOD_MS = 2400;
 const WAVE_REACH = 0.5;
 
-export type OutlineFile = { version: number; viewBox: [number, number]; paths: { teryt: string; d: string }[] };
+export type OutlineFile = {
+  version: number;
+  viewBox: [number, number];
+  /** Granice kraju [zachód, południe, wschód, północ] w stopniach: ten sam kadr co mapa (poster-frame.ts). */
+  bbox: [number, number, number, number];
+  paths: { teryt: string; d: string }[] };
 export type Cell = { teryt: string; d: string; center: Point };
 
 export async function loadOutline(fetchImpl: typeof fetch = (...a) => fetch(...a)): Promise<OutlineFile> {
