@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import indicatorsData from '../../../../config/indicators.json';
 import {
-  BASIC_GROUP,
   buildCatalogTree,
   searchCatalog,
   type CatalogEntry,
@@ -127,7 +126,7 @@ export default function WyborDanychProto() {
                 ]} />
                 {!group && section.groups.map((g) => (
                   <button key={g.id} type="button" className={rowClass} onClick={() => { setGroupId(g.id); setLimit(PAGE); }}>
-                    <span className="min-w-0 break-words">{g.name === BASIC_GROUP ? `★ ${g.name}` : g.name}</span>
+                    <span className="min-w-0 break-words">{g.name}</span>
                     <span className="shrink-0 text-xs text-olowek">{g.entries.length}</span>
                   </button>
                 ))}

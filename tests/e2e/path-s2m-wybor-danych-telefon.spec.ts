@@ -55,10 +55,10 @@ for (const size of SIZES) {
       const crumbs = menu.getByRole('navigation', { name: 'Ścieżka' });
       await expect(crumbs).toContainText('Wszystkie');
       await expect(crumbs).toContainText('Rynek pracy');
-      await menu.getByRole('button', { name: /^★ Najważniejsze/ }).click();
+      await menu.getByRole('button', { name: /^Pozostałe/ }).click();
 
       // Poziom 3: okruszki z grupą i lista wskaźników.
-      await expect(crumbs).toContainText('Najważniejsze');
+      await expect(crumbs).toContainText('Pozostałe');
       await menu.getByRole('button', { name: /Stopa bezrobocia rejestrowanego/ }).click();
 
       await expect.poll(async () => (await search(page)).get('i')).toBe('unemployment-rate');
@@ -135,7 +135,7 @@ for (const size of SIZES) {
 
       await menu.getByRole('navigation', { name: 'Działy' }).getByRole('button', { name: /^Rynek pracy/ }).click();
       expect(await tooSmall()).toBe(0);
-      await menu.getByRole('button', { name: /^★ Najważniejsze/ }).click();
+      await menu.getByRole('button', { name: /^Pozostałe/ }).click();
       expect(await tooSmall()).toBe(0);
       expect(await overflow()).toBe(false);
       // Menu nie wychodzi poza szerokość ekranu.

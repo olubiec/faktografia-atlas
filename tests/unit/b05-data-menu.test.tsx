@@ -80,7 +80,7 @@ describe('B05 – DataMenu', () => {
   it('wpisana fraza (adres ?q=) pokazuje wyniki szukania', () => {
     const out = html({ initialQuery: 'bezrobocie' });
     expect(out).toContain('Stopa bezrobocia rejestrowanego');
-    expect(out).toContain('Rynek pracy › Najważniejsze');
+    expect(out).toContain('Rynek pracy › Pozostałe');
   });
 
   it('pola dotykowe mają min. 44 px: działy, wiersze i pole szukania', () => {

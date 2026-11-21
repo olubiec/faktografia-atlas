@@ -1,4 +1,4 @@
-import { BASIC_GROUP, type CatalogEntry, type CatalogSection, type CatalogTree } from '@/core/catalog/tree';
+import { type CatalogEntry, type CatalogSection, type CatalogTree } from '@/core/catalog/tree';
 import { DataMenuList, rowClass } from './DataMenuList';
 
 // Drzewo Dział › Grupa › Wskaźnik. Kolumna działów (komputer) i prawa kolumna: grupy, potem wskaźniki grupy.
@@ -66,7 +66,7 @@ export function DataMenuBranch({ section, groupId, selectedId, onPick, onHome, o
       {!group &&
         section.groups.map((g) => (
           <button key={g.id} type="button" className={rowClass} onClick={() => onOpenGroup(g.id)}>
-            <span className="min-w-0 break-words">{g.name === BASIC_GROUP ? `★ ${g.name}` : g.name}</span>
+            <span className="min-w-0 break-words">{g.name}</span>
             <span className="shrink-0 text-xs text-olowek">{g.entries.length}</span>
           </button>
         ))}
