@@ -33,3 +33,6 @@ Pętla Jules Loop i Orkiestra zostały usunięte. Zadania wykonują sesje Claude
 | ⬜ | Strona startowa (koncept 19.11) = QU32 (W4d) + QU33–QU38 (W6/W7) | 1 + 6 | czeka na decyzje A/B/C; plan: `docs/KONCEPT-STRONA-STARTOWA.md` |
 | 🔷 **najpierw** | Plan uproszczenia (20.11) = W22-U00–U08, U10, U11 (badania, ukrycie „Pobierz i udostępnij”, priorytet robota biblioteki; równolegle) → W23-U09 (synteza) → etap B (~12) | 11 · 1 | idzie PRZED wszystkim powyżej; reszta poczekalni zamrożona do werdyktu U09; „Pobierz i udostępnij” → `tasks/wstrzymane/`; plan: `docs/PLAN-UPROSZCZENIE.md` |
 Uwaga: zadania W17/W18 w poczekalni nadal czekają; W17-T04 i W17-T05 są zastąpione przez PF08 i PF07 (zrobione). Pełny plan: `docs/PLAN-POPRAWEK.md`; otwarte sprawy: `docs/STATUS-PRZERWANE.md`.
+
+## Odchudzenie planu (21.11.2026)
+Etap B (W23) zmniejszony: scalone B01–B07; w `tasks/` zostają tylko **W23-B13** i **W23-B14** (zakres zmniejszony). Odłożone: B08–B12, B15, U03b, U11b → `tasks/odlozone/` (powody i zamienniki w README tam). Zadania z falami W1–W3, W16, W22 i scalone B01–B07 przeniesione do `tasks/zrobione/` (historia, nie startują). `tasks/poczekalnia/` i `tasks/wstrzymane/` bez zmian: nadal nie startują. Fale po B13–B14 zdefiniuje właściciel.

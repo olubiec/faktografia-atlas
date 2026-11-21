@@ -1,4 +1,6 @@
 # Plan fal etapu B – budowa po uproszczeniu (21.11.2026)
+> **Odchudzenie planu (21.11.2026, decyzja właściciela).** Z etapu B zostają do zrobienia tylko **B13** (profil bez „Moich wskaźników” + „Kopiuj link”) i **B14** w zakresie zmniejszonym (martwy kod, prototypy, wstęp, stopka, Observable Plot). B01–B07 są scalone (pliki w `tasks/zrobione/`). **Odłożone** do `tasks/odlozone/`: B08 (widoki + Ranking), B09 (Wykres), B10 (Tabela), B11–B12 (druga mapa, koniec Porównaj), B15 (odbiór), U03b, U11b – lista i powody: `tasks/odlozone/README.md`. Tabele i opisy niżej dotyczą pełnego planu docelowego, nie bieżącej kolejki. Dalsze zmiany właściciel poda osobno.
+
 Powstał w sesji „po odpowiedziach właściciela” (W23-U12) z `docs/PLAN-DOCELOWY.md` (§4), odpowiedzi P1–P7 i decyzji D1–D9. Pliki zadań: `tasks/W23-B01…B15` oraz `tasks/W23-U03b`, `tasks/W23-U11b`. Opis ekranów: `docs/PRODUKT.md` v4.
 
 ## 1. Odpowiedzi właściciela, które wpisano w zadania
