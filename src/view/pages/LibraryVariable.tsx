@@ -204,7 +204,7 @@ export function LibraryVariable() {
   );
 
   const handleSelectUnit = (teryt: string) => {
-    navigate(`/?u=${teryt}`);
+    navigate(`/mapa?u=${teryt}`);
   };
 
   const levelLabel =

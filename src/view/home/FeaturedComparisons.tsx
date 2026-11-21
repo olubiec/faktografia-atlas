@@ -10,7 +10,7 @@ interface ComparisonCardProps {
 function ComparisonCard({ teryt1, teryt2, name1, name2 }: ComparisonCardProps) {
   return (
     <Link
-      to={`/?c=${teryt1},${teryt2}`}
+      to={`/mapa?c=${teryt1},${teryt2}`}
       className="flex flex-col justify-center min-h-[88px] p-4 bg-tusz text-arkusz hover:bg-tusz/90 border border-tusz focus:outline-none focus:ring-2 focus:ring-tusz focus:ring-offset-2 focus:ring-offset-kalka"
     >
       <div className="flex items-center justify-between gap-4">

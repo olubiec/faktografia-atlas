@@ -7,7 +7,7 @@ export function NotFound() {
       className="p-4 md:p-8 flex flex-col items-center justify-center text-center"
       meta={{
         title: 'Błąd 404',
-        description: 'Nie znaleziono żądanej strony w serwisie Faktografia Atlas.',
+        description: 'Nie znaleziono żądanej strony w serwisie Faktografia.',
       }}
     >
       <div className="max-w-md mx-auto py-12 flex flex-col items-center">

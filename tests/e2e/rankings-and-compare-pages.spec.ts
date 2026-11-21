@@ -33,7 +33,7 @@ test.describe('Rankings and Compare pages (@W16-M02)', () => {
 
       await openMenu();
       await openMap(page);
-      await expect(page).toHaveURL(/\/(\?.*)?$/); // Match home with or without search params
+      await expect(page).toHaveURL(/\/mapa(\?.*)?$/); // Match home with or without search params
     });
   }
 

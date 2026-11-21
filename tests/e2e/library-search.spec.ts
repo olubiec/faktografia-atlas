@@ -221,7 +221,7 @@ test.describe('Strona /biblioteka: szukanie, kategorie, filtry i stan w URL (@S2
 
       const footer = page.getByRole('contentinfo');
       await expect(footer).toBeVisible();
-      await expect(footer.getByText('Faktografia Atlas to niezależna')).toBeVisible();
+      await expect(footer.getByText('Faktografia to niezależna')).toBeVisible();
     }
   });
 });

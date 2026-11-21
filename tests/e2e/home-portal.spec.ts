@@ -22,7 +22,7 @@ test.describe('Sekcje redakcyjne pod mapą (W16-M01)', () => {
     // Sprawdzamy czy Warszawa jest wśród szybkich startów (link to ?u=)
     const warszawaShortcut = page.getByRole('link', { name: 'Warszawa', exact: true });
     await expect(warszawaShortcut).toBeVisible();
-    await expect(warszawaShortcut).toHaveAttribute('href', '/?u=1465011');
+    await expect(warszawaShortcut).toHaveAttribute('href', '/mapa?u=1465011');
 
     // 7 działów (Działy tematyczne)
     const dzialyTematyczne = page.getByRole('heading', { name: 'Działy tematyczne GUS', exact: true }).first();

@@ -11,7 +11,7 @@ export interface SiteLayoutProps {
 }
 
 /**
- * Wspólny układ stron portalu Faktografia Atlas.
+ * Wspólny układ stron portalu Faktografia.
  * Zawiera skip-link „Przejdź do treści” w sekcji nawigacji, nagłówek Header, kontener główny main oraz stopkę SiteFooter.
  */
 export function SiteLayout({ children, className, meta }: SiteLayoutProps) {

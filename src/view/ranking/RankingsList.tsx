@@ -17,7 +17,7 @@ export interface RankingsListProps {
 
 /** Adres mapy z wybraną jednostką, wskaźnikiem, poziomem i (opcjonalnie) rokiem. */
 function mapHref(teryt: string, indicatorId: string, level: UnitLevel, year: number | null) {
-  const base = `/?u=${encodeURIComponent(teryt)}&i=${encodeURIComponent(indicatorId)}&l=${level}`;
+  const base = `/mapa?u=${encodeURIComponent(teryt)}&i=${encodeURIComponent(indicatorId)}&l=${level}`;
   return year === null ? base : `${base}&y=${year}`;
 }
 

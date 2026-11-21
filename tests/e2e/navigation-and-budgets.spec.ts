@@ -22,11 +22,13 @@ for (const vp of VIEWPORTS) {
       // 1. Wejście na stronę główną
       await openMap(page, '?e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
-      await expect(page).toHaveURL(/\/(\?.*)?$/);
+      await expect(page).toHaveURL(/\/mapa(\?.*)?$/);
 
       // 2. Przejście do /porownaj
       await page.goto('/porownaj');
       await expect(page).toHaveURL(/\/porownaj/);
+      // Strona ładuje się leniwie (B03): czekamy na jej treść, zanim sprawdzimy przycisk.
+      await page.waitForLoadState('networkidle');
 
       // 3. Wybór gotowego pojedynku
       const comparisonBtn = page.getByRole('button', { name: /Warszawa vs Kraków/i });
@@ -59,7 +61,7 @@ for (const vp of VIEWPORTS) {
       await expect(page).toHaveURL(/\/porownaj/);
 
       await page.goBack();
-      await expect(page).toHaveURL(/\/(\?.*)?$/);
+      await expect(page).toHaveURL(/\/mapa(\?.*)?$/);
 
       // 7. Seria Dalej w historii przeglądarki
       await page.goForward();

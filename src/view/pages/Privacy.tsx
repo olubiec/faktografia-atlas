@@ -15,7 +15,7 @@ export function Privacy() {
       className="p-4 md:p-8 pb-24 md:pb-32 max-w-4xl mx-auto w-full"
       meta={{
         title: 'Prywatność',
-        description: 'Informacje o ochronie prywatności, braku śledzenia osób i zarządzaniu zgodą na analitykę w portalu Faktografia Atlas.',
+        description: 'Informacje o ochronie prywatności, braku śledzenia osób i zarządzaniu zgodą na analitykę w portalu Faktografia.',
       }}
     >
       <article className="max-w-[70ch] space-y-6">

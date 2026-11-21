@@ -14,7 +14,7 @@ export function PageMeta({
   canonical,
   ogType = 'website',
 }: PageMetaProps) {
-  const fullTitle = title.includes('Faktografia') ? title : `${title} – Faktografia Atlas`;
+  const fullTitle = title.includes('Faktografia') ? title : `${title} – Faktografia`;
 
   return (
     <>

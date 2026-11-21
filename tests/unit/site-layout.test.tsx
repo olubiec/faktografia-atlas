@@ -25,13 +25,14 @@ describe('SiteLayout & SiteFooter (W15-M04)', () => {
 
       // Kolumna 1: Logo Faktografia, misja, licencja CC BY 4.0
       expect(html).toContain('alt="Faktografia"');
-      expect(html).toContain('Faktografia Atlas');
+      expect(html).toContain('Faktografia to niezależna');
       expect(html).toContain('CC BY 4.0');
       expect(html).toContain('https://creativecommons.org/licenses/by/4.0/deed.pl');
 
       // Kolumna 2: Narzędzia
       expect(html).toContain('Narzędzia');
       expect(html).toContain('href="/"');
+      expect(html).toContain('href="/mapa"');
       expect(html).toContain('Mapa Polski');
       expect(html).toContain('href="/rankingi"');
       expect(html).toContain('Rankingi');
@@ -42,13 +43,13 @@ describe('SiteLayout & SiteFooter (W15-M04)', () => {
 
       // Kolumna 3: Działy tematyczne GUS (7 głównych wskaźników)
       expect(html).toContain('Działy tematyczne GUS');
-      expect(html).toContain('href="/?i=density"');
-      expect(html).toContain('href="/?i=unemployment-rate"');
-      expect(html).toContain('href="/?i=avg-wage"');
-      expect(html).toContain('href="/?i=dwellings-per-1000"');
-      expect(html).toContain('href="/?i=forest-cover"');
-      expect(html).toContain('href="/?i=preschool-3-6"');
-      expect(html).toContain('href="/?i=cars-per-1000"');
+      expect(html).toContain('href="/mapa?i=density"');
+      expect(html).toContain('href="/mapa?i=unemployment-rate"');
+      expect(html).toContain('href="/mapa?i=avg-wage"');
+      expect(html).toContain('href="/mapa?i=dwellings-per-1000"');
+      expect(html).toContain('href="/mapa?i=forest-cover"');
+      expect(html).toContain('href="/mapa?i=preschool-3-6"');
+      expect(html).toContain('href="/mapa?i=cars-per-1000"');
 
       // Kolumna 4: Dokumentacja
       expect(html).toContain('Dokumentacja');
@@ -151,9 +152,9 @@ describe('SiteLayout & SiteFooter (W15-M04)', () => {
         </MemoryRouter>
       );
 
-      expect(html).toContain('<title>Przykładowa strona – Faktografia Atlas</title>');
+      expect(html).toContain('<title>Przykładowa strona – Faktografia</title>');
       expect(html).toContain('name="description" content="Opis przykładowej strony"');
-      expect(html).toContain('property="og:title" content="Przykładowa strona – Faktografia Atlas"');
+      expect(html).toContain('property="og:title" content="Przykładowa strona – Faktografia"');
     });
   });
 

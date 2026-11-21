@@ -38,7 +38,7 @@ test.describe('Editorial Pages: O projekcie i Źródła', () => {
     await expect(rows).toHaveCount(20);
 
     // Link "Otwórz na mapie"
-    const firstMapLink = table.locator('a[href*="/?i="]').first();
+    const firstMapLink = table.locator('a[href*="/mapa?i="]').first();
     await expect(firstMapLink).toBeVisible();
   });
 });

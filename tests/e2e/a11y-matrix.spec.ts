@@ -110,17 +110,24 @@ for (const theme of THEMES) {
       ).toEqual([]);
     };
 
-    // 1. Trasa / - stan startowy
-    test('Trasa / (stan startowy)', async ({ page }) => {
-      await page.goto('/?e2e');
+    // 0. Trasa / - ekran startowy (B03)
+    test('Trasa / (ekran startowy)', async ({ page }) => {
+      await page.goto('/');
+      await expect(page.getByRole('heading', { level: 1, name: 'Faktografia' })).toBeVisible();
+      await runAxe(page, 'Trasa / - ekran startowy');
+    });
+
+    // 1. Trasa /mapa - stan startowy
+    test('Trasa /mapa (stan startowy)', async ({ page }) => {
+      await page.goto('/mapa?e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
-      await runAxe(page, 'Trasa / - stan startowy');
+      await runAxe(page, 'Trasa /mapa - stan startowy');
     });
 
     // 2. Trasa / - arkusz wskaźnika
-    test('Trasa / (arkusz wskaźnika)', async ({ page }) => {
+    test('Trasa /mapa (arkusz wskaźnika)', async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.goto('/?e2e');
+      await page.goto('/mapa?e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
       const barButton = page.locator('[data-slot="mobile-indicator-bar"] button').first();
@@ -130,48 +137,48 @@ for (const theme of THEMES) {
       const sheet = page.getByRole('dialog', { name: 'Panel wskaźnika' });
       await expect(sheet).toBeVisible();
 
-      await runAxe(page, 'Trasa / - arkusz wskaźnika');
+      await runAxe(page, 'Trasa /mapa - arkusz wskaźnika');
     });
 
     // 3. Trasa / - profil jednostki 40%
-    test('Trasa / (profil jednostki 40%)', async ({ page }) => {
+    test('Trasa /mapa (profil jednostki 40%)', async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.goto('/?e2e&u=12');
+      await page.goto('/mapa?e2e&u=12');
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
       const sheet = page.locator('[role="dialog"]').first();
       await expect(sheet).toBeVisible();
 
-      await runAxe(page, 'Trasa / - profil jednostki 40%');
+      await runAxe(page, 'Trasa /mapa - profil jednostki 40%');
     });
 
     // 4. Trasa / - profil jednostki 100%
-    test('Trasa / (profil jednostki 100%)', async ({ page }) => {
+    test('Trasa /mapa (profil jednostki 100%)', async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.goto('/?e2e&u=12&sheet=full');
+      await page.goto('/mapa?e2e&u=12&sheet=full');
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
       const sheet = page.locator('[role="dialog"]').first();
       await expect(sheet).toBeVisible();
 
-      await runAxe(page, 'Trasa / - profil jednostki 100%');
+      await runAxe(page, 'Trasa /mapa - profil jednostki 100%');
     });
 
     // 5. Trasa / - zakładka porównania
-    test('Trasa / (zakładka porównania)', async ({ page }) => {
-      await page.goto('/?e2e&u=12');
+    test('Trasa /mapa (zakładka porównania)', async ({ page }) => {
+      await page.goto('/mapa?e2e&u=12');
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
       const compareTab = page.getByRole('tab', { name: /Porównaj/ });
       await expect(compareTab).toBeVisible();
       await compareTab.click();
 
-      await runAxe(page, 'Trasa / - zakładka porównania');
+      await runAxe(page, 'Trasa /mapa - zakładka porównania');
     });
 
     // 6. Trasa / - zakładka części miasta/wsi
-    test('Trasa / (zakładka części miasta/wsi)', async ({ page }) => {
-      await page.goto('/?e2e&u=1202023');
+    test('Trasa /mapa (zakładka części miasta/wsi)', async ({ page }) => {
+      await page.goto('/mapa?e2e&u=1202023');
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
       const partsTrigger = page.locator('button', { hasText: 'Miasto i obszar wiejski' });
@@ -181,7 +188,7 @@ for (const theme of THEMES) {
       const partsTable = page.locator('[data-testid="parts-table"]');
       await expect(partsTable).toBeVisible();
 
-      await runAxe(page, 'Trasa / - zakładka części miasta/wsi');
+      await runAxe(page, 'Trasa /mapa - zakładka części miasta/wsi');
     });
 
     // 7. Trasa /rankingi
