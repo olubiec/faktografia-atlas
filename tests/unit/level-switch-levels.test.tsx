@@ -1,17 +1,19 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { LevelSwitch } from '@/view/main/LevelSwitch';
+
+/** Nazwy wyłączonych przycisków z wyrenderowanego HTML. */
+const disabled = (html: string) =>
+  [...html.matchAll(/<button[^>]*disabled[^>]*>([^<]*)</g)].map((m) => m[1]);
 
 describe('LevelSwitch: poziomy z danymi', () => {
   it('wyłącza poziom bez danych, nawet gdy minLevel by go dopuszczał', () => {
-    render(<LevelSwitch value="pow" minLevel="gmi" levels={['pow', 'gmi']} onChange={vi.fn()} />);
-    expect((screen.getByRole('button', { name: 'Województwa' }) as HTMLButtonElement).disabled).toBe(true);
-    expect((screen.getByRole('button', { name: 'Powiaty' }) as HTMLButtonElement).disabled).toBe(false);
+    expect(disabled(renderToStaticMarkup(<LevelSwitch value="pow" minLevel="gmi" levels={['pow', 'gmi']} onChange={vi.fn<() => void>()} />)))
+      .toEqual(['Województwa']);
   });
 
   it('bez listy poziomów działa jak dotąd (województwa zawsze)', () => {
-    render(<LevelSwitch value="woj" minLevel="pow" onChange={vi.fn()} />);
-    expect((screen.getByRole('button', { name: 'Województwa' }) as HTMLButtonElement).disabled).toBe(false);
-    expect((screen.getByRole('button', { name: 'Gminy' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(disabled(renderToStaticMarkup(<LevelSwitch value="woj" minLevel="pow" onChange={vi.fn<() => void>()} />)))
+      .toEqual(['Gminy']);
   });
 });
