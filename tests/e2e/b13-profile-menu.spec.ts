@@ -35,7 +35,7 @@ for (const size of SIZES) {
       const now = new URL(page.url()).searchParams.get('i');
       await page.waitForFunction((i) => (window as any).__atlas?.choropleth?.indicatorId === i, now);
 
-      const row = page.getByTestId('profile-indicator-list').getByRole('button', { expanded: false }).first();
+      const row = page.getByTestId('profile-indicator-list').getByRole('button', { expanded: false }).filter({ hasNotText: /^Dodaj wskaźnik$/ }).first();
       await row.click();
       await expect(page.getByTestId('profile-indicator-list').getByRole('button', { expanded: true }).first()).toBeVisible();
     });
