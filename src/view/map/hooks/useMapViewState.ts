@@ -375,7 +375,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     return () => {
       resizeObserver.disconnect();
     };
-  }, [animateToView, bounds, drillBbox, driverRef, entryView, setCurrentViewState, sheetInset, sidePanelPx]);
+  }, [animateToView, bounds, drillBbox, driverRef, entryView, liveTargetRef, setCurrentViewState, sheetInset, sidePanelPx]);
 
   // Efekt zależy od progu, nie od zoomu: nie uruchamia się na każdej klatce płynnego zoomu.
   const needsLocalities = currentViewState.zoom >= 8.5;

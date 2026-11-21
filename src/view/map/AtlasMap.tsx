@@ -144,7 +144,9 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     handleMapMoveEnd,
     finishEntry,
   } = useMapViewState(drillState.bbox, bounds, sidePanelPx);
-  finishEntryRef.current = finishEntry;
+  useEffect(() => {
+    finishEntryRef.current = finishEntry;
+  });
 
   // Mapa jest niekontrolowana: widok startowy tylko przy tworzeniu, dalej steruje nim sterownik kamery.
   const [initialView] = useState(() => currentViewState);
