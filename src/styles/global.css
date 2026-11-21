@@ -97,3 +97,25 @@
   --ring: var(--tusz);
   --radius: 0;
 }
+
+/* Wejście z `/` do `/mapa`: lekkie przybliżenie (przejście widoku włącza tylko link „Otwórz mapę”).
+   Czas = motion.cameraIn (= --motion-slow), krzywa = --easing. */
+@keyframes start-zoom-out {
+  to { transform: scale(1.06); opacity: 0; }
+}
+@keyframes map-zoom-in {
+  from { transform: scale(0.97); opacity: 0; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: start-zoom-out var(--motion-slow) var(--easing) both;
+  }
+  ::view-transition-new(root) {
+    animation: map-zoom-in var(--motion-slow) var(--easing) both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) {
+    animation: none;
+  }
+}

@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import tokens from '@/../config/tokens.json';
 import {
   bindVisibility, createStartLoop, loadOutline, outlineCells, type Frame, type OutlineFile,
 } from '@/core/start/outline';
@@ -15,9 +14,8 @@ type Ui = { index: number; mode: Frame['mode']; nearest: string | null };
  * Animowany obrys Polski w tle `/` (własny SVG, bez WebGL).
  * Kolory: 5 klas z start.json (`--seq-1…5`, `--no-data`). Pierwszy kadr, `prefers-reduced-motion`
  * i brak ruchu = ludność. Dane przychodzą z propsa `initial` (testy) albo z dwóch małych plików.
- * `leaving`: obrys płynnie powiększa się i zanika (wejście do mapy).
  */
-export function StartBackground({ leaving = false, initial }: { leaving?: boolean; initial?: StartBackgroundData }) {
+export function StartBackground({ initial }: { initial?: StartBackgroundData }) {
   const [data, setData] = useState<StartBackgroundData | null>(initial ?? null);
   const [ui, setUi] = useState<Ui>({ index: 0, mode: 'random', nearest: null });
   const reduced = useReducedMotion();
@@ -87,19 +85,10 @@ export function StartBackground({ leaving = false, initial }: { leaving?: boolea
   const active = indicators[ui.index] ?? indicators[0];
   const colors = useMemo(() => new Map(active ? startFields(active).map((f) => [f.teryt, f.color]) : []), [active]);
   const caption = ui.mode === 'react' && ui.nearest && active ? captionFor(active, ui.nearest) : null;
-  const ms = `${tokens.motion.cameraIn}ms ${tokens.motion.easing}`;
-  const animateLeave = leaving && !reduced.current;
 
   return (
     <div className="pointer-events-none flex w-full flex-col items-center gap-2" data-slot="start-background">
-      <div
-        className="w-full"
-        style={{
-          transform: animateLeave ? 'scale(2.4)' : 'none',
-          opacity: animateLeave ? 0 : 1,
-          transition: animateLeave ? `transform ${ms}, opacity ${ms}` : 'none',
-        }}
-      >
+      <div className="w-full">
         <svg
           ref={svgRef}
           viewBox={`0 0 ${data?.outline.viewBox[0] ?? 1} ${data?.outline.viewBox[1] ?? 1}`}

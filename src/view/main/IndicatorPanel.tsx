@@ -15,13 +15,10 @@ import { Legend } from '@/view/legend/Legend';
 import { RankingBars } from '@/view/ranking/RankingBars';
 import { IndicatorInfo } from '@/view/explain/IndicatorInfo';
 import { LevelSwitch } from './LevelSwitch';
-import { MyIndicatorsManager } from './MobileIndicatorBar';
-import { SheetIndicatorPicker } from './SheetIndicatorPicker';
 import { ContextBlock } from '@/view/explain/ContextBlock';
 import { useShareData } from '@/view/share/useShareData';
 import { LazyShareDialog } from '@/view/share/LazyShareDialog';
-import { useMyIndicators } from '@/view/hooks/useMyIndicators';
-import { DataMenuDialog } from '@/view/data-menu/DataMenu';
+import { DataMenuWindow } from '@/view/data-menu/DataMenuWindow';
 import { isShareEnabled } from '../../core/share/share-flag';
 
 export interface IndicatorPanelProps {
@@ -51,13 +48,7 @@ export function IndicatorPanel({
   inSheet = false,
   children,
 }: IndicatorPanelProps) {
-  const { indicator, indicators: allIndicators, year, years, level } = view;
-  const { list: mine } = useMyIndicators();
-  // Lista wyboru: „Moje” plus bieżący wskaźnik (np. z ?i=), nawet spoza listy; link nie zmienia listy użytkownika.
-  const indicators = useMemo(
-    () => allIndicators.filter((ind) => mine.includes(ind.id) || ind.id === indicator.id),
-    [allIndicators, mine, indicator.id]
-  );
+  const { indicator, year, years, level } = view;
   const [explanation, setExplanation] = useState<Explanation | null>(null);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
@@ -89,7 +80,7 @@ export function IndicatorPanel({
     return topBottom(named, 5);
   }, [ranking, index]);
 
-  const subtitle = [indicator.unit, year, `dane dla: ${LEVEL_LABELS[level].toLowerCase()}`].filter(Boolean).join(', ');
+  const subtitle = [indicator.unit, `dane dla: ${LEVEL_LABELS[level].toLowerCase()}`].filter(Boolean).join(', ');
 
   const content = (
     <div className={inSheet ? 'py-2 flex flex-col gap-5' : 'p-4 md:p-6 flex flex-col gap-5'}>
@@ -101,16 +92,17 @@ export function IndicatorPanel({
       <div className="flex flex-col gap-1">
         <div className="flex items-start gap-2">
           <div className="flex-1 min-w-0">
-            {inSheet ? (
-              <SheetIndicatorPicker indicators={indicators} indicator={indicator} onSelect={view.setIndicator} />
-            ) : (
-              <DataMenuDialog indicatorId={indicator.id} indicatorName={indicator.name} onSelect={view.setIndicator} />
-            )}
+            <DataMenuWindow
+              indicatorId={indicator.id}
+              indicatorName={indicator.name}
+              year={year}
+              onSelect={view.setIndicator}
+              layout={inSheet ? 'stack' : 'columns'}
+            />
           </div>
           <IndicatorInfo indicatorId={indicator.id} name={indicator.name} explanation={explanation} />
         </div>
         <p className="text-sm text-olowek">{subtitle}</p>
-        {inSheet && <MyIndicatorsManager all={allIndicators} onPick={view.setIndicator} activeId={indicator.id} />}
       </div>
 
       <div className="flex flex-col gap-1.5">
