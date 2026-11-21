@@ -110,7 +110,8 @@ export function MobileIndicatorBar({
       <aside
         aria-label="Panel wskaźnika"
         data-slot="mobile-indicator-bar"
-        className="w-full shrink-0 bg-arkusz text-tusz border-t border-linia z-20 min-h-[48px] mb-3 pb-[env(safe-area-inset-bottom)] flex items-center"
+        // Odstęp dolny mb-3 = BOTTOM_GAP_CLASS z sheetInset.ts (zostaje literałem: pilnuje go test C01).
+        className={`w-full shrink-0 bg-arkusz text-tusz border-t border-linia z-20 min-h-[48px] mb-3 pb-[env(safe-area-inset-bottom)] flex items-center${profileOpen ? ' invisible' : ''}`}
       >
         <button
           type="button"

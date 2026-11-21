@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Unit } from '@/core/units/types';
 import { unitLabel } from '@/core/units/label';
 import { formatValue } from '@/core/format/number';
+import { TOOLTIP_ZONE_CLASS, tooltipBottomOffset } from '@/view/map/sheetInset';
 
 export interface UnitTooltipProps {
   unit: Unit;
@@ -72,8 +73,7 @@ export function UnitTooltip({
         if (rect.height > 0) obstacleTop = Math.min(obstacleTop, rect.top);
       }
 
-      const overlap = Math.max(0, parentRect.bottom - obstacleTop);
-      setBottomOffset(overlap + 12);
+      setBottomOffset(tooltipBottomOffset(parentRect.bottom, obstacleTop));
     };
 
     updatePosition();
@@ -91,7 +91,7 @@ export function UnitTooltip({
         ref={tooltipRef}
         role="status"
         style={bottomOffset != null ? { bottom: `${bottomOffset}px` } : undefined}
-        className="absolute z-30 pointer-events-auto bg-arkusz text-tusz border border-linia p-3.5 bottom-16 left-3 right-3 mx-auto max-w-[360px] flex flex-col gap-2"
+        className={`${TOOLTIP_ZONE_CLASS} pointer-events-auto bg-arkusz text-tusz border border-linia p-3.5 flex flex-col gap-2`}
       >
         <div className="flex flex-col gap-0.5">
           <div className="font-semibold text-sm leading-tight">{unitLabel(unit)}</div>
