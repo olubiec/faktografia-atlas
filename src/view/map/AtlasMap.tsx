@@ -10,6 +10,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import tokensJson from '../../../config/tokens.json';
 
 import { installAtlasSeam, type AtlasState } from '@/core/map/test-seam';
+import { announceAtlasReady, createReadyGate } from '@/core/map/ready-gate';
 import { buildIndex } from '@/core/units/units';
 import { loadUnits, loadAdminTopo } from '@/core/data/load-atlas-data';
 import { countryBounds } from '@/core/map/view';
@@ -102,6 +103,7 @@ export function AtlasMap() {
 function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) {
   const isMobile = useIsMobile();
   const [isReady, setIsReady] = useState(false);
+  const readyGate = useMemo(() => createReadyGate(() => announceAtlasReady(window)), []);
   const [indicatorSheetOpen, setIndicatorSheetOpen] = useState(false);
   const unitIndex = useMemo(() => buildIndex(units), [units]);
   const bounds = useMemo(() => countryBounds(units), [units]);
@@ -296,6 +298,22 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     };
   }, [isReady, selectedTeryt, layers, unitIndex, drillState.selected, theme, choroplethData, profileOpen, currentViewStateRef, mapRef]);
 
+  // Flaga gotowości dotyczy tylko tego egzemplarza mapy: przy wyjściu znika.
+  useEffect(() => () => document.documentElement.removeAttribute('data-atlas-ready'), []);
+
+  // Kolory narysowane: dajemy deck.gl dwie klatki po pojawieniu się danych, potem liczy się „idle”.
+  useEffect(() => {
+    if (!choroplethData) return;
+    let id2 = 0;
+    const id1 = requestAnimationFrame(() => {
+      id2 = requestAnimationFrame(() => readyGate.setColored(true));
+    });
+    return () => {
+      cancelAnimationFrame(id1);
+      cancelAnimationFrame(id2);
+    };
+  }, [choroplethData, readyGate]);
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       installAtlasSeam(window as any, getState);
@@ -407,6 +425,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
             syncMap(evt.target);
             setIsReady(true);
           }}
+          onIdle={() => readyGate.setIdle()}
           attributionControl={false}
           pixelRatio={pixelRatio}
         >

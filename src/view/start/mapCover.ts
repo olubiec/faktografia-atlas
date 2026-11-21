@@ -2,11 +2,10 @@
 // a potem znika. Dzięki temu nie widać pustej powłoki ani kadrów, w których mapa dopiero ustawia kamerę.
 // Działa bez View Transitions (też w Safari) i bez Reacta: okładka żyje w <body>, więc przetrwa zmianę trasy.
 
+import { ATLAS_READY_EVENT } from '@/core/map/ready-gate';
 import { posterRect, type Bbox, type Rect } from '@/core/start/poster-frame';
 
-const MAP_CANVAS = 'canvas.maplibregl-canvas';
-/** Po pojawieniu się płótna mapy dajemy kamerze chwilę na ustawienie się na Polsce. */
-const SETTLE_MS = 500;
+// Płótno mapy (canvas.maplibregl-canvas) nie wystarcza: czekamy na `atlas:ready` (idle + kolory).
 /** Najdłużej trzymamy okładkę (wolna sieć): potem i tak odsłaniamy mapę. */
 const MAX_COVER_MS = 6000;
 
@@ -21,18 +20,17 @@ function coverRect(source: Element): Rect {
   return source.getBoundingClientRect();
 }
 
-/** Rozwiązuje się, gdy mapa ma płótno i kamera mogła się ustawić (albo po MAX_COVER_MS). */
+/** Rozwiązuje się na sygnał `atlas:ready` (mapa bezczynna i pokolorowana) albo po MAX_COVER_MS. */
 function whenMapSettled(): Promise<void> {
   return new Promise((resolve) => {
-    const start = performance.now();
-    let seenAt = 0;
-    const tick = () => {
-      const now = performance.now();
-      if (!seenAt && document.querySelector(MAP_CANVAS)) seenAt = now;
-      if ((seenAt && now - seenAt >= SETTLE_MS) || now - start >= MAX_COVER_MS) return resolve();
-      requestAnimationFrame(tick);
+    const finish = () => {
+      window.removeEventListener(ATLAS_READY_EVENT, finish);
+      window.clearTimeout(cap);
+      resolve();
     };
-    tick();
+    const cap = window.setTimeout(finish, MAX_COVER_MS);
+    window.addEventListener(ATLAS_READY_EVENT, finish);
+    if (document.documentElement.hasAttribute('data-atlas-ready')) finish();
   });
 }
 
