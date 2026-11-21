@@ -1,0 +1,40 @@
+{
+  "_opis": "Mały spis w kształcie available.json (ścieżka „DZIAŁ > GRUPA > TEMAT”) i 15 haseł zwykłego człowieka z raportu U04 (§6). first = id oczekiwanego pierwszego wyniku albo null (brak danych: „Nie mamy jeszcze tych danych”). allowNone = brak wyniku jest dopuszczalny do czasu pobrania danych przez robota.",
+  "available": {
+    "version": 1,
+    "variables": [
+      { "id": "3001", "n": "Liczba ludności – ogółem", "u": "osoba", "c": "LUDNOŚĆ > STAN LUDNOŚCI > Ludność wg płci", "lv": ["pow", "gmi"], "y": [2022, 2023, 2024] },
+      { "id": "72305", "n": "ogółem – ogółem", "u": "osoba", "c": "LUDNOŚĆ > STAN LUDNOŚCI > Ludność wg grup wieku i płci", "lv": ["pow", "gmi"], "y": [2023, 2024] },
+      { "id": "4001", "n": "Szkoły podstawowe – ogółem", "u": "szt.", "c": "SZKOLNICTWO > SZKOLNICTWO PODSTAWOWE > Szkoły podstawowe", "lv": ["pow", "gmi"], "y": [2023, 2024] },
+      { "id": "4002", "n": "Uczniowie szkół podstawowych", "u": "osoba", "c": "SZKOLNICTWO > SZKOLNICTWO PODSTAWOWE > Szkoły podstawowe", "lv": ["pow", "gmi"], "y": [2023, 2024] },
+      { "id": "4003", "n": "Szkoły podstawowe – ogółem", "u": "szt.", "c": "KULTURA > NAUKA JĘZYKÓW OBCYCH > Kursy", "lv": ["pow"], "y": [2023] },
+      { "id": "4004", "n": "Szkoły dla dorosłych (dawne)", "u": "szt.", "c": "SZKOLNICTWO > DANE ARCHIWALNE > Szkoły", "lv": ["pow"], "y": [2010] },
+      { "id": "5001", "n": "Biblioteki i filie", "u": "szt.", "c": "KULTURA > BIBLIOTEKI > Biblioteki publiczne", "lv": ["pow", "gmi"], "y": [2023, 2024] },
+      { "id": "5002", "n": "Kina stałe wg formy własności", "u": "szt.", "c": "KULTURA > KINA > Kina stałe", "lv": ["pow"], "y": [2023, 2024] },
+      { "id": "6001", "n": "Ludność korzystająca z oczyszczalni ścieków", "u": "%", "c": "STAN I OCHRONA ŚRODOWISKA > GOSPODARKA WODNO-ŚCIEKOWA > Oczyszczalnie ścieków", "lv": ["pow", "gmi"], "y": [2023, 2024] },
+      { "id": "6002", "n": "Lasy ogółem", "u": "ha", "c": "STAN I OCHRONA ŚRODOWISKA > LASY > Powierzchnia lasów", "lv": ["pow", "gmi"], "y": [2023, 2024] },
+      { "id": "7001", "n": "Bezrobotni zarejestrowani (dawne)", "u": "osoba", "c": "RYNEK PRACY > DANE ARCHIWALNE > Bezrobocie", "lv": ["pow"], "y": [2005] },
+      { "id": "7002", "n": "Bezrobotni zarejestrowani wg płci", "u": "osoba", "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Bezrobotni", "lv": ["pow", "gmi"], "y": [2023, 2024] },
+      { "id": "8001", "n": "Pracujący ogółem", "u": "osoba", "c": "RYNEK PRACY > ZATRUDNIENIE > Pracujący", "lv": ["pow"], "y": [2023, 2024] },
+      { "id": "2001", "n": "Mieszkania ogółem", "u": "szt.", "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > ZASOBY MIESZKANIOWE > Mieszkania", "lv": ["pow", "gmi"], "y": [2023, 2024] },
+      { "id": "9001", "n": "Dzieci w wychowaniu przedszkolnym", "u": "osoba", "c": "WYCHOWANIE PRZEDSZKOLNE > PRZEDSZKOLA > Dzieci", "lv": ["pow", "gmi"], "y": [2023, 2024] }
+    ]
+  },
+  "queries": [
+    { "q": "bezrobocie", "first": "unemployment-rate" },
+    { "q": "szkoły", "first": "b4001" },
+    { "q": "ludność", "first": "population" },
+    { "q": "mieszkania", "first": "b2001" },
+    { "q": "lekarze", "first": null, "allowNone": true },
+    { "q": "zarobki", "first": "avg-wage" },
+    { "q": "przedszkola", "first": "preschool-3-6" },
+    { "q": "biblioteki", "first": "b5001" },
+    { "q": "lasy", "first": "b6002" },
+    { "q": "samochody", "first": "cars-per-1000" },
+    { "q": "ścieki", "first": "b6001" },
+    { "q": "wynagrodzenie", "first": "avg-wage" },
+    { "q": "wiek", "first": "median-age" },
+    { "q": "dochody gminy", "first": "income-per-capita" },
+    { "q": "kino", "first": "b5002" }
+  ]
+}

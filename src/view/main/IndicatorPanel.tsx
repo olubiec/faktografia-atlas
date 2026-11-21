@@ -10,7 +10,6 @@ import { unitLabel } from '@/core/units/label';
 import { buildLegend, LEGEND_DIRECTION_LABEL } from '@/core/legend/legend';
 import { LEVEL_LABELS } from '@/core/map/main-view';
 import { UNIT_COUNTS } from '@/core/units/counts';
-import { IndicatorPicker } from '@/view/controls/IndicatorPicker';
 import { YearSlider } from '@/view/controls/YearSlider';
 import { Legend } from '@/view/legend/Legend';
 import { RankingBars } from '@/view/ranking/RankingBars';
@@ -22,6 +21,7 @@ import { ContextBlock } from '@/view/explain/ContextBlock';
 import { useShareData } from '@/view/share/useShareData';
 import { LazyShareDialog } from '@/view/share/LazyShareDialog';
 import { useMyIndicators } from '@/view/hooks/useMyIndicators';
+import { DataMenuDialog } from '@/view/data-menu/DataMenu';
 import { isShareEnabled } from '../../core/share/share-flag';
 
 export interface IndicatorPanelProps {
@@ -104,13 +104,13 @@ export function IndicatorPanel({
             {inSheet ? (
               <SheetIndicatorPicker indicators={indicators} indicator={indicator} onSelect={view.setIndicator} />
             ) : (
-              <IndicatorPicker indicators={indicators} value={indicator.id} onChange={view.setIndicator} />
+              <DataMenuDialog indicatorId={indicator.id} indicatorName={indicator.name} onSelect={view.setIndicator} />
             )}
           </div>
           <IndicatorInfo indicatorId={indicator.id} name={indicator.name} explanation={explanation} />
         </div>
         <p className="text-sm text-olowek">{subtitle}</p>
-        <MyIndicatorsManager all={allIndicators} onPick={view.setIndicator} activeId={indicator.id} />
+        {inSheet && <MyIndicatorsManager all={allIndicators} onPick={view.setIndicator} activeId={indicator.id} />}
       </div>
 
       <div className="flex flex-col gap-1.5">

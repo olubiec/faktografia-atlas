@@ -1,0 +1,42 @@
+{
+  "_opis": "Słowa zwykłych ludzi → słowa z nazw GUS (bez polskich liter, małymi). Szukajka próbuje słowa wpisanego ORAZ każdego z zamienników. „sections” podpowiadają najbliższy dział, gdy nic nie znaleziono.",
+  "words": {
+    "zarobki": ["wynagrodzenie"],
+    "zarobek": ["wynagrodzenie"],
+    "place": ["wynagrodzenie"],
+    "pensje": ["wynagrodzenie"],
+    "pensja": ["wynagrodzenie"],
+    "mieszkancy": ["ludnosc"],
+    "szkoly": ["szkolnictwo"],
+    "szkola": ["szkolnictwo"],
+    "uczniowie": ["szkolnictwo"],
+    "lekarze": ["lekarz", "zdrowie"],
+    "lekarz": ["zdrowie"],
+    "szpitale": ["szpital", "zdrowie"],
+    "lasy": ["lesistosc", "lesnictwo"],
+    "las": ["lesistosc", "lesnictwo"],
+    "auta": ["samochody"],
+    "samochod": ["samochody"],
+    "bezrobotni": ["bezrobocie"]
+  },
+  "sections": {
+    "lekarze": "ochrona zdrowia",
+    "lekarz": "ochrona zdrowia",
+    "szpitale": "ochrona zdrowia",
+    "zdrowie": "ochrona zdrowia",
+    "szkoly": "szkolnictwo",
+    "szkola": "szkolnictwo",
+    "uczniowie": "szkolnictwo",
+    "nauczyciele": "szkolnictwo",
+    "zarobki": "rynek pracy",
+    "praca": "rynek pracy",
+    "pracownicy": "rynek pracy",
+    "dzieci": "ludnosc",
+    "wiek": "ludnosc",
+    "drogi": "transport",
+    "autobusy": "transport",
+    "domy": "gospodarka mieszkaniowa",
+    "woda": "stan i ochrona srodowiska",
+    "smieci": "stan i ochrona srodowiska"
+  }
+}
