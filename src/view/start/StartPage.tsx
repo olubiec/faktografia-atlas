@@ -65,7 +65,9 @@ export function StartPage() {
     // Kliknięcie z klawiszem (nowa karta): zwykła nawigacja linku.
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
-    enter('/mapa');
+    // Mapa otwiera się ze wskaźnikiem, który tło pokazuje teraz: okładka i mapa mają te same kolory.
+    const id = document.querySelector('[data-slot="start-background"] svg')?.getAttribute('data-indicator');
+    enter(id ? `/mapa?i=${encodeURIComponent(id)}` : '/mapa');
   };
   // Stuknięcie w województwo na tle: mapa otwiera się na nim, ze wskaźnikiem z tła.
   const pickRegion = (teryt: string, indicatorId: string) => {
