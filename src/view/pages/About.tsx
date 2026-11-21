@@ -111,6 +111,16 @@ export function About() {
             Serwis zaprojektowano z użyciem kroju Atkinson Hyperlegible, zapewniającego maksymalną czytelność dla osób słabowidzących. Kontrast tekstu do tła wynosi min. 13:1, a wszystkie elementy interaktywne spełniają wymóg pola dotykowego min. 44×44 px.
           </p>
         </section>
+
+        {/* Kontakt */}
+        <section aria-labelledby="kontakt" className="space-y-2 border-t border-linia pt-6">
+          <h2 id="kontakt" className="text-base font-[700]">
+            Kontakt
+          </h2>
+          <p className="text-xs text-olowek leading-[1.6]">
+            Błąd w danych albo pomysł? Zgłoś go jako zgłoszenie w repozytorium GitHub projektu (link w stopce strony).
+          </p>
+        </section>
       </div>
     </SiteLayout>
   );

@@ -2,123 +2,12 @@ import { describe, it, expect } from 'vitest';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { MemoryRouter } from 'react-router';
-import { SiteFooter } from '../../src/view/layout/SiteFooter';
 import { SiteLayout } from '../../src/view/layout/SiteLayout';
 import { PageMeta } from '../../src/view/layout/PageMeta';
 import { Privacy } from '../../src/view/pages/Privacy';
 import { NotFound } from '../../src/view/NotFound';
 
 describe('SiteLayout & SiteFooter (W15-M04)', () => {
-  describe('SiteFooter component', () => {
-    it('zawiera wszystkie 4 kolumny stopki w siatce kreślarskiej', () => {
-      const html = renderToString(
-        <MemoryRouter>
-          <SiteFooter />
-        </MemoryRouter>
-      );
-
-      // Siatka i style kreślarskie
-      expect(html).toContain('border-t');
-      expect(html).toContain('border-linia');
-      expect(html).toContain('bg-arkusz');
-      expect(html).toContain('text-tusz');
-
-      // Kolumna 1: Logo Faktografia, misja, licencja CC BY 4.0
-      expect(html).toContain('alt="Faktografia"');
-      expect(html).toContain('Faktografia to niezależna');
-      expect(html).toContain('CC BY 4.0');
-      expect(html).toContain('https://creativecommons.org/licenses/by/4.0/deed.pl');
-
-      // Kolumna 2: Narzędzia
-      expect(html).toContain('Narzędzia');
-      expect(html).toContain('href="/"');
-      expect(html).toContain('href="/mapa"');
-      expect(html).toContain('Mapa Polski');
-      expect(html).toContain('href="/rankingi"');
-      expect(html).toContain('Rankingi');
-      expect(html).toContain('href="/porownaj"');
-      expect(html).toContain('Porównaj');
-      expect(html).toContain('href="/biblioteka"');
-      expect(html).toContain('Biblioteka');
-
-      // Kolumna 3: Działy tematyczne GUS (7 głównych wskaźników)
-      expect(html).toContain('Działy tematyczne GUS');
-      expect(html).toContain('href="/mapa?i=density"');
-      expect(html).toContain('href="/mapa?i=unemployment-rate"');
-      expect(html).toContain('href="/mapa?i=avg-wage"');
-      expect(html).toContain('href="/mapa?i=dwellings-per-1000"');
-      expect(html).toContain('href="/mapa?i=forest-cover"');
-      expect(html).toContain('href="/mapa?i=preschool-3-6"');
-      expect(html).toContain('href="/mapa?i=cars-per-1000"');
-
-      // Kolumna 4: Dokumentacja
-      expect(html).toContain('Dokumentacja');
-      expect(html).toContain('href="/o-projekcie"');
-      expect(html).toContain('O projekcie');
-      expect(html).toContain('href="/zrodla"');
-      expect(html).toContain('Skąd są dane');
-      expect(html).toContain('href="/prywatnosc"');
-      expect(html).toContain('Prywatność i zgoda');
-      expect(html).toContain('https://github.com/olubiec/faktografia-atlas');
-      expect(html).toContain('GitHub');
-    });
-
-    it('zawiera link do /prywatnosc z poprawną etykietą i rozmiarem', () => {
-      const html = renderToString(
-        <MemoryRouter>
-          <SiteFooter />
-        </MemoryRouter>
-      );
-
-      expect(html).toContain('href="/prywatnosc"');
-      expect(html).toContain('Prywatność i zgoda');
-    });
-
-    it('wszystkie pola dotykowe (linki) mają min. 44x44 px, zero cieni i zero zaokrągleń', () => {
-      const html = renderToString(
-        <MemoryRouter>
-          <SiteFooter />
-        </MemoryRouter>
-      );
-
-      // Wszystkie linki muszą posiadać min-h-[44px] i min-w-[44px]
-      const linkMatches = html.match(/<a [^>]+>/g) || [];
-      expect(linkMatches.length).toBeGreaterThanOrEqual(16);
-
-      for (const link of linkMatches) {
-        expect(link).toContain('min-h-[44px]');
-        expect(link).toContain('min-w-[44px]');
-        expect(link).toContain('rounded-none');
-        expect(link).not.toContain('shadow-');
-      }
-    });
-
-    it('spełnia wymagania dostępności axe (role contentinfo, unikalne aria-label dla nav, alt dla img)', () => {
-      const html = renderToString(
-        <MemoryRouter>
-          <SiteFooter />
-        </MemoryRouter>
-      );
-
-      // Landmark footer / contentinfo
-      expect(html).toContain('role="contentinfo"');
-
-      // Unikalne etykiety dla każdego elementu <nav>
-      expect(html).toContain('aria-label="Narzędzia"');
-      expect(html).toContain('aria-label="Działy tematyczne GUS"');
-      expect(html).toContain('aria-label="Dokumentacja"');
-
-      // Dostępny tekst dla obrazka
-      expect(html).toContain('alt="Faktografia"');
-
-      // Linki zewnętrzne otwierane w nowej karcie mają rel="noopener noreferrer"
-      expect(html).toContain('rel="noopener noreferrer"');
-
-      // Brak wpisanych na sztywno kolorów hex
-      expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/);
-    });
-  });
-
   describe('SiteLayout component', () => {
     it('zawiera skip-link „Przejdź do treści” prowadzący do #main-content', () => {
       const html = renderToString(

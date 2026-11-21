@@ -1,6 +1,7 @@
 import { useRef, useSyncExternalStore } from 'react';
-import { Link } from 'react-router';
 import type { DataStatus } from '../../core/data/load-status';
+import { LinkList, type LinkListItem } from '../ui/LinkList';
+import { PageSection } from '../ui/PageSection';
 import { DataFreshness } from './DataFreshness';
 import { useDataStatus } from './useDataStatus';
 
@@ -37,6 +38,16 @@ function getIsDark(): boolean {
   return false;
 }
 
+/** Stopka: najwyżej 6 linków, bez powtórzeń nagłówka i bez działów tematycznych. */
+const FOOTER_LINKS: LinkListItem[] = [
+  { to: '/mapa', label: 'Mapa' },
+  { to: '/o-projekcie', label: 'O projekcie' },
+  { to: '/zrodla', label: 'Skąd są dane' },
+  { to: '/prywatnosc', label: 'Prywatność i zgoda' },
+  { to: 'https://github.com/olubiec/faktografia-atlas', label: 'GitHub' },
+  { to: 'https://creativecommons.org/licenses/by/4.0/deed.pl', label: 'CC BY 4.0' },
+];
+
 interface SiteFooterProps {
   /** Na stronie głównej logo jest już w nagłówku – w stopce ma być dekoracyjne (alt=""), by nie dublować go dla czytników. */
   decorativeLogo?: boolean;
@@ -56,148 +67,21 @@ export function SiteFooter({ decorativeLogo = false, initialStatus }: SiteFooter
       role="contentinfo"
       className="border-t border-linia bg-arkusz text-tusz mt-auto"
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-10 md:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-          {/* Kolumna 1: Logo, opis misji portalu, licencja CC BY 4.0 */}
-          <div className="flex flex-col gap-4">
-            <Link
-              to="/"
-              aria-label="Faktografia"
-              className="inline-flex items-center min-h-[44px] min-w-[44px] rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              <img
-                src={logoSrc}
-                alt={decorativeLogo ? '' : 'Faktografia'}
-                className="h-[28px] md:h-[32px] w-auto"
-                width={160}
-                height={32}
-              />
-            </Link>
-            <p className="text-sm font-[400] text-olowek leading-[1.6]">
-              Faktografia to niezależna, interaktywna mapa Polski prezentująca rzetelne statystyki GUS dla każdego województwa, powiatu i gminy.
-            </p>
-            <p className="text-xs font-[400] text-olowek leading-[1.5]">
-              Dane i opracowanie na licencji{' '}
-              <a
-                href="https://creativecommons.org/licenses/by/4.0/deed.pl"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center min-h-[44px] min-w-[44px] underline hover:text-tusz rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-              >
-                CC BY 4.0
-              </a>
-              .
-            </p>
-          </div>
-
-          {/* Kolumna 2: Narzędzia */}
-          <nav aria-label="Narzędzia" className="flex flex-col gap-1">
-            <h2 className="text-sm font-[700] text-tusz mb-2">Narzędzia</h2>
-            <Link
-              to="/mapa"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Mapa Polski
-            </Link>
-            <Link
-              to="/rankingi"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Rankingi
-            </Link>
-            <Link
-              to="/porownaj"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Porównaj
-            </Link>
-            <Link
-              to="/biblioteka"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Biblioteka
-            </Link>
-          </nav>
-
-          {/* Kolumna 3: Działy tematyczne GUS (7 głównych wskaźników) */}
-          <nav aria-label="Działy tematyczne GUS" className="flex flex-col gap-1">
-            <h2 className="text-sm font-[700] text-tusz mb-2">Działy tematyczne GUS</h2>
-            <Link
-              to="/mapa?i=density"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Ludność (gęstość zaludnienia)
-            </Link>
-            <Link
-              to="/mapa?i=unemployment-rate"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Rynek pracy (stopa bezrobocia)
-            </Link>
-            <Link
-              to="/mapa?i=avg-wage"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Pieniądze (wynagrodzenia)
-            </Link>
-            <Link
-              to="/mapa?i=dwellings-per-1000"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Mieszkania (nowe lokale)
-            </Link>
-            <Link
-              to="/mapa?i=forest-cover"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Środowisko (lesistość)
-            </Link>
-            <Link
-              to="/mapa?i=preschool-3-6"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Edukacja (wychowanie przedszkolne)
-            </Link>
-            <Link
-              to="/mapa?i=cars-per-1000"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Transport (samochody osobowe)
-            </Link>
-          </nav>
-
-          {/* Kolumna 4: Dokumentacja */}
-          <nav aria-label="Dokumentacja" className="flex flex-col gap-1">
-            <h2 className="text-sm font-[700] text-tusz mb-2">Dokumentacja</h2>
-            <Link
-              to="/o-projekcie"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              O projekcie
-            </Link>
-            <Link
-              to="/zrodla"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Skąd są dane
-            </Link>
-            <Link
-              to="/prywatnosc"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              Prywatność i zgoda
-            </Link>
-            <a
-              href="https://github.com/olubiec/faktografia-atlas"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
-            >
-              GitHub
-            </a>
-          </nav>
-        </div>
-        <DataFreshness status={status} className="mt-8" />
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-10 md:py-12">
+        <img
+          src={logoSrc}
+          alt={decorativeLogo ? '' : 'Faktografia'}
+          className="h-[28px] md:h-[32px] w-auto"
+          width={160}
+          height={32}
+        />
+        <p className="mt-4 max-w-prose text-sm font-[400] text-olowek leading-[1.6]">
+          Faktografia to niezależna, interaktywna mapa Polski prezentująca rzetelne statystyki GUS dla każdego województwa, powiatu i gminy. Dane i opracowanie na licencji CC BY 4.0.
+        </p>
+        <PageSection title="Strony" variant="panel">
+          <LinkList items={FOOTER_LINKS} label="Stopka" />
+        </PageSection>
+        <DataFreshness status={status} className="mt-6" />
       </div>
     </footer>
   );
