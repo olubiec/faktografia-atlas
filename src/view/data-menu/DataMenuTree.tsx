@@ -53,14 +53,16 @@ export type DataMenuBranchProps = {
 /** Prawa kolumna: bez działu – podpowiedź; w dziale – grupy; w grupie – wskaźniki (po 50). */
 export function DataMenuBranch({ section, groupId, selectedId, onPick, onHome, onOpenSection, onOpenGroup, isDisabled, limit, onMore }: DataMenuBranchProps) {
   if (!section) return <p className="text-sm text-olowek">Wybierz dział z listy albo wpisz hasło.</p>;
-  const group = section.groups.find((g) => g.id === groupId) ?? null;
+  // Dział z jedną grupą: bez podkategorii, wskaźniki od razu.
+  const only = section.groups.length === 1 ? section.groups[0]! : null;
+  const group = only ?? section.groups.find((g) => g.id === groupId) ?? null;
   return (
     <div className="flex flex-col gap-2">
       <Crumbs
         items={[
           { label: 'Wszystkie', onClick: onHome },
           { label: section.name, onClick: () => onOpenSection(section.id) },
-          ...(group ? [{ label: group.name, onClick: () => onOpenGroup(group.id) }] : []),
+          ...(group && !only ? [{ label: group.name, onClick: () => onOpenGroup(group.id) }] : []),
         ]}
       />
       {!group &&

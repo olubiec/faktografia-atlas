@@ -16,6 +16,11 @@ const STEPS = [
 const CHIP =
   'inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-4 bg-arkusz border border-linia text-tusz font-medium hover:bg-linia/20 rounded-none focus:outline-none focus:ring-2 focus:ring-tusz';
 
+/** Nazwa wspólnego elementu przejścia widoku (stara i nowa strona mają ją na jednym elemencie). */
+function nameForTransition(selector: string) {
+  document.querySelector<HTMLElement>(selector)?.style.setProperty('view-transition-name', 'poland-map');
+}
+
 /** Dopisuje do linku parametry techniczne (`e2e`, `logo`, `tune`) z bieżącego adresu. */
 function withTech(href: string, search: string): string {
   const tech = homeSearch(search);
@@ -40,15 +45,18 @@ export function StartPage() {
     e.preventDefault();
     const go = () => navigate(to('/mapa'));
     if (typeof document.startViewTransition !== 'function') return go();
-    // Kod mapy ładujemy przed przejściem: inaczej nowy widok to pusta powłoka i animacji nie widać (przeskok).
-    import('../Home')
-      .then(() =>
-        document.startViewTransition(async () => {
+    // Kod mapy (Home i leniwy AtlasMap) ładujemy przed przejściem: inaczej nowy widok to pusta powłoka (przeskok).
+    Promise.all([import('../Home'), import('../map/AtlasMap')])
+      .then(() => {
+        // Ten sam obrys Polski co w tle „rośnie” w mapę: wspólna nazwa przejścia (opis w global.css).
+        nameForTransition('[data-slot="start-background"] svg');
+        return document.startViewTransition(async () => {
           flushSync(go);
+          nameForTransition('main');
           // Dajemy mapie dwie klatki na pierwszy render, zanim przeglądarka zrobi „zdjęcie” nowego widoku.
           await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
-        }),
-      )
+        });
+      })
       .catch(go);
   };
 

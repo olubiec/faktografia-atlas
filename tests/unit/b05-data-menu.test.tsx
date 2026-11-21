@@ -6,6 +6,7 @@ import fixture from '../fixtures/catalog/search-queries.json' with { type: 'json
 import { buildCatalogTree, flattenTree } from '../../src/core/catalog/tree';
 import { DataMenuBody } from '../../src/view/data-menu/DataMenu';
 import { DataMenuList } from '../../src/view/data-menu/DataMenuList';
+import { DataMenuBranch } from '../../src/view/data-menu/DataMenuTree';
 import type { AvailableFile } from '../../src/core/indicators/registry';
 import type { Indicator } from '../../src/core/profile/profile';
 
@@ -95,5 +96,15 @@ describe('B05 – DataMenu', () => {
     const out = html();
     expect(out.indexOf('>Ludność<')).toBeLessThan(out.indexOf('>Kultura<'));
     expect(out).toContain('aria-label="Działy"');
+  });
+
+  it('dział z jedną grupą pokazuje wskaźniki od razu, bez podkategorii', () => {
+    const tourism = tree.sections.find((s) => s.name === 'Turystyka')!;
+    expect(tourism.groups).toHaveLength(1);
+    const out = renderToString(
+      <DataMenuBranch section={tourism} groupId={null} selectedId={null} onPick={noop} onHome={noop} onOpenSection={noop} onOpenGroup={noop} limit={50} onMore={noop} />,
+    );
+    expect(out).toContain(tourism.groups[0]!.entries[0]!.name);
+    expect(out).not.toContain('Pozostałe');
   });
 });

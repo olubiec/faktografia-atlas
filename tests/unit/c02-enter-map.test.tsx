@@ -18,6 +18,7 @@ vi.mock('react-router', () => ({
 vi.mock('../../src/view/map/hooks/useReducedMotion', () => ({ useReducedMotion: () => ({ current: reduced }) }));
 vi.mock('../../src/view/layout/SiteLayout', () => ({ SiteLayout: ({ children }: { children: React.ReactNode }) => <div>{children}</div> }));
 vi.mock('../../src/view/Home', () => ({ Home: () => null }));
+vi.mock('../../src/view/map/AtlasMap', () => ({ AtlasMap: () => null }));
 vi.mock('../../src/view/start/StartBackground', () => ({ StartBackground: () => null }));
 
 import { StartPage } from '../../src/view/start/StartPage';
@@ -37,7 +38,7 @@ afterEach(() => { navigate.mockClear(); reduced = false; });
 describe('C02 wejście do mapy', () => {
   it('klik „Otwórz mapę”: najpierw ładuje kod mapy, potem nawiguje wewnątrz przejścia widoku', async () => {
     const start = vi.fn<(cb: () => Promise<void>) => void>((cb) => { void cb(); });
-    vi.stubGlobal('document', { startViewTransition: start });
+    vi.stubGlobal('document', { startViewTransition: start, querySelector: () => null });
     vi.stubGlobal('requestAnimationFrame', (f: () => void) => { f(); return 0; });
     const ev = click();
     expect(ev.defaultPrevented).toBe(true);
@@ -69,14 +70,18 @@ describe('C02 wejście do mapy', () => {
     const scales = [...src.matchAll(/scale\(([\d.]+)\)/g)].map((m) => Number(m[1]));
     expect(scales.every((n) => n <= 1.1)).toBe(true);
   });
-  it('global.css: skala przejścia ≤ 1,06, czas i krzywa z tokenów', () => {
+  it('global.css: wspólny element poland-map, bez skali, czas i krzywa z tokenów', () => {
     const css = read('src/styles/global.css');
-    const block = css.slice(css.indexOf('start-zoom-out'));
-    const scales = [...block.matchAll(/scale\(([\d.]+)\)/g)].map((m) => Number(m[1]));
-    expect(scales.length).toBeGreaterThan(0);
-    expect(Math.max(...scales)).toBeLessThanOrEqual(1.06);
+    const block = css.slice(css.indexOf('start-fade-out'));
+    expect(block).toMatch(/view-transition-old\(poland-map\)/);
+    expect(block).not.toMatch(/scale\(/);
     expect(block).toMatch(/var\(--motion-slow\) var\(--easing\)/);
     const tokens = JSON.parse(read('config/tokens.json'));
     expect(tokens.motion.cameraIn).toBe(tokens.motion.slow);
+  });
+  it('StartPage ładuje też AtlasMap i nadaje wspólną nazwę przejścia', () => {
+    const src = read('src/view/start/StartPage.tsx');
+    expect(src).toMatch(/import\('..\/map\/AtlasMap'\)/);
+    expect(src).toMatch(/poland-map/);
   });
 });
