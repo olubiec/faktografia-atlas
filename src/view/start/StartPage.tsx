@@ -1,4 +1,5 @@
 import type { MouseEvent } from 'react';
+import { flushSync } from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { StartBackground } from './StartBackground';
 import { useReducedMotion } from '@/view/map/hooks/useReducedMotion';
@@ -37,7 +38,18 @@ export function StartPage() {
     // Kliknięcie z klawiszem (nowa karta) i brak animacji (reduced-motion): zwykła nawigacja linku.
     if (reduced.current || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
-    navigate(to('/mapa'), { viewTransition: true });
+    const go = () => navigate(to('/mapa'));
+    if (typeof document.startViewTransition !== 'function') return go();
+    // Kod mapy ładujemy przed przejściem: inaczej nowy widok to pusta powłoka i animacji nie widać (przeskok).
+    import('../Home')
+      .then(() =>
+        document.startViewTransition(async () => {
+          flushSync(go);
+          // Dajemy mapie dwie klatki na pierwszy render, zanim przeglądarka zrobi „zdjęcie” nowego widoku.
+          await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+        }),
+      )
+      .catch(go);
   };
 
   return (
