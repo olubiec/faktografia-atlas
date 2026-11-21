@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import sampleFixture from '../fixtures/prng/sample.json' with { type: 'json' };
 import realUnits from '../../public/data/units.json' with { type: 'json' };
 import { buildLocalities } from '../../scripts/geo/localities-parse.mjs';
+import { openMap } from './helpers/open-map';
 
 const mockLocalities = buildLocalities(sampleFixture.features, realUnits).localities;
 
@@ -22,7 +23,7 @@ test.describe('Localities Search & Lazy Loading (CC5.4a)', () => {
       });
     });
 
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
     expect(localitiesRequests).toHaveLength(0);
 
@@ -51,7 +52,7 @@ test.describe('Localities Search & Lazy Loading (CC5.4a)', () => {
       });
     });
 
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     await page.keyboard.press('Control+k');
@@ -84,7 +85,7 @@ test.describe('Localities Search & Lazy Loading (CC5.4a)', () => {
       });
     });
 
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     await page.keyboard.press('Control+k');

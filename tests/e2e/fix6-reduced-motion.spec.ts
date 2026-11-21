@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 // Ograniczony ruch: kamera skacze bez jazdy – @FIX6G.
 
@@ -16,7 +17,7 @@ test.describe('Reduced motion kamery (@FIX6G)', () => {
   test('wejście w województwo to skok: ślad ≤ 2, brak animacji po 100 ms (@FIX6G)', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as unknown as { __atlas?: Atlas }).__atlas?.ready === true);
     const before = (await atlas(page)).viewState.zoom;
 

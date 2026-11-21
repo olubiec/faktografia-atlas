@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 test.describe('Tile Reveal Sequence and Faded Background (@S16)', () => {
   test('direct navigation with ?u=12 on initial mount has reveal progress immediately 1 (@S16)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=12&e2e');
+    await openMap(page, '?u=12&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 
@@ -15,7 +16,7 @@ test.describe('Tile Reveal Sequence and Faded Background (@S16)', () => {
 
   test('drilling down into voivodeship triggers reveal sequence with progress 0 -> 1 in <= 1s (@S16)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 
@@ -38,7 +39,7 @@ test.describe('Tile Reveal Sequence and Faded Background (@S16)', () => {
 
   test('units outside active voivodeship are drawn and do not react to hover (@S16)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=12&e2e');
+    await openMap(page, '?u=12&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 
@@ -56,7 +57,7 @@ test.describe('Tile Reveal Sequence and Faded Background (@S16)', () => {
   test('prefers-reduced-motion results in reveal progress = 1 immediately (@S16)', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=12&e2e');
+    await openMap(page, '?u=12&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 

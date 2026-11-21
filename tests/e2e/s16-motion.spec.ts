@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 function trackNetwork(page: Page) {
   const urls: string[] = [];
@@ -25,7 +26,7 @@ test.describe('Speed and Motion Performance Path Test W3.6 (@S16)', () => {
 
       // 1. Initial/Direct Navigation to unit with e2e
       await page.setViewportSize({ width: 1440, height: 900 });
-      await page.goto(`/?e2e&u=${targetUnit}`);
+      await openMap(page, `?e2e&u=${targetUnit}`);
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
       await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
       await page.waitForFunction((u) => (window as any).__atlas?.selected === u, targetUnit);
@@ -83,7 +84,7 @@ test.describe('Speed and Motion Performance Path Test W3.6 (@S16)', () => {
       { width: 390, height: 844 },
     ]) {
       await page.setViewportSize(viewport);
-      await page.goto('/?e2e&u=12');
+      await openMap(page, '?e2e&u=12');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
       const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
@@ -94,7 +95,7 @@ test.describe('Speed and Motion Performance Path Test W3.6 (@S16)', () => {
 
   test('touch targets >= 44px, axe accessibility and max 1 red annotation (@S16)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -124,7 +125,7 @@ test.describe('Speed and Motion Performance Path Test W3.6 (@S16)', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 1440, height: 900 });
 
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const initialZoom = await page.evaluate(() => (window as any).__atlas?.viewState?.zoom);

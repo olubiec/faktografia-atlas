@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 import shard12Fixture from '../fixtures/parts/shard-12.json' with { type: 'json' };
+import { openMap } from './helpers/open-map';
 
 test.describe('Profile Parts Block (@S20)', () => {
   test('urban-rural gmina profile has collapsed parts block, opens with 0 requests, expanding fetches 1 shard and shows numbers', async ({
@@ -18,7 +19,7 @@ test.describe('Profile Parts Block (@S20)', () => {
     });
 
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1202023');
+    await openMap(page, '?e2e&u=1202023');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -56,7 +57,7 @@ test.describe('Profile Parts Block (@S20)', () => {
     });
 
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1202023');
+    await openMap(page, '?e2e&u=1202023');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -73,7 +74,7 @@ test.describe('Profile Parts Block (@S20)', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
 
     // 1. Gmina miejska (Kraków - 1261011)
-    await page.goto('/?e2e&u=1261011');
+    await openMap(page, '?e2e&u=1261011');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -81,7 +82,7 @@ test.describe('Profile Parts Block (@S20)', () => {
     await expect(partsTriggerCity).toHaveCount(0);
 
     // 2. Powiat (Powiat brzeski - 1202)
-    await page.goto('/?e2e&u=1202');
+    await openMap(page, '?e2e&u=1202');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -101,7 +102,7 @@ test.describe('Profile Parts Block (@S20)', () => {
     });
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/?e2e&sheet=full&u=1202023');
+    await openMap(page, '?e2e&sheet=full&u=1202023');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);

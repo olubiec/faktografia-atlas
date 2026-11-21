@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 import indexFixture from '../fixtures/library/index.json' with { type: 'json' };
 import valuesSampleFixture from '../fixtures/library/values-sample.json' with { type: 'json' };
+import { openMap } from './helpers/open-map';
 
 test.describe('Test całej ścieżki „Biblioteka GUS” (@S21)', () => {
   test.beforeEach(async ({ page }) => {
@@ -41,7 +42,7 @@ test.describe('Test całej ścieżki „Biblioteka GUS” (@S21)', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
 
     // 1. Wejście z nagłówka
-    await page.goto('/');
+    await openMap(page);
     const desktopLink = page.locator('header nav').getByRole('link', { name: 'Biblioteka' });
     await expect(desktopLink).toBeVisible();
     await desktopLink.click();
@@ -144,7 +145,7 @@ test.describe('Test całej ścieżki „Biblioteka GUS” (@S21)', () => {
     await page.setViewportSize({ width: 390, height: 844 });
 
     // 1. Wejście z nagłówka mobilnego
-    await page.goto('/');
+    await openMap(page);
     const menuBtn = page.locator('header button[aria-label="Menu"]');
     await expect(menuBtn).toBeVisible();
     await menuBtn.click();

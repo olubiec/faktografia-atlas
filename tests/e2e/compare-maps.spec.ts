@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Compare Maps W2.22 (@S18)', () => {
   test('displays two mini maps with selected outlines matching unit TERYTs on desktop and mobile (@S18)', async ({
@@ -9,7 +10,7 @@ test.describe('Compare Maps W2.22 (@S18)', () => {
 
     // 1. Desktop (1440x900)
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e=1&u=12&c=12,14');
+    await openMap(page, '?e2e=1&u=12&c=12,14');
 
     await page.waitForFunction(
       () =>
@@ -53,7 +54,7 @@ test.describe('Compare Maps W2.22 (@S18)', () => {
     test.setTimeout(60000);
 
     await page.setViewportSize({ width: 360, height: 740 });
-    await page.goto('/?e2e=1&u=12&c=12,14');
+    await openMap(page, '?e2e=1&u=12&c=12,14');
 
     await page.waitForFunction(
       () =>
@@ -81,7 +82,7 @@ test.describe('Compare Maps W2.22 (@S18)', () => {
     test.setTimeout(60000);
 
     await page.setViewportSize({ width: 360, height: 740 });
-    await page.goto('/?e2e=1&u=12&c=12,14');
+    await openMap(page, '?e2e=1&u=12&c=12,14');
 
     await page.waitForFunction(
       () =>

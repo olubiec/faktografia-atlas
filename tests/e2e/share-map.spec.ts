@@ -1,13 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 import fs from 'node:fs';
+import { openMap } from './helpers/open-map';
 
 test.describe('Udostępnianie z panelu wskaźnika (W2.19 @S19)', () => {
   test('?i=density&l=pow -> podgląd z tytułem, rokiem i powiaty, CSV 380 wierszy, zero nowych żądań', async ({
     page,
   }) => {
     await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
-    await page.goto('/?i=density&l=pow');
+    await openMap(page, '?i=density&l=pow');
 
     const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
     await expect(panel).toBeVisible({ timeout: 15000 });
@@ -63,7 +64,7 @@ test.describe('Udostępnianie z panelu wskaźnika (W2.19 @S19)', () => {
     page,
   }) => {
     await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
-    await page.goto('/?i=density&u=12');
+    await openMap(page, '?i=density&u=12');
 
     const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
     await expect(panel).toBeVisible({ timeout: 15000 });
@@ -103,7 +104,7 @@ test.describe('Udostępnianie z panelu wskaźnika (W2.19 @S19)', () => {
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
-    await page.goto('/?i=density');
+    await openMap(page, '?i=density');
 
     const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
     await expect(panel).toBeVisible({ timeout: 15000 });

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 test.describe('Responsive Resize and Camera Behavior - W16-M05 (@S16)', () => {
   test.setTimeout(60000);
@@ -8,7 +9,7 @@ test.describe('Responsive Resize and Camera Behavior - W16-M05 (@S16)', () => {
   }) => {
     // 1. Otwórz stronę na pulpicie (1440x900) z wybranym województwem małopolskim (TERYT 12)
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=12&e2e');
+    await openMap(page, '?u=12&e2e');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -74,7 +75,7 @@ test.describe('Responsive Resize and Camera Behavior - W16-M05 (@S16)', () => {
 
   test('resizing window does not trigger long camera animation (@S16)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=12&e2e');
+    await openMap(page, '?u=12&e2e');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -100,7 +101,7 @@ test.describe('Responsive Resize and Camera Behavior - W16-M05 (@S16)', () => {
 
   test('ConsentBar contains safe-area-inset-bottom styling (@S16)', async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 740 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
 
     const consentBar = page.locator('div[aria-label="Zgoda na analitykę"]');
     if (await consentBar.isVisible()) {

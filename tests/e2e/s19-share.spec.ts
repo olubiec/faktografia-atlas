@@ -5,6 +5,7 @@ import path from 'node:path';
 import { build } from 'vite';
 import type { UnitProfile } from '../../src/core/profile/profile';
 import indicators from '../../config/indicators.json' with { type: 'json' };
+import { openMap } from './helpers/open-map';
 
 function createMockProfile(
   teryt: string,
@@ -125,7 +126,7 @@ test.describe('Test całej ścieżki Pobierz i udostępnij W2.23 (@S19)', () => 
       ]) {
         await page.setViewportSize(viewport);
         await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
-        await page.goto('/?e2e=1&i=density&l=pow');
+        await openMap(page, '?e2e=1&i=density&l=pow');
 
         const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
         await expect(panel).toBeVisible({ timeout: 15000 });
@@ -193,7 +194,7 @@ test.describe('Test całej ścieżki Pobierz i udostępnij W2.23 (@S19)', () => 
       // -------------------------------------------------------------
       await page.setViewportSize({ width: 1440, height: 900 });
       await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
-      await page.goto('/?e2e=1&u=3217');
+      await openMap(page, '?e2e=1&u=3217');
 
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -325,7 +326,7 @@ test.describe('Test całej ścieżki Pobierz i udostępnij W2.23 (@S19)', () => 
     ]) {
       await page.setViewportSize(viewport);
       await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
-      await page.goto('/?e2e=1&i=density');
+      await openMap(page, '?e2e=1&i=density');
 
       const panel = page.locator('aside[aria-label="Panel wskaźnika"]');
       await expect(panel).toBeVisible({ timeout: 15000 });
@@ -371,7 +372,7 @@ test.describe('Test całej ścieżki Pobierz i udostępnij W2.23 (@S19)', () => 
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
-    await page.goto('/?e2e=1&u=12&c=12,24');
+    await openMap(page, '?e2e=1&u=12&c=12,24');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);

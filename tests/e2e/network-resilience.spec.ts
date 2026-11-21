@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import indexFixture from '../fixtures/library/index.json' with { type: 'json' };
+import { openMap } from './helpers/open-map';
 
 test.describe('Odporność na błędy sieci, CORS i wyścigi kliknięć (@W17-T04)', () => {
   test('symulacja błędu 500 i timeout na profiles/*: profil nie zawiesza się na białym ekranie i wyświetla komunikat / fallback', async ({
@@ -15,7 +16,7 @@ test.describe('Odporność na błędy sieci, CORS i wyścigi kliknięć (@W17-T0
     });
 
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -46,7 +47,7 @@ test.describe('Odporność na błędy sieci, CORS i wyścigi kliknięć (@W17-T0
       await route.abort('timedout');
     });
 
-    await page.goto('/?e2e&u=0264011');
+    await openMap(page, '?e2e&u=0264011');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -66,7 +67,7 @@ test.describe('Odporność na błędy sieci, CORS i wyścigi kliknięć (@W17-T0
     });
 
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1202023');
+    await openMap(page, '?e2e&u=1202023');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -152,7 +153,7 @@ test.describe('Odporność na błędy sieci, CORS i wyścigi kliknięć (@W17-T0
     });
 
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);

@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 // Przejście koloru GPU nie istnieje: fill.ms zawsze 0 – @S20.
 
@@ -8,7 +9,7 @@ type Win = { __atlas: Atlas };
 
 async function open(page: Page) {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/?e2e');
+  await openMap(page, '?e2e');
   await page.waitForFunction(() => (window as unknown as { __atlas?: Atlas }).__atlas?.ready === true);
   await page.waitForFunction(() => ((window as unknown as Win).__atlas.fill?.dataKey ?? '') !== '');
 }

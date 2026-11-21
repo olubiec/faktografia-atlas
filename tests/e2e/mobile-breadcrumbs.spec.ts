@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Mobile Breadcrumbs Navigation (@S15)', () => {
   test('single-line breadcrumb height is <= 48px at 360px and 390px viewports (@S15)', async ({ page }) => {
     for (const width of [360, 390]) {
       await page.setViewportSize({ width, height: 740 });
-      await page.goto('/?u=1603&e2e');
+      await openMap(page, '?u=1603&e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
       const nav = page.locator('nav[aria-label="Ścieżka"]');
@@ -28,7 +29,7 @@ test.describe('Mobile Breadcrumbs Navigation (@S15)', () => {
   test('clicking back arrow "‹" moves one level up (@S15)', async ({ page }) => {
     test.setTimeout(60000);
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/?u=1603&e2e');
+    await openMap(page, '?u=1603&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     // Close profile sheet if open so map controls are unobstructed
@@ -51,7 +52,7 @@ test.describe('Mobile Breadcrumbs Navigation (@S15)', () => {
   test('clicking "Polska" returns to country level (@S15)', async ({ page }) => {
     test.setTimeout(60000);
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/?u=1603&e2e');
+    await openMap(page, '?u=1603&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     // Close profile sheet if open so map controls are unobstructed
@@ -73,7 +74,7 @@ test.describe('Mobile Breadcrumbs Navigation (@S15)', () => {
 
   test('touch targets on mobile are >= 44px (@S15)', async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 740 });
-    await page.goto('/?u=1603&e2e');
+    await openMap(page, '?u=1603&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const nav = page.locator('nav[aria-label="Ścieżka"]');
@@ -97,7 +98,7 @@ test.describe('Mobile Breadcrumbs Navigation (@S15)', () => {
 
   test('axe accessibility audit passes on mobile breadcrumbs (@S15)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/?u=1603&e2e');
+    await openMap(page, '?u=1603&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const results = await new AxeBuilder({ page }).analyze();

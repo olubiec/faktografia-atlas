@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 // „Wróć” tym samym planerem, miękkie lądowanie, wzrost bez szarpnięć – @FIX6E.
 
@@ -13,7 +14,7 @@ const atlas = (page: Page) => page.evaluate(() => (window as unknown as { __atla
 
 async function open(page: Page) {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/?e2e');
+  await openMap(page, '?e2e');
   await page.waitForFunction(() => (window as unknown as { __atlas?: Atlas }).__atlas?.ready === true);
 }
 

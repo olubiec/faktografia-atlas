@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 test.describe('Sekcje redakcyjne pod mapą (W16-M01)', () => {
   test.beforeEach(async ({ page }) => {
@@ -7,7 +8,7 @@ test.describe('Sekcje redakcyjne pod mapą (W16-M01)', () => {
   });
 
   test('Przewinięcie w dół odsłania 7 działów, 6 pojedynków i stopkę; kliknięcie działu przełącza mapę', async ({ page }) => {
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
 
     // Wskaźnik przewijania jest na dole i jest widoczny
     const scrollIndicator = page.getByText(/Przewiń w dół: Działy tematyczne/i);

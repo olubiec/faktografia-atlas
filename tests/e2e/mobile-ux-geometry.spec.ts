@@ -4,6 +4,7 @@ import {
   expectNoOverlapPairwise,
   expectTouchTargets,
 } from './helpers/mobile-audit';
+import { openMap } from './helpers/open-map';
 
 const VIEWPORTS = [
   { name: '360x740', width: 360, height: 740 },
@@ -17,7 +18,7 @@ for (const vp of VIEWPORTS) {
     });
 
     test('strona główna: brak poziomego scrolla i brak kolizji elementów pływających', async ({ page }) => {
-      await page.goto('/?e2e');
+      await openMap(page, '?e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
       await expectNoHorizontalScroll(page, `home-${vp.name}`);
@@ -35,7 +36,7 @@ for (const vp of VIEWPORTS) {
     });
 
     test('profil w arkuszu dolnym: brak kolizji z nagłówkiem i poprawne proporcje', async ({ page }) => {
-      await page.goto('/?e2e&u=1217011');
+      await openMap(page, '?e2e&u=1217011');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 

@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
   test('opens profile bottom sheet at 35-45% window height on unit selection (@S15)', async ({ page }) => {
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -33,7 +34,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
   });
 
   test('drags handle up to >= 90% window height and displays tabs (@S15)', async ({ page }) => {
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -70,7 +71,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
   });
 
   test('expand/collapse button toggles sheet between >= 90% and ~40% (WCAG 2.5.7) (@S15)', async ({ page }) => {
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -103,7 +104,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
   });
 
   test('has exactly one close button (x) in mobile sheet (@S15)', async ({ page }) => {
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -112,7 +113,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
   });
 
   test('close button (x) closes sheet, removes ?u=, and leaves map zoom unchanged (@S15)', async ({ page }) => {
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -135,7 +136,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
   });
 
   test('map above sheet responds to touch/pointer interactions (@S15)', async ({ page }) => {
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -153,7 +154,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
   test('no horizontal scroll at 360px and 390px, touch targets >= 44px (@S15)', async ({ page }) => {
     for (const width of [360, 390]) {
       await page.setViewportSize({ width, height: 800 });
-      await page.goto('/?e2e&u=12');
+      await openMap(page, '?e2e&u=12');
 
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -174,7 +175,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
   });
 
   test('passes axe accessibility scan with no violations (@S15)', async ({ page }) => {
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const results = await new AxeBuilder({ page }).analyze();
@@ -182,7 +183,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
   });
 
   test('renders at most one red annotation on screen (@S15)', async ({ page }) => {
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const annotations = page.locator('.rough-annotation');
@@ -192,7 +193,7 @@ test.describe('Mobile Profile Sheet W2.6 (@S15)', () => {
 
   test('respects prefers-reduced-motion (@S15)', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const sheet = page.locator('[role="dialog"][aria-label="Województwo małopolskie"]');

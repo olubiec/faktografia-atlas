@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Search Command Dialog (CC5.2)', () => {
   test('lista jednostek jest pobierana raz i wspólnie przez mapę i wyszukiwarkę', async ({ page }) => {
@@ -8,7 +9,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
       if (req.url().includes('/data/units.json')) unitsRequests.push(req.url());
     });
 
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
     // Mapa pobiera listę jednostek przy starcie (osobny plik, nie część kodu); wyszukiwarka używa tej samej pamięci.
     expect(unitsRequests).toHaveLength(1);
@@ -27,7 +28,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
   });
 
   test('opens search modal via Ctrl+K and closes via Esc, restoring focus', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     const searchTrigger = page.locator('header button').first();
@@ -50,7 +51,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
   });
 
   test('opens search modal via clicking header search button', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     // Kliknięcie w przycisk wyszukiwania w nagłówku
@@ -65,7 +66,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
   });
 
   test('searches for "lodz" and selects Łódź gmina miejska on Enter, updating URL', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     await page.keyboard.press('Control+k');
@@ -90,7 +91,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
   });
 
   test('supports ArrowDown keyboard navigation between search results', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     await page.keyboard.press('Control+k');
@@ -111,7 +112,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
   });
 
   test('displays empty state message when no results match', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     await page.keyboard.press('Control+k');
@@ -127,7 +128,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
 
   test('takes full screen on mobile viewport (390x844)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     const searchTrigger = page.locator('header button:visible').first();
@@ -143,7 +144,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
   });
 
   test('axe accessibility audit passes on open search dialog with results', async ({ page }) => {
-    await page.goto('/');
+    await openMap(page);
     await page.waitForLoadState('networkidle');
 
     await page.keyboard.press('Control+k');

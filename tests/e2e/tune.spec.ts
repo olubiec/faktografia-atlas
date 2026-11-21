@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Tune Panel ?tune', () => {
   test('code splitting: without ?tune, no TunePanel/tweakpane bundle requests are made', async ({ page }) => {
@@ -12,7 +13,7 @@ test.describe('Tune Panel ?tune', () => {
       }
     });
 
-    await page.goto('/');
+    await openMap(page);
     await page.goto('/design');
 
     expect(tuneRequests).toEqual([]);

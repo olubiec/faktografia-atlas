@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 const VIEWPORTS = [
   { width: 1440, height: 900, name: 'desktop' },
@@ -19,7 +20,7 @@ for (const vp of VIEWPORTS) {
       });
 
       // 1. Wejście na stronę główną
-      await page.goto('/?e2e');
+      await openMap(page, '?e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
       await expect(page).toHaveURL(/\/(\?.*)?$/);
 
@@ -82,7 +83,7 @@ for (const vp of VIEWPORTS) {
       };
 
       // (a) profil jednostki A (województwo 14)
-      await page.goto('/?e2e&u=1465011');
+      await openMap(page, '?e2e&u=1465011');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
       const afterA = profileShardRequests;
@@ -104,7 +105,7 @@ for (const vp of VIEWPORTS) {
 
       // (d) po pełnym przeładowaniu otwarcie profilu A to najwyżej jedno żądanie
       const beforeReload = profileShardRequests;
-      await page.goto('/?e2e&u=1465011');
+      await openMap(page, '?e2e&u=1465011');
       await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
       expect(profileShardRequests - beforeReload).toBeLessThanOrEqual(1);
     });

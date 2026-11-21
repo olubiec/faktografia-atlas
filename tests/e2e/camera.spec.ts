@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
   test.setTimeout(60000);
@@ -7,7 +8,7 @@ test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const startZoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
@@ -51,7 +52,7 @@ test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
 
   test('dragging during camera transition stops animation (@S16)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=12&e2e');
+    await openMap(page, '?u=12&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     // Click "Wróć" to start zoom out transition
@@ -78,7 +79,7 @@ test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
 
   test('direct navigation ?u=12 loads final view immediately without transition (@S16)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=12&e2e');
+    await openMap(page, '?u=12&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const initialZoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
@@ -95,7 +96,7 @@ test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
 
   test('clicking "Wróć" button executes zoom out transition (@S16)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=12&e2e');
+    await openMap(page, '?u=12&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const startZoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
@@ -119,7 +120,7 @@ test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
   test('prefers-reduced-motion disables camera animations (@S16)', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=12&e2e');
+    await openMap(page, '?u=12&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const startZoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
@@ -133,7 +134,7 @@ test.describe('Smooth Camera Transitions - W3.2 (@S16)', () => {
 
   test('without test mode ?e2e, camera trace is not recorded (@S16)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/');
+    await openMap(page);
 
     const atlasDefined = await page.evaluate(() => (window as any).__atlas !== undefined);
     expect(atlasDefined).toBe(false);

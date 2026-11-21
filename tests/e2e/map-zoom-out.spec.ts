@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { countryBounds, initialViewState } from '../../src/core/map/view';
 import type { Unit } from '../../src/core/units/types';
+import { openMap } from './helpers/open-map';
 
 function projectMercator(
   lon: number,
@@ -36,7 +37,7 @@ test.describe('Map Zoom Out (@S14)', () => {
   for (const { width, height } of testViewports) {
     test(`allows zooming out to show full country with >= 3% margin on ${width}x${height} (@S14)`, async ({ page }) => {
       await page.setViewportSize({ width, height });
-      await page.goto('/?e2e');
+      await openMap(page, '?e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
       const mapContainer = page.locator('[aria-label="Mapa Polski"]');
@@ -83,7 +84,7 @@ test.describe('Map Zoom Out (@S14)', () => {
 
   test('recalculates minZoom when resizing viewport from 1440x900 to 390x844 (@S14)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const mapContainer = page.locator('[aria-label="Mapa Polski"]');

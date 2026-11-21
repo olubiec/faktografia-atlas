@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Full Mobile Path Flow (@S15)', () => {
   const viewports = [
@@ -30,7 +31,7 @@ test.describe('Full Mobile Path Flow (@S15)', () => {
       });
 
       // 1. Start -> Go to home page
-      await page.goto('/?e2e');
+      await openMap(page, '?e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
       await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 
@@ -241,7 +242,7 @@ test.describe('Full Mobile Path Flow (@S15)', () => {
 
   test('passes axe accessibility scan on mobile (@S15)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -252,7 +253,7 @@ test.describe('Full Mobile Path Flow (@S15)', () => {
   test('respects prefers-reduced-motion on mobile (@S15)', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/?e2e&u=12');
+    await openMap(page, '?e2e&u=12');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 

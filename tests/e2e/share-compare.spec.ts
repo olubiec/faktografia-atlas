@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 import fs from 'node:fs';
+import { openMap } from './helpers/open-map';
 
 test.describe('Udostępnianie porównania W2.21 (@S19)', () => {
   test.beforeEach(async ({ page }) => {
@@ -19,7 +20,7 @@ test.describe('Udostępnianie porównania W2.21 (@S19)', () => {
 
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
-    await page.goto('/?e2e=1&u=12&c=12,24');
+    await openMap(page, '?e2e=1&u=12&c=12,24');
 
     await page.waitForFunction(
       () =>
@@ -93,7 +94,7 @@ test.describe('Udostępnianie porównania W2.21 (@S19)', () => {
     ]) {
       await page.setViewportSize(viewport);
       await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
-      await page.goto('/?e2e=1&u=12&c=12,24');
+      await openMap(page, '?e2e=1&u=12&c=12,24');
 
       await page.waitForFunction(
         () =>
@@ -148,7 +149,7 @@ test.describe('Udostępnianie porównania W2.21 (@S19)', () => {
     await page.setViewportSize({ width: 360, height: 740 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.addInitScript(() => sessionStorage.setItem('atlas-share', '1'));
-    await page.goto('/?e2e=1&u=12&c=12,24');
+    await openMap(page, '?e2e=1&u=12&c=12,24');
 
     await page.waitForFunction(
       () =>

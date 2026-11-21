@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 const mockUnemploymentData = {
   id: 'unemployment-rate',
@@ -20,7 +21,7 @@ test.describe('Choropleth Map (CC8.2a-2)', () => {
       });
     });
 
-    await page.goto('/?e2e&i=unemployment-rate');
+    await openMap(page, '?e2e&i=unemployment-rate');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth !== null);
 
@@ -43,7 +44,7 @@ test.describe('Choropleth Map (CC8.2a-2)', () => {
       });
     });
 
-    await page.goto('/?e2e&i=unemployment-rate&u=14');
+    await openMap(page, '?e2e&i=unemployment-rate&u=14');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth?.level === 'pow');
 
@@ -58,7 +59,7 @@ test.describe('Choropleth Map (CC8.2a-2)', () => {
   });
 
   test('without ?i= parameter the map is colored with the default indicator (density, voivodeships)', async ({ page }) => {
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 
@@ -69,7 +70,7 @@ test.describe('Choropleth Map (CC8.2a-2)', () => {
   });
 
   test('unknown ?i= falls back to the default indicator', async ({ page }) => {
-    await page.goto('/?e2e&i=non-existent-indicator');
+    await openMap(page, '?e2e&i=non-existent-indicator');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 
@@ -82,7 +83,7 @@ test.describe('Choropleth Map (CC8.2a-2)', () => {
       await route.fulfill({ status: 404, body: 'Not found' });
     });
 
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForTimeout(300);
 
@@ -100,7 +101,7 @@ test.describe('Choropleth Map (CC8.2a-2)', () => {
       });
     });
 
-    await page.goto('/?e2e&i=unemployment-rate&y=2021');
+    await openMap(page, '?e2e&i=unemployment-rate&y=2021');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth !== null);
 

@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import sampleFixture from '../fixtures/prng/sample.json' with { type: 'json' };
 import realUnits from '../../public/data/units.json' with { type: 'json' };
 import { buildLocalities } from '../../scripts/geo/localities-parse.mjs';
+import { openMap } from './helpers/open-map';
 
 const mockLocalities = buildLocalities(sampleFixture.features, realUnits).localities;
 
@@ -19,7 +20,7 @@ test.describe('Localities Map Layer & Navigation (CC5.4b)', () => {
 
   test('loc-layer pojawia się w window.__atlas.layers od zoomu 8,5 i znika poniżej 8,0 (histereza)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     // Initial map zoom is ~5.5 (zoom < 8,5), so loc-layer should NOT be in layers
@@ -57,7 +58,7 @@ test.describe('Localities Map Layer & Navigation (CC5.4b)', () => {
 
   test('wybór miejscowości w Ctrl+K ustawia ?u= na TERYT jej gminy i zbliża widok do punktu (zoom >= 11)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     // Open search modal via Ctrl+K

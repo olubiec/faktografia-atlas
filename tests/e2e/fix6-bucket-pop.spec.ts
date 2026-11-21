@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 // Przekroczenie zoomu 9 bez „pop” – @FIX6F.
 
@@ -10,7 +11,7 @@ test.describe('Warstwa miejscowości (@FIX6F)', () => {
 
   test('zoom do 9,6 kółkiem (okno 8,3–9,6): warstwa wchodzi przed progiem, brak klatki > 50 ms (@FIX6F)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as unknown as { __atlas?: Atlas }).__atlas?.ready === true);
     await page.waitForTimeout(1000);
     await page.mouse.move(720, 450);

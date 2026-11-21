@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 // Obrys Polski (przybliżony); wystarczy do sprawdzenia, czy kraj mieści się w oknie mapy.
 const POLAND = { w: 14.12, s: 49.0, e: 24.15, n: 54.84 };
@@ -12,7 +13,7 @@ const SIZES = [
 for (const size of SIZES) {
   test(`@S21 FIX7 start: cała Polska widoczna w mapie (${size.name})`, async ({ page }) => {
     await page.setViewportSize({ width: size.width, height: size.height });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true && (window as any).__atlas?.mapView);
     // Kamera ma się ustabilizować (start bez animacji, ale dajemy chwilę na ResizeObserver).
     await page.waitForTimeout(500);

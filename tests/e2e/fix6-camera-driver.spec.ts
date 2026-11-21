@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 // Kamera sterowana przez sterownik (bez setState na klatkę) – @FIX6H2.
 
@@ -12,7 +13,7 @@ const atlas = (page: Page) => page.evaluate(() => (window as unknown as { __atla
 
 async function openDesktop(page: Page) {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/?e2e');
+  await openMap(page, '?e2e');
   await page.waitForFunction(() => (window as unknown as { __atlas?: Atlas }).__atlas?.ready === true);
 }
 
@@ -84,7 +85,7 @@ test.describe('Kamera przez sterownik (@FIX6H2)', () => {
     test.skip(!process.env.PERF, 'pomiar wydajności: tylko z PERF=1');
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, deviceScaleFactor: 3 });
     const page = await context.newPage();
-    await page.goto('/?u=12&e2e');
+    await openMap(page, '?u=12&e2e');
     await page.waitForFunction(() => (window as unknown as { __atlas?: Atlas }).__atlas?.ready === true);
     const decline = page.getByRole('button', { name: 'Nie', exact: true });
     if (await decline.isVisible().catch(() => false)) await decline.click().catch(() => undefined);

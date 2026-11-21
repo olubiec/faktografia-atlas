@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 // Próbkuje postęp „reveal” co klatkę do jego końca (albo do limitu czasu).
 async function sampleReveal(page: Page) {
@@ -22,7 +23,7 @@ async function sampleReveal(page: Page) {
 
 async function open(page: Page) {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/?e2e');
+  await openMap(page, '?e2e');
   await page.waitForFunction(() => (window as any).__atlas?.ready === true);
   await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 }

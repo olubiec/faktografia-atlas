@@ -1,14 +1,15 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 test.describe('Drill Down Map Navigation (CC4.2)', () => {
   test('direct navigation with ?u=02 (voivodeship) zooms in and shows powiat layer', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const initialZoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
 
-    await page.goto('/?u=02&e2e');
+    await openMap(page, '?u=02&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const atlasState = await page.evaluate(() => (window as any).__atlas);
@@ -24,7 +25,7 @@ test.describe('Drill Down Map Navigation (CC4.2)', () => {
 
   test('direct navigation with ?u=0201 (powiat) shows gmi-layer while keeping parent layers', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=0201&e2e');
+    await openMap(page, '?u=0201&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const atlasState = await page.evaluate(() => (window as any).__atlas);
@@ -40,7 +41,7 @@ test.describe('Drill Down Map Navigation (CC4.2)', () => {
 
   test('invalid ?u= code is ignored and defaults to country view', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=invalid999&e2e');
+    await openMap(page, '?u=invalid999&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 
@@ -54,7 +55,7 @@ test.describe('Drill Down Map Navigation (CC4.2)', () => {
 
   test('Back ("Wróć") button steps back level by level and updates URL parameter ?u=', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=0201&e2e');
+    await openMap(page, '?u=0201&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const backButton = page.locator('button', { hasText: 'Wróć' });
@@ -91,7 +92,7 @@ test.describe('Drill Down Map Navigation (CC4.2)', () => {
 
   test('Back button has minimum 44px touch target and is keyboard accessible', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?u=02&e2e');
+    await openMap(page, '?u=02&e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     const backButton = page.locator('button', { hasText: 'Wróć' });

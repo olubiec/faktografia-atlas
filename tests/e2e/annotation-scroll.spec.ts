@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 test.describe('Annotation Scroll & Resize (@S14)', () => {
   test('@S14 annotation stays attached to text when sheet container scrolls 200px', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -49,7 +50,7 @@ test.describe('Annotation Scroll & Resize (@S14)', () => {
 
   test('@S14 annotation adjusts when window resizes from 1440 to 390 width', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -89,7 +90,7 @@ test.describe('Annotation Scroll & Resize (@S14)', () => {
 
   test('@S14 no annotation remains in DOM after closing profile sheet', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=1217011');
+    await openMap(page, '?e2e&u=1217011');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
     await expect(page.locator('.rough-annotation')).toHaveCount(1);

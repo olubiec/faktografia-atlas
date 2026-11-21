@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openMap } from './helpers/open-map';
 
 const mockUnemploymentData = {
   id: 'unemployment-rate',
@@ -21,7 +22,7 @@ test.describe('Choropleth Color Transition (@S16)', () => {
       });
     });
 
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 
@@ -50,7 +51,7 @@ test.describe('Choropleth Color Transition (@S16)', () => {
   test('changing year transitions colors in <= 400ms (@S16)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
 
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 
@@ -79,7 +80,7 @@ test.describe('Choropleth Color Transition (@S16)', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 1440, height: 900 });
 
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
 

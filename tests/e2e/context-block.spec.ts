@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 import fs from 'node:fs';
 import path from 'node:path';
+import { openMap } from './helpers/open-map';
 
 const explanationsFixture = JSON.parse(
   fs.readFileSync(path.join(process.cwd(), 'tests/fixtures/explanations.json'), 'utf-8')
@@ -24,7 +25,7 @@ test.describe('ContextBlock "Na tle kraju" Desktop @S17', () => {
     page,
   }) => {
     // TERYT 1217 to powiat tatrzański
-    await page.goto('/?e2e&u=1217');
+    await openMap(page, '?e2e&u=1217');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
@@ -61,7 +62,7 @@ test.describe('ContextBlock "Na tle kraju" Desktop @S17', () => {
       });
     });
 
-    await page.goto('/?e2e&u=1217');
+    await openMap(page, '?e2e&u=1217');
 
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
@@ -83,7 +84,7 @@ test.describe('ContextBlock "Na tle kraju" Desktop @S17', () => {
   });
 
   test('clicking "najwyżej" unit selects that unit', async ({ page }) => {
-    await page.goto('/?e2e&u=1217');
+    await openMap(page, '?e2e&u=1217');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
@@ -105,7 +106,7 @@ test.describe('ContextBlock "Na tle kraju" Desktop @S17', () => {
       }
     });
 
-    await page.goto('/?e2e&u=1217');
+    await openMap(page, '?e2e&u=1217');
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const profileSheet = page.locator('[data-slot="side"]');
@@ -133,7 +134,7 @@ test.describe('ContextBlock "Na tle kraju" Mobile @S17', () => {
   });
 
   test('no axe accessibility errors and no horizontal overflow on mobile viewport', async ({ page }) => {
-    await page.goto('/?e2e&u=1217');
+    await openMap(page, '?e2e&u=1217');
 
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);

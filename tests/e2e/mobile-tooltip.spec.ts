@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { canvasPoint, VOIVODESHIP_CENTROIDS } from './helpers/map-tap';
+import { openMap } from './helpers/open-map';
 
 test.describe('Mobile Unit Tooltip (W2.9 / @S15)', () => {
   test.beforeEach(async ({ page }) => {
@@ -8,7 +9,7 @@ test.describe('Mobile Unit Tooltip (W2.9 / @S15)', () => {
     await page.addInitScript(() => {
       localStorage.setItem('fa-consent-v1', JSON.stringify({ value: 'denied', at: new Date().toISOString() }));
     });
-    await page.goto('/?e2e');
+    await openMap(page, '?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.choropleth != null);
   });
@@ -105,7 +106,7 @@ test.describe('Mobile Unit Tooltip (W2.9 / @S15)', () => {
   test('dymek fits within screen bounds without horizontal scroll on 360px and 390px viewports @S15', async ({ page }) => {
     for (const width of [360, 390]) {
       await page.setViewportSize({ width, height: 740 });
-      await page.goto('/?e2e');
+      await openMap(page, '?e2e');
       await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
       const canvas = page.locator('.maplibregl-canvas');
