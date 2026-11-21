@@ -1,8 +1,8 @@
 # B14 – Sprzątanie: martwy kod, prototypy, stary picker, Observable Plot
-Fala pliku: W23 (etap B budowy). Fala budowy: 7 z 8 (po zmniejszeniu planu 21.11: następna po B13). Zależy od: B07, B13 (B09, B10, B12 odłożone do `tasks/odlozone/`). Równolegle z: nic (sama w fali).
+Fala pliku: W23 (etap B budowy). Fala budowy: 7 z 8 (po zmniejszeniu planu 21.11: następna po B13). Zależy od: B07, B13, W24-C05, C06, C07, C08 (stopka i „O projekcie” przejęła C06). Równolegle z: W24-C09 (same testy).
 ZAKRES ZMNIEJSZONY (21.11.2026, plan odchudzony): B08–B12 i B15 są odłożone, więc strony `/rankingi` i `/porownaj` ORAZ moduł `src/core/my-indicators/*` (używa go jeszcze `ComparePage`) ZOSTAJĄ – nie usuwasz ich, a test `b14-no-dead-code` nie wymaga braku tras `/rankingi` i `/porownaj` ani braku `my-indicators`. Reszta zadania bez zmian.
 Cel: Z repozytorium znika wszystko, co po przebudowie nie ma użytkownika (stare menu wyboru, „Moje wskaźniki”, prototypy, wstęp, nieużywany pakiet), a CI jest zielone.
-Zmieniaj: src/App.tsx, src/view/Home.tsx, src/view/layout/SiteFooter.tsx, src/view/pages/About.tsx, docs/ELEMENTY.md, package.json, pnpm-lock.yaml, tests/unit/dependencies.test.ts, tests/unit/b14-no-dead-code.test.ts
+Zmieniaj: src/App.tsx, src/view/Home.tsx, docs/ELEMENTY.md, package.json, pnpm-lock.yaml, tests/unit/dependencies.test.ts, tests/unit/b14-no-dead-code.test.ts
 Usuń (zgoda właściciela, tylko jeśli plik istnieje i po zmianie nie ma importera: sprawdź `rg -l`): src/view/map/IntroOverlay.tsx, src/view/test/proto/* i src/view/test/PrototypePage.tsx (trasy `/__test/proto*` z App.tsx), src/core/catalog/prototype-tree.ts + tests/unit/u04-prototype-tree.test.ts (po sprawdzeniu, że `tree.ts` i `search.ts` z B05 mają własne testy), src/core/my-indicators/*, src/view/hooks/useMyIndicators.ts, src/view/pages/MyIndicatorsBar.tsx, myIndicatorsFocus.ts, useIndicatorReorder.ts, src/view/compare/CompareIndicatorPicker.tsx, src/view/controls/IndicatorPicker.tsx, LibraryGroup.tsx, src/core/library/* używane tylko przez usunięte pliki, src/view/ranking/RankingsList.tsx + src/core/ranking/rankings-filter.ts + ich testy (nigdzie niepodpięte wg U01), wszystkie pozostałe pliki bez importera wskazane przez `rg`; testy Z4 (U5 i U6): tests/unit/my-indicators*.test.ts(x), use-my-indicators-*.test.tsx, basic-on-start-guard.test.ts, indicator-picker.test.tsx, indicator-picker-library.test.tsx, add-indicator-*.test.tsx i inne z grupy U5/U6 z docs/research/u/U08.md §3.3, które testują wyłącznie usunięty plik; testy „U?” (E4 fix4-picker-zoom.spec.ts: usuń tylko bloki o pickerze, bloki o przyciskach +/− mapy zostają — jeśli nie da się rozdzielić, zatrzymaj się). Dla każdego usuwanego pliku wypisz w PR powód i dowód `rg -l` (0 importerów)
 Wymagane: tests/unit/b14-no-dead-code.test.ts
 Weryfikacja: pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e
@@ -11,7 +11,7 @@ Zgody właściciela (21.11.2026, odpowiedź P2 A): Z1 (adresy w testach e2e), Z2
 Zadanie:
 1. Zbuduj wykaz kandydatów: dla każdego pliku z „Usuń” uruchom `rg -l "<nazwa modułu>" src tests` i usuwaj tylko pliki bez importerów (po usunięciu następnych w kolejności zależności ponów sprawdzenie, aż lista się wyczerpie). Pliki, które nadal mają importera, zostaw i wypisz w PR.
 2. Usuń `IntroOverlay` (wstęp zastąpiła strona startowa) z `Home.tsx`; usuń prototypy `/__test/proto*` (pliki i trasy w `App.tsx`); strony techniczne `/design`, `/__test/ui`, `/__test/annotation`, `/__test/interactive`, `?tune` ZOSTAJĄ.
-3. Stopka: ok. 6 linków (Mapa · O projekcie · Skąd są dane · Prywatność i zgoda · GitHub · CC BY 4.0), bez działów tematycznych. `About.tsx`: dopisz jedno zdanie o kontakcie (np. przez zgłoszenie w repozytorium GitHub); osobnych stron Kontakt i Zastrzeżenie nie robisz.
+3. (Stopka i zdanie o kontakcie w „O projekcie” przeszły do W24-C06; tu ich nie ruszasz.)
 4. `@observablehq/plot`: usuń z `package.json`, odśwież `pnpm-lock.yaml`, wykreśl z `docs/ELEMENTY.md` i z `dependencies.test.ts` (zgodnie z „Zgody”). Sprawdź `rg "observablehq" src tests scripts` = 0 wyników.
 5. Sprawdź, że `rg -n "Rekordy Polski|Moje wskaźniki|Zamów|Biblioteka GUS" src` nie zwraca wyników (poza `src/view/share/*`, `ComparePage` i jego `my-indicators` do czasu B12, oraz tekstami prawnymi; wypisz w PR).
 6. Nowy test `b14-no-dead-code.test.ts`: lista zakazanych modułów (stare nazwy plików) nie istnieje; `package.json` nie zawiera `@observablehq/plot`; trasy w `App.tsx` nie zawierają `/__test/proto` ani `/biblioteka` (`/rankingi` i `/porownaj` zostają do czasu powrotu B08/B12).
@@ -19,7 +19,6 @@ Zadanie:
 Gotowe, gdy:
 - Test `b14-no-dead-code`: zakazane moduły nie istnieją; trasy w `App.tsx` to `/`, `/mapa`, `/rankingi`, `/porownaj`, `/o-projekcie`, `/zrodla`, `/prywatnosc`, strony techniczne i `*`; `package.json` bez `@observablehq/plot`.
 - Cały zestaw `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e` zielony; liczba usuniętych testów odpowiada wyłącznie plikom z listy „Usuń” (wypisana w PR).
-- Test e2e: stopka ma najwyżej 6 linków i żadnego do działów tematycznych; `/o-projekcie` zawiera zdanie o kontakcie.
 - Test e2e: `/mapa` otwiera się bez wstępu (`IntroOverlay`) i bez błędów w konsoli.
 - Brak nowych osieroconych plików: skrypt `rg` z PR nie wskazuje plików w `src/` bez importera (poza punktami wejścia i trasami).
 Nie ruszaj: src/view/map/AtlasMap.tsx, src/view/map/hooks/*, src/view/share/* i src/core/share/* (wstrzymane, żyją za `?share=1`), src/core/consent, config/*, docs/STAN.md, `*-snapshots/`.

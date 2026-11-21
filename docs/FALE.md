@@ -36,3 +36,6 @@ Uwaga: zadania W17/W18 w poczekalni nadal czekają; W17-T04 i W17-T05 są zastą
 
 ## Odchudzenie planu (21.11.2026)
 Etap B (W23) zmniejszony: scalone B01–B07; w `tasks/` zostają tylko **W23-B13** i **W23-B14** (zakres zmniejszony). Odłożone: B08–B12, B15, U03b, U11b → `tasks/odlozone/` (powody i zamienniki w README tam). Zadania z falami W1–W3, W16, W22 i scalone B01–B07 przeniesione do `tasks/zrobione/` (historia, nie startują). `tasks/poczekalnia/` i `tasks/wstrzymane/` bez zmian: nadal nie startują. Fale po B13–B14 zdefiniuje właściciel.
+
+## Etap C (21.11.2026)
+Nowe polecenia właściciela (okno „Wybierz dane”, wejście do mapy, spójność ekranów, bez „Moich wskaźników” i Biblioteki w innych miejscach) rozpisane w `docs/PLAN-FALE-C.md`: zadania `tasks/W24-C01…C09` + `W23-B13` i `W23-B14` (dostosowane). Cztery fale; nic nie startuje samo.
