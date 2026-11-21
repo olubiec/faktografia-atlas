@@ -26,7 +26,7 @@ App
   - kamera: `easeTo` z kadru plakatu do kadru `/mapa` (z miejscem na panel wskaźnika i dolny pasek);
   - panele mapy: `opacity 0 → 1`, a dotyk włącza się po zakończeniu ruchu.
 
-## 3. Decyzje (stan: czekają na właściciela)
+## 3. Decyzje (stan: właściciel zgodził się na D1–D4, 21.11.2026)
 | # | Decyzja | Rekomendacja | Co zmienia |
 |---|---|---|---|
 | D1 | Czy `/` może pobierać dane mapy (granice `admin.topo.json` 1,3 MB i lista `units.json` 456 KB)? Dziś PRODUKT §7 i testy B07 oraz PATH-1a tego zabraniają. | **Tak, ale dopiero po wyświetleniu strony startowej i w wolnej chwili.** Przy oszczędzaniu danych (Save-Data, sieć 2G) dopiero po kliknięciu, a do tego czasu animuje się sam plakat. Wartości wskaźników na `/` nadal z `start.json` (0 plików `values/`). | PRODUKT §3.1 i §7, testy `b07-start-budget`, `path-s1a-ekran-startowy` (warunek „zero pobrań”: „zero przed pierwszą klatką tła” + nowy test oszczędzania danych) |
@@ -87,7 +87,14 @@ Bez D1 wariant A działa tylko w połowie. Mapa ładowałaby się dopiero po kli
   - w żadnej klatce przejścia nie widać pustego tła: piksel środka Polski nigdy nie ma koloru `--kalka`;
   - Wstecz odwraca ruch, a `/` wygląda jak przed kliknięciem;
   - stuknięcie w Polskę otwiera mapę, a przeciągnięcie (> 10 px) przewija stronę i niczego nie otwiera;
-  - `prefers-reduced-motion`: zmiana bez ruchu kamery, w ≤ 1 klatce.
+  - `prefers-reduced-motion`: zmiana bez ruchu kamery, w ≤ 1 klatce;
+  - dotyk lub mysz w trakcie ruchu kamery (~1 s) przerywa animację i oddaje sterowanie użytkownikowi (dotyk nie czeka na koniec ruchu).
+
+### M4b – Reakcja animacji startu na dotyk i mysz
+- Warstwa strony nad mapą (nie samo płótno) nasłuchuje zdarzeń wskaźnika (`touch-action: pan-y`, pasywnie), więc przewijanie na telefonie działa.
+- Efekty: fala od punktu dotyku; podświetlenie województwa pod palcem lub kursorem (granice z obrysu startowego, który już ma osobne ścieżki województw); stuknięcie otwiera mapę przybliżoną do tego województwa; przeciągnięcie > 10 px przewija stronę.
+- Lekko: maks. kilka efektów naraz; wyłączone przy `prefers-reduced-motion`.
+- **Gotowe, gdy:** test e2e dotyku na 390×844 (stuknięcie otwiera mapę na województwie, przeciągnięcie przewija), test myszy na 1440×900, brak efektów przy reduced motion.
 
 ### M5 – Strażnicy i sprzątanie
 - Nowy test ścieżki `tests/e2e/path-s1b-jedna-mapa.spec.ts` (`@PATH-1b`) obejmuje cały scenariusz z §1 na 390×844 i 1440×900.

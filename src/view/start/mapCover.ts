@@ -2,6 +2,8 @@
 // a potem znika. Dzięki temu nie widać pustej powłoki ani kadrów, w których mapa dopiero ustawia kamerę.
 // Działa bez View Transitions (też w Safari) i bez Reacta: okładka żyje w <body>, więc przetrwa zmianę trasy.
 
+import { posterRect, type Bbox, type Rect } from '@/core/start/poster-frame';
+
 const MAP_CANVAS = 'canvas.maplibregl-canvas';
 /** Po pojawieniu się płótna mapy dajemy kamerze chwilę na ustawienie się na Polsce. */
 const SETTLE_MS = 500;
@@ -9,6 +11,15 @@ const SETTLE_MS = 500;
 const MAX_COVER_MS = 6000;
 
 let active: HTMLElement | null = null;
+
+/** Miejsce Polski w pierwszym kadrze mapy (poster-frame); bez granic w obrysie: miejsce źródła na stronie. */
+function coverRect(source: Element): Rect {
+  const raw = source.getAttribute('data-bbox')?.split(',').map(Number);
+  if (raw?.length === 4 && raw.every(Number.isFinite)) {
+    return posterRect(raw as Bbox, window.innerWidth, window.innerHeight);
+  }
+  return source.getBoundingClientRect();
+}
 
 /** Rozwiązuje się, gdy mapa ma płótno i kamera mogła się ustawić (albo po MAX_COVER_MS). */
 function whenMapSettled(): Promise<void> {
@@ -32,24 +43,20 @@ function whenMapSettled(): Promise<void> {
  */
 export function coverForMap(source: Element | null, animate: boolean): void {
   if (!source || active) return;
-  const rect = source.getBoundingClientRect();
+  const rect = coverRect(source);
   const cover = document.createElement('div');
   cover.setAttribute('data-slot', 'map-cover');
   cover.setAttribute('aria-hidden', 'true');
   cover.className = 'pointer-events-auto fixed inset-0 z-[20000] bg-kalka';
   const t = animate ? 'var(--motion-slow) var(--easing)' : '0s';
-  cover.style.opacity = animate ? '0' : '1';
-  cover.style.transition = `opacity ${t}`;
+  // Okładka od razu w pełni widoczna: nic nie przenika na wejściu, więc nie ma klatki z pustym tłem.
+  cover.style.opacity = '1';
   const copy = source.cloneNode(true) as SVGElement;
   copy.removeAttribute('role');
-  copy.style.cssText = `position:absolute;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;transform-origin:50% 50%;transition:transform ${animate ? 'calc(var(--motion-slow) * 3) var(--easing)' : '0s'}`;
+  copy.style.cssText = `position:absolute;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;`;
   cover.appendChild(copy);
   document.body.appendChild(cover);
   active = cover;
-  requestAnimationFrame(() => {
-    cover.style.opacity = '1';
-    if (animate) copy.style.transform = 'scale(1.06)';
-  });
   void whenMapSettled().then(() => {
     cover.style.transition = `opacity ${t}`;
     cover.style.opacity = '0';

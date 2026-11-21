@@ -9,10 +9,14 @@ import { feature } from 'topojson-client';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const EPS = 1.2; // próg Douglasa–Peuckera w jednostkach ok. 1/100 stopnia
 
-/** Rzut długość/szerokość -> płaszczyzna (jednostka ok. 1/100 stopnia), jak w prototypie U07. */
+// Web Mercator, tak jak mapa: dzięki temu plakat pokrywa się z pierwszym kadrem mapy.
+// Skala: 1 stopień długości = ok. 61,6 jednostki (jak dotąd), więc próg EPS i rozmiar pliku bez zmian.
+const R = (Math.cos((52 * Math.PI) / 180) * 100 * 180) / Math.PI;
+const mercY = (lat) => Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI) / 360));
+
+/** Rzut długość/szerokość -> płaszczyzna Mercatora (y rośnie na południe). */
 function project(lon, lat) {
-  const k = Math.cos((52 * Math.PI) / 180);
-  return [(lon - 14) * k * 100, (55 - lat) * 100];
+  return [((lon * Math.PI) / 180) * R, -mercY(lat) * R];
 }
 
 function distToSegment(p, a, b) {
@@ -61,7 +65,7 @@ function ringToPath(ring, x0, y0) {
 
 /**
  * @param {object} topo - zawartość admin.topo.json
- * @returns {{version:1, viewBox:[number,number], paths:{teryt:string,d:string}[]}}
+ * @returns {{version:1, viewBox:[number,number], bbox:[number,number,number,number], paths:{teryt:string,d:string}[]}}
  */
 export function buildOutline(topo) {
   const fc = feature(topo, topo.objects.woj);
@@ -74,16 +78,26 @@ export function buildOutline(topo) {
       return { teryt: String(f.properties.teryt), rings: rings.filter((r) => r.length >= 4) };
     })
     .sort((a, b) => a.teryt.localeCompare(b.teryt));
-  const all = shapes.flatMap((s) => s.rings.flat());
-  const x0 = Math.min(...all.map((p) => p[0]));
-  const y0 = Math.min(...all.map((p) => p[1]));
-  const w = Math.ceil(Math.max(...all.map((p) => p[0])) - x0);
-  const h = Math.ceil(Math.max(...all.map((p) => p[1])) - y0);
+  // Granice kraju z pełnych (nieuproszczonych) współrzędnych: to samo, co mapa bierze z units.json.
+  const lons = [];
+  const lats = [];
+  for (const f of fc.features) {
+    const polys = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
+    for (const poly of polys) for (const [lon, lat] of poly[0]) {
+        lons.push(lon);
+        lats.push(lat);
+      }
+  }
+  const bbox = [Math.min(...lons), Math.min(...lats), Math.max(...lons), Math.max(...lats)].map((v) => Number(v.toFixed(4)));
+  const [x0, y0] = project(bbox[0], bbox[3]);
+  const [x1, y1] = project(bbox[2], bbox[1]);
+  const w = Number((x1 - x0).toFixed(1));
+  const h = Number((y1 - y0).toFixed(1));
   const paths = shapes.map((s) => ({
     teryt: s.teryt,
     d: s.rings.map((r) => ringToPath(r, x0, y0)).join(''),
   }));
-  return { version: 1, viewBox: [w, h], paths };
+  return { version: 1, viewBox: [w, h], bbox, paths };
 }
 
 function main() {
