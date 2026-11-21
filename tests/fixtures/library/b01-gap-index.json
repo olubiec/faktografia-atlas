@@ -1,0 +1,67 @@
+{
+ "version": 1,
+ "categories": {
+  "P1597": {
+   "n": "Podmioty gospodarki narodowej wpisane do rejestru REGON wg sekcji PKD 2004",
+   "p": "G565"
+  },
+  "G565": {
+   "n": "DANE ARCHIWALNE",
+   "p": "K25"
+  },
+  "K25": {
+   "n": "PODMIOTY GOSPODARKI NARODOWEJ, PRZEKSZTAŁCENIA WŁASNOŚCIOWE I STRUKTURALNE",
+   "p": null
+  },
+  "P1883": {
+   "n": "Ciągniki, samochody i maszyny rolnicze",
+   "p": "G285"
+  },
+  "G285": {
+   "n": "PSR 1996 - INFRASTRUKTURA, WYPOSAŻENIE TECHNICZNE I ŚRODKI PRODUKCJI",
+   "p": "K34"
+  },
+  "K34": {
+   "n": "POWSZECHNE SPISY ROLNE",
+   "p": null
+  }
+ },
+ "units": {
+  "1": "-",
+  "6": "szt."
+ },
+ "variables": [
+  {
+   "id": 1290,
+   "s": "P1597",
+   "n": "w sekcji K – sektor publiczny",
+   "l": 6,
+   "u": 1,
+   "has": 1
+  },
+  {
+   "id": 1690,
+   "s": "P1883",
+   "n": "samochody ciężarowe – ogółem",
+   "l": 6,
+   "u": 6,
+   "has": 1
+  },
+  {
+   "id": 1291,
+   "s": "P1597",
+   "n": "w sekcji K – sektor prywatny",
+   "l": 6,
+   "u": 1,
+   "has": 1
+  },
+  {
+   "id": 1292,
+   "s": "P1597",
+   "n": "w sekcji L – ogółem",
+   "l": 6,
+   "u": 1,
+   "has": 1
+  }
+ ]
+}

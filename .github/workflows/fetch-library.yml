@@ -87,7 +87,7 @@ jobs:
         if: always()
         run: |
           if [ -f lib-wt/library/index.json ] && [ -d lib-wt/library/values ]; then
-            node scripts/data/library-available.mjs lib-wt/library
+            node scripts/data/library-available.mjs lib-wt/library | tee "$RUNNER_TEMP/library-gap.txt"
             ls -l lib-wt/library/available.json
           else
             echo "Brak indeksu lub wartości – spis pominięty."
@@ -103,7 +103,7 @@ jobs:
       - name: Podsumowanie
         if: always()
         run: |
-          { echo '### Biblioteka GUS'; echo; tail -n 3 "$RUNNER_TEMP/library.txt" 2>/dev/null; echo; cat "$RUNNER_TEMP/library-sections.md" 2>/dev/null; echo; du -sh lib-wt/library 2>/dev/null; } >> "$GITHUB_STEP_SUMMARY"
+          { echo '### Biblioteka GUS'; echo; tail -n 3 "$RUNNER_TEMP/library.txt" 2>/dev/null; echo; cat "$RUNNER_TEMP/library-sections.md" 2>/dev/null; echo; tail -n 1 "$RUNNER_TEMP/library-gap.txt" 2>/dev/null; echo; du -sh lib-wt/library 2>/dev/null; } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Zapisz na gałęzi data/library
         if: always()
