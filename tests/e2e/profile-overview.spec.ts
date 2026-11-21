@@ -165,11 +165,12 @@ test.describe('Profile Overview (@S14)', () => {
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
-    const copyBtn = page.locator('button', { hasText: 'Kopiuj link' });
+    // B13: „Kopiuj link” jest też w nagłówku, więc przycisk z profilu wskazujemy w panelu (main).
+    const copyBtn = page.getByRole('main').locator('button', { hasText: 'Kopiuj link' });
     await expect(copyBtn).toBeVisible();
     await copyBtn.click();
 
-    const copiedTextBtn = page.locator('button', { hasText: 'Skopiowano' });
+    const copiedTextBtn = page.getByRole('main').locator('button', { hasText: 'Skopiowano' });
     await expect(copiedTextBtn).toBeVisible();
 
     const clipboardContent = await page.evaluate(() => navigator.clipboard.readText());

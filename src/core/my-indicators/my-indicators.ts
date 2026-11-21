@@ -1,15 +1,8 @@
 // Lista „Moje wskaźniki” – czysta logika, bez przeglądarki i Reacta.
 
-// Lista podstawowa – jedyne miejsce, gdzie ją zmieniamy.
-export const BASIC_INDICATORS: readonly string[] = [
-  'population',
-  'density',
-  'natural-increase',
-  'migration-balance',
-  'share-65plus',
-  'unemployment-rate',
-  'avg-wage',
-];
+// Stała przeniesiona do core/indicators/basic.ts (re-eksport do czasu sprzątania w B14).
+import { BASIC_INDICATORS } from '../indicators/basic';
+export { BASIC_INDICATORS };
 
 export type MyIndicators = readonly string[];
 

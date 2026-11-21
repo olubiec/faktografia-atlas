@@ -16,6 +16,7 @@ import { LazyShareDialog } from '../share/LazyShareDialog';
 import { loadPartsShard, type PartsShard } from '../../core/data/load-parts';
 import { partsRows } from '../../core/parts/rows';
 import { ProfileParts } from './ProfileParts';
+import { ChangeIndicatorWindow } from './ProfileIndicatorList';
 import type { ShareDialogData } from '../share/ShareDialog';
 import type { ProfileCardData, RankingCardData } from '../../core/share/card';
 import { Icon } from '../ui/Icon';
@@ -257,6 +258,11 @@ export function ProfileOverview({
               {rankText}
             </span>
           )}
+          <ChangeIndicatorWindow
+            label="Zmień wskaźnik"
+            selectedId={view.indicator.id}
+            onSelect={view.setIndicator}
+          />
         </div>
       </div>
 

@@ -70,7 +70,7 @@ export const choroplethLayerFactory: LayerFactory = {
       filled: true,
       stroked: true,
       getFillColor,
-      getLineColor: ctx.colors.kalka,
+      getLineColor: ctx.colors.granica ?? ctx.colors.kalka,
       getLineWidth: 1.2,
       lineWidthUnits: 'pixels',
       lineWidthMinPixels: 1,
@@ -108,7 +108,7 @@ export const choroplethLayerFactory: LayerFactory = {
           activePowTeryt,
           ctx.colors,
         ],
-        getLineColor: [ctx.colors.kalka],
+        getLineColor: [ctx.colors.granica ?? ctx.colors.kalka],
       },
     });
     noteFillLayer('choropleth-layer', choropleth.level, layer.props.transitions as Record<string, unknown> | undefined);

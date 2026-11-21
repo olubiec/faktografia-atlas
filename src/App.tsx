@@ -4,6 +4,7 @@ import { ConsentBar } from './view/consent/ConsentBar';
 import { legacyRedirect } from './core/url/legacy-links';
 import { loadAvailable } from './core/indicators/load-available';
 import { libraryIndicatorId } from './core/indicators/registry';
+import { cleanupLegacyStorage } from './core/profile/legacy-cleanup';
 
 // Ciężkie trasy (mapa, strony, test) ładują się leniwie: wejście na `/` nie pobiera kodu mapy.
 const StartPage = lazy(() => import('./view/start/StartPage').then((m) => ({ default: m.StartPage })));
@@ -51,6 +52,7 @@ function LibraryRedirect() {
 }
 
 export function App() {
+  useEffect(cleanupLegacyStorage, []);
   return (
     <BrowserRouter>
       <ConsentBar />

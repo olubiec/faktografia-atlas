@@ -21,8 +21,8 @@ import { Icon } from '../ui/Icon';
 import { Download, Search, Xmark } from 'iconoir-react';
 import { cn } from '../../lib/utils';
 import { versusShareData } from '../../core/share/versus-data';
-import { CompareIndicatorPicker } from '../compare/CompareIndicatorPicker';
-import { useMyIndicators } from '../hooks/useMyIndicators';
+import { BASIC_INDICATORS } from '../../core/indicators/basic';
+import { ChangeIndicatorWindow } from './ProfileIndicatorList';
 import indicatorsData from '../../../config/indicators.json';
 import { isShareEnabled } from '../../core/share/share-flag';
 
@@ -72,7 +72,9 @@ export function ProfileCompare({
   onSelectUnit,
   className,
 }: ProfileCompareProps) {
-  const { list, add, remove, reset } = useMyIndicators();
+  const [extra, setExtra] = useState<string[]>([]);
+  const list = [...BASIC_INDICATORS, ...extra.filter((id) => !BASIC_INDICATORS.includes(id))];
+  const restrict = (p: UnitProfile): UnitProfile => ({ ...p, indicators: p.indicators.filter((i) => list.includes(i.indicatorId)) });
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [topoData, setTopoData] = useState<any>(null);
   const [loadedUnits, setLoadedUnits] = useState<Unit[]>([]);
@@ -450,17 +452,11 @@ export function ProfileCompare({
         view={view}
         onSelectUnit={onSelectUnit}
       />
-      <CompareIndicatorPicker
-        items={profileA.indicators}
-        list={list}
-        onAdd={add}
-        onRemove={remove}
-        onReset={reset}
-      />
-      <ProfileCompareTable
-        profileA={CompareIndicatorPicker.restrictProfile(profileA, list)}
-        profileB={CompareIndicatorPicker.restrictProfile(profileB, list)}
-      />
+      <div className="flex flex-wrap items-center gap-2 py-2">
+        <ChangeIndicatorWindow label="Dodaj wskaźnik do porównania" selectedId={null} onSelect={(id) => setExtra((p) => (p.includes(id) ? p : [...p, id]))} />
+        {extra.length > 0 && <button type="button" onClick={() => setExtra([])} className="min-h-[44px] px-4 py-2 border border-linia bg-arkusz text-xs font-semibold cursor-pointer">Tylko podstawowe</button>}
+      </div>
+      <ProfileCompareTable profileA={restrict(profileA)} profileB={restrict(profileB)} />
       {isShareEnabled() ? (
       <div className="pt-3 flex justify-start">
         <button
