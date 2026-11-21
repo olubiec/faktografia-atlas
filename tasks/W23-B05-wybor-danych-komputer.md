@@ -1,0 +1,42 @@
+# B05 – Jedno menu wyboru danych (komputer)
+Fala pliku: W23 (etap B budowy). Fala budowy: 2 z 8. Zależy od: B01. Równolegle z: B03, B04.
+Cel: W panelu wskaźnika jest jedno menu Dział › Grupa › Wskaźnik z szukajką (tylko pobrane, bez archiwalnych), zbudowane jako komponent, którego użyją też telefon (B06) i profil miejsca (B13).
+Zmieniaj: src/core/catalog/tree.ts, src/core/catalog/search.ts, src/core/catalog/synonyms.ts, config/synonyms.json, src/view/data-menu/DataMenu.tsx, src/view/data-menu/DataMenuTree.tsx, src/view/data-menu/DataMenuSearch.tsx, src/view/data-menu/DataMenuList.tsx, src/view/data-menu/useCatalog.ts, src/view/main/IndicatorPanel.tsx, src/view/hooks/useIndicatorRegistry.ts, tests/unit/b05-catalog-tree.test.ts, tests/unit/b05-catalog-search.test.ts, tests/unit/b05-data-menu.test.tsx, tests/e2e/path-s2-wybor-danych.spec.ts, tests/fixtures/catalog/search-queries.json
+Usuń (zgoda właściciela, tylko jeśli plik istnieje i po zmianie nie ma importera: sprawdź `rg -l`): tests/unit/indicator-panel-my.test.tsx, tests/unit/indicator-panel-basic.test.tsx (testują wyłącznie listę „Moich wskaźników” w panelu, którą to zadanie zdejmuje z panelu; Z4). Inne testy, które padną przez zmianę panelu: nie usuwaj, tylko zatrzymaj się i opisz w PR
+Wymagane: tests/unit/b05-catalog-tree.test.ts, tests/unit/b05-catalog-search.test.ts, tests/unit/b05-data-menu.test.tsx, tests/e2e/path-s2-wybor-danych.spec.ts
+Weryfikacja: pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e
+Przeczytaj najpierw: AGENTS.md, docs/PRODUKT.md (v4), docs/PLAN-DOCELOWY.md, docs/PLAN-FALE-B.md, docs/research/u/WYTYCZNE.md; docs/research/u/U04.md (całość: drzewo, test 15 haseł, szkice menu), src/core/catalog/prototype-tree.ts, tests/unit/u04-prototype-tree.test.ts, src/view/test/proto/wybor-danych.tsx, config/library-priority.json, src/core/indicators/registry.ts, src/view/controls/IndicatorPicker.tsx, src/view/main/IndicatorPanel.tsx
+Zgody właściciela (21.11.2026, odpowiedź P2 A): Z1 (adresy w testach e2e), Z2 (testy strony startowej i nazwy), Z3 (usunięcie testów Biblioteki, Rankingów, Porównaj i pickera razem z funkcją), Z4 (usunięcie testów „Moich wskaźników” i martwych sekcji). Zgody dotyczą wyłącznie plików wymienionych w tym zadaniu. Ten prompt wprost zezwala na nowy plik `config/synonyms.json` (config/*) i na zmianę `src/view/hooks/useIndicatorRegistry.ts`. Odpowiedź P4 A: tylko poprawiasz szukajkę (synonimy, wagi); NIE dodajesz ręcznych wskaźników dla szkół i zdrowia ani nowych danych w `public/data`.
+Zadanie:
+1. Przenieś logikę z prototypu `src/core/catalog/prototype-tree.ts` do stałych plików `tree.ts` (budowa drzewa Dział › Grupa › Wskaźnik) i `search.ts` (szukajka na `minisearch`, który jest już w repozytorium; nowych pakietów nie dodajesz). Prototypowego pliku i jego testu `u04-prototype-tree.test.ts` NIE ruszasz (usunie je B14).
+2. Zasady danych: źródło to lekki `available.json` (jedno żądanie, nigdy pełny `index.json`); tylko pobrane; BEZ grupy „Dane archiwalne”; wbudowane wskaźniki w grupie „★ Najważniejsze” swojego działu; kolejność działów z `config/library-priority.json` (waga malejąco); synonimy (zarobki → wynagrodzenie, szkoły, lekarze itd.) w jednym pliku `config/synonyms.json` czytanym przez `synonyms.ts`.
+3. Brak wyniku: komunikat „Nie mamy jeszcze tych danych o „…”.” z najbliższym działem; bez przycisku „Zamów” i bez linku do zgłoszenia.
+4. Komponent `DataMenu` (`src/view/data-menu/`) ma być wielokrotnego użytku, bo ten sam komponent będzie w oknie profilu (B13) i na telefonie (B06): props `{ selectedId, onSelect(id), onClose, isDisabled?(entry), layout: 'columns' | 'stack' }`; nie zna panelu mapy ani adresu. Tu używasz `layout='columns'` (komputer: dwie kolumny; po kliknięciu grupy lista po 50 + „Pokaż więcej”). Układ `stack` (telefon) dodaje B06. `isDisabled` wyłącza pozycje bez danych na poziomie (dla B11).
+5. Parametr adresu `menu=dane` otwiera menu przy wejściu; `q=<fraza>` wpisuje frazę w szukajkę (potrzebne dla przekierowania starej Biblioteki w B06). Po zamknięciu menu parametr znika z adresu (replace).
+6. Panel (`IndicatorPanel.tsx`): nazwa wskaźnika jest przyciskiem otwierającym `DataMenu` (okno); zdejmij z panelu listę „Moich wskaźników” i stare okno wyboru. Moduły `core/my-indicators` i `MobileIndicatorBar.tsx` zostają (usuną je B06 i B14). Wybór wskaźnika ustawia stan z `useMainView` (nie tworzysz drugiego stanu).
+7. Test szukajki na 15 hasłach zwykłego człowieka z `tests/fixtures/catalog/search-queries.json` (lista z raportu U04; oczekiwany pierwszy wynik albo „brak”). „szkoły” i „lekarze” mogą dać „Nie mamy jeszcze tych danych” — to zamierzone do czasu pobrania przez robota; test ma to dopuszczać.
+Gotowe, gdy:
+- Test jednostkowy drzewa na fixture: brak grupy archiwalnej; każdy wskaźnik ma dział, grupę i poziomy; „★ Najważniejsze” jest pierwszą grupą działu; kolejność działów zgodna z `library-priority.json`.
+- Test szukajki: 15 haseł z fixture daje oczekiwane pierwsze wyniki; synonim „zarobki” znajduje „wynagrodzenie”; polskie znaki i wielkość liter bez znaczenia; brak wyniku zwraca komunikat „Nie mamy jeszcze tych danych”.
+- Test komponentu: `DataMenu` wywołuje `onSelect(id)` po kliknięciu wskaźnika, wyłącza pozycje z `isDisabled`, nie zawiera słów „Zamów” ani „Archiwalne”; pola dotykowe ≥ 44 px.
+- Test e2e `@PATH-2` (1280 px): `/mapa` → przycisk z nazwą wskaźnika → dział → grupa → wskaźnik; adres ma `i=`; legenda i tytuł zgodne; niepobrany wskaźnik nie jest na liście; potem szukaj „bezrobocie” i wybierz wynik; `/mapa?menu=dane&q=ludnosc` otwiera menu z wpisaną frazą.
+- Test e2e budżetu: otwarcie menu = jedno żądanie `available.json` i zero żądań `index.json` (7,9 MB).
+- Istniejące testy (poza dwoma usuniętymi wyżej) przechodzą bez zmian.
+Nie ruszaj: src/view/map/AtlasMap.tsx, src/view/Home.tsx, src/view/map/hooks/*, src/view/main/MobileIndicatorBar.tsx, src/view/main/SheetIndicatorPicker.tsx, src/view/controls/IndicatorPicker.tsx, src/core/library/*, public/data, docs/STAN.md, package.json.
+Po ludzku (do opisu PR):
+- Co zrobiłeś: W panelu mapy jest jedno menu wyboru danych: Dział, potem Grupa, potem Wskaźnik, z szukajką. Pokazuje tylko dane, które mamy; „Moje wskaźniki” znikły z panelu.
+- Co sprawdzić na podglądzie Vercel: Na podglądzie otwórz `/mapa`, kliknij nazwę wskaźnika w panelu, wejdź w dział i wskaźnik; wpisz „zarobki”, „bezrobocie”, „szkoły” (to ostatnie może jeszcze nie mieć danych i powie „Nie mamy jeszcze tych danych”).
+- Czego nie zrobiłeś i dlaczego: Nie zrobiłem wersji na telefon (B06) ani ręcznych wskaźników dla szkół i zdrowia (decyzja P4 A: czekamy na robota).
+Tytuł PR zaczyna się od `[W23-B05]`; gałąź `claude/W23-B05` od `origin/main`; opis ma „Po ludzku”; nie scalaj.
+## PROMPT startowy dla podagenta (wklej w całości)
+```
+Jesteś podagentem zadania [W23-B05] w repozytorium olubiec/faktografia-atlas (katalog /home/user/faktografia-atlas). Wykonaj dokładnie jedno zadanie: tasks/W23-B05-wybor-danych-komputer.md.
+1. Czytaj w tej kolejności: AGENTS.md, docs/PRODUKT.md (v4), docs/PLAN-DOCELOWY.md (§1 ekrany, §4 plan budowy), docs/PLAN-FALE-B.md, docs/research/u/WYTYCZNE.md, plik zadania i jego „Przeczytaj najpierw”.
+2. Zależności: B01. Sprawdź w git log origin/main, że ich PR-y są scalone. Jeśli nie, zatrzymaj się i napisz to w odpowiedzi (nic nie zmieniaj).
+3. Gałąź: git fetch origin && git checkout -b claude/W23-B05 origin/main. Aktualizacja gałęzi tylko git merge origin/main (bez rebase i --force).
+4. Najpierw testy z „Gotowe, gdy” (mają być czerwone), potem kod. Każdy warunek = co najmniej jeden test zachowania. Nie wyłączaj testów, reguł lintera ani typów. Istniejących testów nie zmieniasz ani nie usuwasz, poza wprost wymienionymi w zadaniu.
+5. Zmieniaj tylko pliki z „Zmieniaj” i „Wymagane”. Potrzebujesz innego pliku, nowego pakietu albo niejasny jest warunek: zatrzymaj się i opisz to w PR.
+6. Przed pushem: git diff --name-only origin/main...HEAD (tylko pliki z zadania), git diff --name-status --diff-filter=D origin/main...HEAD (tylko usunięcia wymienione w „Usuń”). Uruchom „Weryfikacja”; czerwone testy poprawiasz sam.
+7. Zrzutów (*-snapshots/) nie generujesz; jeśli wzorce mogły się zmienić, napisz w PR, że trzeba uruchomić „Update snapshots”.
+8. PR: tytuł „[W23-B05] Jedno menu wyboru danych (komputer)”, opis z sekcją „Po ludzku” (co zrobiłem · co sprawdzić na podglądzie Vercel i pod jakim adresem · czego nie zrobiłem i dlaczego), bez „Closes #”. Nie scalaj.
+```
