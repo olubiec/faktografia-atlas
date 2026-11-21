@@ -3,6 +3,7 @@
 // Działa bez View Transitions (też w Safari) i bez Reacta: okładka żyje w <body>, więc przetrwa zmianę trasy.
 
 import { ATLAS_READY_EVENT } from '@/core/map/ready-gate';
+import { setEntry } from '@/core/map/entry-handoff';
 import { posterRect, type Bbox, type Rect } from '@/core/start/poster-frame';
 
 // Płótno mapy (canvas.maplibregl-canvas) nie wystarcza: czekamy na `atlas:ready` (idle + kolory).
@@ -13,11 +14,13 @@ let active: HTMLElement | null = null;
 
 /** Miejsce Polski w pierwszym kadrze mapy (poster-frame); bez granic w obrysie: miejsce źródła na stronie. */
 function coverRect(source: Element): Rect {
+  const bbox = sourceBbox(source);
+  return bbox ? posterRect(bbox, window.innerWidth, window.innerHeight) : source.getBoundingClientRect();
+}
+
+function sourceBbox(source: Element): Bbox | null {
   const raw = source.getAttribute('data-bbox')?.split(',').map(Number);
-  if (raw?.length === 4 && raw.every(Number.isFinite)) {
-    return posterRect(raw as Bbox, window.innerWidth, window.innerHeight);
-  }
-  return source.getBoundingClientRect();
+  return raw?.length === 4 && raw.every(Number.isFinite) ? (raw as Bbox) : null;
 }
 
 /** Rozwiązuje się na sygnał `atlas:ready` (mapa bezczynna i pokolorowana) albo po MAX_COVER_MS. */
@@ -42,6 +45,11 @@ function whenMapSettled(): Promise<void> {
 export function coverForMap(source: Element | null, animate: boolean): void {
   if (!source || active) return;
   const rect = coverRect(source);
+  const bbox = sourceBbox(source);
+  // Mapa wystartuje w tym samym kadrze (entry-frame) i dopiero po gotowości dojedzie do zwykłego widoku.
+  if (bbox) setEntry({ bbox, viewport: { width: window.innerWidth, height: window.innerHeight } });
+  // Z animacją: okładka zaczyna tam, gdzie obrys jest na stronie (też po przewinięciu), i płynnie dojeżdża do kadru mapy.
+  const from = animate ? source.getBoundingClientRect() : rect;
   const cover = document.createElement('div');
   cover.setAttribute('data-slot', 'map-cover');
   cover.setAttribute('aria-hidden', 'true');
@@ -51,9 +59,17 @@ export function coverForMap(source: Element | null, animate: boolean): void {
   cover.style.opacity = '1';
   const copy = source.cloneNode(true) as SVGElement;
   copy.removeAttribute('role');
-  copy.style.cssText = `position:absolute;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;`;
+  const place = (r: Rect) => `position:absolute;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;`;
+  copy.style.cssText = place(from);
   cover.appendChild(copy);
   document.body.appendChild(cover);
+  if (animate && from !== rect) {
+    requestAnimationFrame(() => {
+      void copy.getBoundingClientRect(); // wymusza pozycję startową, żeby przejście ruszyło od niej
+      copy.style.transition = `left ${t}, top ${t}, width ${t}, height ${t}`;
+      copy.style.cssText += place(rect);
+    });
+  }
   active = cover;
   void whenMapSettled().then(() => {
     cover.style.transition = `opacity ${t}`;

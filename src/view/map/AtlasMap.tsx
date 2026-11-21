@@ -1,5 +1,5 @@
 import { WHEEL_ZOOM_RATE, TRACKPAD_ZOOM_RATE } from '../../core/map/camera-wheel';
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import Map, { useControl } from 'react-map-gl/maplibre';
 import { MapboxOverlay } from '@deck.gl/mapbox';
 import type { MapboxOverlayProps } from '@deck.gl/mapbox';
@@ -10,7 +10,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import tokensJson from '../../../config/tokens.json';
 
 import { installAtlasSeam, type AtlasState } from '@/core/map/test-seam';
-import { announceAtlasReady, createReadyGate } from '@/core/map/ready-gate';
+import { useAtlasReady } from './hooks/useAtlasReady';
 import { buildIndex } from '@/core/units/units';
 import { loadUnits, loadAdminTopo } from '@/core/data/load-atlas-data';
 import { countryBounds } from '@/core/map/view';
@@ -103,7 +103,7 @@ export function AtlasMap() {
 function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) {
   const isMobile = useIsMobile();
   const [isReady, setIsReady] = useState(false);
-  const readyGate = useMemo(() => createReadyGate(() => announceAtlasReady(window)), []);
+  const finishEntryRef = useRef<() => void>(() => undefined);
   const [indicatorSheetOpen, setIndicatorSheetOpen] = useState(false);
   const unitIndex = useMemo(() => buildIndex(units), [units]);
   const bounds = useMemo(() => countryBounds(units), [units]);
@@ -142,7 +142,9 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     syncMap,
     handleMapMove,
     handleMapMoveEnd,
+    finishEntry,
   } = useMapViewState(drillState.bbox, bounds, sidePanelPx);
+  finishEntryRef.current = finishEntry;
 
   // Mapa jest niekontrolowana: widok startowy tylko przy tworzeniu, dalej steruje nim sterownik kamery.
   const [initialView] = useState(() => currentViewState);
@@ -298,21 +300,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
     };
   }, [isReady, selectedTeryt, layers, unitIndex, drillState.selected, theme, choroplethData, profileOpen, currentViewStateRef, mapRef]);
 
-  // Flaga gotowości dotyczy tylko tego egzemplarza mapy: przy wyjściu znika.
-  useEffect(() => () => document.documentElement.removeAttribute('data-atlas-ready'), []);
-
-  // Kolory narysowane: dajemy deck.gl dwie klatki po pojawieniu się danych, potem liczy się „idle”.
-  useEffect(() => {
-    if (!choroplethData) return;
-    let id2 = 0;
-    const id1 = requestAnimationFrame(() => {
-      id2 = requestAnimationFrame(() => readyGate.setColored(true));
-    });
-    return () => {
-      cancelAnimationFrame(id1);
-      cancelAnimationFrame(id2);
-    };
-  }, [choroplethData, readyGate]);
+  const onIdle = useAtlasReady(Boolean(choroplethData), () => finishEntryRef.current());
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -425,7 +413,7 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
             syncMap(evt.target);
             setIsReady(true);
           }}
-          onIdle={() => readyGate.setIdle()}
+          onIdle={onIdle}
           attributionControl={false}
           pixelRatio={pixelRatio}
         >
