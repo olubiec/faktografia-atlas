@@ -1,7 +1,7 @@
 import { useEffect, type MouseEvent } from 'react';
-import { flushSync } from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router';
-import { isMapPreloaded, preloadMap } from './preloadMap';
+import { coverForMap } from './mapCover';
+import { preloadMap } from './preloadMap';
 import { StartBackground } from './StartBackground';
 import { useReducedMotion } from '@/view/map/hooks/useReducedMotion';
 import { SiteLayout } from '../layout/SiteLayout';
@@ -17,11 +17,6 @@ const STEPS = [
 const CHIP =
   'inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-4 bg-arkusz border border-linia text-tusz font-medium hover:bg-linia/20 rounded-none focus:outline-none focus:ring-2 focus:ring-tusz';
 
-/** Nazwa wspólnego elementu przejścia widoku (stara i nowa strona mają ją na jednym elemencie). */
-function nameForTransition(selector: string) {
-  document.querySelector<HTMLElement>(selector)?.style.setProperty('view-transition-name', 'poland-map');
-}
-
 /** Dopisuje do linku parametry techniczne (`e2e`, `logo`, `tune`) z bieżącego adresu. */
 function withTech(href: string, search: string): string {
   const tech = homeSearch(search);
@@ -32,7 +27,7 @@ function withTech(href: string, search: string): string {
 /**
  * Prosty ekran startowy (`/`): tytuł, jedno zdanie, 3 kroki, przycisk „Otwórz mapę” i przykłady.
  * Tło: animowany obrys Polski (dwa małe pliki: obrys i start.json), bez kodu mapy i bez wartości wskaźników.
- * „Otwórz mapę”: od razu nawigacja z przejściem widoku (lekkie przybliżenie opisane w global.css).
+ * „Otwórz mapę”: okładka z kopią obrysu przykrywa ekran na czas ładowania mapy (mapCover.ts).
  */
 export function StartPage() {
   const { search } = useLocation();
@@ -47,21 +42,12 @@ export function StartPage() {
   }, []);
 
   const openMap = (e: MouseEvent<HTMLAnchorElement>) => {
-    // Kliknięcie z klawiszem (nowa karta) i brak animacji (reduced-motion): zwykła nawigacja linku.
-    if (reduced.current || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    // Kliknięcie z klawiszem (nowa karta): zwykła nawigacja linku.
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
-    const go = () => navigate(to('/mapa'));
-    if (typeof document.startViewTransition !== 'function') return go();
-    // Kod mapy jeszcze się pobiera: nie każemy czekać, wchodzimy od razu (zwykła nawigacja).
-    if (!isMapPreloaded()) return go();
-    // Ten sam obrys Polski co w tle „rośnie” w mapę: wspólna nazwa przejścia (opis w global.css).
-    nameForTransition('[data-slot="start-background"] svg');
-    document.startViewTransition(async () => {
-      flushSync(go);
-      nameForTransition('main');
-      // Dajemy mapie dwie klatki na pierwszy render, zanim przeglądarka zrobi „zdjęcie” nowego widoku.
-      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
-    });
+    // Okładka z kopią obrysu przykrywa ekran od razu (reakcja na klik) i znika, gdy mapa jest gotowa.
+    coverForMap(document.querySelector('[data-slot="start-background"] svg'), !reduced.current);
+    navigate(to('/mapa'));
   };
 
   return (
