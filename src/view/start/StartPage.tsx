@@ -18,7 +18,7 @@ const STEPS = [
 ];
 
 const CHIP =
-  'inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-4 bg-arkusz border border-linia text-tusz font-medium hover:bg-linia/20 rounded-none focus:outline-none focus:ring-2 focus:ring-tusz';
+  'pointer-events-auto inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-4 bg-arkusz border border-linia text-tusz font-medium hover:bg-linia/20 rounded-none focus:outline-none focus:ring-2 focus:ring-tusz';
 
 /** Dopisuje do linku parametry techniczne (`e2e`, `logo`, `tune`) z bieżącego adresu. */
 function withTech(href: string, search: string): string {
@@ -56,13 +56,21 @@ export function StartPage() {
     preloadMapData();
   };
 
+  // Okładka z kopią obrysu przykrywa ekran od razu (reakcja na klik) i znika, gdy mapa jest gotowa.
+  const enter = (href: string) => {
+    coverForMap(document.querySelector('[data-slot="start-background"] svg'), !reduced.current);
+    navigate(to(href));
+  };
   const openMap = (e: MouseEvent<HTMLAnchorElement>) => {
     // Kliknięcie z klawiszem (nowa karta): zwykła nawigacja linku.
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
-    // Okładka z kopią obrysu przykrywa ekran od razu (reakcja na klik) i znika, gdy mapa jest gotowa.
-    coverForMap(document.querySelector('[data-slot="start-background"] svg'), !reduced.current);
-    navigate(to('/mapa'));
+    enter('/mapa');
+  };
+  // Stuknięcie w województwo na tle: mapa otwiera się na nim, ze wskaźnikiem z tła.
+  const pickRegion = (teryt: string, indicatorId: string) => {
+    warm();
+    enter(`/mapa?i=${indicatorId}&u=${teryt}`);
   };
 
   return (
@@ -74,9 +82,9 @@ export function StartPage() {
     >
       <div className="relative isolate overflow-hidden">
         <div className="absolute inset-x-0 top-0 -z-10 mx-auto flex w-full max-w-3xl justify-center px-4 pt-6 md:px-8">
-          <StartBackground />
+          <StartBackground onPick={pickRegion} />
         </div>
-      <div className="max-w-3xl mx-auto w-full px-4 md:px-8 py-10 md:py-16 flex flex-col gap-10">
+      <div className="pointer-events-none max-w-3xl mx-auto w-full px-4 md:px-8 py-10 md:py-16 flex flex-col gap-10">
         <section className="flex flex-col gap-4 bg-kalka/80 p-4">
           <h1 className="text-4xl md:text-5xl font-[800] text-tusz tracking-tight">Faktografia</h1>
           <p className="text-lg md:text-xl text-tusz">
@@ -97,7 +105,7 @@ export function StartPage() {
             onPointerEnter={warm}
             onTouchStart={warm}
             onFocus={warm}
-            className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-6 py-3 border border-tusz bg-tusz text-arkusz font-bold hover:bg-tusz/90 transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz focus:ring-offset-2 focus:ring-offset-kalka"
+            className="pointer-events-auto inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-6 py-3 border border-tusz bg-tusz text-arkusz font-bold hover:bg-tusz/90 transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz focus:ring-offset-2 focus:ring-offset-kalka"
           >
             Otwórz mapę
           </Link>
