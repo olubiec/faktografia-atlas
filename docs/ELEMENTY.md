@@ -12,7 +12,6 @@ Kodu z cudzych repozytoriów nie kopiujemy (poziom E tylko z licencją i atrybuc
 | react-map-gl | pakiet | https://www.npmjs.com/package/react-map-gl | 8.1.3 | MIT | MapLibre w React | nie | 2026-10-16 |
 | @deck.gl/core, /layers, /mapbox, /extensions | pakiet | https://www.npmjs.com/package/@deck.gl/core | 9.4.0 | MIT | warstwy mapy (kolory, obrysy, miejscowości; S16 – kafelki) | nie | 2026-10-16 |
 | topojson-client | pakiet | https://www.npmjs.com/package/topojson-client | 3.1.0 | ISC | odczyt granic | nie | 2026-10-16 |
-| @observablehq/plot | pakiet | https://www.npmjs.com/package/@observablehq/plot | 0.6.17 | ISC | wykresy lat w profilu | nie | 2026-10-16 |
 | radix-ui | pakiet | https://www.npmjs.com/package/radix-ui | 1.8.1 | MIT | prymitywy UI (zakładki, okna, suwak) | nie | 2026-10-16 |
 | class-variance-authority, clsx, tailwind-merge | pakiet | https://ui.shadcn.com | 0.7.1 / 2.1.1 / 3.7.0 | Apache-2.0 / MIT / MIT | warianty klas komponentów shadcn/ui | nie | 2026-10-16 |
 | react-modal-sheet | pakiet | https://www.npmjs.com/package/react-modal-sheet | 5.6.0 | MIT | dolny arkusz (telefon) | nie | 2026-10-16 |

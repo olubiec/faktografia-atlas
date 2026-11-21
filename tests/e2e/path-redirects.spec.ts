@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 // Przekierowania starych linków (docs/research/u/U08.md §4: R4, R5 w części `/?u=invalid999`, R6).
-// R2 (/biblioteka*) dopisał B06; R1 (/rankingi) i R3 (/porownaj) dopiszą zadania B08 i B12 do tego pliku.
+// R2 (/biblioteka*) usunięte razem z trasami; R1 (/rankingi) i R3 (/porownaj) dopiszą zadania B08 i B12 do tego pliku.
 
 const ready = (page: Page) => page.waitForFunction(() => (window as any).__atlas?.ready === true);
 const isEngineNoise = (text: string) => text.includes('No actors found');
@@ -79,78 +79,5 @@ test.describe('@PATH-R4 @PATH-R6 przekierowania', () => {
     expect(new URL(page.url()).pathname).toBe('/mapa');
     expect(new URL(page.url()).search).toBe('?u=1217&e2e');
     expect(navigations.every((u) => new URL(u).pathname === '/mapa')).toBe(true);
-  });
-});
-
-test.describe('@PATH-R2 przekierowania starej Biblioteki', () => {
-  const available = {
-    version: 1,
-    variables: [{ id: '101', n: 'Ludność – ogółem', u: 'osoba', c: 'LUDNOŚĆ > STAN LUDNOŚCI > Ludność wg płci', lv: ['pow', 'gmi'], y: [2023, 2024] }],
-  };
-
-  test.beforeEach(async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 800 });
-    await page.addInitScript(() => {
-      localStorage.setItem('fa-consent-v1', JSON.stringify({ value: 'denied', at: new Date().toISOString() }));
-    });
-    // Spis wskaźników podstawiamy próbką (z numerem 101, bez 999); pliki wartości nie są potrzebne.
-    await page.route('**/available.json', (route) =>
-      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(available) }),
-    );
-  });
-
-  /** Wchodzi na stary adres, zbiera błędy konsoli i zwraca końcowy adres oraz listę błędów. */
-  async function visit(page: Page, from: string) {
-    const errors: string[] = [];
-    // Błędy sieci (np. brak pliku wartości dla podstawionego wskaźnika) nie są błędami przekierowania.
-    page.on('console', (msg) => {
-      if (msg.type() === 'error' && !isEngineNoise(msg.text()) && !msg.text().includes('Failed to load resource')) errors.push(msg.text());
-    });
-    page.on('pageerror', (err) => {
-      if (!isEngineNoise(err.message)) errors.push(err.message);
-    });
-    await page.goto('/o-projekcie');
-    await page.goto(from);
-    await expect(page).toHaveURL(/\/mapa/);
-    return { url: new URL(page.url()), errors };
-  }
-
-  test('@PATH-R2 `/biblioteka` → `/mapa?menu=dane` i okno wyboru danych jest otwarte', async ({ page }) => {
-    const { url, errors } = await visit(page, '/biblioteka');
-    expect(url.pathname + url.search).toBe('/mapa?menu=dane');
-    await expect(page.getByRole('dialog', { name: 'Wybierz dane' })).toBeVisible();
-    expect(errors).toEqual([]);
-  });
-
-  test('@PATH-R2 `/biblioteka?k=1&q=ludnosc` → `/mapa?menu=dane&q=ludnosc` z wpisaną frazą', async ({ page }) => {
-    const { url, errors } = await visit(page, '/biblioteka?k=1&q=ludnosc');
-    expect(url.pathname + url.search).toBe('/mapa?menu=dane&q=ludnosc');
-    const dialog = page.getByRole('dialog', { name: 'Wybierz dane' });
-    await expect(dialog.getByRole('searchbox', { name: 'Szukaj wskaźnika' })).toHaveValue('ludnosc');
-    expect(errors).toEqual([]);
-  });
-
-  test('@PATH-R2 `/biblioteka/101` → `/mapa?i=b101`', async ({ page }) => {
-    const { url, errors } = await visit(page, '/biblioteka/101');
-    expect(url.pathname + url.search).toBe('/mapa?i=b101');
-    expect(errors).toEqual([]);
-  });
-
-  test('@PATH-R2 nieistniejące `/biblioteka/999` → `/mapa` bez błędu w konsoli', async ({ page }) => {
-    const { url, errors } = await visit(page, '/biblioteka/999');
-    expect(url.pathname + url.search).toBe('/mapa');
-    // Bez `e2e` mapa nie wystawia stanu testowego: czekamy na nagłówek ekranu mapy.
-    await expect(page.getByRole('heading', { level: 1, name: 'Mapa Polski z danymi GUS' })).toBeVisible();
-    expect(errors).toEqual([]);
-  });
-
-  test('@PATH-R2 przekierowanie to „replace”: Wstecz wraca przed stary link, bez pętli', async ({ page }) => {
-    for (const from of ['/biblioteka', '/biblioteka?k=1&q=ludnosc', '/biblioteka/101', '/biblioteka/999']) {
-      await page.goto('/o-projekcie');
-      await page.goto(from);
-      await expect(page).toHaveURL(/\/mapa/);
-      await page.goBack();
-      await expect(page).toHaveURL(/\/o-projekcie$/);
-    }
   });
 });

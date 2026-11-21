@@ -43,21 +43,7 @@ for (const vp of VIEWPORTS) {
       await expect(page).toHaveURL(/\/rankingi/);
       await expect(page.getByText(/mediana/i)).toBeVisible();
 
-      // 5. Przejście do /biblioteka
-      await page.goto('/biblioteka');
-      // Strony Biblioteki nie ma: stary adres przenosi na mapę z otwartym menu danych.
-      await expect(page).toHaveURL(/\/mapa\?menu=dane/);
-
-      // 6. Seria Wstecz w historii przeglądarki
-      await page.goBack();
-      await expect(page).toHaveURL(/\/rankingi/);
-      await expect(page.getByText(/mediana/i)).toBeVisible();
-
-      await page.goBack();
-      if (await comparisonBtn.isVisible()) {
-        await expect(page).toHaveURL(/c=1465(%2C|,)1261/);
-      }
-
+      // 5-6. Seria Wstecz w historii przeglądarki (strony Biblioteki już nie ma)
       await page.goBack();
       await expect(page).toHaveURL(/\/porownaj/);
 
