@@ -38,8 +38,8 @@ describe('B13: profil bez „Moich wskaźników”', () => {
     expect(html).toContain('aria-haspopup="dialog"');
   });
 
-  it('nie ma zarządzania listą: „Dodaj wskaźnik”, ‹ ›, „Przywróć podstawowe”', () => {
-    expect(html).not.toContain('Dodaj wskaźnik');
+  it('ma „Dodaj wskaźnik” (menu danych), ale nie ma przeciągania, ‹ › ani „Przywróć podstawowe”', () => {
+    expect(html).toContain('Dodaj wskaźnik');
     expect(html).not.toContain('Przywróć podstawowe');
     expect(html).not.toContain('Przeciągnij, aby zmienić kolejność');
     expect(html).not.toContain('Usuń wskaźnik');

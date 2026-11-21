@@ -21,7 +21,7 @@ for (const size of SIZES) {
       const change = page.getByRole('button', { name: 'Zmień wskaźnik' }).first();
       await expect(change).toBeVisible({ timeout: 20_000 });
       expect((await change.boundingBox())!.height).toBeGreaterThanOrEqual(44);
-      await expect(page.getByRole('button', { name: /Dodaj wskaźnik$/ })).toHaveCount(0);
+      await expect(page.getByRole('button', { name: /Dodaj wskaźnik$/ }).first()).toBeVisible();
       await expect(page.getByRole('button', { name: 'Przywróć podstawowe' })).toHaveCount(0);
 
       const before = new URL(page.url()).searchParams.get('i');

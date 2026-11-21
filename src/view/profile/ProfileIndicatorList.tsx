@@ -69,7 +69,11 @@ export function ProfileBasicList({
   footnotes: FootnoteItem[];
   onlyBasic?: boolean;
 }) {
-  const shown = onlyBasic ? orderByList(items, BASIC_INDICATORS) : items;
+  const [extra, setExtra] = useState<string[]>([]);
+  const basic = orderByList(items, BASIC_INDICATORS);
+  const added = items.filter((i) => extra.includes(i.indicatorId) && !basic.includes(i));
+  const shown = onlyBasic ? [...basic, ...added] : items;
+  const missing = extra.some((id) => !items.some((i) => i.indicatorId === id));
   const groups = new Map<string, ProfileIndicatorItem[]>();
   for (const item of shown) {
     const g = item.indicator.group || 'Inne';
@@ -77,6 +81,21 @@ export function ProfileBasicList({
   }
   return (
     <div className="my-2" data-testid="profile-indicator-list">
+      {onlyBasic && (
+        <div className="flex flex-wrap items-center gap-2 pt-2">
+          <ChangeIndicatorWindow
+            label="Dodaj wskaźnik"
+            selectedId={null}
+            onSelect={(id) => setExtra((p) => (p.includes(id) ? p : [...p, id]))}
+          />
+          {extra.length > 0 && (
+            <button type="button" onClick={() => setExtra([])} className="min-h-[44px] px-4 py-2 border border-linia bg-arkusz text-xs font-semibold cursor-pointer">
+              Tylko podstawowe
+            </button>
+          )}
+          {missing && <p className="text-xs text-olowek">Dla tego miejsca nie mamy części wybranych danych.</p>}
+        </div>
+      )}
       <div className="divide-y divide-linia">
         {[...groups.entries()].map(([name, list]) => (
           <div key={name} className="pt-4 pb-2 first:pt-2">
