@@ -6,6 +6,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const navigate = vi.fn<(...a: unknown[]) => void>();
 let reduced = false;
+let preloaded = true;
+vi.mock('../../src/view/start/preloadMap', () => ({ preloadMap: () => undefined, isMapPreloaded: () => preloaded }));
 const handlers: Record<string, (e: unknown) => void> = {};
 vi.mock('react-router', () => ({
   useNavigate: () => navigate,
@@ -33,10 +35,10 @@ function click(init: Record<string, unknown> = {}) {
   return ev;
 }
 
-afterEach(() => { navigate.mockClear(); reduced = false; });
+afterEach(() => { navigate.mockClear(); reduced = false; preloaded = true; });
 
 describe('C02 wejście do mapy', () => {
-  it('klik „Otwórz mapę”: najpierw ładuje kod mapy, potem nawiguje wewnątrz przejścia widoku', async () => {
+  it('klik przy pobranym kodzie mapy: nawigacja wewnątrz przejścia widoku', async () => {
     const start = vi.fn<(cb: () => Promise<void>) => void>((cb) => { void cb(); });
     vi.stubGlobal('document', { startViewTransition: start, querySelector: () => null });
     vi.stubGlobal('requestAnimationFrame', (f: () => void) => { f(); return 0; });
@@ -44,6 +46,15 @@ describe('C02 wejście do mapy', () => {
     expect(ev.defaultPrevented).toBe(true);
     await vi.waitFor(() => expect(start).toHaveBeenCalledTimes(1));
     expect(navigate).toHaveBeenCalledWith('/mapa');
+    vi.unstubAllGlobals();
+  });
+  it('klik gdy kod mapy jeszcze się pobiera: wejście od razu, bez czekania i bez przejścia', () => {
+    preloaded = false;
+    const start = vi.fn<(cb: () => Promise<void>) => void>();
+    vi.stubGlobal('document', { startViewTransition: start, querySelector: () => null });
+    click();
+    expect(navigate).toHaveBeenCalledWith('/mapa');
+    expect(start).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
   });
   it('bez obsługi przejść widoku: zwykła nawigacja', () => {
@@ -79,9 +90,8 @@ describe('C02 wejście do mapy', () => {
     const tokens = JSON.parse(read('config/tokens.json'));
     expect(tokens.motion.cameraIn).toBe(tokens.motion.slow);
   });
-  it('StartPage ładuje też AtlasMap i nadaje wspólną nazwę przejścia', () => {
-    const src = read('src/view/start/StartPage.tsx');
-    expect(src).toMatch(/import\('..\/map\/AtlasMap'\)/);
-    expect(src).toMatch(/poland-map/);
+  it('preloadMap pobiera Home i AtlasMap, a StartPage nadaje wspólną nazwę przejścia', () => {
+    expect(read('src/view/start/preloadMap.ts')).toMatch(/import\('..\/map\/AtlasMap'\)/);
+    expect(read('src/view/start/StartPage.tsx')).toMatch(/poland-map/);
   });
 });
