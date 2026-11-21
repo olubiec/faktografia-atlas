@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { coverForMap } from './mapCover';
 import { isFrugalNetwork, preloadMap, preloadMapData } from './preloadMap';
 import { StartBackground } from './StartBackground';
+import { useIsDark } from '@/view/hooks/useIsDark';
 import { useReducedMotion } from '@/view/map/hooks/useReducedMotion';
 import { SiteLayout } from '../layout/SiteLayout';
 import { Button } from '@/components/ui/button';
@@ -38,6 +39,8 @@ export function StartPage() {
   const navigate = useNavigate();
   const reduced = useReducedMotion();
   const to = (href: string) => withTech(href, search);
+  const isDark = useIsDark();
+  const logoSrc = isDark ? '/brand/faktografia-logo-jasne.svg' : '/brand/faktografia-logo-granat.svg';
 
   // Po wczytaniu strony (w wolnej chwili) pobieramy kod mapy, a chwilę później jej dane (nie przy oszczędzaniu danych).
   useEffect(() => {
@@ -83,13 +86,19 @@ export function StartPage() {
         description: 'Zobacz, jak wypada Twoja gmina na tle całej Polski, na danych GUS.',
       }}
     >
-      <div className="relative isolate overflow-hidden">
-        <div className="absolute inset-x-0 top-0 -z-10 mx-auto flex w-full max-w-3xl justify-center px-4 pt-6 md:px-8">
+      <div className="relative isolate">
+        {/* Mapa na górze, w całości widoczna; logo na półprzezroczystym banerze nad nią. */}
+        <div className="relative mx-auto w-full max-w-3xl px-4 pt-6 md:px-8">
           <StartBackground onPick={pickRegion} />
+          <div className="pointer-events-none absolute inset-x-4 top-1/2 flex -translate-y-1/2 justify-center bg-kalka/70 px-4 py-6 md:inset-x-8">
+            <h1 className="m-0 font-extrabold tracking-[-0.02em] text-tusz">
+              <img src={logoSrc} alt="" aria-hidden="true" className="h-10 w-auto md:h-14" />
+              <span className="sr-only">Faktografia</span>
+            </h1>
+          </div>
         </div>
-        <div className="pointer-events-none mx-auto w-full max-w-3xl px-4 py-12 md:px-8 md:py-16">
+        <div className="mx-auto w-full max-w-3xl px-4 pb-12 md:px-8 md:pb-16">
           <div className="flex flex-col gap-6 bg-kalka/95 p-4">
-            <h1 className="text-2xl font-extrabold leading-[1.05] tracking-[-0.02em] text-tusz sm:text-4xl md:text-5xl">Faktografia</h1>
             <p className="text-md font-medium text-tusz md:text-lg">
               Zobacz, jak wypada Twoja gmina na tle całej Polski, na danych GUS.
             </p>
@@ -99,7 +108,7 @@ export function StartPage() {
               ))}
             </ol>
             <div>
-              <Button asChild className="pointer-events-auto">
+              <Button asChild>
                 <Link
                   to={to('/mapa')}
                   onClick={openMap}
