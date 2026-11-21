@@ -16,7 +16,7 @@ export function Home() {
     <AnnotationProvider>
       <div className="h-screen h-dvh flex flex-col bg-kalka text-tusz overflow-hidden relative" style={{ overflowY: 'auto' }}>
         <Header />
-        <main className="flex-1 min-h-0 flex flex-col relative min-h-[calc(100vh-64px)]">
+        <main className="flex-1 min-h-0 flex flex-col relative min-h-[calc(100dvh-56px)] md:min-h-[calc(100dvh-72px)]">
           <h1 className="sr-only">Mapa Polski z danymi GUS</h1>
           <div className="absolute inset-0 flex flex-col">
             <Suspense fallback={<div className="w-full flex-1 bg-kalka" />}>
