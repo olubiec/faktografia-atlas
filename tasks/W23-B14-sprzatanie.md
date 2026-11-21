@@ -1,0 +1,41 @@
+# B14 – Sprzątanie: martwy kod, prototypy, stary picker, Observable Plot
+Fala pliku: W23 (etap B budowy). Fala budowy: 7 z 8. Zależy od: B07, B09, B10, B12, B13. Równolegle z: nic (sama w fali).
+Cel: Z repozytorium znika wszystko, co po przebudowie nie ma użytkownika (stare menu wyboru, „Moje wskaźniki”, prototypy, wstęp, nieużywany pakiet), a CI jest zielone.
+Zmieniaj: src/App.tsx, src/view/Home.tsx, src/view/layout/SiteFooter.tsx, src/view/pages/About.tsx, docs/ELEMENTY.md, package.json, pnpm-lock.yaml, tests/unit/dependencies.test.ts, tests/unit/b14-no-dead-code.test.ts
+Usuń (zgoda właściciela, tylko jeśli plik istnieje i po zmianie nie ma importera: sprawdź `rg -l`): src/view/map/IntroOverlay.tsx, src/view/test/proto/* i src/view/test/PrototypePage.tsx (trasy `/__test/proto*` z App.tsx), src/core/catalog/prototype-tree.ts + tests/unit/u04-prototype-tree.test.ts (po sprawdzeniu, że `tree.ts` i `search.ts` z B05 mają własne testy), src/core/my-indicators/*, src/view/hooks/useMyIndicators.ts, src/view/pages/MyIndicatorsBar.tsx, myIndicatorsFocus.ts, useIndicatorReorder.ts, src/view/compare/CompareIndicatorPicker.tsx, src/view/controls/IndicatorPicker.tsx, LibraryGroup.tsx, src/core/library/* używane tylko przez usunięte pliki, src/view/ranking/RankingsList.tsx + src/core/ranking/rankings-filter.ts + ich testy (nigdzie niepodpięte wg U01), wszystkie pozostałe pliki bez importera wskazane przez `rg`; testy Z4 (U5 i U6): tests/unit/my-indicators*.test.ts(x), use-my-indicators-*.test.tsx, basic-on-start-guard.test.ts, indicator-picker.test.tsx, indicator-picker-library.test.tsx, add-indicator-*.test.tsx i inne z grupy U5/U6 z docs/research/u/U08.md §3.3, które testują wyłącznie usunięty plik; testy „U?” (E4 fix4-picker-zoom.spec.ts: usuń tylko bloki o pickerze, bloki o przyciskach +/− mapy zostają — jeśli nie da się rozdzielić, zatrzymaj się). Dla każdego usuwanego pliku wypisz w PR powód i dowód `rg -l` (0 importerów)
+Wymagane: tests/unit/b14-no-dead-code.test.ts
+Weryfikacja: pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e
+Przeczytaj najpierw: AGENTS.md, docs/PRODUKT.md (v4), docs/PLAN-DOCELOWY.md, docs/PLAN-FALE-B.md, docs/research/u/WYTYCZNE.md; docs/research/u/U01.md (§Co do usunięcia, koszt), docs/research/u/U08.md (§3.2–§3.3, §5 K6), docs/research/u/U05.md (usunięcie Observable Plot), docs/ELEMENTY.md, tests/unit/dependencies.test.ts, src/App.tsx, src/view/Home.tsx
+Zgody właściciela (21.11.2026, odpowiedź P2 A): Z1 (adresy w testach e2e), Z2 (testy strony startowej i nazwy), Z3 (usunięcie testów Biblioteki, Rankingów, Porównaj i pickera razem z funkcją), Z4 (usunięcie testów „Moich wskaźników” i martwych sekcji). Zgody dotyczą wyłącznie plików wymienionych w tym zadaniu. Ten prompt wprost zezwala na zmianę `package.json`, `pnpm-lock.yaml` (usunięcie `@observablehq/plot`; `pnpm install` odświeża lockfile, nie dodajesz niczego), `docs/ELEMENTY.md` (usuń wiersz pakietu i dopisz w PR, że element usunięto) i jedną zmianę w `tests/unit/dependencies.test.ts`: wykreślenie `'@observablehq/plot'` z listy wymaganych pakietów (bez zmiany innych asercji). Wymienia też pliki ekranu src/view/Home.tsx (usunięcie `IntroOverlay`).
+Zadanie:
+1. Zbuduj wykaz kandydatów: dla każdego pliku z „Usuń” uruchom `rg -l "<nazwa modułu>" src tests` i usuwaj tylko pliki bez importerów (po usunięciu następnych w kolejności zależności ponów sprawdzenie, aż lista się wyczerpie). Pliki, które nadal mają importera, zostaw i wypisz w PR.
+2. Usuń `IntroOverlay` (wstęp zastąpiła strona startowa) z `Home.tsx`; usuń prototypy `/__test/proto*` (pliki i trasy w `App.tsx`); strony techniczne `/design`, `/__test/ui`, `/__test/annotation`, `/__test/interactive`, `?tune` ZOSTAJĄ.
+3. Stopka: ok. 6 linków (Mapa · O projekcie · Skąd są dane · Prywatność i zgoda · GitHub · CC BY 4.0), bez działów tematycznych. `About.tsx`: dopisz jedno zdanie o kontakcie (np. przez zgłoszenie w repozytorium GitHub); osobnych stron Kontakt i Zastrzeżenie nie robisz.
+4. `@observablehq/plot`: usuń z `package.json`, odśwież `pnpm-lock.yaml`, wykreśl z `docs/ELEMENTY.md` i z `dependencies.test.ts` (zgodnie z „Zgody”). Sprawdź `rg "observablehq" src tests scripts` = 0 wyników.
+5. Sprawdź, że `rg -n "Rekordy Polski|Moje wskaźniki|Zamów|Biblioteka GUS" src` nie zwraca wyników (poza `src/view/share/*` i teksty prawne, jeśli są; wypisz w PR).
+6. Nowy test `b14-no-dead-code.test.ts`: lista zakazanych modułów (stare nazwy plików) nie istnieje; `package.json` nie zawiera `@observablehq/plot`; trasy w `App.tsx` nie zawierają `/__test/proto`, `/rankingi`, `/porownaj`, `/biblioteka`.
+7. Podaj w PR bilans: liczba usuniętych plików i linii (`git diff --stat origin/main...HEAD | tail -1`), oczekiwane ok. 3 800 linii z U01.
+Gotowe, gdy:
+- Test `b14-no-dead-code`: zakazane moduły nie istnieją; trasy w `App.tsx` to tylko `/`, `/mapa`, `/o-projekcie`, `/zrodla`, `/prywatnosc`, strony techniczne i `*`; `package.json` bez `@observablehq/plot`.
+- Cały zestaw `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e` zielony; liczba usuniętych testów odpowiada wyłącznie plikom z listy „Usuń” (wypisana w PR).
+- Test e2e: stopka ma najwyżej 6 linków i żadnego do działów tematycznych; `/o-projekcie` zawiera zdanie o kontakcie.
+- Test e2e: `/mapa` otwiera się bez wstępu (`IntroOverlay`) i bez błędów w konsoli.
+- Brak nowych osieroconych plików: skrypt `rg` z PR nie wskazuje plików w `src/` bez importera (poza punktami wejścia i trasami).
+Nie ruszaj: src/view/map/AtlasMap.tsx, src/view/map/hooks/*, src/view/share/* i src/core/share/* (wstrzymane, żyją za `?share=1`), src/core/consent, config/*, docs/STAN.md, `*-snapshots/`.
+Po ludzku (do opisu PR):
+- Co zrobiłeś: Posprzątałem po przebudowie: usunąłem stary kod i testy, których nikt już nie używa (stare menu wyboru, „Moje wskaźniki”, prototypy, wstęp przed mapą) oraz nieużywany pakiet wykresów. Stopka jest krótsza.
+- Co sprawdzić na podglądzie Vercel: Na stronie prawie nic nie powinno się zmienić: sprawdź, że `/`, `/mapa`, profil miejsca, stopka i `/o-projekcie` wyglądają i działają jak przed tym PR (to jest właśnie test).
+- Czego nie zrobiłeś i dlaczego: Nie usunąłem kodu udostępniania (wstrzymany, wraca z `?share=1`) ani stron technicznych `/design` i `?tune`.
+Tytuł PR zaczyna się od `[W23-B14]`; gałąź `claude/W23-B14` od `origin/main`; opis ma „Po ludzku”; nie scalaj.
+## PROMPT startowy dla podagenta (wklej w całości)
+```
+Jesteś podagentem zadania [W23-B14] w repozytorium olubiec/faktografia-atlas (katalog /home/user/faktografia-atlas). Wykonaj dokładnie jedno zadanie: tasks/W23-B14-sprzatanie.md.
+1. Czytaj w tej kolejności: AGENTS.md, docs/PRODUKT.md (v4), docs/PLAN-DOCELOWY.md (§1 ekrany, §4 plan budowy), docs/PLAN-FALE-B.md, docs/research/u/WYTYCZNE.md, plik zadania i jego „Przeczytaj najpierw”.
+2. Zależności: B07, B09, B10, B12, B13. Sprawdź w git log origin/main, że ich PR-y są scalone. Jeśli nie, zatrzymaj się i napisz to w odpowiedzi (nic nie zmieniaj).
+3. Gałąź: git fetch origin && git checkout -b claude/W23-B14 origin/main. Aktualizacja gałęzi tylko git merge origin/main (bez rebase i --force).
+4. Najpierw testy z „Gotowe, gdy” (mają być czerwone), potem kod. Każdy warunek = co najmniej jeden test zachowania. Nie wyłączaj testów, reguł lintera ani typów. Istniejących testów nie zmieniasz ani nie usuwasz, poza wprost wymienionymi w zadaniu.
+5. Zmieniaj tylko pliki z „Zmieniaj” i „Wymagane”. Potrzebujesz innego pliku, nowego pakietu albo niejasny jest warunek: zatrzymaj się i opisz to w PR.
+6. Przed pushem: git diff --name-only origin/main...HEAD (tylko pliki z zadania), git diff --name-status --diff-filter=D origin/main...HEAD (tylko usunięcia wymienione w „Usuń”). Uruchom „Weryfikacja”; czerwone testy poprawiasz sam.
+7. Zrzutów (*-snapshots/) nie generujesz; jeśli wzorce mogły się zmienić, napisz w PR, że trzeba uruchomić „Update snapshots”.
+8. PR: tytuł „[W23-B14] Sprzątanie: martwy kod, prototypy, stary picker, Observable Plot”, opis z sekcją „Po ludzku” (co zrobiłem · co sprawdzić na podglądzie Vercel i pod jakim adresem · czego nie zrobiłem i dlaczego), bez „Closes #”. Nie scalaj.
+```

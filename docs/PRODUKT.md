@@ -1,195 +1,125 @@
-# Faktografia Atlas – co budujemy
-**Dla kogo:** osoba ciekawa swojej okolicy (mieszkaniec, dziennikarz, uczeń, samorządowiec), najczęściej z telefonu (§2).
-**Problem:** dane GUS o gminach i powiatach są w tabelach Banku Danych Lokalnych, nie da się ich szybko zobaczyć na mapie ani porównać.
-**Pierwsza wersja ma umieć:** mapa Polski w kolorach wybranego wskaźnika (§3) · profil miejsca z rankingiem i wykresami (§4) · wygodny telefon (§5) · płynne wejście w głąb mapy (§5a) · proste objaśnienia (§6) · porównanie dwóch miejsc (§4a) · link do każdego widoku · **pobieranie i udostępnianie** kart z mapą, rankingiem, profilem i porównaniem oraz danych w CSV (§4b).
-**Czego NIE robimy:** kont użytkowników, liczb wpisywanych ręcznie lub przez AI, śledzenia osób, Google Maps, generatora serii slajdów pod konta Faktografii w tym repo – pojedyncze karty do pobrania dla każdego robimy (§4b) (pełna lista: `docs/ARCHITEKTURA.md` §7).
-**Zarabia:** nie (projekt marki Faktografia; przy komercjalizacji – zmiana hostingu z Vercel Hobby). **Dane osób:** nie – tylko anonimowe statystyki wyszukiwań po zgodzie.
+# Faktografia – co budujemy (v4)
+**Dla kogo:** osoba ciekawa swojej okolicy (mieszkaniec, dziennikarz, uczeń, samorządowiec), najczęściej z telefonu (§5).
+**Problem:** dane GUS o gminach i powiatach są w tabelach Banku Danych Lokalnych; nie da się ich szybko zobaczyć na mapie ani porównać.
+**Jak ma być:** prosto, bardzo prosto. Dwa ekrany: strona startowa `/` i jedyny ekran pracy `/mapa`. Jedno miejsce wyboru danych. Cztery widoki tych samych danych. Dwie mapy obok siebie. Profil miejsca.
+**Czego NIE robimy:** kont użytkowników, liczb wpisywanych ręcznie lub przez AI, śledzenia osób, Google Maps, generatora serii slajdów pod konta Faktografii w tym repo (pełna lista: `docs/ARCHITEKTURA.md` §7). „Pobierz i udostępnij” jest wstrzymane (§4b).
+**Zarabia:** nie. **Dane osób:** nie – tylko anonimowe statystyki po zgodzie.
 **Technologia:** Vite + React + TypeScript, MapLibre + deck.gl, dane statyczne z robota GUS (`docs/ARCHITEKTURA.md`, elementy: `docs/ELEMENTY.md`). **Hosting:** Vercel (podgląd każdego PR).
-**Gdzie jesteśmy:** `docs/STAN.md` · warstwy i plan fal: `docs/ARCHITEKTURA.md` · wygląd: `docs/STYL.md` + makiety `docs/design/`.
+**Gdzie jesteśmy:** `docs/STAN.md` · plan przebudowy: `docs/PLAN-DOCELOWY.md`, fale: `docs/PLAN-FALE-B.md` · wygląd: `docs/STYL.md` + makiety `docs/design/`.
 
-Wersja 3 · 24.10.2026 (v2: 21.10.2026, v1: 20.10.2026). Zmiany v3: §4a porównanie (dwie mapy pomocnicze), §4b pobieranie i udostępnianie (pomysły właściciela 24.10). Zmiany v2: Zmiany v2: nagłówek wg WORKFLOW v5.3 §10.2, §5 telefon (po oglądzie 21.10), §5a wejście w głąb mapy, §6 ścieżka pliku objaśnień, §8–§9 pod nowy proces.
-Opisy ekranów niżej są wymaganiami – mają pierwszeństwo przed starymi promptami i kodem.
+Wersja 4 · 21.11.2026 (v3: 24.10.2026). Zmiany v4: plan uproszczenia (`docs/PLAN-UPROSZCZENIE.md`): strona startowa, `/mapa`, jedno menu wyboru danych, cztery widoki, dwie mapy, profil bez „Moich wskaźników”; znikają strony Rankingi, Biblioteka, Porównaj, „Moje wskaźniki”, „Zamów wskaźnik” i CSV. Numery sekcji §6–§9 bez zmian (powołują się na nie inne dokumenty).
+Opisy ekranów niżej są wymaganiami – mają pierwszeństwo przed starymi promptami i kodem. Stan budowy: zadania `tasks/W23-B*.md`.
 
 ---
 
-## 1. Zasady z pierwszego testu właściciela (20.10.2026)
-Strona przechodziła wszystkie testy, a jako produkt nie działała (zacinała się, mapa bez kolorów, profil zasłaniał mapę, nieczytelne wykresy, „powiat powiat”). Od tego czasu:
-1. Budujemy **ekran jako całość**, nie kawałki – każda sesja kończy się czymś, co da się obejrzeć.
-2. Ekran ogląda **właściciel na podglądzie** (komputer i telefon) przed scaleniem.
+## 1. Zasady
+1. **Prostota** (`docs/PLAN-UPROSZCZENIE.md` §7): jeden ekran pracy; element ma jedno zadanie; w menu najwyżej 2 pozycje; 4 widoki danych; nowa funkcja tylko z testem ścieżki użytkownika; usunięcie funkcji = usunięcie jej kodu i testów w tym samym PR.
+2. Budujemy **ekran jako całość** i oglądamy go na podglądzie (komputer i telefon) przed scaleniem.
 3. Szybkość i wygląd mają **mierzalne progi** (§7) i testy na prawdziwych danych.
-4. Makiety (`docs/design/`) są **warunkiem odbioru**, nie inspiracją.
-
----
+4. **Dane archiwalne i niepobrane wskaźniki nie są pokazywane**; brak wyniku to „Nie mamy jeszcze tych danych”.
 
 ## 2. Dla kogo i po co
+Osoba chce w minutę: (1) zobaczyć, jak jej gmina lub powiat wypada na tle innych w jednej sprawie; (2) zobaczyć „wszystko o moim miejscu”; (3) zrozumieć, co znaczy liczba; (4) wysłać komuś link do tego samego widoku (przycisk „Kopiuj link”, §3.2).
 
-Osoba ciekawa swojej okolicy (mieszkaniec, dziennikarz, uczeń, samorządowiec), najczęściej z telefonu albo laptopa. Chce w minutę:
-1. zobaczyć, jak jej gmina/powiat wypada na tle innych w jednej sprawie (ranking, kolory na mapie);
-2. zobaczyć „wszystko o moim miejscu” w czytelnej formie;
-3. zrozumieć, co znaczy liczba (prosta definicja, odniesienie do Polski i świata);
-4. wysłać komuś link do tego samego widoku.
+## 3. Ekrany
 
----
+### 3.1 `/` – strona startowa (telefon i komputer ten sam układ)
+- Nagłówek: „Faktografia”, szukajka miejsca, motyw dzień/noc; menu: **Start · Mapa**.
+- W tle animowany obrys Polski (16 województw, własny SVG), w kolorach aktualnych danych (`public/data/start.json`). Gdy nikt nic nie robi, rusza się losowo; gdy rusza się mysz lub palec, reaguje (podświetlenie i fala). Cykl czterech wskaźników co 5 s (ludność, bezrobocie, wynagrodzenie, gęstość); **pierwszy kadr, `prefers-reduced-motion` i stan bez JS = ludność**. Podpis „Stopa bezrobocia, 2025 · mazowieckie: 3,1 %” tylko gdy animacja reaguje.
+- Treść (zatwierdzona): „Zobacz, jak wypada Twoja gmina na tle całej Polski, na danych GUS.” + trzy kroki: „1. Wybierz dane, np. bezrobocie albo ludność. 2. Dotknij miejsca na mapie. 3. Zobacz profil i porównaj z innym miejscem.” + jedyny przycisk główny **„Otwórz mapę”** (≥ 44 px). Pod spodem „Przykłady”: 6 miejsc i 6 par (linki `/mapa?…`).
+- Stopka: ok. 6 linków (Mapa · O projekcie · Skąd są dane · Prywatność i zgoda · GitHub · CC BY 4.0).
+- Budżety: obrys ≤ 25 KB (≤ 10 KB gzip), `start.json` ≤ 5 KB, 0 pobrań wartości wskaźników i `units.json`, p95 klatki ≤ 33 ms (SwiftShader ×4 CPU, orientacyjnie), jedna pętla animacji, pauza przy ukrytej karcie.
+- Stare linki `/?u=…&i=…&y=…&l=…&c=…&sheet=…` przekierowują (replace) na `/mapa` z tym samym zapisem; `/` bez parametrów i `/?logo=znak` zostają stroną startową.
 
-## 3. Ekran główny (komputer, ≥ 1024 px) – makieta 02
-
+### 3.2 `/mapa` – jedyny ekran pracy (komputer, ≥ 1024 px)
 ```
-┌ Faktografia ─────────────────────────────── [ Szukaj miejsca  Ctrl K ] [Motyw] ┐
-│┌ Panel wskaźnika (≈ 400 px) ┐                                                  │
-││ Gęstość zaludnienia      ▾ │   Polska / małopolskie            (okruszki)     │
-││ osoby na 1 km², 2025,       │                                                  │
-││ dane dla województw     (?) │          MAPA w kolorach wskaźnika               │
-││ Poziom: [Woj][Pow][Gmi]     │          (zajmuje całą resztę ekranu)            │
-││ Legenda: 5 klas + brak      │                     ┌ dymek po najechaniu ┐      │
-││ „Ciemniej znaczy gęściej”   │                     │ małopolskie         │      │
-││ Rok: ────────────■ 2025     │                     │ 225,8 os./km²       │      │
-││ Najwyżej / najniżej (5+5)   │                     │ 2. z 16 województw  │      │
-││ Źródło: GUS, BDL, 2025      │                     │ Otwórz profil →     │      │
-│└─────────────────────────────┘                     └─────────────────────┘      │
-└──────────────────────────────────────────────────────────────────────────────────┘
+┌ Faktografia ───────────── [Szukaj miejsca Ctrl K] [Kopiuj link] [Motyw] ┐
+│┌ Panel ───────────┐  Polska / małopolskie                                │
+││[Wybierz dane ▾]  │  [ Mapa | Wykres | Tabela | Ranking ] [+ Druga mapa] │
+││Poziom [Woj][Pow] │       MAPA (lub wykres / tabela / ranking)           │
+││       [Gmi]      │       ten sam wskaźnik, rok, poziom i miejsce        │
+││Legenda 5 klas    │                           ┌ dymek: nazwa, wartość,   │
+││Rok ───────■ 2025 │                           │ miejsce, Otwórz profil → │
+││Najwyżej/najniżej │                           └──────────────────────────┘
+│└──────────────────┘                                                      │
+└ O projekcie · Źródła · Prywatność ───────────────────────────────────────┘
 ```
+- Domyślnie mapa w kolorach (domyślny wskaźnik: gęstość zaludnienia), poziom: województwa. Panel: nazwa wskaźnika jest przyciskiem otwierającym wybór danych (§3.3), poziom Woj/Pow/Gmi (gminy tylko dla wskaźników, które je mają), legenda z opisem klas i „brak danych”, rok suwakiem, najwyżej/najniżej (5+5), źródło, (?) z objaśnieniem (§6).
+- **„Kopiuj link”** stale w nagłówku `/mapa` (i w profilu): jedno kliknięcie, „Skopiowano”. „Pobierz i udostępnij” niewidoczne (`?share=1`, §4b).
+- Adres: `?v=mapa|wykres|tabela|ranking` (domyślnie mapa, pomijana), `i`, `i2` (drugi wskaźnik), `y`, `l`, `u`, `c`, `w` (województwo w rankingu), `menu=dane` (otwiera wybór danych), `q` (fraza). Zmiana widoku nie czyści pozostałych.
+- Dymek po najechaniu (komputer) lub pierwszym dotknięciu (telefon): nazwa, wartość z jednostką, miejsce, „Otwórz profil”. Zwykły tekst, bez HTML.
 
-- **Na wejściu mapa jest już w kolorach.** Domyślny wskaźnik: **gęstość zaludnienia** (jak na makiecie; zmiana = jedna stała w kodzie). Domyślny poziom: województwa.
-- **Bez dużego nagłówka „Mapa Polski z danymi GUS” obok mapy.** Tytuł i opis strony są w panelu wskaźnika (jedno zdanie nad nazwą wskaźnika) albo w `<title>`; mapa ma całą szerokość poza panelem.
-- **Wybór wskaźnika:** nazwa wskaźnika w panelu jest przyciskiem, otwiera `IndicatorPicker` (lista z grupami i wyszukiwaniem). Zmiana od razu przekolorowuje mapę i zmienia adres (`?i=`).
-- **Poziom:** przełącznik Województwa / Powiaty / Gminy (gminy tylko dla wskaźników z `minLevel` = gmi; inaczej przycisk wyłączony z podpowiedzią „GUS podaje te dane tylko do powiatów”).
-- **Legenda** z opisem słownym klas i „brak danych”; **rok** suwakiem.
-- **Najwyżej / najniżej:** 5 najlepszych i 5 najsłabszych jednostek bieżącego poziomu; klik = wybór jednostki. To jest „zestawienie miejsc”, o które prosił właściciel.
-- **Dymek** po najechaniu (komputer) albo pierwszym dotknięciu (telefon): nazwa, wartość z jednostką, miejsce w rankingu, „Otwórz profil”. Zwykły tekst, bez HTML.
-- **(?) przy wskaźniku** otwiera objaśnienie (§6).
+### 3.3 Wybór danych – jedno menu zamiast siedmiu miejsc
+- **Dział › Grupa › Wskaźnik** (3 poziomy) + szukajka po całym spisie (`minisearch`, synonimy w `config/synonyms.json`: zarobki → wynagrodzenie). Tylko pobrane wskaźniki, bez grupy „Dane archiwalne”. W dziale najpierw „★ Najważniejsze”. Kolejność działów z `config/library-priority.json`. Pozycje bez danych na bieżącym poziomie są wyłączone.
+- Komputer: okno z dwiema kolumnami (działy | grupy i lista, po 50 + „Pokaż więcej”). Telefon: arkusz, jeden widok naraz z okruszkami „Wszystkie › Dział › Grupa”.
+- Brak wyniku: „Nie mamy jeszcze tych danych o „…”. Najbliższy dział: …” (bez „Zamów”).
+- To **ten sam komponent** w panelu mapy, na telefonie, w drugiej mapie i w profilu miejsca. Źródło: lekki `library/available.json` (jedno żądanie, nigdy pełny `index.json`). Robot dokłada kolejne wskaźniki codziennie (2 × 3 000 zapytań na dobę wg wag działów).
 
-## 4. Profil miejsca (komputer) – makieta 03
+### 3.4 Widoki jednego wskaźnika (zawsze ten sam rok, poziom, miejsce)
+- **Mapa** – jak w §3.2.
+- **Wykres** – własny SVG: linia lat dla wybranego miejsca + przerywana mediana poziomu. Bez wybranego miejsca: jednostka o najwyższej wartości na poziomie, z napisem „Wybierz miejsce na mapie”. Dwa wskaźniki: **jeden wykres z dwiema skalami** (lewa A, prawa B, różne kolory i style linii, podpisane osie); ryzyko mylnego odczytu pilnuje test czytelności na 390 px.
+- **Tabela** – szukaj, sortowanie po nazwie i wartości, kolumny Miejsce | Wartość (rok) | Miejsce w rankingu; dwa wskaźniki = dwie kolumny; klik wiersza ustawia `u` i zostaje w widoku.
+- **Ranking** – poziome słupki poziomu i roku; filtr „Województwo ▾” (ranking w obrębie województwa); wybrane miejsce wyróżnione i zawsze widoczne; dwa wskaźniki = dwa rankingi pod sobą.
+- Telefon: zakładki widoków w jednym rzędzie (4 × ≥ 90 px, pola ≥ 44 px).
 
-- Panel po prawej **obok mapy** (440 px), mapa się zwęża, **nic nie jest nałożone na mapę**. Zamknięcie: ×, Escape; mapa wraca do pełnej szerokości bez zmiany przybliżenia.
-- Nagłówek: „Województwo małopolskie”, „Gmina miejska Wałcz” (bez powtórzeń typu „powiat powiat”), TERYT. **Wszędzie, gdzie widać nazwę gminy, widać jej rodzaj**: „Wałcz (miasto)”, „Wałcz (gmina wiejska)”.
-- Zakładki: **Przegląd** · **Powiaty (22)** / **Gminy (n)** (lista jednostek niższego poziomu z wartością bieżącego wskaźnika) · **Porównaj** (S18; do tego czasu zakładka nieaktywna z napisem „wkrótce”).
-- **Przegląd** (od góry):
-  1. bieżący wskaźnik: nazwa, rok, **duża liczba**, miejsce w rankingu (jedno zakreślenie wg STYL.md §7);
-  2. **ranking wszystkich jednostek tego poziomu** w województwie / kraju jako poziome słupki, wybrana jednostka wyróżniona (makieta 03); długie listy: 10 + „pokaż wszystkie”;
-  3. **pozostałe wskaźniki** w grupach (Ludność, Praca, Pieniądze, Mieszkania, Środowisko, Życie, Transport), każdy jako wiersz: nazwa, wartość, miejsce. **Klik w wiersz rozwija go:** czytelny wykres lat (oś lat, min/max, wartość po najechaniu), objaśnienie (§6), przycisk **„Pokaż na mapie”** (ustawia ten wskaźnik na mapie i w panelu).
-- Na dole: „Kopiuj link”, „Pobierz i udostępnij” (S19, §4b), źródło. „Porównaj z innym miejscem” – S18.
+### 3.5 Dwie mapy
+- Przycisk „+ Druga mapa”: dwa wskaźniki obok siebie, **wspólna kamera, rok i poziom**, osobna legenda pod każdą mapą, klik zaznacza miejsce na obu, pod mapami wartości A i B dla zaznaczonego miejsca, × zamyka drugą.
+- Telefon: jedna pod drugą (po ok. 40% ekranu); zapas: przełącznik A/B (druga instancja odmontowana). Wykres punktowy A × B – później.
 
-## 4a. Porównanie dwóch miejsc (S18)
+## 4. Profil miejsca (komputer: kolumna 440 px obok mapy; telefon: dolny arkusz)
+- Nagłówek: rodzaj i nazwa („Gmina miejsko-wiejska Wadowice”), TERYT (jako tekst), ×. Zakładki: **Przegląd** · **Gminy (n)** / **Powiaty (n)** · **Porównaj z innym miejscem**. Nic nie jest nałożone na mapę; na telefonie mapa nad arkuszem pozostaje dotykalna (40% → pełna wysokość).
+- **Przegląd:** blok bieżącego wskaźnika (nazwa, rok, DUŻA liczba, „149. z 380” w jednym zakreśleniu) z przyciskiem **„Zmień wskaźnik”**, który otwiera to samo menu danych (§3.3), nie osobną listę; ranking jednostek w województwie (słupki, wybrane wyróżnione); **stały zestaw 7 podstawowych wskaźników** (Ludność ogółem · Gęstość zaludnienia · Przyrost naturalny · Saldo migracji · Udział ludności 65+ · Stopa bezrobocia · Przeciętne wynagrodzenie), klik w wiersz rozwija wykres lat, objaśnienie i „Pokaż na mapie”.
+- „Kopiuj link”, źródło. Nie ma listy użytkownika, „+ Dodaj wskaźnik” ani „Moich wskaźników”.
+- Zapisany w przeglądarce klucz dawnych „Moich wskaźników” jest usuwany po cichu.
 
-Pomysł właściciela 24.10.2026: „zestawianie ze sobą różnych powiatów – dwie mapy albo okno z danymi obu”. Robimy oba, w tanim wariancie:
-- **Okno z danymi obu:** zakładka „Porównaj” w profilu – tabela: wiersz na wskaźnik, wartości obu miejsc, miejsca w rankingu, słowna różnica („wyżej o 1,2 p.p.”). Kolory neutralne (bez zieleni i czerwieni).
-- **Dwie mapy:** nad tabelą dwie małe mapki (rysunek SVG, nie druga mapa WebGL): każda pokazuje województwo z danym miejscem w kolorach bieżącego wskaźnika i obrysem w kolorze `korekta`. Na dużej mapie oba miejsca obrysowane.
-- **Na start tylko podstawowe dane (decyzja 19.11.2026):** tabela „Porównaj” otwiera się z 7 podstawowymi wskaźnikami (§4f), nie ze wszystkimi. Każdy wiersz ma ×; „+ Dodaj wskaźnik” dopisuje dowolny inny (także z biblioteki); „Przywróć podstawowe” wraca do startu. Ta sama zasada obowiązuje wszędzie, gdzie są dane: rankingi, profil, eksport, biblioteka – gotowy, mały zestaw na start, resztę użytkownik dodaje i usuwa sam.
-- Link `?c=<teryt>,<teryt>` otwiera to samo porównanie. Dowolne dwa miejsca, także różnych poziomów (wtedy dopisek „różne poziomy – porównuj ostrożnie”).
-- Poza pierwszą wersją („Później”): dwie pełne, ruchome mapy obok siebie (np. dwa wskaźniki albo dwa lata), więcej niż dwa miejsca.
+### 4a. Porównanie dwóch miejsc (w profilu)
+Zakładka „Porównaj”: tabela dwóch miejsc (wiersze stałego zestawu + wskaźnik wybrany menu danych; wartości, miejsca w rankingu, słowna różnica, kolory neutralne) i dwie małe mapki SVG z obrysem miejsc. Link `?u=A&c=A,B`. Dowolne dwa miejsca, także różnych poziomów (dopisek „różne poziomy – porównuj ostrożnie”). **Osobna strona `/porownaj` znika**; dwa wskaźniki dla jednego obszaru = druga mapa (§3.5).
 
-## 4b. Pobierz i udostępnij (S19)
+### 4b. Pobierz i udostępnij – WSTRZYMANE (decyzja D9, 20.11.2026)
+Przycisk, okno z kartami PNG i CSV są niewidoczne; kod żyje za przełącznikiem `?share=1` (`src/core/share/share-flag.ts`) i zostaje bez zmian. Zadania w `tasks/wstrzymane/`. Wrócą po osobnej decyzji; wtedy eksport otwiera się tylko z mapy i profilu. Zasady (licencja CC BY 4.0, źródło GUS na każdej karcie, logo z `public/brand/`) są w historii tej sekcji (v3) i w `tasks/wstrzymane/`.
 
-Pomysł właściciela 24.10.2026: każdy może pobrać dane, tabelki, mapy z legendą i porównania, żeby je udostępniać i używać – w formatach pod komentarze, Instagram i X. To publiczna wersja tego, co miało być w karuzelach.
+### 4c. Miasto i obszar wiejski w gminach miejsko-wiejskich (bez zmian względem v3)
+Dotyczy tylko gmin miejsko-wiejskich (TERYT 7 cyfr kończy się na 3). W profilu zwijany blok „Miasto i obszar wiejski”; rozwinięcie pobiera **jeden** plik `public/data/parts/<teryt województwa>.json`; 14 wskaźników z `config/parts.json`; kolumny Gmina · Miasto · Obszar wiejski; brak wartości → „brak danych”; telefon: karta na wskaźnik. Nie pokazujemy dochodów i wydatków na mieszkańca dla części ani osobnych obrysów miasta i wsi.
 
-- **Przycisk „Pobierz i udostępnij”** w panelu wskaźnika (mapa, ranking), w stopce profilu (profil) i w zakładce „Porównaj” (porównanie). Otwiera okno z podglądem.
-- **Karty (obrazy PNG):**
-  | Karta | Co na niej jest |
-  |---|---|
-  | Mapa | tytuł (wskaźnik, rok, poziom, obszar), mapa w kolorach z legendą 5 klas i „brak danych”, wybrane miejsce obrysowane |
-  | Ranking | 10 najwyżej i 10 najniżej (albo całość, gdy ≤ 20) jako słupki, wybrane miejsce wyróżnione |
-  | Profil | nazwa miejsca, duża liczba z miejscem w rankingu (jedno kółko korekty), 5 wybranych wskaźników |
-  | Porównanie | dwa miejsca, dwie małe mapki, 5–8 wierszy porównania ze słowną różnicą |
-  Każda karta ma logo z `public/brand/`, linijkę „Źródło: GUS, Bank Danych Lokalnych, <rok>” i adres strony – bez wyjątku (licencja danych CC BY 4.0).
-- **Formaty:** Post 4:5 – 1080×1350 (Instagram, Facebook, Threads) · Kwadrat 1:1 – 1080×1080 (komentarze, X, Facebook) · Story 9:16 – 1080×1920 (treść w środkowym pasie 1080×1610) · Poziomy 16:9 – 1600×900 (X, LinkedIn, strony). Motyw jasny albo ciemny.
-- **Zestaw (edytowalny, decyzja 17.11.2026):** okno otwiera się z gotowym zestawem stron zależnym od miejsca otwarcia (mapa: Mapa · Ranking najwyżej · Ranking najniżej · Tabela, + Profil przy wybranym miejscu; profil: Profil · Duża liczba · Wykres lat · Tabela; porównanie: Porównanie · Tabela · Duża liczba A vs B; rankingi: Ranking · Mapa · Rozkład; biblioteka: Ranking · Rozkład). Strony są numerowane „n/N” (numer także na karcie, gdy N > 1). Każda strona ma **×** (usuwa; ostatniej nie da się usunąć) i ‹ › (kolejność); **+** dodaje stronę: Mapa, Ranking, Tabela, Duża liczba, Wykres lat, Rozkład, Porównanie (gdy są dwa miejsca) albo „Podziel tę stronę” (np. tabela > 8 wierszy → kilka stron). Pod podglądem „Dane na tej stronie”: lista wskaźników z × i „+ Dodaj dane” (domyślnie wskaźniki z listy „Moje wskaźniki”, §4f). „Pobierz wszystkie” pobiera kolejne pliki PNG (bez ZIP); na telefonie „Udostępnij zestaw” wysyła je systemowym oknem. Zakaz generatora serii slajdów pod konta Faktografii zostaje – to jest narzędzie dla każdego użytkownika.
-- **Dane (CSV):** to, co widać – bieżący wskaźnik dla wszystkich jednostek poziomu (lub obszaru), cały profil miejsca albo tabela porównania. Kodowanie UTF-8, separator „;”, przecinek dziesiętny (otwiera się wprost w polskim Excelu), kolumny z rokiem i źródłem.
-- **Na telefonie** przycisk „Udostępnij” otwiera systemowe okno (Instagram, X, komunikatory), jeśli przeglądarka to umie; inaczej „Pobierz”.
-- **Prawa:** w oknie zdanie „Możesz używać i udostępniać, podając źródło: Faktografia Atlas, dane GUS”. Karty i CSV na licencji CC BY 4.0.
-- **Zasady techniczne:** karty powstają z tego, co już jest w pamięci strony; **wyjątek (17.11.2026): dodanie do strony wskaźnika, którego wartości nie ma w pamięci = dokładnie jedno pobranie pliku wartości** (potem z pamięci), zero nowych pakietów (SVG i `canvas` przeglądarki, istniejące `roughjs` do kółka korekty), napisy nie wychodzą poza pola także dla najdłuższych nazw („Powiat kędzierzyńsko-kozielski”), działa offline po wczytaniu strony; kod okna i rysowania ładowany dopiero po kliknięciu (osobny plik JS – nie powiększa wejścia, §7).
-- **Poza zakresem:** generator serii slajdów pod konta Faktografii (osobne prywatne repo – może korzystać z tych samych kart), wideo, GIF, XLSX.
+### 4d. Dawna Biblioteka GUS – zastąpiona wyborem danych
+Strony `/biblioteka` i `/biblioteka/<id>` znikają. Stary adres `/biblioteka` → `/mapa?menu=dane` (z `q=` przy frazie), `/biblioteka/101` → `/mapa?i=b101`. Wskaźnik z biblioteki ma id `b<id>` i działa na mapie, w widokach, w drugiej mapie; **nie** w stałym zestawie profilu (profil = jeden plik na województwo). Znikają „Zamów wskaźnik” i „Pobierz CSV”.
 
-## 4c. Miasto i obszar wiejski w gminach miejsko-wiejskich (S20)
+### 4e. Rankingi, „Moje wskaźniki”
+Strona `/rankingi` zastąpiona widokiem Ranking (§3.4): stary adres → `/mapa?…&v=ranking`. „Moje wskaźniki” usunięte (§4).
 
-Decyzja 25.10.2026 (zwiad W1.11: `docs/research/W1.11-wynik.md`). Dotyczy **tylko gmin miejsko-wiejskich** (7-cyfrowy TERYT kończy się na 3). W BDL mają dwie części: **miasto** (kod …4) i **obszar wiejski** (kod …5).
-- W profilu takiej gminy, pod przeglądem: zwijany blok „Miasto i obszar wiejski”. Domyślnie zwinięty; dopiero rozwinięcie pobiera **jeden** plik `public/data/parts/<teryt województwa>.json` (wejście w profil nadal robi dokładnie jedno żądanie – §7).
-- Zawartość: 14 wskaźników z `config/parts.json`; kolumny „Gmina · Miasto · Obszar wiejski” dla najnowszego roku, w którym jest jakakolwiek wartość części; brak wartości → „brak danych”. Telefon: każdy wskaźnik jako karta (trzy liczby pod nazwą), bez poziomego przewijania.
-- **Nie pokazujemy** dochodów i wydatków na mieszkańca (GUS podaje dla części zera = „tylko cała gmina”) ani wskaźników tylko powiatowych. Liczby bierzemy tak, jak podaje BDL (zero zostaje zerem).
-- **Nie robimy** osobnych obrysów miasta i wsi na mapie (nie mamy ich granic) ani koloru części na mapie głównej.
-- Podpis bloku: „Dane GUS (Bank Danych Lokalnych) dla części gminy miejsko-wiejskiej.”
+## 5. Telefon (< 768 px)
+- Nagłówek ≤ 56 px: logo, lupa, menu (Start, Mapa, motyw). Mapa na cały ekran pod nagłówkiem (≥ 75% wysokości, `dvh`, `safe-area`).
+- **Dolny pasek wskaźnika** (nazwa, rok, legenda; ≥ 48 px); dotknięcie otwiera wybór danych (arkusz). Widok nazwy, roku i legendy zostaje widoczny nad paskiem zgody.
+- Dymek po pierwszym dotknięciu jednostki, drugie dotknięcie otwiera profil. Profil: dolny arkusz (40% → pełny), mapa nad nim dotykalna, wybrane miejsce widoczne.
+- Zakładki widoków w jednym rzędzie; dwie mapy jedna pod drugą. Naraz otwarty najwyżej jeden arkusz. Okruszki w jednej linii, „‹” jak „Wróć”.
+- Pasek zgody ≤ 15% wysokości, znika po wyborze. Pola dotykowe ≥ 44 px, brak poziomego przewijania przy 360 i 390 px. Tablet (≥ 768 px) = układ komputera.
 
-## 4d. Biblioteka GUS (S21)
-
-Decyzja 25.10.2026. Osobna strona na całą bibliotekę wskaźników BDL pobieraną stopniowo przez robota (`docs/research/biblioteka-gus.md`). Ekran główny z mapą i 20 wskaźnikami zostaje taki, jaki jest.
-- **`/biblioteka`** (link „Biblioteka” w nagłówku): licznik („<n> wskaźników GUS, z czego <m> można już przeglądać”), kafelki kategorii (działy GUS) z okruszkami, wyszukiwarka po nazwie (bez względu na polskie znaki i wielkość liter), filtry: poziom (powiaty / gminy), jednostka miary, „tylko już pobrane”; wyniki jako lista po 50 z „Pokaż więcej”. Stan (kategoria, tekst, filtry) w adresie `?k= &q= &l= &p=`.
-- **`/biblioteka/<id>`**: nazwa, kategoria, jednostka, wybór roku i poziomu, ranking „najwyżej / najniżej” (po 10), „Pobierz CSV”, źródło i licencja (GUS, BDL, CC BY 4.0). Wskaźnik jeszcze niepobrany → komunikat i przycisk „Zamów ten wskaźnik” (otwiera zgłoszenie na GitHubie z wypełnionym tekstem – sami niczego nie wysyłamy).
-- **Zmiana 17.11.2026 – tylko pobrane:** lista pokazuje wyłącznie wskaźniki z danymi (niepobrane są ukryte, bez przełącznika „tylko pobrane”). Nad listą: „<m> wskaźników z danymi (z <n> w spisie GUS). Kolejne dane dochodzą co noc.” i przycisk „Zamów dane na temat…” (zgłoszenie na GitHubie z wpisanym tematem, jak „Zamów ten wskaźnik”). Pusty wynik: „Nie mamy jeszcze danych o „…”” + przycisk zamówienia.
-- **Zmiana 17.11.2026 – pobrane działają wszędzie:** wskaźnik z biblioteki (id `b<id>` w adresie `?i=b<id>`) działa na mapie, w rankingach, w tabeli porównania i w eksporcie jak 20 głównych; **nie** w profilu miejsca (profil = jeden plik na województwo, §7). Spis pobranych: mały plik `library/available.json` zapisywany przez robota (id, nazwa, jednostka, dział, poziomy, lata); strona nigdy nie ładuje pełnego `index.json` poza `/biblioteka`. Na stronie wskaźnika: „Pokaż na mapie”, „Dodaj do moich”.
-- **Nie ma w pierwszej wersji** (idzie do „Później”): wskaźniki z biblioteki w profilu miejsca, konta, automatyczna kolejka zamówień (zamówienia czytamy ręcznie).
-- Dane: indeks (jeden plik) i wartości (jeden plik na wskaźnik) czytane z jednego adresu, ustawianego w `src/core/library/config.ts` (zmienna `VITE_LIBRARY_BASE`) – dzięki temu zmiana magazynu danych (gałąź w repo → Cloudflare R2) nie dotyka kodu stron.
-
-## 4e. Rankingi (`/rankingi`, 17.11.2026)
-
-- Pasek wyboru: wskaźnik (okno wskaźników jak na mapie), poziom (Województwa/Powiaty/Gminy; poziom, którego wskaźnik nie ma, jest wyłączony z podpowiedzią), rok, województwo (zawężenie), pole „Szukaj” po nazwie (bez względu na polskie znaki i wielkość liter).
-- Nad listą zdania: „Najwyżej: …”, „Najniżej: …”, „Mediana: …” (liczone z danych, z jednostką). Lista: miejsce, pełna nazwa (z rodzajem gminy), wartość z jednostką, słupek; po 50 z „Pokaż więcej”; klik → mapa z tym miejscem i wskaźnikiem. Nigdzie nie ma samego kodu TERYT.
-- Stan w adresie `?i= &l= &y= &w= &q=`; pasek „Kopiuj link · Pobierz i udostępnij” (§4b).
-- Dla wskaźnika z biblioteki (§4d) ranking działa tak samo.
-
-## 4f. Moje wskaźniki (17.11.2026)
-
-- Każdy użytkownik ma własną listę wskaźników. Na start 7 podstawowych (stała w kodzie): Ludność ogółem · Gęstość zaludnienia · Przyrost naturalny · Saldo migracji · Udział ludności 65+ · Stopa bezrobocia · Przeciętne wynagrodzenie. Każdy da się usunąć (×) i przesunąć (‹ ›); „+ Dodaj wskaźnik” otwiera okno z zakładkami „Szukaj” (wyszukiwarka) i „Kategorie” (grupy głównych wskaźników i działy biblioteki, z okruszkami); dodać można dowolny wskaźnik z danymi (z 20 głównych i pobrany z biblioteki). „Przywróć podstawowe” wraca do startu. Lista może być pusta.
-- Gdzie działa: panel wskaźnika na mapie (na górze), arkusz wskaźnika na telefonie, sekcja na górze Biblioteki, wiersze tabeli „Porównaj”, domyślne dane stron w eksporcie (§4b), wybór w Rankingach.
-- Zapis w pamięci przeglądarki (klucz `faktografia-my-indicators`; tylko lista identyfikatorów; nie wysyłamy jej do nas; bez kont). Polityka prywatności ma o tym jedno zdanie. Link do własnej listy – „Później”.
-
-## 5. Telefon (< 768 px) – makieta 04
-
-Ogląd właściciela 21.10.2026: telefon nie nadaje się do użytku (panel wskaźnika nad mapą zajmuje pół ekranu, mapa to pasek, profil zasłania resztę, okruszki i „Wróć” leżą na mapie, pasek zgody zakrywa dół). Wymagania:
-
-- **Nagłówek** ≤ 56 px: logo, lupa, menu. „Motyw”, „O projekcie”, „Skąd są dane” – w menu.
-- **Mapa na cały ekran** pod nagłówkiem (≥ 75% wysokości okna), od razu w kolorach. Wysokość przez `dvh`, dolne elementy z odstępem `safe-area`.
-- **Dolny pasek wskaźnika** „Gęstość zaludnienia ▾ · 2025” (≥ 48 px). Dotknięcie wysuwa **arkusz wskaźnika**: wybór wskaźnika, poziom, legenda, rok, najwyżej/najniżej. Zamknięcie: przeciągnięcie w dół, ×, dotknięcie mapy.
-- **Dymek** po pierwszym dotknięciu jednostki, nad dolnym paskiem, z przyciskiem „Otwórz profil”; drugie dotknięcie tej samej jednostki otwiera profil.
-- **Profil:** dolny arkusz na 40% wysokości, przeciągany do pełnej wysokości i z powrotem; treść jak w §4. Mapa nad arkuszem pozostaje widoczna i dotykalna, a wybrane miejsce mieści się nad arkuszem.
-- Naraz otwarty najwyżej jeden arkusz.
-- **Okruszki** w jednej linii u góry mapy, „‹” działa jak „Wróć” (bez osobnego przycisku na mapie).
-- **Pasek zgody** ≤ 15% wysokości okna, znika po wyborze.
-- Pola dotykowe ≥ 44 px, brak poziomego przewijania przy 360 i 390 px. Tablet (≥ 768 px) = układ komputera.
-
-## 5a. Wejście w głąb mapy (komputer i telefon)
-
-- Wybór województwa / powiatu (klik, ranking, wyszukiwarka): kamera **płynnie** podjeżdża do jednostki (ok. 600 ms), bez skoku. Gest użytkownika przerywa ruch.
-- Jednostki niższego poziomu pojawiają się **kafelek po kafelku**, od środka na zewnątrz; cała fala < 1 s niezależnie od liczby jednostek.
-- Reszta Polski nie znika – zostaje wyblakła jako tło.
-- „Wróć” i okruszki: ruch odwrotny, szybszy (ok. 400 ms). Zmiana wskaźnika / roku: kolory przelewają się w 300 ms.
-- Przybliżanie i oddalanie kółkiem, gestem dwóch palców i przyciskami „+ / −” jest płynne (ok. 300 ms, bez skoków). Czerwony obrys wybranej jednostki gaśnie (300 ms), gdy jednostka zajmuje mniej niż ok. 2% szerokości mapy (po oddaleniu), i wraca po przybliżeniu; wybór zostaje w adresie.
-- Otwarcie linku z `?u=` i zmiana rozmiaru okna – bez animacji. `prefers-reduced-motion` – wszystko od razu.
+## 5a. Wejście w głąb mapy (komputer i telefon; bez zmian względem v3)
+Wybór województwa lub powiatu: kamera płynnie podjeżdża (ok. 600 ms), jednostki niższego poziomu pojawiają się kafelek po kafelku (cała fala < 1 s), reszta Polski zostaje wyblakła. „Wróć” i okruszki: ruch odwrotny (ok. 400 ms). Zmiana wskaźnika lub roku: kolory przelewają się w 300 ms. Przybliżanie kółkiem, dwoma palcami i „+ / −” jest płynne. Obrys wybranej jednostki gaśnie, gdy zajmuje < ok. 2% szerokości mapy. Otwarcie linku z `?u=` i zmiana rozmiaru okna – bez animacji. `prefers-reduced-motion` – wszystko od razu.
 
 ## 6. Objaśnienia wskaźników
-
-Dla każdego wskaźnika (opcjonalnie) wpis w pliku `public/data/explanations.json`. Niezależnie od wpisu blok „Na tle kraju” liczy się sam z danych (miejsce, mediana Polski, najmniej–najwięcej; szczegóły: `docs/ARCHITEKTURA.md` §3, zadania W1.6 i W2.12).
-
-| Pole | Treść | Limit |
-|---|---|---|
-| `short` | definicja prostym językiem („Ilu ludzi mieszka średnio na 1 km² powierzchni.”) | 160 znaków |
-| `howToRead` | jak czytać, na co uważać („Miasta zawsze wypadają wyżej niż wsie; porównuj miasta z miastami.”) | 240 znaków |
-| `world` | Polska na tle UE/świata, z rokiem i liczbą; **jeśli definicje się różnią (np. bezrobocie rejestrowane vs badanie BAEL), napisać to wprost** | 240 znaków + `source`, `url`, `year` |
-| `funFact` | jedna ciekawostka ze świata albo z Polski | 200 znaków + `source`, `url` |
-| `definitionUrl` | oficjalna definicja GUS (pojęcia w statystyce publicznej / opis zmiennej BDL) | link |
-
-Zasady: każda liczba i ciekawostka ma źródło z linkiem; research robi Gem Research, Planista sprawdza każde źródło, **akceptuje właściciel** przed publikacją. Brak wpisu = brak przycisku (?), strona działa dalej.
+Dla wskaźnika (opcjonalnie) wpis w `public/data/explanations.json`: `short` (≤ 160 znaków), `howToRead` (≤ 240), `world` (≤ 240 + `source`, `url`, `year`; jeśli definicje się różnią, napisać to wprost), `funFact` (≤ 200 + `source`, `url`), `definitionUrl`. Każda liczba i ciekawostka ma źródło z linkiem; **akceptuje właściciel** przed publikacją. Brak wpisu = brak przycisku (?). Blok „Na tle kraju” (miejsce, mediana, najmniej–najwięcej) liczy się sam z danych.
 
 ## 7. Szybkość (progi sprawdzane testem w CI)
 
 | Sytuacja | Próg |
 |---|---|
-| Kod JavaScript ładowany na wejściu | bez danych w środku: `units.json` i granice doczytywane jako osobne pliki z pamięcią podręczną |
-| Dane pobierane na wejściu | granice + lista jednostek + **jeden** plik wskaźnika domyślnego; żadnego `profiles/*` |
-| Wybór miejsca | **dokładnie jedno** żądanie danych profilu (`public/data/profiles/<województwo>.json`) |
-| Zmiana wskaźnika | jedno żądanie `values/<id>.json` (jeśli nie było w pamięci); dla wskaźnika z biblioteki jedno żądanie pliku wartości biblioteki |
-| Wejście (po zmianie 17.11) | dodatkowo mały `library/available.json` (< 50 KB); nigdy pełny `index.json` biblioteki (7,9 MB) |
-| Wskaźnik dodany do strony eksportu | dokładnie jedno żądanie pliku wartości (potem z pamięci) |
-| Profil gminy miejsko-wiejskiej | bez dodatkowych żądań; dopiero rozwinięcie „Miasto i obszar wiejski” = jedno żądanie `parts/<województwo>.json` (§4c) |
-| Biblioteka GUS (`/biblioteka`) | wejście = jedno żądanie indeksu; wybór wskaźnika = jedno żądanie wartości; żadnych `values/*` ani `profiles/*` z głównej mapy (§4d) |
+| Strona startowa `/` | obrys ≤ 25 KB, `start.json` ≤ 5 KB; zero pobrań wartości wskaźników, `units.json`, `localities`; JS wejścia ≤ 150 KB po kompresji `[?]` (trasy ładowane leniwie) |
+| Wejście na `/mapa` | granice + lista jednostek + **jeden** plik wskaźnika domyślnego; żadnego `profiles/*` ani pełnego `index.json` |
+| Wybór miejsca | **dokładnie jedno** żądanie danych profilu (`profiles/<województwo>.json`) |
+| Zmiana wskaźnika | jedno żądanie `values/<id>.json` (jeśli nie było w pamięci); dla `b<id>` jedno żądanie pliku wartości biblioteki |
+| Otwarcie wyboru danych | jedno żądanie `library/available.json` (< 50 KB po kompresji); nigdy pełny `index.json` (7,9 MB) |
+| Druga mapa | jedno dodatkowe żądanie pliku wartości drugiego wskaźnika; p95 klatki na województwach ≤ 33 ms (SwiftShader ×4, orientacyjnie) |
+| Profil gminy miejsko-wiejskiej | bez dodatkowych żądań; dopiero rozwinięcie „Miasto i obszar wiejski” = jedno żądanie `parts/<województwo>.json` |
 | Pliki danych | bez wcięć (`JSON.stringify` bez spacji) |
-| Odczuwalnie (właściciel na podglądzie, także na telefonie) | mapa w kolorach ≤ 3 s na zwykłym laptopie; otwarcie profilu bez widocznego zacięcia |
+| Odczuwalnie (właściciel na podglądzie, także na telefonie) | mapa w kolorach ≤ 3 s na zwykłym laptopie; otwarcie profilu bez widocznego zacięcia; tło strony startowej płynne |
 
 ## 8. Definicja „gotowe” dla zadań z UI (dodatkowo do AGENTS.md)
-
-1. Zgodne z makietą (02–05) na 1440×900 i 390×844; różnice wypisane w PR.
+1. Zgodne z opisem ekranu w tym dokumencie na 1440×900 i 390×844; różnice wypisane w PR.
 2. Działa **na prawdziwych danych** z `public/data` (nie tylko na danych syntetycznych w teście).
-3. Właściciel przed scaleniem ogląda podgląd Vercel na komputerze i telefonie według linijki „Ty sprawdzasz” przy zadaniu w `docs/ARCHITEKTURA.md` §3; Jules w sekcji „Po ludzku” pisze, co sprawdzić.
-4. Progi z §7 przechodzą.
+3. Nowa funkcja ma **test ścieżki użytkownika** (`tests/e2e/path-*.spec.ts`, znacznik `@PATH-n`), nie tylko „czy się renderuje”.
+4. Właściciel przed scaleniem ogląda podgląd Vercel na komputerze i telefonie według sekcji „Po ludzku” w PR (lista kontroli: `docs/PLAN-FALE-B.md`).
+5. Progi z §7 przechodzą.
 
 ## 9. Kolejność
-
-Zadania wg warstw: `docs/ARCHITEKTURA.md` §3; fale i ich kolejność: §4 (S14 profil, S15 telefon, S16 wejście w głąb, S17 objaśnienia, S18 porównanie, S19 pobierz i udostępnij – zrobione; S20 miasto i wieś, S21 biblioteka GUS – F8–F12; potem „Później”). Od 25.10.2026 fale puszcza Claude, a Ty scalasz (`docs/AUTOMAT.md` §0).
+Plan budowy etapu B (15 zadań, 8 fal budowy) i kto co sprawdza: `docs/PLAN-FALE-B.md`; pliki zadań: `tasks/W23-B01…B15` (+ `W23-U03b`, `W23-U11b`). Zadania wstrzymane: `tasks/wstrzymane/`; zadania warunkowe po odbiorze: `tasks/poczekalnia/`. Odbiór (B15): liczba kliknięć sześciu typowych zadań w limitach z badania U02 (a ≤ 3, b ≤ 3, c ≤ 4, d ≤ 3, e ≤ 3, f = 1 kliknięcie) i test nr 0 na telefonie właściciela.
