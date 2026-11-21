@@ -38,6 +38,26 @@ function whenMapSettled(): Promise<void> {
 }
 
 /**
+ * Animacja tła przygasza część województw (inline `opacity` < 1); kopia przeniosłaby to na okładkę,
+ * a mapa pod spodem jest w pełnych kolorach. Dlatego okładka wygasza przygaszenie do pełnej jasności
+ * (zanim mapa się odsłoni), żeby przejście okładka → mapa nie było skokiem w jasności.
+ */
+function settleCells(copy: SVGElement, animate: boolean): void {
+  const cells = Array.from(copy.querySelectorAll<SVGPathElement>('path'));
+  if (animate) {
+    cells.forEach((el) => {
+      el.style.transition = 'opacity var(--motion-slow) var(--easing), fill var(--motion-slow) var(--easing)';
+    });
+    // Wymuszenie układu: przejście ma ruszyć od przygaszonego stanu skopiowanego z tła.
+    void copy.getBoundingClientRect();
+  }
+  cells.forEach((el) => {
+    el.style.opacity = '1';
+    el.style.fillOpacity = '1';
+  });
+}
+
+/**
  * Przykrywa ekran okładką z kopią `source` (obrys z tła) w tym samym miejscu i zwraca,
  * gdy okładka jest już widoczna. Zdejmuje ją sama, gdy mapa jest gotowa.
  * `animate: false` (prefers-reduced-motion): bez przenikania i przybliżenia.
@@ -63,6 +83,7 @@ export function coverForMap(source: Element | null, animate: boolean): void {
   copy.style.cssText = place(from);
   cover.appendChild(copy);
   document.body.appendChild(cover);
+  settleCells(copy, animate);
   if (animate && from !== rect) {
     requestAnimationFrame(() => {
       void copy.getBoundingClientRect(); // wymusza pozycję startową, żeby przejście ruszyło od niej
