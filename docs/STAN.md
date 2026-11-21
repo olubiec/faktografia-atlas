@@ -1,5 +1,19 @@
 # Stan – 21.11.2026
 
+## Stan na 21.11.2026 wieczorem (fala 2 etapu C scalona; sekcje niżej są starsze – tam, gdzie się różnią, obowiązuje ta)
+`main` = commit 79a3b75 ([W24-C04] #616). Fale 1 i 2 etapu C (`docs/PLAN-FALE-C.md`) są scalone; fala 3 (C05–C08) czeka na „Zakres potwierdzony” i zgodę właściciela na pliki ekranu w C08.
+
+| Status | Praca | PR / commit | Co dało |
+|---|---|---|---|
+| ✅ scalone | W23-B13 profil uproszczony: stałe 7 wskaźników + „Dodaj wskaźnik”, to samo menu wyboru co na mapie, „Kopiuj link” w nagłówku; w Porównaj to samo; białe granice mapy w ciemnym trybie (startowa i funkcjonalna) | #615, 0706707 | jeden mechanizm wyboru wskaźnika (`DataMenu`, `MainView.setIndicator`) |
+| ✅ scalone | W24-C04 wspólne klocki: `Window` (pełny ekran / okno / od dołu), `PageSection`, `LinkList` (pola min. 44 px); „Wybierz dane” zbudowane na `Window` | #616, 79a3b75 | jedno miejsce na warstwę okna (`z-[10000]`) i odstęp wewnętrzny; testy `c04-ui-modules`, `c04-no-hardcoded-layout` |
+
+**Do sprawdzenia przez właściciela:** profil i Porównaj (7 wskaźników, „Dodaj wskaźnik”, „Zmień wskaźnik”, „Kopiuj link”); białe granice na mapie startowej i funkcjonalnej w trybie ciemnym (telefon); „Wybierz dane” (pełny ekran, Esc, powrót fokusu). „Udostępnij” jest za flagą `?share=1` – bez zmian.
+
+**Znane ograniczenia:** zrzuty pikselowe do odświeżenia workflowem „Update snapshots” (uruchamia właściciel, na gałęzi innej niż `main`); granic w ciemnym trybie nie obejrzano wizualnie (tylko lint, typy, testy); znane czerwone testy poza tą pracą: jednostkowe `indicator-panel-basic`, `indicator-panel-my`, test spójności STAN.md, e2e `map-zoom-out`, `path-s3`, ok. 15 e2e profilu i porównania na telefonie (czerwone już przed B13), dwa `q2-compare-remove` (zachowanie usunie B14); pełne `pnpm test:e2e` nigdy nie przeszło w całości.
+
+**Dalej:** fala 3 = C05 nagłówek i menu telefonu · C06 stopka (ok. 6 linków) · C07 strona `/` · C08 panele i okna na mapie (jeden szkielet okna profilu, wspólny odstęp dolny; wymaga zgody na `AtlasMap.tsx`, `ProfileSheet*.tsx`). Przed startem: „Zakres potwierdzony” i poprawione listy „Zmieniaj” w C05–C08. Fala 4: sprzątanie (B14) i testy-strażnicy spójności ekranów (C09).
+
 ## Stan na 21.11.2026 (fala 1 etapu C i „Jedna mapa” scalone; sekcje niżej są starsze – tam, gdzie się różnią, obowiązuje ta)
 `main` = commit ccc3ab1 ([M7] #613). Fala 1 etapu C (`docs/PLAN-FALE-C.md`) jest scalona; fale 2–4 czekają na polecenie właściciela. Wygląd i zachowanie na telefonie: „do sprawdzenia” przez właściciela na faktografia.eu.
 
