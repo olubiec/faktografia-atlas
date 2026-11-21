@@ -8,7 +8,6 @@ const AtlasMap = lazy(() => import('./map/AtlasMap'));
  * Ekran główny (PRODUKT.md §3): panel wskaźnika po lewej, mapa na resztę szerokości.
  * Tytuł strony jest tylko dla czytników ekranu; opis i źródło są w panelu wskaźnika.
  */
-import { PortalSections } from './home/PortalSections';
 import { IntroOverlay } from './map/IntroOverlay';
 
 export function Home() {
@@ -23,12 +22,8 @@ export function Home() {
               <AtlasMap />
             </Suspense>
           </div>
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-arkusz/90 border border-linia px-4 py-2 text-sm text-olowek pointer-events-none text-center shadow-sm whitespace-nowrap hidden md:block z-[60]">
-            Przewiń w dół: Działy tematyczne · Rekordy Polski · Pojedynki miejsc · Biblioteka
-          </div>
         </main>
 
-        <PortalSections />
         <IntroOverlay />
       </div>
     </AnnotationProvider>

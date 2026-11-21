@@ -1,4 +1,8 @@
-import { Link, useLocation } from 'react-router';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router';
+import tokens from '@/../config/tokens.json';
+import { StartBackground } from './StartBackground';
+import { useReducedMotion } from '@/view/map/hooks/useReducedMotion';
 import { SiteLayout } from '../layout/SiteLayout';
 import { homeSearch } from '@/core/url/home';
 import { START_PAIRS, START_PLACES } from '@/core/start/examples';
@@ -21,11 +25,29 @@ function withTech(href: string, search: string): string {
 
 /**
  * Prosty ekran startowy (`/`): tytuł, jedno zdanie, 3 kroki, przycisk „Otwórz mapę” i przykłady.
- * Bez pobierania danych i bez kodu mapy; tło animowane to osobne zadanie (B07).
+ * Tło: animowany obrys Polski (dwa małe pliki: obrys i start.json), bez kodu mapy i bez wartości wskaźników.
+ * „Otwórz mapę”: obrys płynnie powiększa się i zanika (czas `motion.cameraIn`), potem `/mapa`.
  */
 export function StartPage() {
   const { search } = useLocation();
+  const navigate = useNavigate();
+  const reduced = useReducedMotion();
+  const [leaving, setLeaving] = useState(false);
+  const timer = useRef<number | null>(null);
   const to = (href: string) => withTech(href, search);
+
+  useEffect(() => () => {
+    if (timer.current !== null) window.clearTimeout(timer.current);
+  }, []);
+
+  const openMap = (e: MouseEvent<HTMLAnchorElement>) => {
+    // Kliknięcie z klawiszem (nowa karta) i brak animacji (reduced-motion): zwykła nawigacja linku.
+    if (reduced.current || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    if (leaving) return;
+    setLeaving(true);
+    timer.current = window.setTimeout(() => navigate(to('/mapa')), tokens.motion.cameraIn);
+  };
 
   return (
     <SiteLayout
@@ -34,15 +56,19 @@ export function StartPage() {
         description: 'Zobacz, jak wypada Twoja gmina na tle całej Polski, na danych GUS.',
       }}
     >
+      <div className="relative isolate overflow-hidden">
+        <div className="absolute inset-x-0 top-0 -z-10 mx-auto flex w-full max-w-3xl justify-center px-4 pt-6 md:px-8">
+          <StartBackground leaving={leaving} />
+        </div>
       <div className="max-w-3xl mx-auto w-full px-4 md:px-8 py-10 md:py-16 flex flex-col gap-10">
-        <section className="flex flex-col gap-4">
+        <section className="flex flex-col gap-4 bg-kalka/80 p-4">
           <h1 className="text-4xl md:text-5xl font-[800] text-tusz tracking-tight">Faktografia</h1>
           <p className="text-lg md:text-xl text-tusz">
             Zobacz, jak wypada Twoja gmina na tle całej Polski, na danych GUS.
           </p>
         </section>
 
-        <ol className="flex flex-col gap-2 list-none p-0 m-0 text-base text-tusz">
+        <ol className="flex flex-col gap-2 list-none p-0 m-0 text-base text-tusz bg-kalka/80 p-4">
           {STEPS.map((step) => (
             <li key={step}>{step}</li>
           ))}
@@ -51,6 +77,7 @@ export function StartPage() {
         <div>
           <Link
             to={to('/mapa')}
+            onClick={openMap}
             className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-6 py-3 border border-tusz bg-tusz text-arkusz font-bold hover:bg-tusz/90 transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz focus:ring-offset-2 focus:ring-offset-kalka"
           >
             Otwórz mapę
@@ -84,6 +111,7 @@ export function StartPage() {
             </div>
           </div>
         </section>
+      </div>
       </div>
     </SiteLayout>
   );
