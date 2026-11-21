@@ -17,6 +17,7 @@ vi.mock('react-router', () => ({
 }));
 vi.mock('../../src/view/map/hooks/useReducedMotion', () => ({ useReducedMotion: () => ({ current: reduced }) }));
 vi.mock('../../src/view/layout/SiteLayout', () => ({ SiteLayout: ({ children }: { children: React.ReactNode }) => <div>{children}</div> }));
+vi.mock('../../src/view/Home', () => ({ Home: () => null }));
 vi.mock('../../src/view/start/StartBackground', () => ({ StartBackground: () => null }));
 
 import { StartPage } from '../../src/view/start/StartPage';
@@ -34,13 +35,22 @@ function click(init: Record<string, unknown> = {}) {
 afterEach(() => { navigate.mockClear(); reduced = false; });
 
 describe('C02 wejście do mapy', () => {
-  it('klik „Otwórz mapę” nawiguje od razu (bez timera) z viewTransition', () => {
-    vi.useFakeTimers();
+  it('klik „Otwórz mapę”: najpierw ładuje kod mapy, potem nawiguje wewnątrz przejścia widoku', async () => {
+    const start = vi.fn<(cb: () => Promise<void>) => void>((cb) => { void cb(); });
+    vi.stubGlobal('document', { startViewTransition: start });
+    vi.stubGlobal('requestAnimationFrame', (f: () => void) => { f(); return 0; });
     const ev = click();
     expect(ev.defaultPrevented).toBe(true);
-    expect(navigate).toHaveBeenCalledTimes(1);
-    expect(navigate).toHaveBeenCalledWith('/mapa', { viewTransition: true });
-    vi.useRealTimers();
+    await vi.waitFor(() => expect(start).toHaveBeenCalledTimes(1));
+    expect(navigate).toHaveBeenCalledWith('/mapa');
+    vi.unstubAllGlobals();
+  });
+  it('bez obsługi przejść widoku: zwykła nawigacja', () => {
+    vi.stubGlobal('document', {});
+    const ev = click();
+    expect(ev.defaultPrevented).toBe(true);
+    expect(navigate).toHaveBeenCalledWith('/mapa');
+    vi.unstubAllGlobals();
   });
   it('z klawiszem modyfikującym: zwykły link, bez navigate', () => {
     const ev = click({ ctrlKey: true });
