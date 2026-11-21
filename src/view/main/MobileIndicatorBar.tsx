@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { NavArrowDown, NavArrowUp, ShareAndroid } from 'iconoir-react';
 import { classColorToken } from '@/core/map/classes';
 import type { ChoroplethData } from '@/view/map/hooks/useChoropleth';
@@ -14,6 +14,7 @@ import { BottomSheet } from '@/view/ui/BottomSheet';
 import { Icon } from '@/view/ui/Icon';
 import { useShareData } from '@/view/share/useShareData';
 import { LazyShareDialog } from '@/view/share/LazyShareDialog';
+import { clearMenuUrl, readMenuUrl } from '@/view/data-menu/menuUrl';
 import { IndicatorPanel } from './IndicatorPanel';
 import { isShareEnabled } from '../../core/share/share-flag';
 
@@ -55,7 +56,8 @@ export function MyIndicatorsManager({ all, onPick, defaultOpen = false, activeId
 /**
  * Dolny pasek wskaźnika dla telefonu (< 768 px, PRODUKT.md §5):
  * prezentuje nazwę bieżącego wskaźnika, rok oraz mini-pasek 5 kolorów legendy.
- * Dotknięcie paska otwiera wysuwany arkusz BottomSheet z pełną zawartością IndicatorPanel.
+ * Dotknięcie paska otwiera wysuwany arkusz BottomSheet: na górze menu wyboru danych (DataMenu, układ „stack”),
+ * pod nim poziom, rok, legenda i zestawienia z IndicatorPanel.
  */
 export function MobileIndicatorBar({
   view,
@@ -69,7 +71,7 @@ export function MobileIndicatorBar({
   onOpenChange,
   children,
 }: MobileIndicatorBarProps) {
-  const [internalOpen, setInternalOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(() => readMenuUrl().open);
   const [prevProfileOpen, setPrevProfileOpen] = useState(profileOpen);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
@@ -87,7 +89,13 @@ export function MobileIndicatorBar({
       setInternalOpen(next);
     }
     onOpenChange?.(next);
+    if (!next) clearMenuUrl();
   };
+
+  // Adres ?menu=dane (np. po przekierowaniu starej Biblioteki) otwiera arkusz z menu danych.
+  useEffect(() => {
+    if (readMenuUrl().open) onOpenChange?.(true);
+  }, [onOpenChange]);
 
   const scheme = choropleth?.scheme ?? 'sequential';
   const swatchTokens = useMemo(
@@ -163,7 +171,14 @@ export function MobileIndicatorBar({
 
       >
         <IndicatorPanel
-          view={view}
+          view={{
+            ...view,
+            // Po wyborze wskaźnika arkusz się zamyka, żeby od razu widać było nową mapę.
+            setIndicator: (id: string) => {
+              view.setIndicator(id);
+              setSheetOpen(false);
+            },
+          }}
           choropleth={choropleth}
           ranking={ranking}
           index={index}

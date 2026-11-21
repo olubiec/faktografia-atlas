@@ -46,8 +46,10 @@ test.describe('Full Mobile Path Flow (@S15)', () => {
       await expect(pickerTrigger).toBeVisible();
       await pickerTrigger.click();
 
-      // Select another indicator in popover
-      const targetOption = page.getByRole('option', { name: /Stopa bezrobocia/i }).first();
+      // Menu danych w arkuszu: szukaj i wybierz wynik
+      const menu = page.locator('[data-slot="sheet-indicator-picker"]');
+      await menu.getByRole('searchbox', { name: 'Szukaj wskaźnika' }).fill('bezrobocie');
+      const targetOption = menu.getByRole('button', { name: /Stopa bezrobocia/i }).first();
       await expect(targetOption).toBeVisible();
       await targetOption.click();
 

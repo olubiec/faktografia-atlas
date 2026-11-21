@@ -7,6 +7,7 @@ import { useCatalog } from './useCatalog';
 import { PAGE_SIZE } from './DataMenuList';
 import { DataMenuResults, DataMenuSearchField, MIN_QUERY } from './DataMenuSearch';
 import { DataMenuBranch, DataMenuSections } from './DataMenuTree';
+import { clearMenuUrl, readMenuUrl } from './menuUrl';
 
 // Jedno menu wyboru danych: Dział › Grupa › Wskaźnik z szukajką. Wielokrotnego użytku (panel mapy,
 // profil miejsca, telefon): nie zna panelu mapy ani adresu, wynik oddaje przez onSelect(id).
@@ -21,6 +22,9 @@ export type DataMenuProps = {
   layout: 'columns' | 'stack';
   /** Fraza wpisana w szukajkę przy otwarciu (adres ?q=). */
   initialQuery?: string;
+  /** Dział (i grupa) otwarte od razu, np. po powrocie do menu. */
+  initialSectionId?: string | null;
+  initialGroupId?: string | null;
 };
 
 export type DataMenuBodyProps = DataMenuProps & {
@@ -30,10 +34,10 @@ export type DataMenuBodyProps = DataMenuProps & {
 };
 
 /** Część bez ładowania danych: dostaje gotowe drzewo (łatwa do testów). */
-export function DataMenuBody({ tree, loading = false, failed = false, selectedId, onSelect, onClose, isDisabled, layout, initialQuery = '' }: DataMenuBodyProps) {
+export function DataMenuBody({ tree, loading = false, failed = false, selectedId, onSelect, onClose, isDisabled, layout, initialQuery = '', initialSectionId = null, initialGroupId = null }: DataMenuBodyProps) {
   const [text, setText] = useState(initialQuery);
-  const [sectionId, setSectionId] = useState<string | null>(null);
-  const [groupId, setGroupId] = useState<string | null>(null);
+  const [sectionId, setSectionId] = useState<string | null>(initialSectionId);
+  const [groupId, setGroupId] = useState<string | null>(initialGroupId);
   const [limit, setLimit] = useState(PAGE_SIZE);
 
   const searching = text.trim().length >= MIN_QUERY;
@@ -104,24 +108,6 @@ export function DataMenuBody({ tree, loading = false, failed = false, selectedId
 export function DataMenu(props: DataMenuProps) {
   const { tree, loading, failed } = useCatalog();
   return <DataMenuBody {...props} tree={tree} loading={loading} failed={failed} />;
-}
-
-const MENU_PARAM = 'menu';
-const QUERY_PARAM = 'q';
-
-function readMenuUrl(): { open: boolean; query: string } {
-  if (typeof window === 'undefined') return { open: false, query: '' };
-  const params = new URLSearchParams(window.location.search);
-  return { open: params.get(MENU_PARAM) === 'dane', query: params.get(QUERY_PARAM) ?? '' };
-}
-
-/** Po zamknięciu menu parametry menu= i q= znikają z adresu (replace, bez nowego wpisu w historii). */
-function clearMenuUrl() {
-  const url = new URL(window.location.href);
-  if (!url.searchParams.has(MENU_PARAM) && !url.searchParams.has(QUERY_PARAM)) return;
-  url.searchParams.delete(MENU_PARAM);
-  url.searchParams.delete(QUERY_PARAM);
-  window.history.replaceState(window.history.state, '', url.toString());
 }
 
 export type DataMenuDialogProps = {

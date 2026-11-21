@@ -40,45 +40,36 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
       await openMap(page);
       await openPanelIfMobile(page);
 
-      // Open indicator picker button
-      const triggerButton = page.locator('button', { hasText: 'Wskaźnik' }).first();
-      await expect(triggerButton).toBeVisible();
-      await triggerButton.click();
-
-      const popover = page.getByRole('listbox', { name: 'Lista wskaźników' });
-      await expect(popover).toBeVisible();
-
-      // Verify the popover container fits within viewport bounds
-      // Selektor zawężony: mierzymy najbliższy kontener samej listy wskaźników (okno na komputerze albo
-      // arkusz na telefonie), a nie „pierwszy pasujący” z kilku naraz otwartych okien.
-      const container = popover.locator('xpath=ancestor::*[@data-slot="popover-content" or @role="dialog"][1]');
+      // Menu danych w arkuszu telefonu (DataMenu, układ stack): ma ograniczoną wysokość (do połowy ekranu) i przewija się wewnątrz
+      const sheet = page.getByRole('dialog', { name: 'Panel wskaźnika' });
+      const menu = sheet.locator('[data-slot="sheet-indicator-picker"]');
+      const searchInput = menu.getByRole('searchbox', { name: 'Szukaj wskaźnika' });
+      await expect(searchInput).toBeVisible();
       // Okno przesuwa się w trakcie animacji otwierania: czekamy, aż jego dolna krawędź zmieści się w ekranie.
       await expect
         .poll(async () => {
-          const box = await container.boundingBox();
-          return box ? box.y + box.height : null;
+          const box = await menu.locator('[data-slot="sheet-data-menu"]').boundingBox();
+          return box ? box.height : null;
         })
-        .toBeLessThanOrEqual(height + 2);
+        .toBeLessThanOrEqual(height * 0.5 + 2);
 
-      // Verify search input is visible at top before scrolling
-      const searchInput = page.getByPlaceholder('Szukaj wskaźnika…');
-      await expect(searchInput).toBeVisible();
-
-      // Find last indicator option button in listbox
-      const lastOption = page.getByRole('option').last();
-
-      // Scroll last option into view
+      // Ostatni dział → ostatnia grupa → ostatni wskaźnik (każdy przewinięty do widoku)
+      const lastSection = menu.getByRole('navigation', { name: 'Działy' }).getByRole('button').last();
+      await lastSection.scrollIntoViewIfNeeded();
+      await expect(lastSection).toBeVisible();
+      await lastSection.click();
+      const crumbs = menu.getByRole('navigation', { name: 'Ścieżka' });
+      await expect(crumbs).toBeVisible();
+      const lastGroup = menu.locator('button.cursor-pointer').filter({ hasNot: page.locator('nav') }).last();
+      await lastGroup.scrollIntoViewIfNeeded();
+      await lastGroup.click();
+      const lastOption = menu.getByRole('list', { name: 'Wskaźniki' }).getByRole('button').last();
       await lastOption.scrollIntoViewIfNeeded();
       await expect(lastOption).toBeVisible();
-
-      // Search input should still be visible after scrolling
-      await expect(searchInput).toBeInViewport();
-
-      // Click last option
       await lastOption.click();
 
-      // Popover should close
-      await expect(popover).not.toBeVisible();
+      // Po wyborze menu się zwija
+      await expect(searchInput).toBeHidden();
 
       // URL should be updated with new indicator parameter ?i=
       await expect(page).toHaveURL(/\?i=/);
@@ -121,9 +112,10 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
     expect(box).not.toBeNull();
     expect(box!.height).toBeGreaterThanOrEqual(44);
 
-    await triggerButton.click();
-    const firstOption = page.getByRole('option').first();
-    const optionBox = await firstOption.boundingBox();
+    // Menu danych: pierwszy dział na liście też ma min. 44 px
+    const firstSection = page.getByRole('navigation', { name: 'Działy' }).getByRole('button').first();
+    await expect(firstSection).toBeVisible();
+    const optionBox = await firstSection.boundingBox();
     expect(optionBox).not.toBeNull();
     expect(optionBox!.height).toBeGreaterThanOrEqual(44);
   });
