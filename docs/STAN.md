@@ -1,4 +1,20 @@
-# Stan – 20.11.2026
+# Stan – 21.11.2026
+
+## Stan na 21.11.2026 (fala 1 etapu C i „Jedna mapa” scalone; sekcje niżej są starsze – tam, gdzie się różnią, obowiązuje ta)
+`main` = commit ccc3ab1 ([M7] #613). Fala 1 etapu C (`docs/PLAN-FALE-C.md`) jest scalona; fale 2–4 czekają na polecenie właściciela. Wygląd i zachowanie na telefonie: „do sprawdzenia” przez właściciela na faktografia.eu.
+
+| Status | Praca | PR / commit | Co dało |
+|---|---|---|---|
+| ✅ scalone | W24-C01 „Wybierz dane”: okno na cały ekran, bez „Moich wskaźników” na mapie, dolny pasek wyżej; potem bez grupy „Najważniejsze” | 1ba51f7, 2c5fd20 | wskaźniki w grupach z biblioteki |
+| ✅ scalone | W24-C02 wejście do mapy: lekkie przybliżenie, kod mapy ładowany przed przejściem | 12c9bd2, a760015 | koniec „zamknij i otwórz” |
+| ✅ scalone | W24-C03 audyt układu | 1c805f5 | raport `docs/research/c/C03-audyt-ukladu.md` (zasłonięcia, powtórzenia, moduły wspólne) |
+| ✅ scalone | „Jedna mapa” M1–M7 (`docs/PLAN-JEDNA-MAPA.md`) | #605–#613 | wspólny kadr plakatu i mapy, sygnał gotowości mapy, dojazd kamery, dotyk w tle startu, okładka z płynnym przejściem kolorów, mapa otwiera się ze wskaźnikiem z tła |
+
+**Do sprawdzenia przez właściciela:** `/` → „Otwórz mapę” kilka razy w różnych momentach animacji (bez skoku i zmiany kolorów); stuknięcie w województwo w tle; „Wybierz dane” na telefonie i komputerze; dolny pasek na telefonie.
+
+**Znane ograniczenia:** zrzuty pikselowe do odświeżenia workflowem „Update snapshots” (uruchamia właściciel, po fali 1); znane czerwone testy niezwiązane z tą pracą: jednostkowe `indicator-panel-basic`, `indicator-panel-my`, e2e `map-zoom-out`, `path-s3`; pełne `pnpm test:e2e` nie było uruchomione dla M7. Opcjonalnie, tylko za zgodą: jedna trwała scena mapy dla `/` i `/mapa` zamiast okładki (`mapCover.ts`), jeśli skoki wrócą.
+
+**Dalej:** fala 2 (B13, C04) po wpisaniu „Zakres potwierdzony” na podstawie raportu C03.
 
 ## Stan na 20.11.2026 (fala W4 scalona; wcześniejsze sekcje niżej są starsze – tam, gdzie się różnią, obowiązuje ta sekcja)
 Fala W4 (15 zadań QC + poprawka #571) scalona do `main` przez właściciela-zlecenie 20.11, **bez czekania na zielone testy** (testy `testy-shard` na PR-ach były w kolejce lub w toku w chwili scalania). Stan CI na `main` po scaleniu: **do sprawdzenia**.
