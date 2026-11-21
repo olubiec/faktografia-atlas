@@ -78,9 +78,9 @@ export function Sources() {
     <SiteLayout
       className="p-4 md:p-8 pb-24 md:pb-32 max-w-5xl mx-auto w-full space-y-10"
       meta={{
-        title: 'Skąd są dane — Rejestry i metodologia — Faktografia Atlas',
+        title: 'Skąd są dane — Rejestry i metodologia — Faktografia',
         description:
-          'Oficjalne źródła danych statystycznych i przestrzennych w portalu Faktografia Atlas: GUS BDL, TERYT SIMC, GUGiK PRNG i TopoJSON.',
+          'Oficjalne źródła danych statystycznych i przestrzennych w portalu Faktografia: GUS BDL, TERYT SIMC, GUGiK PRNG i TopoJSON.',
       }}
     >
       <header className="space-y-3 max-w-[70ch]">
@@ -88,7 +88,7 @@ export function Sources() {
           Skąd są dane: Źródła danych i rejestry
         </h1>
         <p className="text-sm font-[400] leading-[1.6]">
-          Faktografia Atlas opiera się wyłącznie na oficjalnych, otwartych rejestrach publicznych
+          Faktografia opiera się wyłącznie na oficjalnych, otwartych rejestrach publicznych
           Rzeczypospolitej Polskiej. Wszystkie liczby są pobierane i weryfikowane przez automatyczne
           roboty danych, bez subiektywnej ingerencji w wartości wskaźników.
         </p>

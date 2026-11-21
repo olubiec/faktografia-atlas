@@ -5,7 +5,7 @@ type Trace = { longitude: number; latitude: number; zoom: number }[];
 test.describe('FIX3: uwagi właściciela', () => {
   test('@S16 wybór miejsca to jeden ciągły ruch: bez skoku na starcie i bez drugiego ruchu po otwarciu profilu', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e');
+    await page.goto('/mapa?e2e');
     await page.waitForFunction(() => (window as any).__atlas?.ready === true);
 
     await page.keyboard.press('Control+k');
@@ -32,12 +32,12 @@ test.describe('FIX3: uwagi właściciela', () => {
     expect(Math.abs(after - final)).toBeLessThan(1e-6);
   });
 
-  test('@S14 klik w logo wraca na stronę główną i czyści wybór miejsca', async ({ page }) => {
+  test('@S14 klik w „Mapa” w menu wraca do stanu startowego mapy i czyści wybór miejsca', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=12');
+    await page.goto('/mapa?e2e&u=12');
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
-    await page.getByRole('link', { name: /Faktografia/ }).first().click();
+    await page.locator('header nav').getByRole('link', { name: 'Mapa' }).click();
 
     await expect.poll(() => page.evaluate(() => window.location.search)).not.toContain('u=');
     await expect.poll(() => page.evaluate(() => (window as any).__atlas.profileOpen)).toBe(false);
@@ -49,7 +49,7 @@ test.describe('FIX3: uwagi właściciela', () => {
 
   test('@S14 profil: domyślnie mały zestaw, wskaźnik można usunąć, dodać, a wybór jest zapamiętany', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/?e2e&u=12');
+    await page.goto('/mapa?e2e&u=12');
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const side = page.locator('[data-slot="side"]');

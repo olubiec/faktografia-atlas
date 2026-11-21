@@ -78,9 +78,9 @@ describe('RankingsList (@S21)', () => {
 
   it('link prowadzi na mapę, z rokiem lub bez', () => {
     const data = makeUnits(2);
-    expect(html(data)).toContain('href="/?u=3000001&amp;i=density&amp;l=gmi&amp;y=2024"');
+    expect(html(data)).toContain('href="/mapa?u=3000001&amp;i=density&amp;l=gmi&amp;y=2024"');
     const noYear = html({ ...data, year: null });
-    expect(noYear).toContain('href="/?u=3000001&amp;i=density&amp;l=gmi"');
+    expect(noYear).toContain('href="/mapa?u=3000001&amp;i=density&amp;l=gmi"');
     expect(noYear).not.toContain('&amp;y=');
   });
 

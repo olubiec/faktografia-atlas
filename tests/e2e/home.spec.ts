@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
+import { openMap } from './helpers/open-map';
 
 test.describe('Home Page', () => {
   test('loads properly, displays title, panel description and map', async ({ page }) => {
-    await page.goto('/');
-    await expect(page).toHaveTitle(/Faktografia Atlas/);
+    await openMap(page);
+    await expect(page).toHaveTitle(/^Faktografia$/);
 
     const logo = page.locator('img[alt="Faktografia"]');
     await expect(logo).toBeVisible();
@@ -18,7 +19,7 @@ test.describe('Home Page', () => {
 
   test('na telefonie panel i mapa nie wychodzą poza ekran', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
+    await openMap(page);
     for (const sel of ['aside[aria-label="Panel wskaźnika"]', '[aria-label="Mapa Polski"]']) {
       const box = await page.locator(sel).boundingBox();
       expect(box).not.toBeNull();
@@ -49,15 +50,18 @@ test.describe('Home Page', () => {
     await expect(logo).toHaveAttribute('src', '/brand/faktografia-logo-jasne.svg');
   });
 
-  test('header links navigate to working pages on desktop', async ({ page }) => {
+  test('menu ma Start i Mapę, a linki stopki prowadzą do działających stron na komputerze', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
 
-    await page.locator('header nav').getByRole('link', { name: 'O projekcie' }).click();
+    const menu = page.locator('header nav').first();
+    await expect(menu.getByRole('link')).toHaveText(['Start', 'Mapa']);
+
+    await page.getByRole('contentinfo').getByRole('link', { name: 'O projekcie' }).click();
     await expect(page).toHaveURL(/\/o-projekcie/);
     await expect(page.locator('h1', { hasText: 'O projekcie' })).toBeVisible();
 
-    await page.locator('header nav').getByRole('link', { name: 'Skąd są dane' }).click();
+    await page.getByRole('contentinfo').getByRole('link', { name: 'Skąd są dane' }).click();
     await expect(page).toHaveURL(/\/zrodla/);
     await expect(page.locator('h1', { hasText: 'Skąd są dane' })).toBeVisible();
   });
@@ -70,22 +74,23 @@ test.describe('Home Page', () => {
     await expect(menuBtn).toBeVisible();
 
     await menuBtn.click();
-    const aboutLink = page.locator('header').getByRole('link', { name: 'O projekcie' });
-    await expect(aboutLink).toBeVisible();
+    const mapLink = page.locator('header').getByRole('link', { name: 'Mapa' });
+    await expect(mapLink).toBeVisible();
+    await expect(page.locator('header').getByRole('link', { name: 'Start' })).toBeVisible();
 
     // Close on Escape
     await page.keyboard.press('Escape');
-    await expect(aboutLink).not.toBeVisible();
+    await expect(mapLink).not.toBeVisible();
 
     // Open and click link
     await menuBtn.click();
-    await expect(aboutLink).toBeVisible();
-    await aboutLink.click();
-    await expect(page).toHaveURL(/\/o-projekcie/);
+    await expect(mapLink).toBeVisible();
+    await mapLink.click();
+    await expect(page).toHaveURL(/\/mapa/);
   });
 
-  test('ma najwyżej jedno ręczne zakreślenie na / (STYL.md §7)', async ({ page }) => {
-    await page.goto('/');
+  test('ma najwyżej jedno ręczne zakreślenie na /mapa (STYL.md §7)', async ({ page }) => {
+    await openMap(page);
     await page.waitForTimeout(700); // Allow rough-notation animation to initialize
     const annotations = page.locator('svg.rough-annotation');
     expect(await annotations.count()).toBeLessThanOrEqual(1);

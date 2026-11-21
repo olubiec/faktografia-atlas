@@ -93,7 +93,7 @@ export function SourcesIndicatorTable() {
               </td>
               <td className="px-4 py-3 text-right whitespace-nowrap">
                 <Link
-                  to={`/?i=${indicator.id}`}
+                  to={`/mapa?i=${indicator.id}`}
                   className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-3 py-1.5 text-xs font-semibold bg-arkusz text-tusz border border-linia hover:border-tusz focus:outline-none focus:ring-2 focus:ring-tusz transition-colors rounded-none"
                   aria-label={`Otwórz na mapie: ${indicator.name}`}
                 >

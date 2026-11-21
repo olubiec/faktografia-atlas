@@ -287,7 +287,7 @@ test.describe('Strona wskaźnika /biblioteka/:id (@S21)', () => {
     }
   });
 
-  test('kliknięcie pozycji w rankingu prowadzi do profilu na mapie /?u= (@W16-M04)', async ({
+  test('kliknięcie pozycji w rankingu prowadzi do profilu na mapie /mapa?u= (@W16-M04)', async ({
     page,
   }) => {
     await page.route('**/index.json', (route) => {
@@ -314,7 +314,7 @@ test.describe('Strona wskaźnika /biblioteka/:id (@S21)', () => {
     await expect(rowButton).toBeVisible();
 
     await rowButton.click();
-    await expect(page).toHaveURL(/\/\?u=0202/);
+    await expect(page).toHaveURL(/\/mapa\?u=0202/);
   });
 
   test('stopka SiteFooter jest widoczna na 1440x900 i 360x740 (@W16-M04)', async ({
@@ -345,7 +345,7 @@ test.describe('Strona wskaźnika /biblioteka/:id (@S21)', () => {
 
       const footer = page.getByRole('contentinfo');
       await expect(footer).toBeVisible();
-      await expect(footer.getByText('Faktografia Atlas to niezależna')).toBeVisible();
+      await expect(footer.getByText('Faktografia to niezależna')).toBeVisible();
     }
   });
 });

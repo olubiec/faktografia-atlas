@@ -12,37 +12,37 @@ export function PortalSections() {
           <p className="text-sm text-olowek">Wybierz miejsce, żeby zobaczyć jego profil na tle Polski:</p>
           <div className="flex flex-wrap gap-2">
             <Link
-              to="/?u=1465011"
+              to="/mapa?u=1465011"
               className="inline-flex items-center justify-center min-h-[44px] px-4 bg-arkusz border border-linia text-tusz font-medium hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Warszawa
             </Link>
             <Link
-              to="/?u=1261011"
+              to="/mapa?u=1261011"
               className="inline-flex items-center justify-center min-h-[44px] px-4 bg-arkusz border border-linia text-tusz font-medium hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Kraków
             </Link>
             <Link
-              to="/?u=1217"
+              to="/mapa?u=1217"
               className="inline-flex items-center justify-center min-h-[44px] px-4 bg-arkusz border border-linia text-tusz font-medium hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Powiat tatrzański
             </Link>
             <Link
-              to="/?u=1001042"
+              to="/mapa?u=1001042"
               className="inline-flex items-center justify-center min-h-[44px] px-4 bg-arkusz border border-linia text-tusz font-medium hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Kleszczów
             </Link>
             <Link
-              to="/?u=2264011"
+              to="/mapa?u=2264011"
               className="inline-flex items-center justify-center min-h-[44px] px-4 bg-arkusz border border-linia text-tusz font-medium hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Sopot
             </Link>
             <Link
-              to="/?u=3217011"
+              to="/mapa?u=3217011"
               className="inline-flex items-center justify-center min-h-[44px] px-4 bg-arkusz border border-linia text-tusz font-medium hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Wałcz
@@ -56,43 +56,43 @@ export function PortalSections() {
           <p className="text-sm text-olowek">Zmień wskaźnik widoczny na mapie Polski:</p>
           <div className="flex flex-col gap-2">
             <Link
-              to="/?i=density"
+              to="/mapa?i=density"
               className="flex items-center min-h-[44px] px-4 bg-arkusz border border-linia text-tusz hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Ludność: Gęstość zaludnienia
             </Link>
             <Link
-              to="/?i=unemployment-rate"
+              to="/mapa?i=unemployment-rate"
               className="flex items-center min-h-[44px] px-4 bg-arkusz border border-linia text-tusz hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Praca: Stopa bezrobocia
             </Link>
             <Link
-              to="/?i=avg-wage"
+              to="/mapa?i=avg-wage"
               className="flex items-center min-h-[44px] px-4 bg-arkusz border border-linia text-tusz hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Pieniądze: Przeciętne wynagrodzenie
             </Link>
             <Link
-              to="/?i=dwellings-per-1000"
+              to="/mapa?i=dwellings-per-1000"
               className="flex items-center min-h-[44px] px-4 bg-arkusz border border-linia text-tusz hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Mieszkania: Nowe lokale
             </Link>
             <Link
-              to="/?i=forest-cover"
+              to="/mapa?i=forest-cover"
               className="flex items-center min-h-[44px] px-4 bg-arkusz border border-linia text-tusz hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Środowisko: Lesistość
             </Link>
             <Link
-              to="/?i=preschool-3-6"
+              to="/mapa?i=preschool-3-6"
               className="flex items-center min-h-[44px] px-4 bg-arkusz border border-linia text-tusz hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Życie: Wychowanie przedszkolne
             </Link>
             <Link
-              to="/?i=cars-per-1000"
+              to="/mapa?i=cars-per-1000"
               className="flex items-center min-h-[44px] px-4 bg-arkusz border border-linia text-tusz hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Transport: Samochody osobowe

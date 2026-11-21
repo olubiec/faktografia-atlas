@@ -2,7 +2,12 @@ import { SiteLayout } from '../layout/SiteLayout';
 
 export function About() {
   return (
-    <SiteLayout>
+    <SiteLayout
+      meta={{
+        title: 'O projekcie',
+        description: 'Publiczny atlas statystyczny Polski: dane GUS dla każdego województwa, powiatu i gminy.',
+      }}
+    >
       <div className="max-w-4xl mx-auto px-4 py-8 md:py-12 space-y-12 text-tusz">
         {/* Nagłówek z dużym znakiem */}
         <header className="flex flex-col md:flex-row items-start md:items-center gap-6 border-b border-linia pb-8">
@@ -18,7 +23,7 @@ export function About() {
           </picture>
           <div className="space-y-2">
             <h1 className="text-3xl md:text-4xl font-[800] tracking-[-0.02em]">
-              O projekcie Faktografia Atlas
+              O projekcie Faktografia
             </h1>
             <p className="text-sm md:text-base text-olowek leading-[1.6]">
               Publiczny atlas statystyczny Polski – otwarty dostęp do danych GUS dla każdego obywatela, badacza i samorządowca.

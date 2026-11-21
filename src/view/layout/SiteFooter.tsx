@@ -74,7 +74,7 @@ export function SiteFooter({ decorativeLogo = false, initialStatus }: SiteFooter
               />
             </Link>
             <p className="text-sm font-[400] text-olowek leading-[1.6]">
-              Faktografia Atlas to niezależna, interaktywna mapa Polski prezentująca rzetelne statystyki GUS dla każdego województwa, powiatu i gminy.
+              Faktografia to niezależna, interaktywna mapa Polski prezentująca rzetelne statystyki GUS dla każdego województwa, powiatu i gminy.
             </p>
             <p className="text-xs font-[400] text-olowek leading-[1.5]">
               Dane i opracowanie na licencji{' '}
@@ -94,7 +94,7 @@ export function SiteFooter({ decorativeLogo = false, initialStatus }: SiteFooter
           <nav aria-label="Narzędzia" className="flex flex-col gap-1">
             <h2 className="text-sm font-[700] text-tusz mb-2">Narzędzia</h2>
             <Link
-              to="/"
+              to="/mapa"
               className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Mapa Polski
@@ -123,43 +123,43 @@ export function SiteFooter({ decorativeLogo = false, initialStatus }: SiteFooter
           <nav aria-label="Działy tematyczne GUS" className="flex flex-col gap-1">
             <h2 className="text-sm font-[700] text-tusz mb-2">Działy tematyczne GUS</h2>
             <Link
-              to="/?i=density"
+              to="/mapa?i=density"
               className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Ludność (gęstość zaludnienia)
             </Link>
             <Link
-              to="/?i=unemployment-rate"
+              to="/mapa?i=unemployment-rate"
               className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Rynek pracy (stopa bezrobocia)
             </Link>
             <Link
-              to="/?i=avg-wage"
+              to="/mapa?i=avg-wage"
               className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Pieniądze (wynagrodzenia)
             </Link>
             <Link
-              to="/?i=dwellings-per-1000"
+              to="/mapa?i=dwellings-per-1000"
               className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Mieszkania (nowe lokale)
             </Link>
             <Link
-              to="/?i=forest-cover"
+              to="/mapa?i=forest-cover"
               className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Środowisko (lesistość)
             </Link>
             <Link
-              to="/?i=preschool-3-6"
+              to="/mapa?i=preschool-3-6"
               className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Edukacja (wychowanie przedszkolne)
             </Link>
             <Link
-              to="/?i=cars-per-1000"
+              to="/mapa?i=cars-per-1000"
               className="flex items-center min-h-[44px] min-w-[44px] text-sm text-olowek hover:text-tusz hover:underline transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz"
             >
               Transport (samochody osobowe)

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Command } from 'cmdk';
+import { useNavigate } from 'react-router';
 import { Dialog as DialogPrimitive } from 'radix-ui';
 import { Search, Xmark } from 'iconoir-react';
 import { Icon } from '@/view/ui/Icon';
@@ -7,6 +8,7 @@ import { loadSearchIndex, useSearch } from './useSearch';
 import { loadLocalities } from '@/core/search/load-localities';
 import { searchLocalities, type LocalitySearchResult } from '@/core/search/localities';
 import { writeUrlState } from '@/core/url/state';
+import { homeSearch } from '@/core/url/home';
 import type { SearchResult, Locality } from '@/core/search';
 import type { Unit } from '@/core/units/types';
 import { unitLabel } from '@/core/units/label';
@@ -22,6 +24,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   const [unitsMap, setUnitsMap] = useState<Map<string, Unit>>(new Map());
   const { results, ready, error } = useSearch(query);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (open) {
@@ -62,8 +65,17 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
     onOpenChange(newOpen);
   };
 
+  // Poza ekranem mapy (start, strony) wybór miejsca otwiera mapę z tym miejscem.
+  const openOnMap = (teryt: string): boolean => {
+    if (window.location.pathname === '/mapa') return false;
+    const tech = homeSearch(window.location.search);
+    navigate(`/mapa${tech ? `${tech}&` : '?'}u=${encodeURIComponent(teryt)}`);
+    return true;
+  };
+
   const handleSelectUnit = (item: SearchResult) => {
     handleOpenChange(false);
+    if (typeof window !== 'undefined' && openOnMap(item.teryt)) return;
     writeUrlState({ u: item.teryt });
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('popstate'));
@@ -72,6 +84,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
 
   const handleSelectLocality = (item: LocalitySearchResult) => {
     handleOpenChange(false);
+    if (typeof window !== 'undefined' && openOnMap(item.teryt)) return;
     writeUrlState({ u: item.teryt });
     if (typeof window !== 'undefined') {
       window.dispatchEvent(

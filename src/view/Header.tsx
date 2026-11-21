@@ -42,10 +42,15 @@ export function Header() {
 
   const searchParams = new URLSearchParams(location.search);
   const isZnakLogo = searchParams.get('logo') === 'znak';
-  const isLibraryActive = location.pathname.startsWith('/biblioteka');
-  const isHomeActive = location.pathname === '/';
-  const isRankingsActive = location.pathname.startsWith('/rankingi');
-  const isCompareActive = location.pathname.startsWith('/porownaj');
+  const isStartActive = location.pathname === '/';
+  const isMapActive = location.pathname === '/mapa';
+  // Start i Mapa niosą tylko parametry techniczne (e2e, tune, logo); stan widoku zostaje na mapie.
+  const startTo = `/${homeSearch(location.search)}`;
+  const mapTo = `/mapa${homeSearch(location.search)}`;
+  const onMapClick = () => {
+    setMobileMenuOpen(false);
+    if (isMapActive) window.dispatchEvent(new Event(ATLAS_RESET_EVENT));
+  };
 
   const systemIsDark = useSyncExternalStore(subscribeSystemTheme, getSystemIsDark, () => false);
 
@@ -103,8 +108,7 @@ export function Header() {
   return (
     <header className="h-[56px] md:h-[72px] flex justify-between items-center px-4 md:px-8 border-b border-linia bg-kalka text-tusz relative z-20 shrink-0">
       <Link
-        to={`/${homeSearch(location.search)}`}
-        onClick={() => window.dispatchEvent(new Event(ATLAS_RESET_EVENT))}
+        to={startTo}
         aria-label="Faktografia – strona główna"
         className="flex items-center min-h-[44px]"
       >
@@ -128,49 +132,22 @@ export function Header() {
         </span>
       </button>
 
-      {/* Desktop Navigation */}
-      <nav className="hidden md:flex items-center gap-6 text-sm font-[500]">
+      {/* Desktop Navigation: tylko Start i Mapa */}
+      <nav aria-label="Menu główne" className="hidden md:flex items-center gap-6 text-sm font-[500]">
         <Link
-          to={`/${location.search}`}
-          className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${isHomeActive ? 'font-bold text-korekta-tekst' : ''}`}
-          aria-current={isHomeActive ? 'page' : undefined}
+          to={startTo}
+          className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${isStartActive ? 'font-bold text-korekta-tekst' : ''}`}
+          aria-current={isStartActive ? 'page' : undefined}
+        >
+          Start
+        </Link>
+        <Link
+          to={mapTo}
+          onClick={onMapClick}
+          className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${isMapActive ? 'font-bold text-korekta-tekst' : ''}`}
+          aria-current={isMapActive ? 'page' : undefined}
         >
           Mapa
-        </Link>
-        <Link
-          to={`/rankingi${location.search}`}
-          className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${isRankingsActive ? 'font-bold text-korekta-tekst' : ''}`}
-          aria-current={isRankingsActive ? 'page' : undefined}
-        >
-          Rankingi
-        </Link>
-        <Link
-          to={`/porownaj${location.search}`}
-          className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${isCompareActive ? 'font-bold text-korekta-tekst' : ''}`}
-          aria-current={isCompareActive ? 'page' : undefined}
-        >
-          Porównaj
-        </Link>
-        <Link
-          to={`/biblioteka${location.search}`}
-          className={`hover:underline transition-colors py-2 flex items-center min-h-[44px] ${
-            isLibraryActive ? 'font-bold text-korekta-tekst' : ''
-          }`}
-          aria-current={isLibraryActive ? 'page' : undefined}
-        >
-          Biblioteka
-        </Link>
-        <Link
-          to={`/o-projekcie${location.search}`}
-          className="hover:underline transition-colors py-2"
-        >
-          O projekcie
-        </Link>
-        <Link
-          to={`/zrodla${location.search}`}
-          className="hover:underline transition-colors py-2"
-        >
-          Skąd są dane
         </Link>
         <button
           type="button"
@@ -212,30 +189,24 @@ export function Header() {
           >
             Motyw: {themeText}
           </button>
-          <Link
-            to={`/biblioteka${location.search}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className={`text-sm font-[500] py-2 hover:underline min-h-[44px] flex items-center ${
-              isLibraryActive ? 'font-bold text-korekta-tekst' : ''
-            }`}
-            aria-current={isLibraryActive ? 'page' : undefined}
-          >
-            Biblioteka
-          </Link>
-          <Link
-            to={`/o-projekcie${location.search}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="text-sm font-[500] py-2 hover:underline"
-          >
-            O projekcie
-          </Link>
-          <Link
-            to={`/zrodla${location.search}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="text-sm font-[500] py-2 hover:underline"
-          >
-            Skąd są dane
-          </Link>
+          <nav aria-label="Menu główne (telefon)" className="flex flex-col gap-4">
+            <Link
+              to={startTo}
+              onClick={() => setMobileMenuOpen(false)}
+              className={`text-sm font-[500] py-2 hover:underline min-h-[44px] flex items-center ${isStartActive ? 'font-bold text-korekta-tekst' : ''}`}
+              aria-current={isStartActive ? 'page' : undefined}
+            >
+              Start
+            </Link>
+            <Link
+              to={mapTo}
+              onClick={onMapClick}
+              className={`text-sm font-[500] py-2 hover:underline min-h-[44px] flex items-center ${isMapActive ? 'font-bold text-korekta-tekst' : ''}`}
+              aria-current={isMapActive ? 'page' : undefined}
+            >
+              Mapa
+            </Link>
+          </nav>
         </Sheet>
       )}
 
