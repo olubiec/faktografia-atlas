@@ -46,10 +46,9 @@ describe('B14: martwy kod usunięty', () => {
     const app = read('src/App.tsx');
     expect(app).not.toContain('/__test/proto');
     expect(app).not.toContain('PrototypePage');
-    // `/biblioteka*` zostaje wyłącznie jako przekierowanie starych linków (R2), nie jako strona.
-    const libraryRoutes = [...app.matchAll(/<Route path="(\/biblioteka[^"]*)" element=\{<(\w+) \/>\}/g)];
-    expect(libraryRoutes.length).toBeGreaterThan(0);
-    expect(libraryRoutes.every((m) => m[2] === 'LibraryRedirect')).toBe(true);
+    // Tras `/biblioteka*` nie ma (usunięte w B14): nieznany adres trafia na stronę 404.
+    expect(app).not.toContain('/biblioteka');
+    expect(app).not.toContain('LibraryRedirect');
   });
 
   it('trasy w App.tsx to tylko dozwolony zestaw', () => {
@@ -58,7 +57,6 @@ describe('B14: martwy kod usunięty', () => {
     expect(paths.sort()).toEqual(
       [
         '/', '/mapa', '/rankingi', '/porownaj', '/o-projekcie', '/zrodla', '/prywatnosc',
-        '/biblioteka', '/biblioteka/:id',
         '/design', '/__test/ui', '/__test/annotation', '/__test/interactive', '*',
       ].sort(),
     );

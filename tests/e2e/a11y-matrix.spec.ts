@@ -205,20 +205,6 @@ for (const theme of THEMES) {
       await runAxe(page, 'Trasa /porownaj');
     });
 
-    // 9. Trasa /biblioteka
-    test('Trasa /biblioteka', async ({ page }) => {
-      await page.goto('/biblioteka');
-      await expect(page.locator('h1')).toBeVisible();
-      await runAxe(page, 'Trasa /biblioteka');
-    });
-
-    // 10. Trasa /biblioteka/60614
-    test('Trasa /biblioteka/60614', async ({ page }) => {
-      await page.goto('/biblioteka/60614');
-      await expect(page.locator('h1')).toBeVisible();
-      await runAxe(page, 'Trasa /biblioteka/60614');
-    });
-
     // 11. Trasa /o-projekcie
     test('Trasa /o-projekcie', async ({ page }) => {
       await page.goto('/o-projekcie');
