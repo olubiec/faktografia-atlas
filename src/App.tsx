@@ -19,7 +19,6 @@ const DesignPage = lazy(() => import('./view/design/DesignPage').then((m) => ({ 
 const AnnotationTestPage = lazy(() => import('./view/test/AnnotationTestPage').then((m) => ({ default: m.AnnotationTestPage })));
 const UiTestPage = lazy(() => import('./view/test/UiTestPage'));
 const InteractiveTestPage = lazy(() => import('./view/test/InteractiveTestPage').then((m) => ({ default: m.InteractiveTestPage })));
-const PrototypePage = lazy(() => import('./view/test/PrototypePage').then((m) => ({ default: m.PrototypePage })));
 
 /** `/`: stary link ze stanem mapy → `/mapa` (replace, bez pętli); w innym razie ekran startowy. */
 function StartRoute() {
@@ -78,8 +77,6 @@ export function App() {
           <Route path="/__test/ui" element={<UiTestPage />} />
           <Route path="/__test/annotation" element={<AnnotationTestPage />} />
           <Route path="/__test/interactive" element={<InteractiveTestPage />} />
-          <Route path="/__test/proto" element={<PrototypePage />} />
-          <Route path="/__test/proto/:name" element={<PrototypePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

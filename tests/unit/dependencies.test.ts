@@ -10,7 +10,7 @@ test('package.json zawiera wszystkie wymagane zależności (CC1.2)', () => {
   const requiredDeps = [
     'maplibre-gl', 'react-map-gl', '@deck.gl/core', '@deck.gl/layers',
     '@deck.gl/mapbox', '@deck.gl/extensions', 'topojson-client', 'cmdk',
-    'minisearch', '@observablehq/plot',
+    'minisearch',
     'react-modal-sheet', 'zod', 'p-throttle', 'posthog-js', 'rough-notation',
     'roughjs', 'iconoir-react', 'tweakpane', '@axe-core/playwright',
     'mapshaper', 'topojson-server', '@types/topojson-client',
