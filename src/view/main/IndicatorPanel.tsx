@@ -107,7 +107,7 @@ export function IndicatorPanel({
 
       <div className="flex flex-col gap-1.5">
         <span className="text-sm font-semibold">Poziom</span>
-        <LevelSwitch value={level} minLevel={indicator.minLevel} onChange={view.setLevel} />
+        <LevelSwitch value={level} minLevel={indicator.minLevel} levels={view.levels} onChange={view.setLevel} />
       </div>
 
       {choropleth && (

@@ -160,7 +160,7 @@ export function ProfileBody({
               Brak danych profilu dla tej jednostki.
             </p>
           ) : (
-            <ProfileBasicList items={otherIndicators} units={units} footnotes={footnotes} onlyBasic={Boolean(view)} />
+            <ProfileBasicList teryt={profile.teryt} items={otherIndicators} units={units} footnotes={footnotes} onlyBasic={Boolean(view)} />
           )}
         </TabsContent>
 

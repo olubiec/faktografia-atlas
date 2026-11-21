@@ -42,7 +42,7 @@ describe('C07 strona / według STYL.md', () => {
   });
 
   it('tytuł: waga 800, tracking −0,02em, bez szeryfów, wersalików i strzałek', () => {
-    const h1 = html.match(/<h1 class="([^"]*)"[^>]*>([^<]*)</);
+    const h1 = html.match(/<h1 class="([^"]*)"[^>]*>.*?<span class="sr-only">([^<]*)<\/span>/);
     expect(h1?.[1]).toContain('font-extrabold');
     expect(h1?.[1]).toContain('tracking-[-0.02em]');
     expect(h1?.[2]).toBe('Faktografia');

@@ -42,6 +42,8 @@ export type MainView = {
   year: number | null;
   years: number[];
   level: UnitLevel;
+  /** Poziomy, na których wskaźnik z biblioteki ma dane (brak = bez ograniczeń). */
+  levels: UnitLevel[] | undefined;
   /** Wejście z ?i=b… zanim wczytał się spis: mapa czeka, nie cofa się do domyślnego. */
   loading: boolean;
   setIndicator: (id: string) => void;
@@ -137,5 +139,5 @@ export function useMainView(): MainView {
     setUrl((prev) => ({ ...prev, l }));
   }, []);
 
-  return { indicator, indicators: registry.all, values, year, years, level, loading: pending, setIndicator, setYear, setLevel };
+  return { indicator, indicators: registry.all, values, year, years, level, levels: libraryLevels, loading: pending, setIndicator, setYear, setLevel };
 }
