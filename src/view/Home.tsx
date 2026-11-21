@@ -8,8 +8,6 @@ const AtlasMap = lazy(() => import('./map/AtlasMap'));
  * Ekran główny (PRODUKT.md §3): panel wskaźnika po lewej, mapa na resztę szerokości.
  * Tytuł strony jest tylko dla czytników ekranu; opis i źródło są w panelu wskaźnika.
  */
-import { IntroOverlay } from './map/IntroOverlay';
-
 export function Home() {
   return (
     <AnnotationProvider>
@@ -23,8 +21,6 @@ export function Home() {
             </Suspense>
           </div>
         </main>
-
-        <IntroOverlay />
       </div>
     </AnnotationProvider>
   );
