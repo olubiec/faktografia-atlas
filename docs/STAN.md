@@ -1,4 +1,23 @@
-# Stan – 20.11.2026
+# Stan – 21.11.2026
+
+## Stan na 21.11.2026 (etap B uproszczenia: fale 1–3 scalone; starsze sekcje niżej – tam, gdzie się różnią, obowiązuje ta)
+Plan: `docs/PLAN-FALE-B.md`, zadania `tasks/W23-B*.md`. Zrzuty pikselowe do odświeżenia workflowem „Update snapshots” na gałęzi PR (nigdy na `main`).
+
+| Status | Praca | PR | Co dało |
+|---|---|---|---|
+| ✅ | Plan etapu B (B01–B15, U03b, U11b), `PRODUKT.md` v4 | #588 | plan i zadania |
+| ✅ | B01 robot | #589 | robot działa codziennie do limitu |
+| ✅ | B02 openMap | #590 | jedno wejście do otwierania mapy |
+| ✅ | B04 dane startu | #591 | dane strony startowej |
+| ✅ | B05 DataMenu na komputerze | #592 | jedno menu wyboru wskaźnika |
+| ✅ | B03 trasy i ekran startowy | #593 | `/` = strona startowa, mapa pod `/mapa` |
+| ✅ | Poprawka paska | #594 | `Home.tsx` 100vh → 100dvh |
+| ✅ | B07 animowane tło startu | #595 | tło strony startowej |
+| ✅ | B06 menu danych na telefonie, koniec Biblioteki | #596 | DataMenu na telefonie |
+
+**Dalej:** fala 4 B08 (przełącznik widoków, Ranking jako widok) · fala 5 B09 wykres, B10 tabela, B11 druga mapa PC, B13 profil + „Kopiuj link” · fala 6 B12 druga mapa telefon, koniec Porównaj · fala 7 B14 sprzątanie · fala 8 B15 odbiór. Poza falami: U03b (zgoda na hosty), U11b (po B13 i 7 dniach od B01).
+
+**Otwarte:** czerwone shardy e2e 2/4 i 3/4 na `main` (przyczyna niesprawdzona, nikt nie przydzielony); flaky `library-query-perf`; pasek i nowe menu niesprawdzone na prawdziwym telefonie; ryzyko pustego ekranu po deployu (stary lazy chunk); baner cookies zasłania dolny pasek.
 
 ## Stan na 20.11.2026 (fala W4 scalona; wcześniejsze sekcje niżej są starsze – tam, gdzie się różnią, obowiązuje ta sekcja)
 Fala W4 (15 zadań QC + poprawka #571) scalona do `main` przez właściciela-zlecenie 20.11, **bez czekania na zielone testy** (testy `testy-shard` na PR-ach były w kolejce lub w toku w chwili scalania). Stan CI na `main` po scaleniu: **do sprawdzenia**.
