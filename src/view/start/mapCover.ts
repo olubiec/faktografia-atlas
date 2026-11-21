@@ -74,6 +74,8 @@ export function coverForMap(source: Element | null, animate: boolean): void {
   void whenMapSettled().then(() => {
     cover.style.transition = `opacity ${t}`;
     cover.style.opacity = '0';
+    // Od początku znikania okładka nie łapie wskaźnika: dotyk w trakcie ruchu kamery trafia w mapę i go przerywa.
+    cover.style.pointerEvents = 'none';
     const done = () => {
       cover.remove();
       if (active === cover) active = null;
