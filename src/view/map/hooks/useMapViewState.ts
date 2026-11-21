@@ -1,6 +1,7 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { fitViewState, TOP_OVERLAY_PX } from '@/core/map/fit';
-import { mapLimits, type MapLimits, type ViewState } from '@/core/map/view';
+import { mapLimits, type ViewState } from '@/core/map/view';
+import { widenToViewport } from '@/core/map/widen-limits';
 import { keyZoomDelta, zoomByTarget } from '@/core/map/zoom-by';
 import { loadLocalities } from '@/core/search/load-localities';
 import type { Locality } from '@/core/search/types';
@@ -10,6 +11,7 @@ import { isSameView, planCamera } from '@/core/map/camera-plan';
 import { stackStep } from '@/core/map/camera-retarget';
 import type { DriverMap } from '@/core/map/camera-driver';
 import { layersZoomBucket } from '@/core/map/localities-layer';
+import { useEntryFrame } from '@/view/map/hooks/useEntryFrame';
 import { useCameraDriver } from '@/view/map/hooks/useCameraDriver';
 import type { MapRef } from 'react-map-gl/maplibre';
 
@@ -35,35 +37,9 @@ type Bbox = [number, number, number, number];
 // Przybliżony obrys Polski; używany tylko, gdy lista jednostek nie jest jeszcze wczytana.
 const POLAND_BBOX: Bbox = [14.12, 49.0, 24.15, 54.84];
 
-const mercatorLat = (latDeg: number): number => Math.log(Math.tan(Math.PI / 4 + (latDeg * Math.PI) / 360));
-const mercatorLatToDeg = (m: number): number => (360 / Math.PI) * Math.atan(Math.exp(m)) - 90;
-
 /** Dopasowanie obszaru do kontenera z miejscem na pasek okruszków u góry i dolny arkusz. */
 function viewStateWithInset(bounds: Bbox, width: number, height: number, insetPx: number): ViewState {
   return fitViewState(bounds, width, height, { top: TOP_OVERLAY_PX, bottom: Math.max(0, insetPx) });
-}
-
-/**
- * MapLibre nie pozwala oddalić się dalej, niż mieści maxBounds. Na wysokim ekranie (telefon)
- * to uniemożliwiałoby dojście do minZoom, więc maxBounds obejmuje też okno widoku przy minZoom.
- */
-function widenToViewport(l: MapLimits, b: Bbox, { width, height }: { width: number; height: number }): MapLimits {
-  if (width <= 0 || height <= 0) return l;
-  const worldPx = 512 * Math.pow(2, l.minZoom);
-  const halfLon = (width / 2 / worldPx) * 360;
-  const halfMerc = (height / 2 / worldPx) * 2 * Math.PI;
-  const cLon = (b[0] + b[2]) / 2;
-  const cMerc = (mercatorLat(b[1]) + mercatorLat(b[3])) / 2;
-  const [w, s, e, n] = l.maxBounds;
-  return {
-    ...l,
-    maxBounds: [
-      Math.min(w, cLon - halfLon),
-      Math.min(s, mercatorLatToDeg(cMerc - halfMerc)),
-      Math.max(e, cLon + halfLon),
-      Math.max(n, mercatorLatToDeg(cMerc + halfMerc)),
-    ],
-  };
 }
 
 /** Szerokość (px) kolumny profilu obok mapy, jeśli jest teraz widoczna. */
@@ -321,6 +297,9 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     [animateToView, bounds, dimensions, sheetInset]
   );
 
+  // Wejście ze strony `/`: mapa startuje w kadrze plakatu i dojeżdża do zwykłego widoku (finishEntry).
+  const { entryView, liveTargetRef, finishEntry } = useEntryFrame(containerRef, userMovedRef, animateToView);
+
   useEffect(() => {
     if (!containerRef.current) return;
     sideExpectedRef.current = sidePanelPx;
@@ -346,7 +325,10 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
           isAnimatingRef.current = false;
           userMovedRef.current = false;
           syncCameraSeam(false);
-          setCurrentViewState(init);
+          liveTargetRef.current = init;
+          const entryStart = entryView();
+          setCurrentViewState(entryStart ?? init);
+          if (entryStart) syncCameraSeam(false, { type: 'reset', view: entryStart });
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
         } else if (fittedKeyRef.current !== key) {
@@ -364,6 +346,14 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
         } else if (isResizeEvent && !userMovedRef.current) {
           const activeBbox = drillBbox ?? bounds;
           const targetView = viewStateWithInset(activeBbox, fitWidth, clientHeight, sheetInset);
+          const entryStart = entryView();
+          if (entryStart) {
+            // Układ jeszcze się ustala: kadr plakatu liczymy od nowa, a ruch do widoku mapy zostaje na koniec.
+            liveTargetRef.current = targetView;
+            fittedKeyRef.current = key;
+            setCurrentViewState(entryStart);
+            return;
+          }
           fittedBboxRef.current = bboxKey;
           fittedKeyRef.current = key;
           if (isAnimatingRef.current) {
@@ -385,7 +375,7 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     return () => {
       resizeObserver.disconnect();
     };
-  }, [animateToView, bounds, drillBbox, driverRef, setCurrentViewState, sheetInset, sidePanelPx]);
+  }, [animateToView, bounds, drillBbox, driverRef, entryView, setCurrentViewState, sheetInset, sidePanelPx]);
 
   // Efekt zależy od progu, nie od zoomu: nie uruchamia się na każdej klatce płynnego zoomu.
   const needsLocalities = currentViewState.zoom >= 8.5;
@@ -445,5 +435,6 @@ export function useMapViewState(drillBbox?: Bbox | null, countryBbox: Bbox = POL
     syncMap,
     handleMapMove,
     handleMapMoveEnd,
+    finishEntry,
   };
 }

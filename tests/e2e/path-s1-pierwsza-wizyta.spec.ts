@@ -52,12 +52,14 @@ for (const width of [390, 1280]) {
       expect(errors).toEqual([]);
     });
 
-    test(`@PATH-1 podczas wejścia obrys się powiększa i zanika, potem /mapa (${width})`, async ({ page }) => {
+    // D4 (zgoda właściciela): zamiast powiększania obrysu na stronie okładka stoi w kadrze mapy od pierwszej klatki.
+    test(`@PATH-1 podczas wejścia okładka z obrysem jest od razu w pełni widoczna, potem /mapa (${width})`, async ({ page }) => {
       await page.goto('/?e2e');
-      const box = page.locator('[data-slot="start-background"] > div').first();
       await expect(page.getByRole('img', { name: /Mapa Polski/ })).toBeVisible();
       await page.getByRole('link', { name: 'Otwórz mapę' }).click();
-      await expect(box).toHaveAttribute('style', /scale\(2\.4\)/);
+      const cover = page.locator('[data-slot="map-cover"]');
+      await expect(cover).toHaveCount(1);
+      await expect(cover).toHaveCSS('opacity', '1');
       await expect(page).toHaveURL(/\/mapa(\?|$)/);
     });
 

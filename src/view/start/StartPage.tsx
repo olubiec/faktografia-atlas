@@ -1,12 +1,15 @@
 import { useEffect, type MouseEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { coverForMap } from './mapCover';
-import { preloadMap } from './preloadMap';
+import { isFrugalNetwork, preloadMap, preloadMapData } from './preloadMap';
 import { StartBackground } from './StartBackground';
 import { useReducedMotion } from '@/view/map/hooks/useReducedMotion';
 import { SiteLayout } from '../layout/SiteLayout';
 import { homeSearch } from '@/core/url/home';
 import { START_PAIRS, START_PLACES } from '@/core/start/examples';
+
+/** Dane mapy rozgrzewamy dopiero po tym czasie (po „networkidle” strony), żeby `/` ładowała się lekko. */
+const DATA_PRELOAD_MS = 3000;
 
 const STEPS = [
   '1. Wybierz dane, np. bezrobocie albo ludność.',
@@ -35,11 +38,23 @@ export function StartPage() {
   const reduced = useReducedMotion();
   const to = (href: string) => withTech(href, search);
 
-  // Po wczytaniu strony (w wolnej chwili) pobieramy kod mapy w tle.
+  // Po wczytaniu strony (w wolnej chwili) pobieramy kod mapy, a chwilę później jej dane (nie przy oszczędzaniu danych).
   useEffect(() => {
-    const id = window.setTimeout(preloadMap, 600);
-    return () => window.clearTimeout(id);
+    const codeId = window.setTimeout(preloadMap, 600);
+    const dataId = window.setTimeout(() => {
+      if (!isFrugalNetwork()) preloadMapData();
+    }, DATA_PRELOAD_MS);
+    return () => {
+      window.clearTimeout(codeId);
+      window.clearTimeout(dataId);
+    };
   }, []);
+
+  // Zamiar otwarcia mapy (najechanie, dotyk, fokus): kod i dane od razu.
+  const warm = () => {
+    preloadMap();
+    preloadMapData();
+  };
 
   const openMap = (e: MouseEvent<HTMLAnchorElement>) => {
     // Kliknięcie z klawiszem (nowa karta): zwykła nawigacja linku.
@@ -79,9 +94,9 @@ export function StartPage() {
           <Link
             to={to('/mapa')}
             onClick={openMap}
-            onPointerEnter={preloadMap}
-            onTouchStart={preloadMap}
-            onFocus={preloadMap}
+            onPointerEnter={warm}
+            onTouchStart={warm}
+            onFocus={warm}
             className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-6 py-3 border border-tusz bg-tusz text-arkusz font-bold hover:bg-tusz/90 transition-colors rounded-none focus:outline-none focus:ring-2 focus:ring-tusz focus:ring-offset-2 focus:ring-offset-kalka"
           >
             Otwórz mapę
