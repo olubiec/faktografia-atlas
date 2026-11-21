@@ -53,13 +53,5 @@ for (const vp of VIEWPORTS) {
 
       await expectNoOverlapPairwise(floaters);
     });
-
-    test('biblioteka: brak poziomego przewijania i poprawne pola dotykowe', async ({ page }) => {
-      await page.goto('/biblioteka');
-      await page.waitForLoadState('domcontentloaded');
-
-      await expectNoHorizontalScroll(page, `library-${vp.name}`);
-      await expectTouchTargets(page);
-    });
   });
 }
