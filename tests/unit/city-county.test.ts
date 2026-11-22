@@ -45,3 +45,15 @@ describe('przypis dla gminy miasta na prawach powiatu', () => {
     expect(text).toContain('dane całego miasta');
   });
 });
+
+describe('nazwy na listach i rankingach', () => {
+  it('powiat ziemski bez słowa „powiat”, miasto na prawach powiatu z dopiskiem', async () => {
+    const { listName } = await import('@/core/units/label');
+    const { unitKindLine } = await import('@/core/units/kinds');
+    expect(listName(mk('3217', 'powiat wałecki', 'pow'))).toBe('wałecki');
+    expect(listName(mk('3262', 'powiat Szczecin', 'pow'))).toBe('Szczecin (miasto na prawach powiatu)');
+    expect(listName(mk('3217011', 'Wałcz', 'gmi'))).toBe('Wałcz (miasto)');
+    expect(unitKindLine(mk('3262', 'powiat Szczecin', 'pow'))).toBe('Miasto na prawach powiatu – miasto i powiat w jednym');
+    expect(unitKindLine(mk('3217', 'powiat wałecki', 'pow'))).toBe('Powiat ziemski – związek kilku gmin');
+  });
+});

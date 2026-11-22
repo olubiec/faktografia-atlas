@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Link } from 'react-router';
 import type { Explanation } from '@/core/explain/explanations';
 import { loadExplanations } from '@/core/explain/explanations';
 import type { ChoroplethData } from '@/view/map/hooks/useChoropleth';
@@ -6,7 +7,7 @@ import type { MainView } from '@/view/map/hooks/useMainView';
 import type { RankedResult } from '@/core/ranking/ranking';
 import { topBottom } from '@/core/ranking/ranking';
 import type { UnitIndex } from '@/core/units/types';
-import { unitLabel } from '@/core/units/label';
+import { isCityCounty, listName } from '@/core/units/label';
 import { buildLegend, LEGEND_DIRECTION_LABEL } from '@/core/legend/legend';
 import { LEVEL_LABELS } from '@/core/map/main-view';
 import { UNIT_COUNTS } from '@/core/units/counts';
@@ -75,7 +76,7 @@ export function IndicatorPanel({
     if (!ranking) return { top: [], bottom: [] };
     const named = ranking.items.map((r) => {
       const unit = index.byTeryt.get(r.teryt);
-      return unit ? { ...r, name: unit.level === 'pow' ? unit.name.replace(/^powiat /, '') : unitLabel(unit) } : r;
+      return unit ? { ...r, name: listName(unit) } : r;
     });
     return topBottom(named, 5);
   }, [ranking, index]);
@@ -143,6 +144,12 @@ export function IndicatorPanel({
       {top.length > 0 && (
         <div className="flex flex-col gap-4">
           <RankingBars title="Najwyżej" items={top} selectedTeryt={selectedTeryt} onSelect={onSelectUnit} />
+          {[...top, ...bottom].some((r) => r.teryt.length === 4 && isCityCounty(r.teryt)) && (
+            <p className="text-xs text-olowek">
+              „Miasto na prawach powiatu” to miasto, które jest jednocześnie gminą i powiatem.{' '}
+              <Link to="/zrodla#miasto-na-prawach-powiatu" className="underline text-tusz">Co to znaczy</Link>
+            </p>
+          )}
           {bottom.length > 0 && (
             <RankingBars title="Najniżej" items={bottom} selectedTeryt={selectedTeryt} onSelect={onSelectUnit} />
           )}
