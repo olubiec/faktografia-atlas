@@ -68,7 +68,7 @@ describe('IndicatorPicker Unit Tests (CC8.3a)', () => {
     );
 
     expect(html).toContain('Ludność ogółem');
-    expect(html).toContain('osoba');
+    expect(html).toContain('osób');
     expect(html).toContain('Przeciętne wynagrodzenie brutto (zł)');
     expect(html).toContain('zł');
     expect(html).toContain('Ludność');
