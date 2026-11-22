@@ -28,11 +28,12 @@ export function hasNewYear(json) {
 }
 
 /** Zmienne pobrane dawniej niż refreshAfterDays: przypięte pierwsze, potem wg wyniku. */
-export function refreshCandidates({ done, config, now = Date.now(), scoreOf = () => 0 }) {
+export function refreshCandidates({ done, config, now = Date.now(), scoreOf = () => 0, calendarHit = () => false, calendarLatest = null }) {
   const maxAge = (config.refreshAfterDays ?? 30) * 86400_000;
   const pinned = new Map((config.pinnedIds ?? []).map((id, i) => [Number(id), i]));
   return Object.entries(done)
-    .filter(([, day]) => now - Date.parse(day) >= maxAge)
+    // Starsze niż maxAge albo temat świeżo opublikowany w kalendarium po ostatnim pobraniu.
+    .filter(([id, day]) => now - Date.parse(day) >= maxAge || (calendarLatest && day < calendarLatest && calendarHit(Number(id))))
     .map(([id]) => Number(id))
     .sort((a, b) => {
       const pa = pinned.has(a), pb = pinned.has(b);

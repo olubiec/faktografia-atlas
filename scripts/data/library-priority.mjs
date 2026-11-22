@@ -1,6 +1,7 @@
 // Biblioteka GUS: kolejność pobierania wg priorytetu i kontrola limitów API (czyste funkcje, testowane bez sieci).
 // Wagi leżą w config/library-priority.json, żeby dało się je zmieniać bez ruszania kodu.
 import { levelsForVariable } from './library-lib.mjs';
+import { calendarHits } from './gus-calendar.mjs';
 
 const norm = (s) => String(s ?? '').trim().toLocaleUpperCase('pl');
 const names = (v) => [v.n1, v.n2, v.n3, v.n4, v.n5].filter((x) => typeof x === 'string' && x.trim()).map((x) => x.toLocaleLowerCase('pl'));
@@ -27,6 +28,9 @@ export function priorityScore(variable, subjectPath, config) {
   // Popularność (liczba otwarć wskaźnika, np. z PostHog): premia rośnie logarytmicznie.
   const hits = Number(config.popularity?.[variable.id] ?? 0);
   if (hits > 0) score += (config.popularityWeight ?? 10) * Math.log10(1 + hits);
+  // Kalendarium GUS: temat świeżo opublikowany (config.calendarStems ustawia robot) dostaje premię, maks. 3 trafienia.
+  const hitsCal = Math.min(3, calendarHits(variable, subjectPath, config.calendarStems));
+  score += hitsCal * (config.calendarBonus ?? 15);
   return score;
 }
 
