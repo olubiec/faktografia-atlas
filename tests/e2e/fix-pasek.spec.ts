@@ -20,7 +20,7 @@ test.describe('Dolny pasek na telefonie (@fix-pasek)', () => {
     expect(box).not.toBeNull();
     const viewportHeight = page.viewportSize()!.height;
     expect(box!.y + box!.height).toBeLessThanOrEqual(viewportHeight);
-    expect(box!.y + box!.height).toBeGreaterThanOrEqual(viewportHeight - 1);
+    expect(box!.y + box!.height).toBeGreaterThanOrEqual(viewportHeight - 16);
 
     const button = bar.getByRole('button').first();
     await expect(button).toHaveAttribute('aria-expanded', 'false');

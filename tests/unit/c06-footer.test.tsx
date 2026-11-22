@@ -11,11 +11,12 @@ const html = renderToString(
 const hrefs = [...html.matchAll(/<a [^>]*href="([^"]+)"/g)].map((m) => m[1]);
 
 describe('C06: stopka na LinkList', () => {
-  it('ma dokładnie 6 linków: Mapa, O projekcie, Skąd są dane, Prywatność, GitHub, CC BY 4.0', () => {
+  it('ma dokładnie 7 linków: Mapa, O projekcie, Skąd są dane, Miejsca, Prywatność, GitHub, CC BY 4.0', () => {
     expect(hrefs).toEqual([
       '/mapa',
       '/o-projekcie',
       '/zrodla',
+      '/miejsca',
       '/prywatnosc',
       'https://github.com/olubiec/faktografia-atlas',
       'https://creativecommons.org/licenses/by/4.0/deed.pl',
@@ -30,7 +31,7 @@ describe('C06: stopka na LinkList', () => {
   });
   it('linki mają pole dotykowe min. 44 px i nie mają cieni ani kolorów na sztywno', () => {
     const links = html.match(/<a [^>]+>/g) ?? [];
-    expect(links.length).toBe(6);
+    expect(links.length).toBe(7);
     for (const l of links) {
       expect(l).toContain('min-h-[44px]');
       expect(l).not.toContain('shadow-');

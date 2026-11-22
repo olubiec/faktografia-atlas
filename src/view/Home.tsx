@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Header } from './Header';
 import { AnnotationProvider } from './annotation/AnnotationProvider';
+import { MapCanonical } from './layout/MapCanonical';
 
 const AtlasMap = lazy(() => import('./map/AtlasMap'));
 
@@ -11,6 +12,7 @@ const AtlasMap = lazy(() => import('./map/AtlasMap'));
 export function Home() {
   return (
     <AnnotationProvider>
+      <MapCanonical />
       <div className="h-screen h-dvh flex flex-col bg-kalka text-tusz overflow-hidden relative" style={{ overflowY: 'auto' }}>
         <Header />
         <main className="flex-1 min-h-0 flex flex-col relative min-h-[calc(100dvh-56px)] md:min-h-[calc(100dvh-72px)]">

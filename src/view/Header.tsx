@@ -140,7 +140,8 @@ export function Header() {
         >
           <Icon icon={Search} aria-hidden={true} size={20} />
           <span className="hidden lg:inline text-olowek">Szukaj miejsca...</span>
-          <span className="hidden lg:inline-block px-1.5 py-0.5 border border-linia bg-kalka text-olowek text-xs font-mono">Ctrl K</span>
+          {/* Podpowiedź skrótu jako treść CSS: nie wchodzi do tekstu przycisku (nazwa dostępna = „Szukaj miejsca”). */}
+          <span aria-hidden="true" data-hint="Ctrl K" className="hidden lg:inline-block px-1.5 py-0.5 border border-linia bg-kalka text-olowek text-xs font-mono after:content-[attr(data-hint)]" />
         </button>
         {themeButton('hidden md:flex')}
         {/* Telefon: menu w oknie (wspólny Window + LinkList) */}

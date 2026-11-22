@@ -24,7 +24,8 @@ for (const width of [390, 1280]) {
       const dataRequests: string[] = [];
       page.on('request', (req) => {
         const url = req.url();
-        if (/\/values\/|units\.json|localities/.test(url)) dataRequests.push(url);
+        // Kod mapy (w tym chunk load-localities-*.js) jest ładowany w tle; liczą się tylko pliki danych.
+        if (/\/data\/(values\/|units\.json|localities)/.test(url)) dataRequests.push(url);
       });
 
       await page.goto('/?e2e');

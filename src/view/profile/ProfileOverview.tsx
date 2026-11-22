@@ -23,6 +23,7 @@ import { IndicatorInfo } from '../explain/IndicatorInfo';
 import { Icon } from '../ui/Icon';
 import { NavArrowDown, NavArrowUp, Download } from 'iconoir-react';
 import { isShareEnabled } from '../../core/share/share-flag';
+import { loadUnitPathTable, unitPagePath } from '../../core/seo/unit-link';
 
 export interface ProfileOverviewProps {
   profile: UnitProfile;
@@ -44,6 +45,18 @@ export function ProfileOverview({
 }: ProfileOverviewProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [explanation, setExplanation] = useState<Explanation | null>(null);
+  const [pagePath, setPagePath] = useState<string | null>(null);
+
+  // Link „Strona miejsca”: tabela adresów wczytywana dopiero po otwarciu profilu.
+  useEffect(() => {
+    let active = true;
+    loadUnitPathTable().then((table) => {
+      if (active) setPagePath(unitPagePath(profile.teryt, table));
+    });
+    return () => {
+      active = false;
+    };
+  }, [profile.teryt]);
 
   useEffect(() => {
     let active = true;
@@ -343,6 +356,17 @@ export function ProfileOverview({
           />
         )
       )}
+
+      {pagePath ? (
+        <div className="pt-2 flex justify-start">
+          <a
+            href={pagePath}
+            className="min-h-[44px] min-w-[44px] px-4 py-2 bg-arkusz border border-linia hover:bg-linia/20 focus:outline-none focus:ring-2 focus:ring-tusz text-xs font-semibold text-tusz transition-colors flex items-center gap-2"
+          >
+            Strona miejsca →
+          </a>
+        </div>
+      ) : null}
 
       {/* Przycisk Pobierz i udostępnij */}
       {isShareEnabled() ? (

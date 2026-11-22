@@ -1,4 +1,7 @@
 import { SiteLayout } from '../layout/SiteLayout';
+import { JsonLd } from '../layout/JsonLd';
+import { datasetLd } from '@/core/seo/json-ld';
+import indicators from '../../../config/indicators.json';
 import { SourcesIndicatorTable } from './SourcesIndicatorTable';
 import { UnitKindsGlossary } from './UnitKindsGlossary';
 
@@ -148,6 +151,8 @@ export function Sources() {
           />
         </div>
       </section>
+
+      <JsonLd data={datasetLd(indicators, [1995])} />
 
       {/* Tabela 20 wskaźników */}
       <section className="space-y-4" aria-labelledby="heading-wskazniki">

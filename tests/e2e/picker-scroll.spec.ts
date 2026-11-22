@@ -79,7 +79,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
   test('@S14 menu wyboru danych mieści się w oknie 1440x600, a szukajka zostaje widoczna przy przewijaniu', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 600 });
     await openMap(page);
-    await page.locator('[data-slot="dialog-trigger"]').click();
+    await page.locator('[data-slot="dialog-trigger"]:not([aria-label="Menu"])').click();
     const dialog = page.getByRole('dialog', { name: 'Wybierz dane' });
     await expect(dialog).toBeVisible();
     await expect
@@ -123,7 +123,7 @@ test.describe('Indicator Picker & Panel Scrolling (@S14)', () => {
   test('@S14 axe accessibility audit passes with data menu open', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await openMap(page);
-    await page.locator('[data-slot="dialog-trigger"]').click();
+    await page.locator('[data-slot="dialog-trigger"]:not([aria-label="Menu"])').click();
     await expect(page.getByRole('dialog', { name: 'Wybierz dane' })).toBeVisible();
 
     const results = await new AxeBuilder({ page }).analyze();

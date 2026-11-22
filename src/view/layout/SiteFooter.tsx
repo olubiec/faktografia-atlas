@@ -38,11 +38,12 @@ function getIsDark(): boolean {
   return false;
 }
 
-/** Stopka: najwyżej 6 linków, bez powtórzeń nagłówka i bez działów tematycznych. */
+/** Stopka: najwyżej 7 linków (7. „Miejsca” – spis stron miejsc, SEO D9), bez powtórzeń nagłówka i bez działów tematycznych. */
 const FOOTER_LINKS: LinkListItem[] = [
   { to: '/mapa', label: 'Mapa' },
   { to: '/o-projekcie', label: 'O projekcie' },
   { to: '/zrodla', label: 'Skąd są dane' },
+  { to: '/miejsca', label: 'Miejsca', reload: true },
   { to: '/prywatnosc', label: 'Prywatność i zgoda' },
   { to: 'https://github.com/olubiec/faktografia-atlas', label: 'GitHub' },
   { to: 'https://creativecommons.org/licenses/by/4.0/deed.pl', label: 'CC BY 4.0' },

@@ -31,9 +31,9 @@ test.describe('Localities Map Layer & Navigation (CC5.4b)', () => {
     const mapContainer = page.locator('[aria-label="Mapa Polski"]');
     await mapContainer.focus();
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 40; i++) {
       await page.keyboard.press('+');
-      await page.waitForTimeout(100);
+      await page.waitForTimeout(250);
       const currentZoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
       if (currentZoom >= 8.5) break;
     }
@@ -41,19 +41,18 @@ test.describe('Localities Map Layer & Navigation (CC5.4b)', () => {
     const currentZoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
     expect(currentZoom).toBeGreaterThanOrEqual(8.5);
 
-    const zoomInLayers = await page.evaluate(() => (window as any).__atlas.layers);
-    expect(zoomInLayers).toContain('loc-layer');
+    // Dane miejscowości (kilka MB) wczytują się po przekroczeniu progu, więc warstwa pojawia się z opóźnieniem.
+    await page.waitForFunction(() => (window as any).__atlas.layers.includes('loc-layer'), undefined, { timeout: 30_000 });
 
     // Zoom out using '-' until zoom < 8
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 40; i++) {
       await page.keyboard.press('-');
-      await page.waitForTimeout(100);
+      await page.waitForTimeout(250);
       const zoom = await page.evaluate(() => (window as any).__atlas.viewState.zoom);
       if (zoom < 8) break;
     }
 
-    const zoomOutLayers = await page.evaluate(() => (window as any).__atlas.layers);
-    expect(zoomOutLayers).not.toContain('loc-layer');
+    await page.waitForFunction(() => !(window as any).__atlas.layers.includes('loc-layer'), undefined, { timeout: 10_000 });
   });
 
   test('wybór miejscowości w Ctrl+K ustawia ?u= na TERYT jej gminy i zbliża widok do punktu (zoom >= 11)', async ({ page }) => {

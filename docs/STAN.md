@@ -1,4 +1,19 @@
-# Stan – 21.11.2026
+# Stan – 22.11.2026
+
+## Stan na 22.11.2026 (fala SEO W25-S01…S12; obowiązuje, gdzie różni się od sekcji niżej)
+Strategia i decyzje: `docs/SEO.md`. Fale 1–4 etapu C i poprawki testów e2e są scalone wcześniej (#633–#636); ta sekcja dotyczy PR „[FIX+SEO]”.
+
+| Status | Praca | Co dało |
+|---|---|---|
+| ✅ w PR | e2e: etykieta przycisku „Szukaj miejsca” zgodna z widocznym napisem; stare testy nagłówka (logo 28–40 px) i startu (H1 zawiera hasło) | zielone CI zamiast ~40 czerwonych testów |
+| ✅ w PR | S01–S04: `robots.txt`, treść zastępcza w HTML startowym, prawdziwe 404 (`vercel.json`, `public/404.html`), pełne meta z `og:image`, JSON-LD (WebSite, Dataset) | robot bez JavaScriptu widzi treść |
+| ✅ w PR | S05–S07: adresy miejsc (`/wojewodztwo/…`, `/powiat/…`, `/miasto/…`, `/gmina/…`), model strony, generator statycznych stron i mapy strony w `pnpm build` | 396 stron indeksowanych (16 woj. + 314 powiatów + 66 miast), 2413 gmin z `noindex` (`config/seo.json`: `indexGminy:false`) |
+| ✅ w PR | S08 strażnik jakości w budowie; S09 link „Strona miejsca” w profilu, 7. link „Miejsca” w stopce, spis `/miejsca`, kanoniczny adres mapy | budowa pada przy powtórzonych tytułach, martwych linkach, złym kanonicznym |
+| ✅ w PR | S10 rankingi wskaźników (`/ranking/<wskaźnik>/wojewodztwa|powiaty|gminy` i gminy w województwie) | strony pod zapytania „najbardziej zalesione gminy” |
+| ✅ w PR | S11 IndexNow po wdrożeniu produkcji (workflow `seo-indexnow.yml`, klucz w `public/`), S12 tygodniowy raport z Search Console (workflow `seo-weekly.yml`) | S12 działa dopiero po dodaniu sekretu `GSC_SERVICE_ACCOUNT` |
+
+**Do zrobienia przez właściciela:** (1) „Update snapshots” po zielonym CI (brakują wzorce c07); (2) Google Search Console – usługa „Domena” (TXT w DNS) i Bing Webmaster; (3) sekret `GSC_SERVICE_ACCOUNT` (docs/SEO.md §7); (4) przekierowanie `www` i drugiej domeny na `faktografia.eu` w panelu Vercel → Domains (D1); (5) decyzja: `faktografia.pl` w kartach udostępniania (`src/core/share/card.ts`) vs `faktografia.eu`; (6) po 4–6 tygodniach obserwacji w Search Console: `config/seo.json` → `indexGminy: true` (D7).
+
 
 ## Stan na 21.11.2026 (fala 1 etapu C i „Jedna mapa” scalone; sekcje niżej są starsze – tam, gdzie się różnią, obowiązuje ta)
 `main` = commit ccc3ab1 ([M7] #613). Fala 1 etapu C (`docs/PLAN-FALE-C.md`) jest scalona; fale 2–4 czekają na polecenie właściciela. Wygląd i zachowanie na telefonie: „do sprawdzenia” przez właściciela na faktografia.eu.
