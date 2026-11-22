@@ -1,5 +1,12 @@
 import { SiteLayout } from '../layout/SiteLayout';
 import { SourcesIndicatorTable } from './SourcesIndicatorTable';
+import { UnitKindsGlossary } from './UnitKindsGlossary';
+import { JsonLd } from '../layout/JsonLd';
+import { datasetLd } from '@/core/seo/json-ld';
+import indicatorsData from '../../../config/indicators.json';
+
+/** Zakres lat szeregów w BDL (docs/SEO.md: 1995–2025). */
+const DATA_YEARS = [1995, 2025];
 
 interface RegistryCardProps {
   title: string;
@@ -83,6 +90,7 @@ export function Sources() {
           'Oficjalne źródła danych statystycznych i przestrzennych w portalu Faktografia: GUS BDL, TERYT SIMC, GUGiK PRNG i TopoJSON.',
       }}
     >
+      <JsonLd data={datasetLd(indicatorsData, DATA_YEARS)} />
       <header className="space-y-3 max-w-[70ch]">
         <h1 className="text-3xl font-[800] leading-[1.05] tracking-[-0.02em]">
           Skąd są dane: Źródła danych i rejestry
@@ -93,6 +101,8 @@ export function Sources() {
           roboty danych, bez subiektywnej ingerencji w wartości wskaźników.
         </p>
       </header>
+
+      <UnitKindsGlossary />
 
       {/* Karty 4 rejestrów z pełną atrybucją wg ELEMENTY.md */}
       <section className="space-y-4" aria-labelledby="heading-rejestry">

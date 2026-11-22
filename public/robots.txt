@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /__test/
+Disallow: /design
+
+Sitemap: https://faktografia.eu/sitemap.xml

@@ -37,6 +37,8 @@ export function RankingBars({
   const maxVal = Math.max(0, ...values);
   const range = maxVal - minVal || 1;
   const zeroPos = ((-minVal) / range) * 100;
+  // Kolumna numeru dopasowana do najdłuższego numeru (np. „2479.”), żeby nie nachodził na nazwę
+  const rankWidth = `${Math.max(...items.map((i) => `${i.rank}.`.length), 2) + 0.5}ch`;
 
   // Ustalanie widocznych elementów w zależności od limitu i zaznaczenia
   let visibleItems = items;
@@ -88,7 +90,10 @@ export function RankingBars({
 
           const rowContent = (
             <>
-              <span className="text-xs font-mono text-olowek w-6 shrink-0 text-right">
+              <span
+                className="text-xs font-mono text-olowek shrink-0 text-right"
+                style={{ width: rankWidth }}
+              >
                 {item.rank}.
               </span>
 

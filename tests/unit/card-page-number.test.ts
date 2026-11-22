@@ -57,7 +57,7 @@ describe('numer strony na karcie (QC905)', () => {
         const { safe, width } = SHARE_FORMATS[f];
         const scene = cardScene(kind, DATA[kind], f, 'light', { measure, pageLabel: '3/5' });
         const src = find(scene, 'Źródło: GUS');
-        const url = find(scene, 'faktografia.pl');
+        const url = find(scene, 'faktografia.eu');
         expect(src, `${kind}/${f}`).toBeDefined();
         expect(url).toBeDefined();
         expect(src!.lines[0]).toContain('3/5');
@@ -77,7 +77,7 @@ describe('numer strony na karcie (QC905)', () => {
     for (const f of FORMATS) {
       const scene = cardScene('map', mapData, f, 'light', { measure, pageLabel: '12/12' });
       const src = find(scene, '12/12')!;
-      const url = find(scene, 'faktografia.pl')!;
+      const url = find(scene, 'faktografia.eu')!;
       expect(src.x + widthOf(src)).toBeLessThan(url.x);
       expect(src.lines[0].endsWith('12/12')).toBe(true);
     }

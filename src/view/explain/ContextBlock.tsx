@@ -4,7 +4,7 @@ import type { Unit } from '../../core/units/types';
 import { loadExplanations, type Explanation } from '../../core/explain/explanations';
 import { context } from '../../core/explain/context';
 import { formatValue } from '../../core/format/number';
-import { unitLabel } from '../../core/units/label';
+import { listName } from '../../core/units/label';
 
 export interface ContextBlockProps {
   values?: IndicatorValues | null;
@@ -123,8 +123,8 @@ export function ContextBlock({
     const bottom = withValues[withValues.length - 1];
 
     return {
-      top: top ? { teryt: top.unit.teryt, name: top.unit.level === 'pow' ? top.unit.name.replace(/^powiat /, '') : unitLabel(top.unit), value: top.value } : null,
-      bottom: bottom ? { teryt: bottom.unit.teryt, name: bottom.unit.level === 'pow' ? bottom.unit.name.replace(/^powiat /, '') : unitLabel(bottom.unit), value: bottom.value } : null,
+      top: top ? { teryt: top.unit.teryt, name: listName(top.unit), value: top.value } : null,
+      bottom: bottom ? { teryt: bottom.unit.teryt, name: listName(bottom.unit), value: bottom.value } : null,
     };
   }, [values, targetUnit, year, units, indicator.higherIsBetter]);
 

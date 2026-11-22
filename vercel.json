@@ -1,4 +1,5 @@
 {
+  "trailingSlash": false,
   "headers": [
     {
       "source": "/(.*)",
@@ -28,12 +29,26 @@
           "value": "max-age=63072000; includeSubDomains; preload"
         }
       ]
+    },
+    {
+      "source": "/__test/(.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
+    },
+    {
+      "source": "/design",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
     }
   ],
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/mapa", "destination": "/index.html" },
+    { "source": "/o-projekcie", "destination": "/index.html" },
+    { "source": "/zrodla", "destination": "/index.html" },
+    { "source": "/prywatnosc", "destination": "/index.html" },
+    { "source": "/rankingi", "destination": "/index.html" },
+    { "source": "/porownaj", "destination": "/index.html" },
+    { "source": "/design", "destination": "/index.html" },
+    { "source": "/__test/ui", "destination": "/index.html" },
+    { "source": "/__test/annotation", "destination": "/index.html" },
+    { "source": "/__test/interactive", "destination": "/index.html" }
   ]
 }

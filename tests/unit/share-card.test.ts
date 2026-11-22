@@ -109,7 +109,7 @@ describe('cardScene layout logic (W1.14)', () => {
           const data = getMockData(kind);
           const scene = cardScene(kind, data, formatKey, theme, {
             measure: mockMeasure,
-            siteUrl: 'faktografia.pl',
+            siteUrl: 'faktografia.eu',
           });
 
           const fmt = SHARE_FORMATS[formatKey];
