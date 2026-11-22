@@ -28,7 +28,12 @@ export function unitHeading(unit: SlugUnit, units: readonly SlugUnit[]): string 
   const kind = unitKind(unit.teryt, unit.level);
   const bare = bareName(unit.name);
   if (kind === 'województwo') return `Województwo ${bare}`;
-  if (kind === 'powiat') return `Powiat ${bare}`;
+  if (kind === 'powiat') {
+    // Powiaty o tej samej nazwie w dwóch województwach (np. bielski) – z województwem, żeby tytuły się nie powtarzały (S08).
+    const same = units.filter((u) => u.level === 'pow' && u.name === unit.name && !isCityCounty(u.teryt));
+    const woj = same.length > 1 ? units.find((u) => u.teryt === unit.teryt.slice(0, 2)) : undefined;
+    return woj ? `Powiat ${bare} (woj. ${woj.name})` : `Powiat ${bare}`;
+  }
   if (kind === 'miasto na prawach powiatu') return bare;
   const twins = units.filter((u) => u.level === 'gmi' && u.name === unit.name && !isCityCounty(u.teryt));
   if (twins.length <= 1) return `Gmina ${bare}`;

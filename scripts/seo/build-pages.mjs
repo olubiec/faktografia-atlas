@@ -30,6 +30,7 @@ try {
   const { buildUnitPage } = await vite.ssrLoadModule('/src/core/seo/unit-page.ts');
   const { renderUnitPage } = await vite.ssrLoadModule('/src/core/seo/page-template.ts');
   const { buildSitemaps, isIndexed } = await vite.ssrLoadModule('/src/core/seo/sitemap.ts');
+  const { auditPages, readPage, summarize } = await vite.ssrLoadModule('/src/core/seo/audit.ts');
 
   const config = await readJson(path.join(root, 'config/seo.json'));
   const indicators = await readJson(path.join(root, 'config/indicators.json'));
@@ -62,6 +63,8 @@ try {
   const ctx = { units, paths, indicators };
   const byTeryt = new Map(units.map((u) => [u.teryt, u]));
   const sitemapPages = [];
+  /** Streszczenia stron do audytu S08 (bez całego HTML w pamięci). */
+  const auditList = [];
   let maxGmina = { bytes: 0, path: '' };
 
   const profileFiles = (await readdir(path.join(dataDir, 'profiles'))).filter((f) => /^\d{2}\.json$/.test(f)).sort();
@@ -92,12 +95,25 @@ try {
       const dir = path.join(dist, urlPath);
       await mkdir(dir, { recursive: true });
       await writeFile(path.join(dir, 'index.html'), html);
+      auditList.push(readPage(urlPath, html));
       sitemapPages.push({ path: urlPath, level: unit.level, indexable, lastmod: page.lastmod });
     }
   }
 
   const sitemaps = buildSitemaps(sitemapPages, staticPaths, config);
   for (const [name, xml] of Object.entries(sitemaps)) await writeFile(path.join(dist, name), xml);
+
+  // Strażnik jakości (S08): błąd przerywa budowę, ostrzeżenia trafiają do podsumowania.
+  const sitemapUrls = Object.entries(sitemaps)
+    .filter(([name]) => name !== 'sitemap.xml')
+    .flatMap(([, xml]) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]));
+  const { errors, warnings, counts } = summarize(auditPages(auditList, sitemapUrls, { knownPaths: staticPaths }));
+  console.log(`Audyt SEO: ${errors.length} błędów, ${warnings.length} ostrzeżeń${counts ? ` (${counts})` : ''}.`);
+  if (errors.length > 0) {
+    for (const e of errors.slice(0, 200)) console.error(`  [${e.code}] ${e.path}: ${e.message}`);
+    if (errors.length > 200) console.error(`  … i ${errors.length - 200} kolejnych.`);
+    throw new Error(`Audyt SEO: ${errors.length} błędów – strony nie przechodzą (docs/SEO.md §5).`);
+  }
 
   const indexed = sitemapPages.filter((p) => p.indexable).length;
   const seconds = ((performance.now() - started) / 1000).toFixed(1);
