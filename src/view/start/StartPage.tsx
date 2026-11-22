@@ -5,6 +5,8 @@ import { isFrugalNetwork, preloadMap, preloadMapData } from './preloadMap';
 import { StartBackground } from './StartBackground';
 import { useReducedMotion } from '@/view/map/hooks/useReducedMotion';
 import { SiteLayout } from '../layout/SiteLayout';
+import { JsonLd } from '../layout/JsonLd';
+import { organizationLd, websiteLd } from '@/core/seo/json-ld';
 import { Button } from '@/components/ui/button';
 import { PageSection } from '@/view/ui/PageSection';
 import { homeSearch } from '@/core/url/home';
@@ -86,6 +88,7 @@ export function StartPage() {
         description: 'Sprawdź dane swojej miejscowości i okolicy na tle całej Polski, na danych GUS.',
       }}
     >
+      <JsonLd data={[websiteLd(), organizationLd()]} />
       <div className="relative isolate">
         {/* Mapa w całości widoczna; na jej dole półprzezroczysty baner (ok. 1/3 wysokości) z hasłem, bez przerwy łączy się z treścią pod spodem. */}
         <div className="mx-auto w-full max-w-3xl px-4 pb-12 pt-6 md:px-8 md:pb-16">
