@@ -1,6 +1,4 @@
-import { HelpCircle } from 'iconoir-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Icon } from '@/view/ui/Icon';
+import { InfoPopover } from '@/view/ui/InfoPopover';
 import type { Explanation } from '@/core/explain/explanations';
 
 export interface IndicatorInfoProps {
@@ -87,19 +85,11 @@ export function IndicatorInfo({
   }
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label={`Co to znaczy: ${name}`}
-          className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] w-11 h-11 text-olowek hover:text-tusz focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-skupienie rounded-none transition-colors"
-        >
-          <Icon icon={HelpCircle} size={20} aria-hidden={true} />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent collisionPadding={16} className="z-[10000] max-h-[var(--radix-popover-content-available-height)] overflow-y-auto w-80 max-w-[calc(100vw-32px)] sm:w-96 text-tusz text-xs border border-linia bg-arkusz p-4 rounded-none">
-        <ExplanationSections explanation={explanation} />
-      </PopoverContent>
-    </Popover>
+    <InfoPopover
+      label={`Co to znaczy: ${name}`}
+      buttonClassName="inline-flex items-center justify-center min-w-[44px] min-h-[44px] w-11 h-11 text-olowek hover:text-tusz focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-skupienie rounded-none transition-colors"
+    >
+      <ExplanationSections explanation={explanation} />
+    </InfoPopover>
   );
 }
