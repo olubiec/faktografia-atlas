@@ -6,9 +6,31 @@
     <link rel="icon" type="image/svg+xml" href="/brand/faktografia-favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Faktografia</title>
+    <meta
+      name="description"
+      content="Sprawdź dane swojej miejscowości i okolicy na tle całej Polski, na danych GUS."
+      data-fallback
+    />
+    <meta property="og:title" content="Faktografia" data-fallback />
+    <meta
+      property="og:description"
+      content="Sprawdź dane swojej miejscowości i okolicy na tle całej Polski, na danych GUS."
+      data-fallback
+    />
+    <meta property="og:type" content="website" data-fallback />
+    <meta property="og:site_name" content="Faktografia" data-fallback />
+    <meta property="og:locale" content="pl_PL" data-fallback />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <h1>Faktografia – dane GUS o gminach i powiatach na mapie</h1>
+      <p>Sprawdź dane swojej miejscowości i okolicy na tle całej Polski, na danych GUS.</p>
+      <ul>
+        <li><a href="/mapa">Mapa</a></li>
+        <li><a href="/o-projekcie">O projekcie</a></li>
+        <li><a href="/zrodla">Skąd są dane</a></li>
+      </ul>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
