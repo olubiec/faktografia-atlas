@@ -3,8 +3,9 @@ name: Fetch library
 # Robot „Biblioteka GUS”: co 12 godzin pobiera kolejną porcję całego BDL (katalog działów i zmiennych, potem wartości
 # na poziomie powiatów i gmin) i zapisuje ją na gałęzi `data/library` (NIGDY na main).
 # Limity API: z kluczem 10/s, 500 / 15 min, 5000 / 12 h, 50 000 / 7 dni. Budżet jednego przebiegu = 3000 zapytań
-# (2 przebiegi dziennie = 6000; nocny „Fetch data” ok. 750; razem 47 250 / 7 dni = 94,5% limitu, patrz checkWindows
-# w scripts/data/library-priority.mjs). Tempo 1 zapytanie / 2 s: 3000 zapytań to ok. 100 min.
+# (2 przebiegi dziennie = 6000; nocny „Fetch data” tylko sonda nowego roku, ok. 20 zapytań, a pełne pobranie raz w tygodniu;
+# razem poniżej limitu 7 dni, patrz checkWindows w scripts/data/library-priority.mjs). Robot sam zmniejsza budżet,
+# gdy poprzedni przebieg był mniej niż 12 h temu (state.runLog, library-plan.mjs). Tempo 1 zapytanie / 2 s: 3000 zapytań to ok. 100 min.
 # Kolejność pobierania: config/library-priority.json (najpierw wskaźniki podstawowe i popularne).
 # Grupa `fetch-data` jest wspólna z nocnym pobieraniem: oba roboty nigdy nie biją w API jednocześnie.
 # Wznawianie: stan w library/state.json; uruchomienie pobiera tylko to, czego jeszcze nie ma.

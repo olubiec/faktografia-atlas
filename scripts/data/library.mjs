@@ -11,11 +11,12 @@ import {
   addSubject, compactPages, createBudget, dataUrl, emptyCatalog, emptyState,
   levelsForVariable, subjectsUrl, variablesUrl,
 } from './library-lib.mjs';
-import { sectionOf, sortQueueByPriority, summarizeBySection } from './library-priority.mjs';
+import { sectionOf, sortQueueByPriority, summarizeBySection, priorityScore } from './library-priority.mjs';
+import { budgetForRun, hasNewYear, refreshCandidates, yearProbeUrl } from './library-plan.mjs';
 
 const dir = process.env.LIBRARY_DIR ?? 'library';
 const clientId = process.env.BDL_CLIENT_ID;
-const budget = createBudget(Number(process.env.LIBRARY_BUDGET ?? 3000));
+let budget = createBudget(Number(process.env.LIBRARY_BUDGET ?? 3000));
 const deadline = Date.now() + Number(process.env.LIBRARY_MINUTES ?? 130) * 60000;
 const stats = { requests: 0 };
 const bySection = {};
@@ -106,6 +107,7 @@ async function downloadValues(state, catalog) {
   stats.queueLength = queue.length;
   for (const v of queue) {
     if (!budget.canStartVariable()) break;
+    const spentBefore = budget.used;
     try {
       const out = { v: v.id };
       for (const level of levelsForVariable(v)) {
@@ -113,14 +115,45 @@ async function downloadValues(state, catalog) {
       }
       await writeJson(`values/${v.id}.json`, out);
       state.done[v.id] = new Date().toISOString().slice(0, 10);
+      (state.cost ??= {})[v.id] = budget.used - spentBefore;
       const section = sectionOf(v, catalog);
       bySection[section] = (bySection[section] ?? 0) + 1;
       stats.queueLength--;
     } catch (err) {
       if (err instanceof LimitStop || /HTTP 429/.test(err.message)) throw err;
       state.failed[v.id] = (state.failed[v.id] ?? 0) + 1;
+      (state.failedAt ??= {})[v.id] = new Date().toISOString();
       console.error(`Zmienna ${v.id}: ${err.message.replace(clientId ?? '', '[KLUCZ]')}`);
     }
+    await writeJson('state.json', state);
+  }
+}
+
+// Odświeżanie: dla pobranych dawniej niż refreshAfterDays jedno tanie zapytanie sprawdza, czy GUS dopisał rok;
+// dopiero wtedy zmienna jest pobierana od nowa. Część budżetu (refreshShare) jest zarezerwowana na tę fazę.
+async function refreshValues(state, catalog, config, total) {
+  const cap = Math.floor(total * (config.refreshShare ?? 0.15));
+  const start = budget.used;
+  const scoreOf = (id) => {
+    const v = catalog.variables[id];
+    return v ? priorityScore(v, catalog.subjects?.[v.subjectId]?.path ?? [], config) : 0;
+  };
+  for (const id of refreshCandidates({ done: state.done, config, scoreOf })) {
+    if (budget.used - start >= cap || !budget.canStartVariable()) break;
+    const v = catalog.variables[id];
+    const old = await readJson(`values/${id}.json`, null);
+    if (!v || !old?.l5 && !old?.l6) continue;
+    const years = old.l6?.y ?? old.l5?.y ?? [];
+    if (years.length === 0) continue;
+    const spentBefore = budget.used;
+    if (hasNewYear(await get(yearProbeUrl(id, years)))) {
+      const out = { v: id };
+      for (const level of levelsForVariable(v)) out[`l${level}`] = compactPages(await allPages((p) => dataUrl(id, level, p)));
+      await writeJson(`values/${id}.json`, out);
+      (state.cost ??= {})[id] = budget.used - spentBefore;
+      stats.refreshed = (stats.refreshed ?? 0) + 1;
+    }
+    state.done[id] = new Date().toISOString().slice(0, 10);
     await writeJson('state.json', state);
   }
 }
@@ -148,7 +181,12 @@ async function main() {
   const state = await readJson('state.json', emptyState());
   const catalog = await readJson('catalog.json', emptyCatalog());
   try {
+    // Okno 12 h: odejmij zapytania z poprzednich przebiegów, żeby dwa przebiegi blisko siebie nie przekroczyły limitu.
+    const total = budgetForRun({ runLog: state.runLog ?? [], now: Date.now(), total: Number(process.env.LIBRARY_BUDGET ?? 3000) });
+    budget = createBudget(total);
     if (!state.catalogDone) await crawlCatalog(state, catalog);
+    const config = JSON.parse(await readFile(configFile, 'utf8'));
+    await refreshValues(state, catalog, config, total);
     await downloadValues(state, catalog);
   } catch (err) {
     if (!(err instanceof LimitStop)) {
@@ -158,12 +196,13 @@ async function main() {
   } finally {
     state.runs++;
     state.lastRun = new Date().toISOString();
+    state.runLog = [...(state.runLog ?? []), { at: state.lastRun, used: stats.requests }].slice(-20);
     await writeJson('state.json', state);
     const total = Object.keys(catalog.variables).length;
     const table = summarizeBySection(bySection, stats.queueLength ?? 0);
     console.log(table);
     if (process.env.LIBRARY_SUMMARY_FILE) await writeFile(process.env.LIBRARY_SUMMARY_FILE, `${table}\n`);
-    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Zmiennych: ${total}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
+    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Zmiennych: ${total}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
   }
 }
 
