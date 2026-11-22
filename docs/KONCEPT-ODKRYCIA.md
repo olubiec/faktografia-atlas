@@ -178,7 +178,7 @@ Punkt wyjścia mierzony przed zmianą (2 tygodnie): odsetek wejść na `/`, któ
 - **F-5 Sygnały z Search Console (po S12 i min. 6 tygodniach danych):** mnożnik kolejności faktów wg wzrostu wyświetleń tematu; sekcja „Tematy do rozważenia” w raporcie tygodniowym. Bez automatycznego publikowania stron.
 - **Później, warunkowo:** quiz „Zgadnij”, F6/F7 jeśli pomiar liczności je uzasadni.
 
-## 13. Decyzje właściciela (domyślne w nawiasie)
+## 13. Decyzje właściciela (domyślne w nawiasie) – przyjęte domyślne 22.11.2026 (właściciel: „bądź decyzyjny”); kolejność zmieniona: F-3 zestawienia po S10
 1. Zmiana `PRODUKT.md` §3.1: „Przykłady” → „Odkrycia” (tak).
 2. Pary do porównania na starcie: zostają zwinięte / znikają (znikają – zastępuje je „bliźniak” i „porównaj z sąsiadem”).
 3. Zapamiętywanie miejsca w przeglądarce (tak, tylko TERYT).
