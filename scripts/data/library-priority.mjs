@@ -28,9 +28,9 @@ export function priorityScore(variable, subjectPath, config) {
   // Popularność (liczba otwarć wskaźnika, np. z PostHog): premia rośnie logarytmicznie.
   const hits = Number(config.popularity?.[variable.id] ?? 0);
   if (hits > 0) score += (config.popularityWeight ?? 10) * Math.log10(1 + hits);
-  // Kalendarium GUS: temat świeżo opublikowany (config.calendarStems ustawia robot) dostaje premię, maks. 3 trafienia.
-  const hitsCal = Math.min(3, calendarHits(variable, subjectPath, config.calendarStems));
-  score += hitsCal * (config.calendarBonus ?? 15);
+  // Kalendarium GUS: temat świeżo opublikowany (config.calendarStems ustawia robot) dostaje premię, drobny dodatek (maks. 2 trafienia × 5 pkt), nie przesądza o kolejności.
+  const hitsCal = Math.min(2, calendarHits(variable, subjectPath, config.calendarStems));
+  score += hitsCal * (config.calendarBonus ?? 5);
   return score;
 }
 

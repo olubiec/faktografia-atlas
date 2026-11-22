@@ -27,20 +27,27 @@ export function hasNewYear(json) {
   return (json?.results ?? []).some((r) => (r.values ?? []).some((v) => v.val !== null && v.val !== undefined));
 }
 
-/** Zmienne pobrane dawniej niż refreshAfterDays: przypięte pierwsze, potem wg wyniku. */
-export function refreshCandidates({ done, config, now = Date.now(), scoreOf = () => 0, calendarHit = () => false, calendarLatest = null }) {
+/**
+ * Zmienne do odświeżenia. Najpierw jak dotąd: pobrane dawniej niż refreshAfterDays (przypięte, potem wg wyniku).
+ * Kalendarium to tylko dodatek: zmienne pasujące do świeżej publikacji, ale jeszcze nie „stare”, idą na sam koniec
+ * i jest ich najwyżej calendarMax na przebieg, więc nie wypierają zwykłej pracy.
+ */
+export function refreshCandidates({ done, config, now = Date.now(), scoreOf = () => 0, calendarHit = () => false, calendarLatest = null, calendarMax = 10 }) {
   const maxAge = (config.refreshAfterDays ?? 30) * 86400_000;
   const pinned = new Map((config.pinnedIds ?? []).map((id, i) => [Number(id), i]));
-  return Object.entries(done)
-    // Starsze niż maxAge albo temat świeżo opublikowany w kalendarium po ostatnim pobraniu.
-    .filter(([id, day]) => now - Date.parse(day) >= maxAge || (calendarLatest && day < calendarLatest && calendarHit(Number(id))))
-    .map(([id]) => Number(id))
-    .sort((a, b) => {
-      const pa = pinned.has(a), pb = pinned.has(b);
-      if (pa !== pb) return pa ? -1 : 1;
-      if (pa && pb) return pinned.get(a) - pinned.get(b);
-      return scoreOf(b) - scoreOf(a) || a - b;
-    });
+  const aged = (day) => now - Date.parse(day) >= maxAge;
+  const byRank = (a, b) => {
+    const pa = pinned.has(a), pb = pinned.has(b);
+    if (pa !== pb) return pa ? -1 : 1;
+    if (pa && pb) return pinned.get(a) - pinned.get(b);
+    return scoreOf(b) - scoreOf(a) || a - b;
+  };
+  const entries = Object.entries(done);
+  const old = entries.filter(([, day]) => aged(day)).map(([id]) => Number(id)).sort(byRank);
+  const fromCalendar = calendarLatest
+    ? entries.filter(([id, day]) => !aged(day) && day < calendarLatest && calendarHit(Number(id))).map(([id]) => Number(id)).sort(byRank).slice(0, calendarMax)
+    : [];
+  return [...old, ...fromCalendar];
 }
 
 /** Z wyniku sond { id: bool } zostawia id wskaźników z nowym rokiem. */

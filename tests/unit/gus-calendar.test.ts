@@ -35,8 +35,8 @@ describe('Kalendarium GUS', () => {
   it('zmienna o pasującej nazwie dostaje premię w wyniku priorytetu', () => {
     const v = { id: 1, level: 5, n1: 'mieszkania oddane do użytkowania' };
     const base = prio.priorityScore(v, ['INFRASTRUKTURA'], {});
-    const boosted = prio.priorityScore(v, ['INFRASTRUKTURA'], { calendarStems: ['mieszk'], calendarBonus: 15 });
-    expect(boosted - base).toBe(15);
+    const boosted = prio.priorityScore(v, ['INFRASTRUKTURA'], { calendarStems: ['mieszk'], calendarBonus: 5 });
+    expect(boosted - base).toBe(5);
   });
   it('świeża publikacja wymusza sprawdzenie nowego roku mimo młodego pobrania', () => {
     const now = Date.parse('2026-11-22T12:00:00Z');
@@ -45,5 +45,15 @@ describe('Kalendarium GUS', () => {
       calendarHit: (id: number) => id === 1, calendarLatest: '2026-11-21',
     });
     expect(ids).toEqual([1]);
+  });
+  it('kalendarium nie wypiera zwykłego odświeżania i ma limit', () => {
+    const now = Date.parse('2026-11-22T12:00:00Z');
+    const done: Record<number, string> = { 1: '2026-11-18', 2: '2026-11-18', 3: '2026-11-18', 9: '2026-10-01' };
+    const ids = plan.refreshCandidates({
+      done, config: { refreshAfterDays: 14 }, now,
+      calendarHit: () => true, calendarLatest: '2026-11-21', calendarMax: 2,
+    });
+    expect(ids[0]).toBe(9);
+    expect(ids.length).toBe(3);
   });
 });
