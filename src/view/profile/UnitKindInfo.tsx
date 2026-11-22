@@ -29,10 +29,6 @@ export function UnitKindInfo({ unit }: { unit: Unit }) {
             <h3 className="font-semibold text-tusz text-xs mb-0.5">{kind.title}</h3>
             <p className="text-olowek text-xs leading-relaxed">{kind.short}</p>
           </div>
-          <div>
-            <h3 className="font-semibold text-tusz text-xs mb-0.5">Przykład</h3>
-            <p className="text-olowek text-xs leading-relaxed">{kind.example}</p>
-          </div>
           <Link
             to={`/zrodla#${kind.id}`}
             className="text-tusz underline hover:text-olowek focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-skupienie text-xs"
