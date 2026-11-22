@@ -32,7 +32,14 @@
     { "match": "wynagrodzen", "points": 15 },
     { "match": "liczba ludności", "points": 20 },
     { "match": "dochody", "points": 10 },
-    { "match": "mieszkań", "points": 10 }
+    { "match": "mieszkań", "points": 10 },
+    { "match": "przeciętne miesięczne", "points": 15 },
+    { "match": "przyrost naturalny", "points": 15 },
+    { "match": "migracj", "points": 10 },
+    { "match": "urodzenia żywe", "points": 10 },
+    { "match": "zgony", "points": 10 },
+    { "match": "przedszkol", "points": 10 },
+    { "match": "gęstość", "points": 10 }
   ],
   "depthPenalty": -8,
   "levelBonus": { "6": 20, "5": 0 },
@@ -42,5 +49,10 @@
   ],
   "popularIds": [],
   "popularBonus": 40,
+  "popularity": {},
+  "popularityWeight": 10,
+  "refreshAfterDays": 14,
+  "refreshShare": 0.15,
+  "retryAfterDays": 7,
   "maxSectionShareInRun": 0.4
 }

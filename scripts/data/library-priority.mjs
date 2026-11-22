@@ -24,6 +24,9 @@ export function priorityScore(variable, subjectPath, config) {
   score += depth * (config.depthPenalty ?? -8);
   score += config.levelBonus?.[variable.level >= 6 ? '6' : '5'] ?? 0;
   if ((config.popularIds ?? []).includes(Number(variable.id))) score += config.popularBonus ?? 40;
+  // Popularność (liczba otwarć wskaźnika, np. z PostHog): premia rośnie logarytmicznie.
+  const hits = Number(config.popularity?.[variable.id] ?? 0);
+  if (hits > 0) score += (config.popularityWeight ?? 10) * Math.log10(1 + hits);
   return score;
 }
 
@@ -34,8 +37,14 @@ export function priorityScore(variable, subjectPath, config) {
 export function sortQueueByPriority(variables, catalog, config, state = {}) {
   const done = state.done ?? {};
   const failed = state.failed ?? {};
+  const now = state.now ?? Date.now();
+  // Po 3 błędach zmienna wraca po retryAfterDays (błąd bywa przejściowy); bez daty błędu zostaje wykluczona.
+  const retryDue = (id) => {
+    const at = Date.parse(state.failedAt?.[id]);
+    return Number.isFinite(at) && now - at >= (config.retryAfterDays ?? 7) * 86400_000;
+  };
   const open = variables.filter(
-    (v) => levelsForVariable(v).length > 0 && !done[v.id] && (failed[v.id] ?? 0) < 3,
+    (v) => levelsForVariable(v).length > 0 && !done[v.id] && ((failed[v.id] ?? 0) < 3 || retryDue(v.id)),
   );
   const scored = open.map((v) => ({
     v,
