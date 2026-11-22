@@ -1,6 +1,6 @@
-# Odkrycia – koncepcja (propozycja v0 · 22.11.2026)
+# Odkrycia – koncepcja ostateczna (v1 · 22.11.2026)
 
-Status: **propozycja do decyzji właściciela** (§13). Do czasu decyzji obowiązuje `docs/PRODUKT.md` §3.1 („Przykłady: 6 miejsc i 6 par”).
+Status: **koncept ostateczny do wdrożenia po decyzjach właściciela** (§13). v1 dodaje analizę trendów i nowinek (§7a) i ostateczny układ treści (§7b). Do czasu decyzji obowiązuje `docs/PRODUKT.md` §3.1 („Przykłady: 6 miejsc i 6 par”).
 Zakres: miejsce pod przyciskiem „Otwórz mapę” na stronie startowej + to, co z tego wynika dla stron miejsc, SEO i robota danych.
 
 ## 0. Werdykt (5 zdań)
@@ -8,7 +8,8 @@ Zakres: miejsce pod przyciskiem „Otwórz mapę” na stronie startowej + to, c
 2. Rozwiązanie: **silnik faktów** – robot liczy dla każdej z 2 859 jednostek (380 powiatów + 2 479 gmin) krótkie, sprawdzalne fakty (skrajności, zmiany, odchylenia od sąsiadów, przełomy), a strona pokazuje je jako karty „jedno zdanie + jedna liczba + jedno kliknięcie do mapy”.
 3. Prototyp na danych z repo: przy samych skrajnościach krajowych ciekawy fakt ma tylko ~25% jednostek (przeciętna gmina jest przeciętna); po dodaniu ram „województwo”, „sąsiedzi” i „własna historia” – **≥ 3 fakty ma 93,5% jednostek, ≥ 1 fakt – 99,5%** (pomiar §2).
 4. „Artykuły” i „newsy” – tak, ale **bez AI i bez cudzych tekstów**: zdania ze stałych szablonów i liczb GUS, wpięte w strony miejsc (fala SEO S-2), plus ok. 25 stałych „zestawień” i strona „Nowe dane GUS” przy każdej aktualizacji robota. Masowe generowanie tysięcy osobnych „artykułów” odrzucam (ryzyko kary Google za „scaled content”, §8).
-5. Lokalizacja: bez IP i bez serwera. Użytkownik wybiera miejsce szukajką albo przyciskiem „Użyj mojej lokalizacji” (liczone w przeglądarce, współrzędne nigdzie nie wychodzą); wybór zapamiętany lokalnie. Kolejność budowy: po fali SEO S-2 (§12).
+5. Trendy wyszukiwań i nowinki: **nie jako automatyczne tworzenie stron** (dla SEO słabo i ryzykownie, §7a), **tak jako sygnał**, który sam zmienia kolejność prawdziwych faktów i podsuwa właścicielowi tematy nowych stron do zatwierdzenia.
+6. Lokalizacja: bez IP i bez serwera. Użytkownik wybiera miejsce szukajką albo przyciskiem „Użyj mojej lokalizacji” (liczone w przeglądarce, współrzędne nigdzie nie wychodzą); wybór zapamiętany lokalnie. Kolejność budowy: po fali SEO S-2 (§12).
 
 ## 1. Diagnoza
 - **Wysoki próg wejścia.** Ścieżka dziś: Otwórz mapę → wybierz dane (20 wskaźników w 7 grupach) → dotknij miejsca → profil. Użytkownik musi wiedzieć, *który* wskaźnik jest ciekawy dla *jego* miejsca. Nie wie – a my wiemy (mamy wszystkie liczby i rankingi).
@@ -106,6 +107,40 @@ Bez JavaScriptu i przy `prefers-reduced-motion`: karty statyczne, „Odkrycie dn
 | „Gorące tematy okolicy” | **Tak, jako kalendarz tematów** | Bez zewnętrznych źródeł nie wiemy, o czym mówi okolica. Wiemy, co jest gorące w Polsce cyklicznie: styczeń – płace, wiosna – budżety gmin, czerwiec–sierpień – turystyka (noclegi), wrzesień – przedszkola, cały rok – mieszkania i wyludnianie. `config/facts.json` ma kalendarz: w danym miesiącu fakty z tematu miesiąca dostają mnożnik 1,5. Właściciel może dopisać temat ręcznie (np. po głośnej sprawie w mediach) – bez kodu. |
 | Quiz „Zgadnij” (np. „gdzie wyższe bezrobocie: A czy B?”, „narysuj, jak zmieniała się ludność Twojej gminy”) | **Później, warunkowo** | Wzorzec o wysokim zaangażowaniu w mediach, ale to nowa funkcja wbrew zasadzie prostoty. Budować tylko, jeśli pomiar po F-1/F-2 (§11) pokaże, że ludzie klikają fakty. |
 
+## 7a. Trendy wyszukiwań i nowinki – analiza
+Pomysł: śledzić, czego ludzie szukają w danych miejscach (wzrost zapytań, nowinki), i automatycznie tworzyć pod to artykuły lub zakładki.
+
+**Skąd wziąć sygnał „co szukają, gdzie”:**
+| Źródło | Ocena |
+|---|---|
+| Google Trends (strona www) | Dla Polski dzieli na województwa i największe miasta. Dla gmin danych **nie ma** (za mało zapytań) – „trend w mojej gminie” w praktyce nie istnieje. Ręcznie, pomocniczo. |
+| Google Trends API | Wciąż **alfa, dostęp po zgłoszeniu, bez gwarancji przyjęcia**. Nie budujemy na tym zależności; właściciel może złożyć wniosek (opcja). |
+| Nieoficjalne pobieranie Trends (skrapery) | **Nie** – łamie regulamin, jest blokowane, a robot przestałby działać bez ostrzeżenia. |
+| Planer słów kluczowych Google Ads | Miesięczne liczby wyszukiwań, cel do poziomu miasta. Wymaga konta Ads; API wymaga tokenu dewelopera. Ręcznie, raz na kwartał (właściciel). |
+| **Search Console (zapytania, na które już się wyświetlamy)** | **Główne źródło.** Pewne, darmowe, dokładne dla naszej domeny; sekret `GSC_SERVICE_ACCOUNT` i raport tygodniowy (S12) już są w planie. |
+| Nowinki z portali | **Nie** (prawo wydawców prasy, §7). |
+
+**Automatyczne strony pod skok zainteresowania – dlaczego dla SEO słabo:**
+1. **Nie wygramy wyścigu.** Na nagły temat w ciągu godzin odpowiadają portale informacyjne (karuzela „Najważniejsze artykuły”, autorytet, świeżość). Nowa domena z danymi nie wejdzie na te zapytania.
+2. **Nie mamy nowej liczby.** Dane GUS przychodzą z opóźnieniem 6–18 miesięcy. Strona „na temat dnia” powtórzyłaby stare liczby – to cienka treść.
+3. **To definicja nadużycia.** Strony tworzone hurtowo głównie po to, by łapać ruch z wyszukiwarki, to „scaled content abuse” – bez względu na to, czy pisze je AI, szablon czy człowiek. Aktualizacje antyspamowe z 2026 r. biorą to na cel, a kara obejmuje **całą domenę** – razem z dobrymi stronami miejsc.
+4. **Szum.** Strony zakładane pod chwilowy trend po kilku tygodniach są martwe; zostają jako setki słabych adresów, które obniżają ocenę całej witryny.
+
+**Co z pomysłu zostaje (i działa):**
+1. **Stałe zakładki tematyczne** zamiast zakładek pod trend: 7 stron `/temat/<grupa>` (Ludność, Praca, Pieniądze, Mieszkania, Środowisko, Życie, Transport). Każda: co mierzymy, mapa, najwyżej/najniżej, 3 najsilniejsze fakty tematu, linki do rankingów (S10) i zestawień. Tematy się nie zmieniają, zmieniają się liczby – Google to lubi (klaster tematyczny).
+2. **Trend zmienia kolejność, nie tworzy stron (automat, bez ryzyka):** gdy w Search Console rosną wyświetlenia zapytań z danego tematu (np. „mieszkania” +40% tydzień do tygodnia), fakty z tego tematu dostają mnożnik na starcie i w „Odkryciu dnia”. Pokazujemy więc to, czego ludzie właśnie szukają – ale zawsze prawdziwe fakty, które już istnieją.
+3. **Kandydaci tematów (decyzja człowieka):** raport tygodniowy (S12) dostaje sekcję „Tematy do rozważenia”: zapytania z wyświetleniami, pozycją 8–30 i bez dopasowanej strony (np. „gminy z największym przyrostem naturalnym”). Właściciel pisze „rób X” → sesja buduje zestawienie albo sekcję huba w zwykłym PR.
+4. **Przewidywalne szczyty zamiast nagłych:** kalendarz (§7) z datami, kiedy zainteresowanie rośnie co roku: publikacje GUS (płace, ludność, bezrobocie), coroczne rankingi zamożności gmin w mediach, wrzesień – przedszkola, sezon turystyczny. Strona tematu jest odświeżana **2–4 tygodnie przed** szczytem, bo Google potrzebuje czasu na ponowne odczytanie. To jest korzystanie z trendów, które działa w SEO: trend przewidziany, strona gotowa.
+
+## 7b. Ostateczny układ treści (4 warstwy)
+| Warstwa | Co | Jak powstaje | Ryzyko |
+|---|---|---|---|
+| W1 Miejsca | strona każdego powiatu i gminy z 3–5 faktami (S06/S07 + silnik faktów) | automat z danych | niskie (fakty różne dla każdego miejsca, gminy `noindex` do D7) |
+| W2 Tematy | 7 hubów `/temat/…`, ~25 zestawień, rankingi S10 | automat z danych; lista stron zatwierdzona raz | niskie |
+| W3 Zdarzenia | „Nowe dane GUS”, odświeżenia przed szczytami z kalendarza | robot otwiera PR, właściciel scala | niskie (człowiek w pętli) |
+| W4 Sygnały | Search Console → mnożnik kolejności faktów (automat) + „Tematy do rozważenia” w raporcie (człowiek) | automat tylko dla kolejności | brak – nic nie jest publikowane bez człowieka |
+Strona startowa („Odkrycia”, §6) pokazuje W1 dla Twojego miejsca, a W2–W4 dla wszystkich.
+
 ## 8. SEO (Polska, 2026)
 - **Odpowiedzi AI w Google (AI Overviews, tryb AI) i czatboty** cytują krótkie zdania z liczbą, rokiem i źródłem. Szablon faktu ma dokładnie tę formę – to bezpośrednio zwiększa szansę cytowania stron miejsc. Ruch z samych wyników „10 niebieskich linków” będzie spadał; cytowania i linki z mediów – nie.
 - **Unikalność treści:** konkurencja (Polska w liczbach, BDL, Wikipedia) ma tabele. Zdania porównawcze („najwięcej w okolicy”, „bliźniak”, „po 9 latach spadku rośnie”) są nasze i różne dla każdej gminy – to odpowiedź na ryzyko „cienkich stron szablonowych”.
@@ -138,7 +173,9 @@ Punkt wyjścia mierzony przed zmianą (2 tygodnie): odsetek wejść na `/`, któ
 - **F-1 Silnik faktów (bez zmian na stronie):** `src/core/facts` (F1–F5 + F9, siła, dobór, szablony), `build-facts.mjs` w robocie, testy na fixture (w tym znane zmiany granic i obwarzanek), raport liczności jak w §2 w opisie PR. Odbiór: właściciel czyta 50 losowych zestawów faktów (lista w PR) i zaznacza nudne/błędne.
 - **F-2 Start – stan A i B:** sekcje „Twoje miejsce”, „Odkrycie dnia”, „Zestawienia”; szukajka + zapamiętanie; deep linki; e2e „1 kliknięcie od faktu do mapy”; budżet 4 KB. Wymaga zmiany `PRODUKT.md` §3.1.
 - **F-3 Fakty na stronach miejsc + zestawienia:** `lead` S06 bierze 3 najsilniejsze fakty; ~25 stron zestawień (rozszerzenie S10); F3 sąsiedzi i F8 bliźniak (potrzebują sąsiedztwa z `admin.topo.json` w robocie).
-- **F-4 Nowe dane GUS + kalendarz tematów + geolokalizacja:** robot otwiera PR ze stroną zmian; `config/facts.json` z kalendarzem; przycisk „Użyj mojej lokalizacji”.
+- **F-3** obejmuje też 7 hubów `/temat/<grupa>` (§7a).
+- **F-4 Nowe dane GUS + kalendarz tematów + geolokalizacja:** robot otwiera PR ze stroną zmian; `config/facts.json` z kalendarzem i datami szczytów; przycisk „Użyj mojej lokalizacji”.
+- **F-5 Sygnały z Search Console (po S12 i min. 6 tygodniach danych):** mnożnik kolejności faktów wg wzrostu wyświetleń tematu; sekcja „Tematy do rozważenia” w raporcie tygodniowym. Bez automatycznego publikowania stron.
 - **Później, warunkowo:** quiz „Zgadnij”, F6/F7 jeśli pomiar liczności je uzasadni.
 
 ## 13. Decyzje właściciela (domyślne w nawiasie)
@@ -150,6 +187,9 @@ Punkt wyjścia mierzony przed zmianą (2 tygodnie): odsetek wejść na `/`, któ
 6. Fakt „zmiana granic w roku X” pokazywany jako ciekawostka (nie – tylko wykluczenie z faktów).
 7. Lista ~25 zestawień – proponuje sesja F-3, Ty wybierasz (tak).
 8. Kolejność: po S-2, przed S-3/S-4 (tak – zestawienia i fakty wzmacniają S10).
+9. 7 stałych hubów tematycznych zamiast stron pod trend (tak).
+10. Trend z Search Console tylko zmienia kolejność faktów; nowe strony wyłącznie po Twoim „rób” (tak).
+11. Wniosek o dostęp do Google Trends API alfa – opcjonalnie, składasz Ty (nie jest potrzebny do startu).
 
 ## 14. Czego nie robimy
-Newsów z cudzych portali, tekstów i liczb z AI, lokalizacji z IP, kont i powiadomień, osobnego artykułu dla każdej gminy, ocen „najlepsza/najgorsza gmina”, przyczyn zjawisk, których nie ma w danych.
+Automatycznych stron pod chwilowe trendy, nieoficjalnego pobierania Google Trends, newsów z cudzych portali, tekstów i liczb z AI, lokalizacji z IP, kont i powiadomień, osobnego artykułu dla każdej gminy, ocen „najlepsza/najgorsza gmina”, przyczyn zjawisk, których nie ma w danych.
