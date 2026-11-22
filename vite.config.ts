@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from "path"
@@ -27,9 +27,34 @@ function getVercelHeaders(): Record<string, string> {
   }
 }
 
+// Podgląd jak Vercel: `/powiat/x` serwuje `dist/powiat/x/index.html` (statyczne strony miejsc, S07).
+function directoryIndex(): Plugin {
+  return {
+    name: 'faktografia-directory-index',
+    configurePreviewServer(server) {
+      const outDir = path.resolve(server.config.root, server.config.build.outDir)
+      server.middlewares.use((req, _res, next) => {
+        const [pathname, query] = (req.url ?? '').split('?', 2)
+        if (pathname && !pathname.endsWith('/') && !path.extname(pathname)) {
+          let file = ''
+          try {
+            file = path.join(outDir, decodeURIComponent(pathname), 'index.html')
+          } catch {
+            return next()
+          }
+          if (file.startsWith(outDir + path.sep) && fs.existsSync(file)) {
+            req.url = `${pathname}/index.html${query ? `?${query}` : ''}`
+          }
+        }
+        next()
+      })
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), directoryIndex()],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
