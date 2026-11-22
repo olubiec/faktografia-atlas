@@ -135,7 +135,7 @@ export function Header() {
         <button
           type="button"
           onClick={() => changeSearchOpen(true)}
-          aria-label="Szukaj miejsca"
+          aria-label="Szukaj miejsca... Ctrl K"
           className="min-w-11 min-h-11 gap-2 px-3 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-sm flex items-center justify-center cursor-pointer rounded-none"
         >
           <Icon icon={Search} aria-hidden={true} size={20} />

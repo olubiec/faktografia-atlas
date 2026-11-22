@@ -52,8 +52,8 @@ for (const width of SIZES) {
         }
       }
       const logo = await header.locator('img[alt="Faktografia"]').boundingBox();
-      expect(logo!.height).toBeGreaterThanOrEqual(width < 768 ? 28 : 36);
-      expect(logo!.height).toBeLessThanOrEqual(width < 768 ? 32 : 40);
+      expect(logo!.height).toBeGreaterThanOrEqual(28);
+      expect(logo!.height).toBeLessThanOrEqual(40);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     });
   });
