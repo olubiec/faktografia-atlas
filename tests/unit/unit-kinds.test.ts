@@ -61,6 +61,7 @@ describe('rodzaje jednostek na pełnych danych (units.json)', () => {
       expect(k.short.length).toBeGreaterThan(20);
       expect(k.long.length).toBeGreaterThan(k.short.length - 1);
       expect(k.example).toBeTruthy();
+      expect(k.tagline.split(' ').length).toBeLessThanOrEqual(5);
     }
   });
 });

@@ -109,11 +109,11 @@ export function ProfileBody({
             title={profile.unit?.name ?? unitTitleText}
           >
             {unitTitleText}
-            {profile.unit && <UnitKindHint unit={profile.unit} />}
           </h2>
           <p className="text-xs text-olowek font-mono">
             {`TERYT ${profile.teryt}`}
           </p>
+          {profile.unit && <UnitKindHint unit={profile.unit} />}
           {cityNote && <p className="text-xs text-olowek">{cityNote}</p>}
         </div>
         {showCloseButton && onClose && (

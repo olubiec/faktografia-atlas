@@ -14,6 +14,8 @@ export type UnitKindInfo = {
   id: UnitKindId;
   /** Nazwa rodzaju w mianowniku, np. „Powiat ziemski”. */
   title: string;
+  /** 3–4 słowa widoczne pod nazwą jednostki. */
+  tagline: string;
   /** Jedno zdanie do podpowiedzi przy znaku zapytania. */
   short: string;
   /** Pełna definicja do słownika. */
@@ -28,6 +30,7 @@ export type UnitKindInfo = {
 export const UNIT_KINDS: UnitKindInfo[] = [
   {
     id: 'wojewodztwo',
+    tagline: 'największa jednostka kraju',
     title: 'Województwo',
     short: 'Największa jednostka podziału kraju. Dzieli się na powiaty (także miasta na prawach powiatu).',
     long: 'Największa jednostka podziału administracyjnego Polski. Obejmuje powiaty ziemskie i miasta na prawach powiatu. Jest 16 województw.',
@@ -36,6 +39,7 @@ export const UNIT_KINDS: UnitKindInfo[] = [
   },
   {
     id: 'powiat-ziemski',
+    tagline: 'związek kilku gmin',
     title: 'Powiat ziemski',
     short: 'Zwykły powiat: obejmuje kilka gmin (miejskich, wiejskich i miejsko-wiejskich). Jego siedziba to miasto, ale samo miasto bywa osobną gminą.',
     long: 'Zwykły powiat, czyli związek kilku sąsiednich gmin. Zawiera gminy różnych rodzajów. Ma siedzibę w jednym z miast, np. Wałcz w powiecie wałeckim, ale to miasto jest tylko jedną z gmin powiatu. Powiatów ziemskich jest 314.',
@@ -44,6 +48,7 @@ export const UNIT_KINDS: UnitKindInfo[] = [
   },
   {
     id: 'miasto-na-prawach-powiatu',
+    tagline: 'miasto i powiat w jednym',
     title: 'Miasto na prawach powiatu',
     short: 'Duże miasto, które jest jednocześnie gminą miejską i powiatem (powiat grodzki). Powiat i gmina to ta sama jednostka, więc ma ten sam obszar i zwykle te same dane.',
     long: 'Miasto, które samo pełni zadania powiatu. Jest jednocześnie gminą miejską i powiatem (stąd nazwa „powiat grodzki”). W danych GUS ma dwa wpisy, powiatowy i gminny, ale to ta sama jednostka. Takich miast jest 66, np. Szczecin, Kraków, Sopot. Numer powiatu w kodzie TERYT jest od 61 wzwyż. GUS niektóre wskaźniki podaje tylko dla powiatów, wtedy dane gminy to dane całego miasta.',
@@ -52,6 +57,7 @@ export const UNIT_KINDS: UnitKindInfo[] = [
   },
   {
     id: 'gmina-miejska',
+    tagline: 'samo miasto, bez wsi',
     title: 'Gmina miejska',
     short: 'Gmina, którą jest samo miasto, bez okolicznych wsi. Kod TERYT kończy się na 1.',
     long: 'Gmina obejmująca wyłącznie miasto. Jest częścią powiatu ziemskiego (np. Wałcz w powiecie wałeckim) albo, w przypadku miast na prawach powiatu, jest zarazem powiatem. Kod TERYT gminy kończy się na 1. Takich gmin jest 302, w tym 66 miast na prawach powiatu.',
@@ -60,6 +66,7 @@ export const UNIT_KINDS: UnitKindInfo[] = [
   },
   {
     id: 'gmina-wiejska',
+    tagline: 'same wsie, bez miasta',
     title: 'Gmina wiejska',
     short: 'Gmina bez miasta: same wsie. Często ma tę samą nazwę co sąsiednie miasto, ale to osobna gmina. Kod kończy się na 2.',
     long: 'Gmina złożona wyłącznie ze wsi, bez miasta. Często otacza miasto, które jest osobną gminą i ma tę samą nazwę (np. Wałcz miejska i Wałcz wiejska). Kod TERYT gminy kończy się na 2. Takich gmin jest 1459.',
@@ -68,6 +75,7 @@ export const UNIT_KINDS: UnitKindInfo[] = [
   },
   {
     id: 'gmina-miejsko-wiejska',
+    tagline: 'miasto razem z wsiami',
     title: 'Gmina miejsko-wiejska',
     short: 'Jedna gmina obejmująca miasto razem z okolicznymi wsiami. Kod kończy się na 3.',
     long: 'Gmina, w której miasto (siedziba gminy) i okoliczne wsie tworzą jedną jednostkę. Dane GUS dotyczą całej gminy, nie samego miasta. Kod TERYT gminy kończy się na 3. Takich gmin jest 718.',

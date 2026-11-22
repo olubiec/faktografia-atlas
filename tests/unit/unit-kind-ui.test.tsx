@@ -20,5 +20,6 @@ describe('słownik jednostek w interfejsie', () => {
       </MemoryRouter>,
     );
     expect(html).toContain('Co to znaczy: Miasto na prawach powiatu');
+    expect(html).toContain('Miasto na prawach powiatu</span><span class="text-olowek"> – miasto i powiat w jednym');
   });
 });
