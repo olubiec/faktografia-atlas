@@ -23,6 +23,7 @@ import { IndicatorInfo } from '../explain/IndicatorInfo';
 import { Icon } from '../ui/Icon';
 import { NavArrowDown, NavArrowUp, Download } from 'iconoir-react';
 import { isShareEnabled } from '../../core/share/share-flag';
+import { unitPagePath } from '../../core/seo/unit-link';
 
 export interface ProfileOverviewProps {
   profile: UnitProfile;
@@ -156,6 +157,8 @@ export function ProfileOverview({
   }, [isPartsLoaded, partsShard, profile.teryt, profile.indicators, view.values]);
 
   const [isShareOpen, setIsShareOpen] = useState(false);
+  // Statyczna strona miejsca (S09); adres z listy jednostek, którą mapa już ma. Brak adresu = brak linku.
+  const pagePath = useMemo(() => unitPagePath(profile.teryt, units), [profile.teryt, units]);
 
   const handleShowOnMap = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -344,9 +347,10 @@ export function ProfileOverview({
         )
       )}
 
-      {/* Przycisk Pobierz i udostępnij */}
-      {isShareEnabled() ? (
-      <div className="pt-2 flex justify-start">
+      {/* Przycisk Pobierz i udostępnij oraz link do strony miejsca */}
+      {isShareEnabled() || pagePath ? (
+      <div className="pt-2 flex flex-wrap items-center justify-start gap-x-4 gap-y-2">
+        {isShareEnabled() ? (
         <button
           type="button"
           onClick={() => setIsShareOpen(true)}
@@ -355,6 +359,15 @@ export function ProfileOverview({
           <Icon icon={Download} size={16} aria-hidden={true} />
           <span>Pobierz i udostępnij</span>
         </button>
+        ) : null}
+        {pagePath ? (
+          <a
+            href={pagePath}
+            className="inline-flex items-center gap-1 min-h-[44px] min-w-[44px] text-xs font-semibold text-tusz underline hover:text-olowek focus:outline-none focus:ring-2 focus:ring-tusz"
+          >
+            Strona miejsca <span aria-hidden="true">→</span>
+          </a>
+        ) : null}
       </div>
       ) : null}
 

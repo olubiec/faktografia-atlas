@@ -1,7 +1,8 @@
 import { Link } from 'react-router';
 import { cn } from '@/lib/utils';
 
-export type LinkListItem = { to: string; label: string };
+/** `reloadDocument`: adres poza aplikacją (statyczna strona z generatora) – zwykłe przejście zamiast routera. */
+export type LinkListItem = { to: string; label: string; reloadDocument?: boolean };
 
 const VARIANT = {
   footer: 'flex flex-wrap gap-x-4 gap-y-1',
@@ -27,6 +28,7 @@ export function LinkList({ items, variant = 'footer', activePath, label }: LinkL
             <li key={item.to}>
               <Link
                 to={item.to}
+                reloadDocument={item.reloadDocument}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
                   'inline-flex min-h-[44px] items-center text-sm text-tusz underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-tusz',
