@@ -10,7 +10,8 @@ test.describe('Map Component (CC4.1b)', () => {
       try {
         const parsed = new URL(url);
         // Any host other than localhost / 127.0.0.1 is external
-        if (parsed.hostname !== 'localhost' && parsed.hostname !== '127.0.0.1' && !url.startsWith('data:') && !url.startsWith('blob:')) {
+        if (parsed.hostname !== 'localhost' && parsed.hostname !== '127.0.0.1' && !url.startsWith('data:') && !url.startsWith('blob:') && !url.endsWith('/library/available.json')) {
+          // Wyjątek: lista dostępnych danych biblioteki GUS (wybór danych pokazuje tylko to, co mamy).
           externalRequests.push(url);
         }
       } catch {

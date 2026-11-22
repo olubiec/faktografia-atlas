@@ -47,7 +47,7 @@ test.describe('Ekran główny (CC13.B)', () => {
   test('zmiana wskaźnika, poziomu i roku zmienia stan mapy i adres', async ({ page }) => {
     await ready(page, '/?e2e');
 
-    await page.locator('[data-slot="dialog-trigger"]').click();
+    await page.locator('[data-slot="dialog-trigger"]:not([aria-label="Menu"])').click();
     const dialog = page.getByRole('dialog', { name: 'Wybierz dane' });
     await dialog.getByRole('searchbox', { name: 'Szukaj wskaźnika' }).fill('stopa bezrobocia rejestrowanego');
     await dialog.getByRole('button', { name: /Stopa bezrobocia rejestrowanego/ }).click();

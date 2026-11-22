@@ -31,7 +31,7 @@ const choroplethId = (page: Page) =>
 const search = async (page: Page) => new URLSearchParams(await page.evaluate(() => window.location.search));
 
 /** Przycisk z nazwą wskaźnika w panelu (nie przycisk „Co to znaczy”). */
-const trigger = (page: Page) => page.locator('[data-slot="dialog-trigger"]');
+const trigger = (page: Page) => page.locator('[data-slot="dialog-trigger"]:not([aria-label="Menu"])');
 
 test.describe('@PATH-2 wybór danych (1280 px)', () => {
   test.beforeEach(async ({ page }) => {
