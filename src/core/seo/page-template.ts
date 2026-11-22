@@ -34,11 +34,11 @@ export function dataDate(iso: string): string {
   return new Intl.DateTimeFormat('pl-PL', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Warsaw' }).format(d);
 }
 
-const LINK = 'inline-flex min-h-[44px] items-center text-tusz underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-tusz';
-const H2 = 'text-xl font-bold text-tusz';
-const SECTION = 'mt-12 md:mt-16';
+export const LINK = 'inline-flex min-h-[44px] items-center text-tusz underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-tusz';
+export const H2 = 'text-xl font-bold text-tusz';
+export const SECTION = 'mt-12 md:mt-16';
 
-const a = (href: string, label: string, cls = LINK) => `<a href="${attr(href)}" class="${cls}">${text(label)}</a>`;
+export const a = (href: string, label: string, cls = LINK) => `<a href="${attr(href)}" class="${cls}">${text(label)}</a>`;
 const valid = (links: readonly PageLink[]) => links.filter((l) => l.path);
 
 function breadcrumbs(model: RenderModel): PageLink[] {
@@ -67,7 +67,7 @@ function placeLd(model: RenderModel): LdObject {
   return ld;
 }
 
-function breadcrumbLd(crumbs: PageLink[]): LdObject {
+export function breadcrumbLd(crumbs: PageLink[]): LdObject {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -75,36 +75,44 @@ function breadcrumbLd(crumbs: PageLink[]): LdObject {
   };
 }
 
-function head(model: RenderModel, assets: PageAssets, crumbs: PageLink[]): string {
-  const url = absoluteUrl(model.path);
+/** Wspólne dane nagłówka dokumentu (strona miejsca, ranking, spis rankingów). */
+export interface DocumentHead {
+  path: string;
+  title: string;
+  description: string;
+  indexable: boolean;
+  ld: readonly LdObject[];
+}
+
+function head(doc: DocumentHead, assets: PageAssets): string {
+  const url = absoluteUrl(doc.path);
   const meta = (key: 'name' | 'property', name: string, content: string | number) =>
     `<meta ${key}="${name}" content="${attr(content)}">`;
   return [
     '<meta charset="UTF-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
     '<script src="/theme-init.js"></script>',
-    `<title>${text(model.title)}</title>`,
-    meta('name', 'description', model.description),
-    meta('name', 'robots', model.indexable ? 'index,follow' : 'noindex,follow'),
+    `<title>${text(doc.title)}</title>`,
+    meta('name', 'description', doc.description),
+    meta('name', 'robots', doc.indexable ? 'index,follow' : 'noindex,follow'),
     `<link rel="canonical" href="${attr(url)}">`,
     '<link rel="icon" type="image/svg+xml" href="/brand/faktografia-favicon.svg">',
     ...assets.css.map((href) => `<link rel="stylesheet" href="${attr(href)}">`),
     meta('property', 'og:type', 'website'),
     meta('property', 'og:site_name', 'Faktografia'),
     meta('property', 'og:locale', 'pl_PL'),
-    meta('property', 'og:title', model.title),
-    meta('property', 'og:description', model.description),
+    meta('property', 'og:title', doc.title),
+    meta('property', 'og:description', doc.description),
     meta('property', 'og:url', url),
     meta('property', 'og:image', absoluteUrl(OG_IMAGE_PATH)),
     meta('property', 'og:image:width', OG_IMAGE_WIDTH),
     meta('property', 'og:image:height', OG_IMAGE_HEIGHT),
     meta('name', 'twitter:card', 'summary_large_image'),
-    `<script type="application/ld+json">${serializeLd(placeLd(model))}</script>`,
-    `<script type="application/ld+json">${serializeLd(breadcrumbLd(crumbs))}</script>`,
+    ...doc.ld.map((ld) => `<script type="application/ld+json">${serializeLd(ld)}</script>`),
   ].join('\n');
 }
 
-function crumbNav(crumbs: PageLink[]): string {
+export function crumbNav(crumbs: PageLink[]): string {
   const items = crumbs.map((c, i) =>
     i === crumbs.length - 1
       ? `<li><span aria-current="page" class="inline-flex min-h-[44px] items-center text-olowek">${text(c.name)}</span></li>`
@@ -149,35 +157,46 @@ function localitiesSection(names: readonly string[] | undefined): string {
   }</section>`;
 }
 
-/** Pełny dokument HTML strony miejsca. Bez skryptu aplikacji: tylko theme-init.js i JSON-LD. */
-export function renderUnitPage(model: RenderModel, assets: PageAssets): string {
-  const crumbs = breadcrumbs(model);
-  const logo =
-    '<a href="/" aria-label="Faktografia – strona główna" class="flex min-h-[44px] items-center"><picture>' +
-    '<source srcset="/brand/faktografia-logo-jasne.svg" media="(prefers-color-scheme: dark)">' +
-    '<img src="/brand/faktografia-logo-granat.svg" alt="Faktografia" class="h-10 md:h-12 w-auto -ml-3 md:-ml-3.5"></picture></a>';
-  const button = `<a href="${attr(mapLink(model.teryt, model.level))}" class="mt-6 inline-flex min-h-[44px] items-center border border-tusz bg-tusz px-4 py-2 font-bold text-arkusz focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tusz">Otwórz na mapie</a>`;
+const LOGO =
+  '<a href="/" aria-label="Faktografia – strona główna" class="flex min-h-[44px] items-center"><picture>' +
+  '<source srcset="/brand/faktografia-logo-jasne.svg" media="(prefers-color-scheme: dark)">' +
+  '<img src="/brand/faktografia-logo-granat.svg" alt="Faktografia" class="h-10 md:h-12 w-auto -ml-3 md:-ml-3.5"></picture></a>';
+
+/** Przycisk do mapy (≥ 44 px). */
+export const mapButton = (href: string, label: string) =>
+  `<a href="${attr(href)}" class="mt-6 inline-flex min-h-[44px] items-center border border-tusz bg-tusz px-4 py-2 font-bold text-arkusz focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tusz">${text(label)}</a>`;
+
+/** Pełny dokument: nagłówek z logo, treść `main` (już w HTML), stopka ze źródłem i datą danych. */
+export function renderDocument(doc: DocumentHead & { lastmod: string }, main: string, assets: PageAssets): string {
   return `<!doctype html>
 <html lang="pl">
 <head>
-${head(model, assets, crumbs)}
+${head(doc, assets)}
 </head>
 <body class="min-h-screen bg-kalka text-tusz">
-<header class="flex h-14 md:h-18 items-center border-b border-linia px-4 md:px-8">${logo}</header>
+<header class="flex h-14 md:h-18 items-center border-b border-linia px-4 md:px-8">${LOGO}</header>
 <main id="main-content" class="mx-auto max-w-5xl px-4 py-8 md:px-8 md:py-12">
-${crumbNav(crumbs)}
-<h1 class="mt-6 text-3xl md:text-4xl font-extrabold leading-tight break-words">${text(model.h1)}</h1>
-${model.lead.map((s) => `<p class="mt-4 max-w-prose">${text(s)}</p>`).join('\n')}
-${button}
-${table(model.rows, model.h1)}
-${localitiesSection(model.localities)}
-${linkSection('podrzedne', model.level === 'woj' ? 'Powiaty i miasta' : 'Gminy', model.links.children)}
-${linkSection('podobne', 'Podobne pod względem liczby ludności', model.links.neighbours)}
+${main}
 </main>
 <footer class="border-t border-linia bg-arkusz px-4 py-8 md:px-8">
-<p class="mx-auto max-w-5xl text-sm text-olowek">Źródło: GUS, Bank Danych Lokalnych, CC BY 4.0 · dane z ${text(dataDate(model.lastmod))}</p>
+<p class="mx-auto max-w-5xl text-sm text-olowek">Źródło: GUS, Bank Danych Lokalnych, CC BY 4.0 · dane z ${text(dataDate(doc.lastmod))}</p>
 </footer>
 </body>
 </html>
 `;
+}
+
+/** Pełny dokument HTML strony miejsca. Bez skryptu aplikacji: tylko theme-init.js i JSON-LD. */
+export function renderUnitPage(model: RenderModel, assets: PageAssets): string {
+  const crumbs = breadcrumbs(model);
+  const main = `${crumbNav(crumbs)}
+<h1 class="mt-6 text-3xl md:text-4xl font-extrabold leading-tight break-words">${text(model.h1)}</h1>
+${model.lead.map((s) => `<p class="mt-4 max-w-prose">${text(s)}</p>`).join('\n')}
+${mapButton(mapLink(model.teryt, model.level), 'Otwórz na mapie')}
+${table(model.rows, model.h1)}
+${localitiesSection(model.localities)}
+${linkSection('podrzedne', model.level === 'woj' ? 'Powiaty i miasta' : 'Gminy', model.links.children)}
+${linkSection('podobne', 'Podobne pod względem liczby ludności', model.links.neighbours)}`;
+  const ld = [placeLd(model), breadcrumbLd(crumbs)];
+  return renderDocument({ ...model, ld }, main, assets);
 }
