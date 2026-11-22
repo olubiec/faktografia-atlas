@@ -13,7 +13,7 @@ import {
 } from './library-lib.mjs';
 import { sectionOf, sortQueueByPriority, summarizeBySection, priorityScore } from './library-priority.mjs';
 import { fetchHtml, loadCalendar, calendarHits } from './gus-calendar.mjs';
-import { budgetForRun, hasNewYear, refreshCandidates, yearProbeUrl } from './library-plan.mjs';
+import { budgetForRun, hasNewYear, pagesHaveValues, refreshCandidates, yearProbeUrl } from './library-plan.mjs';
 
 const dir = process.env.LIBRARY_DIR ?? 'library';
 const clientId = process.env.BDL_CLIENT_ID;
@@ -112,7 +112,13 @@ async function downloadValues(state, catalog, config = null) {
     try {
       const out = { v: v.id };
       for (const level of levelsForVariable(v)) {
-        out[`l${level}`] = compactPages(await allPages((p) => dataUrl(v.id, level, p)));
+        const pages = await allPages((p) => dataUrl(v.id, level, p));
+        out[`l${level}`] = compactPages(pages);
+        // Powiaty są tanie (kilka zapytań), gminy drogie (~25): pusty poziom powiatów = gmin nie pobieramy.
+        if (level === 5 && !pagesHaveValues(pages)) {
+          stats.skippedEmpty = (stats.skippedEmpty ?? 0) + 1;
+          break;
+        }
       }
       await writeJson(`values/${v.id}.json`, out);
       state.done[v.id] = new Date().toISOString().slice(0, 10);
@@ -216,7 +222,7 @@ async function main() {
     const table = summarizeBySection(bySection, stats.queueLength ?? 0);
     console.log(table);
     if (process.env.LIBRARY_SUMMARY_FILE) await writeFile(process.env.LIBRARY_SUMMARY_FILE, `${table}\n`);
-    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Kalendarium GUS: ${stats.calendarTitles ?? 0} publikacji. Zmiennych: ${total}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
+    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Kalendarium GUS: ${stats.calendarTitles ?? 0} publikacji. Pominięte puste (bez gmin): ${stats.skippedEmpty ?? 0}. Zmiennych: ${total}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
   }
 }
 

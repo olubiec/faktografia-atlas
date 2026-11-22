@@ -27,6 +27,11 @@ export function hasNewYear(json) {
   return (json?.results ?? []).some((r) => (r.values ?? []).some((v) => v.val !== null && v.val !== undefined));
 }
 
+/** Czy którakolwiek strona odpowiedzi ma jakąkolwiek wartość. Pusty poziom powiatów = nie pobieramy gmin (oszczędność ~25 zapytań). */
+export function pagesHaveValues(pages) {
+  return pages.some((p) => hasNewYear(p));
+}
+
 /**
  * Zmienne do odświeżenia. Najpierw jak dotąd: pobrane dawniej niż refreshAfterDays (przypięte, potem wg wyniku).
  * Kalendarium to tylko dodatek: zmienne pasujące do świeżej publikacji, ale jeszcze nie „stare”, idą na sam koniec

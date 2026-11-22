@@ -90,3 +90,11 @@ describe('Nocna sonda nowego roku', () => {
     expect(fetched).toHaveLength(2); // dla „a” bez zapytania
   });
 });
+
+describe('oszczędność zapytań', () => {
+  it('pagesHaveValues: pusty poziom powiatów nie ma wartości', async () => {
+    const plan = await import('../../scripts/data/library-plan.mjs');
+    expect(plan.pagesHaveValues([{ results: [{ values: [{ year: 2020, val: null }] }] }])).toBe(false);
+    expect(plan.pagesHaveValues([{ results: [] }, { results: [{ values: [{ year: 2020, val: 3 }] }] }])).toBe(true);
+  });
+});
