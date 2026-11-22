@@ -23,7 +23,7 @@ import { cn } from '../../lib/utils';
 import { versusShareData } from '../../core/share/versus-data';
 import { BASIC_INDICATORS } from '../../core/indicators/basic';
 import { ChangeIndicatorWindow } from './ProfileIndicatorList';
-import { UnitKindHint } from './UnitKindHint'; import { useExtraItems } from './useExtraItems'; import { ExtraIndicatorList } from './ExtraIndicatorList';
+import { UnitKindInfo } from './UnitKindInfo'; import { useExtraItems } from './useExtraItems'; import { ExtraIndicatorList } from './ExtraIndicatorList';
 import indicatorsData from '../../../config/indicators.json';
 import { isShareEnabled } from '../../core/share/share-flag';
 
@@ -436,8 +436,8 @@ export function ProfileCompare({
           <span className="text-xs text-olowek block">Porównanie z:</span>
           <span className="text-sm font-bold text-tusz truncate block">
             {profileB.unit ? unitTitle(profileB.unit) : `TERYT ${profileB.teryt}`}
-          </span>{profileB.unit && <UnitKindHint unit={profileB.unit} />}
-        </div>
+          </span>
+        </div>{profileB.unit && <UnitKindInfo unit={profileB.unit} />}
         <button
           type="button"
           onClick={handleClearSecondUnit}

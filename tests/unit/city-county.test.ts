@@ -20,7 +20,7 @@ describe('miasta na prawach powiatu', () => {
   it('Szczecin jako powiat to „miasto na prawach powiatu”, nie zwykły powiat', () => {
     const pow = mk('3262', 'powiat Szczecin', 'pow');
     expect(unitLabel(pow)).toBe('Szczecin (miasto na prawach powiatu)');
-    expect(unitTitle(pow)).toBe('Miasto na prawach powiatu Szczecin');
+    expect(unitTitle(pow)).toBe('Powiat Szczecin');
     expect(unitTitle(mk('3262011', 'Szczecin', 'gmi'))).toBe('Gmina miejska Szczecin');
   });
 
@@ -47,11 +47,11 @@ describe('przypis dla gminy miasta na prawach powiatu', () => {
 });
 
 describe('nazwy na listach i rankingach', () => {
-  it('powiat ziemski bez słowa „powiat”, miasto na prawach powiatu z dopiskiem', async () => {
+  it('powiat bez słowa „powiat”, gmina z rodzajem', async () => {
     const { listName } = await import('@/core/units/label');
     const { unitKindLine } = await import('@/core/units/kinds');
     expect(listName(mk('3217', 'powiat wałecki', 'pow'))).toBe('wałecki');
-    expect(listName(mk('3262', 'powiat Szczecin', 'pow'))).toBe('Szczecin (miasto na prawach powiatu)');
+    expect(listName(mk('3262', 'powiat Szczecin', 'pow'))).toBe('Szczecin');
     expect(listName(mk('3217011', 'Wałcz', 'gmi'))).toBe('Wałcz (miasto)');
     expect(unitKindLine(mk('3262', 'powiat Szczecin', 'pow'))).toBe('Miasto na prawach powiatu – miasto i powiat w jednym');
     expect(unitKindLine(mk('3217', 'powiat wałecki', 'pow'))).toBe('Powiat ziemski – związek kilku gmin');
