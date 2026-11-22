@@ -12,6 +12,7 @@ import {
   levelsForVariable, subjectsUrl, variablesUrl,
 } from './library-lib.mjs';
 import { sectionOf, sortQueueByPriority, summarizeBySection, priorityScore } from './library-priority.mjs';
+import { fetchHtml, loadCalendar, calendarHits } from './gus-calendar.mjs';
 import { budgetForRun, hasNewYear, refreshCandidates, yearProbeUrl } from './library-plan.mjs';
 
 const dir = process.env.LIBRARY_DIR ?? 'library';
@@ -101,8 +102,8 @@ async function crawlCatalog(state, catalog) {
 }
 
 // Faza 2: wartości zmiennych wg kolejki priorytetów.
-async function downloadValues(state, catalog) {
-  const config = JSON.parse(await readFile(configFile, 'utf8'));
+async function downloadValues(state, catalog, config = null) {
+  config ??= JSON.parse(await readFile(configFile, 'utf8'));
   const queue = sortQueueByPriority(Object.values(catalog.variables), catalog, config, state);
   stats.queueLength = queue.length;
   for (const v of queue) {
@@ -138,7 +139,9 @@ async function refreshValues(state, catalog, config, total) {
     const v = catalog.variables[id];
     return v ? priorityScore(v, catalog.subjects?.[v.subjectId]?.path ?? [], config) : 0;
   };
-  for (const id of refreshCandidates({ done: state.done, config, scoreOf })) {
+  const pathOf = (v) => catalog.subjects?.[v.subjectId]?.path ?? [];
+  const calendarHit = (id) => !!catalog.variables[id] && calendarHits(catalog.variables[id], pathOf(catalog.variables[id]), config.calendarStems) > 0;
+  for (const id of refreshCandidates({ done: state.done, config, scoreOf, calendarHit, calendarLatest: config.calendarLatest })) {
     if (budget.used - start >= cap || !budget.canStartVariable()) break;
     const v = catalog.variables[id];
     const old = await readJson(`values/${id}.json`, null);
@@ -156,6 +159,16 @@ async function refreshValues(state, catalog, config, total) {
     state.done[id] = new Date().toISOString().slice(0, 10);
     await writeJson('state.json', state);
   }
+}
+
+// Kalendarium GUS (3 ostatnie dni): rdzenie tematów do premii w kolejce. Błąd sieci nie przerywa pracy.
+async function applyCalendar(config) {
+  if (process.env.LIBRARY_CALENDAR === '0') return;
+  const cal = await loadCalendar(fetchHtml).catch(() => null);
+  if (!cal) return;
+  config.calendarStems = cal.stems;
+  config.calendarLatest = cal.latest;
+  stats.calendarTitles = cal.titles.length;
 }
 
 // Podgląd: ile i jakie zmienne weszłyby do tego przebiegu (bez zapytań do API).
@@ -186,8 +199,9 @@ async function main() {
     budget = createBudget(total);
     if (!state.catalogDone) await crawlCatalog(state, catalog);
     const config = JSON.parse(await readFile(configFile, 'utf8'));
+    await applyCalendar(config);
     await refreshValues(state, catalog, config, total);
-    await downloadValues(state, catalog);
+    await downloadValues(state, catalog, config);
   } catch (err) {
     if (!(err instanceof LimitStop)) {
       console.error(String(err.message).replace(clientId, '[KLUCZ]'));
@@ -202,7 +216,7 @@ async function main() {
     const table = summarizeBySection(bySection, stats.queueLength ?? 0);
     console.log(table);
     if (process.env.LIBRARY_SUMMARY_FILE) await writeFile(process.env.LIBRARY_SUMMARY_FILE, `${table}\n`);
-    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Zmiennych: ${total}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
+    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Kalendarium GUS: ${stats.calendarTitles ?? 0} publikacji. Zmiennych: ${total}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
   }
 }
 
