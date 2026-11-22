@@ -1,0 +1,74 @@
+{
+ "totals": {
+  "clicks": 120,
+  "impressions": 4800,
+  "position": 18.2
+ },
+ "queries": [
+  {
+   "keys": [
+    "lesistość gmina wieliczka"
+   ],
+   "clicks": 30,
+   "impressions": 500,
+   "ctr": 0.06,
+   "position": 6.1
+  },
+  {
+   "keys": [
+    "mapa bezrobocia powiaty"
+   ],
+   "clicks": 25,
+   "impressions": 900,
+   "ctr": 0.0278,
+   "position": 8.4
+  },
+  {
+   "keys": [
+    "ludność powiat krakowski"
+   ],
+   "clicks": 20,
+   "impressions": 700,
+   "ctr": 0.0286,
+   "position": 11.0
+  },
+  {
+   "keys": [
+    "nowe zapytanie"
+   ],
+   "clicks": 5,
+   "impressions": 60,
+   "ctr": 0.0833,
+   "position": 14.0
+  }
+ ],
+ "pages": [
+  {
+   "keys": [
+    "https://faktografia.eu/ranking/lesistosc/powiaty"
+   ],
+   "clicks": 50,
+   "impressions": 1200,
+   "ctr": 0.0417,
+   "position": 7.2
+  },
+  {
+   "keys": [
+    "https://faktografia.eu/powiat/krakowski"
+   ],
+   "clicks": 15,
+   "impressions": 500,
+   "ctr": 0.03,
+   "position": 12.0
+  },
+  {
+   "keys": [
+    "https://faktografia.eu/miejsca"
+   ],
+   "clicks": 5,
+   "impressions": 300,
+   "ctr": 0.0167,
+   "position": 20.0
+  }
+ ]
+}

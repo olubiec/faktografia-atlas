@@ -1,0 +1,45 @@
+name: SEO IndexNow
+
+# Po wdrożeniu produkcji zgłasza Bingowi i wyszukiwarkom partnerskim (IndexNow) tylko te adresy z mapy strony,
+# których data zmiany się zmieniła. Google nie obsługuje IndexNow – dla niego wystarcza mapa strony.
+# Poprzednia migawka mapy strony pochodzi z artefaktu poprzedniego udanego przebiegu.
+on:
+  deployment_status:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: seo-indexnow
+  cancel-in-progress: false
+
+jobs:
+  indexnow:
+    if: github.event_name == 'workflow_dispatch' || (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Poprzednia migawka mapy strony
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p old
+          id=$(gh run list --workflow seo-indexnow.yml --status success --limit 1 --json databaseId --jq '.[0].databaseId' || true)
+          if [ -n "$id" ]; then gh run download "$id" --name sitemap-snapshot --dir old || true; fi
+      - name: Zgłoszenie zmienionych adresów
+        run: node scripts/seo/indexnow.mjs old new
+      - uses: actions/upload-artifact@v7
+        with:
+          name: sitemap-snapshot
+          path: new
+          if-no-files-found: ignore
+          retention-days: 90
