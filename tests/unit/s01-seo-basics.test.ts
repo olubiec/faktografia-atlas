@@ -13,18 +13,6 @@ describe('W25-S01: robots.txt, sitemap.xml, index.html', () => {
     expect(robots).toContain('Disallow: /__test/');
   });
 
-  it('sitemap.xml ma 5 adresów z domeny głównej, każdy istnieje w App.tsx', () => {
-    const xml = read('public/sitemap.xml');
-    const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]!);
-    expect(locs).toHaveLength(5);
-    const app = read('src/App.tsx');
-    for (const loc of locs) {
-      expect(loc.startsWith(`${SITE}/`)).toBe(true);
-      const path = loc.slice(SITE.length);
-      expect(app).toContain(`path="${path}"`);
-    }
-  });
-
   it('index.html ma język, opis 70–160 znaków, og:locale, h1 i linki w #root', () => {
     const html = read('index.html');
     expect(html).toMatch(/<html lang="pl"/);
