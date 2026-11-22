@@ -4,8 +4,9 @@ import type { Unit } from '../../core/units/types';
 import type { MainView } from '../map/hooks/useMainView';
 import { collectFootnotes } from '../../core/profile/footnotes';
 import { childUnits } from '../../core/profile/sections';
-import { unitTitle } from '../../core/units/label';
+import { cityCountyNote, unitTitle } from '../../core/units/label';
 import { Footnotes } from './Footnotes';
+import { UnitKindHint } from './UnitKindHint';
 import { Sheet } from '../ui/Sheet';
 import { Icon } from '../ui/Icon';
 import { ProfileOverview } from './ProfileOverview';
@@ -81,6 +82,7 @@ export function ProfileBody({
   }, []);
 
   const childrenResult = profile.unit ? childUnits(profile.unit, units) : null;
+  const cityNote = profile.unit ? cityCountyNote(profile.unit) : null;
   const unitTitleText = profile.unit ? unitTitle(profile.unit) : `TERYT ${profile.teryt}`;
 
   // Pozostałe wskaźniki bez bieżącego aktywnego (gdy jest view)
@@ -111,6 +113,8 @@ export function ProfileBody({
           <p className="text-xs text-olowek font-mono">
             {`TERYT ${profile.teryt}`}
           </p>
+          {profile.unit && <UnitKindHint unit={profile.unit} />}
+          {cityNote && <p className="text-xs text-olowek">{cityNote}</p>}
         </div>
         {showCloseButton && onClose && (
           <button

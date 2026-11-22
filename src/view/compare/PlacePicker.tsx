@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { loadSearchIndex, useSearch } from '@/view/search/useSearch';
 import { loadLocalities } from '@/core/search/load-localities';
 import { searchLocalities, type LocalitySearchResult } from '@/core/search/localities';
-import { unitLabel } from '@/core/units/label';
+import { isCityCounty, unitLabel } from '@/core/units/label';
 import type { Locality, SearchResult } from '@/core/search';
 import type { Unit } from '@/core/units/types';
 
@@ -47,7 +47,7 @@ function buildOptions(
 /** Nazwa wybranego miejsca z rodzajem, np. „Kraków (powiat grodzki)”. */
 function selectedLabel(unit: Unit | undefined, teryt: string): string {
   if (!unit) return teryt;
-  if (unit.level === 'pow') return `${unit.name} (${unit.teryt[2] === '6' ? 'powiat grodzki' : 'powiat'})`;
+  if (unit.level === 'pow') return `${unit.name} (${isCityCounty(unit.teryt) ? 'powiat grodzki' : 'powiat'})`;
   return unitLabel(unit);
 }
 
