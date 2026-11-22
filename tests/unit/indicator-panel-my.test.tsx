@@ -87,12 +87,10 @@ describe('Panel mapy: aktywny wiersz „Moich wskaźników” (QC506)', () => {
     expect(currentRows(renderManager('b999'))).toHaveLength(0);
   });
 
-  it('cały panel przekazuje bieżący wskaźnik i oznacza jego wiersz', () => {
+  it('cały panel mapy nie pokazuje już „Moich wskaźników” (C01: tylko w Porównaj)', () => {
     const id = BASIC_INDICATORS[1];
     const html = renderPanel(id);
-    expect(seen.some((s) => s.activeId === id)).toBe(true);
-    const rows = currentRows(html);
-    expect(rows).toHaveLength(1);
-    expect(rows[0]).toContain(`data-row-id="${id}"`);
+    expect(seen).toHaveLength(0);
+    expect(currentRows(html)).toHaveLength(0);
   });
 });
