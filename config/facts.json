@@ -1,0 +1,69 @@
+{
+  "$opis": "Silnik faktów (W26-F01, docs/KONCEPT-ODKRYCIA.md §3–§4). Wagi i progi zmienialne bez kodu; po zmianie uruchom node scripts/data/build-facts.mjs.",
+  "frameWeights": {
+    "kraj": 1,
+    "zmiana": 0.9,
+    "wojewodztwo": 0.7,
+    "rekord": 0.5,
+    "typowosc": 0.2
+  },
+  "indicatorWeights": {
+    "population": 1,
+    "avg-wage": 1,
+    "unemployment-rate": 1,
+    "unemployed-share-working-age": 1,
+    "dwellings-per-1000": 1,
+    "dwelling-area-per-person": 1,
+    "income-per-capita": 1,
+    "share-65plus": 0.8,
+    "median-age": 0.8,
+    "migration-balance": 0.8,
+    "preschool-3-6": 0.8
+  },
+  "defaultIndicatorWeight": 0.6,
+  "freshness": { "latest": 1, "older": 0.7 },
+  "thresholds": {
+    "nationalShare": 0.01,
+    "voivodeshipTop": 3,
+    "voivodeshipMinUnits": 15,
+    "changeYears": 10,
+    "changeShare": 0.02,
+    "recordDeviation": 0.15,
+    "recordMinYears": 8,
+    "boundaryJump": 0.03,
+    "smallPopulation": 5000,
+    "smallAverageYears": 3,
+    "typicalBand": 10
+  },
+  "rateUnits": ["na 1000", "na 10 tys."],
+  "relativeChangeUnits": ["osoba", "osoby", "zł", "os./km²", "m²"],
+  "absoluteIndicators": ["population", "density"],
+  "changeExcluded": ["density"],
+  "recordExcluded": ["natural-increase", "migration-balance", "density"],
+  "selection": { "count": 3, "perIndicator": 1, "perGroup": 2 },
+  "calendar": {
+    "1": "Praca",
+    "2": "Pieniądze",
+    "3": "Ludność",
+    "4": "Mieszkania",
+    "5": "Środowisko",
+    "6": "Życie",
+    "7": "Życie",
+    "8": "Transport",
+    "9": "Życie",
+    "10": "Pieniądze",
+    "11": "Ludność",
+    "12": "Mieszkania"
+  },
+  "calendarBoost": 1.5,
+  "trendBoost": {},
+  "start": {
+    "dailyCount": 30,
+    "lists": [
+      { "indicatorId": "income-per-capita", "level": "gmi", "dir": 1 },
+      { "indicatorId": "avg-wage", "level": "pow", "dir": 1 },
+      { "indicatorId": "forest-cover", "level": "gmi", "dir": 1 },
+      { "indicatorId": "median-age", "level": "gmi", "dir": -1 }
+    ]
+  }
+}

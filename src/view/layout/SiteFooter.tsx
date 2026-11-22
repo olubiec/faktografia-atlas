@@ -38,9 +38,13 @@ function getIsDark(): boolean {
   return false;
 }
 
-/** Stopka: najwyżej 6 linków, bez powtórzeń nagłówka i bez działów tematycznych. */
+/**
+ * Stopka: 7 linków (D9: 7. to „Miejsca”), bez powtórzeń nagłówka i bez działów tematycznych.
+ * `/miejsca` to statyczna strona spoza aplikacji, więc link przeładowuje dokument.
+ */
 const FOOTER_LINKS: LinkListItem[] = [
   { to: '/mapa', label: 'Mapa' },
+  { to: '/miejsca', label: 'Miejsca', reloadDocument: true },
   { to: '/o-projekcie', label: 'O projekcie' },
   { to: '/zrodla', label: 'Skąd są dane' },
   { to: '/prywatnosc', label: 'Prywatność i zgoda' },
