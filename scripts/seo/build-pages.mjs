@@ -12,6 +12,55 @@ const dataDir = path.join(root, 'public/data');
 /** Limit rozmiaru strony gminy bez kompresji (warunek S07). */
 const MAX_GMINA_BYTES = 80 * 1024;
 
+/**
+ * Statyczny dokument `/miejsca` (indeksowany). Klasy tylko te, które ma już page-template.ts (skanowany przez Tailwind).
+ * Każda nazwa i adres przechodzą przez escapeHtml / escapeAttr.
+ */
+function renderPlacesPage(voivodeships, { css, escapeAttr: attr, escapeHtml: text, absoluteUrl }) {
+  const title = 'Miejsca: województwa, powiaty i miasta – Faktografia';
+  const description = 'Spis 16 województw z powiatami i miastami na prawach powiatu. Każde miejsce ma stronę z danymi GUS.';
+  const url = absoluteUrl('/miejsca');
+  const LINK = 'inline-flex min-h-[44px] items-center text-tusz underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-tusz';
+  const a = (href, label) => `<a href="${attr(href)}" class="${LINK}">${text(label)}</a>`;
+  const sections = voivodeships.map(
+    (v) => `<section aria-labelledby="w${attr(v.teryt)}" class="mt-12 md:mt-16"><h2 id="w${attr(v.teryt)}" class="text-xl font-bold text-tusz">${a(v.path, v.name)}</h2>
+<ul class="mt-3 flex flex-wrap gap-x-6">${v.children.map((c) => `<li>${a(c.path, c.name)}</li>`).join('')}</ul></section>`,
+  );
+  return `<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/theme-init.js"></script>
+<title>${text(title)}</title>
+<meta name="description" content="${attr(description)}">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="${attr(url)}">
+<link rel="icon" type="image/svg+xml" href="/brand/faktografia-favicon.svg">
+${css.map((href) => `<link rel="stylesheet" href="${attr(href)}">`).join('\n')}
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Faktografia">
+<meta property="og:locale" content="pl_PL">
+<meta property="og:title" content="${attr(title)}">
+<meta property="og:description" content="${attr(description)}">
+<meta property="og:url" content="${attr(url)}">
+</head>
+<body class="min-h-screen bg-kalka text-tusz">
+<header class="flex h-14 md:h-18 items-center border-b border-linia px-4 md:px-8"><a href="/" aria-label="Faktografia – strona główna" class="flex min-h-[44px] items-center"><picture><source srcset="/brand/faktografia-logo-jasne.svg" media="(prefers-color-scheme: dark)"><img src="/brand/faktografia-logo-granat.svg" alt="Faktografia" class="h-10 md:h-12 w-auto -ml-3 md:-ml-3.5"></picture></a></header>
+<main id="main-content" class="mx-auto max-w-5xl px-4 py-8 md:px-8 md:py-12">
+<h1 class="mt-6 text-3xl md:text-4xl font-extrabold leading-tight break-words">Miejsca w Polsce</h1>
+<p class="mt-4 max-w-prose">Województwa, powiaty i miasta na prawach powiatu. Gminy są na stronach powiatów.</p>
+<a href="/mapa" class="mt-6 inline-flex min-h-[44px] items-center border border-tusz bg-tusz px-4 py-2 font-bold text-arkusz focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tusz">Otwórz mapę</a>
+${sections.join('\n')}
+</main>
+<footer class="border-t border-linia bg-arkusz px-4 py-8 md:px-8">
+<p class="mx-auto max-w-5xl text-sm text-olowek">Źródło: GUS, Bank Danych Lokalnych, CC BY 4.0</p>
+</footer>
+</body>
+</html>
+`;
+}
+
 const readJson = async (file) => JSON.parse(await readFile(file, 'utf8'));
 const started = performance.now();
 
@@ -30,6 +79,9 @@ try {
   const { buildUnitPage } = await vite.ssrLoadModule('/src/core/seo/unit-page.ts');
   const { renderUnitPage } = await vite.ssrLoadModule('/src/core/seo/page-template.ts');
   const { buildSitemaps, isIndexed } = await vite.ssrLoadModule('/src/core/seo/sitemap.ts');
+  const { placesIndex } = await vite.ssrLoadModule('/src/core/seo/unit-link.ts');
+  const { escapeAttr, escapeHtml } = await vite.ssrLoadModule('/src/core/seo/html.ts');
+  const { absoluteUrl } = await vite.ssrLoadModule('/src/core/seo/site.ts');
 
   const config = await readJson(path.join(root, 'config/seo.json'));
   const indicators = await readJson(path.join(root, 'config/indicators.json'));
@@ -95,6 +147,12 @@ try {
       sitemapPages.push({ path: urlPath, level: unit.level, indexable, lastmod: page.lastmod });
     }
   }
+
+  // S09 (D9): spis miejsc `/miejsca` – 16 województw z powiatami i miastami; link w stopce każdej strony aplikacji.
+  const placesHtml = renderPlacesPage(placesIndex(units), { css, escapeAttr, escapeHtml, absoluteUrl });
+  await mkdir(path.join(dist, 'miejsca'), { recursive: true });
+  await writeFile(path.join(dist, 'miejsca', 'index.html'), placesHtml);
+  staticPaths.push(absoluteUrl('/miejsca'));
 
   const sitemaps = buildSitemaps(sitemapPages, staticPaths, config);
   for (const [name, xml] of Object.entries(sitemaps)) await writeFile(path.join(dist, name), xml);
