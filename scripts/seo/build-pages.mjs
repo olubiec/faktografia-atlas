@@ -6,6 +6,7 @@ import { createServer } from 'vite';
 
 const DIST = 'dist';
 const MAX_BYTES = 80 * 1024;
+const MAX_RANKING_BYTES = 120 * 1024;
 const STATIC_PATHS = ['/', '/mapa', '/miejsca', '/o-projekcie', '/zrodla', '/prywatnosc'];
 
 const json = async (p) => JSON.parse(await readFile(p, 'utf8'));
@@ -23,6 +24,8 @@ try {
   const { buildSitemaps } = await server.ssrLoadModule('/src/core/seo/sitemap.ts');
   const { auditPages } = await server.ssrLoadModule('/src/core/seo/audit.ts');
   const { renderPlacesPage } = await server.ssrLoadModule('/src/core/seo/places-page.ts');
+  const { buildRankingPage, rankingLevels, rankingPath } = await server.ssrLoadModule('/src/core/seo/ranking-page.ts');
+  const { renderRankingPage } = await server.ssrLoadModule('/src/core/seo/ranking-html.ts');
 
   const units = await json('public/data/units.json');
   const indicators = await json('config/indicators.json');
@@ -76,14 +79,66 @@ try {
     else noindex++;
   }
 
+  const lastmod = [...profiles.values()].map((p) => p.generatedAt).sort().at(-1);
+
+  // Rankingi (S10): 20 wskaźników × poziomy, a dla gmin także 16 województw.
+  const explanations = new Map((await json('public/data/explanations.json')).items.map((e) => [e.indicatorId, e]));
+  const wojUnits = units.filter((u) => u.level === 'woj');
+  const rankingLinks = [];
+  let rankingCount = 0;
+  for (const indicator of indicators) {
+    let values;
+    try {
+      values = await json(path.join('public/data/values', `${indicator.id}.json`));
+    } catch {
+      continue;
+    }
+    const yi = values.years.length - 1;
+    const year = values.years[yi];
+    const explanation = explanations.get(indicator.id) ?? null;
+    const levels = rankingLevels(indicator);
+    const make = (level, woj) => buildRankingPage({ indicator, year, level, woj, units, paths, valueOf: (t) => values.values[t]?.[yi] ?? null, explanation, lastmod });
+    const links = [];
+    for (const level of levels) {
+      const national = make(level);
+      if (!national) continue;
+      const related = levels.filter((l) => l !== level).map((l) => ({ label: `${indicator.name}: ranking ${{ woj: 'województw', pow: 'powiatów', gmi: 'gmin' }[l]}`, path: rankingPath(indicator.name, l) }));
+      const group = [];
+      if (level === 'gmi') {
+        for (const w of wojUnits) {
+          const wp = make(level, w);
+          if (!wp) continue;
+          group.push({ page: wp, related: [{ label: `${indicator.name}: ranking gmin w Polsce`, path: national.path }] });
+          related.push({ label: `Gminy: województwo ${w.name}`, path: wp.path });
+        }
+      }
+      for (const { page, related: rel } of [{ page: national, related }, ...group]) {
+        const isGmina = page.level === 'gmi';
+        const indexable = !isGmina || config.indexGminy === true;
+        const out = renderRankingPage(page, rel, cssHrefs, !indexable);
+        const bytes = Buffer.byteLength(out);
+        if (bytes > MAX_RANKING_BYTES) throw new Error(`Ranking ${page.path} ma ${bytes} B (limit ${MAX_RANKING_BYTES} B)`);
+        if (bytes > biggest.bytes) biggest = { bytes, path: page.path };
+        const file = path.join(DIST, `${page.path}.html`);
+        await mkdir(path.dirname(file), { recursive: true });
+        await writeFile(file, out);
+        rendered.push({ path: page.path, html: out });
+        pages.push({ path: page.path, indexable, lastmod, group: 'rankingi' });
+        rankingCount++;
+        if (indexable) indexed++;
+        else noindex++;
+      }
+      links.push({ label: { woj: 'województwa', pow: 'powiaty', gmi: 'gminy' }[level], path: national.path });
+    }
+    if (links.length) rankingLinks.push({ indicator: indicator.name, links });
+  }
+
   // Spis miejsc (/miejsca) i tabela adresów dla linku „Strona miejsca” w profilu (wczytywana leniwie).
-  const places = renderPlacesPage(units, paths, cssHrefs);
+  const places = renderPlacesPage(units, paths, cssHrefs, rankingLinks);
   await writeFile(path.join(DIST, 'miejsca.html'), places);
   rendered.push({ path: '/miejsca', html: places });
   await mkdir(path.join(DIST, 'data'), { recursive: true });
   await writeFile(path.join(DIST, 'data', 'seo-paths.json'), JSON.stringify(Object.fromEntries(paths.byTeryt)));
-
-  const lastmod = [...profiles.values()].map((p) => p.generatedAt).sort().at(-1);
   const sitemaps = buildSitemaps(pages, STATIC_PATHS, { indexGminy: config.indexGminy === true, lastmod });
   for (const f of sitemaps) await writeFile(path.join(DIST, f.name), f.xml);
 
@@ -95,7 +150,7 @@ try {
     console.error(`[seo] BŁĘDY (${errors.length}):\n${errors.slice(0, 50).map((e) => '  ' + e).join('\n')}`);
     process.exitCode = 1;
   }
-  console.log(`[seo] stron: ${pages.length} (indeksowane: ${indexed}, noindex: ${noindex}); największa: ${biggest.path} ${biggest.bytes} B; czas: ${((Date.now() - started) / 1000).toFixed(1)} s`);
+  console.log(`[seo] stron: ${pages.length}, w tym rankingów: ${rankingCount} (indeksowane: ${indexed}, noindex: ${noindex}); największa: ${biggest.path} ${biggest.bytes} B; czas: ${((Date.now() - started) / 1000).toFixed(1)} s`);
 } finally {
   await server.close();
 }

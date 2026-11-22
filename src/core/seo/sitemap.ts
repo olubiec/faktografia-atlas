@@ -4,7 +4,7 @@ export interface SitemapPage {
   path: string;
   indexable: boolean;
   lastmod: string;
-  group: 'wojewodztwa-powiaty' | 'gminy';
+  group: 'wojewodztwa-powiaty' | 'gminy' | 'rankingi';
 }
 export interface SitemapFile { name: string; xml: string }
 
@@ -40,6 +40,7 @@ export function buildSitemaps(
   const list = (group: SitemapPage['group']) =>
     pages.filter((p) => p.indexable && p.group === group).map((p) => ({ path: p.path, lastmod: p.lastmod }));
   add('sitemap-wojewodztwa-powiaty', list('wojewodztwa-powiaty'));
+  add('sitemap-rankingi', list('rankingi'));
   if (options.indexGminy) add('sitemap-gminy', list('gminy'));
 
   const index = files

@@ -100,3 +100,8 @@ export function buildUnitPaths(units: readonly SlugUnit[]): UnitPaths {
   }
   return { byTeryt, byPath };
 }
+
+/** Fragment adresu wskaźnika: nazwa bez jednostki w nawiasie, np. „Lesistość (%)” → `lesistosc`. */
+export function indicatorSlug(name: string): string {
+  return slugify(name.replace(/\([^)]*\)/g, ''));
+}

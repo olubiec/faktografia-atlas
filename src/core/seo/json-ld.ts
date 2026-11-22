@@ -62,3 +62,21 @@ export function datasetLd(indicators: readonly LdIndicator[], years: readonly nu
     variableMeasured: names,
   };
 }
+
+/** Zbiór danych jednego wskaźnika w jednym roku (strona rankingu). */
+export function rankingDatasetLd(name: string, year: number, url: string, description: string): JsonLd {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: `${name} (${year})`,
+    description,
+    url,
+    license: LICENSE_URL,
+    creator: { '@type': 'Organization', name: 'Główny Urząd Statystyczny', url: 'https://stat.gov.pl/' },
+    isBasedOn: BDL_URL,
+    inLanguage: 'pl',
+    spatialCoverage: { '@type': 'Place', name: 'Polska' },
+    temporalCoverage: String(year),
+    variableMeasured: name,
+  };
+}

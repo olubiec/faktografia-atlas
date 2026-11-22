@@ -1,6 +1,6 @@
 import { formatValue } from '../format/number';
 import { isCityCounty, slugify, type SlugUnit, type UnitPaths } from './slug';
-import { change, titleAndDescription } from './unit-page-text';
+import { change, titleAndDescription, unitLinkLabel } from './unit-page-text';
 import {
   extremeSentence,
   populationChangeSentence,
@@ -148,15 +148,7 @@ export function buildUnitPage(unit: SlugUnit, profile: ProfileShard, ctx: PageCo
     ranked.length > 1 ? sentence('lowest', ranked[ranked.length - 1]) : null,
   ].filter((s): s is string => s !== null);
 
-  const linkLabel = (u: SlugUnit): string => {
-    const p = ctx.paths.byTeryt.get(u.teryt)!;
-    if (u.level === 'woj') return `województwo ${u.name}`;
-    if (u.level === 'pow') return isCityCounty(u.teryt) ? u.name.replace(/^powiat\s+/i, '') : u.name;
-    const k = kindOf(u);
-    // Gmina o powtórzonej nazwie (adres z dopiskiem) dostaje w odnośniku rodzaj.
-    return k !== 'miasto' && p.replace(/^\/[a-z]+\//, '') !== slugify(u.name) ? `${u.name} (${KIND_LABEL[k].replace('Gmina ', 'gmina ')})` : u.name;
-  };
-  const link = (u: SlugUnit): PageLink => ({ label: linkLabel(u), path: ctx.paths.byTeryt.get(u.teryt)! });
+  const link = (u: SlugUnit): PageLink => ({ label: unitLinkLabel(u, ctx.paths), path: ctx.paths.byTeryt.get(u.teryt)! });
   const woj = nameByTeryt.get(unit.teryt.slice(0, 2));
   const county = unit.level === 'gmi' && parent && !isCityCounty(parent.teryt) ? parent : undefined;
   const parents = [county, unit.level !== 'woj' ? woj : undefined].filter((u): u is SlugUnit => !!u).map(link);

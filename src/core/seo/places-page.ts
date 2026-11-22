@@ -10,7 +10,9 @@ const DESCRIPTION =
 const a = (path: string, label: string) => `<a class="underline text-tusz hover:text-olowek" href="${escapeAttr(path)}">${h(label)}</a>`;
 
 /** Spis miejsc (`/miejsca`): województwa, a w nich powiaty i miasta na prawach powiatu. Statyczny, indeksowany. */
-export function renderPlacesPage(units: readonly SlugUnit[], paths: UnitPaths, cssHrefs: string[]): string {
+export interface PlacesRanking { indicator: string; links: { label: string; path: string }[] }
+
+export function renderPlacesPage(units: readonly SlugUnit[], paths: UnitPaths, cssHrefs: string[], rankings: readonly PlacesRanking[] = []): string {
   const woj = units.filter((u) => u.level === 'woj').sort((x, y) => x.name.localeCompare(y.name, 'pl'));
   const sections = woj
     .map((w) => {
@@ -29,6 +31,11 @@ export function renderPlacesPage(units: readonly SlugUnit[], paths: UnitPaths, c
       );
     })
     .join('\n');
+  const rankingSection = rankings.length
+    ? `<section class="mt-12"><h2 class="text-xl font-bold">Rankingi</h2><ul class="mt-2 space-y-2">${rankings
+        .map((r) => `<li><span class="font-medium">${h(r.indicator)}:</span> ${r.links.map((l) => a(l.path, l.label)).join(' · ')}</li>`)
+        .join('')}</ul></section>`
+    : '';
   const url = absoluteUrl(PLACES_PATH);
   return `<!doctype html>
 <html lang="pl">
@@ -57,6 +64,7 @@ ${cssHrefs.map((c) => `<link rel="stylesheet" href="${escapeAttr(c)}">`).join('\
 <p class="mt-2">Województwa, powiaty i miasta na prawach powiatu z danymi GUS. Gminy są na stronach powiatów.</p>
 <p class="mt-4"><a class="inline-flex min-h-11 items-center bg-tusz px-5 text-arkusz font-medium" href="/mapa">Otwórz mapę</a></p>
 ${sections}
+${rankingSection}
 </main>
 <footer class="mx-auto max-w-3xl px-4 py-6 text-sm text-olowek border-t border-linia"><p>Źródło: GUS, Bank Danych Lokalnych, licencja CC BY 4.0</p><p class="mt-1"><a class="underline" href="/zrodla">Skąd są dane</a> · <a class="underline" href="/o-projekcie">O projekcie</a></p></footer>
 </body>

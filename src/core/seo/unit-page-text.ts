@@ -1,5 +1,6 @@
 import { formatValue } from '../format/number';
 import { percentChange } from './sentences';
+import { isCityCounty, slugify, type SlugUnit, type UnitPaths } from './slug';
 import type { IndicatorMeta, ProfileEntry } from './unit-page';
 
 const TITLE_MAX = 65;
@@ -49,4 +50,16 @@ export function titleAndDescription(label: string, qualifier: string, year: numb
   const head = `${withQ}: ${bits.join(', ')}`;
   const tail = tails.find((t) => (head + t).length <= 160) ?? '.';
   return { title, description: head + tail };
+}
+
+const GMINA_LABEL: Record<string, string> = { '1': 'gmina miejska', '2': 'gmina wiejska', '3': 'gmina miejsko-wiejska' };
+
+/** Nazwa w odnośniku: województwo i powiat z rodzajem; gmina o powtórzonej nazwie (adres z dopiskiem) z rodzajem w nawiasie. */
+export function unitLinkLabel(u: SlugUnit, paths: UnitPaths): string {
+  if (u.level === 'woj') return `województwo ${u.name}`;
+  if (u.level === 'pow') return isCityCounty(u.teryt) ? u.name.replace(/^powiat\s+/i, '') : u.name;
+  const path = paths.byTeryt.get(u.teryt) ?? '';
+  const city = u.parent !== null && isCityCounty(u.parent);
+  const ambiguous = path.replace(/^\/[a-z]+\//, '') !== slugify(u.name);
+  return !city && ambiguous ? `${u.name} (${GMINA_LABEL[u.teryt.slice(6, 7)] ?? 'gmina'})` : u.name;
 }
