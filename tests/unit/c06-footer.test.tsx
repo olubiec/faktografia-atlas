@@ -11,9 +11,11 @@ const html = renderToString(
 const hrefs = [...html.matchAll(/<a [^>]*href="([^"]+)"/g)].map((m) => m[1]);
 
 describe('C06: stopka na LinkList', () => {
-  it('ma dokładnie 6 linków: Mapa, O projekcie, Skąd są dane, Prywatność, GitHub, CC BY 4.0', () => {
+  // S09 (D9, zgoda właściciela): 7. link „Miejsca” → /miejsca.
+  it('ma dokładnie 7 linków: Mapa, Miejsca, O projekcie, Skąd są dane, Prywatność, GitHub, CC BY 4.0', () => {
     expect(hrefs).toEqual([
       '/mapa',
+      '/miejsca',
       '/o-projekcie',
       '/zrodla',
       '/prywatnosc',
@@ -30,7 +32,7 @@ describe('C06: stopka na LinkList', () => {
   });
   it('linki mają pole dotykowe min. 44 px i nie mają cieni ani kolorów na sztywno', () => {
     const links = html.match(/<a [^>]+>/g) ?? [];
-    expect(links.length).toBe(6);
+    expect(links.length).toBe(7);
     for (const l of links) {
       expect(l).toContain('min-h-[44px]');
       expect(l).not.toContain('shadow-');
