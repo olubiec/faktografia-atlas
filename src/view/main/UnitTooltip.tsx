@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Unit } from '@/core/units/types';
 import { unitLabel } from '@/core/units/label';
+import { unitKindLine } from '@/core/units/kinds';
 import { formatValue } from '@/core/format/number';
 import { TOOLTIP_ZONE_CLASS, tooltipBottomOffset } from '@/view/map/sheetInset';
 
@@ -95,6 +96,7 @@ export function UnitTooltip({
       >
         <div className="flex flex-col gap-0.5">
           <div className="font-semibold text-sm leading-tight">{unitLabel(unit)}</div>
+          <div className="text-xs text-olowek">{unitKindLine(unit)}</div>
           <div className="font-mono font-bold text-lg leading-tight">
             {value == null ? 'brak danych' : formatValue(value, unitName)}
           </div>
@@ -125,6 +127,7 @@ export function UnitTooltip({
       style={{ left: flip ? x - 252 : x + 14, top: y + 14 }}
     >
       <div className="font-semibold text-sm">{unitLabel(unit)}</div>
+      <div className="text-xs text-olowek">{unitKindLine(unit)}</div>
       <div className="font-mono font-bold text-lg leading-tight">
         {value == null ? 'brak danych' : formatValue(value, unitName)}
       </div>

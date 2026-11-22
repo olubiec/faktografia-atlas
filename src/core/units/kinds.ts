@@ -98,6 +98,12 @@ export function unitKindId(unit: Pick<Unit, 'level' | 'teryt'>): UnitKindId | nu
   return null;
 }
 
+/** Jedna linijka „Rodzaj – krótka definicja” albo null. */
+export function unitKindLine(unit: Pick<Unit, 'level' | 'teryt'>): string | null {
+  const k = unitKindInfo(unit);
+  return k ? `${k.title} – ${k.tagline}` : null;
+}
+
 /** Definicja rodzaju jednostki albo null. */
 export function unitKindInfo(unit: Pick<Unit, 'level' | 'teryt'>): UnitKindInfo | null {
   const id = unitKindId(unit);

@@ -64,6 +64,15 @@ export function unitLabel(unit: Unit, options?: UnitLabelOptions): string {
 }
 
 /**
+ * Nazwa do list i rankingów: powiat ziemski bez słowa „powiat” (np. „wałecki”),
+ * miasto na prawach powiatu z dopiskiem, żeby nie myliło się z gminą o tej samej nazwie.
+ */
+export function listName(unit: Unit): string {
+  if (unit.level === 'pow' && !isCityCounty(unit.teryt)) return unit.name.replace(/^powiat /i, '');
+  return unitLabel(unit);
+}
+
+/**
  * Zwraca nagłówek profilu jednostki.
  * Np.: „Gmina miejska Wałcz”, „Gmina wiejska Wałcz”, „Powiat wałecki”, „Województwo zachodniopomorskie”.
  */

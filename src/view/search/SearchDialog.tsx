@@ -12,6 +12,7 @@ import { homeSearch } from '@/core/url/home';
 import type { SearchResult, Locality } from '@/core/search';
 import type { Unit } from '@/core/units/types';
 import { unitLabel } from '@/core/units/label';
+import { unitKindInfo } from '@/core/units/kinds';
 
 export interface SearchDialogProps {
   open: boolean;
@@ -171,6 +172,8 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                   {results.map((item) => {
                     const unit = unitsMap.get(item.teryt);
                     const displayName = unit ? unitLabel(unit) : item.name;
+                    const tagline = unit ? unitKindInfo(unit)?.tagline : undefined;
+                    const detail = [item.context, tagline].filter(Boolean).join(' · ');
                     return (
                       <Command.Item
                         key={`unit:${item.teryt}`}
@@ -180,8 +183,8 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                       >
                         <div className="flex flex-col gap-0.5 min-w-0 pr-2">
                           <span className="font-[600] text-sm text-tusz truncate">{displayName}</span>
-                        {item.context && (
-                          <span className="text-xs text-olowek truncate">{item.context}</span>
+                        {detail && (
+                          <span className="text-xs text-olowek truncate">{detail}</span>
                         )}
                         </div>
                         <span className="text-xs text-olowek border border-linia px-2 py-0.5 bg-kalka flex-shrink-0 whitespace-nowrap font-mono">
