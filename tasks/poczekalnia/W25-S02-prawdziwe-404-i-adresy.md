@@ -15,7 +15,7 @@ Gotowe, gdy:
 - Test: w vercel.json nie ma reguły przepisującej `/(.*)`; każda ścieżka `<Route path>` z App.tsx (poza `*`) jest objęta regułą; `trailingSlash` = false; nagłówki bezpieczeństwa identyczne jak przed zmianą (porównanie z wartościami w teście).
 - Test: public/404.html zawiera noindex, link do `/` i `/mapa`, brak `<script`.
 - Na podglądzie Vercel (wpisz w PR wynik lub „do sprawdzenia”): `/nie-ma-takiej` → 404; `/mapa?u=12` działa; `/o-projekcie` działa po odświeżeniu.
-Dla właściciela (w PR, nie w kodzie): przekierowanie `www.faktografia.eu` i drugiej domeny na główną ustawia się w panelu Vercel → Domains (D1).
+Dla właściciela (w PR, nie w kodzie): przekierowanie `www.faktografia.eu` na główną jest już ustawione w panelu Vercel → Domains (D1); `faktografia.pl` nie jest nasza – nie dodawaj jej nigdzie.
 Nie ruszaj: docs/STAN.md, `*-snapshots/`, pliki ekranu spoza „Zmieniaj”.
 Kontekst i decyzje D1–D9: `docs/SEO.md` (obowiązują wartości domyślne, chyba że właściciel zmienił je w §3).
 Po ludzku (do opisu PR):

@@ -10,7 +10,7 @@ Dokument dla właściciela i dla sesji Claude. Zadania wdrożeniowe: `tasks/pocz
 | 2 | Wszystkie miejsca żyją w parametrach `/mapa?u=…&i=…`. | Dla wyszukiwarki to **jedna strona** (`/mapa`). 2875 jednostek z danymi = 0 stron do zaindeksowania. | krytyczna |
 | 3 | Brak `robots.txt` i `sitemap.xml`; reguła w `vercel.json` kieruje każdy adres na `index.html`. | Każdy błędny adres odpowiada kodem 200 („miękkie 404”), `robots.txt` zwraca stronę HTML. | wysoka |
 | 4 | Brak opisu (`meta description`), obrazka do udostępnień (`og:image`), adresu kanonicznego i danych strukturalnych w HTML startowym. | Słabe wyniki w Google, brzydkie podglądy linków w Messengerze/Facebooku/X. | średnia |
-| 5 | Dwie domeny w kodzie: faktografia.eu (STAN.md) i faktografia.pl (`src/core/share/card.ts`). | Rozproszenie sygnałów, jeśli obie działają. | średnia – decyzja właściciela |
+| 5 | Karty do udostępniania drukują adres **faktografia.pl** (`src/core/share/card.ts`, `ShareDialog.tsx`) – tej domeny nie mamy (zajęta przez kogoś innego). | Ruch i linki z udostępnionych kart trafiają na cudzą stronę. | wysoka – naprawa w S13 |
 | 6 | Strony techniczne (`/__test/*`, `/design`) są publiczne. | Śmieci w indeksie. | niska |
 
 Wniosek: dziś strona może pojawiać się w Google praktycznie tylko na zapytanie „Faktografia”. Wszystko poniżej to budowa od zera, nie „optymalizacja”.
@@ -33,7 +33,7 @@ Szacunek (orientacyjny, duża niepewność): po pełnym wdrożeniu i 6–12 mies
 
 | # | Decyzja | Domyślnie | Dlaczego |
 |---|---|---|---|
-| D1 | Domena główna | **faktografia.eu** (ta działa); druga domena i `www` → przekierowanie 301 | jeden adres = jedna siła strony. Jeśli właściciel woli `.pl` (lekko lepsza w PL), zmiana jest najtańsza **teraz**, przed zaindeksowaniem. |
+| D1 | Domena główna | **faktografia.eu – potwierdzone przez właściciela 22.11.2026** (`.pl` zajęta przez kogoś innego); `www` → przekierowanie 301 | jeden adres = jedna siła strony. Nigdzie (kod, karty, materiały) nie podajemy `faktografia.pl`. |
 | D2 | Adresy miejsc | `/wojewodztwo/<nazwa>`, `/powiat/<nazwa>`, `/gmina/<nazwa>` (polskie litery → ASCII); przy powtórzeniu nazwy dopisek rodzaju (`-miasto`, `-gmina-wiejska`) i powiatu | czytelne, stałe; 226 nazw gmin i 10 nazw powiatów się powtarza |
 | D3 | Strony miejscowości (54 tys.) | **nie robimy** | brak własnych danych = dokładnie typ stron karany od 2024 r. Nazwy miejscowości wypisujemy na stronie gminy. |
 | D4 | Strony miejsc są statyczne (HTML generowany przy budowie), lekkie, bez mapy WebGL; przycisk „Otwórz na mapie” → `/mapa?u=…` | tak | szybkość, czytelność dla robotów AI, brak zmian w ekranach mapy |
@@ -45,9 +45,10 @@ Szacunek (orientacyjny, duża niepewność): po pełnym wdrożeniu i 6–12 mies
 
 ## 4. Plan wdrożenia (fale)
 
-**Fala S-1 – fundament (bezpieczne, 1–2 dni pracy agentów):**
+**Fala S-1 – fundament (bezpieczne, 1–2 dni pracy agentów): S01–S04 + S13**
 - S01 `robots.txt`, podstawowe meta w `index.html` (opis, `og:*`, `lang`, `theme-color`), statyczna mapa strony dla 4 stron.
-- S02 `vercel.json`: prawdziwe 404, przekierowania domen (D1), `noindex` dla `/__test/*` i `/design`.
+- S02 `vercel.json`: prawdziwe 404, `noindex` dla `/__test/*` i `/design`.
+- S13 karty do udostępniania: adres `faktografia.eu` zamiast `faktografia.pl`.
 - S03 `PageMeta`: `og:image`, `og:url`, `og:locale`, karta X, kanoniczny adres na każdej stronie; obrazek 1200×630 z logo.
 - S04 dane strukturalne: `Organization` + `WebSite` (strona startowa), `Dataset` (strona „Skąd są dane”).
 
@@ -89,6 +90,8 @@ Raz w miesiącu jedno z poniższych:
 - Po każdej publikacji danych GUS (np. bezrobocie, ludność): jedna mapa na kontach Faktografii z linkiem do rankingu.
 
 ## 7. Narzędzia do podpięcia (właściciel)
+
+Stan 22.11.2026 (zgłoszone przez właściciela): Search Console, Bing Webmaster Tools, przekierowanie `www` w Vercel i sekret `GSC_SERVICE_ACCOUNT` – **zrobione**. Pozostaje opcjonalnie Ahrefs Webmaster Tools.
 
 | Narzędzie | Koszt | Po co | Kiedy |
 |---|---|---|---|
