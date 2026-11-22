@@ -75,7 +75,7 @@ describe('Unit tests: analytics.ts & ConsentBar (CC11.1b)', () => {
 
       expect(html).toContain('role="region"');
       expect(html).toContain('aria-label="Zgoda na analitykę"');
-      expect(html).toContain('Czy możemy liczyć anonimowo, czego szukasz?');
+      expect(html).toContain('Chcemy wiedzieć, czego szukasz na mapie, żeby ją ulepszać. Zgadzasz się?');
       expect(html).toContain('Zgadzam się');
       expect(html).toContain('Nie');
       expect(html).toContain('min-h-[44px]');
