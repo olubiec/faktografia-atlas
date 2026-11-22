@@ -10,6 +10,7 @@ import type { UnitIndex } from '@/core/units/types';
 import { isCityCounty, listName } from '@/core/units/label';
 import { buildLegend, LEGEND_DIRECTION_LABEL } from '@/core/legend/legend';
 import { LEVEL_LABELS } from '@/core/map/main-view';
+import { displayUnit } from '@/core/format/number';
 import { UNIT_COUNTS } from '@/core/units/counts';
 import { YearSlider } from '@/view/controls/YearSlider';
 import { Legend } from '@/view/legend/Legend';
@@ -81,7 +82,7 @@ export function IndicatorPanel({
     return topBottom(named, 5);
   }, [ranking, index]);
 
-  const subtitle = [indicator.unit, `dane dla: ${LEVEL_LABELS[level].toLowerCase()}`].filter(Boolean).join(', ');
+  const subtitle = [displayUnit(indicator.unit), `dane dla: ${LEVEL_LABELS[level].toLowerCase()}`].filter(Boolean).join(', ');
 
   const content = (
     <div className={inSheet ? 'py-2 flex flex-col gap-5' : 'p-4 md:p-6 flex flex-col gap-5'}>
