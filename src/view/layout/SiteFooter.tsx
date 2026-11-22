@@ -43,7 +43,7 @@ const FOOTER_LINKS: LinkListItem[] = [
   { to: '/mapa', label: 'Mapa' },
   { to: '/o-projekcie', label: 'O projekcie' },
   { to: '/zrodla', label: 'Skąd są dane' },
-  { to: '/miejsca', label: 'Miejsca' },
+  { to: '/miejsca', label: 'Miejsca', reload: true },
   { to: '/prywatnosc', label: 'Prywatność i zgoda' },
   { to: 'https://github.com/olubiec/faktografia-atlas', label: 'GitHub' },
   { to: 'https://creativecommons.org/licenses/by/4.0/deed.pl', label: 'CC BY 4.0' },

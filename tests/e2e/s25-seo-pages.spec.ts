@@ -16,6 +16,6 @@ test.describe('@S25 statyczne strony miejsc', () => {
     await page.goto('/powiat/krakowski');
     await page.getByRole('link', { name: 'Otwórz na mapie' }).click();
     await expect(page).toHaveURL(/\/mapa\?u=1206&l=pow/);
-    await page.waitForFunction(() => (window as unknown as { __atlas?: { ready?: boolean } }).__atlas?.ready === true);
+    await expect(page.getByLabel('Mapa Polski')).toBeVisible();
   });
 });

@@ -31,7 +31,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
     await openMap(page);
     await page.waitForLoadState('networkidle');
 
-    const searchTrigger = page.locator('header button').first();
+    const searchTrigger = page.getByRole('button', { name: /Szukaj miejsca/ });
     await searchTrigger.focus();
     await expect(searchTrigger).toBeFocused();
 
@@ -55,7 +55,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
     await page.waitForLoadState('networkidle');
 
     // Kliknięcie w przycisk wyszukiwania w nagłówku
-    const searchTrigger = page.locator('header button').first();
+    const searchTrigger = page.getByRole('button', { name: /Szukaj miejsca/ });
     await searchTrigger.click();
 
     const searchInput = page.locator('div[role="dialog"] input[placeholder="Gmina, powiat albo miejscowość"]');
@@ -131,7 +131,7 @@ test.describe('Search Command Dialog (CC5.2)', () => {
     await openMap(page);
     await page.waitForLoadState('networkidle');
 
-    const searchTrigger = page.locator('header button:visible').first();
+    const searchTrigger = page.getByRole('button', { name: /Szukaj miejsca/ });
     await searchTrigger.click();
 
     const dialogContent = page.locator('div[role="dialog"]');

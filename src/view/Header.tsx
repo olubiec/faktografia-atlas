@@ -135,12 +135,13 @@ export function Header() {
         <button
           type="button"
           onClick={() => changeSearchOpen(true)}
-          aria-label="Szukaj miejsca... Ctrl K"
+          aria-label="Szukaj miejsca"
           className="min-w-11 min-h-11 gap-2 px-3 border border-linia bg-arkusz hover:bg-linia/20 transition-colors text-tusz text-sm flex items-center justify-center cursor-pointer rounded-none"
         >
           <Icon icon={Search} aria-hidden={true} size={20} />
           <span className="hidden lg:inline text-olowek">Szukaj miejsca...</span>
-          <span className="hidden lg:inline-block px-1.5 py-0.5 border border-linia bg-kalka text-olowek text-xs font-mono">Ctrl K</span>
+          {/* Podpowiedź skrótu jako treść CSS: nie wchodzi do tekstu przycisku (nazwa dostępna = „Szukaj miejsca”). */}
+          <span aria-hidden="true" data-hint="Ctrl K" className="hidden lg:inline-block px-1.5 py-0.5 border border-linia bg-kalka text-olowek text-xs font-mono after:content-[attr(data-hint)]" />
         </button>
         {themeButton('hidden md:flex')}
         {/* Telefon: menu w oknie (wspólny Window + LinkList) */}
