@@ -109,7 +109,7 @@ ${section('W środku', page.links.children)}
 ${section('Podobne pod względem liczby ludności', page.links.neighbors)}
 ${localities}
 </main>
-<footer class="mx-auto max-w-3xl px-4 py-6 text-sm text-olowek border-t border-linia"><p>${source}</p><p class="mt-1"><a class="underline" href="/zrodla">Skąd są dane</a> · <a class="underline" href="/o-projekcie">O projekcie</a></p></footer>
+<footer class="mx-auto max-w-3xl px-4 py-6 text-sm text-olowek border-t border-linia"><p>${source}</p><p class="mt-1"><a class="underline" href="/miejsca">Miejsca</a> · <a class="underline" href="/zrodla">Skąd są dane</a> · <a class="underline" href="/o-projekcie">O projekcie</a></p></footer>
 </body>
 </html>
 `;

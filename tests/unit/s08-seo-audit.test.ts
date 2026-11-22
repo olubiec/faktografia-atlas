@@ -10,7 +10,7 @@ import { buildUnitPage, type IndicatorMeta, type ProfileShard } from '../../src/
 const ALL = units as SlugUnit[];
 const ctx = { units: ALL, paths: buildUnitPaths(ALL), indicators: indicators as IndicatorMeta[] };
 const shard = profile as unknown as ProfileShard;
-const STATIC = ['/', '/mapa', '/zrodla', '/o-projekcie'];
+const STATIC = ['/', '/mapa', '/miejsca', '/zrodla', '/o-projekcie'];
 
 const page = (path: string, extra = ''): AuditPage => ({
   path,

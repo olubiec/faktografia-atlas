@@ -6,7 +6,7 @@ import { createServer } from 'vite';
 
 const DIST = 'dist';
 const MAX_BYTES = 80 * 1024;
-const STATIC_PATHS = ['/', '/mapa', '/o-projekcie', '/zrodla', '/prywatnosc'];
+const STATIC_PATHS = ['/', '/mapa', '/miejsca', '/o-projekcie', '/zrodla', '/prywatnosc'];
 
 const json = async (p) => JSON.parse(await readFile(p, 'utf8'));
 const started = Date.now();
@@ -22,6 +22,7 @@ try {
   const { renderUnitPage } = await server.ssrLoadModule('/src/core/seo/page-template.ts');
   const { buildSitemaps } = await server.ssrLoadModule('/src/core/seo/sitemap.ts');
   const { auditPages } = await server.ssrLoadModule('/src/core/seo/audit.ts');
+  const { renderPlacesPage } = await server.ssrLoadModule('/src/core/seo/places-page.ts');
 
   const units = await json('public/data/units.json');
   const indicators = await json('config/indicators.json');
@@ -75,13 +76,20 @@ try {
     else noindex++;
   }
 
+  // Spis miejsc (/miejsca) i tabela adresów dla linku „Strona miejsca” w profilu (wczytywana leniwie).
+  const places = renderPlacesPage(units, paths, cssHrefs);
+  await writeFile(path.join(DIST, 'miejsca.html'), places);
+  rendered.push({ path: '/miejsca', html: places });
+  await mkdir(path.join(DIST, 'data'), { recursive: true });
+  await writeFile(path.join(DIST, 'data', 'seo-paths.json'), JSON.stringify(Object.fromEntries(paths.byTeryt)));
+
   const lastmod = [...profiles.values()].map((p) => p.generatedAt).sort().at(-1);
   const sitemaps = buildSitemaps(pages, STATIC_PATHS, { indexGminy: config.indexGminy === true, lastmod });
   for (const f of sitemaps) await writeFile(path.join(DIST, f.name), f.xml);
 
   // Strażnik jakości (S08): błąd przerywa budowę.
   const sitemapUrls = sitemaps.flatMap((f) => (f.name === 'sitemap.xml' ? [] : [...f.xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1])));
-  const { errors, warnings } = auditPages(rendered, sitemapUrls, STATIC_PATHS);
+  const { errors, warnings } = auditPages(rendered, sitemapUrls, STATIC_PATHS.filter((p) => p !== '/miejsca'));
   if (warnings.length) console.warn(`[seo] ostrzeżenia: ${warnings.length}\n${warnings.slice(0, 10).map((w) => '  ' + w).join('\n')}`);
   if (errors.length) {
     console.error(`[seo] BŁĘDY (${errors.length}):\n${errors.slice(0, 50).map((e) => '  ' + e).join('\n')}`);
