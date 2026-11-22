@@ -64,11 +64,11 @@ export function unitLabel(unit: Unit, options?: UnitLabelOptions): string {
 }
 
 /**
- * Nazwa do list i rankingów: powiat ziemski bez słowa „powiat” (np. „wałecki”),
- * miasto na prawach powiatu z dopiskiem, żeby nie myliło się z gminą o tej samej nazwie.
+ * Nazwa do list i rankingów (wąskie kolumny): powiat bez słowa „powiat”, np. „wałecki” albo „Szczecin”.
+ * Powiat ziemski ma nazwę małą literą, miasto na prawach powiatu wielką; wyjaśnia to notka pod rankingiem.
  */
 export function listName(unit: Unit): string {
-  if (unit.level === 'pow' && !isCityCounty(unit.teryt)) return unit.name.replace(/^powiat /i, '');
+  if (unit.level === 'pow') return unit.name.replace(/^powiat /i, '');
   return unitLabel(unit);
 }
 
@@ -83,10 +83,6 @@ export function unitTitle(unit: Unit): string {
       return name.charAt(0).toUpperCase() + name.slice(1);
     }
     return `Województwo ${name}`;
-  }
-
-  if (unit.level === 'pow' && isCityCounty(unit.teryt)) {
-    return `Miasto na prawach powiatu ${unit.name.replace(/^powiat /i, '')}`;
   }
 
   if (unit.level === 'pow') {

@@ -146,7 +146,7 @@ export function IndicatorPanel({
           <RankingBars title="Najwyżej" items={top} selectedTeryt={selectedTeryt} onSelect={onSelectUnit} />
           {[...top, ...bottom].some((r) => r.teryt.length === 4 && isCityCounty(r.teryt)) && (
             <p className="text-xs text-olowek">
-              „Miasto na prawach powiatu” to miasto, które jest jednocześnie gminą i powiatem.{' '}
+              Powiaty pisane wielką literą (np. Szczecin) to miasta na prawach powiatu: jedno miasto jest tu gminą i powiatem naraz.{' '}
               <Link to="/zrodla#miasto-na-prawach-powiatu" className="underline text-tusz">Co to znaczy</Link>
             </p>
           )}

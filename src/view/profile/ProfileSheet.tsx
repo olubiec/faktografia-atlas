@@ -7,6 +7,7 @@ import { childUnits } from '../../core/profile/sections';
 import { cityCountyNote, unitTitle } from '../../core/units/label';
 import { Footnotes } from './Footnotes';
 import { UnitKindHint } from './UnitKindHint';
+import { UnitKindInfo } from './UnitKindInfo';
 import { Sheet } from '../ui/Sheet';
 import { Icon } from '../ui/Icon';
 import { ProfileOverview } from './ProfileOverview';
@@ -104,12 +105,15 @@ export function ProfileBody({
       {/* Nagłówek */}
       <div className="flex justify-between items-start gap-4 pb-4 border-b border-linia">
         <div className="min-w-0 flex-1 space-y-1">
-          <h2
-            className="text-2xl font-bold tracking-tight break-words text-tusz"
-            title={profile.unit?.name ?? unitTitleText}
-          >
-            {unitTitleText}
-          </h2>
+          <div className="flex items-start gap-1">
+            <h2
+              className="text-2xl font-bold tracking-tight break-words text-tusz min-w-0"
+              title={profile.unit?.name ?? unitTitleText}
+            >
+              {unitTitleText}
+            </h2>
+            {profile.unit && <UnitKindInfo unit={profile.unit} />}
+          </div>
           <p className="text-xs text-olowek font-mono">
             {`TERYT ${profile.teryt}`}
           </p>
