@@ -58,6 +58,7 @@ Fala W4 (15 zadań QC + poprawka #571) scalona do `main` przez właściciela-zle
 - Starsze sekcje (Co działa, Sesja teraz, Plan, Przypomnienia, Znane problemy / dług – stan z 28.10) przeniesione do `docs/STAN-ARCHIWUM.md` 20.11.2026 (U00).
 
 ## Decyzje (najnowsze na górze, 1 linia, kto)
+- 22.11.2026 · **SEO:** strategia `docs/SEO.md` (diagnoza, decyzje D1–D9, rutyna, narzędzia); zadania `tasks/poczekalnia/W25-S01…S12` czekają na start; `W18-P04` skreślone (zastąpione przez S03) (Claude, na polecenie właściciela)
 - 21.11.2026 · **Plan odchudzony:** po B01–B07 w kolejce tylko B13 i B14 (zmniejszone); B08–B12, B15, U03b, U11b odłożone do `tasks/odlozone/`; zadania historyczne w `tasks/zrobione/` (Claude, na polecenie właściciela „usuńmy zbędne, odłóżmy na przyszłość”)
 - 21.11.2026 · **Etap C rozplanowany** (`docs/PLAN-FALE-C.md`): 4 fale, zadania `tasks/W24-C01…C09` + B13/B14 dostosowane: okno „Wybierz dane” na cały ekran, „Moje wskaźniki” tylko w Porównaj, płynne wejście do mapy, audyt i wspólne moduły okien/menu/stopki, strona `/` według STYL, testy-strażnicy (Claude, na polecenie właściciela)
 - 20.11.2026 · **W4 scalona do `main` (#556–#570) mimo nieukończonego CI** (na polecenie właściciela „scalaj”); pasek +/− zoomu usunięty (#571, na polecenie właściciela); `.gitignore` dla `.claude/worktrees/` nadal czeka na decyzję (Claude, z polecenia właściciela)

@@ -1,5 +1,5 @@
 # Zasady dla agentów – Faktografia Atlas
-Co budujemy: docs/PRODUKT.md (przy ekranach ma pierwszeństwo) · Gdzie jesteśmy: docs/STAN.md · Wygląd: docs/STYL.md · Warstwy, dane, plan fal: docs/ARCHITEKTURA.md · Elementy z zewnątrz i licencje: docs/ELEMENTY.md · Wzorce z cudzych projektów: docs/INSPIRACJE.md
+Co budujemy: docs/PRODUKT.md (przy ekranach ma pierwszeństwo) · Gdzie jesteśmy: docs/STAN.md · Wygląd: docs/STYL.md · Warstwy, dane, plan fal: docs/ARCHITEKTURA.md · Elementy z zewnątrz i licencje: docs/ELEMENTY.md · Wzorce z cudzych projektów: docs/INSPIRACJE.md · SEO: docs/SEO.md
 
 Publiczna strona z interaktywną mapą Polski (województwo > powiat > gmina > miejscowość) i danymi GUS.
 Właściciel nie czyta kodu: ocenia zachowanie na podglądzie Vercel, często z telefonu.

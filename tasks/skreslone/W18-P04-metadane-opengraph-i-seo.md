@@ -1,4 +1,5 @@
 # P04 – Metadane OpenGraph i SEO
+> Skreślone 22.11.2026: dotyczyło usuniętych stron (`LibraryVariable`, `Rankings`). Zastąpione przez `tasks/poczekalnia/W25-S03` (docs/SEO.md).
 Cel: Dynamiczne generowanie metadanych stron, tytulow i tagow OpenGraph dla podstron i wskaźnikow.
 Zmieniaj: src/core/meta/seo.ts, src/view/pages/LibraryVariable.tsx, src/view/pages/Rankings.tsx, tests/unit/seo-meta.test.ts
 Wymagane: src/core/meta/seo.ts, tests/unit/seo-meta.test.ts
