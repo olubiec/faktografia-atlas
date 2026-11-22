@@ -1,5 +1,6 @@
 import { SiteLayout } from '../layout/SiteLayout';
 import { SourcesIndicatorTable } from './SourcesIndicatorTable';
+import { UnitKindsGlossary } from './UnitKindsGlossary';
 
 interface RegistryCardProps {
   title: string;
@@ -93,6 +94,8 @@ export function Sources() {
           roboty danych, bez subiektywnej ingerencji w wartości wskaźników.
         </p>
       </header>
+
+      <UnitKindsGlossary />
 
       {/* Karty 4 rejestrów z pełną atrybucją wg ELEMENTY.md */}
       <section className="space-y-4" aria-labelledby="heading-rejestry">

@@ -6,6 +6,7 @@ import { collectFootnotes } from '../../core/profile/footnotes';
 import { childUnits } from '../../core/profile/sections';
 import { cityCountyNote, unitTitle } from '../../core/units/label';
 import { Footnotes } from './Footnotes';
+import { UnitKindHint } from './UnitKindHint';
 import { Sheet } from '../ui/Sheet';
 import { Icon } from '../ui/Icon';
 import { ProfileOverview } from './ProfileOverview';
@@ -108,6 +109,7 @@ export function ProfileBody({
             title={profile.unit?.name ?? unitTitleText}
           >
             {unitTitleText}
+            {profile.unit && <UnitKindHint unit={profile.unit} />}
           </h2>
           <p className="text-xs text-olowek font-mono">
             {`TERYT ${profile.teryt}`}
