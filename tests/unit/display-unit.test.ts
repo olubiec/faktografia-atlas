@@ -16,3 +16,11 @@ describe('jednostki po liczbie (polska odmiana)', () => {
     expect(displayUnit(' % ')).toBe('%');
   });
 });
+
+describe('pozostałe jednostki z błędną odmianą lub skrótem', () => {
+  it('„lata” → „lat”, „ob.” → „obiektów”, „gosp.” → „gospodarstw”', () => {
+    expect(formatValue(41.2, 'lata')).toBe('41,2 lat');
+    expect(displayUnit('ob.')).toBe('obiektów');
+    expect(displayUnit('gosp.')).toBe('gospodarstw');
+  });
+});

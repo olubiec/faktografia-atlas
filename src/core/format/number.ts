@@ -22,6 +22,9 @@ const DISPLAY_UNITS: Record<string, string> = {
   'osoby': 'osób',
   'm2': 'm²',
   'km2': 'km²',
+  'lata': 'lat',
+  'ob.': 'obiektów',
+  'gosp.': 'gospodarstw',
 };
 
 /** Jednostka w postaci do wyświetlenia obok liczby lub w polu wyboru wskaźnika. */

@@ -45,7 +45,7 @@ describe('formatValue', () => {
     expect(formatValue(102.5, 'os./km²')).toBe('102,5\u00A0os./km²');
     expect(formatValue(42.1, 'na 10 tys.')).toBe('42,1\u00A0na 10 tys.');
     expect(formatValue(28.4, 'm²')).toBe('28,4\u00A0m²');
-    expect(formatValue(41.2, 'lata')).toBe('41,2\u00A0lata');
+    expect(formatValue(41.2, 'lata')).toBe('41,2\u00A0lat');
   });
 });
 
