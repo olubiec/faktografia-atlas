@@ -109,3 +109,11 @@ export function buildUnitPaths(units: readonly SlugUnit[]): UnitPaths {
 
   return { pathByTeryt, terytByPath };
 }
+
+/**
+ * Adres wskaźnika w rankingach (S10): nazwa bez dopisku w nawiasie na końcu,
+ * np. „Lesistość (%)” → „lesistosc”. Zmiana = nowe adresy dla Google (jak wyżej).
+ */
+export function indicatorSlug(name: string): string {
+  return slugify(name.replace(/\s*\([^()]*\)\s*$/, ''));
+}
