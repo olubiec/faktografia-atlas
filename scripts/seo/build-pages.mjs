@@ -21,6 +21,7 @@ try {
   const { buildUnitPage } = await server.ssrLoadModule('/src/core/seo/unit-page.ts');
   const { renderUnitPage } = await server.ssrLoadModule('/src/core/seo/page-template.ts');
   const { buildSitemaps } = await server.ssrLoadModule('/src/core/seo/sitemap.ts');
+  const { auditPages } = await server.ssrLoadModule('/src/core/seo/audit.ts');
 
   const units = await json('public/data/units.json');
   const indicators = await json('config/indicators.json');
@@ -42,6 +43,7 @@ try {
   }
 
   const pages = [];
+  const rendered = [];
   let indexed = 0;
   let noindex = 0;
   let biggest = { bytes: 0, path: '' };
@@ -67,14 +69,23 @@ try {
     const file = path.join(DIST, `${pagePath}.html`);
     await mkdir(path.dirname(file), { recursive: true });
     await writeFile(file, out);
+    rendered.push({ path: pagePath, html: out });
     pages.push({ path: pagePath, indexable: page.indexable, lastmod: page.lastmod, group: isGmina ? 'gminy' : 'wojewodztwa-powiaty' });
     if (page.indexable) indexed++;
     else noindex++;
   }
 
   const lastmod = [...profiles.values()].map((p) => p.generatedAt).sort().at(-1);
-  for (const f of buildSitemaps(pages, STATIC_PATHS, { indexGminy: config.indexGminy === true, lastmod })) {
-    await writeFile(path.join(DIST, f.name), f.xml);
+  const sitemaps = buildSitemaps(pages, STATIC_PATHS, { indexGminy: config.indexGminy === true, lastmod });
+  for (const f of sitemaps) await writeFile(path.join(DIST, f.name), f.xml);
+
+  // Strażnik jakości (S08): błąd przerywa budowę.
+  const sitemapUrls = sitemaps.flatMap((f) => (f.name === 'sitemap.xml' ? [] : [...f.xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1])));
+  const { errors, warnings } = auditPages(rendered, sitemapUrls, STATIC_PATHS);
+  if (warnings.length) console.warn(`[seo] ostrzeżenia: ${warnings.length}\n${warnings.slice(0, 10).map((w) => '  ' + w).join('\n')}`);
+  if (errors.length) {
+    console.error(`[seo] BŁĘDY (${errors.length}):\n${errors.slice(0, 50).map((e) => '  ' + e).join('\n')}`);
+    process.exitCode = 1;
   }
   console.log(`[seo] stron: ${pages.length} (indeksowane: ${indexed}, noindex: ${noindex}); największa: ${biggest.path} ${biggest.bytes} B; czas: ${((Date.now() - started) / 1000).toFixed(1)} s`);
 } finally {

@@ -148,7 +148,11 @@ export function buildUnitPage(unit: SlugUnit, profile: ProfileShard, ctx: PageCo
   const slugBase = path.replace(/^\/[a-z]+\//, '');
   const nameSlug = slugify(name);
   const needsQualifier = kind !== 'wojewodztwo' && slugBase !== nameSlug;
-  const qualifier = needsQualifier && parent && unit.level === 'gmi' ? `pow. ${plainName(parent)}` : '';
+  const wojUnit = nameByTeryt.get(unit.teryt.slice(0, 2));
+  const qualifier = !needsQualifier ? ''
+    : unit.level === 'gmi' && parent ? `pow. ${plainName(parent)}`
+    : kind === 'powiat' && wojUnit ? `woj. ${wojUnit.name}`
+    : '';
   const year = byId.get('population')?.year ?? Math.max(...entries.map((e) => e.year ?? 0));
   const { title, description } = titleAndDescription(label, qualifier, year, byId, metas);
 
