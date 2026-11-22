@@ -35,3 +35,13 @@ describe('miasta na prawach powiatu', () => {
     expect(cityCountyNote(mk('32', 'zachodniopomorskie', 'woj'))).toBeNull();
   });
 });
+
+describe('przypis dla gminy miasta na prawach powiatu', () => {
+  it('wyjaśnia, że dane powiatowe są danymi całego miasta', async () => {
+    const { formatParentFootnoteText } = await import('@/core/profile/footnotes');
+    const units = [mk('3262', 'powiat Szczecin', 'pow')];
+    const text = formatParentFootnoteText('3262', units);
+    expect(text).toContain('Szczecin jest miastem na prawach powiatu');
+    expect(text).toContain('dane całego miasta');
+  });
+});

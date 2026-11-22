@@ -1,5 +1,6 @@
 import type { ProfileIndicatorItem } from './profile';
 import type { Unit } from '../units/types';
+import { isCityCounty } from '../units/label';
 
 export interface Footnote {
   id: number;
@@ -12,6 +13,11 @@ export interface Footnote {
 export function formatParentFootnoteText(fromParentTeryt: string, units: Unit[]): string {
   const parentUnit = units.find((u) => u.teryt === fromParentTeryt);
   if (parentUnit) {
+    // Miasto na prawach powiatu: powiat i gmina to to samo miasto, GUS podaje te dane tylko na poziomie powiatu.
+    if (parentUnit.level === 'pow' && isCityCounty(parentUnit.teryt)) {
+      const city = parentUnit.name.replace(/^powiat /i, '');
+      return `GUS podaje te dane tylko dla powiatów; ${city} jest miastem na prawach powiatu, więc to dane całego miasta`;
+    }
     const name = parentUnit.name;
     if (
       name.startsWith('powiat ') ||
