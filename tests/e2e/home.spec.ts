@@ -42,7 +42,7 @@ test.describe('Home Page', () => {
     // Switch to dark mode
     await themeButton.click(); // Ciemny
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    await expect(logoZnak).toHaveAttribute('src', '/brand/faktografia-znak-jasne.svg');
+    await expect(logoZnak).toHaveAttribute('src', '/brand/faktografia-znak-jasny.svg');
 
     // Remove ?logo=znak, verify standard logo
     await page.goto('/');

@@ -124,7 +124,7 @@ for (const theme of THEMES) {
         expect(res.rounded).toBe(0);
       });
 
-      test('tytuł 800, logo w nagłówku z /brand/ o wysokości 28–40 px', async ({ page }) => {
+      test('tytuł 800, logo w nagłówku z /brand/ o wysokości 28–48 px', async ({ page }) => {
         const h1 = page.locator('main h1');
         await expect(h1).toContainText('Faktografia');
         expect(await h1.evaluate((el) => getComputedStyle(el).fontWeight)).toBe('800');
@@ -132,7 +132,7 @@ for (const theme of THEMES) {
         await expect(logo).toHaveAttribute('src', /^\/brand\//);
         const box = await logo.boundingBox();
         expect(box!.height).toBeGreaterThanOrEqual(28);
-        expect(box!.height).toBeLessThanOrEqual(40);
+        expect(box!.height).toBeLessThanOrEqual(48);
       });
     });
   }

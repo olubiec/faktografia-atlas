@@ -67,7 +67,6 @@ test.describe('Kamera przez sterownik (@FIX6H2)', () => {
     await openDesktop(page);
     await searchVoivodeship(page);
     await page.waitForFunction(() => (window as unknown as { __atlas: Atlas }).__atlas.camera.animating === true);
-    const before = (await atlas(page)).viewState.zoom;
     const box = await page.locator('[aria-label="Mapa Polski"]').boundingBox();
     await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
     await page.mouse.wheel(0, 600);
@@ -76,9 +75,11 @@ test.describe('Kamera przez sterownik (@FIX6H2)', () => {
       undefined,
       { timeout: 100 }
     );
+    // Zoom tuż po przerwaniu animacji vs. po wygaszeniu wygładzania kółka: kółko (deltaY > 0) oddala.
+    const first = (await atlas(page)).viewState.zoom;
     await page.waitForTimeout(800);
     const after = (await atlas(page)).viewState.zoom;
-    expect(after).toBeLessThan(before - 0.01);
+    expect(after).toBeLessThan(first - 0.01);
   });
 
   test('pomiar klatek „Wróć” przy dławieniu ×4: żadna klatka > 100 ms (@FIX6H2)', async ({ browser }) => {

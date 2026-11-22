@@ -47,34 +47,17 @@ test.describe('FIX3: uwagi właściciela', () => {
     expect(zoom).toBeLessThan(7);
   });
 
-  test('@S14 profil: domyślnie mały zestaw, wskaźnik można usunąć, dodać, a wybór jest zapamiętany', async ({ page }) => {
+  test('@S14 profil: domyślnie mały zestaw bez przycisków usuwania, „Dodaj wskaźnik” otwiera „Wybierz dane”', async ({ page }) => {
+    // Po C01 domyślny zestaw nie ma przycisków usuwania (są tylko przy dodanych); wybór danych jest w oknie „Wybierz dane”.
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/mapa?e2e&u=12');
     await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
 
     const side = page.locator('[data-slot="side"]');
-    const removeButtons = side.getByRole('button', { name: /^Usuń wskaźnik:/ });
-    const initial = await removeButtons.count();
-    expect(initial).toBeGreaterThan(0);
-    expect(initial).toBeLessThanOrEqual(7);
-
-    const box = await removeButtons.first().boundingBox();
-    expect(box!.width).toBeGreaterThanOrEqual(44);
-    expect(box!.height).toBeGreaterThanOrEqual(44);
-
-    await removeButtons.first().click();
-    await expect(removeButtons).toHaveCount(initial - 1);
-
-    await side.getByRole('button', { name: 'Dodaj wskaźnik' }).click();
-    const addButtons = side.getByRole('button', { name: /^Dodaj: / });
-    const addable = await addButtons.count();
-    expect(addable).toBeGreaterThan(0);
-    await addButtons.first().click();
-    await expect(removeButtons).toHaveCount(initial);
-
-    await removeButtons.first().click();
-    await page.reload();
-    await page.waitForFunction(() => (window as any).__atlas?.profileOpen === true);
-    await expect(page.locator('[data-slot="side"]').getByRole('button', { name: /^Usuń wskaźnik:/ })).toHaveCount(initial - 1);
+    await expect(side.getByRole('button', { name: /^Usuń wskaźnik:/ })).toHaveCount(0);
+    const add = side.getByRole('button', { name: 'Dodaj wskaźnik' });
+    expect((await add.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    await add.click();
+    await expect(page.getByRole('dialog', { name: /Wybierz dane/ })).toBeVisible();
   });
 });
