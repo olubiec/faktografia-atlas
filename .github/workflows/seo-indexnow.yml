@@ -1,0 +1,64 @@
+name: SEO – IndexNow
+
+# S11 (docs/SEO.md §5): po udanym wdrożeniu produkcji (Vercel → deployment_status) wysyła do IndexNow
+# (Bing i wyszukiwarki partnerskie) tylko adresy nowe lub ze zmienionym `lastmod` w mapie strony.
+# Stary stan mapy strony = artefakt `sitemap-snapshot` z poprzedniego udanego przebiegu tego workflow.
+# Błąd sieci lub odmowa IndexNow = ostrzeżenie, nie czerwony przebieg. Klucz IndexNow jest publiczny z założenia.
+on:
+  deployment_status:
+  workflow_dispatch:
+
+# contents: read – checkout; actions: read – pobranie artefaktu z poprzedniego przebiegu (tylko odczyt).
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: seo-indexnow
+  cancel-in-progress: false
+
+jobs:
+  indexnow:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Wdrożenia podglądu też uruchamiają workflow (zadanie jest wtedy pominięte, bez artefaktu),
+      # więc szukamy najnowszego przebiegu, który faktycznie ma artefakt.
+      - name: Pobierz migawkę mapy strony z poprzedniego przebiegu
+        run: |
+          mkdir -p indexnow-snapshot/old
+          for RUN_ID in $(gh run list --repo "$GITHUB_REPOSITORY" --workflow seo-indexnow.yml \
+            --limit 50 --json databaseId -q '.[].databaseId' || true); do
+            if gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" -n sitemap-snapshot -D indexnow-snapshot/old 2>/dev/null; then
+              echo "Migawka z przebiegu $RUN_ID."
+              break
+            fi
+          done
+          [ -f indexnow-snapshot/old/sitemap-snapshot.xml ] || echo "Brak migawki – zapiszę stan bazowy."
+
+      - name: Wyślij zmienione adresy do IndexNow
+        run: node scripts/seo/indexnow.mjs --old indexnow-snapshot/old/sitemap-snapshot.xml --out indexnow-snapshot/new/sitemap-snapshot.xml
+
+      - name: Zapisz migawkę dla następnego przebiegu
+        uses: actions/upload-artifact@v7
+        with:
+          name: sitemap-snapshot
+          path: indexnow-snapshot/new/sitemap-snapshot.xml
+          retention-days: 90
+          if-no-files-found: ignore
