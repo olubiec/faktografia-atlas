@@ -5,7 +5,7 @@ import type { MainView } from '../map/hooks/useMainView';
 import { CompareMaps } from './CompareMaps';
 import { ProfileCompareTable } from './ProfileCompareTable';
 import { compare } from '../../core/compare/compare';
-import { unitTitle } from '../../core/units/label';
+import { isCityCounty, unitTitle } from '../../core/units/label';
 import { formatValue } from '../../core/format/number';
 import { loadAdminTopo, loadUnits } from '../../core/data/load-atlas-data';
 import { loadGeoData } from '../map/layers/admin';
@@ -221,7 +221,7 @@ export function ProfileCompare({
       .map((u) => ({
         teryt: u.teryt,
         name: u.name,
-        label: u.level === 'woj' ? 'województwo' : u.level === 'pow' ? 'powiat' : 'gmina',
+        label: u.level === 'woj' ? 'województwo' : u.level === 'pow' ? (isCityCounty(u.teryt) ? 'miasto na prawach powiatu' : 'powiat') : 'gmina',
       }));
   }, [searchResultsRaw, searchQuery, profileA.teryt, units]);
 

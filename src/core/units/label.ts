@@ -17,6 +17,17 @@ export function gminaKind(teryt: string): 'miasto' | 'gmina wiejska' | 'gmina mi
   return null;
 }
 
+/**
+ * Czy kod TERYT (powiatu 4-cyfrowy lub gminy 7-cyfrowy) należy do miasta na prawach powiatu.
+ * Numery powiatów 01–60 to powiaty ziemskie, od 61 w górę – powiaty grodzkie
+ * (66 miast, np. 3262 Szczecin, 2470 Mysłowice). Miasto na prawach powiatu jest
+ * jedną jednostką, która jest zarazem gminą miejską i powiatem.
+ */
+export function isCityCounty(teryt: string): boolean {
+  if (teryt.length !== 4 && teryt.length !== 7) return false;
+  return Number(teryt.slice(2, 4)) >= 61;
+}
+
 export interface UnitLabelOptions {
   short?: boolean;
   sameParentUnits?: Unit[];
@@ -28,6 +39,9 @@ export interface UnitLabelOptions {
  * Jeśli short: true i w sameParentUnits nie ma drugiej gminy o tej samej nazwie, zwraca samo unit.name.
  */
 export function unitLabel(unit: Unit, options?: UnitLabelOptions): string {
+  if (unit.level === 'pow' && isCityCounty(unit.teryt)) {
+    return `${unit.name.replace(/^powiat /i, '')} (miasto na prawach powiatu)`;
+  }
   if (unit.level !== 'gmi') {
     return unit.name;
   }
@@ -62,6 +76,10 @@ export function unitTitle(unit: Unit): string {
     return `Województwo ${name}`;
   }
 
+  if (unit.level === 'pow' && isCityCounty(unit.teryt)) {
+    return `Miasto na prawach powiatu ${unit.name.replace(/^powiat /i, '')}`;
+  }
+
   if (unit.level === 'pow') {
     const name = unit.name;
     if (name.toLowerCase().startsWith('powiat ')) {
@@ -81,4 +99,14 @@ export function unitTitle(unit: Unit): string {
 
   const kindCapitalized = kind.charAt(0).toUpperCase() + kind.slice(1);
   return `${kindCapitalized} ${unit.name}`;
+}
+
+/**
+ * Krótkie wyjaśnienie dla miasta na prawach powiatu (powiatu grodzkiego) i jego gminy,
+ * np. dla Szczecina. Dla pozostałych jednostek zwraca null.
+ */
+export function cityCountyNote(unit: Unit): string | null {
+  if (unit.level === 'woj' || !isCityCounty(unit.teryt)) return null;
+  const city = unit.name.replace(/^powiat /i, '');
+  return `${city} to miasto na prawach powiatu: jedna jednostka, która jest jednocześnie gminą miejską i powiatem. GUS podaje dla niej dane osobno jako powiat i jako gminę, więc wartości często są takie same.`;
 }

@@ -1,5 +1,6 @@
 import MiniSearch from 'minisearch';
 import type { Unit } from '../units/types';
+import { isCityCounty } from '../units/label';
 import { normalize } from './normalize';
 import type { Locality, SearchDoc, SearchIndex, SearchOptions, SearchResult } from './types';
 
@@ -14,7 +15,7 @@ function getUnitLabel(unit: Unit): string {
     return 'województwo';
   }
   if (unit.level === 'pow') {
-    return unit.teryt[2] === '6' ? 'miasto na prawach powiatu' : 'powiat';
+    return isCityCounty(unit.teryt) ? 'miasto na prawach powiatu' : 'powiat';
   }
   const lastDigit = unit.teryt.slice(-1);
   if (lastDigit === '1') return 'gmina miejska';
@@ -61,12 +62,12 @@ function getCleanName(unit: Unit): string {
  * Sprawdza, czy jednostka jest miastem na prawach powiatu lub jego gminą.
  */
 function isMnpp(unit: Unit, unitsMap: Map<string, Unit>): boolean {
-  if (unit.level === 'pow' && unit.teryt[2] === '6') {
+  if (unit.level === 'pow' && isCityCounty(unit.teryt)) {
     return true;
   }
   if (unit.level === 'gmi' && unit.parent) {
     const parentPow = unitsMap.get(unit.parent);
-    if (parentPow && parentPow.teryt[2] === '6') {
+    if (parentPow && isCityCounty(parentPow.teryt)) {
       return true;
     }
   }
