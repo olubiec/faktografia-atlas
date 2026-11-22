@@ -56,10 +56,10 @@ describe('Panel mapy: „Moje” na górze (QR01C)', () => {
   });
   afterEach(() => vi.unstubAllGlobals());
 
-  it('start: panel ma przycisk „Moje wskaźniki”, a pasek jest zwinięty (bez ×, bez powtórzonych nazw)', () => {
+  it('start: panel mapy nie ma „Moich wskaźników” (C01), a przycisk „Wybierz dane” jest (bez ×)', () => {
     const html = render(BASIC_INDICATORS[0]);
-    expect(html).toContain('Moje wskaźniki');
-    expect(html).toContain('aria-expanded="false"');
+    expect(html).not.toContain('Moje wskaźniki');
+    expect(html).toContain('Wybierz dane');
     expect(removeButtons(html)).toBe(0);
     expect(html).not.toContain('Przywróć podstawowe');
   });
