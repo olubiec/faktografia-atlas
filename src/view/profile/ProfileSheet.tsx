@@ -6,7 +6,6 @@ import { collectFootnotes } from '../../core/profile/footnotes';
 import { childUnits } from '../../core/profile/sections';
 import { cityCountyNote, unitTitle } from '../../core/units/label';
 import { Footnotes } from './Footnotes';
-import { UnitKindHint } from './UnitKindHint';
 import { UnitKindInfo } from './UnitKindInfo';
 import { Sheet } from '../ui/Sheet';
 import { Icon } from '../ui/Icon';
@@ -117,7 +116,6 @@ export function ProfileBody({
           <p className="text-xs text-olowek font-mono">
             {`TERYT ${profile.teryt}`}
           </p>
-          {profile.unit && <UnitKindHint unit={profile.unit} />}
           {cityNote && <p className="text-xs text-olowek">{cityNote}</p>}
         </div>
         {showCloseButton && onClose && (
