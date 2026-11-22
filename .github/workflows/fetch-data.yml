@@ -162,6 +162,12 @@ jobs:
         if: steps.checks.outcome == 'success'
         run: node scripts/data/build-profiles.mjs
 
+      # (W26-F01) Fakty o jednostkach (public/data/facts/<WW>.json) i Odkrycie dnia (public/data/facts-start.json).
+      - name: Zbuduj fakty (public/data/facts/, facts-start.json)
+        id: facts
+        if: steps.checks.outcome == 'success'
+        run: node scripts/data/build-facts.mjs
+
       # (S20) Części miasto / obszar wiejski: fetch-values.mjs zapisał data/parts/<id>.json, tu składamy pliki na województwa.
       - name: Zbuduj pliki części miasto i wieś (public/data/parts/)
         id: parts
@@ -181,6 +187,7 @@ jobs:
         run: |
           git add public/data/values/ public/data/profiles/
           [ -f public/data/start.json ] && git add public/data/start.json
+          [ -d public/data/facts ] && git add public/data/facts/ public/data/facts-start.json
           for d in data/parts public/data/parts; do [ -d "$d" ] && git add "$d"; done
           if git diff --staged --quiet; then
             echo "Brak zmian w danych."
