@@ -43,7 +43,7 @@ export function cardScene(kind: SceneKind, data: CardData, formatKey: ShareForma
   const fmt = SHARE_FORMATS[formatKey] ?? SHARE_FORMATS.post;
   const { width, height, safe } = fmt;
   const colors = getThemeColors(theme);
-  const { measure, siteUrl = 'faktografia.pl', pageLabel = '' } = options;
+  const { measure, siteUrl = 'faktografia.eu', pageLabel = '' } = options;
 
   const scaleFactor = width / 1080;
   const fontScale = {

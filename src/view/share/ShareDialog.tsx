@@ -112,7 +112,6 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
   const scene = useMemo(() => {
     return cardScene(activeKind, activeCardData, selectedFormat, selectedTheme, {
       measure,
-      siteUrl: 'faktografia.pl',
       pageLabel,
     });
   }, [activeKind, activeCardData, selectedFormat, selectedTheme, measure, pageLabel]);
@@ -157,7 +156,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
         const cData = dataForPage(data, k, page.options?.side);
         if (!cData) continue;
         const pageLabelText = labels.find((l) => l.id === page.id)?.label ?? '';
-        const cScene = cardScene(k, cData, selectedFormat, selectedTheme, { measure, siteUrl: 'faktografia.pl', pageLabel: pageLabelText });
+        const cScene = cardScene(k, cData, selectedFormat, selectedTheme, { measure, pageLabel: pageLabelText });
         const blob = await renderPng(cScene);
         const year = 'year' in cData ? cData.year : 2025;
         const fileName = shareFileName('faktografia', [k, selectedFormat, year, page.id], 'png');

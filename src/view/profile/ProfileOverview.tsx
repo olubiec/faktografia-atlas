@@ -19,6 +19,7 @@ import { ProfileParts } from './ProfileParts';
 import { ChangeIndicatorWindow } from './ProfileIndicatorList';
 import type { ShareDialogData } from '../share/ShareDialog';
 import type { ProfileCardData, RankingCardData } from '../../core/share/card';
+import { IndicatorInfo } from '../explain/IndicatorInfo';
 import { Icon } from '../ui/Icon';
 import { NavArrowDown, NavArrowUp, Download } from 'iconoir-react';
 import { isShareEnabled } from '../../core/share/share-flag';
@@ -223,11 +224,12 @@ export function ProfileOverview({
     <div className="space-y-4 pb-4 border-b border-linia">
             {/* Nazwa wskaźnika, przycisk rozwijania i rok */}
       <div className="space-y-1">
+        <div className="flex items-center gap-1">
         <button
           type="button"
           aria-expanded={isExpanded}
           onClick={() => setIsExpanded((prev) => !prev)}
-          className="w-full text-left min-h-[44px] flex flex-col justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-tusz p-1 -m-1 hover:bg-linia/10 transition-colors"
+          className="min-w-0 flex-1 text-left min-h-[44px] flex flex-col justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-tusz p-1 -m-1 hover:bg-linia/10 transition-colors"
         >
           <div className="flex items-center justify-between text-xs text-olowek font-mono">
             <span className="font-semibold text-tusz min-w-0 flex-1 truncate pr-2">
@@ -244,11 +246,13 @@ export function ProfileOverview({
             </div>
           </div>
         </button>
+        <IndicatorInfo indicatorId={view.indicator.id} name={view.indicator.name} explanation={explanation} />
+        </div>
 
         {/* Duża liczba z zakreśleniem kółkiem i pozycja w rankingu */}
         <div className="flex flex-col items-start gap-2 pt-1">
           <Annotate type="circle" show={true}>
-            <span className="text-3xl font-extrabold leading-none tabular-nums text-tusz px-1">
+            <span className="text-2xl font-extrabold leading-none tabular-nums text-tusz px-2 py-1">
               {formattedValue}
             </span>
           </Annotate>

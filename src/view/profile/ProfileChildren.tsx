@@ -2,6 +2,7 @@ import type { UnitProfile } from '../../core/profile/profile';
 import type { Unit } from '../../core/units/types';
 import type { MainView } from '../map/hooks/useMainView';
 import { childUnits } from '../../core/profile/sections';
+import { UnitKindInfo } from './UnitKindInfo';
 import { unitLabel } from '../../core/units/label';
 import { formatValue } from '../../core/format/number';
 
@@ -95,12 +96,12 @@ export function ProfileChildren({
     <div className="py-2" data-slot="profile-children-list">
       <ul className="divide-y divide-linia" role="list">
         {rows.map((row) => (
-          <li key={row.teryt}>
+          <li key={row.teryt} className="flex items-center">
             <button
               type="button"
               onClick={() => onSelectUnit?.(row.teryt)}
               data-slot="child-unit-button"
-              className="w-full min-h-[44px] py-2 px-1 flex items-center justify-between text-left hover:bg-linia/10 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer transition-colors"
+              className="flex-1 min-w-0 min-h-[44px] py-2 px-1 flex items-center justify-between text-left hover:bg-linia/10 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer transition-colors"
             >
               <span className="text-sm font-medium text-tusz truncate pr-2">
                 {row.label}
@@ -109,6 +110,7 @@ export function ProfileChildren({
                 {row.formattedValue}
               </span>
             </button>
+            <UnitKindInfo unit={row.unit} />
           </li>
         ))}
       </ul>

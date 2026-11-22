@@ -34,7 +34,7 @@ describe('logo na karcie', () => {
       { indicator: { name: 'Bezrobocie', unit: '%' }, year: 2024, selectedTeryt: '1', items: [] } as never,
       'square',
       'light',
-      { measure: (t: string, sz: number) => t.length * sz * 0.55, siteUrl: 'faktografia.pl' },
+      { measure: (t: string, sz: number) => t.length * sz * 0.55, siteUrl: 'faktografia.eu' },
     );
     const logo = scene.items.find((i): i is Extract<typeof i, { type: 'image' }> => i.type === 'image')!;
     expect(logo.src).toContain('public/brand/');

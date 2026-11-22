@@ -71,13 +71,13 @@ describe('buildLegend pure function', () => {
     expect(legend).toHaveLength(4);
 
     expect(legend[0].token).toBe('--div-1');
-    expect(legend[0].label).toBe('poniżej 100\u00A0osoba');
+    expect(legend[0].label).toBe('poniżej 100\u00A0osób');
 
     expect(legend[1].token).toBe('--div-3');
-    expect(legend[1].label).toBe('od 100\u00A0osoba do 200\u00A0osoba');
+    expect(legend[1].label).toBe('od 100\u00A0osób do 200\u00A0osób');
 
     expect(legend[2].token).toBe('--div-5');
-    expect(legend[2].label).toBe('powyżej 200\u00A0osoba');
+    expect(legend[2].label).toBe('powyżej 200\u00A0osób');
 
     expect(legend[3]).toEqual({
       token: '--no-data',
