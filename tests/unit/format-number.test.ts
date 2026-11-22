@@ -39,8 +39,8 @@ describe('formatValue', () => {
 
     expect(formatValue(12.34, '%')).toBe('12,3\u00A0%');
     expect(formatValue(1234.56, 'zł')).toBe('1\u00A0235\u00A0zł');
-    expect(formatValue(72305, 'osoba')).toBe('72\u00A0305\u00A0osoba');
-    expect(formatValue(100.8, 'osoby')).toBe('101\u00A0osoby');
+    expect(formatValue(72305, 'osoba')).toBe('72\u00A0305\u00A0osób');
+    expect(formatValue(100.8, 'osoby')).toBe('101\u00A0osób');
     expect(formatValue(3.456, 'na 1000')).toBe('3,5\u00A0na 1000');
     expect(formatValue(102.5, 'os./km²')).toBe('102,5\u00A0os./km²');
     expect(formatValue(42.1, 'na 10 tys.')).toBe('42,1\u00A0na 10 tys.');
