@@ -1,3 +1,4 @@
+import { displayUnit } from '../../core/format/number';
 import { useState } from 'react';
 import { Check } from 'iconoir-react';
 import { Icon } from '@/view/ui/Icon';
@@ -50,7 +51,7 @@ export function LibraryItem({
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <span className="text-xs text-olowek font-mono border border-linia/60 px-1.5 py-0.5 bg-kalka whitespace-nowrap">
-          {item.unit}
+          {displayUnit(item.unit)}
         </span>
         {selected && <Icon icon={Check} size={18} aria-hidden={true} className="text-korekta" />}
       </div>

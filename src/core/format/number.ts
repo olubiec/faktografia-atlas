@@ -14,6 +14,23 @@ export const UNIT_FRACTION_DIGITS: Record<string, number> = {
 };
 
 /**
+ * Jak jednostkę pokazujemy obok liczby. GUS podaje „osoba”, a po liczbie
+ * po polsku jest „osób” (72 305 osób). Klucze to jednostki z danych.
+ */
+const DISPLAY_UNITS: Record<string, string> = {
+  'osoba': 'osób',
+  'osoby': 'osób',
+  'm2': 'm²',
+  'km2': 'km²',
+};
+
+/** Jednostka w postaci do wyświetlenia obok liczby lub w polu wyboru wskaźnika. */
+export function displayUnit(unit: string): string {
+  const trimmed = unit.trim();
+  return DISPLAY_UNITS[trimmed] ?? trimmed;
+}
+
+/**
  * Zwraca domyślną liczbę miejsc po przecinku dla danej jednostki.
  */
 export function getFractionDigits(unit?: string | null): number {
@@ -30,7 +47,7 @@ export function getFractionDigits(unit?: string | null): number {
 /**
  * Formatuje liczbę zgodnie z polską konwencją (Intl.NumberFormat('pl-PL')).
  * Używa niełamiącej spacji jako separatora tysięcy oraz przecinka dziesiętnego.
- * Dodaje niełamiącą spację przed jednostką (np. %, zł, osoba).
+ * Dodaje niełamiącą spację przed jednostką (np. %, zł, osób).
  * Dla null / undefined / NaN zwraca "brak danych".
  */
 export function formatValue(
@@ -62,7 +79,7 @@ export function formatValue(
     return formattedNumber;
   }
 
-  const cleanUnit = unit.trim();
+  const cleanUnit = displayUnit(unit);
   if (!cleanUnit) {
     return formattedNumber;
   }

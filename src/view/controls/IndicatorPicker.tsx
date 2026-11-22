@@ -1,3 +1,4 @@
+import { displayUnit } from '../../core/format/number';
 import React, { useState, useMemo } from 'react';
 import { NavArrowDown, Check, Search } from 'iconoir-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -176,7 +177,7 @@ export function IndicatorPickerContent({
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className="text-xs text-olowek font-mono border border-linia/60 px-1.5 py-0.5 bg-kalka whitespace-nowrap">
-                        {item.unit}
+                        {displayUnit(item.unit)}
                       </span>
                       {isSelected && (
                         <Icon icon={Check} size={18} aria-hidden={true} className="text-korekta" />
