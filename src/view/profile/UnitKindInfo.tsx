@@ -23,7 +23,7 @@ export function UnitKindInfo({ unit }: { unit: Unit }) {
           <Icon icon={HelpCircle} size={20} aria-hidden={true} />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 max-w-[calc(100vw-32px)] sm:w-96 text-tusz text-xs border border-linia bg-arkusz p-4 rounded-none">
+      <PopoverContent className="z-[10000] w-80 max-w-[calc(100vw-32px)] sm:w-96 text-tusz text-xs border border-linia bg-arkusz p-4 rounded-none">
         <div className="space-y-3">
           <div>
             <h3 className="font-semibold text-tusz text-xs mb-0.5">{kind.title}</h3>
