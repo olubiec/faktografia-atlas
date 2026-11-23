@@ -1,4 +1,5 @@
 // Siła faktu = rzadkość × waga ramy × waga wskaźnika × świeżość (KONCEPT-ODKRYCIA §4).
+import { monthBoost } from './calendar';
 import { FRAME_BY_TYPE, type Fact, type FactsConfig } from './types';
 
 export type FactDraft = Omit<Fact, 'frame' | 'strength'>;
@@ -28,7 +29,7 @@ export function finishFact(f: FactDraft, config: FactsConfig, latestYear: number
   return { ...f, frame, strength: Math.round(raw * 100) / 100 };
 }
 
-/** Mnożnik kalendarza tematów: grupa miesiąca × calendarBoost (dla Odkrycia dnia). */
+/** Mnożnik kalendarza tematów: grupa (albo jedna z grup) miesiąca × calendarBoost (dla Odkrycia dnia; calendar.ts). */
 export function calendarBoost(config: FactsConfig, group: string, month: number): number {
-  return config.calendar[String(month)] === group ? config.calendarBoost : 1;
+  return monthBoost(config, group, month);
 }

@@ -213,6 +213,22 @@ try {
   const discoverLastmod = discoverPages.map((p) => p.lastmod).sort().at(-1);
   sitemaps['sitemap.xml'] = ranking.withSitemapEntry(sitemaps['sitemap.xml'], discover.DISCOVER_SITEMAP, discoverLastmod);
   console.log(`Tematy i zestawienia: ${discoverPages.length} stron (indeksowane: ${discoverPages.filter((p) => p.indexable).length}).`);
+  // W26-F05: „Nowe dane GUS” – tylko pozycje zatwierdzone (scalony PR robota) w public/data/news.json.
+  const newsItems = (await readJson(path.join(dataDir, 'news.json')).catch(() => ({ items: [] }))).items ?? [];
+  const newsSite = await vite.ssrLoadModule('/src/core/facts/news-page.ts');
+  const news = newsSite.buildNewsSite(newsItems, { ...discoverCtx, gminaMinPopulation: discoverCtx.lists.gminaMinPopulation,
+    boundaryJump: factsConfig.news?.boundaryJump ?? discoverCtx.boundaryJump, recordMinYears: factsConfig.thresholds.recordMinYears, rows: factsConfig.news?.rows }, { css });
+  for (const page of news.pages) {
+    await mkdir(path.join(dist, page.path), { recursive: true });
+    await writeFile(path.join(dist, page.path, 'index.html'), page.html);
+    auditList.push(readPage(page.path, page.html));
+  }
+  if (news.pages.length) {
+    sitemaps[newsSite.NEWS_SITEMAP] = ranking.rankingSitemap(news.pages);
+    sitemaps['sitemap.xml'] = ranking.withSitemapEntry(sitemaps['sitemap.xml'], newsSite.NEWS_SITEMAP, news.pages.map((p) => p.lastmod).sort().at(-1));
+  }
+  for (const e of news.skipped) console.warn(`Nowe dane: brak danych do strony ${e.id} ${e.year} – pominięta.`);
+  console.log(`Nowe dane GUS: ${news.pages.length} stron.`);
   for (const [name, xml] of Object.entries(sitemaps)) await writeFile(path.join(dist, name), xml);
 
   // Strażnik jakości (S08): błąd przerywa budowę, ostrzeżenia trafiają do podsumowania.
