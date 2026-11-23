@@ -11,6 +11,8 @@ const dist = path.join(root, 'dist');
 const dataDir = path.join(root, 'public/data');
 /** Limit rozmiaru strony gminy bez kompresji (warunek S07). */
 const MAX_GMINA_BYTES = 80 * 1024;
+/** Limit rozmiaru strony rankingu bez kompresji (warunek S10). */
+const MAX_RANKING_BYTES = 120 * 1024;
 
 /**
  * Statyczny dokument `/miejsca` (indeksowany). Klasy tylko te, które ma już page-template.ts (skanowany przez Tailwind).
@@ -159,6 +161,30 @@ try {
   staticPaths.push(absoluteUrl('/miejsca'));
 
   const sitemaps = buildSitemaps(sitemapPages, staticPaths, config);
+
+  // Rankingi wskaźników (S10): 380 stron + spis /ranking, własna mapa strony dopisana do indeksu.
+  const ranking = await vite.ssrLoadModule('/src/core/seo/ranking-template.ts');
+  const explanations = await readJson(path.join(dataDir, 'explanations.json'));
+  const values = {};
+  for (const ind of indicators) values[ind.id] = await readJson(path.join(dataDir, 'values', `${ind.id}.json`));
+  const rankingCtx = { units, paths, headings: ranking.rankingHeadings(units), indicators, explanations: explanations.items, indexGminy: config.indexGminy };
+  const rankingPages = ranking.buildRankingSite(values, rankingCtx, { css });
+  let maxRanking = { bytes: 0, path: '' };
+  for (const page of rankingPages) {
+    const bytes = Buffer.byteLength(page.html, 'utf8');
+    if (bytes > maxRanking.bytes) maxRanking = { bytes, path: page.path };
+    if (bytes > MAX_RANKING_BYTES) throw new Error(`Strona ${page.path} ma ${bytes} B (limit ${MAX_RANKING_BYTES} B).`);
+    await mkdir(path.join(dist, page.path), { recursive: true });
+    await writeFile(path.join(dist, page.path, 'index.html'), page.html);
+    auditList.push(readPage(page.path, page.html));
+  }
+  const rankingLastmod = rankingPages.map((p) => p.lastmod).sort().at(-1);
+  sitemaps[ranking.RANKING_SITEMAP] = ranking.rankingSitemap(rankingPages);
+  sitemaps['sitemap.xml'] = ranking.withSitemapEntry(sitemaps['sitemap.xml'], ranking.RANKING_SITEMAP, rankingLastmod);
+  console.log(
+    `Rankingi: ${rankingPages.length} stron (indeksowane: ${rankingPages.filter((p) => p.indexable).length}); ` +
+      `największa ${maxRanking.path} ${(maxRanking.bytes / 1024).toFixed(1)} KB.`,
+  );
   for (const [name, xml] of Object.entries(sitemaps)) await writeFile(path.join(dist, name), xml);
 
   // Strażnik jakości (S08): błąd przerywa budowę, ostrzeżenia trafiają do podsumowania.
