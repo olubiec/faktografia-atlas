@@ -10,8 +10,8 @@ import { absoluteUrl } from './site';
 import type { SlugUnit } from './slug';
 
 const LICENSE_URL = 'https://creativecommons.org/licenses/by/4.0/';
-const H1 = 'mt-6 text-3xl md:text-4xl font-extrabold leading-tight break-words';
-const TABLE =
+export const H1 = 'mt-6 text-3xl md:text-4xl font-extrabold leading-tight break-words';
+export const TABLE =
   'w-full border-collapse text-sm [&_td]:border-b [&_td]:border-linia [&_td]:px-3 [&_td]:py-1 [&_td]:align-middle ' +
   '[&_th]:border-b [&_th]:border-tusz [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-bold ' +
   '[&_a]:inline-flex [&_a]:min-h-[44px] [&_a]:items-center [&_a]:underline [&_a]:underline-offset-4 ' +
