@@ -3,6 +3,7 @@ import type { DataStatus } from '../../core/data/load-status';
 import { LinkList, type LinkListItem } from '../ui/LinkList';
 import { PageSection } from '../ui/PageSection';
 import { DataFreshness } from './DataFreshness';
+import { SocialLinks } from './SocialLinks';
 import { useDataStatus } from './useDataStatus';
 
 function subscribeTheme(callback: () => void) {
@@ -85,6 +86,7 @@ export function SiteFooter({ decorativeLogo = false, initialStatus }: SiteFooter
         <PageSection title="Strony" variant="panel">
           <LinkList items={FOOTER_LINKS} label="Stopka" />
         </PageSection>
+        <SocialLinks className="mt-4 -ml-3" />
         <DataFreshness status={status} className="mt-6" />
       </div>
     </footer>
