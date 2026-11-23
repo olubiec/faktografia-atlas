@@ -5,6 +5,7 @@ import { dailyEntry, factView, listPlaceholders, listView, placeFacts, type Fact
 import { loadFactsStart } from '@/core/start/load-discoveries';
 import { forgetPlace, readPlace, savePlace } from '@/core/start/place-memory';
 import { FactCard } from './FactCard';
+import { LocateButton, LocatedNote } from './LocateButton';
 import { PlaceFacts } from './PlaceFacts';
 import { PlaceSearch } from './PlaceSearch';
 import { StartLists } from './StartLists';
@@ -42,7 +43,8 @@ export function Discoveries({ to, onWarm }: DiscoveriesProps) {
   const ref = useRef<HTMLDivElement>(null);
   const near = useNearViewport(ref);
   // Zapamiętane miejsce (sam TERYT); bez pamięci przeglądarki – stan A.
-  const [place, setPlace] = useState<{ teryt: string; name: string | null } | null>(() => {
+  // `located`: miejsce ustalone przyciskiem „Użyj mojej lokalizacji” – wtedy potwierdzenie „Twoja gmina: X. Zmień”.
+  const [place, setPlace] = useState<{ teryt: string; name: string | null; located?: boolean } | null>(() => {
     const teryt = readPlace();
     return teryt ? { teryt, name: null } : null;
   });
@@ -60,9 +62,9 @@ export function Discoveries({ to, onWarm }: DiscoveriesProps) {
     };
   }, [near]);
 
-  const pick = (teryt: string, name: string) => {
+  const pick = (teryt: string, name: string, located = false) => {
     savePlace(teryt);
-    setPlace({ teryt, name: name || null });
+    setPlace({ teryt, name: name || null, located });
   };
   const change = () => {
     forgetPlace();
@@ -75,6 +77,7 @@ export function Discoveries({ to, onWarm }: DiscoveriesProps) {
       <div ref={ref} className="flex flex-col gap-10">
         <section aria-labelledby="start-place-title" className="flex flex-col gap-3">
           <h3 id="start-place-title" className={place ? 'sr-only' : SUB}>Twoje miejsce</h3>
+          {place?.located && place.name && <LocatedNote name={place.name} onChange={change} />}
           {place && near ? (
             <PlaceFacts teryt={place.teryt} name={place.name} to={to} onWarm={onWarm} onChange={change} />
           ) : (
@@ -82,6 +85,7 @@ export function Discoveries({ to, onWarm }: DiscoveriesProps) {
               <>
                 <p className="m-0 text-sm text-olowek">Wpisz swoją miejscowość, a pokażemy 3 rzeczy o Twojej gminie.</p>
                 <PlaceSearch onPick={pick} />
+                <LocateButton onLocated={(teryt, name) => pick(teryt, name, true)} />
               </>
             )
           )}

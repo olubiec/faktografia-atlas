@@ -82,7 +82,21 @@
     "12": "Mieszkania"
   },
   "calendarBoost": 1.5,
+  "calendarPeaks": [
+    { "date": "01-22", "group": "Praca", "label": "GUS: przeciętne wynagrodzenie i bezrobocie za grudzień" },
+    { "date": "03-31", "group": "Pieniądze", "label": "Sprawozdania z wykonania budżetów gmin za rok poprzedni" },
+    { "date": "06-15", "group": "Ludność", "label": "GUS: ludność według gmin na koniec roku poprzedniego" },
+    { "date": "07-01", "group": "Życie", "label": "Sezon turystyczny: noclegi" },
+    { "date": "09-01", "group": "Życie", "label": "Początek roku przedszkolnego" },
+    { "date": "10-15", "group": "Pieniądze", "label": "Coroczne rankingi zamożności gmin w mediach" },
+    { "date": "11-15", "group": "Mieszkania", "label": "GUS: budownictwo mieszkaniowe" }
+  ],
   "trendBoost": {},
+  "news": {
+    "$opis": "Strony „Nowe dane GUS” (W26-F05): ile pozycji w tabelach; próg skoku powierzchni dla porównania rok do roku (ostrzejszy niż w 10 latach: w jednym roku nawet mała zmiana granic daje „rekordowy” spadek, np. Prószków 2017).",
+    "rows": 10,
+    "boundaryJump": 0.015
+  },
   "start": {
     "dailyCount": 30,
     "lists": [

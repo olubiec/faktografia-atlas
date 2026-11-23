@@ -131,8 +131,13 @@ export interface FactsConfig {
   changeExcluded: string[];
   recordExcluded: string[];
   selection: { count: number; perIndicator: number; perGroup: number };
-  calendar: Record<string, string>;
+  /** Miesiąc (1–12) → grupa tematu albo lista grup (W26-F05: właściciel może dopisać temat). */
+  calendar: Record<string, string | string[]>;
   calendarBoost: number;
+  /** Coroczne szczyty zainteresowania (W26-F05, calendar.ts): „MM-DD”, grupa, opis. */
+  calendarPeaks?: { date: string; group: string; label: string }[];
+  /** Strony „Nowe dane GUS” (W26-F05, news.ts): pozycje w tabelach i próg zmiany granic rok do roku. */
+  news?: { rows: number; boundaryJump: number };
   trendBoost: Record<string, number>;
   start: {
     dailyCount: number;

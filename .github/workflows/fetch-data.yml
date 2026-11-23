@@ -221,6 +221,37 @@ jobs:
           gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/dispatches" -f ref="$BRANCH" \
             || echo "::warning::Nie udało się uruchomić CI na $BRANCH (uruchom CI ręcznie: Actions → CI → Run workflow na tej gałęzi)."
 
+      # (W26-F05) „Nowe dane GUS”: dla każdego wskaźnika z nowym rokiem (względem main) osobna gałąź
+      # robot/nowe-dane-<id>-<rok> od commitu z danymi + pozycja w public/data/news.json i PR. Bez auto-scalania:
+      # strona /nowe-dane/<id>-<rok> powstaje dopiero, gdy właściciel scali PR po obejrzeniu podglądu.
+      - name: Strony „Nowe dane GUS” (osobne PR do akceptacji)
+        if: steps.push.outputs.changed == 'true' && steps.checks.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          DATA_SHA="$(git rev-parse HEAD)"
+          git fetch origin main
+          node scripts/data/build-news.mjs detect --base origin/main > "$RUNNER_TEMP/news.txt" || { echo "::warning::Wykrywanie nowych lat nie powiodło się."; exit 0; }
+          echo "Nowe lata: $(tr '\n' ' ' < "$RUNNER_TEMP/news.txt")"
+          while read -r ID YEAR; do
+            [ -z "$ID" ] && continue
+            NB="robot/nowe-dane-$ID-$YEAR"
+            if git ls-remote --exit-code --heads origin "$NB" >/dev/null 2>&1; then echo "$NB już istnieje."; continue; fi
+            git checkout -q -B "$NB" "$DATA_SHA"
+            node scripts/data/build-news.mjs add "$ID" "$YEAR" > "$RUNNER_TEMP/news-body.md" || { echo "::warning::$NB: brak strony."; continue; }
+            git add public/data/news.json
+            git commit -q -m "nowe dane: $ID za $YEAR (strona /nowe-dane/$ID-$YEAR)"
+            git push origin "HEAD:refs/heads/$NB" || { echo "::warning::Nie udało się wypchnąć $NB."; continue; }
+            N="$(gh api -X POST "repos/$GITHUB_REPOSITORY/pulls" -f title="Nowe dane GUS: $ID za $YEAR" -f head="$NB" -f base=main -F body=@"$RUNNER_TEMP/news-body.md" --jq .number)" \
+              || { echo "::warning::Nie udało się otworzyć PR dla $NB (otwórz ręcznie)."; continue; }
+            echo "Nowe dane: PR #$N ($NB)" >> "$GITHUB_STEP_SUMMARY"
+            gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/dispatches" -f ref="$NB" || true
+          done < "$RUNNER_TEMP/news.txt"
+          git checkout -q -B "$BRANCH" "$DATA_SHA"
+          # Kalendarz tematów: szczyty za 2–4 tygodnie – wtedy warto odświeżyć stronę tematu.
+          PEAKS="$(node scripts/data/build-news.mjs peaks || true)"
+          if [ -n "$PEAKS" ]; then { echo "### Kalendarz tematów: szczyty za 2–4 tygodnie"; echo "$PEAKS"; } >> "$GITHUB_STEP_SUMMARY"; fi
+
       - name: Zgłoszenie błędu nocnego pobierania
         if: failure() && github.event_name != 'workflow_dispatch'
         shell: bash
