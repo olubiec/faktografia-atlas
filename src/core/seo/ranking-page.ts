@@ -6,6 +6,7 @@ import { rankUnits, type RankedUnit } from '../ranking/ranking';
 import type { Unit } from '../units/types';
 import { placeIn, plNumber, shortIndicatorName, showValue } from './sentences';
 import { indicatorSlug, slugify, type SlugUnit, type UnitPaths } from './slug';
+import { titleIndicatorName } from './title-names';
 import type { PageIndicator, PageLink } from './unit-page';
 
 export type RankingLevel = Unit['level'];
@@ -151,10 +152,12 @@ export function buildRankingPage(spec: RankingSpec, values: IndicatorValues, ctx
   }
 
   const h1 = `${short} – ranking ${gen} ${where}${y}`;
+  // Krótka nazwa wskaźnika tylko wtedy, gdy pełna nie mieści się w 65 znakach (H1 zostaje pełny).
+  const compact = titleIndicatorName(ind);
   const title = pick(
     voiv
-      ? [h1, `${short} – ranking gmin, woj. ${voiv.name}${y}`, `${short} – gminy, woj. ${voiv.name}`]
-      : [h1, `${short} – ranking ${gen}${y}`, `${short} – ranking ${gen}`],
+      ? [h1, `${short} – ranking gmin, woj. ${voiv.name}${y}`, `${short} – gminy, woj. ${voiv.name}`, `${compact} – ranking gmin, woj. ${voiv.name}${y}`, `${compact} – gminy, woj. ${voiv.name}`]
+      : [h1, `${short} – ranking ${gen}${y}`, `${short} – ranking ${gen}`, `${compact} – ranking ${gen} w Polsce${y}`, `${compact} – ranking ${gen}${y}`],
     TITLE_MAX,
   );
   const descriptions =
