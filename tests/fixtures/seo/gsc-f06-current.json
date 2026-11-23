@@ -1,0 +1,24 @@
+{
+  "totals": { "rows": [{ "clicks": 140, "impressions": 3250, "ctr": 0.0431, "position": 10.4 }], "responseAggregationType": "byProperty" },
+  "query": {
+    "rows": [
+      { "keys": ["mapa gmin polski"], "clicks": 20, "impressions": 1200, "ctr": 0.0167, "position": 18.9 },
+      { "keys": ["bezrobocie powiat krakowski"], "clicks": 60, "impressions": 900, "ctr": 0.0667, "position": 3.0 },
+      { "keys": ["nowe mieszkania gminy"], "clicks": 18, "impressions": 600, "ctr": 0.03, "position": 9.5 },
+      { "keys": ["przyrost naturalny gminy"], "clicks": 22, "impressions": 200, "ctr": 0.11, "position": 3.0 },
+      { "keys": ["samochody na 1000 mieszkańców gminy"], "clicks": 4, "impressions": 150, "ctr": 0.0267, "position": 12.0 },
+      { "keys": ["mieszkania oddane do użytku powiat"], "clicks": 12, "impressions": 100, "ctr": 0.12, "position": 5.0 },
+      { "keys": ["lesistość gmin"], "clicks": 1, "impressions": 60, "ctr": 0.0167, "position": 12.0 },
+      { "keys": ["pogoda zakopane"], "clicks": 0, "impressions": 40, "ctr": 0, "position": 41.0 }
+    ],
+    "responseAggregationType": "byProperty"
+  },
+  "page": {
+    "rows": [
+      { "keys": ["https://faktografia.eu/powiat/krakowski"], "clicks": 60, "impressions": 900, "ctr": 0.0667, "position": 3.0 },
+      { "keys": ["https://faktografia.eu/mapa"], "clicks": 20, "impressions": 1200, "ctr": 0.0167, "position": 18.9 },
+      { "keys": ["https://faktografia.eu/zestawienie/samochody"], "clicks": 4, "impressions": 150, "ctr": 0.0267, "position": 12.0 }
+    ],
+    "responseAggregationType": "byPage"
+  }
+}

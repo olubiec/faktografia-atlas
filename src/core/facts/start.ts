@@ -41,7 +41,7 @@ export function pickDaily(build: FactsBuild, month: number): Fact[] {
   const pool: Fact[] = [];
   for (const { selected } of build.byUnit.values()) {
     for (const f of selected) {
-      if ((f.type === 'F1' || f.type === 'F4') && f.compare.kind !== 'typical' && f.compare.kind !== 'record' && f.compare.rank === 1) {
+      if ((f.type === 'F1' || f.type === 'F4') && (f.compare.kind === 'rank' || f.compare.kind === 'change') && f.compare.rank === 1) {
         if (f.compare.kind === 'rank' && f.compare.tie) continue;
         const group = build.ctx.indicators.get(f.indicatorId)?.group ?? '';
         pool.push({ ...f, strength: Math.round(f.strength * calendarBoost(config, group, month) * 100) / 100 });

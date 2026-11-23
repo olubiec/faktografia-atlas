@@ -4,6 +4,7 @@
     "kraj": 1,
     "zmiana": 0.9,
     "wojewodztwo": 0.7,
+    "sasiedzi": 0.6,
     "rekord": 0.5,
     "typowosc": 0.2
   },
@@ -21,7 +22,10 @@
     "preschool-3-6": 0.8
   },
   "defaultIndicatorWeight": 0.6,
-  "freshness": { "latest": 1, "older": 0.7 },
+  "freshness": {
+    "latest": 1,
+    "older": 0.7
+  },
   "thresholds": {
     "nationalShare": 0.01,
     "voivodeshipTop": 3,
@@ -35,12 +39,34 @@
     "smallAverageYears": 3,
     "typicalBand": 10
   },
-  "rateUnits": ["na 1000", "na 10 tys."],
-  "relativeChangeUnits": ["osoba", "osoby", "zł", "os./km²", "m²"],
-  "absoluteIndicators": ["population", "density"],
-  "changeExcluded": ["density"],
-  "recordExcluded": ["natural-increase", "migration-balance", "density"],
-  "selection": { "count": 3, "perIndicator": 1, "perGroup": 2 },
+  "rateUnits": [
+    "na 1000",
+    "na 10 tys."
+  ],
+  "relativeChangeUnits": [
+    "osoba",
+    "osoby",
+    "zł",
+    "os./km²",
+    "m²"
+  ],
+  "absoluteIndicators": [
+    "population",
+    "density"
+  ],
+  "changeExcluded": [
+    "density"
+  ],
+  "recordExcluded": [
+    "natural-increase",
+    "migration-balance",
+    "density"
+  ],
+  "selection": {
+    "count": 3,
+    "perIndicator": 1,
+    "perGroup": 2
+  },
   "calendar": {
     "1": "Praca",
     "2": "Pieniądze",
@@ -60,10 +86,52 @@
   "start": {
     "dailyCount": 30,
     "lists": [
-      { "indicatorId": "income-per-capita", "level": "gmi", "dir": 1 },
-      { "indicatorId": "avg-wage", "level": "pow", "dir": 1 },
-      { "indicatorId": "forest-cover", "level": "gmi", "dir": 1 },
-      { "indicatorId": "median-age", "level": "gmi", "dir": -1 }
+      {
+        "indicatorId": "income-per-capita",
+        "level": "gmi",
+        "dir": 1
+      },
+      {
+        "indicatorId": "avg-wage",
+        "level": "pow",
+        "dir": 1
+      },
+      {
+        "indicatorId": "forest-cover",
+        "level": "gmi",
+        "dir": 1
+      },
+      {
+        "indicatorId": "median-age",
+        "level": "gmi",
+        "dir": -1
+      }
     ]
+  },
+  "neighbours": {
+    "$opis": "F3 (W26-F03): fakt, gdy co najmniej tylu sąsiadów ma wartość; przy mniejszej liczbie bezpośrednich sąsiadów pierścień obejmuje sąsiadów sąsiadów.",
+    "min": 4
+  },
+  "twin": {
+    "$opis": "F8 (W26-F03): bliźniak = najbliższa jednostka poziomu w innym województwie; wskaźniki standaryzowane (z), ludność i gęstość w skali log; wspólnych wskaźników co najmniej minShare.",
+    "indicators": [
+      "population",
+      "density",
+      "share-65plus",
+      "median-age",
+      "migration-balance",
+      "income-per-capita",
+      "unemployed-share-working-age",
+      "dwellings-per-1000",
+      "dwelling-area-per-person",
+      "forest-cover",
+      "preschool-3-6",
+      "avg-wage"
+    ],
+    "log": [
+      "population",
+      "density"
+    ],
+    "minShare": 0.7
   }
 }

@@ -6,10 +6,11 @@ import type { FactsContext } from './context';
 import { factSentence } from './sentences';
 import type { Fact, FactType, Level } from './types';
 
-const TYPES: FactType[] = ['F1', 'F2', 'F4', 'F5', 'F9'];
+const TYPES: FactType[] = ['F1', 'F2', 'F3', 'F4', 'F5', 'F9'];
 const LABEL: Record<FactType, string> = {
   F1: 'F1 skrajność w Polsce (1% górny/dolny w poziomie)',
   F2: 'F2 miejsce 1–3 / 3 ostatnie w województwie (≥ 15 jednostek)',
+  F3: 'F3 poza zakresem wszystkich sąsiadów (≥ 4, przy < 4 – sąsiedzi sąsiadów)',
   F4: 'F4 zmiana 10 lat (2% górne/dolne, bez zmian granic)',
   F5: 'F5 rekord względem mediany kraju (> 15%)',
   F9: 'F9 typowość (pozycja wobec mediany)',
@@ -53,14 +54,14 @@ export function renderReport(build: FactsBuild, shards: Record<string, FactsShar
     }
     lines.push(`| ${LABEL[t]} | ${facts} | ${withAny} | ${pct(withAny, total)} |`);
   }
-  lines.push('', '## Pokrycie po doborze (3 fakty, ≤ 1 na wskaźnik, ≤ 2 na grupę)', '', '| Poziom | Jednostek | ≥ 3 kandydatów F1–F5 | ≥ 3 fakty | 3 fakty bez F9 | ≥ 1 fakt F1/F2/F4/F5 | tylko F9 |', '|---|---:|---:|---:|---:|---:|---:|');
+  lines.push('', '## Pokrycie po doborze (3 fakty, ≤ 1 na wskaźnik, ≤ 2 na grupę)', '', '| Poziom | Jednostek | ≥ 3 kandydatów F1–F5 | ≥ 3 fakty | 3 fakty bez F9 | ≥ 1 fakt F1–F5 | tylko F9 |', '|---|---:|---:|---:|---:|---:|---:|');
   for (const level of ['woj', 'pow', 'gmi', 'razem'] as const) {
     const list = level === 'razem' ? units : units.filter((u) => u.level === (level as Level));
     const sel = list.map((u) => byUnit.get(u.teryt)?.selected ?? []);
     const strong = (s: Fact[]) => s.filter((f) => f.type !== 'F9').length;
     const cand = list.filter((u) => {
       const c = byUnit.get(u.teryt)?.counts ?? {};
-      return (c.F1 ?? 0) + (c.F2 ?? 0) + (c.F4 ?? 0) + (c.F5 ?? 0) >= 3;
+      return (c.F1 ?? 0) + (c.F2 ?? 0) + (c.F3 ?? 0) + (c.F4 ?? 0) + (c.F5 ?? 0) >= 3;
     }).length;
     lines.push(
       `| ${level} | ${list.length} | ${pct(cand, list.length)} | ${pct(sel.filter((s) => s.length >= 3).length, list.length)} | ${pct(sel.filter((s) => strong(s) >= 3).length, list.length)} | ${pct(sel.filter((s) => strong(s) >= 1).length, list.length)} | ${pct(sel.filter((s) => strong(s) === 0).length, list.length)} |`,
@@ -74,7 +75,8 @@ export function renderReport(build: FactsBuild, shards: Record<string, FactsShar
     '- Rekord względny (F5) liczy się tylko wtedy, gdy rekordem jest **ostatni** rok – fakt mówi o teraz, nie o 2009 r. Prototyp liczył rekord w dowolnym roku, stąd u niego więcej F5.',
     '- Skrajność (F1, F2, F4) wymaga, by cała grupa remisu zmieściła się w progu (100 gmin z 0% kanalizacji to nie skrajność).',
     '- Gminy < 5 tys. mieszkańców: wskaźniki „na 1000” i „na 10 tys.” jako średnia 3 lat (zdanie mówi „średnio … w latach …”).',
-    '- Rama „sąsiedzi” (F3) i F6–F8 nie są w tym PR (zadanie F01: F1, F2, F4, F5, F9). F3 podniosłaby udział gmin z 3 faktami bez F9 (prototyp: 93,5%).',
+    '- F3 (W26-F03): sąsiedzi ze wspólnych łuków admin.topo.json; przy < 4 sąsiadach pierścień z sąsiadami sąsiadów (zdanie mówi wtedy „okolicznych”).',
+    `- F8 (bliźniak w innym województwie): ${build.twins.size} z ${total} jednostek (miasta na prawach powiatu porównywane jako powiaty). F6–F7 poza zakresem.`,
     '- F9 (typowość) to ostatnia deska: pozycja wobec mediany kraju, zawsze z liczbą i rokiem.',
     '',
   );

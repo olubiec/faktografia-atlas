@@ -1,0 +1,12 @@
+{
+  "$opis": "Słownik tematów (W26-F06, docs/KONCEPT-ODKRYCIA.md §7a). Zapytanie z Search Console → grupa wskaźników z config/indicators.json, bez AI. Zasady: wielkość liter i polskie znaki bez znaczenia; słowo = początek wyrazu (\"bezrobo\" łapie \"bezrobocie\", \"bezrobotni\"); słowo z $ na końcu = cały wyraz; fraza ze spacją = fragment zapytania. Wygrywa temat z największą liczbą trafień (remis: kolejność w pliku).",
+  "groups": {
+    "Ludność": ["ludnosc", "liczba mieszkancow", "ilu mieszkancow", "ile mieszkancow", "populac", "demograf", "przyrost", "urodze", "zgon", "migrac", "emigrac", "imigrac", "mediana wieku", "srednia wieku", "starzen", "senior", "zaludni", "gestosc"],
+    "Praca": ["bezrobo", "praca$", "pracy$", "prace$", "zatrudni", "pracodaw", "pracowni", "wiek produkcyjny"],
+    "Pieniądze": ["wynagrodz", "zarob", "pensj", "placa$", "place$", "placy$", "dochod", "wydatk", "budzet", "zamozn", "bogat", "biedn", "regon", "firm", "przedsiebior", "podatk"],
+    "Mieszkania": ["mieszkani", "mieszkan$", "budown", "deweloper", "nieruchomosc", "metraz", "domy$", "domow$"],
+    "Środowisko": ["lesist", "las$", "lasy$", "lasow$", "lesn", "kanaliz", "sciek", "wodociag", "ekolog", "srodowisk", "zielen"],
+    "Życie": ["przedszkol", "bibliote", "czytelni", "turyst", "nocleg", "hotel", "jakosc zycia"],
+    "Transport": ["samoch", "auta$", "aut$", "motoryzac", "transport", "komunikac", "rejestrac"]
+  }
+}
