@@ -1,7 +1,8 @@
 // „Odkrycia” na stronie startowej (W26-F02, KONCEPT-ODKRYCIA §6, §9): czysta logika bez Reacta.
 // Dane przychodzą z sieci (facts-start.json, facts/<WW>.json); tu tylko wybór, linki do mapy i teksty kart.
 import indicatorsData from '../../../config/indicators.json';
-import { decodeFact, type EncodedFact } from '../facts/codec';
+import factsConfig from '../../../config/facts.json';
+import { decodeFact, decodeTwin, type EncodedFact } from '../facts/codec';
 import { factSentence } from '../facts/sentences';
 import { dailyIndex, type DailyEntry, type FactsStart, type StartList } from '../facts/start';
 import type { Fact, Level } from '../facts/types';
@@ -21,6 +22,10 @@ export interface FactsFile {
   woj: string;
   generatedAt: string;
   units: Record<string, EncodedFact[]>;
+  /** Sąsiedzi jednostki (ten sam poziom), W26-F03. */
+  near?: Record<string, string[]>;
+  /** Bliźniak F8: ['F8', TERYT bliźniaka, rok, ile wskaźników, odległość]. */
+  twins?: Record<string, (string | number)[]>;
 }
 
 export function levelOf(teryt: string): Level {
@@ -52,6 +57,46 @@ export function factHref(f: Fact): string {
 /** Zestawienie → mapa z tym wskaźnikiem, rokiem i poziomem (bez zaznaczenia). */
 export function listHref(list: StartList): string {
   return mapHref({ indicatorId: list.indicatorId, year: list.year, level: list.level });
+}
+
+/** Widok porównania dwóch miejsc w istniejącym formacie `/mapa?c=a,b`. */
+export function compareHref(a: string, b: string): string {
+  return `/mapa?c=${encodeURIComponent(a)},${encodeURIComponent(b)}`;
+}
+
+/** Pierwszy sąsiad jednostki (do „Porównaj z sąsiadem”); null, gdy plik go nie ma. */
+export function firstNeighbour(file: FactsFile, teryt: string): string | null {
+  return file.near?.[teryt]?.[0] ?? null;
+}
+
+export interface TwinView {
+  twin: string;
+  year: number;
+  dims: number;
+  href: string;
+}
+
+/** Bliźniak (F8): najbardziej podobna jednostka tego samego poziomu w innym województwie. */
+export function twinView(file: FactsFile, teryt: string): TwinView | null {
+  const raw = file.twins?.[teryt];
+  if (!raw) return null;
+  const t = decodeTwin(teryt, raw);
+  return { twin: t.twin, year: t.year, dims: t.dims, href: compareHref(teryt, t.twin) };
+}
+
+/** „Najbardziej podobna gmina w innym województwie: Ząbki (mazowieckie). Porównaliśmy 11 wskaźników z 2025 r.” */
+export function twinSentence(t: TwinView, twinName: string): string {
+  const level = levelOf(t.twin);
+  const kind =
+    level === 'gmi'
+      ? 'podobna gmina'
+      : level === 'woj'
+        ? 'podobne województwo'
+        : Number(t.twin.slice(2, 4)) >= 61
+          ? 'podobne miasto na prawach powiatu'
+          : 'podobny powiat';
+  const woj = level === 'woj' ? '' : ` (${WOJ_NAMES[t.twin.slice(0, 2)] ?? t.twin.slice(0, 2)})`;
+  return `Najbardziej ${kind} w innym województwie: ${twinName}${woj}. Porównaliśmy ${t.dims} wskaźników z ${t.year} r.`;
 }
 
 /** Fakty jednostki z pliku województwa, w kolejności z pliku (najsilniejsze pierwsze). */
@@ -115,6 +160,23 @@ export function listView(list: StartList): ListView | null {
     })),
     href: listHref(list),
   };
+}
+
+/** Karty zestawień przed pobraniem danych (z config/facts.json): tytuł i link są od razu, pozycje dochodzą. */
+export function listPlaceholders(): ListView[] {
+  return (factsConfig.start.lists as { indicatorId: string; level: Level; dir: 1 | -1 }[])
+    .map((l): ListView | null => {
+      const ind = INDICATORS.get(l.indicatorId);
+      if (!ind) return null;
+      return {
+        key: `${l.indicatorId}-${l.level}-${l.dir}`,
+        title: shortIndicatorName(ind.name, ind.unit),
+        subtitle: '',
+        rows: [],
+        href: mapHref({ indicatorId: l.indicatorId, level: l.level }),
+      };
+    })
+    .filter((l): l is ListView => l !== null);
 }
 
 /** Nagłówek stanu B: „Gmina Wieliczka”, „Miasto Kraków”, „Powiat wielicki”, „Województwo małopolskie”. */

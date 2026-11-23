@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { PageSection } from '@/view/ui/PageSection';
 import type { FactsStart } from '@/core/facts/start';
-import { dailyEntry, factView, listView, placeFacts, type FactView, type ListView } from '@/core/start/discoveries';
+import { dailyEntry, factView, listPlaceholders, listView, placeFacts, type FactView, type ListView } from '@/core/start/discoveries';
 import { loadFactsStart } from '@/core/start/load-discoveries';
 import { forgetPlace, readPlace, savePlace } from '@/core/start/place-memory';
 import { FactCard } from './FactCard';
@@ -27,6 +27,9 @@ function fromStart(start: FactsStart, now: Date): { daily: Daily | null; lists: 
     lists: start.lists.map(listView).filter((l): l is ListView => l !== null),
   };
 }
+
+// Tytuły i linki zestawień są od razu (z konfiguracji), pozycje dochodzą z facts-start.json.
+const PLACEHOLDERS = listPlaceholders();
 
 const SUB = 'm-0 text-xl font-bold leading-tight text-tusz';
 
@@ -97,11 +100,7 @@ export function Discoveries({ to, onWarm }: DiscoveriesProps) {
 
         <section aria-labelledby="start-lists-title" className="flex flex-col gap-3">
           <h3 id="start-lists-title" className={SUB}>Zestawienia</h3>
-          {view && view.lists.length > 0 ? (
-            <StartLists lists={view.lists} to={to} onWarm={onWarm} />
-          ) : (
-            !failed && <p className="m-0 text-sm text-olowek" role="status">Wczytujemy zestawienia…</p>
-          )}
+          <StartLists lists={view && view.lists.length > 0 ? view.lists : PLACEHOLDERS} to={to} onWarm={onWarm} />
         </section>
       </div>
     </PageSection>

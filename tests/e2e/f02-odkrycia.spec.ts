@@ -139,6 +139,22 @@ test.describe('@F02 Twoje miejsce', () => {
     await ready(page);
     expect((await page.evaluate(() => (window as any).__atlas)).selected).toBe('1219053');
   });
+
+  test('@F02 Twoja okolica i Twój bliźniak prowadzą do porównania (1 kliknięcie)', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('faktografia.place', '1219053'));
+    await page.goto('/?e2e');
+    const facts = (await openDiscoveries(page)).locator('[data-slot="place-facts"]');
+    const neighbour = facts.locator('[data-slot="place-neighbour"]');
+    await expect(neighbour.getByRole('link', { name: 'Porównaj z sąsiadem' })).toHaveAttribute('href', /^\/mapa\?c=1219053,\d{7}(&|$)/);
+    const twin = facts.locator('[data-slot="place-twin"]');
+    await expect(twin).toContainText(/Najbardziej podobna gmina w innym województwie: .+\(\p{L}[\p{L}-]*\)\. Porównaliśmy \d+ wskaźników z \d{4} r\./u);
+    const link = twin.getByRole('link', { name: 'Porównaj z bliźniakiem' });
+    const href = (await link.getAttribute('href'))!;
+    const pair = new URL(href, 'http://x').searchParams.get('c')!;
+    expect(pair).toMatch(/^1219053,\d{7}$/);
+    await link.click();
+    await expect(page).toHaveURL(new RegExp(`/mapa\\?.*c=${pair}`));
+  });
 });
 
 test.describe('@F02 budżet startu', () => {

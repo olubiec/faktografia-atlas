@@ -9,7 +9,12 @@ import { buildStart } from '../../src/core/facts/start';
 import type { Fact, FactIndicator, FactsConfig, FactsInput, FactUnit, IndicatorValues } from '../../src/core/facts/types';
 import {
   bigNumber,
+  compareHref,
   dailyEntry,
+  firstNeighbour,
+  listPlaceholders,
+  twinSentence,
+  twinView,
   factHref,
   factView,
   factsFileUrl,
@@ -206,5 +211,44 @@ describe('F02 pobieranie danych', () => {
     await expect(loadFactsStart(fail as unknown as typeof fetch)).rejects.toThrow('HTTP 500');
     const ok = vi.fn<() => Promise<Response>>(async () => new Response(JSON.stringify(start)));
     await expect(loadFactsStart(ok as unknown as typeof fetch)).resolves.toEqual(start);
+  });
+});
+
+describe('F02 Twoja okolica i Twój bliźniak (dane F03)', () => {
+  // Wpis Wieliczki przepisany z public/data/facts/12.json (near, twins).
+  const wieliczka: FactsFile = {
+    woj: '12',
+    generatedAt: '2026-11-17T10:24:24.317Z',
+    units: { '1219053': [['F5', 'population', 2025, 70471, 1.72, 1, 7226, 1995]] },
+    near: { '1219053': ['1206143', '1209013', '1219012'] },
+    twins: { '1219053': ['F8', '1434011', 2025, 11, 0.59] },
+  };
+
+  it('porównanie z sąsiadem i z bliźniakiem w istniejącym formacie /mapa?c=a,b', () => {
+    expect(firstNeighbour(wieliczka, '1219053')).toBe('1206143');
+    expect(compareHref('1219053', '1206143')).toBe('/mapa?c=1219053,1206143');
+    const twin = twinView(wieliczka, '1219053')!;
+    expect(twin).toEqual({ twin: '1434011', year: 2025, dims: 11, href: '/mapa?c=1219053,1434011' });
+  });
+
+  it('brak sąsiadów lub bliźniaka (stary plik) – brak karty, bez błędu', () => {
+    const old: FactsFile = { woj: '12', generatedAt: '', units: {} };
+    expect(firstNeighbour(old, '1219053')).toBeNull();
+    expect(twinView(old, '1219053')).toBeNull();
+  });
+
+  it('zdanie o bliźniaku: rodzaj jednostki, województwo, liczba wskaźników i rok', () => {
+    const twin = twinView(wieliczka, '1219053')!;
+    expect(twinSentence(twin, 'Ząbki')).toBe(
+      'Najbardziej podobna gmina w innym województwie: Ząbki (mazowieckie). Porównaliśmy 11 wskaźników z 2025 r.',
+    );
+    expect(twinSentence({ ...twin, twin: '1465' }, 'powiat Warszawa')).toMatch(/^Najbardziej podobne miasto na prawach powiatu/);
+    expect(twinSentence({ ...twin, twin: '1434' }, 'powiat wołomiński')).toMatch(/^Najbardziej podobny powiat/);
+  });
+
+  it('zestawienia przed pobraniem danych: 4 karty z tytułem i linkiem do mapy', () => {
+    const lists = listPlaceholders();
+    expect(lists).toHaveLength(config.start.lists.length);
+    for (const l of lists) expect(l.href).toMatch(/^\/mapa\?i=[\w-]+&l=(gmi|pow|woj)$/);
   });
 });

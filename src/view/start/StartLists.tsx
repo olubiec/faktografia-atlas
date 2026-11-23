@@ -8,7 +8,7 @@ export interface StartListsProps {
   onWarm?: () => void;
 }
 
-/** „Zestawienia”: 4 krótkie listy (3 pozycje) i link do mapy z tym wskaźnikiem. */
+/** „Zestawienia”: 4 krótkie listy (3 pozycje) i link do mapy z tym wskaźnikiem; przed pobraniem danych sam tytuł i link. */
 export function StartLists({ lists, to, onWarm }: StartListsProps) {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -16,9 +16,10 @@ export function StartLists({ lists, to, onWarm }: StartListsProps) {
         <article key={l.key} data-slot="start-list" className="flex min-w-0 flex-col gap-3 border border-linia bg-arkusz p-4">
           <div className="flex flex-col gap-1">
             <h4 className="m-0 text-md font-bold leading-tight text-tusz break-words">{l.title}</h4>
-            <p className="m-0 text-xs text-olowek">{l.subtitle}</p>
+            {l.subtitle && <p className="m-0 text-xs text-olowek">{l.subtitle}</p>}
           </div>
-          <ol className="m-0 flex list-none flex-col p-0">
+          {l.rows.length === 0 && <p className="m-0 text-sm text-olowek" role="status">Wczytujemy pozycje…</p>}
+          <ol className="m-0 flex list-none flex-col p-0" hidden={l.rows.length === 0}>
             {l.rows.map((r, i) => (
               <li key={r.teryt} className="flex min-w-0 items-baseline gap-3 border-t border-linia py-2 text-sm text-tusz">
                 <span className="w-4 shrink-0 font-mono text-xs text-olowek">{i + 1}</span>

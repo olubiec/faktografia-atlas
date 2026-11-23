@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { factView, placeFacts, placeHeading, type FactView } from '@/core/start/discoveries';
+import {
+  factView,
+  firstNeighbour,
+  placeFacts,
+  placeHeading,
+  twinView,
+  type FactView,
+  type TwinView,
+} from '@/core/start/discoveries';
 import { loadPlaceFacts } from '@/core/start/load-discoveries';
 import { loadUnits } from '@/core/data/load-atlas-data';
 import { FactCard } from './FactCard';
+import { PlaceExtras } from './PlaceExtras';
 
 export interface PlaceFactsProps {
   teryt: string;
@@ -14,12 +23,17 @@ export interface PlaceFactsProps {
   onChange: () => void;
 }
 
-type Loaded = { teryt: string; facts: FactView[] } | { teryt: string; error: true };
+type Loaded =
+  | { teryt: string; facts: FactView[]; neighbour: string | null; twin: TwinView | null }
+  | { teryt: string; error: true };
 
-/** Stan B: „Gmina X – 3 rzeczy, których mogłeś nie wiedzieć” – 3 karty z `facts/<WW>.json` i „Zmień miejsce”. */
+/**
+ * Stan B: „Gmina X – 3 rzeczy, których mogłeś nie wiedzieć” – 3 karty z `facts/<WW>.json`, „Zmień miejsce”,
+ * niżej „Twoja okolica” i „Twój bliźniak”. Nazwy (miejsca, sąsiada, bliźniaka) z listy jednostek.
+ */
 export function PlaceFacts({ teryt, name, to, onWarm, onChange }: PlaceFactsProps) {
   const [loaded, setLoaded] = useState<Loaded | null>(null);
-  const [unitName, setUnitName] = useState<{ teryt: string; name: string } | null>(null);
+  const [names, setNames] = useState<Map<string, string> | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -28,7 +42,7 @@ export function PlaceFacts({ teryt, name, to, onWarm, onChange }: PlaceFactsProp
         const facts = placeFacts(file, teryt)
           .map(factView)
           .filter((v): v is FactView => v !== null);
-        if (!cancelled) setLoaded({ teryt, facts });
+        if (!cancelled) setLoaded({ teryt, facts, neighbour: firstNeighbour(file, teryt), twin: twinView(file, teryt) });
       })
       .catch(() => !cancelled && setLoaded({ teryt, error: true }));
     return () => {
@@ -36,23 +50,21 @@ export function PlaceFacts({ teryt, name, to, onWarm, onChange }: PlaceFactsProp
     };
   }, [teryt]);
 
+  // Lista jednostek: ta sama pamięć co szukajka i rozgrzewka mapy (jedno żądanie na wizytę).
   useEffect(() => {
-    if (name) return;
     let cancelled = false;
     loadUnits()
-      .then((units) => {
-        const u = units.find((x) => x.teryt === teryt);
-        if (u && !cancelled) setUnitName({ teryt, name: u.name });
-      })
+      .then((units) => !cancelled && setNames(new Map(units.map((u) => [u.teryt, u.name]))))
       .catch(() => undefined);
     return () => {
       cancelled = true;
     };
-  }, [teryt, name]);
+  }, []);
 
-  const known = name ?? (unitName?.teryt === teryt ? unitName.name : null);
-  const heading = known ? `${placeHeading(teryt, known)} – 3 rzeczy, których mogłeś nie wiedzieć` : 'Twoje miejsce – 3 rzeczy, których mogłeś nie wiedzieć';
+  const known = name ?? names?.get(teryt) ?? null;
+  const heading = `${known ? placeHeading(teryt, known) : 'Twoje miejsce'} – 3 rzeczy, których mogłeś nie wiedzieć`;
   const current = loaded?.teryt === teryt ? loaded : null;
+  const ok = current && 'facts' in current ? current : null;
 
   return (
     <div className="flex flex-col gap-4" data-slot="place-facts" data-teryt={teryt}>
@@ -66,16 +78,17 @@ export function PlaceFacts({ teryt, name, to, onWarm, onChange }: PlaceFactsProp
       {current && 'error' in current && (
         <p className="m-0 text-sm text-olowek" role="status">Nie udało się wczytać ciekawostek. Sprawdź połączenie i odśwież stronę.</p>
       )}
-      {current && 'facts' in current && current.facts.length === 0 && (
+      {ok && ok.facts.length === 0 && (
         <p className="m-0 text-sm text-olowek" role="status">Dla tego miejsca nie mamy jeszcze ciekawostek. Otwórz je na mapie albo wybierz inne.</p>
       )}
-      {current && 'facts' in current && current.facts.length > 0 && (
+      {ok && ok.facts.length > 0 && (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-          {current.facts.map((f) => (
+          {ok.facts.map((f) => (
             <FactCard key={f.key} fact={f} to={to} onWarm={onWarm} />
           ))}
         </div>
       )}
+      {ok && <PlaceExtras teryt={teryt} neighbour={ok.neighbour} twin={ok.twin} names={names} to={to} onWarm={onWarm} />}
     </div>
   );
 }

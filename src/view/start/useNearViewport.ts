@@ -5,7 +5,7 @@ import { useEffect, useState, type RefObject } from 'react';
  * Dane sekcji pod przyciskiem „Otwórz mapę” pobieramy dopiero wtedy – pierwsze wejście na `/` jest lekkie.
  * Bez IntersectionObserver (stare przeglądarki) od razu true.
  */
-export function useNearViewport(ref: RefObject<Element | null>, margin = '400px'): boolean {
+export function useNearViewport(ref: RefObject<Element | null>, margin = '200px'): boolean {
   const [near, setNear] = useState(false);
   useEffect(() => {
     if (near) return;
