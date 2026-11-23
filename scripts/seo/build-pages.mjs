@@ -18,7 +18,7 @@ const MAX_RANKING_BYTES = 120 * 1024;
  * Statyczny dokument `/miejsca` (indeksowany). Klasy tylko te, które ma już page-template.ts (skanowany przez Tailwind).
  * Każda nazwa i adres przechodzą przez escapeHtml / escapeAttr.
  */
-function renderPlacesPage(voivodeships, { css, escapeAttr: attr, escapeHtml: text, absoluteUrl }) {
+function renderPlacesPage(voivodeships, { css, escapeAttr: attr, escapeHtml: text, absoluteUrl }, extra = '') {
   const title = 'Miejsca: województwa, powiaty i miasta – Faktografia';
   const description = 'Spis 16 województw z powiatami i miastami na prawach powiatu. Każde miejsce ma stronę z danymi GUS.';
   const url = absoluteUrl('/miejsca');
@@ -54,6 +54,7 @@ ${css.map((href) => `<link rel="stylesheet" href="${attr(href)}">`).join('\n')}
 <p class="mt-4 max-w-prose">Województwa, powiaty i miasta na prawach powiatu. Gminy są na stronach powiatów.</p>
 <a href="/mapa" class="mt-6 inline-flex min-h-[44px] items-center border border-tusz bg-tusz px-4 py-2 font-bold text-arkusz focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tusz">Otwórz mapę</a>
 ${sections.join('\n')}
+${extra}
 </main>
 <footer class="border-t border-linia bg-arkusz px-4 py-8 md:px-8">
 <p class="mx-auto max-w-5xl text-sm text-olowek">Źródło: GUS, Bank Danych Lokalnych, CC BY 4.0</p>
@@ -157,15 +158,21 @@ try {
   }
 
   // S09 (D9): spis miejsc `/miejsca` – 16 województw z powiatami i miastami; link w stopce każdej strony aplikacji.
-  const placesHtml = renderPlacesPage(placesIndex(units), { css, escapeAttr, escapeHtml, absoluteUrl });
+  // S10 + F04: pod spisem rankingi wskaźników i tematy; /miejsca też przechodzi audyt (linki do nowych stron).
+  const ranking = await vite.ssrLoadModule('/src/core/seo/ranking-template.ts');
+  const discover = await vite.ssrLoadModule('/src/core/seo/discover-site.ts');
+  const { topicsSection } = await vite.ssrLoadModule('/src/core/seo/discover-template.ts');
+  const { topicsOf } = await vite.ssrLoadModule('/src/core/seo/topics.ts');
+  const placesExtra = `${ranking.rankingIndexSection(indicators)}\n${topicsSection(topicsOf(indicators))}`;
+  const placesHtml = renderPlacesPage(placesIndex(units), { css, escapeAttr, escapeHtml, absoluteUrl }, placesExtra);
   await mkdir(path.join(dist, 'miejsca'), { recursive: true });
   await writeFile(path.join(dist, 'miejsca', 'index.html'), placesHtml);
+  auditList.push(readPage('/miejsca', placesHtml));
   staticPaths.push(absoluteUrl('/miejsca'));
 
   const sitemaps = buildSitemaps(sitemapPages, staticPaths, config);
 
   // Rankingi wskaźników (S10): 380 stron + spis /ranking, własna mapa strony dopisana do indeksu.
-  const ranking = await vite.ssrLoadModule('/src/core/seo/ranking-template.ts');
   const explanations = await readJson(path.join(dataDir, 'explanations.json'));
   const values = {};
   for (const ind of indicators) values[ind.id] = await readJson(path.join(dataDir, 'values', `${ind.id}.json`));
@@ -187,6 +194,25 @@ try {
     `Rankingi: ${rankingPages.length} stron (indeksowane: ${rankingPages.filter((p) => p.indexable).length}); ` +
       `największa ${maxRanking.path} ${(maxRanking.bytes / 1024).toFixed(1)} KB.`,
   );
+  // F04: 7 tematów /temat/<grupa>, zestawienia /zestawienie/<slug> (config/lists.json) i spis /zestawienia.
+  const factsConfig = await readJson(path.join(root, 'config/facts.json'));
+  const factFiles = (await readdir(path.join(dataDir, 'facts'))).filter((f) => /^\d{2}\.json$/.test(f)).sort();
+  const shards = await Promise.all(factFiles.map((f) => readJson(path.join(dataDir, 'facts', f))));
+  const discoverCtx = {
+    units, paths, headings: rankingCtx.headings, indicators, explanations: explanations.items, values,
+    lists: await readJson(path.join(root, 'config/lists.json')),
+    relativeChangeUnits: factsConfig.relativeChangeUnits, boundaryJump: factsConfig.thresholds.boundaryJump,
+  };
+  const discoverPages = discover.buildDiscoverSite(discoverCtx, discover.factsFromShards(shards), { css });
+  for (const page of discoverPages) {
+    await mkdir(path.join(dist, page.path), { recursive: true });
+    await writeFile(path.join(dist, page.path, 'index.html'), page.html);
+    auditList.push(readPage(page.path, page.html));
+  }
+  sitemaps[discover.DISCOVER_SITEMAP] = ranking.rankingSitemap(discoverPages);
+  const discoverLastmod = discoverPages.map((p) => p.lastmod).sort().at(-1);
+  sitemaps['sitemap.xml'] = ranking.withSitemapEntry(sitemaps['sitemap.xml'], discover.DISCOVER_SITEMAP, discoverLastmod);
+  console.log(`Tematy i zestawienia: ${discoverPages.length} stron (indeksowane: ${discoverPages.filter((p) => p.indexable).length}).`);
   for (const [name, xml] of Object.entries(sitemaps)) await writeFile(path.join(dist, name), xml);
 
   // Strażnik jakości (S08): błąd przerywa budowę, ostrzeżenia trafiają do podsumowania.
