@@ -3,11 +3,15 @@ import { FRAME_BY_TYPE, type Fact, type FactsConfig } from './types';
 
 export type FactDraft = Omit<Fact, 'frame' | 'strength'>;
 
-/** Rzadkość: −ln(miejsce/N) dla rankingów, ln(liczba lat) dla rekordu, bliskość mediany dla typowości. */
+/**
+ * Rzadkość: −ln(miejsce/N) dla rankingów, ln(liczba lat) dla rekordu, ln(sąsiedzi + 1) dla F3
+ * (1. miejsce wśród siebie i sąsiadów), bliskość mediany dla typowości.
+ */
 export function rarity(f: FactDraft, seriesYears = 0): number {
   const c = f.compare;
   if (c.kind === 'rank' || c.kind === 'change') return -Math.log(c.rank / Math.max(c.total, 1));
   if (c.kind === 'record') return Math.log(Math.max(seriesYears, 2));
+  if (c.kind === 'neighbours') return Math.log(c.count + 1);
   return 1 - Math.abs(c.percentile - 50) / 50;
 }
 

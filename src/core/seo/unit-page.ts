@@ -4,6 +4,7 @@ import type { ProfileShard, ProfileShardItem } from '../data/load-profile';
 import { formatValue } from '../format/number';
 import type { Indicator } from '../profile/profile';
 import { isCityCounty } from '../units/label';
+import { extremes, factLead, mergeLead, type PageFacts, type TwinLink } from './fact-lead';
 import type { UnitPaths, SlugUnit } from './slug';
 import {
   changeSince,
@@ -17,7 +18,6 @@ import {
   shortIndicatorName,
   unitHeading,
   unitKind,
-  type IndicatorFact,
   type UnitKind,
 } from './sentences';
 
@@ -31,12 +31,14 @@ export interface PageLink {
 export type PageIndicator = Pick<Indicator, 'id' | 'name' | 'unit' | 'higherIsBetter'>;
 /** Plik profilu województwa (kształt z scripts/data/build-profiles.mjs). */
 export type PageProfile = Pick<ProfileShard, 'generatedAt' | 'years' | 'units'>;
-type PageProfileItem = ProfileShardItem;
+export type PageProfileItem = ProfileShardItem;
 
 export interface UnitPageContext {
   units: readonly SlugUnit[];
   paths: UnitPaths;
   indicators: readonly PageIndicator[];
+  /** Plik faktów województwa (W26-F03); brak = `lead` tylko ze zdań S06. */
+  facts?: PageFacts;
 }
 
 export interface PageRow {
@@ -61,7 +63,10 @@ export interface UnitPage {
   kind: UnitKind;
   lead: string[];
   rows: PageRow[];
-  links: { parents: PageLink[]; children: PageLink[]; neighbours: PageLink[] };
+  /** W26-F03: `around` – sąsiedzi na mapie (wspólna granica), `twin` – bliźniak z innego województwa (F8). */
+  links: { parents: PageLink[]; children: PageLink[]; neighbours: PageLink[]; around?: PageLink[]; twin?: TwinLink | null };
+  /** Szablony zdań faktów w `lead` (audyt S08). */
+  templates?: string[];
   indexable: boolean;
   lastmod: string;
 }
@@ -106,20 +111,6 @@ function buildRows(profile: PageProfile, items: PageProfileItem[], ctx: UnitPage
     });
   }
   return rows;
-}
-
-/** Wskaźnik z najwyższym / najniższym miejscem w kraju (bez neutralnych i danych jednostki nadrzędnej). */
-function extremes(items: PageProfileItem[], ctx: UnitPageContext) {
-  const facts: (IndicatorFact & { score: number })[] = [];
-  for (const ind of ctx.indicators) {
-    const it = items.find((i) => i.indicatorId === ind.id);
-    if (!it || ind.higherIsBetter === null || it.fromParent || it.value === null || it.year === null) continue;
-    if (!it.rankNational || !it.totalNational) continue;
-    const [name, value] = [shortIndicatorName(ind.name, ind.unit), showValue(it.value, ind.unit)];
-    facts.push({ name, value, year: it.year, rank: it.rankNational, total: it.totalNational, score: it.rankNational / it.totalNational });
-  }
-  const sorted = [...facts].sort((a, b) => a.score - b.score);
-  return { best: sorted[0] ?? null, worst: sorted.length > 1 ? sorted[sorted.length - 1] : null };
 }
 
 const LINKS_NEIGHBOURS = 6;
@@ -177,17 +168,17 @@ export function buildUnitPage(unitIn: SlugUnit, profile: PageProfile, ctx: UnitP
   const pop = get('population');
   const popBefore = pop ? valueBefore(profile, pop, 10) : null;
   const { best, worst } = extremes(items, ctx);
-  const lead = [
-    populationSentence(kind, bareName, pop ? { value: pop.value!, year: pop.year!, before: popBefore } : null),
-    populationRankSentence(kind, voiv?.name ?? '', {
+  const fl = ctx.facts ? factLead(unit, ctx.facts, ctx) : null;
+  const lead = mergeLead(fl, populationSentence(kind, bareName, pop ? { value: pop.value!, year: pop.year!, before: popBefore } : null), [
+    [populationRankSentence(kind, voiv?.name ?? '', {
       rank: kind === 'województwo' ? (pop?.rankNational ?? null) : (pop?.rankVoivodeship ?? null),
       total: kind === 'województwo' ? (pop?.totalNational ?? 0) : (pop?.totalVoivodeship ?? 0),
       year: pop?.year ?? null,
       national: kind === 'województwo',
-    }),
-    extremeSentence('best', best),
-    extremeSentence('worst', worst),
-  ].filter((s): s is string => s !== null);
+    }), 'population'],
+    [extremeSentence('best', best), best?.id],
+    [extremeSentence('worst', worst), worst?.id],
+  ]);
 
   const year = pop?.year ?? null;
   const ind = (id: string) => ctx.indicators.find((i) => i.id === id);
@@ -212,7 +203,8 @@ export function buildUnitPage(unitIn: SlugUnit, profile: PageProfile, ctx: UnitP
     kind,
     lead,
     rows: buildRows(profile, items, ctx),
-    links: pageLinks(unit, profile, ctx),
+    links: { ...pageLinks(unit, profile, ctx), ...(fl ? { around: fl.around, twin: fl.twin } : {}) },
+    ...(fl ? { templates: fl.templates } : {}),
     indexable: fresh >= MIN_FRESH_INDICATORS,
     lastmod: profile.generatedAt,
   };

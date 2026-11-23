@@ -5,6 +5,7 @@ import { escapeAttr as attr, escapeHtml as text } from './html';
 import { serializeLd, type LdObject } from './json-ld';
 import { absoluteUrl, OG_IMAGE_HEIGHT, OG_IMAGE_PATH, OG_IMAGE_WIDTH } from './site';
 import type { SlugUnit } from './slug';
+import { twinIntro } from './fact-lead';
 import type { PageLink, PageRow, UnitPage } from './unit-page';
 
 /** Model strony z S06 uzupełniony o to, czego potrzebuje dokument. */
@@ -139,6 +140,16 @@ function linkSection(id: string, title: string, links: readonly PageLink[]): str
 <ul class="mt-3 flex flex-wrap gap-x-6">${ok.map((l) => `<li>${a(l.path, l.name)}</li>`).join('')}</ul></section>`;
 }
 
+/** Sąsiedzi (W26-F03): „Gminy w okolicy” – wspólna granica, przy obwarzanku także dalsi sąsiedzi. */
+const AROUND_TITLE: Record<SlugUnit['level'], string> = { gmi: 'Gminy w okolicy', pow: 'Powiaty w okolicy', woj: 'Województwa w okolicy' };
+
+/** Bliźniak (F8): jedno zdanie z linkiem do strony podobnego miejsca w innym województwie. */
+function twinSection(twin: RenderModel['links']['twin']): string {
+  if (!twin?.path) return '';
+  return `<section aria-labelledby="blizniak" class="${SECTION}"><h2 id="blizniak" class="${H2}">Bliźniak w innym województwie</h2>
+<p class="mt-3 max-w-prose">${text(twinIntro(twin))} ${a(twin.path, twin.name)} (woj. ${text(twin.voivodeship)}).</p></section>`;
+}
+
 function localitiesSection(names: readonly string[] | undefined): string {
   if (!names || names.length === 0) return '';
   const shown = names.slice(0, MAX_LOCALITIES);
@@ -172,6 +183,8 @@ ${button}
 ${table(model.rows, model.h1)}
 ${localitiesSection(model.localities)}
 ${linkSection('podrzedne', model.level === 'woj' ? 'Powiaty i miasta' : 'Gminy', model.links.children)}
+${linkSection('okolica', AROUND_TITLE[model.level], model.links.around ?? [])}
+${twinSection(model.links.twin)}
 ${linkSection('podobne', 'Podobne pod względem liczby ludności', model.links.neighbours)}
 </main>
 <footer class="border-t border-linia bg-arkusz px-4 py-8 md:px-8">

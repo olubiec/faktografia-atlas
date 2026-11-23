@@ -1,4 +1,4 @@
-// Detektory faktów F1, F2, F4, F5, F9 (KONCEPT-ODKRYCIA §3). Każdy zwraca fakty jednej jednostki.
+// Detektory faktów F1, F2, F3, F4, F5, F9 (KONCEPT-ODKRYCIA §3). Każdy zwraca fakty jednej jednostki.
 import { windowHasBoundaryChange } from './boundaries';
 import type { FactsContext } from './context';
 import { median, percentile, rankOf, withinTop } from './rank';
@@ -51,6 +51,23 @@ export function detectVoivodeship(ctx: FactsContext, unit: FactUnit, ind: FactIn
     const compare = { kind: 'rank' as const, dir, rank: r.rank, total: r.total, tie: r.ties > 1 };
     return [finishFact({ type: 'F2', teryt: unit.teryt, indicatorId: ind.id, year: cur.year, value: cur.value, compare, ...span(cur.s.span) }, ctx.input.config, ctx.latestYear)];
   });
+}
+
+/** F3 – wartość poza zakresem wszystkich sąsiadów (≥ 4 z wartością w tym samym roku). */
+export function detectNeighbours(ctx: FactsContext, unit: FactUnit, ind: FactIndicator): Fact[] {
+  const ring = ctx.input.neighbours?.[unit.teryt];
+  const min = ctx.input.config.neighbours?.min ?? 4;
+  if (!ring) return [];
+  const cur = current(ctx, unit, ind);
+  if (!cur) return [];
+  const around = ring.ids.map((t) => ctx.series(t, ind.id)?.values[cur.idx]).filter((v): v is number => v != null);
+  if (around.length < min) return [];
+  const lo = Math.min(...around);
+  const hi = Math.max(...around);
+  const dir: Direction | null = cur.value > hi ? 1 : cur.value < lo ? -1 : null;
+  if (!dir) return [];
+  const compare = { kind: 'neighbours' as const, dir, count: around.length, min: lo, max: hi, extended: ring.extended };
+  return [finishFact({ type: 'F3', teryt: unit.teryt, indicatorId: ind.id, year: cur.year, value: cur.value, compare, ...span(cur.s.span) }, ctx.input.config, ctx.latestYear)];
 }
 
 /** Zmiana w oknie: procentowa dla liczb (osoby, zł), różnica dla wskaźników (%, na 1000). */
@@ -158,6 +175,7 @@ export function detectAll(ctx: FactsContext, unit: FactUnit): Fact[] {
     out.push(
       ...detectNational(ctx, unit, ind),
       ...detectVoivodeship(ctx, unit, ind),
+      ...detectNeighbours(ctx, unit, ind),
       ...detectChange(ctx, unit, ind),
       ...detectRecord(ctx, unit, ind),
       ...detectTypical(ctx, unit, ind),
