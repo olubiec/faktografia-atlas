@@ -125,11 +125,13 @@ try {
   for (const file of profileFiles) {
     const profile = await readJson(path.join(dataDir, 'profiles', file));
     const woj = file.slice(0, 2);
+    // W26-F03: fakty, sąsiedzi i bliźniak z pliku robota faktów (brak pliku = strony bez faktów).
+    const facts = await readJson(path.join(dataDir, 'facts', `${woj}.json`)).catch(() => undefined);
     // Każdy adres raz: gmina miasta na prawach powiatu ma adres powiatu (terytByPath daje TERYT powiatu).
     for (const [urlPath, teryt] of paths.terytByPath) {
       if (teryt.slice(0, 2) !== woj) continue;
       const unit = byTeryt.get(teryt);
-      const page = buildUnitPage(unit, profile, ctx);
+      const page = buildUnitPage(unit, profile, { ...ctx, facts });
       const indexable = isIndexed({ level: unit.level, indexable: page.indexable }, config);
       const html = renderUnitPage(
         {
@@ -149,7 +151,7 @@ try {
       const dir = path.join(dist, urlPath);
       await mkdir(dir, { recursive: true });
       await writeFile(path.join(dir, 'index.html'), html);
-      auditList.push(readPage(urlPath, html));
+      auditList.push(readPage(urlPath, html, page.templates));
       sitemapPages.push({ path: urlPath, level: unit.level, indexable, lastmod: page.lastmod });
     }
   }
@@ -193,6 +195,7 @@ try {
     .flatMap(([, xml]) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]));
   const { errors, warnings, counts } = summarize(auditPages(auditList, sitemapUrls, { knownPaths: staticPaths }));
   console.log(`Audyt SEO: ${errors.length} błędów, ${warnings.length} ostrzeżeń${counts ? ` (${counts})` : ''}.`);
+  for (const w of warnings.filter((x) => x.code === 'template-share')) console.log(`  [${w.code}] ${w.message}`);
   if (errors.length > 0) {
     for (const e of errors.slice(0, 200)) console.error(`  [${e.code}] ${e.path}: ${e.message}`);
     if (errors.length > 200) console.error(`  … i ${errors.length - 200} kolejnych.`);

@@ -15,6 +15,13 @@ export interface SentenceContext {
 /** Jednostki poziomu w dopełniaczu liczby mnogiej: „z 2 479 gmin”. */
 const PEERS: Record<Level, string> = { gmi: 'gmin', pow: 'powiatów', woj: 'województw' };
 
+/** „w każdej z 8 sąsiednich gmin”, „w każdym z 5 okolicznych powiatów” (rodzaj: gmina – ż., powiat/województwo – m./n.). */
+const AROUND: Record<Level, { each: string; noun: string }> = {
+  gmi: { each: 'każdej', noun: 'gmin' },
+  pow: { each: 'każdym', noun: 'powiatów' },
+  woj: { each: 'każdym', noun: 'województw' },
+};
+
 const ordinal = (rank: number) => (rank === 1 ? '' : `${rank}. `);
 
 /** „35 169 zł w 2025 r.” albo „średnio 4,2 na 1000 w latach 2023–2025”. */
@@ -47,6 +54,13 @@ export function factSentence(f: Fact, ctx: SentenceContext): string | null {
     if (!delta) return null;
     return `${name}: ${delta} (${when(f, unit)}) – ${ordinal(c.rank)}${changeWord(c.dir, f.value - c.fromValue)} z ${plNumber(c.total)} ${peers} w Polsce.`;
   }
+  if (c.kind === 'neighbours') {
+    const { each, noun } = AROUND[ctx.level];
+    const word = c.dir === 1 ? 'więcej' : 'mniej';
+    const ring = c.extended ? 'okolicznych' : 'sąsiednich';
+    const range = `od ${showValue(c.min, unit)} do ${showValue(c.max, unit)}`;
+    return `${name}: ${when(f, unit)} – ${word} niż w ${each} z ${plNumber(c.count)} ${ring} ${noun} (u nich ${range}).`;
+  }
   if (c.kind === 'record') {
     const side = c.dir === 1 ? 'najdalej powyżej' : 'najdalej poniżej';
     return `${name}: ${when(f, unit)} – ${side} mediany ${peers} w Polsce (${showValue(c.median, unit)}) od początku danych (${c.sinceYear} r.).`;
@@ -55,4 +69,17 @@ export function factSentence(f: Fact, ctx: SentenceContext): string | null {
   const med = showValue(c.median, unit);
   if (Math.abs(c.percentile - 50) <= band) return `${name}: ${when(f, unit)} – blisko mediany ${peers} w Polsce (${med}).`;
   return `${name}: ${when(f, unit)}; mediana ${peers} w Polsce: ${med}.`;
+}
+
+/**
+ * Identyfikator szablonu zdania (do audytu S08 „ten sam szablon na > 30% stron”): typ faktu i wariant słów,
+ * np. „F2:najwyższa”, „F3:mniej”, „F9:blisko”. Wskaźnik i liczby nie zmieniają szablonu.
+ */
+export function factTemplate(f: Fact, typicalBand = 10): string {
+  const c = f.compare;
+  if (c.kind === 'rank') return `${f.type}:${c.dir === 1 ? 'najwyższa' : 'najniższa'}`;
+  if (c.kind === 'change') return `${f.type}:${changeWord(c.dir, f.value - c.fromValue)}`;
+  if (c.kind === 'neighbours') return `${f.type}:${c.dir === 1 ? 'więcej' : 'mniej'}`;
+  if (c.kind === 'record') return `${f.type}:${c.dir === 1 ? 'powyżej' : 'poniżej'}`;
+  return `${f.type}:${Math.abs(c.percentile - 50) <= typicalBand ? 'blisko' : 'mediana'}`;
 }

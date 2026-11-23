@@ -1,9 +1,10 @@
 // Składanie faktów dla wszystkich jednostek: kandydaci (detektory) → dobór 3 → pliki na województwa.
-import { encodeFact, type EncodedFact } from './codec';
+import { encodeFact, encodeTwin, type EncodedFact, type EncodedTwin } from './codec';
 import { createContext, type FactsContext } from './context';
 import { detectAll } from './detectors';
 import { selectFacts } from './select';
-import type { Fact, FactsInput, FactType } from './types';
+import { findTwins } from './twins';
+import type { Fact, FactsInput, FactType, TwinFact } from './types';
 
 export interface UnitFacts {
   /** Wybrane fakty (≥ 3, chyba że jednostka nie ma żadnych danych). */
@@ -15,6 +16,8 @@ export interface UnitFacts {
 export interface FactsBuild {
   ctx: FactsContext;
   byUnit: Map<string, UnitFacts>;
+  /** F8 – bliźniak w innym województwie (W26-F03). */
+  twins: Map<string, TwinFact>;
 }
 
 export function buildFacts(input: FactsInput): FactsBuild {
@@ -26,14 +29,19 @@ export function buildFacts(input: FactsInput): FactsBuild {
     for (const f of candidates) counts[f.type] = (counts[f.type] ?? 0) + 1;
     byUnit.set(unit.teryt, { selected: selectFacts(candidates, ctx.indicators, input.config.selection), counts });
   }
-  return { ctx, byUnit };
+  return { ctx, byUnit, twins: findTwins(ctx) };
 }
 
-/** Plik public/data/facts/<WW>.json: { woj, generatedAt, units: { teryt: [fakt, …] } }. */
+/**
+ * Plik public/data/facts/<WW>.json: { woj, generatedAt, units: { teryt: [fakt, …] }, near, twins }.
+ * `near` – pierścień sąsiadów (TERYT, ten sam poziom; do F3 i linków), `twins` – bliźniak F8 (W26-F03).
+ */
 export interface FactsShard {
   woj: string;
   generatedAt: string;
   units: Record<string, EncodedFact[]>;
+  near?: Record<string, string[]>;
+  twins?: Record<string, EncodedTwin>;
 }
 
 export function buildShards(build: FactsBuild, generatedAt: string): Record<string, FactsShard> {
@@ -41,7 +49,12 @@ export function buildShards(build: FactsBuild, generatedAt: string): Record<stri
   for (const unit of build.ctx.input.units) {
     const woj = unit.teryt.slice(0, 2);
     shards[woj] ??= { woj, generatedAt, units: {} };
-    shards[woj].units[unit.teryt] = (build.byUnit.get(unit.teryt)?.selected ?? []).map(encodeFact);
+    const shard = shards[woj];
+    shard.units[unit.teryt] = (build.byUnit.get(unit.teryt)?.selected ?? []).map(encodeFact);
+    const ring = build.ctx.input.neighbours?.[unit.teryt];
+    if (ring?.ids.length) (shard.near ??= {})[unit.teryt] = ring.ids;
+    const twin = build.twins.get(unit.teryt);
+    if (twin) (shard.twins ??= {})[unit.teryt] = encodeTwin(twin);
   }
   return shards;
 }
