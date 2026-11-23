@@ -1,7 +1,8 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import type { UnitIndex } from '@/core/units/types';
 import { getDrillState, getParentTeryt } from '@/core/map/drill';
-import { readUrlState, writeUrlState } from '@/core/url/state';
+import { writeUrlState } from '@/core/url/state';
+import { selectedFromUrl } from '@/core/url/selection';
 import { ATLAS_RESET_EVENT } from '@/core/url/home';
 import { loadLocalities } from '@/core/search/load-localities';
 import type { ViewState } from '@/core/map/view';
@@ -20,7 +21,7 @@ export function useMapSelection(unitIndex: UnitIndex, options?: MapSelectionOpti
 
   const [selectedTeryt, setSelectedTeryt] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
-    return readUrlState(window.location.search, unitIndex).u ?? null;
+    return selectedFromUrl(window.location.search, unitIndex);
   });
 
   const drillState = useMemo(() => {
@@ -70,7 +71,7 @@ export function useMapSelection(unitIndex: UnitIndex, options?: MapSelectionOpti
   useEffect(() => {
     const handlePopState = () => {
       if (typeof window === 'undefined') return;
-      const fromUrl = readUrlState(window.location.search, unitIndex).u ?? null;
+      const fromUrl = selectedFromUrl(window.location.search, unitIndex);
       setSelectedTeryt(fromUrl);
     };
 
