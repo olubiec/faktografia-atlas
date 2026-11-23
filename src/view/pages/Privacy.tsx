@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { clearConsent } from '@/core/consent/consent';
 import { SiteLayout } from '../layout/SiteLayout';
+import { PLACE_KEY } from '@/core/start/place-memory';
 
 export function Privacy() {
   const [revoked, setRevoked] = useState(false);
@@ -68,6 +69,9 @@ export function Privacy() {
             </li>
             <li>
               <code className="font-mono bg-arkusz px-1.5 py-0.5 border border-linia">fa-consent-v1</code> – zapis Twojej decyzji o wyrażeniu lub odmowie zgody na anonimowe statystyki.
+            </li>
+            <li>
+              <code className="font-mono bg-arkusz px-1.5 py-0.5 border border-linia">{PLACE_KEY}</code> – miejsce wybrane na stronie startowej (sam kod TERYT gminy) zapisuje się tylko w Twojej przeglądarce i nie jest nigdzie wysyłane; „Zmień miejsce” je usuwa.
             </li>
           </ul>
         </section>

@@ -8,9 +8,8 @@ import { SiteLayout } from '../layout/SiteLayout';
 import { JsonLd } from '../layout/JsonLd';
 import { organizationLd, websiteLd } from '@/core/seo/json-ld';
 import { Button } from '@/components/ui/button';
-import { PageSection } from '@/view/ui/PageSection';
 import { homeSearch } from '@/core/url/home';
-import { START_PAIRS, START_PLACES } from '@/core/start/examples';
+import { Discoveries } from './Discoveries';
 
 /** Dane mapy rozgrzewamy dopiero po tym czasie (po „networkidle” strony), żeby `/` ładowała się lekko. */
 const DATA_PRELOAD_MS = 3000;
@@ -24,8 +23,6 @@ const STEPS = [
 /** Hasło na banerze: o miejscowości i okolicy użytkownika. */
 const TAGLINE = 'Sprawdź swoją miejscowość i okolicę.';
 
-const CHIP = 'pointer-events-auto';
-
 /** Dopisuje do linku parametry techniczne (`e2e`, `logo`, `tune`) z bieżącego adresu. */
 function withTech(href: string, search: string): string {
   const tech = homeSearch(search);
@@ -34,7 +31,7 @@ function withTech(href: string, search: string): string {
 }
 
 /**
- * Prosty ekran startowy (`/`): baner z hasłem na dole mapy, 3 kroki, przycisk „Otwórz mapę” i przykłady.
+ * Prosty ekran startowy (`/`): baner z hasłem na dole mapy, 3 kroki, przycisk „Otwórz mapę” i „Odkrycia” (Discoveries.tsx).
  * Tło: animowany obrys Polski (dwa małe pliki: obrys i start.json), bez kodu mapy i bez wartości wskaźników.
  * „Otwórz mapę”: okładka z kopią obrysu przykrywa ekran na czas ładowania mapy (mapCover.ts).
  */
@@ -122,32 +119,7 @@ export function StartPage() {
             </div>
           </div>
 
-          <PageSection id="start-examples" title="Przykłady">
-            <div className="flex flex-col gap-3">
-              <h3 className="text-sm font-bold text-olowek">Zobacz miejsce</h3>
-              <div className="flex flex-wrap gap-2">
-                {START_PLACES.map((p) => (
-                  <Button key={p.teryt} asChild variant="secondary" className={CHIP}>
-                    <Link to={to(p.href)}>{p.name}</Link>
-                  </Button>
-                ))}
-              </div>
-            </div>
-            <div className="mt-6 flex flex-col gap-3">
-              <h3 className="text-sm font-bold text-olowek">Porównaj dwa miejsca</h3>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {START_PAIRS.map((p) => (
-                  <Button key={p.href} asChild variant="secondary" className={`${CHIP} justify-between gap-3`}>
-                    <Link to={to(p.href)}>
-                      <span className="min-w-0 truncate">{p.name1}</span>
-                      <span className="shrink-0 text-xs text-olowek">vs</span>
-                      <span className="min-w-0 truncate text-right">{p.name2}</span>
-                    </Link>
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </PageSection>
+          <Discoveries to={to} onWarm={warm} />
         </div>
       </div>
     </SiteLayout>
