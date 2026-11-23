@@ -1,4 +1,36 @@
-# Stan – 21.11.2026
+# Stan – 23.11.2026
+
+## Stan na 23.11.2026 (SEO W25 S01–S13 i „Odkrycia” W26 F01–F06 scalone; sekcje niżej są starsze – tam, gdzie się różnią, obowiązuje ta)
+Scalone autonomicznie na polecenie właściciela (22.11, „bądź decyzyjny”). Przed scaleniem każdego PR: `pnpm lint`, `typecheck`, `test`, `build` (audyt SEO) lokalnie zielone; e2e danej fali uruchomione lokalnie. Pełne e2e w CI na `main` od wcześniej czerwone / przekracza 20 min – **do sprawdzenia**.
+
+| Status | Praca | PR | Co dało |
+|---|---|---|---|
+| ✅ scalone | W25-S01, S02, S04, S13 robots, prawdziwe 404, dane strukturalne, adres na kartach | (fala S-1) | podstawy techniczne SEO |
+| ✅ scalone | W25-S03 meta, kanoniczne adresy, obrazek OG | #653 | `src/core/seo/site.ts`, `public/og/faktografia.png` |
+| ✅ scalone | W25-S05 adresy miejsc (slugi) | #654 | `/wojewodztwo/…`, `/powiat/…`, `/gmina/…` |
+| ✅ scalone | W25-S06 model strony miejsca | #655 | zdania z danych, profil 12 wskaźników |
+| ✅ scalone | W25-S07 generator stron miejsc | #656 | 2809 stron statycznych (396 indeksowanych; gminy `noindex` – `config/seo.json`, decyzja D7) |
+| ✅ scalone | W25-S08 strażnik jakości SEO | #657 | audyt przy `pnpm build`; błąd = czerwony build |
+| ✅ scalone | W25-S09 linki wewnętrzne | #659 | „Strona miejsca →” w profilu, `/miejsca`, link w stopce |
+| ✅ scalone | W25-S10 strony rankingów | #662 | 381 stron `/ranking/…` (41 indeksowanych) |
+| ✅ scalone | W25-S11 IndexNow | #661 | workflow `seo-indexnow.yml` |
+| ✅ scalone | W25-S12 raport Search Console | #663 | workflow `seo-weekly.yml` (wymaga sekretów GSC) |
+| ✅ scalone | W26-F01 silnik faktów | #660 | `public/data/facts/*`, `facts-start.json`; przegląd 50 gmin: `docs/research/F01-przeglad-faktow.md` |
+| ✅ scalone | W26-F02 start „Odkrycia” | #667 | zamiast „Przykładów”: Twoje miejsce (3 fakty), Odkrycie dnia, 4 zestawienia, Twoja okolica, Twój bliźniak |
+| ✅ scalone | W26-F03 fakty na stronach miejsc | #665 | sąsiedzi, bliźniak, lead z faktami (3 fakty na 81% stron) |
+| ✅ scalone | W26-F04 tematy i zestawienia | #666 | 7 stron `/temat/…`, 26 `/zestawienie/…`, `/zestawienia`; krótsze tytuły rankingów (108 ostrzeżeń → 0) |
+| ✅ scalone | W26-F05 nowe dane GUS, kalendarz, lokalizacja | #668 | robot otwiera PR „Nowe dane GUS” na każdy nowy rok wskaźnika (bez automatycznego scalania); kalendarz tematów; „Użyj mojej lokalizacji” |
+| ✅ scalone | W26-F06 sygnały Search Console | #664 | `trendBoost`, „Tematy do rozważenia” (workflow `gsc-trend-boost.yml`) |
+| ✅ main | poprawki po fali | 07d780d, d568050 | test ścieżki S1a sprawdza „Odkrycia”; `vercel.json`: `geolocation=(self)` (tylko nasza domena; kamera i mikrofon dalej wyłączone) |
+
+**Do sprawdzenia przez właściciela:** `/` na telefonie – sekcja „Odkrycia”: wpisz miejscowość → 3 fakty, „Zmień miejsce”, „Użyj mojej lokalizacji” (przeglądarka zapyta o zgodę); `/gmina/<nazwa>`, `/powiat/…`, `/ranking/…`, `/temat/…`, `/zestawienia`, `/miejsca`; czy zdania faktów brzmią naturalnie (próbka 50 gmin w `docs/research/F01-przeglad-faktow.md`).
+
+**Do zrobienia przez właściciela:** workflow „Update snapshots” (zmienił się start i stopka); sekrety Search Console dla `seo-weekly.yml` i `gsc-trend-boost.yml`; zgłoszenie `sitemap.xml` w Search Console.
+
+**Znane ograniczenia:** audyt ma 1 ostrzeżenie – zdanie „F2: najniższa w województwie” na 37% stron (próg 30%); wymaga osobnego zadania w silniku faktów (zmiana wagi 0.7→0.6 dała tylko 35%). Strony „Nowe dane GUS” pojawią się dopiero po pierwszym PR robota. Kalendarz tematów liczy miesiąc z dnia przebiegu robota.
+
+**Dalej:** F-3 (listy po S10) i zadanie na różnorodność zdań F2.
+
 
 ## Stan na 21.11.2026 (fala 1 etapu C i „Jedna mapa” scalone; sekcje niżej są starsze – tam, gdzie się różnią, obowiązuje ta)
 `main` = commit ccc3ab1 ([M7] #613). Fala 1 etapu C (`docs/PLAN-FALE-C.md`) jest scalona; fale 2–4 czekają na polecenie właściciela. Wygląd i zachowanie na telefonie: „do sprawdzenia” przez właściciela na faktografia.eu.
