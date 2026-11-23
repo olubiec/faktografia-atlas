@@ -1,0 +1,84 @@
+name: SEO – mnożniki tematów (Search Console)
+
+# W26-F06 (docs/KONCEPT-ODKRYCIA.md §7a–§7b): co poniedziałek, po raporcie tygodniowym (seo-weekly.yml),
+# wzrost wyświetleń zapytań wg tematu → config/facts.json → trendBoost (1,0–1,5) i przebudowa faktów.
+# Zmienia tylko kolejność istniejących, prawdziwych faktów. Wynik idzie do PR robota na gałęzi
+# robot/trend-boost – bez automatycznego scalania (scala właściciel). Żadne strony nie powstają.
+# Sekret GSC_SERVICE_ACCOUNT trafia tylko do zmiennej środowiska kroku skryptu i nigdy do logu.
+# Brak sekretu → komunikat i zielony przebieg bez zmian.
+on:
+  schedule:
+    - cron: '47 5 * * 1' # poniedziałek, 30 min po raporcie tygodniowym
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: gsc-trend-boost
+  cancel-in-progress: false
+
+jobs:
+  trend:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      BRANCH: robot/trend-boost
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Mnożniki tematów z Search Console → config/facts.json
+        env:
+          GSC_SERVICE_ACCOUNT: ${{ secrets.GSC_SERVICE_ACCOUNT }}
+        run: node scripts/seo/gsc-topics.mjs --write
+
+      - name: Przebuduj fakty, gdy mnożniki się zmieniły
+        id: diff
+        shell: bash
+        run: |
+          if git diff --quiet -- config/facts.json; then
+            echo "Mnożniki bez zmian – brak PR."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            node scripts/data/build-facts.mjs
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Commity robota nie uruchamiają CI same z siebie, dlatego CI uruchamiamy ręcznie na gałęzi.
+      - name: PR robota (bez automatycznego scalania) i CI
+        if: steps.diff.outputs.changed == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add config/facts.json
+          [ -d public/data/facts ] && git add public/data/facts/ public/data/facts-start.json
+          git commit -m "seo: mnożniki tematów z Search Console (trendBoost)"
+          git push --force origin "HEAD:refs/heads/$BRANCH"
+          N="$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&head=${GITHUB_REPOSITORY_OWNER}:${BRANCH}" --jq '.[0].number // empty')"
+          if [ -z "$N" ]; then
+            BODY="Robot „SEO – mnożniki tematów” (przebieg $GITHUB_RUN_ID, docs/KONCEPT-ODKRYCIA.md §7a–§7b).
+
+          Po ludzku: tematy, których ludzie szukają częściej niż tydzień wcześniej, dostają mnożnik (najwyżej 1,5) – ich prawdziwe fakty wskakują wyżej na stronie startowej i w Odkryciu dnia. Nie powstają żadne nowe strony ani teksty; zmienia się tylko kolejność. Tabela tematów jest w podsumowaniu przebiegu (Actions).
+
+          Zakres: config/facts.json (trendBoost), public/data/facts/, public/data/facts-start.json. Scalasz Ty – nic nie scala się samo."
+            N="$(gh api -X POST "repos/$GITHUB_REPOSITORY/pulls" -f title="seo: mnożniki tematów z Search Console" -f head="$BRANCH" -f base=main -f body="$BODY" --jq .number)" \
+              || { echo "::warning::Nie udało się otworzyć PR (Settings → Actions → General → „Allow GitHub Actions to create and approve pull requests”). Gałąź $BRANCH jest wypchnięta, PR otwórz ręcznie."; exit 0; }
+          fi
+          echo "PR #$N" >> "$GITHUB_STEP_SUMMARY"
+          gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/dispatches" -f ref="$BRANCH" \
+            || echo "::warning::Nie udało się uruchomić CI na $BRANCH (Actions → CI → Run workflow na tej gałęzi)."

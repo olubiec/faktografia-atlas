@@ -1,69 +1,24 @@
 // Tygodniowy raport z Google Search Console jako zgłoszenie na GitHubie (S12, docs/SEO.md §7–§8).
-// Token OAuth z konta usługi przez podpis JWT w node:crypto (bez nowych pakietów).
+// Token OAuth i zapytania do API: scripts/seo/gsc-client.mjs (wspólne z gsc-topics.mjs, W26-F06).
 // Sekret GSC_SERVICE_ACCOUNT czytamy tylko ze zmiennej środowiska i NIGDY go nie wypisujemy.
 //
 // Użycie: node scripts/seo/gsc-report.mjs [--dry-run] [--record <katalog>]
 //   --dry-run   wypisuje Markdown zamiast tworzyć zgłoszenie
 //   --record    zapisuje surowe odpowiedzi API (format tests/fixtures/seo/gsc-*.json)
-import { createSign } from 'node:crypto';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
+import { SITE, WM, accessToken, api, loadAccount, searchAnalytics } from './gsc-client.mjs';
 
-const SITE = 'sc-domain:faktografia.eu';
 const SAMPLE_SIZE = 40;
-const SCOPE = 'https://www.googleapis.com/auth/webmasters.readonly';
 const root = path.resolve(import.meta.dirname, '../..');
 const { values: args } = parseArgs({ options: { 'dry-run': { type: 'boolean', default: false }, record: { type: 'string' } } });
 
-// Brak sekretu (np. fork, nowe repo) → czytelny komunikat i kod 0, bez czerwonego CI.
-const raw = process.env.GSC_SERVICE_ACCOUNT;
-if (!raw || !raw.trim()) {
-  console.log('Brak sekretu GSC_SERVICE_ACCOUNT – raport Search Console pominięty. Dodaj go w ustawieniach repozytorium (docs/SEO.md §7).');
-  process.exit(0);
-}
-
-let account;
-try {
-  account = JSON.parse(raw);
-  if (!account.client_email || !account.private_key) throw new Error('brak pól');
-} catch {
-  // bez treści sekretu w komunikacie
-  console.log('::error::Sekret GSC_SERVICE_ACCOUNT nie jest poprawnym kluczem JSON konta usługi (potrzebne client_email i private_key).');
-  process.exit(1);
-}
-
-const b64url = (v) => Buffer.from(typeof v === 'string' ? v : JSON.stringify(v)).toString('base64url');
-
-async function accessToken() {
-  const now = Math.floor(Date.now() / 1000);
-  const aud = account.token_uri || 'https://oauth2.googleapis.com/token';
-  const unsigned = `${b64url({ alg: 'RS256', typ: 'JWT' })}.${b64url({ iss: account.client_email, scope: SCOPE, aud, iat: now, exp: now + 3600 })}`;
-  const signature = createSign('RSA-SHA256').update(unsigned).sign(account.private_key).toString('base64url');
-  const res = await fetch(aud, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion: `${unsigned}.${signature}` }),
-  });
-  if (!res.ok) throw new Error(`token OAuth → HTTP ${res.status}`);
-  return (await res.json()).access_token;
-}
-
-async function api(token, url, body) {
-  const res = await fetch(url, {
-    method: body ? 'POST' : 'GET',
-    headers: { Authorization: `Bearer ${token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  if (!res.ok) throw new Error(`${new URL(url).pathname} → HTTP ${res.status}`);
-  return res.json();
-}
-
-const WM = `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(SITE)}`;
+// Brak sekretu (np. fork, nowe repo) → czytelny komunikat i kod 0, bez czerwonego CI (gsc-client.mjs).
+const account = loadAccount('raport Search Console pominięty');
 
 async function week(token, range) {
-  const q = (dimensions) =>
-    api(token, `${WM}/searchAnalytics/query`, { startDate: range.start, endDate: range.end, ...(dimensions.length ? { dimensions } : {}), rowLimit: 1000 });
+  const q = (dimensions) => searchAnalytics(token, range, dimensions);
   return { totals: await q([]), query: await q(['query']), page: await q(['page']) };
 }
 
@@ -105,7 +60,7 @@ try {
   const core = await vite.ssrLoadModule('/src/core/seo/gsc-report.ts');
   const { SITE_URL } = await vite.ssrLoadModule('/src/core/seo/site.ts');
   const range = core.reportWindow(new Date());
-  const token = await accessToken();
+  const token = await accessToken(account);
   const current = await week(token, range.current);
   const previous = await week(token, range.previous);
   const sitemaps = await api(token, `${WM}/sitemaps`);
@@ -134,7 +89,13 @@ try {
     await save('gsc-inspect.json', inspections);
   }
 
-  const markdown = core.renderMarkdown(core.buildReport({ window: range, current, previous, sitemaps, inspections, previousState }));
+  // (W26-F06) „Tematy do rozważenia” i mnożniki tematów – tylko informacja, nic nie powstaje samo.
+  const trend = await vite.ssrLoadModule('/src/core/facts/trend-boost.ts');
+  const { topicCandidates, renderSignals } = await vite.ssrLoadModule('/src/core/facts/topic-candidates.ts');
+  const keywords = JSON.parse(await readFile(path.join(root, 'config/topic-keywords.json'), 'utf8'));
+  const pages = [...urls, ...(current.page.rows ?? []).map((r) => r.keys?.[0] ?? '')];
+  const signals = renderSignals(trend.topicTrends(current.query, previous.query, keywords), topicCandidates(current.query, pages, keywords));
+  const markdown = `${core.renderMarkdown(core.buildReport({ window: range, current, previous, sitemaps, inspections, previousState }))}\n${signals}`;
   const title = `SEO – tydzień ${range.current.start} – ${range.current.end}`;
   if (!canIssue) {
     console.log(`# ${title}\n\n${markdown}`);
