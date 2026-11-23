@@ -1,10 +1,12 @@
 // Statyczne dokumenty HTML rankingów (S10) i ich mapa strony. Ten sam szkielet co strony miejsc (page-template).
 // Tabela ma klasy na <table> (warianty [&_td]), żeby 200–300 wierszy mieściło się w budżecie wagi strony.
+import type { Feature } from 'geojson';
 import type { IndicatorValues } from '../profile/profile';
 import { escapeAttr as attr, escapeHtml as text } from './html';
 import type { LdObject } from './json-ld';
 import { a, breadcrumbLd, crumbNav, H2, LINK, mapButton, renderDocument, SECTION, type PageAssets } from './page-template';
 import { buildRankingPage, LEVELS, RANKING_ROOT, rankingPath, type RankingContext, type RankingPage, type RankingRow, type RankingSpec } from './ranking-page';
+import { rankingMapAlt, rankingMapFigure, rankingMapSrc, rankingMapSvg } from './ranking-map';
 import { shortIndicatorName, unitHeading } from './sentences';
 import { absoluteUrl } from './site';
 import type { SlugUnit } from './slug';
@@ -75,6 +77,13 @@ const linkList = (id: string, title: string, links: RankingPage['related'][numbe
     : `<section aria-labelledby="${id}" class="${SECTION}"><h2 id="${id}" class="${H2}">${text(title)}</h2>
 <ul class="mt-3 flex flex-wrap gap-x-6">${links.map((l) => `<li>${a(l.path, l.name)}</li>`).join('')}</ul></section>`;
 
+/** Statyczna mapa rankingu (obrazek obok strony), gdy strona ma wartości do mapy. */
+function mapFigure(page: RankingPage): string {
+  if (page.mapValues.length === 0) return '';
+  const alt = rankingMapAlt({ title: page.h1, values: page.mapValues, unit: page.unit });
+  return rankingMapFigure(rankingMapSrc(page.path), alt, `Mapa: ${page.h1}. Źródło: GUS, Bank Danych Lokalnych.`);
+}
+
 /** Pełny dokument strony rankingu. */
 export function renderRankingPage(page: RankingPage, assets: PageAssets): string {
   const ex = page.explanation;
@@ -86,6 +95,7 @@ export function renderRankingPage(page: RankingPage, assets: PageAssets): string
 <h1 class="${H1}">${text(page.h1)}</h1>
 <p class="mt-4 max-w-prose">${page.lead.map(text).join(' ')}</p>
 ${mapButton(page.mapHref, 'Zobacz na mapie')}
+${mapFigure(page)}
 ${about.length || definition ? `<section aria-labelledby="o-wskazniku" class="${SECTION}"><h2 id="o-wskazniku" class="${H2}">O wskaźniku</h2>${about.join('')}${definition}</section>` : ''}
 ${rankingTable(page)}
 ${page.related.map((r) => linkList(r.id, r.title, r.links)).join('\n')}`;
@@ -133,6 +143,21 @@ export interface BuiltRankingPage {
   lastmod: string;
   /** Poziom rankingu; spis `/ranking` ma null. */
   level: RankingPage['spec']['level'] | null;
+  /** Plik SVG mapy do zapisania pod `rankingMapSrc(path)`; brak, gdy strona nie ma mapy. */
+  mapSvg?: string;
+}
+
+/** Granice jednostek według poziomu (TopoJSON public/geo/admin.topo.json rozpakowany w generatorze). */
+export type RankingGeo = Partial<Record<RankingPage['spec']['level'], readonly Feature[]>>;
+
+const teryt = (f: Feature) => String(f.properties?.teryt ?? '');
+
+function mapSvgFor(page: RankingPage, geo: RankingGeo | undefined): string | undefined {
+  const all = geo?.[page.spec.level];
+  if (!all || page.mapValues.length === 0) return undefined;
+  const voiv = page.spec.voivodeship;
+  const features = voiv ? all.filter((f) => teryt(f).startsWith(voiv)) : all;
+  return rankingMapSvg({ features, values: page.mapValues, title: page.h1, unit: page.unit, year: page.year });
 }
 
 /** Wszystkie strony rankingów i spis `/ranking` (generator: scripts/seo/build-pages.mjs). */
@@ -140,13 +165,17 @@ export function buildRankingSite(
   values: Readonly<Record<string, IndicatorValues>>,
   ctx: RankingContext,
   assets: PageAssets,
+  geo?: RankingGeo,
 ): BuiltRankingPage[] {
   const pages: BuiltRankingPage[] = [];
   for (const spec of rankingSpecs(ctx.indicators, ctx.units)) {
     const v = values[spec.indicatorId];
     if (!v) throw new Error(`Brak public/data/values/${spec.indicatorId}.json`);
     const page = buildRankingPage(spec, v, ctx);
-    pages.push({ path: page.path, html: renderRankingPage(page, assets), indexable: page.indexable, lastmod: page.lastmod, level: spec.level });
+    const mapSvg = mapSvgFor(page, geo);
+    // Bez pliku mapy strona nie pokazuje obrazka (żadnych linków do nieistniejących plików).
+    const html = renderRankingPage(mapSvg ? page : { ...page, mapValues: [] }, assets);
+    pages.push({ path: page.path, html, indexable: page.indexable, lastmod: page.lastmod, level: spec.level, ...(mapSvg ? { mapSvg } : {}) });
   }
   const lastmod = pages.map((p) => p.lastmod).sort().at(-1) ?? new Date(0).toISOString();
   pages.push({ path: RANKING_ROOT, html: renderRankingIndex(ctx.indicators, lastmod, assets), indexable: true, lastmod, level: null });

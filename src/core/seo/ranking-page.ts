@@ -6,6 +6,7 @@ import { rankUnits, type RankedUnit } from '../ranking/ranking';
 import type { Unit } from '../units/types';
 import { placeIn, plNumber, shortIndicatorName, showValue } from './sentences';
 import { indicatorSlug, slugify, type SlugUnit, type UnitPaths } from './slug';
+import type { MapValue } from './ranking-map';
 import { titleIndicatorName } from './title-names';
 import type { PageIndicator, PageLink } from './unit-page';
 
@@ -76,6 +77,8 @@ export interface RankingPage {
   unit: string;
   scopeName: string;
   mapHref: string;
+  /** Wartości do statycznej mapy (ranking-map); pusta dla rankingu gmin w Polsce (za duży plik). */
+  mapValues: MapValue[];
   crumbs: PageLink[];
   related: { id: string; title: string; links: PageLink[] }[];
   indexable: boolean;
@@ -202,6 +205,7 @@ export function buildRankingPage(spec: RankingSpec, values: IndicatorValues, ctx
     unit: ind.unit,
     scopeName: voiv ? `województwo ${voiv.name}` : 'Polska',
     mapHref: `/mapa?i=${encodeURIComponent(ind.id)}&l=${spec.level}`,
+    mapValues: !voiv && spec.level === 'gmi' ? [] : ranked.map((r) => ({ teryt: r.teryt, name: ctx.headings.get(r.teryt) ?? r.name, value: r.value })),
     crumbs: [
       { teryt: '', name: 'Faktografia', path: '/' },
       { teryt: '', name: 'Rankingi', path: RANKING_ROOT },

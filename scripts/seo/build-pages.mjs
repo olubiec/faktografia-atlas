@@ -4,6 +4,7 @@
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
+import { feature } from 'topojson-client';
 import { createServer } from 'vite';
 
 const root = path.resolve(import.meta.dirname, '../..');
@@ -13,6 +14,8 @@ const dataDir = path.join(root, 'public/data');
 const MAX_GMINA_BYTES = 80 * 1024;
 /** Limit rozmiaru strony rankingu bez kompresji (warunek S10). */
 const MAX_RANKING_BYTES = 120 * 1024;
+/** Limit pliku statycznej mapy rankingu (SVG bez kompresji). */
+const MAX_MAP_BYTES = 200 * 1024;
 
 /**
  * Statyczny dokument `/miejsca` (indeksowany). Klasy tylko te, które ma już page-template.ts (skanowany przez Tailwind).
@@ -177,16 +180,29 @@ try {
   const values = {};
   for (const ind of indicators) values[ind.id] = await readJson(path.join(dataDir, 'values', `${ind.id}.json`));
   const rankingCtx = { units, paths, headings: ranking.rankingHeadings(units), indicators, explanations: explanations.items, indexGminy: config.indexGminy };
-  const rankingPages = ranking.buildRankingSite(values, rankingCtx, { css });
+  // Statyczne mapy rankingów: granice z public/geo (to samo źródło co mapa na /mapa).
+  const topo = await readJson(path.join(root, 'public/geo/admin.topo.json'));
+  const geo = Object.fromEntries(['woj', 'pow', 'gmi'].map((l) => [l, feature(topo, topo.objects[l]).features]));
+  const rankingPages = ranking.buildRankingSite(values, rankingCtx, { css }, geo);
+  const rankingMap = await vite.ssrLoadModule('/src/core/seo/ranking-map.ts');
   let maxRanking = { bytes: 0, path: '' };
+  let maxMap = { bytes: 0, path: '', count: 0 };
   for (const page of rankingPages) {
     const bytes = Buffer.byteLength(page.html, 'utf8');
     if (bytes > maxRanking.bytes) maxRanking = { bytes, path: page.path };
     if (bytes > MAX_RANKING_BYTES) throw new Error(`Strona ${page.path} ma ${bytes} B (limit ${MAX_RANKING_BYTES} B).`);
     await mkdir(path.join(dist, page.path), { recursive: true });
     await writeFile(path.join(dist, page.path, 'index.html'), page.html);
+    if (page.mapSvg) {
+      const mapBytes = Buffer.byteLength(page.mapSvg, 'utf8');
+      if (mapBytes > MAX_MAP_BYTES) throw new Error(`Mapa ${page.path} ma ${mapBytes} B (limit ${MAX_MAP_BYTES} B).`);
+      if (mapBytes > maxMap.bytes) maxMap = { ...maxMap, bytes: mapBytes, path: page.path };
+      maxMap.count++;
+      await writeFile(path.join(dist, rankingMap.rankingMapSrc(page.path)), page.mapSvg);
+    }
     auditList.push(readPage(page.path, page.html));
   }
+  console.log(`Mapy rankingów: ${maxMap.count} plików SVG; największa ${maxMap.path} ${(maxMap.bytes / 1024).toFixed(1)} KB.`);
   const rankingLastmod = rankingPages.map((p) => p.lastmod).sort().at(-1);
   sitemaps[ranking.RANKING_SITEMAP] = ranking.rankingSitemap(rankingPages);
   sitemaps['sitemap.xml'] = ranking.withSitemapEntry(sitemaps['sitemap.xml'], ranking.RANKING_SITEMAP, rankingLastmod);

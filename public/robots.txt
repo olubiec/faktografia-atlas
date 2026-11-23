@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /__test/
 Disallow: /design
+# Stan mapy w adresie (/mapa?u=…, /mapa?i=…) to ta sama aplikacja – indeksujemy /mapa i strony statyczne.
+Disallow: /mapa?
 
 Sitemap: https://faktografia.eu/sitemap.xml
