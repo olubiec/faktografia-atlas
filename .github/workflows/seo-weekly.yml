@@ -1,0 +1,60 @@
+name: SEO – raport tygodniowy
+
+# S12 (docs/SEO.md §8): co poniedziałek rano zgłoszenie „SEO – tydzień …” z etykietą `seo`
+# (liczby z Google Search Console i czerwone flagi; najpierw „Co wymaga działania”).
+# Sekret GSC_SERVICE_ACCOUNT trafia tylko do zmiennej środowiska kroku raportu i nigdy do logu.
+# Brak sekretu → komunikat i zielony przebieg.
+on:
+  schedule:
+    - cron: '17 5 * * 1' # poniedziałek ok. 06:17 czasu polskiego zimą, 07:17 latem
+  workflow_dispatch:
+    inputs:
+      record:
+        description: 'Zapisz surowe odpowiedzi API jako artefakt (do tests/fixtures/seo) (true/false)'
+        required: false
+        default: 'false'
+
+permissions:
+  issues: write
+  contents: read
+
+concurrency:
+  group: seo-weekly
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Raport Search Console → zgłoszenie
+        env:
+          GSC_SERVICE_ACCOUNT: ${{ secrets.GSC_SERVICE_ACCOUNT }}
+          GITHUB_TOKEN: ${{ github.token }}
+          RECORD: ${{ github.event.inputs.record }}
+        run: |
+          if [ "$RECORD" = "true" ]; then
+            node scripts/seo/gsc-report.mjs --record gsc-record
+          else
+            node scripts/seo/gsc-report.mjs
+          fi
+
+      - name: Nagrane odpowiedzi API (tylko ręcznie, record=true)
+        if: github.event.inputs.record == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: gsc-fixtures
+          path: gsc-record/
+          retention-days: 14
+          if-no-files-found: ignore

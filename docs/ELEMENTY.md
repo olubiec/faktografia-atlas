@@ -62,5 +62,6 @@ Kodu z cudzych repozytoriów nie kopiujemy (poziom E tylko z licencją i atrybuc
 | GitHub (repo publiczne, Actions) | kod, CI, roboty danych | Secret scanning i push protection włączone |
 | Vercel (Hobby) | hosting i podgląd PR | tylko użycie niekomercyjne |
 | PostHog (EU) | statystyki wyszukiwań po zgodzie | klucz projektu publiczny z założenia; jeszcze niepodłączony |
+| Google Search Console API (searchanalytics, sitemaps, urlInspection) | tygodniowy raport SEO jako zgłoszenie na GitHubie (S12, workflow `seo-weekly.yml`) | bezpłatne; konto usługi tylko do odczytu, klucz wyłącznie w sekrecie `GSC_SERVICE_ACCOUNT`; dodano 2026-11-22 |
 | Jules | wykonawca zadań | – |
 | CodeRabbit | komentarze do PR | darmowy dla repo publicznego |
