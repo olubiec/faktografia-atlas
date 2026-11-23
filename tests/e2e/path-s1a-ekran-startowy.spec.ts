@@ -41,10 +41,12 @@ for (const width of [390, 1280]) {
       expect(box!.height).toBeGreaterThanOrEqual(44);
       expect(box!.width).toBeGreaterThanOrEqual(44);
 
-      // Przykłady: 6 miejsc i 6 par, wszystkie prowadzą na /mapa.
-      const examples = page.getByRole('region', { name: 'Przykłady' });
-      const hrefs = await examples.getByRole('link').evaluateAll((els) => els.map((e) => e.getAttribute('href')));
-      expect(hrefs).toHaveLength(12);
+      // Odkrycia (W26-F02 zastąpiło „Przykłady”): 4 zestawienia, każde prowadzi na /mapa.
+      const discoveries = page.getByRole('region', { name: 'Odkrycia' });
+      const hrefs = await discoveries
+        .getByRole('link', { name: /^Zobacz na mapie: / })
+        .evaluateAll((els) => els.map((e) => e.getAttribute('href')));
+      expect(hrefs).toHaveLength(4);
       for (const href of hrefs) expect(href).toMatch(/^\/mapa\?/);
 
       // Na `/` nie pobieramy żadnych danych.
@@ -60,12 +62,11 @@ for (const width of [390, 1280]) {
       expect(errors).toEqual([]);
     });
 
-    test(`@PATH-1a przykład miejsca otwiera mapę z tym miejscem (${width})`, async ({ page }) => {
+    test(`@PATH-1a zestawienie z Odkryć otwiera mapę (${width})`, async ({ page }) => {
       await page.goto('/?e2e');
-      await page.getByRole('region', { name: 'Przykłady' }).getByRole('link', { name: 'Powiat tatrzański' }).click();
-      await expect(page).toHaveURL(/\/mapa\?u=1217/);
+      await page.getByRole('region', { name: 'Odkrycia' }).getByRole('link', { name: /^Zobacz na mapie: / }).first().click();
+      await expect(page).toHaveURL(/\/mapa\?/);
       await ready(page);
-      expect((await page.evaluate(() => (window as any).__atlas)).selected).toBe('1217');
     });
   });
 }
