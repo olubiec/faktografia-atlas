@@ -1,5 +1,5 @@
 // Robot faktów (W26-F01, docs/KONCEPT-ODKRYCIA.md §9): public/data/values + units → public/data/facts/<WW>.json
-// i public/data/facts-start.json. Logika w src/core/facts (TS) – ładowana przez Vite (ssrLoadModule),
+// i public/data/facts-start.json. W26-F03: sąsiedzi z public/geo/admin.topo.json (F3, pole near) i bliźniak (F8, pole twins). Logika w src/core/facts (TS) – ładowana przez Vite (ssrLoadModule),
 // tak jak generator stron scripts/seo/build-pages.mjs; bez nowych pakietów.
 // Użycie: node scripts/data/build-facts.mjs [--report docs/research/F01-przeglad-faktow.md]
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -25,6 +25,7 @@ const vite = await createServer({
 try {
   const { buildFacts, buildShards } = await vite.ssrLoadModule('/src/core/facts/build.ts');
   const { buildStart } = await vite.ssrLoadModule('/src/core/facts/start.ts');
+  const { ringsFromTopology } = await vite.ssrLoadModule('/src/core/facts/neighbours.ts');
 
   const config = await readJson(path.join(root, 'config/facts.json'));
   const indicators = await readJson(path.join(root, 'config/indicators.json'));
@@ -41,7 +42,10 @@ try {
     }
   }
 
-  const build = buildFacts({ indicators, values, units, config });
+  // Sąsiedztwo liczy robot (wspólne łuki granic), strona dostaje gotowe pierścienie w plikach faktów.
+  const topology = await readJson(path.join(root, 'public/geo/admin.topo.json'));
+  const neighbours = ringsFromTopology(topology, config.neighbours?.min ?? 4);
+  const build = buildFacts({ indicators, values, units, config, neighbours });
   const shards = buildShards(build, generatedAt);
   const outDir = path.join(dataDir, 'facts');
   await mkdir(outDir, { recursive: true });

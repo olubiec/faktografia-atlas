@@ -1,0 +1,48 @@
+[
+  {
+    "url": "https://faktografia.eu/powiat/krakowski",
+    "result": {
+      "inspectionResult": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:faktografia.eu&id=example",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Submitted and indexed",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-11-18T10:00:00Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://faktografia.eu/powiat/krakowski",
+          "userCanonical": "https://faktografia.eu/powiat/krakowski",
+          "crawledAs": "MOBILE"
+        }
+      }
+    }
+  },
+  {
+    "url": "https://faktografia.eu/powiat/wielicki",
+    "result": {
+      "inspectionResult": {
+        "indexStatusResult": {
+          "verdict": "NEUTRAL",
+          "coverageState": "Discovered - currently not indexed",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED"
+        }
+      }
+    }
+  },
+  {
+    "url": "https://faktografia.eu/wojewodztwo/malopolskie",
+    "result": {
+      "inspectionResult": {
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Submitted and indexed",
+          "pageFetchState": "SUCCESSFUL",
+          "lastCrawlTime": "2026-11-17T09:00:00Z"
+        }
+      }
+    }
+  }
+]

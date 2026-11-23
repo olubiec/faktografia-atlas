@@ -1,7 +1,7 @@
 // Dobór faktów z różnorodnością (KONCEPT-ODKRYCIA §4): najsilniejsze, ≤ 1 na wskaźnik, ≤ 2 na grupę.
 import type { Fact, FactIndicator, FactsConfig } from './types';
 
-const TYPE_ORDER = ['F1', 'F4', 'F2', 'F5', 'F9'];
+const TYPE_ORDER = ['F1', 'F4', 'F2', 'F3', 'F5', 'F9'];
 
 /** Porządek stały: siła malejąco, potem typ i wskaźnik (ten sam wynik przy tych samych danych). */
 export function compareFacts(a: Fact, b: Fact): number {

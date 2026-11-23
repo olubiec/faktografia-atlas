@@ -1,0 +1,18 @@
+{
+  "totals": { "rows": [{ "clicks": 100, "impressions": 3500, "ctr": 0.0286, "position": 15.0 }], "responseAggregationType": "byProperty" },
+  "query": {
+    "rows": [
+      { "keys": ["bezrobocie powiat krakowski"], "clicks": 30, "impressions": 800, "ctr": 0.0375, "position": 7.0 },
+      { "keys": ["ludność małopolska"], "clicks": 35, "impressions": 750, "ctr": 0.0467, "position": 8.0 }
+    ],
+    "responseAggregationType": "byProperty"
+  },
+  "page": {
+    "rows": [
+      { "keys": ["https://faktografia.eu/powiat/krakowski"], "clicks": 45, "impressions": 1000, "ctr": 0.045, "position": 7.5 },
+      { "keys": ["https://faktografia.eu/wojewodztwo/malopolskie"], "clicks": 10, "impressions": 900, "ctr": 0.0111, "position": 11.0 },
+      { "keys": ["https://faktografia.eu/mapa"], "clicks": 25, "impressions": 1300, "ctr": 0.0192, "position": 17.0 }
+    ],
+    "responseAggregationType": "byPage"
+  }
+}

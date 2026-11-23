@@ -1,6 +1,7 @@
 // Kontekst obliczeń: serie efektywne jednostek (średnia 3-letnia dla małych gmin), lata zmian granic,
 // posortowane wartości poziomu w danym roku (do miejsc w rankingu i median). Wszystko leniwie z pamięcią.
 import { boundaryChangeYears, impliedArea } from './boundaries';
+import { expandTrendBoost } from './trend-boost';
 import type { FactIndicator, FactsInput, FactUnit, Level } from './types';
 
 const LEVEL_RANK: Record<Level, number> = { gmi: 1, pow: 2, woj: 3 };
@@ -52,7 +53,9 @@ export function trailingMean(values: readonly (number | null)[], span: number): 
   });
 }
 
-export function createContext(input: FactsInput): FactsContext {
+export function createContext(rawInput: FactsInput): FactsContext {
+  // (W26-F06) trendBoost wg grupy → wg wskaźnika (siła faktu w strength.ts mnoży przez trendBoost[wskaźnik]).
+  const input = { ...rawInput, config: expandTrendBoost(rawInput.config, rawInput.indicators) };
   const { config, values } = input;
   const indicators = new Map(input.indicators.map((i) => [i.id, i]));
   const units = new Map(input.units.map((u) => [u.teryt, u]));

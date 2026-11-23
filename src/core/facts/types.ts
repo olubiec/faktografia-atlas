@@ -3,15 +3,16 @@
 
 export type Level = 'woj' | 'pow' | 'gmi';
 
-/** F1 kraj · F2 województwo · F4 zmiana 10 lat · F5 rekord względny · F9 typowość. */
-export type FactType = 'F1' | 'F2' | 'F4' | 'F5' | 'F9';
+/** F1 kraj · F2 województwo · F3 sąsiedzi · F4 zmiana 10 lat · F5 rekord względny · F9 typowość. */
+export type FactType = 'F1' | 'F2' | 'F3' | 'F4' | 'F5' | 'F9';
 
 /** Rama porównania – wynika z typu, ale jest w rekordzie, bo od niej zależy waga. */
-export type Frame = 'kraj' | 'wojewodztwo' | 'zmiana' | 'rekord' | 'typowosc';
+export type Frame = 'kraj' | 'wojewodztwo' | 'sasiedzi' | 'zmiana' | 'rekord' | 'typowosc';
 
 export const FRAME_BY_TYPE: Record<FactType, Frame> = {
   F1: 'kraj',
   F2: 'wojewodztwo',
+  F3: 'sasiedzi',
   F4: 'zmiana',
   F5: 'rekord',
   F9: 'typowosc',
@@ -48,6 +49,18 @@ export interface RecordCompare {
   sinceYear: number;
 }
 
+/** Na tle sąsiadów (F3): wartość poza zakresem wszystkich sąsiadów (W26-F03). */
+export interface NeighboursCompare {
+  kind: 'neighbours';
+  dir: Direction;
+  /** Ilu sąsiadów ma wartość w tym roku. */
+  count: number;
+  min: number;
+  max: number;
+  /** Pierścień poszerzony o sąsiadów sąsiadów (jednostka miała < 4 sąsiadów, np. miasto w obwarzanku). */
+  extended: boolean;
+}
+
 /** Typowość (F9): mediana poziomu i percentyl jednostki (0–100). */
 export interface TypicalCompare {
   kind: 'typical';
@@ -55,7 +68,7 @@ export interface TypicalCompare {
   percentile: number;
 }
 
-export type FactCompare = RankCompare | ChangeCompare | RecordCompare | TypicalCompare;
+export type FactCompare = RankCompare | ChangeCompare | NeighboursCompare | RecordCompare | TypicalCompare;
 
 export interface Fact {
   type: FactType;
@@ -125,6 +138,29 @@ export interface FactsConfig {
     dailyCount: number;
     lists: { indicatorId: string; level: Level; dir: Direction }[];
   };
+  /** F3: najmniej sąsiadów z wartością; mniej bezpośrednich sąsiadów = pierścień z sąsiadami sąsiadów. */
+  neighbours?: { min: number };
+  /** F8: wskaźniki wektora podobieństwa (standaryzowane), te w skali logarytmicznej i minimalny udział wspólnych. */
+  twin?: { indicators: string[]; log: string[]; minShare: number };
+}
+
+/** Pierścień sąsiadów jednostki (ten sam poziom). */
+export interface NeighbourRing {
+  ids: string[];
+  extended: boolean;
+}
+
+/** F8 – bliźniak: najbliższa jednostka tego samego poziomu w innym województwie. Relacja, nie ranking. */
+export interface TwinFact {
+  type: 'F8';
+  teryt: string;
+  twin: string;
+  /** Najczęstszy rok danych w wektorze. */
+  year: number;
+  /** Ile wskaźników porównano. */
+  dims: number;
+  /** Odległość (średnia kwadratowa różnic odchyleń standardowych). */
+  distance: number;
 }
 
 export interface FactsInput {
@@ -132,4 +168,6 @@ export interface FactsInput {
   values: Record<string, IndicatorValues>;
   units: FactUnit[];
   config: FactsConfig;
+  /** Pierścienie sąsiadów z topologii (W26-F03); brak = bez faktów F3. */
+  neighbours?: Record<string, NeighbourRing>;
 }
