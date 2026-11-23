@@ -1,5 +1,7 @@
 // Dane strukturalne JSON-LD (schema.org): czyste funkcje, bez Reacta. Domena: docs/SEO.md (D1).
 
+import { CONTACT_EMAIL, SOCIAL_PROFILE_URLS } from '../brand/social';
+
 export const SITE_URL = 'https://faktografia.eu';
 const LICENSE_URL = 'https://creativecommons.org/licenses/by/4.0/';
 
@@ -32,6 +34,8 @@ export function organizationLd(): LdObject {
     url: `${SITE_URL}/`,
     logo: `${SITE_URL}/brand/faktografia-logo-granat.svg`,
     address: { '@type': 'PostalAddress', addressCountry: 'PL' },
+    email: CONTACT_EMAIL,
+    sameAs: SOCIAL_PROFILE_URLS,
   };
 }
 
