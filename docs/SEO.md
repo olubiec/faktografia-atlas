@@ -116,3 +116,16 @@ Klucza konta usługi nigdy nie wklejasz do czatu ani do repo – tylko jako sekr
 Mierniki (Search Console, co miesiąc): liczba stron zaindeksowanych / w mapie strony (cel ≥ 80 %), wyświetlenia, kliknięcia, liczba zapytań z ≥ 1 kliknięciem, Core Web Vitals = „Dobre”.
 
 Czerwone flagi (wymagają sesji Claude): spadek zaindeksowanych stron > 20 % w tydzień; „Wykryto – obecnie nie zindeksowano” > 50 % stron gmin po 8 tygodniach (sygnał słabej jakości – nie dokładamy stron, poprawiamy istniejące); ręczne działanie w Search Console; błędy 5xx.
+
+## Zewnętrzny audyt planu (23.11.2026) – co sprawdzono i co z tego wynika
+
+| Zarzut | Stan w kodzie | Decyzja |
+|---|---|---|
+| Strony gmin to „chuda” tabela szablonowa | Strony miejsc mają fakty z silnika (`src/core/facts`: 3 fakty na 81% stron), sąsiadów, bliźniaka, miejsce w województwie i w Polsce, zmianę w czasie. Gminy są poza indeksem (D7) | Bez zmian; przed włączeniem gmin (D7) obserwacja raportu indeksowania |
+| Brak obrazów dla Grafiki Google | Brakowało | **Zrobione:** statyczna mapa SVG (`src/core/seo/ranking-map.ts`) na rankingach województw, powiatów i gmin w województwie (296 plików, ≤ 100 KB), z tytułem, legendą, źródłem „faktografia.eu” i opisowym `alt`. Ranking gmin w Polsce bez mapy (za duży plik) |
+| `/mapa?u=…` tylko z kanonicznym adresem w JS | Kanoniczny adres ustawiany w przeglądarce | **Zrobione:** `Disallow: /mapa?` w `robots.txt`; `/mapa` i strony statyczne zostają w indeksie |
+| Jedna tabela 20 wskaźników zamiast sekcji | Tabela z `<caption>` i `<th scope="row">`; strony powiatów i województw zaczynają się od faktów | Bez zmian (zmieniałoby istniejące testy S06/S07); do rozważenia przy włączaniu gmin |
+| Stopka z 16 województwami (S09 vs D9) | Stopka ma jeden link „Miejsca” (D9) | Zgodne, bez zmian |
+| IndexNow i `Place` przeceniane | IndexNow to dodatek (Bing, Copilot, ChatGPT); rankingi mają tabele `<table>/<caption>/<thead>` | Bez zmian |
+| `Dataset` bez pliku | `Dataset` ma nazwę, opis, licencję, twórcę i zakres – pola wymagane przez Google są | Bez zmian; `distribution` po dodaniu CSV do pobrania |
+| Brak magnesu na linki (PNG ze znakiem, `<iframe>`) | Mapa SVG ma znak „faktografia.eu” i można ją wkleić | Osadzanie (`embed`) i PNG mapy – osobne zadanie produktowe |
