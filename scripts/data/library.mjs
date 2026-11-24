@@ -119,7 +119,15 @@ async function downloadValues(state, catalog, config = null, scope = null) {
     try {
       const out = { v: v.id };
       for (const level of fetchLevels(v)) {
-        const pages = await allPages((p) => dataUrl(v.id, level, p));
+        let pages;
+        try {
+          pages = await allPages((p) => dataUrl(v.id, level, p));
+        } catch (err) {
+          // Luka w gminach nie przekreśla wskaźnika: zapisujemy województwa i powiaty, gminy dociągnie dopełnienie.
+          if (level !== 6 || isHardStop(err)) throw err;
+          markGmiGap(state, v.id);
+          break;
+        }
         out[levelKey(level)] = compactPages(pages);
         // Powiaty są tanie (kilka zapytań), gminy drogie (~25): pusty poziom powiatów = gmin nie pobieramy.
         if (level === 5 && !pagesHaveValues(pages)) {
@@ -134,7 +142,7 @@ async function downloadValues(state, catalog, config = null, scope = null) {
       bySection[section] = (bySection[section] ?? 0) + 1;
       stats.queueLength--;
     } catch (err) {
-      if (err instanceof LimitStop || /HTTP 429/.test(err.message)) throw err;
+      if (isHardStop(err)) throw err;
       state.failed[v.id] = (state.failed[v.id] ?? 0) + 1;
       (state.failedAt ??= {})[v.id] = new Date().toISOString();
       console.error(`Zmienna ${v.id}: ${err.message.replace(clientId ?? '', '[KLUCZ]')}`);
@@ -143,19 +151,41 @@ async function downloadValues(state, catalog, config = null, scope = null) {
   }
 }
 
-// Dopełnienie: zmienne pobrane wcześniej, którym brakuje poziomu (najczęściej województw – 1 zapytanie).
-// Dzięki temu każdy wskaźnik ma komplet poziomów, które publikuje GUS: województwa, powiaty, gminy.
+// Dopełnienie: zmienne pobrane wcześniej, którym brakuje poziomu (najczęściej województw – 1 zapytanie)
+// albo gmin, których pobranie się nie udało (luka). Lukę w gminach próbujemy GAP_TRIES razy, potem ją
+// akceptujemy – strona pokaże wtedy województwa i powiaty, a dla gmin informację o braku danych.
+const GAP_TRIES = 3;
+const isHardStop = (err) => err instanceof LimitStop || /HTTP 429/.test(err.message);
+
+function markGmiGap(state, id) {
+  (state.gmiGap ??= {})[id] = (state.gmiGap[id] ?? 0) + 1;
+  stats.gmiGaps = (stats.gmiGaps ?? 0) + 1;
+}
+
 async function backfillLevels(state, catalog, scope) {
   const pathOf = (v) => catalog.subjects?.[v.subjectId]?.path ?? [];
   state.woj ??= {};
+  state.gmiGap ??= {};
   for (const id of Object.keys(state.done)) {
-    if (state.woj[id] || !budget.canStartVariable()) continue;
+    const gapTries = state.gmiGap[id] ?? 0;
+    const retryGap = gapTries > 0 && gapTries < GAP_TRIES;
+    if ((state.woj[id] && !retryGap) || !budget.canStartVariable()) continue;
     const v = catalog.variables[id];
     if (!v || scopeReason(v, pathOf(v), scope) !== null) continue;
     const old = await readJson(`values/${id}.json`, null);
-    const missing = missingLevels(v, old);
-    for (const level of missing) old[levelKey(level)] = compactPages(await allPages((p) => dataUrl(id, level, p)));
-    if (missing.length > 0) {
+    let changed = false;
+    for (const level of missingLevels(v, old)) {
+      try {
+        old[levelKey(level)] = compactPages(await allPages((p) => dataUrl(id, level, p)));
+        changed = true;
+        if (level === 6) delete state.gmiGap[id];
+      } catch (err) {
+        if (isHardStop(err)) throw err;
+        if (level === 6) markGmiGap(state, id);
+        else console.error(`Dopełnienie ${id}: ${err.message.replace(clientId ?? '', '[KLUCZ]')}`);
+      }
+    }
+    if (changed) {
       await writeJson(`values/${id}.json`, old);
       stats.backfilled = (stats.backfilled ?? 0) + 1;
     }
@@ -256,7 +286,7 @@ async function main() {
     const table = summarizeBySection(bySection, stats.queueLength ?? 0);
     console.log(table);
     if (process.env.LIBRARY_SUMMARY_FILE) await writeFile(process.env.LIBRARY_SUMMARY_FILE, `${table}\n`);
-    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Dopełnionych o brakujące poziomy: ${stats.backfilled ?? 0}. Kalendarium GUS: ${stats.calendarTitles ?? 0} publikacji. Pominięte puste (bez gmin): ${stats.skippedEmpty ?? 0}. Zmiennych: ${total}, w wytycznych: ${stats.inScope ?? '?'}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
+    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Dopełnionych o brakujące poziomy: ${stats.backfilled ?? 0}. Kalendarium GUS: ${stats.calendarTitles ?? 0} publikacji. Pominięte puste (bez gmin): ${stats.skippedEmpty ?? 0}. Luki w gminach (zapisane bez gmin): ${stats.gmiGaps ?? 0}. Zmiennych: ${total}, w wytycznych: ${stats.inScope ?? '?'}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
   }
 }
 

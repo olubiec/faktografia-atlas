@@ -1,6 +1,7 @@
 // Spis pobranych wskaźników biblioteki: library/available.json (mały plik czytany przez stronę zamiast index.json).
 // Użycie: node scripts/data/library-available.mjs <katalog-library>
-// Czyta <katalog>/index.json i <katalog>/values/*.json, zapisuje <katalog>/available.json (JSON bez wcięć).
+// Czyta <katalog>/index.json, <katalog>/catalog.json (gdy jest) i <katalog>/values/*.json,
+// zapisuje <katalog>/available.json (JSON bez wcięć).
 import { mkdir, readdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,6 +20,30 @@ function categoryPath(categories, subjectId) {
     id = categories[id].p;
   }
   return names.join(' > ');
+}
+
+/**
+ * Spis biblioteki (index.json) obejmuje tylko zmienne z powiatami lub gminami. Robot pobiera też
+ * wskaźniki podawane przez GUS tylko dla województw (poziom 2–4) – ich opis bierzemy z katalogu,
+ * żeby trafiły do wyboru na stronie. Czysta funkcja: zwraca nowy spis, wejścia nie zmienia.
+ */
+export function withRegionalVariables(indexFile, catalog) {
+  const known = new Set((indexFile?.variables ?? []).map((v) => String(v.id)));
+  const units = [...(indexFile?.units ?? [])];
+  const categories = { ...(indexFile?.categories ?? {}) };
+  for (const [id, subject] of Object.entries(catalog?.subjects ?? {})) {
+    categories[id] ??= { n: subject.name, p: subject.parent ?? null };
+  }
+  const extra = [];
+  for (const v of Object.values(catalog?.variables ?? {})) {
+    const lvl = Number(v.level);
+    if (known.has(String(v.id)) || !(lvl >= 2 && lvl < 5)) continue;
+    const unit = v.unit ?? v.measureUnitName ?? '';
+    if (!units.includes(unit)) units.push(unit);
+    const n = [v.n1, v.n2, v.n3, v.n4, v.n5].filter((x) => typeof x === 'string' && x.trim()).join(' – ');
+    extra.push({ id: v.id, s: v.subjectId ?? v.s, n, l: 2, u: units.indexOf(unit), has: 0 });
+  }
+  return { ...indexFile, categories, units, variables: [...(indexFile?.variables ?? []), ...extra] };
 }
 
 /** Czysta funkcja (bez I/O): spis zmiennych, które mają plik wartości z jakimikolwiek danymi. */
@@ -90,6 +115,12 @@ export async function writeAvailable(dir, onGap) {
     names = (await readdir(path.join(dir, 'values'))).filter((n) => n.endsWith('.json'));
   } catch (err) {
     throw new Error(`Nie mogę odczytać katalogu ${path.join(dir, 'values')}: ${err.message}`);
+  }
+  try {
+    const catalog = JSON.parse(await readFile(path.join(dir, 'catalog.json'), 'utf8'));
+    index = withRegionalVariables(index, catalog);
+  } catch {
+    // Brak katalogu – spis tylko z index.json (wskaźniki wyłącznie wojewódzkie pominięte).
   }
   const files = [];
   for (const name of names) {
