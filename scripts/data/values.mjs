@@ -64,7 +64,7 @@ export function toIndicatorValues(indicator, pages, units, fetchedAt) {
             const yr = Number(v.year);
             if (!Number.isNaN(yr)) {
               yearsSet.add(yr);
-              const val = (v.val === null || v.val === undefined || Number.isNaN(Number(v.val)))
+              const val = (v.val === null || v.val === undefined || Number.isNaN(Number(v.val)) || (v.attrId !== undefined && v.attrId !== 1 && Number(v.val) === 0))
                 ? null
                 : Number(v.val);
               yearMap.set(yr, val);

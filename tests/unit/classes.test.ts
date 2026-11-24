@@ -145,3 +145,13 @@ describe('computeBreaks – brak powtórzonych progów (S26)', () => {
     expect(new Set(b).size).toBe(b.length);
   });
 });
+
+describe('computeBreaks – zera jako osobna klasa (S26)', () => {
+  test('prawie same zera: zero ma klasę, reszta jest rozróżnialna', () => {
+    const values = [...Array(95).fill(0), 1, 2, 3, 4, 10];
+    const b = computeBreaks(values, 'quantile', 5);
+    expect(b.length).toBeGreaterThanOrEqual(2);
+    expect(classify(0, b)).toBe(0);
+    expect(classify(10, b)).toBeGreaterThan(classify(1, b) as number);
+  });
+});

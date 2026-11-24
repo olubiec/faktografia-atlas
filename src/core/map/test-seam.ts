@@ -8,6 +8,8 @@ export type ChoroplethSeamState = {
   year: number | null;
   level: UnitLevel;
   classes: number;
+  /** Progi legendy (rosnące, bez powtórzeń) – test sprawdza, że liczba klas = progi + 1. */
+  breaks?: number[];
 } | null;
 
 export type RevealSeamState = {

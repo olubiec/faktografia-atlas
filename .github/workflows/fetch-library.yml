@@ -101,6 +101,17 @@ jobs:
           mkdir -p lib-wt/library
           node scripts/data/status.mjs --values public/data/values --library lib-wt/library --out lib-wt/library/status.json
 
+      - name: Kontrola spójności danych (raport, nie blokuje)
+        if: always()
+        continue-on-error: true
+        timeout-minutes: 20
+        env:
+          LIBRARY_DIR: lib-wt/library
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+          pnpm vitest run tests/validate
+
       - name: Podsumowanie
         if: always()
         run: |

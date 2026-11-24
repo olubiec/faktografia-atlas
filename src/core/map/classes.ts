@@ -46,7 +46,18 @@ export function computeBreaks(
     }
   }
 
-  return cleanBreaks(breaks, sorted[0]);
+  const min = sorted[0];
+  const cleaned = cleanBreaks(breaks, min);
+  // Dużo wartości równych minimum (np. same zera): minimum dostaje własną klasę,
+  // a pozostałe wartości dzielimy kwantylami na resztę klas.
+  if (method === 'quantile' && cleaned.length < n - 1) {
+    const rest = sorted.filter((v) => v > min);
+    if (rest.length > 0) {
+      const restBreaks = computeBreaks(rest, 'quantile', n - 1);
+      return cleanBreaks([rest[0], ...restBreaks], min);
+    }
+  }
+  return cleaned;
 }
 
 /**

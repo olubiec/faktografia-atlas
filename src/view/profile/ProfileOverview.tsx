@@ -254,10 +254,17 @@ export function ProfileOverview({
         {/* Duża liczba z zakreśleniem kółkiem i pozycja w rankingu */}
         <div className="flex flex-col items-start gap-2 pt-1">
           <Annotate type="circle" show={true}>
-            <span className="text-2xl font-extrabold leading-none tabular-nums text-tusz px-2 py-1">
+            <span data-slot="big-number" className="text-2xl font-extrabold leading-none tabular-nums text-tusz px-2 py-1">
               {formattedValue}
             </span>
           </Annotate>
+
+          {view.indicator.unit.trim() === '%' && currentItem.value !== null && currentItem.value > 100 && (
+            <p data-slot="over-100-note" className="text-xs text-olowek">
+              Powyżej 100% to nie błąd: GUS liczy dzieci według miejsca przedszkola, a ludność według miejsca
+              zamieszkania, więc gmina z dużą liczbą miejsc może przekroczyć 100%.
+            </p>
+          )}
 
           {rankText && (
             <span className="text-sm font-semibold text-olowek">
