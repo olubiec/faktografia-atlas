@@ -15,7 +15,7 @@ import {
 import { sectionOf, sortQueueByPriority, summarizeBySection, priorityScore } from './library-priority.mjs';
 import { fetchHtml, loadCalendar, calendarHits } from './gus-calendar.mjs';
 import {
-  fetchLevels, filterInScope, isStale, levelKey, loadScope, probeUrlFor, scopeReason, yearsOf,
+  fetchLevels, filterInScope, isStale, levelKey, loadScope, missingLevels, probeUrlFor, scopeReason, yearsOf,
 } from './library-scope.mjs';
 import { budgetForRun, hasNewYear, pagesHaveValues, refreshCandidates } from './library-plan.mjs';
 
@@ -143,8 +143,9 @@ async function downloadValues(state, catalog, config = null, scope = null) {
   }
 }
 
-// Dopełnienie: zmienne pobrane, zanim robot brał województwa – dociąga sam poziom wojewódzki (1 zapytanie).
-async function backfillVoivodeships(state, catalog, scope) {
+// Dopełnienie: zmienne pobrane wcześniej, którym brakuje poziomu (najczęściej województw – 1 zapytanie).
+// Dzięki temu każdy wskaźnik ma komplet poziomów, które publikuje GUS: województwa, powiaty, gminy.
+async function backfillLevels(state, catalog, scope) {
   const pathOf = (v) => catalog.subjects?.[v.subjectId]?.path ?? [];
   state.woj ??= {};
   for (const id of Object.keys(state.done)) {
@@ -152,8 +153,9 @@ async function backfillVoivodeships(state, catalog, scope) {
     const v = catalog.variables[id];
     if (!v || scopeReason(v, pathOf(v), scope) !== null) continue;
     const old = await readJson(`values/${id}.json`, null);
-    if (old && !old.l3) {
-      old.l3 = compactPages(await allPages((p) => dataUrl(id, 2, p)));
+    const missing = missingLevels(v, old);
+    for (const level of missing) old[levelKey(level)] = compactPages(await allPages((p) => dataUrl(id, level, p)));
+    if (missing.length > 0) {
       await writeJson(`values/${id}.json`, old);
       stats.backfilled = (stats.backfilled ?? 0) + 1;
     }
@@ -238,7 +240,7 @@ async function main() {
     const scope = await loadScope();
     await applyCalendar(config);
     await refreshValues(state, catalog, config, total, scope);
-    await backfillVoivodeships(state, catalog, scope);
+    await backfillLevels(state, catalog, scope);
     await downloadValues(state, catalog, config, scope);
   } catch (err) {
     if (!(err instanceof LimitStop)) {
@@ -254,7 +256,7 @@ async function main() {
     const table = summarizeBySection(bySection, stats.queueLength ?? 0);
     console.log(table);
     if (process.env.LIBRARY_SUMMARY_FILE) await writeFile(process.env.LIBRARY_SUMMARY_FILE, `${table}\n`);
-    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Dopełnionych o województwa: ${stats.backfilled ?? 0}. Kalendarium GUS: ${stats.calendarTitles ?? 0} publikacji. Pominięte puste (bez gmin): ${stats.skippedEmpty ?? 0}. Zmiennych: ${total}, w wytycznych: ${stats.inScope ?? '?'}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
+    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Dopełnionych o brakujące poziomy: ${stats.backfilled ?? 0}. Kalendarium GUS: ${stats.calendarTitles ?? 0} publikacji. Pominięte puste (bez gmin): ${stats.skippedEmpty ?? 0}. Zmiennych: ${total}, w wytycznych: ${stats.inScope ?? '?'}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
   }
 }
 

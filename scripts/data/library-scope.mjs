@@ -116,3 +116,13 @@ export function probeUrlFor(v, years) {
   if (Number(v.level) < 5) u.searchParams.set('unit-level', '2');
   return u.toString();
 }
+
+/**
+ * Poziomy, których brakuje w pobranym pliku (np. pobranym, zanim robot brał województwa).
+ * Gmin nie dociągamy, gdy powiaty są puste – GUS wtedy nie ma też gmin (ta sama zasada co przy pobieraniu).
+ */
+export function missingLevels(v, file) {
+  if (!file) return [];
+  const powEmpty = file.l5 && Object.keys(file.l5.d ?? {}).length === 0;
+  return fetchLevels(v).filter((level) => !file[levelKey(level)] && !(level === 6 && powEmpty));
+}

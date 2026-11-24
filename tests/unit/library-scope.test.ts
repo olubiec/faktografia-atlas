@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  buildScope, fetchLevels, filterInScope, isStale, levelKey, loadScope, probeUrlFor, scopeReason, yearsOf,
+  buildScope, fetchLevels, filterInScope, isStale, levelKey, loadScope, missingLevels, probeUrlFor, scopeReason, yearsOf,
 } from '../../scripts/data/library-scope.mjs';
 import { sortQueueByPriority } from '../../scripts/data/library-priority.mjs';
 import curation from '../../config/library-curation.json';
@@ -91,6 +91,17 @@ describe('Biblioteka GUS – wytyczne pobierania', () => {
   it('lata z pliku: najdokładniejszy dostępny poziom, także sam wojewódzki', () => {
     expect(yearsOf({ l3: { y: ['2020'] }, l5: { y: ['2021'] } })).toEqual(['2021']);
     expect(yearsOf({ l3: { y: ['2020'] } })).toEqual(['2020']);
+  });
+
+  it('bez braków: robot widzi, których poziomów brakuje w pobranym pliku', () => {
+    const full = { y: ['2023'], d: { a: [1] } };
+    // Plik sprzed zmiany: powiaty i gminy są, województw brak.
+    expect(missingLevels({ level: 6 }, { l5: full, l6: full })).toEqual([2]);
+    expect(missingLevels({ level: 6 }, { l3: full, l5: full, l6: full })).toEqual([]);
+    // Puste powiaty = GUS nie ma też gmin; nie marnujemy zapytań.
+    expect(missingLevels({ level: 6 }, { l5: { y: [], d: {} } })).toEqual([2]);
+    expect(missingLevels({ level: 3 }, {})).toEqual([2]);
+    expect(missingLevels({ level: 6 }, null)).toEqual([]);
   });
 
   it('dane archiwalne (ostatni rok przed progiem) nie są odświeżane', () => {
