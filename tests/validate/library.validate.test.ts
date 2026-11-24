@@ -43,6 +43,7 @@ run('biblioteka GUS – spójność danych', () => {
     const lines = [`### Kontrola spójności biblioteki`, `Sprawdzono plików: ${files.length}; błędów: ${errors.length}; uwag: ${report.length - errors.length}`, '', '| reguła | liczba |', '|---|---|', ...[...byRule].map(([k, n]) => `| ${k} | ${n} |`)];
     console.log(lines.join('\n'));
     if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n');
-    if (process.env.VALIDATE_STRICT === '1') expect(errors).toEqual([]);
+    // Tryb raportu: błędy tylko w raporcie; VALIDATE_STRICT=1 → niepowodzenie.
+    expect(process.env.VALIDATE_STRICT === '1' ? errors : []).toEqual([]);
   });
 });
