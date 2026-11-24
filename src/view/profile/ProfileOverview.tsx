@@ -4,7 +4,9 @@ import type { Unit } from '../../core/units/types';
 import type { MainView } from '../map/hooks/useMainView';
 import { rankingScope } from '../../core/profile/sections';
 import { rankUnits } from '../../core/ranking/ranking';
+import { overviewItem } from '../../core/profile/overview-item';
 import { formatValue } from '../../core/format/number';
+import { appliesToUnit } from '../../core/profile/applicability';
 import { unitLabel } from '../../core/units/label';
 import { Annotate } from '../annotation/Annotate';
 import { RankingBars } from '../ranking/RankingBars';
@@ -58,16 +60,14 @@ export function ProfileOverview({
     };
   }, [view.indicator.id]);
 
-  const currentItem = useMemo(() => {
-    return (
-      profile.indicators.find((item) => item.indicatorId === view.indicator.id) ??
-      profile.indicators[0]
-    );
-  }, [profile.indicators, view.indicator.id]);
+  const currentItem = useMemo(
+    () => overviewItem(view.values, profile.teryt, view.year, view.indicator.name),
+    [view.values, profile.teryt, view.year, view.indicator.name],
+  );
 
   const formattedValue = useMemo(() => {
-    return formatValue(currentItem?.value ?? null, view.indicator.unit);
-  }, [currentItem?.value, view.indicator.unit]);
+    return formatValue(currentItem.value, view.indicator.unit);
+  }, [currentItem.value, view.indicator.unit]);
 
   const scope = useMemo(() => {
     return profile.unit ? rankingScope(profile.unit, units) : { teryts: [], description: '' };
@@ -185,7 +185,7 @@ export function ProfileOverview({
       indicatorName: view.indicator.name,
       unit: view.indicator.unit,
       year: view.year ?? 2025,
-      bigNumber: formatValue(currentItem?.value ?? null, null),
+      bigNumber: formatValue(currentItem.value, null),
       rankText: rankText ?? undefined,
       indicators: otherInds,
     };
@@ -217,7 +217,7 @@ export function ProfileOverview({
     view.indicator.name,
     view.indicator.unit,
     view.year,
-    currentItem?.value,
+    currentItem.value,
     rankText,
     ranking,
     rankingItems,
@@ -249,16 +249,30 @@ export function ProfileOverview({
             </div>
           </div>
         </button>
-        <IndicatorInfo indicatorId={view.indicator.id} name={view.indicator.name} explanation={explanation} />
+        <IndicatorInfo indicatorId={view.indicator.id} name={view.indicator.name} unit={view.indicator.unit} explanation={explanation} />
         </div>
 
         {/* Duża liczba z zakreśleniem kółkiem i pozycja w rankingu */}
         <div className="flex flex-col items-start gap-2 pt-1">
           <Annotate type="circle" show={true}>
-            <span className="text-2xl font-extrabold leading-none tabular-nums text-tusz px-2 py-1">
+            <span data-slot="big-number" className="text-2xl font-extrabold leading-none tabular-nums text-tusz px-2 py-1">
               {formattedValue}
             </span>
           </Annotate>
+
+          {!appliesToUnit(view.indicator.name, profile.teryt) && (
+            <p data-slot="not-applicable" className="text-xs text-olowek">
+              Nie dotyczy tego miejsca: wskaźnik opisuje inny rodzaj jednostek (np. miasta na prawach powiatu
+              albo gminy bez miast), więc brak wartości to nie zero.
+            </p>
+          )}
+
+          {view.indicator.unit.trim() === '%' && currentItem.value !== null && currentItem.value > 100 && (
+            <p data-slot="over-100-note" className="text-xs text-olowek">
+              Powyżej 100% to nie błąd: GUS liczy dzieci według miejsca przedszkola, a ludność według miejsca
+              zamieszkania, więc gmina z dużą liczbą miejsc może przekroczyć 100%.
+            </p>
+          )}
 
           {rankText && (
             <span className="text-sm font-semibold text-olowek">
@@ -276,7 +290,7 @@ export function ProfileOverview({
       {/* Rozwinięcie ze szczegółami wskaźnika (wykres lat, objaśnienia, przycisk Pokaż na mapie) */}
       {isExpanded && (
         <div className="pt-2 space-y-3">
-          {currentItem?.series && currentItem.series.length >= 2 && (
+          {currentItem.series.length >= 2 && (
             <TrendChart
               series={currentItem.series}
               unit={view.indicator.unit}

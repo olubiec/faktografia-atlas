@@ -100,7 +100,7 @@ export function buildChoropleth({
 
   const rawValues = unitsOfLevel.map((u) => values.values[u.teryt]?.[yearIdx]);
   const scheme = schemeFor(rawValues);
-  const breaks = computeBreaks(rawValues, method, n);
+  const breaks = computeBreaks(rawValues, method, n, { nice: true });
 
   for (const u of unitsOfLevel) {
     const val = values.values[u.teryt]?.[yearIdx];

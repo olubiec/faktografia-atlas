@@ -82,7 +82,8 @@ export function compactPages(pages) {
       const row = y.map(() => null);
       for (const v of r.values ?? []) {
         const i = y.indexOf(String(v.year));
-        if (i >= 0 && v.val !== null && v.val !== undefined) row[i] = v.val;
+        // attrId ≠ 1 z wartością 0 = brak/poufne (nie prawdziwe zero) – zostaje null.
+        if (i >= 0 && v.val !== null && v.val !== undefined && !(v.attrId !== undefined && v.attrId !== 1 && Number(v.val) === 0)) row[i] = v.val;
       }
       if (row.some((x) => x !== null)) d[String(r.id)] = row;
     }

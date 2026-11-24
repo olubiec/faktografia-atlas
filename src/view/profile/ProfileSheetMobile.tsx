@@ -6,6 +6,7 @@ import { ProfileBody } from './ProfileSheet';
 import { BottomSheet } from '@/view/ui/BottomSheet';
 import { unitTitle } from '@/core/units/label';
 import { writeUrlState } from '@/core/url/state';
+import { wantsFullSheet } from '@/core/url/selection';
 import { setSheetInset } from '@/view/map/sheetInset';
 
 export interface ProfileSheetMobileProps {
@@ -98,9 +99,7 @@ export function ProfileSheetMobile({
     onClose();
   };
 
-  const isSheetFull =
-    typeof window !== 'undefined' &&
-    new URLSearchParams(window.location.search).get('sheet') === 'full';
+  const isSheetFull = typeof window !== 'undefined' && wantsFullSheet(window.location.search);
 
   return (
     <BottomSheet

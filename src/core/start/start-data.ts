@@ -60,7 +60,7 @@ export function startFields(ind: StartIndicator): StartField[] {
       name: WOJ_NAMES[teryt] ?? teryt,
       value,
       cls,
-      color: `var(${classColorToken(cls, CLASS_COUNT, 'sequential')})`,
+      color: `var(${classColorToken(cls, breaks.length + 1, 'sequential')})`,
     };
   });
 }

@@ -90,7 +90,7 @@ export function context(
 
   const rank = betterCount + 1;
 
-  let percentBelow = Math.round((worseCount / total) * 100);
+  let percentBelow = Math.floor((worseCount / total) * 100);
   let position0to1 = max === min ? 0 : (targetValue - min) / (max - min);
 
   let sameInVoivodeship: ContextStats | null = null;
@@ -98,7 +98,7 @@ export function context(
   if (targetUnit.level !== 'woj' && voivodeshipValues.length > 0) {
     voivodeshipValues.sort((a, b) => a - b);
     sameInVoivodeship = {
-      percentBelow: Math.round((wojWorseCount / voivodeshipValues.length) * 100),
+      percentBelow: Math.floor((wojWorseCount / voivodeshipValues.length) * 100),
       median: calculateMedian(voivodeshipValues),
       min: voivodeshipValues[0],
       max: voivodeshipValues[voivodeshipValues.length - 1],

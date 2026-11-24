@@ -29,7 +29,7 @@ export function DataMenuList({ entries, selectedId, onPick, isDisabled, limit, o
         const newTopic = !showPath && e.topic !== '' && e.topic !== shown[i - 1]?.topic;
         return (
           <li key={e.id} className="flex flex-col gap-1">
-            {newTopic && <h3 className="pt-2 text-xs font-bold uppercase text-olowek">{e.topic}</h3>}
+            {newTopic && <h3 className="pt-2 text-xs font-bold text-olowek">{e.topic}</h3>}
             <button
               type="button"
               disabled={disabled}

@@ -53,7 +53,8 @@ test.describe('Choropleth Map (CC8.2a-2)', () => {
       indicatorId: 'unemployment-rate',
       year: 2023,
       level: 'pow',
-      classes: 5,
+      // S26: liczba klas wynika z danych (progi bez powtórzeń); atrapa ma mało różnych wartości
+      classes: atlasState.choroplethBreaks.length + 1,
     });
     expect(atlasState.layers).toContain('choropleth-layer');
   });

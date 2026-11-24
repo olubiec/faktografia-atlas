@@ -99,11 +99,25 @@ export function RankingBars({
 
               <span
                 className={cn(
-                  'text-sm min-w-0 flex-1 truncate text-left',
+                  'text-sm min-w-0 flex-1 flex text-left',
                   isSelected ? 'font-bold text-korekta-tekst' : 'font-normal text-tusz'
                 )}
+                title={item.name}
               >
-                {item.name}
+                {(() => {
+                  // Typ jednostki w nawiasie (np. „gmina wiejska”) zostaje widoczny, ścinana jest sama nazwa.
+                  // Nazwa zawija się do 2 linii zamiast ucinać się do „powiat w…”.
+                  const m = /^(.*?)(\s\([^)]*\))$/.exec(item.name);
+                  const stripped = m && /powiat/i.test(m[2]) ? m[1].replace(/^powiat\s+/i, '') : m?.[1];
+                  return m ? (
+                    <>
+                      <span className="line-clamp-2 min-w-0 break-words leading-tight">{stripped}</span>
+                      <span className="shrink-0 whitespace-pre self-start leading-tight">{m[2]}</span>
+                    </>
+                  ) : (
+                    <span className="line-clamp-2 min-w-0 break-words leading-tight">{item.name}</span>
+                  );
+                })()}
               </span>
 
               <div className="w-24 sm:w-32 h-2.5 bg-kalka relative shrink-0 overflow-hidden">

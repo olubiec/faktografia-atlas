@@ -11,6 +11,12 @@ export const UNIT_FRACTION_DIGITS: Record<string, number> = {
   'os./km²': 1,
   'm²': 1,
   'lata': 1,
+  'szt.': 0,
+  'ob.': 0,
+  'gosp.': 0,
+  'msc.': 0,
+  'etat': 0,
+  'rok': 0,
 };
 
 /**
@@ -22,6 +28,9 @@ const DISPLAY_UNITS: Record<string, string> = {
   'osoby': 'osób',
   'm2': 'm²',
   'km2': 'km²',
+  'm3': 'm³',
+  'dam3': 'dam³',
+  'tys. m3': 'tys. m³',
   'lata': 'lat',
   'ob.': 'obiektów',
   'gosp.': 'gospodarstw',
@@ -30,6 +39,7 @@ const DISPLAY_UNITS: Record<string, string> = {
 /** Jednostka w postaci do wyświetlenia obok liczby lub w polu wyboru wskaźnika. */
 export function displayUnit(unit: string): string {
   const trimmed = unit.trim();
+  if (trimmed === '-' || trimmed === '–') return '';
   return DISPLAY_UNITS[trimmed] ?? trimmed;
 }
 
@@ -62,9 +72,18 @@ export function formatValue(
     return 'brak danych';
   }
 
-  const fractionDigits =
+  let fractionDigits =
     customFractionDigits ??
     (unit ? getFractionDigits(unit) : Number.isInteger(value) ? 0 : 1);
+
+  // Niezerowa wartość nie może wyglądać jak zero (0,04 % -> „0,04”, nie „0,0”).
+  if (customFractionDigits === undefined && value !== 0) {
+    while (fractionDigits < 3 && Number(Math.abs(value).toFixed(fractionDigits)) === 0) {
+      fractionDigits++;
+    }
+  }
+  // Brak „-0,0”: wartość zaokrąglona do zera jest zapisywana bez minusa.
+  const shown = Number(value.toFixed(fractionDigits)) === 0 ? 0 : value;
 
   const formatter = new Intl.NumberFormat('pl-PL', {
     minimumFractionDigits: fractionDigits,
@@ -75,7 +94,7 @@ export function formatValue(
   // W V8/ICU separatorem tysięcy jest spacja niełamiąca \u00A0 lub wąska \u202F.
   // Ujednolicamy do klasycznej spacji niełamiącej \u00A0.
   const formattedNumber = formatter
-    .format(value)
+    .format(shown)
     .replace(/\u202F/g, '\u00A0');
 
   if (!unit) {

@@ -13,6 +13,7 @@ import { LEVEL_LABELS } from '@/core/map/main-view';
 import { displayUnit } from '@/core/format/number';
 import { UNIT_COUNTS } from '@/core/units/counts';
 import { YearSlider } from '@/view/controls/YearSlider';
+import { AgeSlider } from '@/view/controls/AgeSlider';
 import { Legend } from '@/view/legend/Legend';
 import { RankingBars } from '@/view/ranking/RankingBars';
 import { IndicatorInfo } from '@/view/explain/IndicatorInfo';
@@ -102,9 +103,10 @@ export function IndicatorPanel({
               layout={inSheet ? 'stack' : 'columns'}
             />
           </div>
-          <IndicatorInfo indicatorId={indicator.id} name={indicator.name} explanation={explanation} />
+          <IndicatorInfo indicatorId={indicator.id} name={indicator.name} unit={indicator.unit} explanation={explanation} />
         </div>
         <p className="text-sm text-olowek">{subtitle}</p>
+        <AgeSlider indicatorId={indicator.id} onChange={view.setIndicator} />
       </div>
 
       <div className="flex flex-col gap-1.5">
