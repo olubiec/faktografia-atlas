@@ -60,8 +60,8 @@ export function ProfileOverview({
   }, [view.indicator.id]);
 
   const currentItem = useMemo(
-    () => overviewItem(view.values, profile.teryt, view.year),
-    [view.values, profile.teryt, view.year],
+    () => overviewItem(view.values, profile.teryt, view.year, view.indicator.name),
+    [view.values, profile.teryt, view.year, view.indicator.name],
   );
 
   const formattedValue = useMemo(() => {
@@ -248,7 +248,7 @@ export function ProfileOverview({
             </div>
           </div>
         </button>
-        <IndicatorInfo indicatorId={view.indicator.id} name={view.indicator.name} explanation={explanation} />
+        <IndicatorInfo indicatorId={view.indicator.id} name={view.indicator.name} unit={view.indicator.unit} explanation={explanation} />
         </div>
 
         {/* Duża liczba z zakreśleniem kółkiem i pozycja w rankingu */}

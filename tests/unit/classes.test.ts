@@ -155,3 +155,20 @@ describe('computeBreaks – zera jako osobna klasa (S26)', () => {
     expect(classify(10, b)).toBeGreaterThan(classify(1, b) as number);
   });
 });
+
+describe('computeBreaks – nice', () => {
+  test('zaokrągla progi do 2 cyfr znaczących', () => {
+    const values = Array.from({ length: 100 }, (_, i) => 40000 + i * 217.3);
+    const raw = computeBreaks(values, 'quantile', 5);
+    const nice = computeBreaks(values, 'quantile', 5, { nice: true });
+    expect(raw.some((b) => !Number.isInteger(b))).toBe(true);
+    for (const b of nice) expect(Number(b.toPrecision(2))).toBe(b);
+  });
+  test('dla samych liczb całkowitych daje progi całkowite i rosnące', () => {
+    const values = [0, 0, 1, 1, 2, 2, 3, 4, 5, 7, 9, 12, 15, 40];
+    const nice = computeBreaks(values, 'quantile', 5, { nice: true });
+    for (const b of nice) expect(Number.isInteger(b)).toBe(true);
+    expect([...nice].sort((a, b) => a - b)).toEqual(nice);
+    expect(new Set(nice).size).toBe(nice.length);
+  });
+});

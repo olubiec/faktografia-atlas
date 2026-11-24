@@ -9,6 +9,36 @@ export type ClassifyResult = number | 'no-data';
 export function computeBreaks(
   values: (number | null | undefined)[],
   method: ClassificationMethod,
+  n: number,
+  options: { nice?: boolean } = {}
+): number[] {
+  const raw = computeRawBreaks(values, method, n);
+  return options.nice ? niceBreaks(raw, values) : raw;
+}
+
+/**
+ * Zaokrągla progi do 2 cyfr znaczących (46 206,8 → 46 000), a gdy wszystkie wartości są
+ * całkowite – do liczb całkowitych. Legenda czyta się wtedy jak ludzka, bez „od 3,7 do 12,2”
+ * dla liczb sztuk. Powtórzone i nie większe od minimum progi są usuwane.
+ */
+export function niceBreaks(breaks: number[], values: (number | null | undefined)[]): number[] {
+  const valid = values.filter((v): v is number => typeof v === 'number' && !Number.isNaN(v));
+  if (valid.length === 0 || breaks.length === 0) return breaks;
+  const min = Math.min(...valid);
+  const integers = valid.every((v) => Number.isInteger(v));
+  const rounded = breaks.map((b) => {
+    if (b === 0) return 0;
+    const digits = 1 - Math.floor(Math.log10(Math.abs(b)));
+    const factor = 10 ** digits;
+    const r = Math.round(b * factor) / factor;
+    return integers ? Math.round(r) : r;
+  });
+  return cleanBreaks(rounded, min);
+}
+
+function computeRawBreaks(
+  values: (number | null | undefined)[],
+  method: ClassificationMethod,
   n: number
 ): number[] {
   const validValues = values.filter(
@@ -53,7 +83,7 @@ export function computeBreaks(
   if (method === 'quantile' && cleaned.length < n - 1) {
     const rest = sorted.filter((v) => v > min);
     if (rest.length > 0) {
-      const restBreaks = computeBreaks(rest, 'quantile', n - 1);
+      const restBreaks = computeRawBreaks(rest, 'quantile', n - 1);
       return cleanBreaks([rest[0], ...restBreaks], min);
     }
   }

@@ -1,4 +1,5 @@
 import { standaloneName } from './standalone-name';
+import { effectiveUnit } from './effective-unit';
 import priority from '../../../config/library-priority.json';
 import type { AvailableFile } from '../indicators/registry';
 import type { Indicator } from '../profile/profile';
@@ -126,7 +127,7 @@ export function buildCatalogTree(main: Indicator[], available: AvailableFile | n
     place.set(Number(v.id), { group, topic: titleCase(rawTopic) });
     put(draft, section, group, {
       id: `b${v.id}`, name: standaloneName(v.n, v.c), section, group, topic: titleCase(rawTopic),
-      unit: v.u ?? '', levels: v.lv, builtin: false,
+      unit: effectiveUnit(v.n, v.u), levels: v.lv, builtin: false,
     });
   }
   // Wbudowane na końcu, bo ich dział (np. „Turystyka”) może jeszcze nie istnieć w bibliotece.

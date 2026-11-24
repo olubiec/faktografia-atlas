@@ -106,14 +106,16 @@ export function RankingBars({
               >
                 {(() => {
                   // Typ jednostki w nawiasie (np. „gmina wiejska”) zostaje widoczny, ścinana jest sama nazwa.
+                  // Nazwa zawija się do 2 linii zamiast ucinać się do „powiat w…”.
                   const m = /^(.*?)(\s\([^)]*\))$/.exec(item.name);
+                  const stripped = m && /powiat/i.test(m[2]) ? m[1].replace(/^powiat\s+/i, '') : m?.[1];
                   return m ? (
                     <>
-                      <span className="truncate min-w-0">{m[1]}</span>
-                      <span className="shrink-0 whitespace-pre">{m[2]}</span>
+                      <span className="line-clamp-2 min-w-0 break-words leading-tight">{stripped}</span>
+                      <span className="shrink-0 whitespace-pre self-start leading-tight">{m[2]}</span>
                     </>
                   ) : (
-                    <span className="truncate min-w-0">{item.name}</span>
+                    <span className="line-clamp-2 min-w-0 break-words leading-tight">{item.name}</span>
                   );
                 })()}
               </span>

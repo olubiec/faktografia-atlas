@@ -102,7 +102,7 @@ export function IndicatorPanel({
               layout={inSheet ? 'stack' : 'columns'}
             />
           </div>
-          <IndicatorInfo indicatorId={indicator.id} name={indicator.name} explanation={explanation} />
+          <IndicatorInfo indicatorId={indicator.id} name={indicator.name} unit={indicator.unit} explanation={explanation} />
         </div>
         <p className="text-sm text-olowek">{subtitle}</p>
       </div>
