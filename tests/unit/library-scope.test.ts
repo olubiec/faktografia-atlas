@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { buildScope, filterInScope, isStale, loadScope, scopeReason } from '../../scripts/data/library-scope.mjs';
+import {
+  buildScope, fetchLevels, filterInScope, isStale, levelKey, loadScope, probeUrlFor, scopeReason, yearsOf,
+} from '../../scripts/data/library-scope.mjs';
 import { sortQueueByPriority } from '../../scripts/data/library-priority.mjs';
 import curation from '../../config/library-curation.json';
 import scopeFile from '../../config/library-scope.json';
@@ -30,11 +32,13 @@ describe('Biblioteka GUS – wytyczne pobierania', () => {
 
   it('wbudowane i przypięte wchodzą zawsze, nawet spoza listy tematów', () => {
     expect(scopeReason(v({ id: 60559, subjectId: 'P777' }), LUD, scope)).toBeNull();
-    expect(scopeReason(v({ id: 999, subjectId: 'P777', level: 3 }), LUD, scope)).toBeNull();
+    expect(scopeReason(v({ id: 999, subjectId: 'P777', level: 0 }), LUD, scope)).toBeNull();
   });
 
-  it('same województwa (poziom < 5) – pomijane', () => {
-    expect(scopeReason(v({ level: 3 }), LUD, scope)).toBe('brak danych dla powiatów i gmin');
+  it('dane tylko dla województw wchodzą, same dane dla całej Polski – nie', () => {
+    expect(scopeReason(v({ level: 2 }), LUD, scope)).toBeNull();
+    expect(scopeReason(v({ level: 4 }), LUD, scope)).toBeNull();
+    expect(scopeReason(v({ level: 1 }), LUD, scope)).toBe('tylko dane dla całej Polski');
   });
 
   it('zbyt szczegółowy podział (więcej niż maxDepth członów) – pomijany', () => {
@@ -64,6 +68,29 @@ describe('Biblioteka GUS – wytyczne pobierania', () => {
     const wanted = filterInScope(Object.values(catalog.variables), catalog, scope);
     const queue = sortQueueByPriority(wanted, catalog, { ...priority, pinnedIds: [] }, { done: {}, failed: {} }) as V[];
     expect(queue.map((x) => x.id).sort()).toEqual([1, 3]);
+  });
+
+  it('województwa pobierane zawsze, powiaty i gminy – gdy GUS je ma', () => {
+    expect(fetchLevels({ level: 6 })).toEqual([2, 5, 6]);
+    expect(fetchLevels({ level: 5 })).toEqual([2, 5]);
+    expect(fetchLevels({ level: 3 })).toEqual([2]);
+    expect(fetchLevels({ level: 1 })).toEqual([]);
+    // Strona czyta województwa z klucza l3.
+    expect(fetchLevels({ level: 6 }).map(levelKey)).toEqual(['l3', 'l5', 'l6']);
+  });
+
+  it('zmienna tylko wojewódzka trafia do kolejki, a sonda nowego roku pyta o województwa', () => {
+    const catalog = { subjects: { P1: { path: LUD } }, variables: { 7: v({ id: 7, level: 2 }) } };
+    const queue = sortQueueByPriority(Object.values(catalog.variables), catalog, { ...priority, pinnedIds: [] }, { done: {}, failed: {} }, fetchLevels) as V[];
+    expect(queue.map((x) => x.id)).toEqual([7]);
+    expect(new URL(probeUrlFor({ id: 7, level: 2 }, ['2022'])).searchParams.get('unit-level')).toBe('2');
+    expect(new URL(probeUrlFor({ id: 7, level: 6 }, ['2022'])).searchParams.get('unit-level')).toBe('5');
+    expect(new URL(probeUrlFor({ id: 7, level: 6 }, ['2022'])).searchParams.get('year')).toBe('2023');
+  });
+
+  it('lata z pliku: najdokładniejszy dostępny poziom, także sam wojewódzki', () => {
+    expect(yearsOf({ l3: { y: ['2020'] }, l5: { y: ['2021'] } })).toEqual(['2021']);
+    expect(yearsOf({ l3: { y: ['2020'] } })).toEqual(['2020']);
   });
 
   it('dane archiwalne (ostatni rok przed progiem) nie są odświeżane', () => {

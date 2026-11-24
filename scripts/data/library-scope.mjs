@@ -4,6 +4,7 @@
 // nie zużywa zapytań na dane, których strona i tak nie pokaże.
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { yearProbeUrl } from './library-plan.mjs';
 
 const lower = (s) => String(s ?? '').toLocaleLowerCase('pl').trim();
 const fileOf = (name) => fileURLToPath(new URL(`../../config/${name}`, import.meta.url));
@@ -31,6 +32,7 @@ export function buildScope({ scope, curation, indicators = [], priority = {} }) 
   return {
     topics: new Set(Object.keys(scope.topics ?? {})),
     maxDepth: scope.maxDepth ?? 2,
+    minLevel: scope.minLevel ?? 2,
     patterns: (scope.dropNamePatterns ?? []).map((p) => new RegExp(p, 'u')),
     staleBeforeYear: curation.staleBeforeYear ?? 0,
     dropIds: new Set((curation.dropIds ?? []).map(String)),
@@ -61,7 +63,7 @@ export async function loadScope() {
 export function scopeReason(v, subjectPath, scope) {
   const id = String(v.id);
   if (scope.always.has(id)) return null;
-  if (!(Number(v.level) >= 5)) return 'brak danych dla powiatów i gmin';
+  if (!(Number(v.level) >= scope.minLevel)) return 'tylko dane dla całej Polski';
   if (!scope.topics.has(String(v.subjectId))) return 'temat spoza wytycznych';
   if (scope.dropIds.has(id)) return 'odrzucony po przeglądzie';
   if (depthOf(v) > scope.maxDepth) return 'zbyt szczegółowy podział';
@@ -85,4 +87,32 @@ export function filterInScope(variables, catalog, scope) {
 export function isStale(years, scope) {
   const list = (years ?? []).map(Number).filter(Number.isFinite);
   return list.length > 0 && Math.max(...list) < scope.staleBeforeYear;
+}
+
+/**
+ * Poziomy jednostek do pobrania (unit-level w API BDL): 2 = województwa, 5 = powiaty, 6 = gminy.
+ * Województwa zawsze (16 wierszy = 1 zapytanie), powiaty i gminy, gdy zmienna je ma.
+ * Poziomy 3–4 (regiony, podregiony) nie mają odpowiednika na mapie – z nich bierzemy województwa.
+ */
+export function fetchLevels(v) {
+  const lvl = Number(v.level);
+  if (!Number.isFinite(lvl) || lvl < 2) return [];
+  return [2, ...(lvl >= 5 ? [5] : []), ...(lvl >= 6 ? [6] : [])];
+}
+
+/** Klucz poziomu w pliku wartości: województwa jako l3 (tak czyta je strona), reszta l5 / l6. */
+export function levelKey(level) {
+  return level === 2 ? 'l3' : `l${level}`;
+}
+
+/** Lata w pobranym pliku: najdokładniejszy poziom, jaki jest. */
+export function yearsOf(file) {
+  return file?.l6?.y ?? file?.l5?.y ?? file?.l3?.y ?? [];
+}
+
+/** Sonda nowego roku: na poziomie powiatów, a dla danych tylko wojewódzkich – województw. */
+export function probeUrlFor(v, years) {
+  const u = new URL(yearProbeUrl(v.id, years));
+  if (Number(v.level) < 5) u.searchParams.set('unit-level', '2');
+  return u.toString();
 }
