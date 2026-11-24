@@ -1,4 +1,4 @@
-Wskaźników: 20, zapytań: 756
+Wskaźników: 20, zapytań: 0, stron z poprzedniego uruchomienia: 736
 population	var 72305	poziom 5	stron 4	rekordów 382
 population	var 72305	poziom 6	stron 42	rekordów 4180
 density	var 60559	poziom 5	stron 4	rekordów 381
