@@ -9,7 +9,7 @@ for (const size of SIZES) {
     test.use({ viewport: size });
 
     for (const path of PAGES) {
-      test(`${path}: najwyżej 7 linków (S09: + Miejsca), bez Biblioteki, pola ≥ 44 px, bez nakładania`, async ({ page }) => {
+      test(`${path}: najwyżej 11 linków (7 + X, Instagram, TikTok, e-mail), bez Biblioteki, pola ≥ 44 px, bez nakładania`, async ({ page }) => {
         await page.addInitScript(() => {
           localStorage.setItem('fa-consent-v1', JSON.stringify({ value: 'denied', at: new Date().toISOString() }));
         });
@@ -17,7 +17,7 @@ for (const size of SIZES) {
         const footer = page.getByRole('contentinfo');
         await footer.scrollIntoViewIfNeeded();
         const links = footer.getByRole('link');
-        expect(await links.count()).toBeLessThanOrEqual(7);
+        expect(await links.count()).toBeLessThanOrEqual(11);
         for (const href of await links.evaluateAll((els) => els.map((e) => e.getAttribute('href') ?? ''))) {
           expect(href).not.toMatch(/^\/(biblioteka|rankingi|porownaj)/);
           expect(href).not.toContain('/mapa?i=');
