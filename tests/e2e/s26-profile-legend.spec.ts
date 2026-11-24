@@ -11,9 +11,8 @@ test.describe('Profil i legenda: spójność wartości (@S26)', () => {
 
   test('progi legendy są rosnące, a liczba klas = progi + 1 (@S26)', async ({ page }) => {
     await openMap(page, '?e2e');
-    await page.waitForFunction(() => (window as any).__atlas?.choropleth?.breaks?.length >= 0);
-    const c = await page.evaluate(() => (window as any).__atlas.choropleth);
-    const b: number[] = c.breaks;
+    await page.waitForFunction(() => Array.isArray((window as any).__atlas?.choroplethBreaks));
+    const { c, b } = await page.evaluate(() => ({ c: (window as any).__atlas.choropleth, b: (window as any).__atlas.choroplethBreaks as number[] }));
     expect(c.classes).toBe(b.length + 1);
     for (let i = 1; i < b.length; i++) expect(b[i]).toBeGreaterThan(b[i - 1]);
   });

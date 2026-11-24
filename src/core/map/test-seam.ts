@@ -8,8 +8,6 @@ export type ChoroplethSeamState = {
   year: number | null;
   level: UnitLevel;
   classes: number;
-  /** Progi legendy (rosnące, bez powtórzeń) – test sprawdza, że liczba klas = progi + 1. */
-  breaks?: number[];
 } | null;
 
 export type RevealSeamState = {
@@ -30,6 +28,8 @@ export type AtlasState = {
   mapView?: { longitude: number; latitude: number; zoom: number };
   theme: 'light' | 'dark';
   choropleth: ChoroplethSeamState;
+  /** Progi legendy (rosnące, bez powtórzeń): liczba klas = progi + 1. */
+  choroplethBreaks?: number[];
   profileOpen: boolean;
   reveal?: RevealSeamState;
   camera?: CameraSeamState;
@@ -75,6 +75,7 @@ export function installAtlasSeam(
         mapView: state.mapView ? { ...state.mapView } : undefined,
         theme: state.theme,
         choropleth: state.choropleth ? { ...state.choropleth } : null,
+        choroplethBreaks: state.choroplethBreaks ? [...state.choroplethBreaks] : undefined,
         profileOpen: state.profileOpen,
         reveal: typeof getRevealState === 'function' ? { ...getRevealState() } : { running: false, progress: 1 },
         fill: typeof getFillTransitionState === 'function' ? { ...getFillTransitionState() } : { ms: 0, dataKey: '' },

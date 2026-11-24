@@ -296,9 +296,9 @@ function AtlasMapReady({ units, adminTopo }: { units: Unit[]; adminTopo: any }) 
             year: choroplethData.year,
             level: choroplethData.level,
             classes: choroplethData.classes,
-            breaks: choroplethData.breaks,
           }
         : null,
+      choroplethBreaks: choroplethData?.breaks,
       profileOpen,
     };
   }, [isReady, selectedTeryt, layers, unitIndex, drillState.selected, theme, choroplethData, profileOpen, currentViewStateRef, mapRef]);
