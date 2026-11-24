@@ -1,3 +1,4 @@
+// Nieużywany: roczniki 0–19 lat zniknęły z menu (nie mają sensu na mapie). Do usunięcia na prośbę właściciela.
 import { useEffect, useMemo, useState } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { buildAgeFamilies, familyOf, type AgeFamily } from '@/core/catalog/age-family';

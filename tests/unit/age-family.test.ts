@@ -9,11 +9,9 @@ const vars = (name: string, from: number) =>
   }));
 
 describe('rodziny wieku', () => {
-  it('6 roczników to jedna pozycja w menu z id najmłodszego', () => {
+  it('pojedyncze roczniki wieku nie trafiają do menu', () => {
     const entries = flattenTree(buildCatalogTree([], { version: 1, variables: vars('ogółem', 100) }));
-    expect(entries).toHaveLength(1);
-    expect(entries[0]!.id).toBe('b100');
-    expect(entries[0]!.name).toMatch(/wybierz wiek/);
+    expect(entries).toHaveLength(0);
   });
   it('buildAgeFamilies znajduje rodzinę po id i sortuje roczniki', () => {
     const fams = buildAgeFamilies(vars('mężczyźni', 200));

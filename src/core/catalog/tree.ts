@@ -1,6 +1,6 @@
 import { standaloneName } from './standalone-name';
 import { effectiveUnit } from './effective-unit';
-import { buildAgeFamilies, hiddenIds, representativeIds } from './age-family';
+import { buildAgeFamilies, hiddenIds } from './age-family';
 import priority from '../../../config/library-priority.json';
 import type { AvailableFile } from '../indicators/registry';
 import type { Indicator } from '../profile/profile';
@@ -50,11 +50,6 @@ const WEIGHTS = (priority as Priority).sectionWeights;
 const DEFAULT_WEIGHT = (priority as Priority).defaultSectionWeight;
 /** Klucze wag w kolejności pliku: przy równej wadze działy idą tak, jak w configu. */
 const WEIGHT_KEYS = Object.keys(WEIGHTS).map((key) => ({ key, norm: normalize(key) }));
-
-/** Pozycja rodziny wieku w menu: nazwa bez rocznika; rocznik wybiera się suwakiem. */
-function ageFamilyName(n: string, c?: string): string {
-  return `${standaloneName(n.replace(/ – \d{1,3}$/, ''), c)} – wybierz wiek`;
-}
 
 /** „SZKOLNICTWO PODSTAWOWE” → „Szkolnictwo podstawowe” (skróty z listy zostają wielkie). */
 export function titleCase(raw: string): string {
@@ -125,7 +120,6 @@ export function buildCatalogTree(main: Indicator[], available: AvailableFile | n
   const place = new Map<number, { group: string; topic: string }>();
   const families = buildAgeFamilies(available?.variables ?? []);
   const hidden = hiddenIds(families);
-  const reps = representativeIds(families);
   const lib = (available?.variables ?? []).filter((v) => v.id && v.n && v.c && v.lv.length > 0 && !hidden.has(v.id));
   for (const v of lib) {
     const [rawSection = '', rawGroup = '', rawTopic = ''] = (v.c ?? '').split(' > ').map((p) => p.trim());
@@ -135,7 +129,7 @@ export function buildCatalogTree(main: Indicator[], available: AvailableFile | n
     const group = titleCase(rawGroup);
     place.set(Number(v.id), { group, topic: titleCase(rawTopic) });
     put(draft, section, group, {
-      id: `b${v.id}`, name: reps.has(v.id) ? ageFamilyName(v.n, v.c) : standaloneName(v.n, v.c), section, group, topic: titleCase(rawTopic),
+      id: `b${v.id}`, name: standaloneName(v.n, v.c), section, group, topic: titleCase(rawTopic),
       unit: effectiveUnit(v.n, v.u), levels: v.lv, builtin: false,
     });
   }
