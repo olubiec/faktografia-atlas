@@ -9,8 +9,12 @@ import { popularOnly } from '../../src/core/catalog/curation';
 
 const dir = process.env.LIBRARY_DIR;
 const run = dir && existsSync(path.join(dir, 'available.json')) ? describe : describe.skip;
-/** Górna granica: więcej oznacza, że import wpuścił serię niszowych danych. */
-const MAX_POPULAR = 120;
+/**
+ * Górna granica: więcej oznacza, że import wpuścił serię niszowych danych.
+ * Robot pobiera tylko wytyczne z config/library-scope.json (ok. 630 wskaźników) plus to, co pobrał wcześniej,
+ * więc limit ma zapas na komplet wytycznych (decyzja właściciela: dużo danych, ale tylko sensownych).
+ */
+const MAX_POPULAR = 900;
 
 run('biblioteka GUS – wybór popularnych danych', () => {
   it('w menu zostaje rozsądna liczba prostych wskaźników', () => {

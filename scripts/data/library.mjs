@@ -1,6 +1,7 @@
 // Robot „Biblioteka GUS”: w każdym uruchomieniu (co 12 h) pobiera tyle, ile mieści się w budżecie zapytań,
 // i zapisuje postęp w library/state.json. Uruchomienie wznawia pracę od miejsca zatrzymania.
 // Kolejność: config/library-priority.json (podstawowe i popularne wskaźniki najpierw).
+// Zakres: config/library-scope.json + reguły strony (library-scope.mjs) – reszty katalogu robot nie pobiera.
 // Użycie: BDL_CLIENT_ID=… LIBRARY_DIR=library LIBRARY_BUDGET=3000 node scripts/data/library.mjs
 // Podgląd bez sieci i bez klucza: LIBRARY_DRY=1 LIBRARY_DIR=… node scripts/data/library.mjs
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
@@ -13,6 +14,7 @@ import {
 } from './library-lib.mjs';
 import { sectionOf, sortQueueByPriority, summarizeBySection, priorityScore } from './library-priority.mjs';
 import { fetchHtml, loadCalendar, calendarHits } from './gus-calendar.mjs';
+import { filterInScope, isStale, loadScope, scopeReason } from './library-scope.mjs';
 import { budgetForRun, hasNewYear, pagesHaveValues, refreshCandidates, yearProbeUrl } from './library-plan.mjs';
 
 const dir = process.env.LIBRARY_DIR ?? 'library';
@@ -102,9 +104,12 @@ async function crawlCatalog(state, catalog) {
 }
 
 // Faza 2: wartości zmiennych wg kolejki priorytetów.
-async function downloadValues(state, catalog, config = null) {
+async function downloadValues(state, catalog, config = null, scope = null) {
   config ??= JSON.parse(await readFile(configFile, 'utf8'));
-  const queue = sortQueueByPriority(Object.values(catalog.variables), catalog, config, state);
+  scope ??= await loadScope();
+  const wanted = filterInScope(Object.values(catalog.variables), catalog, scope);
+  stats.inScope = wanted.length;
+  const queue = sortQueueByPriority(wanted, catalog, config, state);
   stats.queueLength = queue.length;
   for (const v of queue) {
     if (!budget.canStartVariable()) break;
@@ -138,7 +143,7 @@ async function downloadValues(state, catalog, config = null) {
 
 // Odświeżanie: dla pobranych dawniej niż refreshAfterDays jedno tanie zapytanie sprawdza, czy GUS dopisał rok;
 // dopiero wtedy zmienna jest pobierana od nowa. Część budżetu (refreshShare) jest zarezerwowana na tę fazę.
-async function refreshValues(state, catalog, config, total) {
+async function refreshValues(state, catalog, config, total, scope) {
   const cap = Math.floor(total * (config.refreshShare ?? 0.15));
   const start = budget.used;
   const scoreOf = (id) => {
@@ -150,10 +155,12 @@ async function refreshValues(state, catalog, config, total) {
   for (const id of refreshCandidates({ done: state.done, config, scoreOf, calendarHit, calendarLatest: config.calendarLatest })) {
     if (budget.used - start >= cap || !budget.canStartVariable()) break;
     const v = catalog.variables[id];
+    // Poza wytycznymi (strona tego nie pokaże) – nie wydajemy nawet zapytania-sondy.
+    if (!v || scopeReason(v, pathOf(v), scope) !== null) continue;
     const old = await readJson(`values/${id}.json`, null);
-    if (!v || !old?.l5 && !old?.l6) continue;
+    if (!old?.l5 && !old?.l6) continue;
     const years = old.l6?.y ?? old.l5?.y ?? [];
-    if (years.length === 0) continue;
+    if (years.length === 0 || isStale(years, scope)) continue;
     const spentBefore = budget.used;
     if (hasNewYear(await get(yearProbeUrl(id, years)))) {
       const out = { v: id };
@@ -182,7 +189,9 @@ async function dryRun() {
   const state = await readJson('state.json', emptyState());
   const catalog = await readJson('catalog.json', emptyCatalog());
   const config = JSON.parse(await readFile(configFile, 'utf8'));
-  const queue = sortQueueByPriority(Object.values(catalog.variables), catalog, config, state);
+  const wanted = filterInScope(Object.values(catalog.variables), catalog, await loadScope());
+  console.log(`Wytyczne (config/library-scope.json): ${wanted.length} z ${Object.keys(catalog.variables).length} zmiennych katalogu.`);
+  const queue = sortQueueByPriority(wanted, catalog, config, state);
   const inRun = queue.slice(0, Math.floor(budget.left / 45));
   const counts = {};
   for (const v of inRun) counts[sectionOf(v, catalog)] = (counts[sectionOf(v, catalog)] ?? 0) + 1;
@@ -205,9 +214,10 @@ async function main() {
     budget = createBudget(total);
     if (!state.catalogDone) await crawlCatalog(state, catalog);
     const config = JSON.parse(await readFile(configFile, 'utf8'));
+    const scope = await loadScope();
     await applyCalendar(config);
-    await refreshValues(state, catalog, config, total);
-    await downloadValues(state, catalog, config);
+    await refreshValues(state, catalog, config, total, scope);
+    await downloadValues(state, catalog, config, scope);
   } catch (err) {
     if (!(err instanceof LimitStop)) {
       console.error(String(err.message).replace(clientId, '[KLUCZ]'));
@@ -222,7 +232,7 @@ async function main() {
     const table = summarizeBySection(bySection, stats.queueLength ?? 0);
     console.log(table);
     if (process.env.LIBRARY_SUMMARY_FILE) await writeFile(process.env.LIBRARY_SUMMARY_FILE, `${table}\n`);
-    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Kalendarium GUS: ${stats.calendarTitles ?? 0} publikacji. Pominięte puste (bez gmin): ${stats.skippedEmpty ?? 0}. Zmiennych: ${total}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
+    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Kalendarium GUS: ${stats.calendarTitles ?? 0} publikacji. Pominięte puste (bez gmin): ${stats.skippedEmpty ?? 0}. Zmiennych: ${total}, w wytycznych: ${stats.inScope ?? '?'}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
   }
 }
 
