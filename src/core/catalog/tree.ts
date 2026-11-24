@@ -1,3 +1,4 @@
+import { standaloneName } from './standalone-name';
 import priority from '../../../config/library-priority.json';
 import type { AvailableFile } from '../indicators/registry';
 import type { Indicator } from '../profile/profile';
@@ -124,7 +125,7 @@ export function buildCatalogTree(main: Indicator[], available: AvailableFile | n
     const group = titleCase(rawGroup);
     place.set(Number(v.id), { group, topic: titleCase(rawTopic) });
     put(draft, section, group, {
-      id: `b${v.id}`, name: v.n, section, group, topic: titleCase(rawTopic),
+      id: `b${v.id}`, name: standaloneName(v.n, v.c), section, group, topic: titleCase(rawTopic),
       unit: v.u ?? '', levels: v.lv, builtin: false,
     });
   }

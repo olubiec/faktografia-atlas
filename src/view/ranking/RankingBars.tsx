@@ -99,11 +99,23 @@ export function RankingBars({
 
               <span
                 className={cn(
-                  'text-sm min-w-0 flex-1 truncate text-left',
+                  'text-sm min-w-0 flex-1 flex text-left',
                   isSelected ? 'font-bold text-korekta-tekst' : 'font-normal text-tusz'
                 )}
+                title={item.name}
               >
-                {item.name}
+                {(() => {
+                  // Typ jednostki w nawiasie (np. „gmina wiejska”) zostaje widoczny, ścinana jest sama nazwa.
+                  const m = /^(.*?)(\s\([^)]*\))$/.exec(item.name);
+                  return m ? (
+                    <>
+                      <span className="truncate min-w-0">{m[1]}</span>
+                      <span className="shrink-0 whitespace-pre">{m[2]}</span>
+                    </>
+                  ) : (
+                    <span className="truncate min-w-0">{item.name}</span>
+                  );
+                })()}
               </span>
 
               <div className="w-24 sm:w-32 h-2.5 bg-kalka relative shrink-0 overflow-hidden">

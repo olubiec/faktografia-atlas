@@ -1,3 +1,4 @@
+import { standaloneName } from '../catalog/standalone-name';
 import { normalize } from '../search/normalize';
 import type { Indicator } from '../profile/profile';
 import type { UnitLevel } from '../units/types';
@@ -65,7 +66,7 @@ function toIndicator(v: AvailableVariable, duplicatesMain: boolean): Indicator {
   return {
     id: libraryIndicatorId(v.id),
     bdlVarId: Number(v.id),
-    name: v.n,
+    name: standaloneName(v.n, v.c),
     unit: v.u ?? '',
     description: `${path}${note}`.trim(),
     group: path.split(' > ')[0] ?? '',
