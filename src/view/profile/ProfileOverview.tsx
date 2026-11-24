@@ -4,6 +4,7 @@ import type { Unit } from '../../core/units/types';
 import type { MainView } from '../map/hooks/useMainView';
 import { rankingScope } from '../../core/profile/sections';
 import { rankUnits } from '../../core/ranking/ranking';
+import { overviewItem } from '../../core/profile/overview-item';
 import { formatValue } from '../../core/format/number';
 import { unitLabel } from '../../core/units/label';
 import { Annotate } from '../annotation/Annotate';
@@ -58,16 +59,14 @@ export function ProfileOverview({
     };
   }, [view.indicator.id]);
 
-  const currentItem = useMemo(() => {
-    return (
-      profile.indicators.find((item) => item.indicatorId === view.indicator.id) ??
-      profile.indicators[0]
-    );
-  }, [profile.indicators, view.indicator.id]);
+  const currentItem = useMemo(
+    () => overviewItem(view.values, profile.teryt, view.year),
+    [view.values, profile.teryt, view.year],
+  );
 
   const formattedValue = useMemo(() => {
-    return formatValue(currentItem?.value ?? null, view.indicator.unit);
-  }, [currentItem?.value, view.indicator.unit]);
+    return formatValue(currentItem.value, view.indicator.unit);
+  }, [currentItem.value, view.indicator.unit]);
 
   const scope = useMemo(() => {
     return profile.unit ? rankingScope(profile.unit, units) : { teryts: [], description: '' };
@@ -185,7 +184,7 @@ export function ProfileOverview({
       indicatorName: view.indicator.name,
       unit: view.indicator.unit,
       year: view.year ?? 2025,
-      bigNumber: formatValue(currentItem?.value ?? null, null),
+      bigNumber: formatValue(currentItem.value, null),
       rankText: rankText ?? undefined,
       indicators: otherInds,
     };
@@ -217,7 +216,7 @@ export function ProfileOverview({
     view.indicator.name,
     view.indicator.unit,
     view.year,
-    currentItem?.value,
+    currentItem.value,
     rankText,
     ranking,
     rankingItems,
@@ -276,7 +275,7 @@ export function ProfileOverview({
       {/* Rozwinięcie ze szczegółami wskaźnika (wykres lat, objaśnienia, przycisk Pokaż na mapie) */}
       {isExpanded && (
         <div className="pt-2 space-y-3">
-          {currentItem?.series && currentItem.series.length >= 2 && (
+          {currentItem.series.length >= 2 && (
             <TrendChart
               series={currentItem.series}
               unit={view.indicator.unit}

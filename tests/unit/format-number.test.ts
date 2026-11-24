@@ -60,3 +60,23 @@ describe('formatSource', () => {
     expect(formatSource()).toBe('Źródło: GUS, BDL');
   });
 });
+
+describe('formatValue – poprawki z audytu', () => {
+  it('nie pokazuje -0,0', () => {
+    expect(formatValue(-0.04, '%')).toBe('-0,04\u00A0%');
+    expect(formatValue(-0.0004, '%')).not.toContain('-');
+  });
+  it('niezerowa wartość nie wygląda jak zero', () => {
+    expect(formatValue(0.04, '%')).toBe('0,04 %');
+  });
+  it('jednostka „-” jest pomijana', () => {
+    expect(formatValue(12.5, '-')).toBe('12,5');
+  });
+  it('jednostki liczone w sztukach są bez miejsc po przecinku', () => {
+    expect(formatValue(7, 'szt.')).toBe('7 szt.');
+    expect(formatValue(2025, 'rok')).toBe('2 025 rok');
+  });
+  it('m3 jako m³', () => {
+    expect(formatValue(3, 'm3')).toBe('3,0 m³');
+  });
+});

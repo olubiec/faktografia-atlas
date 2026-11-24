@@ -23,12 +23,11 @@ describe('CC8.1 - Klasy kolorów kartogramu (czysta logika)', () => {
     test('obsługuje przypadek brzegowy: wszystkie wartości równe', () => {
       const values = [10, 10, 10, 10];
       const equalBreaks = computeBreaks(values, 'equal', 5);
-      expect(equalBreaks).toHaveLength(4);
-      expect(equalBreaks).toEqual([10, 10, 10, 10]);
+      // powtórzone progi są usuwane: jedna klasa
+      expect(equalBreaks).toEqual([]);
 
       const quantileBreaks = computeBreaks(values, 'quantile', 5);
-      expect(quantileBreaks).toHaveLength(4);
-      expect(quantileBreaks).toEqual([10, 10, 10, 10]);
+      expect(quantileBreaks).toEqual([]);
     });
 
     test('obsługuje przypadek brzegowy: mniej różnych wartości niż klas', () => {
@@ -41,12 +40,11 @@ describe('CC8.1 - Klasy kolorów kartogramu (czysta logika)', () => {
     test('obsługuje przypadek brzegowy: jedna wartość', () => {
       const values = [42];
       const equalBreaks = computeBreaks(values, 'equal', 5);
-      expect(equalBreaks).toHaveLength(4);
-      expect(equalBreaks).toEqual([42, 42, 42, 42]);
+      // powtórzone progi są usuwane: jedna klasa
+      expect(equalBreaks).toEqual([]);
 
       const quantileBreaks = computeBreaks(values, 'quantile', 5);
-      expect(quantileBreaks).toHaveLength(4);
-      expect(quantileBreaks).toEqual([42, 42, 42, 42]);
+      expect(quantileBreaks).toEqual([]);
     });
 
     test('obsługuje przypadek brzegowy: sama lista null', () => {
@@ -130,5 +128,20 @@ describe('CC8.1 - Klasy kolorów kartogramu (czysta logika)', () => {
       expect(content).not.toMatch(/window\./);
       expect(content).not.toMatch(/document\./);
     });
+  });
+});
+
+describe('computeBreaks – brak powtórzonych progów (S26)', () => {
+  test('dużo zer: próg zera nie tworzy pustej klasy', () => {
+    const values = [0, 0, 0, 0, 0, 0, 1, 2, 5, 9];
+    const b = computeBreaks(values, 'quantile', 5);
+    expect(b.every((x, i) => i === 0 || x > b[i - 1])).toBe(true);
+    expect(b.every((x) => x > 0)).toBe(true);
+    expect(classify(0, b)).toBe(0);
+  });
+  test('liczby całkowite z remisami: progi rosnące ściśle', () => {
+    const values = [43, 43, 43, 43, 44, 44, 45, 46, 47, 48];
+    const b = computeBreaks(values, 'quantile', 5);
+    expect(new Set(b).size).toBe(b.length);
   });
 });

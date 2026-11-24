@@ -64,14 +64,14 @@ export function ContextBlock({
     if (item && item.rankNational !== null && item.totalNational > 0) {
       const rank = item.rankNational;
       const total = item.totalNational;
-      const percentBelow = Math.round(((total - rank) / total) * 100);
+      const percentBelow = Math.floor(((total - rank) / total) * 100);
 
       let sameInVoivodeship: { percentBelow: number; median?: number; min?: number; max?: number } | null = null;
       if (item.rankVoivodeship !== null && item.totalVoivodeship > 0) {
         const wojRank = item.rankVoivodeship;
         const wojTotal = item.totalVoivodeship;
         sameInVoivodeship = {
-          percentBelow: Math.round(((wojTotal - wojRank) / wojTotal) * 100),
+          percentBelow: Math.floor(((wojTotal - wojRank) / wojTotal) * 100),
         };
       }
 
@@ -226,7 +226,7 @@ export function ContextBlock({
         <div className="pt-2 border-t border-linia flex flex-col gap-2">
           {topBottomUnits.top && (
             <div className="flex items-center justify-between gap-2 min-h-[44px]">
-              <span className="text-olowek shrink-0">Najwyżej:</span>
+              <span className="text-olowek shrink-0">Najwyżej w kraju:</span>
               <button
                 type="button"
                 onClick={(e) => {
@@ -241,7 +241,7 @@ export function ContextBlock({
           )}
           {topBottomUnits.bottom && (
             <div className="flex items-center justify-between gap-2 min-h-[44px]">
-              <span className="text-olowek shrink-0">Najniżej:</span>
+              <span className="text-olowek shrink-0">Najniżej w kraju:</span>
               <button
                 type="button"
                 onClick={(e) => {

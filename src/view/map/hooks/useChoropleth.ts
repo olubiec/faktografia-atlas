@@ -201,7 +201,7 @@ export function useChoropleth(
       indicatorId: indicator.id,
       year: result.year,
       level,
-      classes: 5,
+      classes: result.breaks.length + 1,
       scheme: result.scheme,
       breaks: result.breaks,
       classByTeryt: result.classByTeryt,

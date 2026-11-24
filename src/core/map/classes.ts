@@ -46,7 +46,20 @@ export function computeBreaks(
     }
   }
 
-  return breaks;
+  return cleanBreaks(breaks, sorted[0]);
+}
+
+/**
+ * Usuwa powtórzone progi i progi nie większe od minimum danych (pusta klasa
+ * „poniżej minimum”). Liczba klas = progi + 1, więc legenda nie ma pustych ani
+ * zdublowanych przedziałów.
+ */
+export function cleanBreaks(breaks: number[], min: number): number[] {
+  const out: number[] = [];
+  for (const b of breaks) {
+    if (b > min && (out.length === 0 || b > out[out.length - 1])) out.push(b);
+  }
+  return out;
 }
 
 /**

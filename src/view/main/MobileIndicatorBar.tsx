@@ -99,8 +99,11 @@ export function MobileIndicatorBar({
 
   const scheme = choropleth?.scheme ?? 'sequential';
   const swatchTokens = useMemo(
-    () => [0, 1, 2, 3, 4].map((i) => classColorToken(i, 5, scheme)),
-    [scheme]
+    () => {
+      const n = Math.max(1, choropleth?.classes ?? 5);
+      return Array.from({ length: n }, (_, i) => classColorToken(i, n, scheme));
+    },
+    [scheme, choropleth?.classes]
   );
 
   const shareData = useShareData({ view, choropleth, ranking, index, selectedTeryt });
