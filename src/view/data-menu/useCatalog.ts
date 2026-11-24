@@ -1,3 +1,4 @@
+import { popularOnly } from '@/core/catalog/curation';
 import { useEffect, useMemo, useState } from 'react';
 import indicatorsData from '../../../config/indicators.json';
 import { buildCatalogTree, type CatalogTree } from '@/core/catalog/tree';
@@ -22,14 +23,14 @@ export type CatalogState = {
 export function useCatalog(): CatalogState {
   const [state, setState] = useState<{ done: boolean; available: AvailableFile | null }>(() => {
     const peeked = peekAvailable();
-    return { done: peeked !== undefined, available: peeked ?? null };
+    return { done: peeked !== undefined, available: popularOnly(peeked ?? null) };
   });
 
   useEffect(() => {
     if (state.done) return;
     let cancelled = false;
     loadAvailable().then((available) => {
-      if (!cancelled) setState({ done: true, available });
+      if (!cancelled) setState({ done: true, available: popularOnly(available) });
     });
     return () => {
       cancelled = true;
