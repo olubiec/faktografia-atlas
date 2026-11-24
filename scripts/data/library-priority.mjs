@@ -36,9 +36,9 @@ export function priorityScore(variable, subjectPath, config) {
 
 /**
  * Kolejka pobierania: przypięte → reszta wg wyniku z limitem udziału jednego działu → nieudane (< 3 prób).
- * Pomija pobrane i te, które zawiodły 3 razy. Remis rozstrzyga rosnące id (wynik jest deterministyczny).
+ * Pomija pobrane i te, które zawiodły 3 razy. levelsOf = poziomy do pobrania (domyślnie powiaty i gminy). Remis rozstrzyga rosnące id (wynik jest deterministyczny).
  */
-export function sortQueueByPriority(variables, catalog, config, state = {}) {
+export function sortQueueByPriority(variables, catalog, config, state = {}, levelsOf = levelsForVariable) {
   const done = state.done ?? {};
   const failed = state.failed ?? {};
   const now = state.now ?? Date.now();
@@ -48,7 +48,7 @@ export function sortQueueByPriority(variables, catalog, config, state = {}) {
     return Number.isFinite(at) && now - at >= (config.retryAfterDays ?? 7) * 86400_000;
   };
   const open = variables.filter(
-    (v) => levelsForVariable(v).length > 0 && !done[v.id] && ((failed[v.id] ?? 0) < 3 || retryDue(v.id)),
+    (v) => levelsOf(v).length > 0 && !done[v.id] && ((failed[v.id] ?? 0) < 3 || retryDue(v.id)),
   );
   const scored = open.map((v) => ({
     v,

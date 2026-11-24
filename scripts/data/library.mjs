@@ -1,6 +1,7 @@
 // Robot „Biblioteka GUS”: w każdym uruchomieniu (co 12 h) pobiera tyle, ile mieści się w budżecie zapytań,
 // i zapisuje postęp w library/state.json. Uruchomienie wznawia pracę od miejsca zatrzymania.
 // Kolejność: config/library-priority.json (podstawowe i popularne wskaźniki najpierw).
+// Zakres: config/library-scope.json + reguły strony (library-scope.mjs) – reszty katalogu robot nie pobiera.
 // Użycie: BDL_CLIENT_ID=… LIBRARY_DIR=library LIBRARY_BUDGET=3000 node scripts/data/library.mjs
 // Podgląd bez sieci i bez klucza: LIBRARY_DRY=1 LIBRARY_DIR=… node scripts/data/library.mjs
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
@@ -9,11 +10,14 @@ import { fileURLToPath } from 'node:url';
 import { fetchWithRetry } from './fetch-values.mjs';
 import {
   addSubject, compactPages, createBudget, dataUrl, emptyCatalog, emptyState,
-  levelsForVariable, subjectsUrl, variablesUrl,
+  subjectsUrl, variablesUrl,
 } from './library-lib.mjs';
 import { sectionOf, sortQueueByPriority, summarizeBySection, priorityScore } from './library-priority.mjs';
 import { fetchHtml, loadCalendar, calendarHits } from './gus-calendar.mjs';
-import { budgetForRun, hasNewYear, pagesHaveValues, refreshCandidates, yearProbeUrl } from './library-plan.mjs';
+import {
+  fetchLevels, filterInScope, isStale, levelKey, loadScope, missingLevels, probeUrlFor, scopeReason, yearsOf,
+} from './library-scope.mjs';
+import { budgetForRun, hasNewYear, pagesHaveValues, refreshCandidates } from './library-plan.mjs';
 
 const dir = process.env.LIBRARY_DIR ?? 'library';
 const clientId = process.env.BDL_CLIENT_ID;
@@ -102,18 +106,29 @@ async function crawlCatalog(state, catalog) {
 }
 
 // Faza 2: wartości zmiennych wg kolejki priorytetów.
-async function downloadValues(state, catalog, config = null) {
+async function downloadValues(state, catalog, config = null, scope = null) {
   config ??= JSON.parse(await readFile(configFile, 'utf8'));
-  const queue = sortQueueByPriority(Object.values(catalog.variables), catalog, config, state);
+  scope ??= await loadScope();
+  const wanted = filterInScope(Object.values(catalog.variables), catalog, scope);
+  stats.inScope = wanted.length;
+  const queue = sortQueueByPriority(wanted, catalog, config, state, fetchLevels);
   stats.queueLength = queue.length;
   for (const v of queue) {
     if (!budget.canStartVariable()) break;
     const spentBefore = budget.used;
     try {
       const out = { v: v.id };
-      for (const level of levelsForVariable(v)) {
-        const pages = await allPages((p) => dataUrl(v.id, level, p));
-        out[`l${level}`] = compactPages(pages);
+      for (const level of fetchLevels(v)) {
+        let pages;
+        try {
+          pages = await allPages((p) => dataUrl(v.id, level, p));
+        } catch (err) {
+          // Luka w gminach nie przekreśla wskaźnika: zapisujemy województwa i powiaty, gminy dociągnie dopełnienie.
+          if (level !== 6 || isHardStop(err)) throw err;
+          markGmiGap(state, v.id);
+          break;
+        }
+        out[levelKey(level)] = compactPages(pages);
         // Powiaty są tanie (kilka zapytań), gminy drogie (~25): pusty poziom powiatów = gmin nie pobieramy.
         if (level === 5 && !pagesHaveValues(pages)) {
           stats.skippedEmpty = (stats.skippedEmpty ?? 0) + 1;
@@ -127,7 +142,7 @@ async function downloadValues(state, catalog, config = null) {
       bySection[section] = (bySection[section] ?? 0) + 1;
       stats.queueLength--;
     } catch (err) {
-      if (err instanceof LimitStop || /HTTP 429/.test(err.message)) throw err;
+      if (isHardStop(err)) throw err;
       state.failed[v.id] = (state.failed[v.id] ?? 0) + 1;
       (state.failedAt ??= {})[v.id] = new Date().toISOString();
       console.error(`Zmienna ${v.id}: ${err.message.replace(clientId ?? '', '[KLUCZ]')}`);
@@ -136,9 +151,52 @@ async function downloadValues(state, catalog, config = null) {
   }
 }
 
+// Dopełnienie: zmienne pobrane wcześniej, którym brakuje poziomu (najczęściej województw – 1 zapytanie)
+// albo gmin, których pobranie się nie udało (luka). Lukę w gminach próbujemy GAP_TRIES razy, potem ją
+// akceptujemy – strona pokaże wtedy województwa i powiaty, a dla gmin informację o braku danych.
+const GAP_TRIES = 3;
+const isHardStop = (err) => err instanceof LimitStop || /HTTP 429/.test(err.message);
+
+function markGmiGap(state, id) {
+  (state.gmiGap ??= {})[id] = (state.gmiGap[id] ?? 0) + 1;
+  stats.gmiGaps = (stats.gmiGaps ?? 0) + 1;
+}
+
+async function backfillLevels(state, catalog, scope) {
+  const pathOf = (v) => catalog.subjects?.[v.subjectId]?.path ?? [];
+  state.woj ??= {};
+  state.gmiGap ??= {};
+  for (const id of Object.keys(state.done)) {
+    const gapTries = state.gmiGap[id] ?? 0;
+    const retryGap = gapTries > 0 && gapTries < GAP_TRIES;
+    if ((state.woj[id] && !retryGap) || !budget.canStartVariable()) continue;
+    const v = catalog.variables[id];
+    if (!v || scopeReason(v, pathOf(v), scope) !== null) continue;
+    const old = await readJson(`values/${id}.json`, null);
+    let changed = false;
+    for (const level of missingLevels(v, old)) {
+      try {
+        old[levelKey(level)] = compactPages(await allPages((p) => dataUrl(id, level, p)));
+        changed = true;
+        if (level === 6) delete state.gmiGap[id];
+      } catch (err) {
+        if (isHardStop(err)) throw err;
+        if (level === 6) markGmiGap(state, id);
+        else console.error(`Dopełnienie ${id}: ${err.message.replace(clientId ?? '', '[KLUCZ]')}`);
+      }
+    }
+    if (changed) {
+      await writeJson(`values/${id}.json`, old);
+      stats.backfilled = (stats.backfilled ?? 0) + 1;
+    }
+    state.woj[id] = 1;
+    await writeJson('state.json', state);
+  }
+}
+
 // Odświeżanie: dla pobranych dawniej niż refreshAfterDays jedno tanie zapytanie sprawdza, czy GUS dopisał rok;
 // dopiero wtedy zmienna jest pobierana od nowa. Część budżetu (refreshShare) jest zarezerwowana na tę fazę.
-async function refreshValues(state, catalog, config, total) {
+async function refreshValues(state, catalog, config, total, scope) {
   const cap = Math.floor(total * (config.refreshShare ?? 0.15));
   const start = budget.used;
   const scoreOf = (id) => {
@@ -150,14 +208,16 @@ async function refreshValues(state, catalog, config, total) {
   for (const id of refreshCandidates({ done: state.done, config, scoreOf, calendarHit, calendarLatest: config.calendarLatest })) {
     if (budget.used - start >= cap || !budget.canStartVariable()) break;
     const v = catalog.variables[id];
+    // Poza wytycznymi (strona tego nie pokaże) – nie wydajemy nawet zapytania-sondy.
+    if (!v || scopeReason(v, pathOf(v), scope) !== null) continue;
     const old = await readJson(`values/${id}.json`, null);
-    if (!v || !old?.l5 && !old?.l6) continue;
-    const years = old.l6?.y ?? old.l5?.y ?? [];
-    if (years.length === 0) continue;
+    if (!old) continue;
+    const years = yearsOf(old);
+    if (years.length === 0 || isStale(years, scope)) continue;
     const spentBefore = budget.used;
-    if (hasNewYear(await get(yearProbeUrl(id, years)))) {
+    if (hasNewYear(await get(probeUrlFor(v, years)))) {
       const out = { v: id };
-      for (const level of levelsForVariable(v)) out[`l${level}`] = compactPages(await allPages((p) => dataUrl(id, level, p)));
+      for (const level of fetchLevels(v)) out[levelKey(level)] = compactPages(await allPages((p) => dataUrl(id, level, p)));
       await writeJson(`values/${id}.json`, out);
       (state.cost ??= {})[id] = budget.used - spentBefore;
       stats.refreshed = (stats.refreshed ?? 0) + 1;
@@ -182,7 +242,9 @@ async function dryRun() {
   const state = await readJson('state.json', emptyState());
   const catalog = await readJson('catalog.json', emptyCatalog());
   const config = JSON.parse(await readFile(configFile, 'utf8'));
-  const queue = sortQueueByPriority(Object.values(catalog.variables), catalog, config, state);
+  const wanted = filterInScope(Object.values(catalog.variables), catalog, await loadScope());
+  console.log(`Wytyczne (config/library-scope.json): ${wanted.length} z ${Object.keys(catalog.variables).length} zmiennych katalogu.`);
+  const queue = sortQueueByPriority(wanted, catalog, config, state, fetchLevels);
   const inRun = queue.slice(0, Math.floor(budget.left / 45));
   const counts = {};
   for (const v of inRun) counts[sectionOf(v, catalog)] = (counts[sectionOf(v, catalog)] ?? 0) + 1;
@@ -205,9 +267,11 @@ async function main() {
     budget = createBudget(total);
     if (!state.catalogDone) await crawlCatalog(state, catalog);
     const config = JSON.parse(await readFile(configFile, 'utf8'));
+    const scope = await loadScope();
     await applyCalendar(config);
-    await refreshValues(state, catalog, config, total);
-    await downloadValues(state, catalog, config);
+    await refreshValues(state, catalog, config, total, scope);
+    await backfillLevels(state, catalog, scope);
+    await downloadValues(state, catalog, config, scope);
   } catch (err) {
     if (!(err instanceof LimitStop)) {
       console.error(String(err.message).replace(clientId, '[KLUCZ]'));
@@ -222,7 +286,7 @@ async function main() {
     const table = summarizeBySection(bySection, stats.queueLength ?? 0);
     console.log(table);
     if (process.env.LIBRARY_SUMMARY_FILE) await writeFile(process.env.LIBRARY_SUMMARY_FILE, `${table}\n`);
-    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Kalendarium GUS: ${stats.calendarTitles ?? 0} publikacji. Pominięte puste (bez gmin): ${stats.skippedEmpty ?? 0}. Zmiennych: ${total}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
+    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Dopełnionych o brakujące poziomy: ${stats.backfilled ?? 0}. Kalendarium GUS: ${stats.calendarTitles ?? 0} publikacji. Pominięte puste (bez gmin): ${stats.skippedEmpty ?? 0}. Luki w gminach (zapisane bez gmin): ${stats.gmiGaps ?? 0}. Zmiennych: ${total}, w wytycznych: ${stats.inScope ?? '?'}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
   }
 }
 
