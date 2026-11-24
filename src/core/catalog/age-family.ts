@@ -1,7 +1,7 @@
 import type { AvailableVariable } from '../indicators/registry';
 
 // „Ludność – 0”, „… – 1”, … „… – 19” to jedna rodzina: ten sam wskaźnik w różnych rocznikach wieku.
-// W menu zostaje jedna pozycja na rodzinę, a rocznik wybiera się suwakiem w panelu wskaźnika.
+// Pojedyncze roczniki (0–19 lat) nie mają sensu jako osobne wskaźniki na mapie, więc cała rodzina znika z menu.
 
 export type AgeMember = { age: number; id: string };
 export type AgeFamily = { key: string; base: string; members: AgeMember[] };
@@ -30,10 +30,7 @@ export function familyOf(families: AgeFamily[], bdlId: string): AgeFamily | null
   return families.find((f) => f.members.some((m) => m.id === bdlId)) ?? null;
 }
 
-/** Id (z biblioteki) rocznika; reprezentant rodziny w menu to najmłodszy rocznik. */
-export function representativeIds(families: AgeFamily[]): Set<string> {
-  return new Set(families.map((f) => f.members[0]!.id));
-}
+/** Id (z biblioteki) wszystkich roczników z rodzin – ukrywane w menu. */
 export function hiddenIds(families: AgeFamily[]): Set<string> {
-  return new Set(families.flatMap((f) => f.members.slice(1).map((m) => m.id)));
+  return new Set(families.flatMap((f) => f.members.map((m) => m.id)));
 }
