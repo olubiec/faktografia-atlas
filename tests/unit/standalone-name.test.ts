@@ -41,3 +41,14 @@ describe('standaloneName – działy budżetu', () => {
     expect(a).not.toBe(b);
   });
 });
+
+describe('podmiot z tematu „X wg Y”', () => {
+  it('„pracownicy biurowi” wśród radnych dostaje podmiot', () => {
+    expect(standaloneName('pracownicy biurowi', 'SAMORZĄD TERYTORIALNY > ORGANY GMINY > Radni gminy wg grup zawodów')).toBe(
+      'Radni gminy – pracownicy biurowi'
+    );
+  });
+  it('nazwa ze słowem z podmiotu zostaje bez zmian', () => {
+    expect(standaloneName('Radni ogółem', 'X > Y > Radni gminy wg płci')).toBe('Radni ogółem');
+  });
+});

@@ -56,7 +56,7 @@ export function tidyName(name: string): string {
 function withTopic(name: string, categoryPath?: string | null): string {
   const topicRaw = (categoryPath ?? '').split(' > ').map((p) => p.trim()).filter(Boolean).pop() ?? '';
   if (!topicRaw) return name;
-  if (!isBareQualifier(name)) return name;
+  if (!isBareQualifier(name)) return withSubject(name, topicRaw);
   const topicStems = stems(topicRaw).filter((st) => !GENERIC_STEMS.has(st));
   const own = new Set(stems(name));
   if (topicStems.length === 0 || topicStems.some((s) => own.has(s))) return name;
@@ -74,4 +74,18 @@ function withDivision(name: string, categoryPath?: string | null): string {
   if (!m) return name;
   const label = m[1].trim().toLocaleLowerCase('pl');
   return name.toLocaleLowerCase('pl').includes(label) ? name : `${name} (dział: ${label})`;
+}
+
+/**
+ * Temat „Radni gminy wg grup zawodów” + nazwa „pracownicy biurowi”: sama nazwa nie mówi, kogo dotyczy.
+ * Gdy nazwa jest krótka i nie dzieli słowa z podmiotem tematu (część przed „wg”), dopisujemy podmiot.
+ */
+function withSubject(name: string, topicRaw: string): string {
+  const subject = /^(.+?)\s+wg\s+/i.exec(topicRaw)?.[1]?.trim();
+  if (!subject || name.length > 70 || name.includes(' – ')) return name;
+  const subjectStems = stems(subject).filter((st) => !GENERIC_STEMS.has(st));
+  const own = new Set(stems(name));
+  if (subjectStems.length === 0 || subjectStems.some((st) => own.has(st))) return name;
+  const head = subject === subject.toLocaleUpperCase('pl') ? titleCase(subject) : subject.charAt(0).toLocaleUpperCase('pl') + subject.slice(1);
+  return `${head} – ${name.charAt(0).toLocaleLowerCase('pl') + name.slice(1)}`;
 }

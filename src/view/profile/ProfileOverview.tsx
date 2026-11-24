@@ -6,6 +6,7 @@ import { rankingScope } from '../../core/profile/sections';
 import { rankUnits } from '../../core/ranking/ranking';
 import { overviewItem } from '../../core/profile/overview-item';
 import { formatValue } from '../../core/format/number';
+import { appliesToUnit } from '../../core/profile/applicability';
 import { unitLabel } from '../../core/units/label';
 import { Annotate } from '../annotation/Annotate';
 import { RankingBars } from '../ranking/RankingBars';
@@ -258,6 +259,13 @@ export function ProfileOverview({
               {formattedValue}
             </span>
           </Annotate>
+
+          {!appliesToUnit(view.indicator.name, profile.teryt) && (
+            <p data-slot="not-applicable" className="text-xs text-olowek">
+              Nie dotyczy tego miejsca: wskaźnik opisuje inny rodzaj jednostek (np. miasta na prawach powiatu
+              albo gminy bez miast), więc brak wartości to nie zero.
+            </p>
+          )}
 
           {view.indicator.unit.trim() === '%' && currentItem.value !== null && currentItem.value > 100 && (
             <p data-slot="over-100-note" className="text-xs text-olowek">
