@@ -1,4 +1,5 @@
-import { classify, computeBreaks } from '../map/classes';
+import { classify, legendBreaks } from '../map/classes';
+import { schemeFor } from '../map/choropleth';
 import { LEVEL_LABELS } from '../map/main-view';
 import { compare } from '../compare/compare';
 import { formatValue, getFractionDigits } from '../format/number';
@@ -49,7 +50,7 @@ function mapData(ind: Indicator, ctx: PageSceneContext): MapCardData {
   const idx = vs ? vs.years.indexOf(ctx.year) : -1;
   const at = (u: Unit): number | null => (idx < 0 ? null : (vs.values[u.teryt]?.[idx] ?? null));
   const scope = ctx.units.filter((u) => u.level === ctx.level);
-  const breaks = computeBreaks(scope.map(at), 'quantile', 5);
+  const breaks = legendBreaks(scope.map(at));
   const classes: Record<string, 0 | 1 | 2 | 3 | 4 | 'noData'> = {};
   for (const u of scope) {
     const c = classify(at(u), breaks);
@@ -83,9 +84,11 @@ function histogramData(ind: Indicator, ctx: PageSceneContext): HistogramCardData
   const idx = vs ? vs.years.indexOf(ctx.year) : -1;
   if (!vs || idx < 0) return null;
   const scope = ctx.units.filter((u) => u.level === ctx.level);
+  const values = scope.map((u) => vs.values[u.teryt]?.[idx] ?? null);
   return {
     indicator: { name: ind.name, unit: ind.unit }, year: ctx.year, levelName: LEVEL_LABELS[ctx.level].toLowerCase(),
-    values: scope.map((u) => vs.values[u.teryt]?.[idx] ?? null),
+    // Te same progi i schemat kolorów co legenda mapy.
+    values, breaks: legendBreaks(values), scheme: schemeFor(values),
     selectedValue: ctx.placeTeryt ? (vs.values[ctx.placeTeryt]?.[idx] ?? null) : undefined,
   };
 }

@@ -77,7 +77,7 @@ export function makeFillColorGetter({ choropleth, isInScope, memory, reduced }: 
   // Kolory klas liczymy raz na warstwę, a nie osobno dla każdej z tysięcy jednostek.
   const palette = new Map<string, Rgba>();
   const colorOf = (cls: ClassifyResult): Rgba => {
-    const token = classColorToken(cls, choropleth.classes, choropleth.scheme);
+    const token = classColorToken(cls, choropleth.classes, choropleth.scheme, choropleth.breaks);
     let color = palette.get(token);
     if (!color) {
       color = resolveTokenColor(token);
