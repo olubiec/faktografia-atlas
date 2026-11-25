@@ -39,3 +39,16 @@ Etap B (W23) zmniejszony: scalone B01–B07; w `tasks/` zostają tylko **W23-B13
 
 ## Etap C (21.11.2026)
 Nowe polecenia właściciela (okno „Wybierz dane”, wejście do mapy, spójność ekranów, bez „Moich wskaźników” i Biblioteki w innych miejscach) rozpisane w `docs/PLAN-FALE-C.md`: zadania `tasks/W24-C01…C09` + `W23-B13` i `W23-B14` (dostosowane). Cztery fale; nic nie startuje samo.
+
+## Fale W27–W30: nowe dane, premiery GUS, świeżość Odkryć, kalendarium (25.11.2026)
+Polecenia właściciela: pobrać nowe, nieniszowe dane i pokazać je na mapach; premiery z kalendarium GUS pobierać w pierwszej kolejności; świeże i skrajne dane najpierw w „Odkryciach” i w materiałach; kilka dni etykiety „Nowość”; tablica kalendarium na górze repo; automat dopasowujący tematy do trendów (robot proponuje, właściciel decyduje).
+Zasada „nie niszowe” (W27-D01, wspólna dla wszystkich zadań): ≥ 95% gmin z wartością, ostatni rok ≥ bieżący − 2, seria ≥ 4 lata, wskaźnik względny.
+
+| Fala | Zadania (w fali równolegle, rozłączne pliki) | Zależy od |
+|---|---|---|
+| W27 | `D01` nowe wskaźniki główne (urodzenia, zgony, seniorzy na 100 dzieci, apteki, drogi rowerowe; warunkowo małżeństwa, żłobki) · `D02` świeże dane i skrajności najpierw w Odkryciu dnia, zestawieniach i „3 rzeczach” · `D03` trendy z odsłon Wikipedii → `trendBoost` (bez sekretów GSC) · `D05` premiera w kalendarium GUS = pobranie tego samego dnia + księga kalendarium (`library/calendar.json`) | – |
+| W28 | `D04` robot proponuje zmienne pasujące do tematów na czasie + premia w kolejce · `D06` etykieta „Nowość” (wybór danych, karty faktów) · `D07` tablica „Kalendarium danych”: przypięte zgłoszenie + znaczek w README (zaplanowane, czeka, pobrane, odrzucone, wdrożone, odkrycia) | D02, D03, D05 |
+| W29 | `D08` pakiet „Do materiałów” (social media; tekst, nie generator slajdów) · `D09` premiery z biblioteki w Odkryciach na czas świeżości | D07; D02+D05 |
+| W30 | `D10` „Wkrótce od GUS” i „Nowości na mapie” na `/nowe-dane` | D05, D07 |
+
+Uwagi: D01 wymaga przebiegu „Fetch data” na gałęzi zadania (sesja uruchamia albo prosi właściciela); po D01 i D06 odświeżyć zrzuty („Update snapshots”). D07 – właściciel raz przypina zgłoszenie „Kalendarium danych”. Czego nie ma w planie: Google Trends (brak ogólnodostępnego API), automatycznego dodawania wskaźników głównych przez robota.
