@@ -21,10 +21,19 @@ export function StartLists({ lists, to, onWarm }: StartListsProps) {
           {l.rows.length === 0 && <p className="m-0 text-sm text-olowek" role="status">Wczytujemy pozycje…</p>}
           <ol className="m-0 flex list-none flex-col p-0" hidden={l.rows.length === 0}>
             {l.rows.map((r, i) => (
-              <li key={r.teryt} className="flex min-w-0 items-baseline gap-3 border-t border-linia py-2 text-sm text-tusz">
-                <span className="w-4 shrink-0 font-mono text-xs text-olowek">{i + 1}</span>
-                <span className="min-w-0 flex-1 truncate" title={r.name}>{r.name}</span>
-                <span className="shrink-0 font-mono text-xs tabular-nums">{r.value}</span>
+              <li key={r.teryt} className="border-t border-linia text-sm text-tusz">
+                <Link
+                  to={to(r.href)}
+                  data-slot="start-list-row"
+                  className="flex min-h-[44px] min-w-0 items-baseline gap-3 py-2 text-tusz no-underline hover:bg-linia/15 focus-visible:outline-2 focus-visible:outline-tusz"
+                  onPointerEnter={onWarm}
+                  onTouchStart={onWarm}
+                  onFocus={onWarm}
+                >
+                  <span className="w-4 shrink-0 font-mono text-xs text-olowek">{i + 1}</span>
+                  <span className="min-w-0 flex-1 truncate" title={r.name}>{r.name}</span>
+                  <span className="shrink-0 font-mono text-xs tabular-nums">{r.value}</span>
+                </Link>
               </li>
             ))}
           </ol>
