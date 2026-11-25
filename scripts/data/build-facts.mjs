@@ -25,6 +25,7 @@ const vite = await createServer({
 try {
   const { buildFacts, buildShards } = await vite.ssrLoadModule('/src/core/facts/build.ts');
   const { buildStart } = await vite.ssrLoadModule('/src/core/facts/start.ts');
+  const { updateLedger, freshYears } = await vite.ssrLoadModule('/src/core/facts/fresh.ts');
   const { ringsFromTopology } = await vite.ssrLoadModule('/src/core/facts/neighbours.ts');
 
   const config = await readJson(path.join(root, 'config/facts.json'));
@@ -45,10 +46,18 @@ try {
   // Sąsiedztwo liczy robot (wspólne łuki granic), strona dostaje gotowe pierścienie w plikach faktów.
   const topology = await readJson(path.join(root, 'public/geo/admin.topo.json'));
   const neighbours = ringsFromTopology(topology, config.neighbours?.min ?? 4);
-  const build = buildFacts({ indicators, values, units, config, neighbours });
-  const shards = buildShards(build, generatedAt);
+  // Księga świeżości (W27-D02): nowy rok wskaźnika = świeże dane przez config.fresh.days. Brak pliku = pierwsze uruchomienie.
   const outDir = path.join(dataDir, 'facts');
   await mkdir(outDir, { recursive: true });
+  const ledgerPath = path.join(outDir, 'fresh.json');
+  const prevLedger = await readJson(ledgerPath).catch(() => null);
+  const freshDays = config.fresh?.days ?? 0;
+  const ledger = updateLedger(prevLedger, values, generatedAt, freshDays);
+  await writeFile(ledgerPath, `${JSON.stringify(ledger, null, 1)}\n`, 'utf8');
+  const fresh = freshYears(ledger, generatedAt, freshDays);
+  console.log(`facts/fresh.json: ${Object.keys(fresh).length} świeżych wskaźników z ${Object.keys(ledger).length}`);
+  const build = buildFacts({ indicators, values, units, config, neighbours, fresh });
+  const shards = buildShards(build, generatedAt);
   for (const [woj, shard] of Object.entries(shards)) {
     const json = JSON.stringify(shard);
     await writeFile(path.join(outDir, `${woj}.json`), json, 'utf8');
