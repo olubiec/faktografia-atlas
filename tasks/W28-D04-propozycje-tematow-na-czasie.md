@@ -23,7 +23,7 @@ Zadanie:
    - w `library-priority.mjs` dodaj premię `trendBonus` (w `config/library-priority.json`, start: 15 pkt) dla zmiennych pasujących do rosnącego tematu, na wzór `calendarBonus`;
    - lista rosnących tematów może trafić do konfiguracji tak samo jak `calendarStems`. Jeśli wymaga to zmiany workflowu biblioteki, napisz w PR i zatrzymaj się na tej części; punkty 1–2 zostają;
    - premia nie może przekroczyć udziału działu `maxSectionShareInRun` (test).
-4. W `docs/KONCEPT-ODKRYCIA.md` dopisz krótki opis: robot proponuje, człowiek decyduje, filtr „nie niszowe”.
+4. W `docs/KONCEPT-ODKRYCIA.md` dopisz w §7: (a) „Sygnał z Wikipedii (W27-D03)” – na podstawie komentarza w `src/core/facts/wiki-trend.ts`; (b) propozycje: robot proponuje, człowiek decyduje, filtr „nie niszowe”.
 
 Gotowe, gdy:
 - Test na `tests/fixtures/library/available-sample.json` (wycinek prawdziwego spisu, ok. 30 zmiennych, w tym warianty płci, liczby bezwzględne, serie przerwane przed 2022 i zmienne bez gmin):

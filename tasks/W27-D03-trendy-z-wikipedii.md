@@ -1,6 +1,6 @@
 # D03 – Sygnał „o czym się teraz mówi” z odsłon Wikipedii (działa bez Search Console)
 Cel: co tydzień robot sprawdza, które tematy (grupy wskaźników) zyskują zainteresowanie w Polsce. Mnożnik `trendBoost` przesuwa w górę fakty z tych tematów, nawet gdy sekrety Search Console nie są ustawione. Nic nie publikuje się bez scalenia przez właściciela.
-Zmieniaj: src/core/facts/wiki-trend.ts, scripts/seo/wiki-topics.mjs, config/topic-wiki.json, .github/workflows/gsc-trend-boost.yml, docs/ELEMENTY.md, docs/KONCEPT-ODKRYCIA.md, tests/fixtures/wiki/*, tests/unit/w27-d03-wiki-trend.test.ts
+Zmieniaj: src/core/facts/wiki-trend.ts, scripts/seo/wiki-topics.mjs, config/topic-wiki.json, .github/workflows/gsc-trend-boost.yml, docs/ELEMENTY.md, tests/fixtures/wiki/*, tests/unit/w27-d03-wiki-trend.test.ts
 Wymagane: tests/unit/w27-d03-wiki-trend.test.ts
 Weryfikacja: pnpm lint && pnpm typecheck && pnpm test && pnpm build
 Przeczytaj najpierw: docs/KONCEPT-ODKRYCIA.md §7a–§7b, src/core/facts/trend-boost.ts, scripts/seo/gsc-topics.mjs, .github/workflows/gsc-trend-boost.yml, config/topic-keywords.json, config/facts.json (trendBoost, calendarPeaks)
@@ -45,7 +45,7 @@ Zadanie:
 5. Fikstury:
    - nagraj prawdziwe odpowiedzi API (po jednej na 2–3 artykuły) do `tests/fixtures/wiki/`;
    - jeśli sieć sesji blokuje `wikimedia.org`, napisz w PR, że potrzebna jest zgoda na ten host, i zatrzymaj się. Zmyślonych odpowiedzi nie robisz.
-6. W `docs/KONCEPT-ODKRYCIA.md` dopisz w §7 akapit „Sygnał z Wikipedii (W27-D03)”: źródło, progi, łączenie z GSC i granice. Mnożnik zmienia tylko kolejność prawdziwych faktów, nie tworzy nowych.
+6. Opis mechanizmu (źródło, progi, łączenie z GSC, granice: mnożnik zmienia tylko kolejność prawdziwych faktów) daj w komentarzu nagłówkowym `wiki-trend.ts` i w opisie PR – do `docs/KONCEPT-ODKRYCIA.md` przeniesie go W28-D04 (w W27 ten plik zmienia D02).
 
 Gotowe, gdy:
 - Test na fiksturach: wzrost +40% przy ≥ 2000 odsłon daje mnożnik 1,4. Wzrost przy 500 odsłonach i wzrost 20% dają 1 (brak wpisu).
