@@ -1,6 +1,6 @@
 # D01 – Pięć do siedmiu nowych wskaźników głównych (urodzenia, zgony, seniorzy na 100 dzieci, apteki, drogi rowerowe)
 Cel: nowe, szeroko interesujące tematy (kryzys urodzeń, starzenie się, dostęp do aptek, rowery) są na mapie, w profilu miejsca i w silniku faktów jak 20 dotychczasowych wskaźników, z liczbami pobranymi przez robota.
-Zmieniaj: config/indicators.json, public/data/explanations.json, public/data/values/*, public/data/profiles/*, public/data/parts/*, public/data/facts/*, public/data/facts-start.json, public/data/start.json, tests/unit/s04-json-ld.test.tsx, tests/unit/explanations-data.test.ts, tests/unit/indicator-registry.test.ts, tests/unit/w27-d01-new-indicators.test.ts
+Zmieniaj: config/indicators.json, public/data/explanations.json, public/data/values/*, public/data/profiles/*, public/data/parts/*, public/data/facts/*, public/data/facts-start.json, public/data/start.json, tests/unit/s04-json-ld.test.tsx, tests/unit/explanations-data.test.ts, tests/unit/indicator-registry.test.ts, src/core/indicators/registry.ts, tests/unit/w27-d01-new-indicators.test.ts
 Wymagane: tests/unit/w27-d01-new-indicators.test.ts
 Weryfikacja: pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e
 Przeczytaj najpierw: docs/PRODUKT.md §1 i §7, docs/ARCHITEKTURA.md (dane), .github/workflows/fetch-data.yml, config/library-curation.json, src/core/indicators/registry.ts, tests/unit/data-contract.test.ts
@@ -34,7 +34,7 @@ Zadanie:
    - po przebiegu zrób `git pull` (merge) gałęzi i dopiero wtedy testy.
 
    Sesja nie wpisuje ani nie liczy żadnych wartości ręcznie. Pliki `public/data/*` (poza `explanations.json`) zmienia wyłącznie robot; sesja ich nie edytuje.
-4. Wybór danych nie może pokazać dwa razy tej samej zmiennej, na przykład `births-per-1000` z wskaźników głównych i `b450540` z biblioteki. Jeśli rejestr (`src/core/indicators/registry.ts`) tego nie odfiltrowuje, napisz w PR i zatrzymaj się (to plik spoza zakresu).
+4. Wybór danych nie może pokazać dwa razy tej samej zmiennej, na przykład `births-per-1000` z wskaźników głównych i `b450540` z biblioteki. Jeśli rejestr (`src/core/indicators/registry.ts`) tego nie odfiltrowuje, popraw go: w `buildRegistry` pomijaj wpisy biblioteki, których `bdlVarId` jest już wśród głównych (plik jest w zakresie; w `indicator-registry.test.ts` wolno tylko zmienić liczbę 20 i dodać test dubli).
 5. Istniejące testy z liczbą „20” (`s04-json-ld`, `explanations-data`, `indicator-registry`): **wolno zmienić wyłącznie liczbę** na nową liczbę wskaźników oraz liczbę w nazwie testu. Żadnej asercji nie usuwasz. `tests/unit/discover.test.ts` i `scripts/data/discover.mjs` zostają bez zmian.
 
 Gotowe, gdy:

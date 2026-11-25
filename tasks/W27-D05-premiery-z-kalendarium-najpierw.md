@@ -1,6 +1,6 @@
 # D05 – Premiera w kalendarium GUS = pobranie w pierwszej kolejności (tego samego dnia) i wpis do księgi kalendarium
 Cel: gdy GUS opublikuje temat, który mamy we wskaźnikach głównych albo w bibliotece, robot pobiera go przed wszystkim innym, w ciągu kilku godzin. Każda premiera trafia do księgi kalendarium ze stanem: zaplanowana → pobrana / odrzucona (z powodem). Księga jest podstawą etykiety „Nowość” (W28-D06), tablicy kalendarium (W28-D07) i materiałów (W29-D08).
-Zmieniaj: scripts/data/gus-calendar.mjs, scripts/data/library-plan.mjs, scripts/data/library.mjs, scripts/data/premieres.mjs, config/library-priority.json, .github/workflows/fetch-data.yml, .github/workflows/fetch-library.yml, tests/fixtures/gus-calendar/*, tests/unit/w27-d05-premieres.test.ts
+Zmieniaj: scripts/data/gus-calendar.mjs, scripts/data/library-plan.mjs, scripts/data/library.mjs, scripts/data/premieres.mjs, config/library-priority.json, .github/workflows/fetch-data.yml, .github/workflows/fetch-library.yml, .github/workflows/fetch-premieres.yml, tests/fixtures/gus-calendar/*, tests/unit/w27-d05-premieres.test.ts
 Wymagane: tests/unit/w27-d05-premieres.test.ts
 Weryfikacja: pnpm lint && pnpm typecheck && pnpm test && pnpm build
 Przeczytaj najpierw: scripts/data/gus-calendar.mjs, scripts/data/library-plan.mjs (`refreshCandidates`, `calendarMax`), scripts/data/library.mjs (l. 200–240), scripts/data/probe-new-year.mjs, .github/workflows/fetch-data.yml, .github/workflows/fetch-library.yml, config/library-curation.json, tasks/W27-D01-nowe-wskazniki-glowne.md (zasada „nie niszowe”)
@@ -49,3 +49,5 @@ Gotowe, gdy:
 
 Nie ruszaj: `scripts/data/library-priority.mjs` (zmienia go W28-D04), `config/indicators.json`, `src/*`.
 Tytuł PR zaczyna się od `[W27-D05]`; opis ma „Po ludzku” (w tym: o której godzinie robot teraz sprawdza premiery).
+
+Uzupełnienie (25.11): przebiegi premierowe z pkt 4 (ok. 10:40 i 11:10 UTC) mogą być osobnym nowym workflow `.github/workflows/fetch-premieres.yml` z własnym cronem i własnym, małym budżetem, żeby nie zmieniać limitów `fetch-data` / `fetch-library` ani istniejących testów (`b01`, `b04`). Istniejących testów nie zmieniasz.

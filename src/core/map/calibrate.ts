@@ -1,6 +1,7 @@
 // Kalibracja progów legendy: czytelne zaokrąglenie, które nie psuje podziału,
 // oraz osobne klasy po obu stronach zera dla wskaźników, które bywają ujemne.
 // Czysta logika, bez zależności od reszty map/classes (unikamy cyklu importów).
+import { jenksBreaks, TAIL_MIN_SHARE, TAIL_SPAN } from './tail';
 
 /** Maks. odsetek jednostek, które mogą zmienić klasę przez zaokrąglenie progów. */
 export const MAX_SHIFT_SHARE = 0.2;
@@ -87,7 +88,14 @@ function sideBreak(side: number[]): number[] {
   if (sorted[0] === sorted[sorted.length - 1]) return [];
   // Jak w kwantylach: wartości równe minimum (np. zera) nie powinny same tworzyć klasy.
   const m = median(sorted);
-  const raw = m > sorted[0] ? m : sorted.find((v) => v > sorted[0])!;
+  let raw = m > sorted[0] ? m : sorted.find((v) => v > sorted[0])!;
+  // Ogon po tej stronie zera (kilka skrajnych wartości): próg w naturalnej przerwie zamiast mediany.
+  const range = sorted[sorted.length - 1] - sorted[0];
+  const stretched = (sorted[sorted.length - 1] - raw) / range > TAIL_SPAN || (raw - sorted[0]) / range > TAIL_SPAN;
+  if (stretched) {
+    const natural = jenksBreaks(sorted, 2, Math.max(1, Math.floor(sorted.length * TAIL_MIN_SHARE)));
+    if (natural.length === 1 && natural[0] > sorted[0]) raw = natural[0];
+  }
   return calibrateBreaks([raw], sorted);
 }
 
