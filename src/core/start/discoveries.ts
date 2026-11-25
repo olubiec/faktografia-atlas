@@ -140,7 +140,7 @@ export interface ListView {
   key: string;
   title: string;
   subtitle: string;
-  rows: { teryt: string; name: string; value: string }[];
+  rows: { teryt: string; name: string; value: string; href: string }[];
   href: string;
 }
 
@@ -157,6 +157,8 @@ export function listView(list: StartList): ListView | null {
       teryt,
       name,
       value: formatValue(value, ind.unit).replace(/^-/, '−'),
+      // Wiersz prowadzi do mapy z tą jednostką zaznaczoną (otwiera się jej profil), z tym samym wskaźnikiem i rokiem.
+      href: mapHref({ indicatorId: list.indicatorId, year: list.year, teryt, level: list.level }),
     })),
     href: listHref(list),
   };

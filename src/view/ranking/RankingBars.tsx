@@ -156,7 +156,7 @@ export function RankingBars({
               <button
                 type="button"
                 onClick={() => onSelect(item.teryt)}
-                className="flex items-center gap-2 w-full py-2 min-h-[44px] text-left transition-colors cursor-pointer border-0 rounded-none bg-transparent hover:bg-linia/15 focus:outline-none focus:ring-1 focus:ring-tusz px-1"
+                className="flex items-center gap-4 w-full py-2 min-h-[44px] text-left transition-colors cursor-pointer border-0 rounded-none bg-transparent hover:bg-linia/15 focus:outline-none focus:ring-1 focus:ring-tusz px-1"
               >
                 {rowContent}
               </button>
@@ -168,7 +168,7 @@ export function RankingBars({
             <li
               key={item.teryt}
               aria-label={ariaLabel}
-              className="flex items-center gap-2 w-full py-2 min-h-[44px] text-left px-1"
+              className="flex items-center gap-4 w-full py-2 min-h-[44px] text-left px-1"
             >
               {rowContent}
             </li>
