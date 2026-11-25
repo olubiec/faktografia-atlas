@@ -70,3 +70,25 @@ export function buildLegend({
 
   return items;
 }
+
+/**
+ * Opis pod legendą. Przy równolicznych klasach: „pięć grup o podobnej liczbie jednostek”.
+ * Gdy ogon rozkładu rozciągnął progi (tail.ts), klasy nie są równoliczne – mówimy to wprost
+ * i podajemy, ile jednostek ma najwyższa grupa.
+ */
+export function legendCaption(
+  scheme: ClassificationScheme,
+  classByTeryt: Record<string, number | 'no-data'>,
+  classCount: number
+): string {
+  if (scheme === 'diverging') return 'Kolory pokazują, czy wartość jest poniżej, czy powyżej zera.';
+  const counts = new Array<number>(classCount).fill(0);
+  for (const c of Object.values(classByTeryt)) if (typeof c === 'number' && c < classCount) counts[c]++;
+  const total = counts.reduce((s, c) => s + c, 0);
+  const top = counts[classCount - 1];
+  const equalShare = 1 / classCount;
+  if (total === 0 || classCount < 2 || top >= total * equalShare * 0.6) {
+    return 'Pięć grup o podobnej liczbie jednostek.';
+  }
+  return `Grupy nie są równoliczne: kilka wartości mocno odstaje, więc najwyższa grupa to tylko ${top} z ${total} jednostek.`;
+}
