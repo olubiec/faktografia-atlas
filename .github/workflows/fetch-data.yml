@@ -22,7 +22,6 @@ on:
         default: 'false'
   schedule:
     - cron: '10 1 * * *' # ok. 03:10 czasu polskiego latem, 02:10 zimą
-    - cron: '40 10 * * *' # (W27-D05) przebieg premierowy: GUS publikuje ok. 10:00 czasu polskiego; sonda tylko dla wskaźników z dzisiejszych publikacji
   push:
     branches: [main]
     paths:
@@ -45,8 +44,7 @@ jobs:
     timeout-minutes: 170
     env:
       GH_TOKEN: ${{ github.token }}
-      # przebieg premierowy ma własną gałąź, żeby nie nadpisać nocnego PR (noc zaczyna gałąź od main)
-      BRANCH: ${{ github.event.inputs.branch || (github.event.schedule == '40 10 * * *' && 'data/premiere') || 'data/nightly' }}
+      BRANCH: ${{ github.event.inputs.branch || 'data/nightly' }}
       ONLY: ${{ github.event.inputs.only }}
       # ręcznie: wg pola; noc i zmiana skryptu: zawsze od nowa
       REFRESH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.refresh || 'true' }}
@@ -104,12 +102,6 @@ jobs:
         env:
           BDL_CLIENT_ID: ${{ secrets.BDL_CLIENT_ID }}
         run: |
-          if [ "${{ github.event.schedule }}" = "40 10 * * *" ]; then
-            # Premiery: bez dopasowań ani jednego zapytania do BDL; z dopasowaniami sonda tylko tych wskaźników.
-            LIST="$(node scripts/data/premieres.mjs main | tail -n 1)"
-            echo "Wskaźniki z premiery i nowym rokiem: ${LIST:-brak}"
-            echo "only=${LIST:-NONE}" >> "$GITHUB_OUTPUT"; exit 0
-          fi
           if [ "$(date -u +%u)" = "7" ]; then echo "Niedziela: pełne odświeżenie."; echo "only=ALL" >> "$GITHUB_OUTPUT"; exit 0; fi
           LIST="$(node scripts/data/probe-new-year.mjs | tail -n 1)"
           echo "Wskaźniki z nowym rokiem: ${LIST:-brak}"

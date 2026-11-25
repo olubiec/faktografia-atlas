@@ -168,25 +168,19 @@ describe('W27-D05 księga kalendarium', () => {
 
 describe('W27-D05 limity BDL i workflowy', () => {
   const wf = (f: string) => readFileSync(`.github/workflows/${f}`, 'utf8');
+  // Premiery korzystają z dotychczasowych przebiegów (04:40 i 16:40) i budżetu 3000 – plan się nie zmienia.
   const plan2 = [
-    { name: 'biblioteka rano', startMinute: 4 * 60 + 40, requests: 2850 },
-    { name: 'premiery biblioteki', startMinute: 11 * 60 + 10, requests: 200 },
-    { name: 'biblioteka wieczorem', startMinute: 16 * 60 + 40, requests: 2850 },
+    { name: 'biblioteka rano', startMinute: 4 * 60 + 40, requests: 3000 },
+    { name: 'biblioteka wieczorem', startMinute: 16 * 60 + 40, requests: 3000 },
     { name: 'fetch-data', startMinute: 70, requests: 750 },
-    { name: 'premiery wskaźników', startMinute: 10 * 60 + 40, requests: 100 },
   ];
-  it('plan z nowymi przebiegami mieści się w limitach BDL', () => {
-    const res = prio.checkWindows(plan2);
-    expect(res.ok).toBe(true);
+  it('plan mieści się w limitach BDL', () => {
+    expect(prio.checkWindows(plan2).ok).toBe(true);
   });
-  it('workflowy mają przebiegi premierowe zgodne z planem', () => {
-    expect(wf('fetch-data.yml')).toContain("cron: '40 10 * * *'");
-    expect(wf('fetch-data.yml')).toContain('premieres.mjs main');
+  it('harmonogram i budżet workflowów bez zmian (premiery w tej samej kolejce)', () => {
+    expect(wf('fetch-data.yml').match(/cron:/g)).toHaveLength(1);
     const lib = wf('fetch-library.yml');
-    expect(lib).toContain("cron: '10 11 * * *'");
-    expect(lib).toContain("cron: '40 4,16 * * *'");
-    expect(lib).toContain("'200'");
-    expect(lib).toContain("'2850'");
-    expect(lib).toContain('LIBRARY_PREMIERES_ONLY');
+    expect(lib.match(/- cron:/g)).toHaveLength(1);
+    expect(lib).toContain("LIBRARY_BUDGET: ${{ github.event.inputs.budget || '3000' }}");
   });
 });

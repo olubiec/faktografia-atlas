@@ -3,10 +3,10 @@ name: Fetch library
 # Robot „Biblioteka GUS”: co 12 godzin pobiera kolejną porcję całego BDL (katalog działów i zmiennych, potem wartości
 # na poziomie powiatów i gmin) i zapisuje ją na gałęzi `data/library` (NIGDY na main).
 # Limity API: z kluczem 10/s, 500 / 15 min, 5000 / 12 h, 50 000 / 7 dni. Budżet jednego przebiegu = 3000 zapytań
-# (2 przebiegi dziennie po 2850 + przebieg premier 11:10 po 200 (W27-D05); nocny „Fetch data” tylko sonda nowego roku, ok. 20 zapytań, a pełne pobranie raz w tygodniu;
+# (2 przebiegi dziennie = 6000; nocny „Fetch data” tylko sonda nowego roku, ok. 20 zapytań, a pełne pobranie raz w tygodniu;
 # razem poniżej limitu 7 dni, patrz checkWindows w scripts/data/library-priority.mjs). Robot sam zmniejsza budżet,
 # gdy poprzedni przebieg był mniej niż 12 h temu (state.runLog, library-plan.mjs). Tempo 1 zapytanie / 2 s: 3000 zapytań to ok. 100 min.
-# Premiery GUS (W27-D05): zmienne z publikacji z dziś i wczoraj idą na początek kolejki, a przebieg 11:10 UTC robi tylko je.
+# Premiery GUS (W27-D05): zmienne z publikacji z dziś i wczoraj idą na początek kolejki (w tym samym budżecie).
 # Księga kalendarium library/calendar.json powstaje obok status.json na tej samej gałęzi.
 # Kolejność pobierania: config/library-priority.json (najpierw wskaźniki podstawowe i popularne).
 # Grupa `fetch-data` jest wspólna z nocnym pobieraniem: oba roboty nigdy nie biją w API jednocześnie.
@@ -20,7 +20,6 @@ on:
         default: '3000'
   schedule:
     - cron: '40 4,16 * * *'
-    - cron: '10 11 * * *' # (W27-D05) przebieg „tylko premiery”: po publikacjach GUS (ok. 10:00 czasu polskiego), mały budżet
 
 permissions:
   contents: write
@@ -36,9 +35,7 @@ jobs:
     timeout-minutes: 170
     env:
       BRANCH: data/library
-      # Budżety: 2 × 2850 + 200 (premiery) + ok. 100 (premiery wskaźników głównych) + nocny ok. 750 = 6750/dobę, jak dawniej 2 × 3000 + 750.
-      LIBRARY_BUDGET: ${{ github.event.inputs.budget || (github.event.schedule == '10 11 * * *' && '200') || '2850' }}
-      LIBRARY_PREMIERES_ONLY: ${{ github.event.schedule == '10 11 * * *' && '1' || '0' }}
+      LIBRARY_BUDGET: ${{ github.event.inputs.budget || '3000' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -107,7 +104,7 @@ jobs:
           node scripts/data/status.mjs --values public/data/values --library lib-wt/library --out lib-wt/library/status.json
 
       - name: Kontrola spójności danych (raport, nie blokuje)
-        if: always() && env.LIBRARY_PREMIERES_ONLY != '1'
+        if: always()
         continue-on-error: true
         timeout-minutes: 20
         env:

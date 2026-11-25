@@ -28,8 +28,8 @@ const stats = { requests: 0 };
 const bySection = {};
 const configFile = fileURLToPath(new URL('../../config/library-priority.json', import.meta.url));
 const indicatorsFile = fileURLToPath(new URL('../../config/indicators.json', import.meta.url));
-// Przebieg „tylko premiery” (ok. 11:10 UTC): sprawdza i pobiera wyłącznie zmienne z dzisiejszych publikacji GUS.
-const premiereOnly = process.env.LIBRARY_PREMIERES_ONLY === '1';
+// Tryb „tylko premiery” (uruchamiany ręcznie): sprawdza i pobiera wyłącznie zmienne z dzisiejszych publikacji GUS.
+const premiereOnly = process.env.LIBRARY_PREMIERES_ONLY === '1'; // ręcznie: tylko premiery
 const today = () => new Date().toISOString().slice(0, 10);
 let premieres = [];
 
