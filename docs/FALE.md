@@ -39,3 +39,9 @@ Etap B (W23) zmniejszony: scalone B01–B07; w `tasks/` zostają tylko **W23-B13
 
 ## Etap C (21.11.2026)
 Nowe polecenia właściciela (okno „Wybierz dane”, wejście do mapy, spójność ekranów, bez „Moich wskaźników” i Biblioteki w innych miejscach) rozpisane w `docs/PLAN-FALE-C.md`: zadania `tasks/W24-C01…C09` + `W23-B13` i `W23-B14` (dostosowane). Cztery fale; nic nie startuje samo.
+
+## Fala W27–W28: nowe dane i świeżość Odkryć (25.11.2026)
+Polecenie właściciela: pobrać nowe, nieniszowe dane i pokazać je na mapach; świeże i skrajne dane najpierw w „Odkryciach”; automat dopasowujący tematy do trendów.
+- **W27** (równolegle, rozłączne pliki): `D01` nowe wskaźniki główne (urodzenia, zgony, seniorzy na 100 dzieci, apteki, drogi rowerowe; warunkowo małżeństwa i żłobki; ID sprawdzone w spisie robota biblioteki), `D02` świeże dane i skrajności najpierw w Odkryciu dnia, zestawieniach i „3 rzeczach”, `D03` sygnał trendów z odsłon Wikipedii (działa bez sekretów Search Console).
+- **W28** (po scaleniu D03): `D04` robot proponuje do 5 zmiennych biblioteki pasujących do tematów na czasie (filtr „nie niszowe”) i pobiera je wcześniej; o wskaźnikach głównych decyduje właściciel.
+- D01 wymaga przebiegu „Fetch data” na gałęzi zadania (sesja uruchamia albo prosi właściciela). Po D01 trzeba odświeżyć zrzuty („Update snapshots”).
