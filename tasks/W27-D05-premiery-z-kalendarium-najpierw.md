@@ -13,6 +13,7 @@ Stan dziś:
 Zadanie:
 1. **Przyszłe premiery.**
    - `loadCalendar` dostaje opcję `ahead` (domyślnie 14 dni naprzód). Sprawdź na prawdziwej podstronie dnia z przyszłości, czy GUS ją publikuje (harmonogram), i nagraj ją do `tests/fixtures/gus-calendar/`.
+     Wiadomo od właściciela (zrzuty stat.gov.pl z 25.11.2026): kalendarium pokazuje przyszłe dni z liczbą publikacji (np. 30.11 – 49) i listą po kliknięciu dnia, więc przyszłe podstrony istnieją. Ustal tylko dokładny adres i nagraj.
    - Jeśli przyszłych podstron nie ma albo są puste, zostaw `ahead = 0`, opisz to w PR i rób resztę.
    - Jeśli sieć sesji blokuje `stat.gov.pl`, użyj fikstur już nagranych w repo albo napisz w PR i zatrzymaj się na tej części.
 2. **Dopasowanie** (`scripts/data/premieres.mjs`, czyste funkcje).
