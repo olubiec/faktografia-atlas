@@ -8,7 +8,7 @@ import type { RankedResult } from '@/core/ranking/ranking';
 import { topBottom } from '@/core/ranking/ranking';
 import type { UnitIndex } from '@/core/units/types';
 import { isCityCounty, listName } from '@/core/units/label';
-import { buildLegend, LEGEND_DIRECTION_LABEL } from '@/core/legend/legend';
+import { buildLegend, legendCaption, LEGEND_DIRECTION_LABEL } from '@/core/legend/legend';
 import { LEVEL_LABELS } from '@/core/map/main-view';
 import { displayUnit } from '@/core/format/number';
 import { UNIT_COUNTS } from '@/core/units/counts';
@@ -120,9 +120,7 @@ export function IndicatorPanel({
           </div>
           <Legend items={legend} className="border-0 p-0 max-w-none" />
           <p className="text-xs text-olowek">
-            {choropleth.scheme === 'diverging'
-              ? 'Kolory pokazują, czy wartość jest poniżej, czy powyżej zera.'
-              : 'Pięć grup o podobnej liczbie jednostek.'}
+            {legendCaption(choropleth.scheme, choropleth.classByTeryt, choropleth.breaks.length + 1)}
           </p>
         </div>
       )}
