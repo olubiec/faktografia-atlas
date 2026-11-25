@@ -101,9 +101,9 @@ export function MobileIndicatorBar({
   const swatchTokens = useMemo(
     () => {
       const n = Math.max(1, choropleth?.classes ?? 5);
-      return Array.from({ length: n }, (_, i) => classColorToken(i, n, scheme));
+      return Array.from({ length: n }, (_, i) => classColorToken(i, n, scheme, choropleth?.breaks));
     },
-    [scheme, choropleth?.classes]
+    [scheme, choropleth?.classes, choropleth?.breaks]
   );
 
   const shareData = useShareData({ view, choropleth, ranking, index, selectedTeryt });

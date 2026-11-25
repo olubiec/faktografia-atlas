@@ -1,4 +1,5 @@
 import { classColorToken, type ClassificationScheme } from '../map/classes';
+import { isZeroClass, ZERO_EDGE } from '../map/calibrate';
 import { formatValue } from '../format/number';
 
 export const LEGEND_DIRECTION_LABEL = 'mniej → więcej';
@@ -33,21 +34,25 @@ export function buildLegend({
     const numClasses = breaks.length + 1;
 
     for (let i = 0; i < numClasses; i++) {
-      const token = classColorToken(i, numClasses, scheme);
+      const token = classColorToken(i, numClasses, scheme, breaks);
 
-      if (i === 0) {
+      if (isZeroClass(i, breaks)) {
+        // Klasa „dokładnie 0” (wskaźniki z wartościami ujemnymi i dodatnimi).
+        items.push({ token, from: 0, to: 0, label: formatValue(0, unit) });
+      } else if (i === 0) {
         // Pierwsza klasa: poniżej x
         const to = breaks[0];
         const label = `poniżej ${formatValue(to, unit)}`;
         items.push({ token, from: null, to, label });
       } else if (i === numClasses - 1) {
         // Ostatnia klasa: powyżej y
-        const from = breaks[breaks.length - 1];
+        const last = breaks[breaks.length - 1];
+        const from = last === ZERO_EDGE ? 0 : last;
         const label = `powyżej ${formatValue(from, unit)}`;
         items.push({ token, from, to: null, label });
       } else {
         // Pośrednie klasy: od x do y
-        const from = breaks[i - 1];
+        const from = breaks[i - 1] === ZERO_EDGE ? 0 : breaks[i - 1];
         const to = breaks[i];
         const label = `od ${formatValue(from, unit)} do ${formatValue(to, unit)}`;
         items.push({ token, from, to, label });

@@ -1,6 +1,6 @@
 // Dane tła strony startowej: wartości czterech wskaźników (public/data/start.json) i ich klasy kolorów.
 // Bez Reacta; sieć jest podawana z zewnątrz, żeby test mógł ją podmienić.
-import { classColorToken, classify, computeBreaks } from '@/core/map/classes';
+import { classColorToken, classify, legendBreaks } from '@/core/map/classes';
 
 export const START_URL = '/data/start.json';
 export const CLASS_COUNT = 5;
@@ -50,9 +50,9 @@ export function indicatorLabel(ind: StartIndicator): string {
   return SHORT_LABELS[ind.id] ?? ind.name;
 }
 
-/** 16 pól, każde w jednej z 5 klas (kwantyle), kolor jako `var(--seq-n)`. */
+/** 16 pól, każde w jednej z 5 klas (te same skalibrowane progi co legenda mapy), kolor jako `var(--seq-n)`. */
 export function startFields(ind: StartIndicator): StartField[] {
-  const breaks = computeBreaks(Object.values(ind.values), 'quantile', CLASS_COUNT);
+  const breaks = legendBreaks(Object.values(ind.values), CLASS_COUNT);
   return Object.entries(ind.values).map(([teryt, value]) => {
     const cls = classify(value, breaks) as number;
     return {
@@ -60,7 +60,7 @@ export function startFields(ind: StartIndicator): StartField[] {
       name: WOJ_NAMES[teryt] ?? teryt,
       value,
       cls,
-      color: `var(${classColorToken(cls, breaks.length + 1, 'sequential')})`,
+      color: `var(${classColorToken(cls, breaks.length + 1, 'sequential', breaks)})`,
     };
   });
 }

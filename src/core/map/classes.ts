@@ -1,3 +1,7 @@
+import { calibrateBreaks, cleanBreaks, divergingBreaks, divergingToken } from './calibrate';
+
+export { cleanBreaks } from './calibrate';
+
 export type ClassificationMethod = 'quantile' | 'equal';
 export type ClassificationScheme = 'sequential' | 'diverging';
 export type ClassifyResult = number | 'no-data';
@@ -5,6 +9,8 @@ export type ClassifyResult = number | 'no-data';
 /**
  * Oblicza n - 1 progów podziału dla podanych wartości wskaźnika.
  * Wartości null oraz NaN są pomijane.
+ * `nice` = progi do legendy: skalibrowane zaokrąglenie, a gdy są wartości ujemne
+ * i dodatnie (kwantyle) – zero jako granica klas (patrz calibrate.ts).
  */
 export function computeBreaks(
   values: (number | null | undefined)[],
@@ -12,28 +18,27 @@ export function computeBreaks(
   n: number,
   options: { nice?: boolean } = {}
 ): number[] {
+  if (options.nice && method === 'quantile' && n > 1) {
+    const valid = values.filter((v): v is number => typeof v === 'number' && !Number.isNaN(v));
+    if (valid.some((v) => v < 0) && valid.some((v) => v > 0)) return divergingBreaks(valid);
+  }
   const raw = computeRawBreaks(values, method, n);
   return options.nice ? niceBreaks(raw, values) : raw;
 }
 
+/** Progi legendy dla mapy i kart: kwantyle, 5 klas, skalibrowane (jeden automat dla całej strony). */
+export function legendBreaks(values: (number | null | undefined)[], n = 5): number[] {
+  return computeBreaks(values, 'quantile', n, { nice: true });
+}
+
 /**
- * Zaokrągla progi do 2 cyfr znaczących (46 206,8 → 46 000), a gdy wszystkie wartości są
- * całkowite – do liczb całkowitych. Legenda czyta się wtedy jak ludzka, bez „od 3,7 do 12,2”
- * dla liczb sztuk. Powtórzone i nie większe od minimum progi są usuwane.
+ * Zaokrągla progi do czytelnej postaci (zwykle 2 cyfry znaczące: 46 206,8 → 46 000), a gdy
+ * wszystkie wartości są całkowite – do liczb całkowitych. Gdy takie zaokrąglenie zlałoby klasy
+ * lub przesunęło wiele jednostek (wąski rozrzut, np. 104–112), bierze kolejne cyfry.
  */
 export function niceBreaks(breaks: number[], values: (number | null | undefined)[]): number[] {
   const valid = values.filter((v): v is number => typeof v === 'number' && !Number.isNaN(v));
-  if (valid.length === 0 || breaks.length === 0) return breaks;
-  const min = Math.min(...valid);
-  const integers = valid.every((v) => Number.isInteger(v));
-  const rounded = breaks.map((b) => {
-    if (b === 0) return 0;
-    const digits = 1 - Math.floor(Math.log10(Math.abs(b)));
-    const factor = 10 ** digits;
-    const r = Math.round(b * factor) / factor;
-    return integers ? Math.round(r) : r;
-  });
-  return cleanBreaks(rounded, min);
+  return calibrateBreaks(breaks, valid);
 }
 
 function computeRawBreaks(
@@ -91,19 +96,6 @@ function computeRawBreaks(
 }
 
 /**
- * Usuwa powtórzone progi i progi nie większe od minimum danych (pusta klasa
- * „poniżej minimum”). Liczba klas = progi + 1, więc legenda nie ma pustych ani
- * zdublowanych przedziałów.
- */
-export function cleanBreaks(breaks: number[], min: number): number[] {
-  const out: number[] = [];
-  for (const b of breaks) {
-    if (b > min && (out.length === 0 || b > out[out.length - 1])) out.push(b);
-  }
-  return out;
-}
-
-/**
  * Przypisuje wartość do klasy o indeksie 0...n-1 na podstawie wyznaczonych progów,
  * lub zwraca 'no-data' dla brakujących wartości (null / NaN).
  */
@@ -125,15 +117,22 @@ export function classify(
 
 /**
  * Zwraca nazwę zmiennej CSS tokenu koloru (np. --seq-1, --div-3, --no-data)
- * dla podanego indeksu klasy i schematu kolorów.
+ * dla podanego indeksu klasy i schematu kolorów. Przy schemacie rozbieżnym podaj
+ * progi (`breaks`): klasy poniżej zera dostają ciepłe kolory, powyżej – chłodne.
  */
 export function classColorToken(
   index: ClassifyResult,
   n: number,
-  scheme: ClassificationScheme
+  scheme: ClassificationScheme,
+  breaks?: number[]
 ): string {
   if (index === 'no-data') {
     return '--no-data';
+  }
+  // Progi z zerem: kolor zależy od strony zera, nie od numeru klasy.
+  if (scheme === 'diverging' && breaks) {
+    const token = divergingToken(index, breaks);
+    if (token) return token;
   }
 
   const maxClasses = Math.min(Math.max(n, 1), 5);

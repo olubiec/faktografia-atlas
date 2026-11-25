@@ -1,6 +1,7 @@
 import tokens from '../../../config/tokens.json';
-import { classify, computeBreaks, type ClassificationMethod, type ClassificationScheme } from '../map/classes';
+import { classColorToken, classify, computeBreaks, type ClassificationMethod, type ClassificationScheme } from '../map/classes';
 import { formatValue } from '../format/number';
+import { isZeroClass, ZERO_EDGE } from '../map/calibrate';
 import { fitText, type MeasureFn } from './text-fit';
 import { type CardItem, getThemeColors } from './card';
 
@@ -44,9 +45,12 @@ export function histogramCounts(
 /** Etykieta przedziału klasy: „do b”, „a – b”, „od a”. */
 function rangeLabel(i: number, breaks: number[], fmt: (n: number) => string): string {
   if (breaks.length === 0) return i === 0 ? 'wszystkie' : '–';
+  if (isZeroClass(i, breaks)) return fmt(0);
+  const at = (k: number) => (breaks[k] === ZERO_EDGE ? 0 : breaks[k]);
   if (i === 0) return `do ${fmt(breaks[0])}`;
-  if (i >= breaks.length) return `od ${fmt(breaks[breaks.length - 1])}`;
-  return `${fmt(breaks[i - 1])} – ${fmt(breaks[i])}`;
+  if (i === breaks.length) return `od ${fmt(at(breaks.length - 1))}`;
+  if (i > breaks.length) return '–';
+  return `${fmt(at(i - 1))} – ${fmt(breaks[i])}`;
 }
 
 export function renderHistogramContent({
@@ -57,10 +61,16 @@ export function renderHistogramContent({
   const scheme = data.scheme ?? 'sequential';
   const palette = scheme === 'diverging' ? tokens.data.diverging : tokens.data.sequential;
   const theme = colors.kalka === tokens.color.dark.kalka ? 'dark' : 'light';
-  const barColors = [...palette[theme], colors.noDataColor];
 
   const source = data.breaks ? { breaks: data.breaks } : (data.method ?? 'quantile');
   const { counts, noData, breaks } = histogramCounts(data.values, source, scheme);
+  // Kolor słupka jak kolor klasy na mapie (przy progach z zerem: strona zera, nie numer klasy).
+  const classes = breaks.length + 1;
+  const classColor = (i: number) => {
+    const token = classColorToken(i, classes, scheme, breaks);
+    return palette[theme][Number(token.split('-').pop()) - 1] ?? colors.noDataColor;
+  };
+  const barColors = [...[0, 1, 2, 3, 4].map(classColor), colors.noDataColor];
   const all = [...counts, noData];
   const maxCount = Math.max(1, ...all);
 

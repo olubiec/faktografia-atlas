@@ -1,4 +1,4 @@
-import { computeBreaks } from '../map/classes';
+import { legendBreaks } from '../map/classes';
 import { formatValue } from '../format/number';
 
 export type Severity = 'error' | 'warning';
@@ -48,9 +48,11 @@ export function checkLevel({ unit, data }: CheckInput): Finding[] {
     out.push(f('EMPTY_LAST_YEAR', 'warning', `brak wartości w ostatnim roku (${years[last]})`));
     return out;
   }
-  const breaks = computeBreaks(lastValues, 'quantile', 5);
+  // Te same progi co legenda na stronie; przy wartościach po obu stronach zera pełna legenda ma 4 klasy.
+  const breaks = legendBreaks(lastValues);
+  const fullClasses = breaks.includes(0) && lastValues.some((v) => v < 0) ? 3 : 4;
   if (breaks.length === 0) out.push(f('LEGEND_ONE_CLASS', 'warning', 'wszystkie wartości równe: mapa w jednym kolorze'));
-  else if (breaks.length < 4) out.push(f('LEGEND_FEW_CLASSES', 'warning', `legenda ma tylko ${breaks.length + 1} klasy`));
+  else if (breaks.length < fullClasses) out.push(f('LEGEND_FEW_CLASSES', 'warning', `legenda ma tylko ${breaks.length + 1} klasy`));
 
   const nonZero = lastValues.filter((v) => v !== 0);
   const fakeZero = nonZero.filter((v) => /^-?0([,.]0+)?( |$)/.test(formatValue(v, unit))).length;

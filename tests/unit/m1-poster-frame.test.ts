@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { buildOutline } from '../../scripts/geo/start-outline.mjs';
 import { countryBounds } from '../../src/core/map/view';
 import { fitViewState, TOP_OVERLAY_PX } from '../../src/core/map/fit';
-import { classColorToken, classify, computeBreaks } from '../../src/core/map/classes';
+import { classColorToken, classify, legendBreaks } from '../../src/core/map/classes';
 import { posterRect } from '../../src/core/start/poster-frame';
 import { startFields, type StartFile } from '../../src/core/start/start-data';
 
@@ -59,9 +59,10 @@ describe('M1 kadr plakatu = kadr mapy', () => {
 describe('M1 kolory startu = klasy mapy', () => {
   it('każde województwo każdego z 4 wskaźników ma ten sam kolor co mapa', () => {
     for (const ind of start.indicators) {
-      const breaks = computeBreaks(Object.values(ind.values), 'quantile', 5);
+      // Mapa liczy progi legendy przez legendBreaks (kwantyle + kalibracja), więc start też.
+      const breaks = legendBreaks(Object.values(ind.values));
       const fromMap = new Map(
-        Object.entries(ind.values).map(([t, v]) => [t, `var(${classColorToken(classify(v, breaks), 5, 'sequential')})`]),
+        Object.entries(ind.values).map(([t, v]) => [t, `var(${classColorToken(classify(v, breaks), breaks.length + 1, 'sequential', breaks)})`]),
       );
       for (const f of startFields(ind)) expect(f.color).toBe(fromMap.get(f.teryt));
     }

@@ -155,7 +155,7 @@ function SingleMiniMap({
               const fillVar =
                 s.fill === 'noData'
                   ? 'var(--no-data)'
-                  : `var(${classColorToken(s.fill, 5, scheme)})`;
+                  : `var(${classColorToken(s.fill, (choropleth?.breaks.length ?? 4) + 1, scheme, choropleth?.breaks)})`;
 
               return (
                 <path

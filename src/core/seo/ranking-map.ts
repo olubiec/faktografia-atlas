@@ -1,10 +1,11 @@
 // Statyczna mapa rankingu (SVG) dla stron /ranking/… – obrazek widoczny dla Grafiki Google i do wklejenia
 // w prezentację. Kształty i projekcja jak w kartach udostępniania (share/map-shapes), klasy kwantylowe
-// jak na mapie (map/classes), kolory wyłącznie z config/tokens.json. Czyste funkcje, bez Reacta.
+// i kolory jak na mapie (map/classes: te same progi legendy, zero jako granica dla wartości ujemnych), kolory wyłącznie z config/tokens.json. Czyste funkcje, bez Reacta.
 import type { Feature } from 'geojson';
 import tokens from '../../../config/tokens.json';
 import { displayUnit, formatValue, getFractionDigits } from '../format/number';
-import { classify, computeBreaks } from '../map/classes';
+import { classColorToken, classify, legendBreaks } from '../map/classes';
+import { schemeFor } from '../map/choropleth';
 import { mapShapes } from '../share/map-shapes';
 import { escapeAttr as attr, escapeHtml as text } from './html';
 import { showValue } from './sentences';
@@ -36,7 +37,7 @@ export interface RankingMapInput {
 }
 
 const colors = tokens.color.light;
-const seq = tokens.data.sequential.light;
+const palettes = { sequential: tokens.data.sequential.light, diverging: tokens.data.diverging.light };
 const noData = tokens.data.noData.light;
 const font = tokens.font;
 
@@ -113,7 +114,7 @@ export function titleLines(title: string): string[] {
 }
 
 /** Legenda: dla każdej klasy najmniejsza i największa wartość jednostek, które do niej trafiły. */
-function legend(values: readonly MapValue[], breaks: number[], unit: string, anyNoData: boolean): string {
+function legend(values: readonly MapValue[], breaks: number[], fills: string[], unit: string, anyNoData: boolean): string {
   const ranges: { min: number; max: number }[] = [];
   for (const v of values) {
     const c = classify(v.value, breaks);
@@ -125,7 +126,7 @@ function legend(values: readonly MapValue[], breaks: number[], unit: string, any
   const y = LEGEND_Y + 20;
   const small = font.scale.xs;
   const unitLabel = unit.trim() ? `<text x="8" y="${LEGEND_Y + 10}">Wartość (${text(displayUnit(unit))})</text>` : '';
-  const items = seq.map((fill, i) => {
+  const items = fills.map((fill, i) => {
     const x = i * step + 8;
     const r = ranges[i];
     const label = r
@@ -143,7 +144,15 @@ function legend(values: readonly MapValue[], breaks: number[], unit: string, any
 /** Dokument SVG mapy rankingu. */
 export function rankingMapSvg(input: RankingMapInput): string {
   const byTeryt = new Map(input.values.map((v) => [v.teryt, v.value]));
-  const breaks = computeBreaks(input.values.map((v) => v.value), 'quantile', CLASSES);
+  const numbers = input.values.map((v) => v.value);
+  const breaks = legendBreaks(numbers, CLASSES);
+  const scheme = schemeFor(numbers);
+  const classes = breaks.length + 1;
+  // Kolor każdej klasy z tokenu (ten sam wybór co na mapie), legenda ma tyle pól, ile klas.
+  const fills = Array.from({ length: classes }, (_, i) => {
+    const token = classColorToken(i, classes, scheme, breaks);
+    return palettes[scheme][Number(token.split('-').pop()) - 1];
+  });
   const classOf = (teryt: string) => {
     const c = classify(byTeryt.get(teryt), breaks);
     return c === 'no-data' ? 'noData' : (Math.min(c, CLASSES - 1) as 0 | 1 | 2 | 3 | 4);
@@ -152,7 +161,7 @@ export function rankingMapSvg(input: RankingMapInput): string {
   const paths = shapes
     .map((s) => ({ ...s, d: compactPath(s.d) }))
     .filter((s) => s.d)
-    .map((s) => `<path d="${s.d}" fill="${s.fill === 'noData' ? noData : seq[s.fill]}"/>`)
+    .map((s) => `<path d="${s.d}" fill="${s.fill === 'noData' ? noData : fills[s.fill]}"/>`)
     .join('');
   const anyNoData = shapes.some((s) => s.fill === 'noData');
   return (
@@ -164,7 +173,7 @@ export function rankingMapSvg(input: RankingMapInput): string {
     titleLines(input.title).map((l, i) => `<text x="8" y="${24 + i * 24}">${text(l)}</text>`).join('') +
     '</g>' +
     `<g stroke="${colors.arkusz}" stroke-width="0.6" stroke-linejoin="round">${paths}</g>` +
-    `${legend(input.values, breaks, input.unit, anyNoData)}</svg>\n`
+    `${legend(input.values, breaks, fills, input.unit, anyNoData)}</svg>\n`
   );
 }
 
