@@ -29,7 +29,7 @@ type ValuesFile = { years: number[]; values: Record<string, (number | null)[]> }
 
 describe('W27-D01: nowe wskaźniki główne', () => {
   for (const n of NEW) {
-    describe(n.id, () => {
+    describe(`wskaźnik ${n.id}`, () => {
       it('ma wpis w config/indicators.json z podanym bdlVarId i poziomem gmi', () => {
         const ind = indicators.find((i) => i.id === n.id);
         expect(ind).toBeDefined();
