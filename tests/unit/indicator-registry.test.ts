@@ -16,10 +16,10 @@ const available = JSON.parse(
 ) as AvailableFile;
 
 describe('rejestr wskaźników (QC602)', () => {
-  it('20 głównych + 5 z biblioteki = 25, b101 istnieje', () => {
+  it('25 głównych + 5 z biblioteki = 30, b101 istnieje', () => {
     const r = buildRegistry(main, available);
-    expect(main).toHaveLength(20);
-    expect(r.all).toHaveLength(25);
+    expect(main).toHaveLength(25);
+    expect(r.all).toHaveLength(30);
     expect(r.library).toHaveLength(5);
     expect(r.byId.get('b101')).toBeDefined();
   });
@@ -41,16 +41,16 @@ describe('rejestr wskaźników (QC602)', () => {
     expect(i.unit).toBe('osoba');
   });
 
-  it('brak duplikatów id, najpierw 20 głównych, biblioteka po nazwie', () => {
+  it('brak duplikatów id, najpierw 25 głównych, biblioteka po nazwie', () => {
     const r = buildRegistry(main, available);
     expect(new Set(r.all.map((i) => i.id)).size).toBe(r.all.length);
-    expect(r.all.slice(0, 20).map((i) => i.id)).toEqual(main.map((i) => i.id));
+    expect(r.all.slice(0, 25).map((i) => i.id)).toEqual(main.map((i) => i.id));
     const names = r.library.map((i) => i.name);
     expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b, 'pl')));
   });
 
   it('available == null → tylko główne', () => {
-    expect(buildRegistry(main, null).all).toHaveLength(20);
+    expect(buildRegistry(main, null).all).toHaveLength(25);
   });
 
   it('uszkodzone wpisy pomijane, reszta zostaje', () => {
@@ -64,7 +64,7 @@ describe('rejestr wskaźników (QC602)', () => {
       ],
     };
     const r = buildRegistry(main, broken);
-    expect(r.all).toHaveLength(25);
+    expect(r.all).toHaveLength(30);
     expect(r.byId.has('b999')).toBe(false);
     expect(r.byId.has('b998')).toBe(false);
   });
@@ -82,6 +82,23 @@ describe('rejestr wskaźników (QC602)', () => {
     expect(r.library).toHaveLength(2);
     expect(r.byId.get('b555')?.description).toContain('(z biblioteki GUS)');
     expect(r.byId.get('b101')?.description).not.toContain('(z biblioteki GUS)');
+  });
+
+  it('zmienna biblioteki o bdlVarId wskaźnika głównego jest pomijana (brak dubli bdlVarId)', () => {
+    const dup: AvailableFile = {
+      ...available,
+      variables: [
+        ...available.variables,
+        { id: String(main[0].bdlVarId), n: 'Ludność ogółem', u: 'osoba', c: 'Ludność > X', lv: ['gmi'], y: [2024] },
+        { id: '450540', n: 'Urodzenia żywe na 1000 ludności', u: 'na 1000', c: 'Ludność > Y', lv: ['gmi'], y: [2024] },
+      ],
+    };
+    const r = buildRegistry(main, dup);
+    expect(r.byId.has(`b${main[0].bdlVarId}`)).toBe(false);
+    expect(r.byId.has('b450540')).toBe(false);
+    expect(r.all).toHaveLength(30);
+    const ids = r.all.map((i) => i.bdlVarId);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
   it('pomocnicy id biblioteki', () => {
