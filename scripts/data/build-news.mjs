@@ -5,7 +5,8 @@
 // Użycie:
 //   node scripts/data/build-news.mjs detect [--base origin/main]   → wiersze „<id> <rok>” z nowym rokiem (bez już zatwierdzonych)
 //   node scripts/data/build-news.mjs add <id> <rok>                 → dopisuje pozycję do public/data/news.json, wypisuje opis PR (Markdown)
-//   node scripts/data/build-news.mjs peaks                          → szczyty kalendarza tematów za 2–4 tygodnie (podsumowanie przebiegu)
+//   node scripts/data/build-news.mjs calendar [--lib library]       → public/data/calendar.json (W30-D10; czyta tylko generator stron)
+//   node scripts/data/build-news.mjs peaks                       → szczyty kalendarza tematów za 2–4 tygodnie (podsumowanie przebiegu)
 import { execFileSync } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -55,6 +56,21 @@ try {
   if (mode === 'peaks') {
     const { upcomingPeaks } = await vite.ssrLoadModule('/src/core/facts/calendar.ts');
     for (const p of upcomingPeaks(config, new Date())) console.log(`- ${p.on} (za ${p.inDays} dni): ${p.label} – odśwież stronę tematu „${p.group}”.`);
+  } else if (mode === 'calendar') {
+    // W30-D10: public/data/calendar.json (≤ 5 KB, bez wcięć) z księgi library/calendar.json; brak księgi = puste kalendarium.
+    const pub = await vite.ssrLoadModule('/src/core/facts/calendar-public.ts');
+    const libArg = rest.indexOf('--lib');
+    const lib = path.resolve(libArg >= 0 ? rest[libArg + 1] : path.join(root, 'library'));
+    const calendar = pub.buildPublicCalendar({
+      today: new Date().toISOString().slice(0, 10),
+      ledger: await readJson(path.join(lib, 'calendar.json')).catch(() => null),
+      available: await readJson(path.join(lib, 'available.json')).catch(() => null),
+      fresh: await readJson(path.join(dataDir, 'facts/fresh.json')).catch(() => ({})),
+      indicators: await readJson(path.join(root, 'config/indicators.json')),
+    });
+    const json = pub.serializeCalendar(calendar);
+    await writeFile(path.join(dataDir, 'calendar.json'), `${json}\n`, 'utf8');
+    console.log(`Kalendarium: ${calendar.planned.length} zaplanowanych, ${calendar.done.length} pobranych, ${json.length} znaków.`);
   } else {
     await detectOrAdd(news, config);
   }
@@ -119,6 +135,6 @@ async function detectOrAdd(news, config) {
       ].join('\n'),
     );
   } else {
-    throw new Error('Użycie: build-news.mjs detect [--base <ref>] | add <id> <rok> | peaks');
+    throw new Error('Użycie: build-news.mjs detect [--base <ref>] | add <id> <rok> | peaks | calendar [--lib <katalog>]');
   }
 }

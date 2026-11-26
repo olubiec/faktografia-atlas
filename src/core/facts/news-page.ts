@@ -3,6 +3,7 @@
 import { escapeAttr as attr, escapeHtml as text } from '../seo/html';
 import { a, breadcrumbLd, crumbNav, H2, mapButton, renderDocument, SECTION, type PageAssets } from '../seo/page-template';
 import { H1, TABLE } from '../seo/ranking-template';
+import { renderCalendarSections, type PublicCalendar } from './calendar-public';
 import { buildNewsPage, NEWS_INDEX_NAME, NEWS_ROOT, type NewsContext, type NewsEntry, type NewsPage, type NewsRow } from './news';
 
 export const NEWS_SITEMAP = 'sitemap-nowe-dane.xml';
@@ -36,7 +37,7 @@ ${table('rekordy', 'Rekordy serii', page.records, page, 'Rekord')}
   return renderDocument({ ...page, ld: [breadcrumbLd(page.crumbs)] }, main, assets);
 }
 
-function renderNewsIndex(pages: readonly NewsPage[], lastmod: string, assets: PageAssets): string {
+function renderNewsIndex(pages: readonly NewsPage[], lastmod: string, assets: PageAssets, calendar?: PublicCalendar | null): string {
   const crumbs = [
     { teryt: '', name: 'Faktografia', path: '/' },
     { teryt: '', name: NEWS_INDEX_NAME, path: NEWS_ROOT },
@@ -45,6 +46,7 @@ function renderNewsIndex(pages: readonly NewsPage[], lastmod: string, assets: Pa
   const main = `${crumbNav(crumbs)}
 <h1 class="${H1}">${text(NEWS_INDEX_NAME)}</h1>
 <p class="mt-4 max-w-prose">Co zmieniło się po każdej nowej publikacji GUS: największe wzrosty, spadki i rekordy w gminach i powiatach.</p>
+${renderCalendarSections(calendar, new Set(pages.map((p) => p.path)))}
 <ul class="mt-3">${items}</ul>`;
   const doc = {
     path: NEWS_ROOT,
@@ -65,7 +67,7 @@ export interface BuiltNewsPage {
 }
 
 /** Strony z public/data/news.json (zatwierdzone PR-em robota) i ich spis; brak pozycji = brak stron. */
-export function buildNewsSite(entries: readonly NewsEntry[], ctx: NewsContext, assets: PageAssets): { pages: BuiltNewsPage[]; skipped: NewsEntry[] } {
+export function buildNewsSite(entries: readonly NewsEntry[], ctx: NewsContext, assets: PageAssets, calendar?: PublicCalendar | null): { pages: BuiltNewsPage[]; skipped: NewsEntry[] } {
   const models: NewsPage[] = [];
   const skipped: NewsEntry[] = [];
   for (const e of entries) {
@@ -78,6 +80,6 @@ export function buildNewsSite(entries: readonly NewsEntry[], ctx: NewsContext, a
   models.sort((x, y) => y.entry.year - x.entry.year || x.path.localeCompare(y.path));
   const pages = models.map((p) => ({ path: p.path, html: renderNewsPage(p, assets), indexable: p.indexable, lastmod: p.lastmod }));
   const lastmod = models.map((p) => p.lastmod).sort().at(-1)!;
-  pages.push({ path: NEWS_ROOT, html: renderNewsIndex(models, lastmod, assets), indexable: true, lastmod });
+  pages.push({ path: NEWS_ROOT, html: renderNewsIndex(models, lastmod, assets, calendar), indexable: true, lastmod });
   return { pages, skipped };
 }

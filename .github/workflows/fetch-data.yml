@@ -180,6 +180,20 @@ jobs:
         if: steps.checks.outcome == 'success'
         run: node scripts/data/start.mjs
 
+      # (W30-D10) Publiczne kalendarium: public/data/calendar.json (≤ 5 KB) z księgi library/calendar.json (gałąź data/library).
+      # Czyta je tylko generator stron statycznych (/nowe-dane); brak księgi = puste kalendarium, krok nie psuje przebiegu.
+      - name: Zbuduj kalendarium (public/data/calendar.json)
+        id: calendar
+        if: steps.checks.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/library"
+          if git fetch --depth=1 origin data/library 2>/dev/null; then
+            for f in calendar.json available.json; do git show "FETCH_HEAD:library/$f" > "$RUNNER_TEMP/library/$f" 2>/dev/null || rm -f "$RUNNER_TEMP/library/$f"; done
+          fi
+          node scripts/data/build-news.mjs calendar --lib "$RUNNER_TEMP/library"
+
       - name: Zatwierdź i wypchnij dane (values, profiles, parts)
         id: push
         if: always() && (env.MANUAL == 'true' || steps.checks.outcome == 'success')
@@ -187,6 +201,7 @@ jobs:
         run: |
           git add public/data/values/ public/data/profiles/
           [ -f public/data/start.json ] && git add public/data/start.json
+          [ -f public/data/calendar.json ] && git add public/data/calendar.json
           [ -d public/data/facts ] && git add public/data/facts/ public/data/facts-start.json
           for d in data/parts public/data/parts; do [ -d "$d" ] && git add "$d"; done
           if git diff --staged --quiet; then
