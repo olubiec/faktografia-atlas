@@ -126,10 +126,10 @@ export function ProfileCompareTable({
             data-slot="compare-sticky-header"
             className="sticky top-0 z-10 bg-arkusz border-b border-linia py-2 px-1 grid grid-cols-2 gap-2 text-xs font-semibold text-olowek"
           >
-            <div className="truncate" title={unitAName}>
+            <div className="[overflow-wrap:normal] [word-break:normal] hyphens-none" title={unitAName}>
               {unitAName}
             </div>
-            <div className="truncate text-right" title={unitBName}>
+            <div className="text-right [overflow-wrap:normal] [word-break:normal] hyphens-none" title={unitBName}>
               {unitBName}
             </div>
           </div>

@@ -83,7 +83,7 @@ export function DataMenuBody({ tree, loading = false, failed = false, selectedId
       </p>
       <div className={columns ? 'grid min-h-0 gap-4 md:max-h-[65dvh] md:grid-cols-[16rem_1fr]' : 'flex min-h-0 flex-col gap-3'}>
         {!searching && (!section || columns) && <DataMenuSections tree={tree} sectionId={sectionId} onOpen={openSection} scrollable={columns} />}
-        <section ref={rightRef} aria-label="Wskaźniki" className={columns ? 'min-w-0 md:min-h-0 md:overflow-y-auto' : 'min-w-0'}>
+        <section ref={rightRef} aria-label="Wskaźniki" className={columns ? 'min-w-0 md:min-h-0 md:overflow-y-auto md:overscroll-contain' : 'min-w-0'}>
           {searching ? (
             <DataMenuResults
               tree={tree}
@@ -152,7 +152,7 @@ export function DataMenuDialog({ indicatorId, indicatorName, onSelect }: DataMen
           <Icon icon={NavArrowDown} aria-hidden={true} size={20} />
         </button>
       </DialogTrigger>
-      <DialogContent className="max-h-[85dvh] max-w-4xl overflow-y-auto">
+      <DialogContent className="max-h-[85dvh] max-w-4xl overflow-y-auto overscroll-contain">
         <DialogHeader>
           <DialogTitle>Wybierz dane</DialogTitle>
           <DialogDescription>Dział, grupa, wskaźnik. Pokazujemy tylko dane, które mamy.</DialogDescription>

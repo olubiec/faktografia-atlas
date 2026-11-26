@@ -1,4 +1,4 @@
-import { capTail, reshapeTail } from './tail';
+import { capTail, guardTail, reshapeTail } from './tail';
 import { calibrateBreaks, cleanBreaks, divergingBreaks, divergingToken } from './calibrate';
 
 export { cleanBreaks } from './calibrate';
@@ -27,7 +27,8 @@ export function computeBreaks(
   if (!options.nice) return raw;
   // Ogon rozkładu: rozciągniętą skrajną klasę kwantylową zastępują naturalne przerwy (tail.ts).
   const valid = values.filter((v): v is number => typeof v === 'number' && !Number.isNaN(v));
-  return niceBreaks(method === 'quantile' ? capTail(valid, reshapeTail(valid, raw)) : raw, values);
+  const nice = niceBreaks(method === 'quantile' ? capTail(valid, reshapeTail(valid, raw)) : raw, values);
+  return method === 'quantile' ? guardTail(nice) : nice;
 }
 
 /** Progi legendy dla mapy i kart: kwantyle, 5 klas, skalibrowane (jeden automat dla całej strony). */

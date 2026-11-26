@@ -80,7 +80,9 @@ function roundestBreaks(raw: number[], valid: number[], start: number[]): number
   const limit = Math.max(shifted, 0) + valid.length * ROUNDER_SHIFT_SHARE;
   for (let i = 0; i < out.length; i++) {
     // Kandydaci tylko z surowego progu (jak dotąd): najpierw 1 cyfra znacząca, potem 2.
-    for (let digits = 1; digits <= 2; digits++) {
+    // Trzecia cyfra tylko, gdy próg po kalibracji ma więcej niż 3 cyfry znaczące (np. 2920,43 → 2920).
+    const maxDigits = Number(Math.abs(out[i]).toPrecision(3)) === Math.abs(out[i]) ? 2 : 3;
+    for (let digits = 1; digits <= maxDigits; digits++) {
       const r = roundSignificant(base[i], digits);
       const cand = integers ? Math.round(r) : r;
       if (cand === out[i]) break;

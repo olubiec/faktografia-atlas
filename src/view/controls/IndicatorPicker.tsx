@@ -134,7 +134,7 @@ export function IndicatorPickerContent({
       <div
         role="listbox"
         aria-label="Lista wskaźników"
-        className="flex-1 overflow-y-auto p-1 divide-y divide-linia/20 min-h-0"
+        className="flex-1 overflow-y-auto overscroll-contain p-1 divide-y divide-linia/20 min-h-0"
       >
         {filteredIndicators.length === 0 && filteredLibrary.length === 0 ? (
           <div role="status" className="p-6 text-center text-olowek text-sm">

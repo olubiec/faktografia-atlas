@@ -25,14 +25,16 @@ export function StartLists({ lists, to, onWarm }: StartListsProps) {
                 <Link
                   to={to(r.href)}
                   data-slot="start-list-row"
-                  className="flex min-h-[44px] min-w-0 items-baseline gap-3 py-2 text-tusz no-underline hover:bg-linia/15 focus-visible:outline-2 focus-visible:outline-tusz"
+                  className="flex min-h-[44px] min-w-0 items-start gap-3 py-2 text-tusz no-underline hover:bg-linia/15 focus-visible:outline-2 focus-visible:outline-tusz"
                   onPointerEnter={onWarm}
                   onTouchStart={onWarm}
                   onFocus={onWarm}
                 >
                   <span className="w-4 shrink-0 font-mono text-xs text-olowek">{i + 1}</span>
-                  <span className="min-w-0 flex-1 truncate" title={r.name}>{r.name}</span>
-                  <span className="shrink-0 font-mono text-xs tabular-nums">{r.value}</span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="leading-tight [overflow-wrap:normal] [word-break:normal] hyphens-none" data-slot="start-list-name">{r.name}</span>
+                    <span className="font-mono text-xs tabular-nums text-olowek">{r.value}</span>
+                  </span>
                 </Link>
               </li>
             ))}

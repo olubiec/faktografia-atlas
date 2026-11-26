@@ -158,3 +158,28 @@ export function capTail(valid: number[], breaks: number[]): number[] {
   if (x === undefined || x <= lo || x >= hi) return breaks;
   return [...breaks.slice(0, k - 1), x];
 }
+
+/** Zaokrągla w dół do `digits` cyfr znaczących (bez artefaktów typu 30000.000000000004). */
+function floorSignificant(x: number, digits: number): number {
+  if (x <= 0) return x;
+  const p = 10 ** (Math.floor(Math.log10(x)) - digits + 1);
+  return Math.round(Math.floor(x / p + 1e-9) * p * 1e9) / 1e9;
+}
+
+/**
+ * Ostatnia straż ogona, po zaokrągleniu progów: jeśli górny próg nadal jest ponad TAIL_MAX_RATIO razy
+ * większy od przedostatniego (np. 80 000 → 230 000), obniżamy go do okrągłej liczby ≤ TAIL_MAX_RATIO × poprzedni.
+ * Obniżenie tylko powiększa górną klasę „powyżej X”, więc klasa nie robi się pusta.
+ */
+export function guardTail(breaks: number[]): number[] {
+  const k = breaks.length;
+  if (k < 3) return breaks;
+  const lo = breaks[k - 2];
+  const hi = breaks[k - 1];
+  if (lo <= 0 || hi / lo <= TAIL_MAX_RATIO) return breaks;
+  const limit = lo * TAIL_MAX_RATIO;
+  let x = floorSignificant(limit, 2);
+  if (x <= lo) x = floorSignificant(limit, 3);
+  if (x <= lo || x >= hi) return breaks;
+  return [...breaks.slice(0, k - 1), x];
+}

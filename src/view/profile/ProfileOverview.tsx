@@ -235,7 +235,7 @@ export function ProfileOverview({
           className="min-w-0 flex-1 text-left min-h-[44px] flex flex-col justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-tusz p-1 -m-1 hover:bg-linia/10 transition-colors"
         >
           <div className="flex items-center justify-between text-xs text-olowek font-mono">
-            <span className="font-semibold text-tusz min-w-0 flex-1 truncate pr-2">
+            <span className="font-semibold text-tusz min-w-0 flex-1 pr-2 leading-tight [overflow-wrap:normal] [word-break:normal] hyphens-none">
               {view.indicator.name}
             </span>
             <div className="flex items-center gap-2 shrink-0">

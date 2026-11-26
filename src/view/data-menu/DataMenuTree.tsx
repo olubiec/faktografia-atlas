@@ -5,7 +5,7 @@ import { DataMenuList, rowClass } from './DataMenuList';
 
 export function DataMenuSections({ tree, sectionId, onOpen, scrollable = false }: { tree: CatalogTree; sectionId: string | null; onOpen: (id: string) => void; scrollable?: boolean }) {
   return (
-    <nav aria-label="Działy" className={`flex flex-col gap-1${scrollable ? ' md:min-h-0 md:overflow-y-auto' : ''}`}>
+    <nav aria-label="Działy" className={`flex flex-col gap-1${scrollable ? ' md:min-h-0 md:overflow-y-auto md:overscroll-contain' : ''}`}>
       {tree.sections.map((s) => (
         <button
           key={s.id}
