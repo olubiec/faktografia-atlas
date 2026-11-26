@@ -193,3 +193,11 @@ Punkt wyjścia mierzony przed zmianą (2 tygodnie): odsetek wejść na `/`, któ
 
 ## 14. Czego nie robimy
 Automatycznych stron pod chwilowe trendy, nieoficjalnego pobierania Google Trends, newsów z cudzych portali, tekstów i liczb z AI, lokalizacji z IP, kont i powiadomień, osobnego artykułu dla każdej gminy, ocen „najlepsza/najgorsza gmina”, przyczyn zjawisk, których nie ma w danych.
+
+## 15. Świeże dane (W27-D02)
+- **Co jest świeże:** wskaźnik, którego ostatni rok danych właśnie się zmienił (albo który właśnie doszedł). Robot faktów prowadzi księgę `public/data/facts/fresh.json` (`{ id: { year, since } }`); `since` to znacznik z danych (`generatedAt`), nie zegar. Pierwsze uruchomienie (brak pliku) nie robi wszystkiego świeżym – świeże są tylko wskaźniki z `fetchedAt` w oknie `fresh.days`.
+- **Jak długo:** `fresh.days` w `config/facts.json` (start: 28 dni od `since`). Potem mnożniki znikają same, bez ręcznej pracy i bez AI.
+- **Siła faktów:** fakt z najnowszego roku świeżego wskaźnika × `fresh.boost` (1,6) – także fakty jednostek, więc nowe dane wypychają stare z „3 rzeczy” w profilu. Dodatkowo × `fresh.extremeBoost` (1,3) dla 1. miejsca w kraju bez remisu (F1) i rekordu serii (F5). Skrajność „zmiana rok do roku w górnym 1%” pominięta: typ F4 ma okno 10 lat, a zdanie „… od 2024 r. – największy wzrost z N …” dublowałoby się z faktem 10-letnim tego samego wskaźnika; wymaga osobnej decyzji.
+- **Odkrycie dnia:** pierwsze `fresh.dailySlots` (7) dni po `generatedAt` pokazują najsilniejsze krajowe fakty świeżych wskaźników (indeksy `dailyIndex(generatedAt + k dni)`, różne jednostki); resztę wypełnia dotychczasowy algorytm. Bez świeżych wskaźników wynik jest taki jak dawniej.
+- **Zestawienia:** pierwsze z 4 zestawień zastępuje zestawienie najsilniejszego świeżego wskaźnika (gminy, „najwyżej”, gminy poniżej `thresholds.smallPopulation` pominięte); „najsilniejszy” = największa suma siły jego faktów krajowych. Pozostałe trzy bez zmian; `facts-start.json` zostaje ≤ 4 KB.
+- **Profil miejsca:** „3 rzeczy” biorą fakty z wyboru po mnożnikach, więc świeże fakty wskaźnika są wyżej.
