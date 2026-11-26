@@ -1,0 +1,5 @@
+{"updated":"2026-11-26","entries":[
+{"date":"2026-12-01","title":"Rynek pracy w 2025 r.","href":"https://stat.gov.pl/obszary-tematyczne/rynek-pracy/rynek-pracy-2025.html","main":["unemployment"],"library":[{"id":201,"state":"planned","base":2024},{"id":202,"state":"planned","base":2024}]},
+{"date":"2026-11-25","title":"Sytuacja demograficzna Polski do 2025 r.","href":"https://stat.gov.pl/obszary-tematyczne/ludnosc/sytuacja-demograficzna-2025.html","main":["population"],"library":[{"id":101,"state":"downloaded","base":2024,"on":"2026-11-25"},{"id":102,"state":"waiting","base":2024},{"id":103,"state":"rejected","base":2024,"reason":"niszowe"}]},
+{"date":"2026-11-02","title":"Mieszkania w 2025 r.","href":"https://stat.gov.pl/obszary-tematyczne/budownictwo/mieszkania-2025.html","main":[],"library":[{"id":301,"state":"rejected","base":2024,"reason":"brak-nowego-roku-14-dni"},{"id":302,"state":"rejected","base":2024,"reason":"brak-gmin"}]}
+]}
