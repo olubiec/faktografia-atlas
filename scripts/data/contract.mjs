@@ -6,6 +6,9 @@
  * @param {object[]} units - Lista jednostek z public/data/units.json
  * @returns {string[]} Lista opisów błędów (pusta tablica oznacza poprawny plik)
  */
+/** Minimalny udział jednostek poziomu minLevel z wartością w ostatnim roku. */
+const MIN_COVERAGE = 0.75;
+
 export function checkValuesFile(json, indicator, units) {
   const errors = [];
 
@@ -84,7 +87,7 @@ export function checkValuesFile(json, indicator, units) {
     }
   }
 
-  // 4. Pokrycie w ostatnim roku dla minLevel (>= 95%)
+  // 4. Pokrycie w ostatnim roku dla minLevel (>= MIN_COVERAGE; obniżone z 95% decyzją właściciela)
   if (isYearsArray && indicator.minLevel && json.values && typeof json.values === 'object') {
     const minLevelUnits = units.filter((u) => u && u.level === indicator.minLevel);
     if (minLevelUnits.length > 0) {
@@ -101,9 +104,9 @@ export function checkValuesFile(json, indicator, units) {
       const missingCount = minLevelUnits.length - hasValueCount;
       const coverage = hasValueCount / minLevelUnits.length;
 
-      if (coverage < 0.95) {
+      if (coverage < MIN_COVERAGE) {
         errors.push(
-          `Wskaźnik "${indicator.id}" (${indicator.name}): co najmniej 95% jednostek poziomu "${indicator.minLevel}" musi posiadać wartość w ostatnim roku (${missingCount} braków na ${minLevelUnits.length} jednostek, pokrycie ${(coverage * 100).toFixed(1)}%).`,
+          `Wskaźnik "${indicator.id}" (${indicator.name}): co najmniej ${Math.round(MIN_COVERAGE * 100)}% jednostek poziomu "${indicator.minLevel}" musi posiadać wartość w ostatnim roku (${missingCount} braków na ${minLevelUnits.length} jednostek, pokrycie ${(coverage * 100).toFixed(1)}%).`,
         );
       }
     }
