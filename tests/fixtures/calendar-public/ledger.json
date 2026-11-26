@@ -1,0 +1,8 @@
+{"updated":"2026-11-26","entries":[
+{"date":"2026-12-02","title":"Wynagrodzenia <b>2025</b> & dodatki","href":"https://stat.gov.pl/obszary-tematyczne/wynagrodzenia-2025.html","main":["avg-wage"],"library":[{"id":201,"state":"planned","base":2024}]},
+{"date":"2026-11-28","title":"Informacja o sytuacji społeczno-gospodarczej kraju oraz o stanie finansów publicznych i długu sektora instytucji rządowych i samorządowych w ujęciu rocznym i kwartalnym za cały ubiegły rok","href":"https://stat.gov.pl/sytuacja-2025.html","main":[],"library":[]},
+{"date":"2027-01-20","title":"Za daleko w przyszłości","href":"https://stat.gov.pl/daleko.html","main":[],"library":[]},
+{"date":"2026-12-05","title":"Zły adres","href":"javascript:alert(1)","main":[],"library":[]},
+{"date":"2026-11-25","title":"Sytuacja demograficzna","href":"https://stat.gov.pl/demografia.html","main":["population"],"library":[{"id":101,"state":"downloaded","base":2024,"on":"2026-11-25"},{"id":102,"state":"rejected","base":2024,"reason":"niszowe"},{"id":103,"state":"waiting","base":2024}]},
+{"date":"2026-10-01","title":"Dawna publikacja","href":"https://stat.gov.pl/dawna.html","main":[],"library":[{"id":104,"state":"downloaded","base":2024,"on":"2026-10-02"}]}
+]}

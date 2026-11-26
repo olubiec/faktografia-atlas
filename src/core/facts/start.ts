@@ -12,6 +12,8 @@ export interface DailyEntry {
   /** Nazwa jednostki (bez wczytywania units.json na starcie). */
   n: string;
   f: EncodedFact;
+  /** Tylko wskaźnik z biblioteki (`b<varId>`, W29-D09): [nazwa, jednostka] – rejestr strony go nie zna bez pobrania katalogu. */
+  i?: [string, string];
 }
 
 export interface StartList {
@@ -21,6 +23,8 @@ export interface StartList {
   year: number;
   /** 3 pierwsze pozycje: [TERYT, nazwa, wartość]. */
   top: [string, string, number][];
+  /** Tylko wskaźnik z biblioteki (W29-D09): [nazwa, jednostka]. */
+  i?: [string, string];
 }
 
 export interface FactsStart {
@@ -69,12 +73,17 @@ const isNationalFirst = (f: Fact): boolean =>
   f.compare.rank === 1 &&
   !(f.compare.kind === 'rank' && f.compare.tie);
 
-/** Najsilniejsze krajowe fakty ze świeżych wskaźników (najnowszy rok): różne jednostki, bez limitu na wskaźnik. */
-export function pickFreshDaily(build: FactsBuild, slots: number): Fact[] {
-  const fresh = build.ctx.input.fresh ?? {};
+/**
+ * Najsilniejsze krajowe fakty ze świeżych wskaźników (najnowszy rok): różne jednostki, bez limitu na wskaźnik.
+ * `library` (W29-D09): osobny build świeżych zmiennych biblioteki – ich fakty traktujemy tak samo jak wskaźniki główne.
+ */
+export function pickFreshDaily(build: FactsBuild, slots: number, library?: FactsBuild | null): Fact[] {
   const pool: Fact[] = [];
-  for (const { selected } of build.byUnit.values()) {
-    for (const f of selected) if (fresh[f.indicatorId] !== undefined && f.year >= fresh[f.indicatorId] && isNationalFirst(f)) pool.push(f);
+  for (const b of library ? [build, library] : [build]) {
+    const fresh = b.ctx.input.fresh ?? {};
+    for (const { selected } of b.byUnit.values()) {
+      for (const f of selected) if (fresh[f.indicatorId] !== undefined && f.year >= fresh[f.indicatorId] && isNationalFirst(f)) pool.push(f);
+    }
   }
   const units = new Set<string>();
   const out: Fact[] = [];
@@ -92,12 +101,12 @@ export function pickFreshDaily(build: FactsBuild, slots: number): Fact[] {
  * więc przez pierwsze dni po generatedAt strona pokazuje świeże dane; resztę wypełnia pickDaily (bez powtórzeń jednostek).
  * Bez świeżych faktów wynik = pickDaily.
  */
-export function pickDailyWithFresh(build: FactsBuild, generatedAt: string): Fact[] {
+export function pickDailyWithFresh(build: FactsBuild, generatedAt: string, library?: FactsBuild | null): Fact[] {
   const { config } = build.ctx.input;
   const month = new Date(generatedAt).getUTCMonth() + 1;
   const base = pickDaily(build, month);
   const slots = Math.min(config.fresh?.dailySlots ?? 0, config.start.dailyCount);
-  const fresh = slots > 0 ? pickFreshDaily(build, slots) : [];
+  const fresh = slots > 0 ? pickFreshDaily(build, slots, library) : [];
   if (fresh.length === 0) return base;
   const taken = new Set(fresh.map((f) => f.teryt));
   const rest = base.filter((f) => !taken.has(f.teryt)).slice(0, config.start.dailyCount - fresh.length);
@@ -132,17 +141,24 @@ function latestPopulation(build: FactsBuild, teryt: string): number {
   return 0;
 }
 
-/** Zestawienie najsilniejszego świeżego wskaźnika (suma siły jego faktów krajowych); null, gdy brak świeżych. */
-export function buildFreshList(build: FactsBuild): StartList | null {
-  const fresh = build.ctx.input.fresh ?? {};
+/**
+ * Zestawienie najsilniejszego świeżego wskaźnika (suma siły jego faktów krajowych); null, gdy brak świeżych.
+ * `library` (W29-D09): świeże zmienne biblioteki konkurują z głównymi na tych samych zasadach; link karty ma wtedy id `b<varId>`.
+ */
+export function buildFreshList(build: FactsBuild, library?: FactsBuild | null): StartList | null {
   const sums = new Map<string, number>();
-  for (const { selected } of build.byUnit.values()) {
-    for (const f of selected) if (f.frame === 'kraj' && fresh[f.indicatorId] !== undefined && f.year >= fresh[f.indicatorId]) sums.set(f.indicatorId, (sums.get(f.indicatorId) ?? 0) + f.strength);
+  const owner = new Map<string, FactsBuild>();
+  for (const b of library ? [build, library] : [build]) {
+    const fresh = b.ctx.input.fresh ?? {};
+    for (const id of Object.keys(fresh)) owner.set(id, b);
+    for (const { selected } of b.byUnit.values()) {
+      for (const f of selected) if (f.frame === 'kraj' && fresh[f.indicatorId] !== undefined && f.year >= fresh[f.indicatorId]) sums.set(f.indicatorId, (sums.get(f.indicatorId) ?? 0) + f.strength);
+    }
   }
-  const ids = Object.keys(fresh).sort((a, b) => (sums.get(b) ?? 0) - (sums.get(a) ?? 0) || a.localeCompare(b));
+  const ids = [...owner.keys()].sort((a, b) => (sums.get(b) ?? 0) - (sums.get(a) ?? 0) || a.localeCompare(b));
   const { smallPopulation } = build.ctx.input.config.thresholds;
   for (const id of ids) {
-    const list = buildList(build, id, 'gmi', 1, smallPopulation);
+    const list = buildList(owner.get(id)!, id, 'gmi', 1, smallPopulation);
     if (list && list.top.length > 0) return list;
   }
   return null;
@@ -151,15 +167,20 @@ export function buildFreshList(build: FactsBuild): StartList | null {
 /**
  * `newYears` (id wskaźnika → najnowszy rok, tylko wskaźniki nowe ≤ fresh.labelDays dni; newMainYears) dopisuje
  * kartom Odkrycia dnia flagę „Nowość” (opcjonalny ostatni element zapisu). Bez niego plik jest taki sam jak dotąd.
+ * `library` (W29-D09): build świeżych zmiennych biblioteki (library-fresh.ts); bez niego (null) wynik jest taki sam jak dotąd.
  */
-export function buildStart(build: FactsBuild, generatedAt: string, newYears?: Readonly<Record<string, number>>): FactsStart {
+export function buildStart(build: FactsBuild, generatedAt: string, newYears?: Readonly<Record<string, number>>, library?: FactsBuild | null): FactsStart {
   const { ctx } = build;
-  const daily = markNew(pickDailyWithFresh(build, generatedAt), newYears).map((f) => ({ u: f.teryt, n: ctx.units.get(f.teryt)?.name ?? f.teryt, f: encodeFact(f) }));
+  const meta = (id: string): { i: [string, string] } | undefined => {
+    const ind = library?.ctx.indicators.get(id);
+    return ind ? { i: [ind.name, ind.unit] } : undefined;
+  };
+  const daily = markNew(pickDailyWithFresh(build, generatedAt, library), newYears).map((f) => ({ u: f.teryt, n: ctx.units.get(f.teryt)?.name ?? f.teryt, f: encodeFact(f), ...meta(f.indicatorId) }));
   const configured = ctx.input.config.start.lists;
-  const freshList = buildFreshList(build);
+  const freshList = buildFreshList(build, library);
   const lists = (freshList ? configured.slice(1) : configured)
     .map((l) => buildList(build, l.indicatorId, l.level, l.dir))
     .filter((l): l is StartList => l !== null);
-  if (freshList) lists.unshift(freshList);
+  if (freshList) lists.unshift({ ...freshList, ...meta(freshList.indicatorId) });
   return { generatedAt, daily, lists };
 }

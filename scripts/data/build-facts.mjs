@@ -2,15 +2,28 @@
 // i public/data/facts-start.json. W26-F03: sąsiedzi z public/geo/admin.topo.json (F3, pole near) i bliźniak (F8, pole twins). Logika w src/core/facts (TS) – ładowana przez Vite (ssrLoadModule),
 // tak jak generator stron scripts/seo/build-pages.mjs; bez nowych pakietów.
 // Użycie: node scripts/data/build-facts.mjs [--report docs/research/F01-przeglad-faktow.md]
+import { execFileSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { createServer } from 'vite';
+import { factsFromValues } from './premieres.mjs';
 
 const root = path.resolve(import.meta.dirname, '../..');
 const dataDir = path.join(root, 'public/data');
 const readJson = async (file) => JSON.parse(await readFile(file, 'utf8'));
 const reportArg = process.argv.indexOf('--report');
 const reportPath = reportArg > 0 ? path.resolve(root, process.argv[reportArg + 1]) : null;
+
+// Plik z gałęzi data/library (git show po `git fetch origin data/library`, bez API BDL); brak gałęzi albo pliku = null.
+const LIBRARY_REF = process.env.LIBRARY_REF || 'origin/data/library';
+const readLibraryFile = (rel) => {
+  try {
+    const text = execFileSync('git', ['show', `${LIBRARY_REF}:library/${rel}`], { cwd: root, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024, stdio: ['ignore', 'pipe', 'ignore'] });
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+};
 
 const vite = await createServer({
   root,
@@ -27,6 +40,7 @@ try {
   const { buildStart } = await vite.ssrLoadModule('/src/core/facts/start.ts');
   const { updateLedger, freshYears } = await vite.ssrLoadModule('/src/core/facts/fresh.ts');
   const { newMainYears, labelDaysOf } = await vite.ssrLoadModule('/src/core/facts/fresh-label.ts');
+  const { prepareLibraryFresh, buildLibraryFacts } = await vite.ssrLoadModule('/src/core/facts/library-fresh.ts');
   const { ringsFromTopology } = await vite.ssrLoadModule('/src/core/facts/neighbours.ts');
 
   const config = await readJson(path.join(root, 'config/facts.json'));
@@ -57,7 +71,23 @@ try {
   await writeFile(ledgerPath, `${JSON.stringify(ledger, null, 1)}\n`, 'utf8');
   const fresh = freshYears(ledger, generatedAt, freshDays);
   console.log(`facts/fresh.json: ${Object.keys(fresh).length} świeżych wskaźników z ${Object.keys(ledger).length}`);
-  const build = buildFacts({ indicators, values, units, config, neighbours, fresh });
+  const factsInput = { indicators, values, units, config, neighbours, fresh };
+  const build = buildFacts(factsInput);
+  // Premiery z biblioteki (W29-D09): świeże, nieniszowe zmienne z księgi kalendarium → osobny build, tylko do Odkrycia dnia i zestawień.
+  // Pliki województw (shards) powstają wyłącznie z `build`, więc „3 rzeczy” w profilach się nie zmieniają. Brak gałęzi lub księgi = bez zmian.
+  const available = readLibraryFile('available.json');
+  const libFresh = prepareLibraryFresh({
+    calendar: readLibraryFile('calendar.json'),
+    available,
+    readValues: (id) => readLibraryFile(`values/${id}.json`),
+    units,
+    generatedAt,
+    config,
+    isNiche: (id, raw, v) => factsFromValues(raw, { unit: v.u, name: v.n }).niche,
+  });
+  const libBuild = buildLibraryFacts(factsInput, libFresh);
+  console.log(`biblioteka w Odkryciach: ${libFresh.indicators.map((i) => i.id).join(', ') || 'brak'}`);
+  if (libFresh.droppedUnits.length) console.log(`  pominięte (jednostka bez poprawnego zdania): ${libFresh.droppedUnits.map((d) => `${d.id} [${d.unit}]`).join(', ')}`);
   // Etykieta „Nowość” (W28-D06): wskaźniki z nowym rokiem sprzed najwyżej fresh.labelDays dni.
   const newYears = newMainYears(ledger, generatedAt, labelDaysOf(config));
   const shards = buildShards(build, generatedAt, newYears);
@@ -66,7 +96,7 @@ try {
     await writeFile(path.join(outDir, `${woj}.json`), json, 'utf8');
     console.log(`facts/${woj}.json: ${Object.keys(shard.units).length} jednostek, ${json.length} B`);
   }
-  const start = JSON.stringify(buildStart(build, generatedAt, newYears));
+  const start = JSON.stringify(buildStart(build, generatedAt, newYears, libBuild));
   await writeFile(path.join(dataDir, 'facts-start.json'), start, 'utf8');
   console.log(`facts-start.json: ${start.length} B`);
 
