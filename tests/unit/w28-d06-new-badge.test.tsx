@@ -129,3 +129,13 @@ describe('W28-D06 – komponenty', () => {
     expect(render(plain)).not.toContain('Nowe dane');
   });
 });
+
+describe('W28-D06 – wpięcie w budowę plików i panel', () => {
+  it('buildShards z mapą nowych wskaźników koduje flagę, bez mapy plik jest bez zmian', async () => {
+    const { buildShards } = await import('../../src/core/facts/build');
+    const build = { ctx: { input: { units: [{ teryt: '1606042' }], neighbours: undefined } }, byUnit: new Map([['1606042', { selected: [base] }]]), twins: new Map() };
+    const run = (y?: Record<string, number>) => buildShards(build as never, 'g', y)['16'].units['1606042'][0];
+    expect(run()).toEqual(['F1', 'population', 2025, 3005, 6.39, -1, 1, 71, 0]);
+    expect(run({ population: 2025 })).toEqual(['F1', 'population', 2025, 3005, 6.39, -1, 1, 71, 0, 0, 1]);
+  });
+});

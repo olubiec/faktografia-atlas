@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { NavArrowDown, NavArrowUp } from 'iconoir-react';
 import type { Indicator } from '@/core/profile/profile';
+import { isNewIndicator } from '@/core/facts/fresh-label';
+import { peekNewIds } from '@/core/indicators/load-available';
 import { DataMenu } from '@/view/data-menu/DataMenu';
 import { clearMenuUrl, readMenuUrl } from '@/view/data-menu/menuUrl';
 import { Icon } from '@/view/ui/Icon';
+import { NewBadge } from '@/view/ui/NewBadge';
 
 export type SheetIndicatorPickerProps = {
   /** Nieużywane: spis bierze samo DataMenu (zostaje dla zgodności z panelem, sprząta B14). */
@@ -37,6 +40,8 @@ export function SheetIndicatorPicker({ indicator, onSelect, defaultOpen = true }
             <span className="text-xs text-olowek">Wskaźnik</span>
             <span className="font-semibold text-sm text-tusz line-clamp-2 break-words leading-tight" title={indicator.name}>
               {indicator.name}
+              {/* „Nowość” tylko, gdy spis jest już w pamięci (bez dodatkowego żądania). */}
+              {isNewIndicator(indicator.id, peekNewIds()) && <NewBadge />}
             </span>
           </div>
         </button>

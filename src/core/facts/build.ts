@@ -1,4 +1,5 @@
 // Składanie faktów dla wszystkich jednostek: kandydaci (detektory) → dobór 3 → pliki na województwa.
+import { markNew } from './fresh-label';
 import { encodeFact, encodeTwin, type EncodedFact, type EncodedTwin } from './codec';
 import { createContext, type FactsContext } from './context';
 import { detectAll } from './detectors';
@@ -46,13 +47,14 @@ export interface FactsShard {
   twins?: Record<string, EncodedTwin>;
 }
 
-export function buildShards(build: FactsBuild, generatedAt: string): Record<string, FactsShard> {
+/** `newYears` (newMainYears): fakty z najnowszego roku nowego wskaźnika dostają flagę „Nowość” (W28-D06). */
+export function buildShards(build: FactsBuild, generatedAt: string, newYears?: Readonly<Record<string, number>>): Record<string, FactsShard> {
   const shards: Record<string, FactsShard> = {};
   for (const unit of build.ctx.input.units) {
     const woj = unit.teryt.slice(0, 2);
     shards[woj] ??= { woj, generatedAt, units: {} };
     const shard = shards[woj];
-    shard.units[unit.teryt] = (build.byUnit.get(unit.teryt)?.selected ?? []).map(encodeFact);
+    shard.units[unit.teryt] = markNew(build.byUnit.get(unit.teryt)?.selected ?? [], newYears).map(encodeFact);
     const ring = build.ctx.input.neighbours?.[unit.teryt];
     if (ring?.ids.length) (shard.near ??= {})[unit.teryt] = ring.ids;
     const twin = build.twins.get(unit.teryt);
