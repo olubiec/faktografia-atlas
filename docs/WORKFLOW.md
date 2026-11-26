@@ -738,6 +738,10 @@ Wdrożenie (prompt do Julesa): „Przejdź na pnpm 11: ustaw w package.json pole
 - Zmienne repo (opcjonalne): `LOOP_MAX_CONCURRENT` (12), `LOOP_DAILY_BUDGET` (80), `LOOP_FIX_GRACE_MIN` (10), `LOOP_TEST_WAVE` (`off` wyłącza falę testów), `LOOP_PLAN_GUARD` (`off` wyłącza strażnika), `LOOP_STATE_FILE`, `LOOP_SCOPE_ALLOW` (lockfile’e dozwolone poza zakresem).
 - `AGENTS.md` ma sekcję o zadaniach z pętli (format, tytuł PR, zakazy); `tasks/SZABLON.md` to wzór pliku zadania.
 
+### 10.7 Tablica „Kalendarium danych” (W28-D07)
+Jedno zgłoszenie na GitHubie z etykietą `kalendarium`; robot (`.github/workflows/calendar-board.yml`, po `fetch-library` i `fetch-data`, ręcznie i ok. 06:20 UTC) tylko podmienia jego treść – nie zakłada nowych zgłoszeń i nie komentuje, więc nie ma powiadomień ani PR do scalania. Właściciel przypina je raz ręcznie (zgłoszenie → „Pin issue”).
+Stany biorą się z księgi `library/calendar.json` na gałęzi `data/library` (W27-D05): `planned` → `waiting` → `downloaded` albo `rejected` (z powodem). „Wdrożone” = zmienna w `library/available.json` albo nowy rok wskaźnika w `public/data/facts/fresh.json` na `main`; „Odkrycia” = najmocniejsze fakty ze świeżych wskaźników w `facts-start.json`, zdania z szablonów `src/core/facts`. Liczby zna tylko robot z plików danych, nic nie jest wpisywane ręcznie. Znaczek z liczbami czyta `library/badge.json` (zapisywany na `data/library`, nie na `main`).
+
 ## 11. Moduły według typu projektu
 
 - **Strona / aplikacja:** testy w przeglądarce (Playwright) + dostępność (axe); dane z API z tajnym kluczem pobierane w CI lub na serwerze, nie w przeglądarce; analityka po zgodzie użytkownika.

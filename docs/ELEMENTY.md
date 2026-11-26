@@ -66,3 +66,4 @@ Kodu z cudzych repozytoriów nie kopiujemy (poziom E tylko z licencją i atrybuc
 | IndexNow (api.indexnow.org) | po wdrożeniu produkcji: zgłoszenie zmienionych adresów do Bing i wyszukiwarek partnerskich (S11, workflow `seo-indexnow.yml`) | bezpłatny protokół otwarty (https://www.indexnow.org); klucz w `public/<klucz>.txt` publiczny z założenia; dodano 2026-11-22 |
 | Jules | wykonawca zadań | – |
 | CodeRabbit | komentarze do PR | darmowy dla repo publicznego |
+| shields.io (endpoint `img.shields.io/endpoint`) | znaczek „Kalendarium: N premier · M nowości” w README z `library/badge.json` | **NIE UŻYWANE – licencja i zasady usługi niesprawdzone** (W28-D07, 2026-11-26: sieć sesji zablokowała img.shields.io i GitHub API). README ma na razie sam link tekstowy; po sprawdzeniu (repo badges/shields, LICENSE) właściciel zdecyduje o znaczku |
