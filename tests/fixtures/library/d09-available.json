@@ -1,0 +1,7 @@
+{"version":1,"generatedAt":"2026-11-17T00:00:00Z","variables":[
+{"id":"9001","n":"Urodzenia żywe na 1000 ludności","u":"na 1000","s":"11","c":"Ludność > Ruch naturalny","lv":["pow","gmi"],"y":[2022,2023,2024,2025]},
+{"id":"9002","n":"Zgony w wieku niemowlęcym","u":"%","s":"11","c":"Ludność > Ruch naturalny","lv":["gmi"],"y":[2022,2023,2024,2025]},
+{"id":"9003","n":"Małżeństwa na 1000 ludności","u":"na 1000","s":"11","c":"Ludność > Ruch naturalny","lv":["gmi"],"y":[2022,2023,2024,2025]},
+{"id":"9004","n":"Długość ścieżek rowerowych na 1000 mieszkańców","u":"km","s":"11","c":"Transport > Drogi","lv":["gmi"],"y":[2022,2023,2024,2025]},
+{"id":"9005","n":"Rozwody na 1000 ludności","u":"na 1000","s":"11","c":"Ludność > Ruch naturalny","lv":["gmi"],"y":[2022,2023,2024,2025]}
+]}
