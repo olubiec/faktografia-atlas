@@ -42,7 +42,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Katalog roboczy z gałęzi data/library (gdy jej jeszcze nie ma: puste sekcje „—”)
+      - name: 'Katalog roboczy z gałęzi data/library (gdy jej jeszcze nie ma: puste sekcje „—”)'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
