@@ -53,6 +53,7 @@
   "popularityWeight": 10,
   "refreshAfterDays": 14,
   "refreshShare": 0.15,
+  "premiereMax": 40,
   "retryAfterDays": 7,
   "maxSectionShareInRun": 0.4
 }

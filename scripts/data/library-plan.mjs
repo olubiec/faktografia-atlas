@@ -37,7 +37,7 @@ export function pagesHaveValues(pages) {
  * Kalendarium to tylko dodatek: zmienne pasujące do świeżej publikacji, ale jeszcze nie „stare”, idą na sam koniec
  * i jest ich najwyżej calendarMax na przebieg, więc nie wypierają zwykłej pracy.
  */
-export function refreshCandidates({ done, config, now = Date.now(), scoreOf = () => 0, calendarHit = () => false, calendarLatest = null, calendarMax = 10 }) {
+export function refreshCandidates({ done, config, now = Date.now(), scoreOf = () => 0, calendarHit = () => false, calendarLatest = null, calendarMax = 10, premiereIds = [], premiereMax = 40 }) {
   const maxAge = (config.refreshAfterDays ?? 30) * 86400_000;
   const pinned = new Map((config.pinnedIds ?? []).map((id, i) => [Number(id), i]));
   const aged = (day) => now - Date.parse(day) >= maxAge;
@@ -47,12 +47,16 @@ export function refreshCandidates({ done, config, now = Date.now(), scoreOf = ()
     if (pa && pb) return pinned.get(a) - pinned.get(b);
     return scoreOf(b) - scoreOf(a) || a - b;
   };
-  const entries = Object.entries(done);
+  // Premiery (publikacja z dziś/wczoraj i wpisy „waiting” z księgi) idą przed wszystkim, także przed przypiętymi;
+  // limit premiereMax dotyczy tylko ich, calendarMax ich nie obejmuje.
+  const premiere = premiereIds.filter((id) => String(id) in done).slice(0, premiereMax).map(Number);
+  const isPremiere = new Set(premiere);
+  const entries = Object.entries(done).filter(([id]) => !isPremiere.has(Number(id)));
   const old = entries.filter(([, day]) => aged(day)).map(([id]) => Number(id)).sort(byRank);
   const fromCalendar = calendarLatest
     ? entries.filter(([id, day]) => !aged(day) && day < calendarLatest && calendarHit(Number(id))).map(([id]) => Number(id)).sort(byRank).slice(0, calendarMax)
     : [];
-  return [...old, ...fromCalendar];
+  return [...premiere, ...old, ...fromCalendar];
 }
 
 /** Z wyniku sond { id: bool } zostawia id wskaźników z nowym rokiem. */

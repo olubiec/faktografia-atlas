@@ -14,8 +14,9 @@ import {
 } from './library-lib.mjs';
 import { sectionOf, sortQueueByPriority, summarizeBySection, priorityScore } from './library-priority.mjs';
 import { fetchHtml, loadCalendar, calendarHits } from './gus-calendar.mjs';
+import { factsFromValues, findPremieres, premiereVariableIds, prependPremieres, updateLedger, waitingIds } from './premieres.mjs';
 import {
-  fetchLevels, filterInScope, isStale, levelKey, loadScope, missingLevels, probeUrlFor, scopeReason, yearsOf,
+  fetchLevels, filterInScope, isStale, levelKey, loadScope, missingLevels, probeUrlFor, scopeReason, variableName, yearsOf,
 } from './library-scope.mjs';
 import { budgetForRun, hasNewYear, pagesHaveValues, refreshCandidates } from './library-plan.mjs';
 
@@ -26,6 +27,11 @@ const deadline = Date.now() + Number(process.env.LIBRARY_MINUTES ?? 130) * 60000
 const stats = { requests: 0 };
 const bySection = {};
 const configFile = fileURLToPath(new URL('../../config/library-priority.json', import.meta.url));
+const indicatorsFile = fileURLToPath(new URL('../../config/indicators.json', import.meta.url));
+// Tryb „tylko premiery” (fetch-premieres.yml, ok. 11:10 UTC): sprawdza i pobiera wyłącznie zmienne z dzisiejszych publikacji GUS.
+const premiereOnly = process.env.LIBRARY_PREMIERES_ONLY === '1'; // ustawiane przez fetch-premieres.yml
+const today = () => new Date().toISOString().slice(0, 10);
+let premieres = [];
 
 async function readJson(file, fallback) {
   try {
@@ -111,7 +117,8 @@ async function downloadValues(state, catalog, config = null, scope = null) {
   scope ??= await loadScope();
   const wanted = filterInScope(Object.values(catalog.variables), catalog, scope);
   stats.inScope = wanted.length;
-  const queue = sortQueueByPriority(wanted, catalog, config, state, fetchLevels);
+  let queue = prependPremieres(sortQueueByPriority(wanted, catalog, config, state, fetchLevels), config.premiereIds ?? []);
+  if (premiereOnly) queue = queue.filter((v) => (config.premiereIds ?? []).includes(Number(v.id)));
   stats.queueLength = queue.length;
   for (const v of queue) {
     if (!budget.canStartVariable()) break;
@@ -197,7 +204,7 @@ async function backfillLevels(state, catalog, scope) {
 // Odświeżanie: dla pobranych dawniej niż refreshAfterDays jedno tanie zapytanie sprawdza, czy GUS dopisał rok;
 // dopiero wtedy zmienna jest pobierana od nowa. Część budżetu (refreshShare) jest zarezerwowana na tę fazę.
 async function refreshValues(state, catalog, config, total, scope) {
-  const cap = Math.floor(total * (config.refreshShare ?? 0.15));
+  const cap = premiereOnly ? total : Math.floor(total * (config.refreshShare ?? 0.15));
   const start = budget.used;
   const scoreOf = (id) => {
     const v = catalog.variables[id];
@@ -205,7 +212,10 @@ async function refreshValues(state, catalog, config, total, scope) {
   };
   const pathOf = (v) => catalog.subjects?.[v.subjectId]?.path ?? [];
   const calendarHit = (id) => !!catalog.variables[id] && calendarHits(catalog.variables[id], pathOf(catalog.variables[id]), config.calendarStems) > 0;
-  for (const id of refreshCandidates({ done: state.done, config, scoreOf, calendarHit, calendarLatest: config.calendarLatest })) {
+  const premiereIds = config.premiereIds ?? [];
+  let candidates = refreshCandidates({ done: state.done, config, scoreOf, calendarHit, calendarLatest: config.calendarLatest, premiereIds, premiereMax: config.premiereMax });
+  if (premiereOnly) candidates = candidates.filter((id) => premiereIds.includes(id));
+  for (const id of candidates) {
     if (budget.used - start >= cap || !budget.canStartVariable()) break;
     const v = catalog.variables[id];
     // Poza wytycznymi (strona tego nie pokaże) – nie wydajemy nawet zapytania-sondy.
@@ -230,11 +240,42 @@ async function refreshValues(state, catalog, config, total, scope) {
 // Kalendarium GUS (3 ostatnie dni): rdzenie tematów do premii w kolejce. Błąd sieci nie przerywa pracy.
 async function applyCalendar(config) {
   if (process.env.LIBRARY_CALENDAR === '0') return;
-  const cal = await loadCalendar(fetchHtml).catch(() => null);
-  if (!cal) return;
+  const cal = await loadCalendar(fetchHtml, { ahead: Number(process.env.LIBRARY_CALENDAR_AHEAD ?? 0) }).catch(() => null);
+  if (!cal) return null;
   config.calendarStems = cal.stems;
   config.calendarLatest = cal.latest;
   stats.calendarTitles = cal.titles.length;
+  return cal;
+}
+
+// Premiery: publikacje z kalendarium dopasowane do wskaźników głównych i zmiennych biblioteki; ich zmienne idą na początek kolejki.
+async function applyPremieres(cal, catalog, config, state) {
+  const pathOf = (v) => catalog.subjects?.[v.subjectId]?.path ?? [];
+  const indicators = JSON.parse(await readFile(indicatorsFile, 'utf8'));
+  const variables = Object.values(catalog.variables).map((variable) => ({ variable, path: pathOf(variable) }));
+  premieres = findPremieres(cal.items, { indicators, variables });
+  const scoreOf = (id) => (catalog.variables[id] ? priorityScore(catalog.variables[id], pathOf(catalog.variables[id]), config) : 0);
+  const max = config.premiereMax ?? 40;
+  const fresh = premiereVariableIds(premieres, today(), { premiereMax: max, scoreOf });
+  const waiting = waitingIds(await readJson('calendar.json', null));
+  config.premiereIds = [...new Set([...fresh, ...waiting])].slice(0, max);
+  stats.premieres = premieres.length;
+  await writeLedger(catalog, state);
+}
+
+// Księga kalendarium (library/calendar.json): stan każdej zmiennej z publikacji, bez wcięć, deterministyczna.
+async function writeLedger(catalog, state) {
+  const prev = await readJson('calendar.json', { entries: [] });
+  const scope = await loadScope();
+  const ids = new Set([...premieres.flatMap((p) => p.library), ...prev.entries.flatMap((e) => e.library.map((v) => v.id))]);
+  const facts = {};
+  for (const id of ids) {
+    const v = catalog.variables[id];
+    const reason = !v || scopeReason(v, catalog.subjects?.[v.subjectId]?.path ?? [], scope) !== null ? 'poza-wytycznymi' : Number(v.level) < 6 ? 'brak-gmin' : null;
+    const values = reason ? null : await readJson(`values/${id}.json`, null);
+    facts[id] = { reason, doneOn: state.done[id] ?? null, ...(values ? factsFromValues(values, { unit: v.unit, name: variableName(v) }) : { lastYear: null, niche: false }) };
+  }
+  await writeJson('calendar.json', updateLedger(prev, { today: today(), premieres, factsOf: (id) => facts[id] }));
 }
 
 // Podgląd: ile i jakie zmienne weszłyby do tego przebiegu (bez zapytań do API).
@@ -268,9 +309,10 @@ async function main() {
     if (!state.catalogDone) await crawlCatalog(state, catalog);
     const config = JSON.parse(await readFile(configFile, 'utf8'));
     const scope = await loadScope();
-    await applyCalendar(config);
+    const cal = await applyCalendar(config);
+    if (cal && state.catalogDone) await applyPremieres(cal, catalog, config, state);
     await refreshValues(state, catalog, config, total, scope);
-    await backfillLevels(state, catalog, scope);
+    if (!premiereOnly) await backfillLevels(state, catalog, scope);
     await downloadValues(state, catalog, config, scope);
   } catch (err) {
     if (!(err instanceof LimitStop)) {
@@ -278,6 +320,7 @@ async function main() {
       process.exitCode = /HTTP 429/.test(err.message) ? 0 : 1;
     }
   } finally {
+    if (premieres.length || stats.premieres !== undefined) await writeLedger(catalog, state).catch((e) => console.error(`Księga kalendarium: ${e.message}`));
     state.runs++;
     state.lastRun = new Date().toISOString();
     state.runLog = [...(state.runLog ?? []), { at: state.lastRun, used: stats.requests }].slice(-20);
@@ -286,7 +329,7 @@ async function main() {
     const table = summarizeBySection(bySection, stats.queueLength ?? 0);
     console.log(table);
     if (process.env.LIBRARY_SUMMARY_FILE) await writeFile(process.env.LIBRARY_SUMMARY_FILE, `${table}\n`);
-    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Dopełnionych o brakujące poziomy: ${stats.backfilled ?? 0}. Kalendarium GUS: ${stats.calendarTitles ?? 0} publikacji. Pominięte puste (bez gmin): ${stats.skippedEmpty ?? 0}. Luki w gminach (zapisane bez gmin): ${stats.gmiGaps ?? 0}. Zmiennych: ${total}, w wytycznych: ${stats.inScope ?? '?'}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
+    console.log(`Zapytań: ${budget.used}/${budget.used + budget.left}. Katalog: ${state.catalogDone ? 'komplet' : `w toku (${state.pending.length} działów w kolejce)`}. Odświeżonych (nowy rok): ${stats.refreshed ?? 0}. Dopełnionych o brakujące poziomy: ${stats.backfilled ?? 0}. Kalendarium GUS: ${stats.calendarTitles ?? 0} publikacji, premier: ${stats.premieres ?? 0}. Pominięte puste (bez gmin): ${stats.skippedEmpty ?? 0}. Luki w gminach (zapisane bez gmin): ${stats.gmiGaps ?? 0}. Zmiennych: ${total}, w wytycznych: ${stats.inScope ?? '?'}, pobranych: ${Object.keys(state.done).length}, błędnych: ${Object.keys(state.failed).length}.`);
   }
 }
 

@@ -95,6 +95,8 @@ export interface FactIndicator {
 
 /** Plik public/data/values/<id>.json (podzbiór). */
 export interface IndicatorValues {
+  /** Kiedy robot pobrał plik (ISO); brak w danych testowych. */
+  fetchedAt?: string;
   years: number[];
   values: Record<string, (number | null)[]>;
 }
@@ -139,6 +141,8 @@ export interface FactsConfig {
   /** Strony „Nowe dane GUS” (W26-F05, news.ts): pozycje w tabelach i próg zmiany granic rok do roku. */
   news?: { rows: number; boundaryJump: number };
   trendBoost: Record<string, number>;
+  /** Świeże dane (W27-D02, fresh.ts): ile dni wskaźnik jest świeży, mnożniki siły i dni Odkrycia dnia dla świeżych faktów. */
+  fresh?: FreshConfig;
   start: {
     dailyCount: number;
     lists: { indicatorId: string; level: Level; dir: Direction }[];
@@ -147,6 +151,13 @@ export interface FactsConfig {
   neighbours?: { min: number };
   /** F8: wskaźniki wektora podobieństwa (standaryzowane), te w skali logarytmicznej i minimalny udział wspólnych. */
   twin?: { indicators: string[]; log: string[]; minShare: number };
+}
+
+export interface FreshConfig {
+  days: number;
+  boost: number;
+  extremeBoost: number;
+  dailySlots: number;
 }
 
 /** Pierścień sąsiadów jednostki (ten sam poziom). */
@@ -175,4 +186,6 @@ export interface FactsInput {
   config: FactsConfig;
   /** Pierścienie sąsiadów z topologii (W26-F03); brak = bez faktów F3. */
   neighbours?: Record<string, NeighbourRing>;
+  /** Świeże wskaźniki (W27-D02): id → ostatni rok z danymi; brak = nic nie jest świeże. */
+  fresh?: Record<string, number>;
 }
