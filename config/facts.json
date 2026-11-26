@@ -100,11 +100,12 @@
   ],
   "trendBoost": {},
   "fresh": {
-    "$opis": "Świeże dane (W27-D02, docs/KONCEPT-ODKRYCIA.md): days – ile dni po nowym roku wskaźnika jest świeży; boost – mnożnik siły faktu z najnowszego roku; extremeBoost – dodatkowo dla 1. miejsca bez remisu i rekordu serii; dailySlots – ile pierwszych dni Odkrycia dnia zajmują świeże fakty krajowe.",
+    "$opis": "Świeże dane (W27-D02, docs/KONCEPT-ODKRYCIA.md): days – ile dni po nowym roku wskaźnika jest świeży; boost – mnożnik siły faktu z najnowszego roku; extremeBoost – dodatkowo dla 1. miejsca bez remisu i rekordu serii; dailySlots – ile pierwszych dni Odkrycia dnia zajmują świeże fakty krajowe; labelDays (W28-D06) – ile dni od nowego roku wskaźnika widać etykietę „Nowość”.",
     "days": 28,
     "boost": 1.6,
     "extremeBoost": 1.3,
-    "dailySlots": 7
+    "dailySlots": 7,
+    "labelDays": 7
   },
   "news": {
     "$opis": "Strony „Nowe dane GUS” (W26-F05): ile pozycji w tabelach; próg skoku powierzchni dla porównania rok do roku (ostrzejszy niż w 10 latach: w jednym roku nawet mała zmiana granic daje „rekordowy” spadek, np. Prószków 2017).",

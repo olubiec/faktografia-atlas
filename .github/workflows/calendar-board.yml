@@ -1,0 +1,74 @@
+name: Calendar board
+
+# W28-D07: tablica „Kalendarium danych” = jedno zgłoszenie (etykieta `kalendarium`), którego treść robot podmienia.
+# Nie zakłada nowych zgłoszeń, nie komentuje (bez powiadomień), niczego nie scala i nie pisze na main.
+# Pisze tylko library/badge.json na gałęzi data/library (znaczek w README). Sekretów poza GITHUB_TOKEN brak.
+# Stany biorą się z księgi library/calendar.json (fetch-library), a „Wdrożone” i „Odkrycia” z plików na main.
+on:
+  workflow_run:
+    workflows: ['Fetch library', 'Fetch data']
+    types: [completed]
+  workflow_dispatch:
+  schedule:
+    - cron: '20 6 * * *'
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: calendar-board
+  cancel-in-progress: false
+
+jobs:
+  board:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BRANCH: data/library
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Katalog roboczy z gałęzi data/library (gdy jej jeszcze nie ma: puste sekcje „—”)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            git fetch --depth 1 origin "$BRANCH"
+            git worktree add -B "$BRANCH" lib-wt "origin/$BRANCH"
+          else
+            mkdir -p lib-wt/library
+          fi
+
+      - name: Złóż tablicę i podmień treść zgłoszenia „Kalendarium danych”
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p lib-wt/library
+          node scripts/data/calendar-board.mjs --lib lib-wt/library --out "$RUNNER_TEMP/board.md" --badge lib-wt/library/badge.json --issue | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Zapisz znaczek (library/badge.json) na gałęzi data/library
+        run: |
+          [ -d lib-wt/.git ] || [ -f lib-wt/.git ] || { echo "Brak gałęzi $BRANCH – znaczek powstanie po pierwszym przebiegu biblioteki."; exit 0; }
+          cd lib-wt
+          git add -f library/badge.json
+          if git diff --staged --quiet; then echo "Znaczek bez zmian."; exit 0; fi
+          git commit -m "data: znaczek kalendarium"
+          for i in 1 2 3 4; do
+            git push origin "HEAD:refs/heads/$BRANCH" && exit 0
+            git fetch origin "$BRANCH" && git merge --no-edit "origin/$BRANCH"
+            sleep $((i * 5))
+          done
+          echo "::warning::Nie udało się zapisać znaczka (kolejny przebieg spróbuje ponownie)."

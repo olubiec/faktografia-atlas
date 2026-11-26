@@ -46,8 +46,30 @@ export function withRegionalVariables(indexFile, catalog) {
   return { ...indexFile, categories, units, variables: [...(indexFile?.variables ?? []), ...extra] };
 }
 
-/** Czysta funkcja (bez I/O): spis zmiennych, które mają plik wartości z jakimikolwiek danymi. */
-export function buildAvailable(indexFile, valuesFiles, generatedAt = new Date().toISOString()) {
+const DAY_MS = 86_400_000;
+
+// Ta sama definicja co src/core/facts/fresh-label.ts (isNewSince/newIdList); test w tests/unit/w28-d06-new-badge.test.tsx pilnuje zgodności.
+const isNewSince = (since, now, days) => {
+  if (!since) return false;
+  const diff = Date.parse(now) - Date.parse(since);
+  return Number.isFinite(diff) && diff >= 0 && diff <= days * DAY_MS;
+};
+
+/**
+ * Lista `new` w available.json (W28-D06): id wskaźników głównych z księgi public/data/facts/fresh.json (nowy rok ≤ days dni)
+ * oraz zmiennych biblioteki `downloaded` w library/calendar.json (≤ days dni). Brak którejś księgi = brak jej wkładu.
+ */
+export function buildNewIds({ ledger, calendar, now, days = 7 }) {
+  const ids = new Set();
+  for (const [id, e] of Object.entries(ledger ?? {})) if (isNewSince(e?.since, now, days)) ids.add(id);
+  for (const e of calendar?.entries ?? []) {
+    for (const v of e.library ?? []) if (v.state === 'downloaded' && isNewSince(v.on, now, days)) ids.add(String(v.id));
+  }
+  return [...ids].sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+}
+
+/** Czysta funkcja (bez I/O): spis zmiennych, które mają plik wartości z jakimikolwiek danymi. `newIds` → pole `new`. */
+export function buildAvailable(indexFile, valuesFiles, generatedAt = new Date().toISOString(), newIds = []) {
   const byId = new Map((indexFile?.variables ?? []).map((v) => [String(v.id), v]));
   const variables = [];
   for (const file of valuesFiles) {
@@ -73,7 +95,7 @@ export function buildAvailable(indexFile, valuesFiles, generatedAt = new Date().
     });
   }
   variables.sort((a, b) => Number(a.id) - Number(b.id));
-  return { version: 1, generatedAt, variables };
+  return { version: 1, generatedAt, variables, ...(newIds.length > 0 ? { new: newIds } : {}) };
 }
 
 /** Czy plik wartości ma jakąkolwiek daną na którymkolwiek poziomie. */
@@ -103,7 +125,7 @@ export function formatGapLine(gap) {
 }
 
 /** Cienka nakładka: czyta katalog, woła buildAvailable, zapisuje atomowo. Błąd = wyjątek (nic nie zapisujemy). */
-export async function writeAvailable(dir, onGap) {
+export async function writeAvailable(dir, onGap, opts = {}) {
   let index;
   try {
     index = JSON.parse(await readFile(path.join(dir, 'index.json'), 'utf8'));
@@ -126,7 +148,17 @@ export async function writeAvailable(dir, onGap) {
   for (const name of names) {
     files.push(JSON.parse(await readFile(path.join(dir, 'values', name), 'utf8')));
   }
-  const out = buildAvailable(index, files);
+  const readOptional = async (file) => {
+    try {
+      return JSON.parse(await readFile(file, 'utf8'));
+    } catch {
+      return null; // brak księgi = brak etykiet z niej, spis i tak powstaje
+    }
+  };
+  const ledger = await readOptional(opts.freshPath ?? path.join('public', 'data', 'facts', 'fresh.json'));
+  const calendar = await readOptional(path.join(dir, 'calendar.json'));
+  const generatedAt = new Date().toISOString();
+  const out = buildAvailable(index, files, generatedAt, buildNewIds({ ledger, calendar, now: generatedAt, days: opts.days ?? 7 }));
   if (onGap) onGap(countGap(index, files));
   const target = path.join(dir, 'available.json');
   await mkdir(dir, { recursive: true });
