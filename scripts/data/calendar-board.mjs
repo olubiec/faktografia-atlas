@@ -3,7 +3,8 @@
 // i szablonów src/core/facts (bez AI, bez wpisywania ręcznego). Czyste funkcje + cienkie wejście/wyjście.
 // Wejście z wiersza poleceń (workflow calendar-board.yml):
 //   node scripts/data/calendar-board.mjs --lib lib-wt/library --out board.md --badge lib-wt/library/badge.json [--issue]
-import { readFile, writeFile } from 'node:fs/promises';
+//     [--materials lib-wt/library/materials [--materials-force]]   (W29-D08: pakiet „Do materiałów”)
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -93,7 +94,7 @@ const lastYear = (x) => (x?.y?.length ? Math.max(...x.y.map(Number)) : undefined
  * Sekcje tablicy jako listy wierszy (bez przycinania). `sentenceOf(daily)` składa zdanie z szablonu (wstrzykiwane,
  * bo szablony są w TypeScript); zwraca null, gdy nie da się uczciwie ułożyć zdania.
  */
-export function buildSections({ today, ledger, available, start, fresh, freshDays = DONE_DAYS, indicators = [], sentenceOf = () => null, topics = [] }) {
+export function buildSections({ today, ledger, available, start, fresh, freshDays = DONE_DAYS, indicators = [], sentenceOf = () => null, topics = [], materials = [] }) {
   const st = collectStates(ledger, today);
   const varLabel = (id) => nameOf(available, id)?.n ?? `zmienna ${id}`;
   const indName = (id) => indicators.find((i) => i.id === id)?.name ?? id;
@@ -142,6 +143,12 @@ export function buildSections({ today, ledger, available, start, fresh, freshDay
 
   const trends = topics.map((t) => `| ${cell(t.topic ?? t)} | ${t.change != null ? cell(t.change) : DASH} |`);
 
+  // „Do materiałów” (W29-D08): pakiet z src/core/facts/materials.ts, tytuł = zdanie z szablonu, link do widoku na mapie.
+  // Bez ściskania spacji: liczby mają twarde spacje, a zdanie ma zostać identyczne jak w pakiecie.
+  const esc = (s) => String(s).replace(/\|/g, '\\|');
+  const kindLabel = { premiere: 'premiera GUS', fresh: 'świeże dane', extreme: 'skrajność', trend: 'temat na czasie' };
+  const forMaterials = materials.map((m, i) => `| ${i + 1} | ${kindLabel[m.kind] ?? m.kind} | ${esc(m.title)} | ${esc(m.value.text)} | ${link(m.source.text, `${SITE}${m.source.map}`)} |`);
+
   return [
     { title: 'Zaplanowane (14 dni)', head: ['Data', 'Publikacja GUS', 'Co pobierzemy'], rows: planned },
     { title: 'Czeka na BDL', head: ['Od kiedy', 'Zmienna (publikacja)'], rows: waiting },
@@ -150,7 +157,37 @@ export function buildSections({ today, ledger, available, start, fresh, freshDay
     { title: 'Wdrożone (na stronie)', head: ['Mapa'], rows: deployed },
     { title: 'Odkrycia', head: ['Jednostka', 'Fakt', 'Mapa'], rows: discoveries },
     { title: 'Tematy na czasie', head: ['Temat', 'Zmiana'], rows: trends },
+    { title: 'Do materiałów', head: ['#', 'Rodzaj', 'Zdanie', 'Liczba', 'Źródło i mapa'], rows: forMaterials },
   ];
+}
+
+/** Pakiet „Do materiałów” zapisujemy w poniedziałek (co tydzień) i w dniu, w którym księga ma nowe `downloaded` (premiera GUS). */
+export function shouldBuildMaterials({ today, ledger, force = false }) {
+  if (force || new Date(`${today}T00:00:00Z`).getUTCDay() === 1) return true;
+  return (ledger?.entries ?? []).some((e) => (e.library ?? []).some((v) => v.state === 'downloaded' && (v.on ?? e.date) === today));
+}
+
+/** latest.json pakietu „Do materiałów”: ta sama treść co plik .md, w strukturze (deterministyczny zapis). */
+export const materialsJson = (pack) => `${JSON.stringify(pack, null, 2)}\n`;
+
+const KIND_LABEL = { premiere: 'Premiera GUS', fresh: 'Świeże dane', extreme: 'Skrajność', trend: 'Temat na czasie' };
+
+/** Plik library/materials/<data>.md; `site` dopisuje domenę do linków mapy. */
+export function renderMaterialsMarkdown(pack, { site = '' } = {}) {
+  const rows = (list) => (list.length ? list.map((r) => `${r.rank}. ${r.name} (${r.teryt}) – ${r.text}`).join('; ') : DASH);
+  const lines = [`# Do materiałów – ${pack.date}`, '', '_Pakiet tekstowy robota: zdania ze stałych szablonów, liczby wyłącznie z danych GUS (BDL). Bez grafik i bez AI._', ''];
+  if (pack.items.length === 0) lines.push('Brak pozycji w tym tygodniu.', '');
+  pack.items.forEach((it, i) => {
+    const what = it.premiere ? `${KIND_LABEL[it.kind]}: [${it.premiere.title}](${it.premiere.href}), ${it.premiere.date}` : `${KIND_LABEL[it.kind]}${it.topic ? ` (${it.topic})` : ''}`;
+    lines.push(`## ${i + 1}. ${it.title}`, '', `- Rodzaj: ${what}`, `- Jednostka: ${it.unitName} (${it.teryt})`, `- Liczba: ${it.value.text} (${it.year} r.)`);
+    if (it.context.average) lines.push(`- Średnia: ${it.context.average.text} (${it.context.average.basis})`);
+    if (it.context.change10) lines.push(`- Zmiana w 10 lat: ${it.context.change10}`);
+    lines.push(`- Najwyżej: ${rows(it.ranking.top)}`, `- Najniżej: ${rows(it.ranking.bottom)}`);
+    lines.push(`- Źródło: ${it.source.text}${it.source.bdlVarId != null ? `, zmienna BDL ${it.source.bdlVarId}` : ''} · [mapa](${site}${it.source.map})`);
+    if (it.warnings.length) lines.push(`- Uwaga: ${it.warnings.join('; ')}`);
+    lines.push('');
+  });
+  return lines.join('\n');
 }
 
 const renderSection = (s, limit) => {
@@ -257,13 +294,41 @@ async function main() {
       return factSentence(decodeFact(d.u, d.f), { indicator: { name: ind.name, unit: ind.unit }, level: levelOf(d.u) });
     };
     const today = new Date().toISOString().slice(0, 10);
+    const ledger = await readJson(path.join(lib, 'calendar.json'), null);
+    const factsConfig = await readJson(path.join(root, 'config/facts.json'), {});
+    // Pakiet „Do materiałów” (W29-D08): liczby tylko z public/data, zdania z szablonów src/core/facts.
+    const { buildMaterials } = await vite.ssrLoadModule('/src/core/facts/materials.ts');
+    const values = {};
+    for (const i of indicators) {
+      const v = await readJson(path.join(data, 'values', `${i.id}.json`), null);
+      if (v) values[i.id] = v;
+    }
+    const pack = buildMaterials({
+      today,
+      indicators,
+      values,
+      units: await readJson(path.join(data, 'units.json'), []),
+      config: factsConfig,
+      gminaMinPopulation: (await readJson(path.join(root, 'config/lists.json'), {})).gminaMinPopulation ?? 5000,
+      fresh,
+      premieres: ledger?.entries ?? [],
+      daily: start?.daily ?? [],
+    });
+    const materialsDir = arg('materials');
+    if (materialsDir && shouldBuildMaterials({ today, ledger, force: process.argv.includes('--materials-force') })) {
+      await mkdir(materialsDir, { recursive: true });
+      await writeFile(path.join(materialsDir, `${today}.md`), renderMaterialsMarkdown(pack, { site: SITE }));
+      await writeFile(path.join(materialsDir, 'latest.json'), materialsJson(pack));
+      console.log(`Do materiałów: ${pack.items.length} pozycji → ${materialsDir}`);
+    }
     const { markdown, counts } = buildBoard({
       today,
-      ledger: await readJson(path.join(lib, 'calendar.json'), null),
+      materials: pack.items,
+      ledger,
       available: await readJson(path.join(lib, 'available.json'), null),
       start,
       fresh,
-      freshDays: (await readJson(path.join(root, 'config/facts.json'), {})).fresh?.days ?? DONE_DAYS,
+      freshDays: factsConfig.fresh?.days ?? DONE_DAYS,
       indicators,
       sentenceOf,
       topics: Array.isArray(topics) ? topics : [],
