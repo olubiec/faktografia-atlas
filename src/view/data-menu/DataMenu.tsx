@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NavArrowDown } from 'iconoir-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Icon } from '@/view/ui/Icon';
@@ -58,6 +58,19 @@ export function DataMenuBody({ tree, loading = false, failed = false, selectedId
     onClose();
   };
   const columns = layout === 'columns';
+  // Po wyborze działu/grupy prawa zawartość pokazuje się od początku (także na telefonie, gdzie lista była przewinięta).
+  const rightRef = useRef<HTMLElement | null>(null);
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    const el = rightRef.current;
+    if (!el) return;
+    el.scrollTop = 0;
+    if (typeof el.scrollIntoView === 'function') el.scrollIntoView({ block: 'start' });
+  }, [sectionId, groupId]);
 
   return (
     <div className="flex min-h-0 flex-col gap-3 text-tusz" data-layout={layout}>
@@ -68,9 +81,9 @@ export function DataMenuBody({ tree, loading = false, failed = false, selectedId
         {loading ? 'Wczytuję spis…' : `${tree.total} wskaźników z danymi w ${tree.sections.length} działach.`}
         {failed && ' Spisu pobranych danych nie udało się wczytać – widać tylko wskaźniki wbudowane.'}
       </p>
-      <div className={columns ? 'grid min-h-0 gap-4 md:grid-cols-[16rem_1fr]' : 'flex min-h-0 flex-col gap-3'}>
-        {!searching && (!section || columns) && <DataMenuSections tree={tree} sectionId={sectionId} onOpen={openSection} />}
-        <section aria-label="Wskaźniki" className="min-w-0">
+      <div className={columns ? 'grid min-h-0 gap-4 md:max-h-[65dvh] md:grid-cols-[16rem_1fr]' : 'flex min-h-0 flex-col gap-3'}>
+        {!searching && (!section || columns) && <DataMenuSections tree={tree} sectionId={sectionId} onOpen={openSection} scrollable={columns} />}
+        <section ref={rightRef} aria-label="Wskaźniki" className={columns ? 'min-w-0 md:min-h-0 md:overflow-y-auto' : 'min-w-0'}>
           {searching ? (
             <DataMenuResults
               tree={tree}

@@ -10,6 +10,7 @@ import type { UnitIndex } from '@/core/units/types';
 import { isCityCounty, listName } from '@/core/units/label';
 import { buildLegend, legendCaption, LEGEND_DIRECTION_LABEL } from '@/core/legend/legend';
 import { LEVEL_LABELS } from '@/core/map/main-view';
+import { fallbackLevel, levelsWithData } from '@/core/map/level-data';
 import { displayUnit } from '@/core/format/number';
 import { UNIT_COUNTS } from '@/core/units/counts';
 import { YearSlider } from '@/view/controls/YearSlider';
@@ -66,6 +67,15 @@ export function IndicatorPanel({
     };
   }, [indicator.id]);
 
+  // Poziomy z wartościami (puste poziomy są wyłączone); gdy bieżący stał się pusty – wracamy do najbliższego z danymi.
+  const withData = useMemo(() => (view.values && year != null ? levelsWithData(view.values, year) : undefined), [view.values, year]);
+  const { setLevel } = view;
+  useEffect(() => {
+    if (!withData || withData.length === 0) return;
+    const next = fallbackLevel(level, withData);
+    if (next !== level) setLevel(next);
+  }, [withData, level, setLevel]);
+
   const allUnits = useMemo(() => Array.from(index.byTeryt.values()), [index]);
 
   const legend = useMemo(
@@ -109,7 +119,7 @@ export function IndicatorPanel({
 
       <div className="flex flex-col gap-1.5">
         <span className="text-sm font-semibold">Poziom</span>
-        <LevelSwitch value={level} minLevel={indicator.minLevel} levels={view.levels} onChange={view.setLevel} />
+        <LevelSwitch value={level} minLevel={indicator.minLevel} levels={view.levels} withData={withData} onChange={view.setLevel} />
       </div>
 
       {choropleth && (
