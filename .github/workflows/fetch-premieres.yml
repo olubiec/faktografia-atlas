@@ -1,0 +1,95 @@
+name: Fetch premieres
+
+# (W27-D05) Premiery GUS tego samego dnia. GUS publikuje zwykle o 10:00 czasu polskiego.
+# Dwa małe przebiegi z własnym budżetem, osobno od „Fetch data” i „Fetch library” (ich harmonogramy i limity bez zmian):
+#  - 10:40 UTC „wskaźniki główne”: z kalendarium bierze dzisiejsze publikacje, sonduje (1 zapytanie na wskaźnik) tylko dopasowane
+#    wskaźniki główne; bez dopasowań kończy się od razu z zerem zapytań do BDL. Jeśli GUS dopisał nowy rok, uruchamia „Fetch data”
+#    tylko dla tych wskaźników na osobnej gałęzi data/premiere (nie nadpisuje nocnego PR).
+#  - 11:10 UTC „biblioteka”: scripts/data/library.mjs w trybie „tylko premiery”, budżet 25 zapytań.
+# Budżet dobowy: zapas planu w oknie 7 dni to ok. 35 zapytań na dobę (6750 z 6785), więc: biblioteka 25 + wskaźniki główne 10.
+# Grupa `fetch-data` jest wspólna z pozostałymi robotami: nigdy nie biją w API jednocześnie.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '40 10 * * *'
+    - cron: '10 11 * * *'
+
+permissions:
+  contents: write
+  actions: write
+  issues: write
+
+concurrency:
+  group: fetch-data
+  cancel-in-progress: false
+
+jobs:
+  main-indicators:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '40 10 * * *'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BDL_CLIENT_ID: ${{ secrets.BDL_CLIENT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 1
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Sonda nowego roku dla wskaźników z dzisiejszych publikacji
+        id: probe
+        shell: bash
+        run: |
+          LIST="$(node scripts/data/premieres.mjs main | tail -n 1)"
+          echo "Wskaźniki z premiery i nowym rokiem: ${LIST:-brak}"
+          echo "only=$LIST" >> "$GITHUB_OUTPUT"
+      - name: Uruchom „Fetch data” tylko dla tych wskaźników
+        if: steps.probe.outputs.only != ''
+        run: gh workflow run fetch-data.yml --ref main -f branch=data/premiere -f only="${{ steps.probe.outputs.only }}" -f refresh=true
+
+  library:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '10 11 * * *'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BRANCH: data/library
+      LIBRARY_BUDGET: '25'
+      LIBRARY_PREMIERES_ONLY: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 1
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Przygotuj katalog roboczy z gałęzi data/library
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            git fetch --depth 1 origin "$BRANCH"
+            git worktree add -B "$BRANCH" lib-wt "origin/$BRANCH"
+          else
+            echo "Brak gałęzi $BRANCH – pierwszy przebieg „Fetch library” ją utworzy."; exit 0
+          fi
+      - name: Pobierz zmienne z premier (w granicach budżetu)
+        env:
+          BDL_CLIENT_ID: ${{ secrets.BDL_CLIENT_ID }}
+          LIBRARY_DIR: lib-wt/library
+          LIBRARY_MINUTES: '20'
+        run: |
+          [ -d lib-wt/library ] || { echo "Brak katalogu biblioteki."; exit 0; }
+          node scripts/data/library.mjs
+      - name: Zapisz na gałęzi data/library (wartości i księga kalendarium)
+        if: always()
+        working-directory: lib-wt
+        run: |
+          [ -d library ] || exit 0
+          git add -f library/
+          if git diff --staged --quiet; then echo "Brak zmian."; exit 0; fi
+          git commit -m "data: premiery GUS – księga kalendarium i nowe wartości"
+          git push origin "HEAD:refs/heads/$BRANCH"

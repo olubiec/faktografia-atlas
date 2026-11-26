@@ -6,6 +6,8 @@ name: Fetch library
 # (2 przebiegi dziennie = 6000; nocny „Fetch data” tylko sonda nowego roku, ok. 20 zapytań, a pełne pobranie raz w tygodniu;
 # razem poniżej limitu 7 dni, patrz checkWindows w scripts/data/library-priority.mjs). Robot sam zmniejsza budżet,
 # gdy poprzedni przebieg był mniej niż 12 h temu (state.runLog, library-plan.mjs). Tempo 1 zapytanie / 2 s: 3000 zapytań to ok. 100 min.
+# Premiery GUS (W27-D05): zmienne z publikacji z dziś i wczoraj idą na początek kolejki (w tym samym budżecie).
+# Księga kalendarium library/calendar.json powstaje obok status.json na tej samej gałęzi.
 # Kolejność pobierania: config/library-priority.json (najpierw wskaźniki podstawowe i popularne).
 # Grupa `fetch-data` jest wspólna z nocnym pobieraniem: oba roboty nigdy nie biją w API jednocześnie.
 # Wznawianie: stan w library/state.json; uruchomienie pobiera tylko to, czego jeszcze nie ma.
