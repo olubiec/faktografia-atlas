@@ -88,10 +88,12 @@ export function buildRegistry(main: Indicator[], available: AvailableFile | null
     all.push(i);
   }
   const mainNames = new Set(main.map((i) => normalize(i.name)));
+  // Ta sama zmienna BDL nie może wystąpić dwa razy (np. births-per-1000 i b450540).
+  const mainVarIds = new Set(main.map((i) => String(i.bdlVarId)));
   const library: Indicator[] = [];
   const meta = new Map<string, AvailableVariable>();
   for (const v of available?.variables ?? []) {
-    if (!isValid(v) || byId.has(libraryIndicatorId(v.id))) continue;
+    if (!isValid(v) || mainVarIds.has(v.id) || byId.has(libraryIndicatorId(v.id))) continue;
     const ind = toIndicator(v, mainNames.has(normalize(v.n)));
     byId.set(ind.id, ind);
     meta.set(ind.id, v);

@@ -160,6 +160,38 @@
    "world": null,
    "funFact": null,
    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/1125,pojecie.html"
+  },
+  {
+   "indicatorId": "births-per-1000",
+   "short": "Ile dzieci urodziło się w ciągu roku na każde 1000 mieszkańców.",
+   "howToRead": "Pokazuje, jak „młode” jest miejsce. Wynik zależy od liczby kobiet w wieku rodzenia, więc małe wahania z roku na rok są normalne.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
+  },
+  {
+   "indicatorId": "deaths-per-1000",
+   "short": "Ile osób zmarło w ciągu roku na każde 1000 mieszkańców.",
+   "howToRead": "Wysoki wynik to głównie skutek starszej ludności, a nie „gorsze miejsce”. Młode gminy mają zgonów mniej, bo mieszka tam mniej seniorów.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
+  },
+  {
+   "indicatorId": "old-per-100-young",
+   "short": "Ilu seniorów przypada na 100 dzieci i młodzieży.",
+   "howToRead": "Wiek przedprodukcyjny to 0–17 lat, poprodukcyjny to 60+ (kobiety) i 65+ (mężczyźni), według GUS. Wynik 150 to 150 seniorów na 100 młodych.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
+  },
+  {
+   "indicatorId": "people-per-pharmacy",
+   "short": "Ilu mieszkańców przypada na jedną aptekę ogólnodostępną.",
+   "howToRead": "Im mniej osób na aptekę, tym bliżej do niej. Przykład: 2000 to jedna apteka na dwa tysiące mieszkańców. W małych gminach wynik bywa bardzo zmienny.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
   }
  ]
 }

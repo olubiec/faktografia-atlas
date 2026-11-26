@@ -200,5 +200,45 @@
     "higherIsBetter": null,
     "minLevel": "pow",
     "footnote": "rejestracje flot leasingowych zawyżają niektóre miasta"
+  },
+  {
+    "id": "births-per-1000",
+    "bdlVarId": 450540,
+    "name": "Urodzenia żywe na 1000 ludności",
+    "unit": "na 1000",
+    "description": "Liczba urodzeń żywych w ciągu roku w przeliczeniu na 1000 ludności.",
+    "group": "Ludność",
+    "higherIsBetter": null,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "deaths-per-1000",
+    "bdlVarId": 450541,
+    "name": "Zgony na 1000 ludności",
+    "unit": "na 1000",
+    "description": "Liczba zgonów w ciągu roku w przeliczeniu na 1000 ludności.",
+    "group": "Ludność",
+    "higherIsBetter": null,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "old-per-100-young",
+    "bdlVarId": 60564,
+    "name": "Osoby w wieku poprodukcyjnym na 100 osób w wieku przedprodukcyjnym",
+    "unit": "na 100",
+    "description": "Ile osób w wieku poprodukcyjnym przypada na 100 osób w wieku przedprodukcyjnym.",
+    "group": "Ludność",
+    "higherIsBetter": null,
+    "minLevel": "gmi"
+  },
+  {
+    "id": "people-per-pharmacy",
+    "bdlVarId": 60583,
+    "name": "Ludność na aptekę ogólnodostępną",
+    "unit": "osoba",
+    "description": "Ilu mieszkańców przypada na jedną aptekę ogólnodostępną.",
+    "group": "Życie",
+    "higherIsBetter": false,
+    "minLevel": "gmi"
   }
 ]
