@@ -2,6 +2,7 @@
 import { encodeFact, encodeTwin, type EncodedFact, type EncodedTwin } from './codec';
 import { createContext, type FactsContext } from './context';
 import { detectAll } from './detectors';
+import { boostFresh } from './fresh';
 import { selectFacts } from './select';
 import { findTwins } from './twins';
 import type { Fact, FactsInput, FactType, TwinFact } from './types';
@@ -22,12 +23,13 @@ export interface FactsBuild {
 
 export function buildFacts(input: FactsInput): FactsBuild {
   const ctx = createContext(input);
+  const { config } = ctx.input;
   const byUnit = new Map<string, UnitFacts>();
   for (const unit of input.units) {
     const candidates = detectAll(ctx, unit);
     const counts: Partial<Record<FactType, number>> = {};
     for (const f of candidates) counts[f.type] = (counts[f.type] ?? 0) + 1;
-    byUnit.set(unit.teryt, { selected: selectFacts(candidates, ctx.indicators, input.config.selection), counts });
+    byUnit.set(unit.teryt, { selected: selectFacts(boostFresh(candidates, config.fresh, input.fresh), ctx.indicators, input.config.selection), counts });
   }
   return { ctx, byUnit, twins: findTwins(ctx) };
 }

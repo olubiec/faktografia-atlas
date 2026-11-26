@@ -61,25 +61,100 @@ export function pickDaily(build: FactsBuild, month: number): Fact[] {
   return out;
 }
 
+/** Krajowy fakt 1. miejsca bez remisu (F1/F4) – materiał na Odkrycie dnia. */
+const isNationalFirst = (f: Fact): boolean =>
+  (f.type === 'F1' || f.type === 'F4') &&
+  (f.compare.kind === 'rank' || f.compare.kind === 'change') &&
+  f.compare.rank === 1 &&
+  !(f.compare.kind === 'rank' && f.compare.tie);
+
+/** Najsilniejsze krajowe fakty ze świeżych wskaźników (najnowszy rok): różne jednostki, bez limitu na wskaźnik. */
+export function pickFreshDaily(build: FactsBuild, slots: number): Fact[] {
+  const fresh = build.ctx.input.fresh ?? {};
+  const pool: Fact[] = [];
+  for (const { selected } of build.byUnit.values()) {
+    for (const f of selected) if (fresh[f.indicatorId] !== undefined && f.year >= fresh[f.indicatorId] && isNationalFirst(f)) pool.push(f);
+  }
+  const units = new Set<string>();
+  const out: Fact[] = [];
+  for (const f of pool.sort(compareFacts)) {
+    if (out.length >= slots) break;
+    if (units.has(f.teryt)) continue;
+    units.add(f.teryt);
+    out.push(f);
+  }
+  return out;
+}
+
+/**
+ * Odkrycie dnia ze świeżymi faktami: k-ty świeży fakt ląduje na indeksie dailyIndex(generatedAt + k dni),
+ * więc przez pierwsze dni po generatedAt strona pokazuje świeże dane; resztę wypełnia pickDaily (bez powtórzeń jednostek).
+ * Bez świeżych faktów wynik = pickDaily.
+ */
+export function pickDailyWithFresh(build: FactsBuild, generatedAt: string): Fact[] {
+  const { config } = build.ctx.input;
+  const month = new Date(generatedAt).getUTCMonth() + 1;
+  const base = pickDaily(build, month);
+  const slots = Math.min(config.fresh?.dailySlots ?? 0, config.start.dailyCount);
+  const fresh = slots > 0 ? pickFreshDaily(build, slots) : [];
+  if (fresh.length === 0) return base;
+  const taken = new Set(fresh.map((f) => f.teryt));
+  const rest = base.filter((f) => !taken.has(f.teryt)).slice(0, config.start.dailyCount - fresh.length);
+  const length = fresh.length + rest.length;
+  const out: (Fact | null)[] = Array.from({ length }, () => null);
+  const t0 = Date.parse(generatedAt);
+  fresh.forEach((f, k) => {
+    out[dailyIndex(new Date(t0 + k * 86_400_000), length)] = f;
+  });
+  let next = 0;
+  return out.map((f) => f ?? rest[next++]);
+}
+
 /** Zestawienie: 3 jednostki poziomu z najwyższą (dir 1) lub najniższą (dir −1) wartością w roku odniesienia. */
-export function buildList(build: FactsBuild, indicatorId: string, level: Level, dir: Direction): StartList | null {
+export function buildList(build: FactsBuild, indicatorId: string, level: Level, dir: Direction, minPopulation = 0): StartList | null {
   const { ctx } = build;
   const data = ctx.input.values[indicatorId];
   const idx = ctx.refYearIdx(indicatorId, level);
   if (!data || idx < 0) return null;
   const rows = ctx.byLevel[level]
+    .filter((u) => minPopulation === 0 || latestPopulation(build, u.teryt) >= minPopulation)
     .map((u) => [u.teryt, u.name, data.values[u.teryt]?.[idx]] as const)
     .filter((r): r is readonly [string, string, number] => r[2] != null)
     .sort((a, b) => dir * (b[2] - a[2]) || a[0].localeCompare(b[0]));
   return { indicatorId, level, dir, year: data.years[idx], top: rows.slice(0, 3).map((r) => [r[0], r[1], r[2]]) };
 }
 
+/** Ostatnia znana ludność jednostki (0, gdy brak – taka gmina nie wchodzi do zestawienia z progiem). */
+function latestPopulation(build: FactsBuild, teryt: string): number {
+  const s = build.ctx.input.values.population?.values[teryt] ?? [];
+  for (let i = s.length - 1; i >= 0; i--) if (s[i] != null) return s[i] as number;
+  return 0;
+}
+
+/** Zestawienie najsilniejszego świeżego wskaźnika (suma siły jego faktów krajowych); null, gdy brak świeżych. */
+export function buildFreshList(build: FactsBuild): StartList | null {
+  const fresh = build.ctx.input.fresh ?? {};
+  const sums = new Map<string, number>();
+  for (const { selected } of build.byUnit.values()) {
+    for (const f of selected) if (f.frame === 'kraj' && fresh[f.indicatorId] !== undefined && f.year >= fresh[f.indicatorId]) sums.set(f.indicatorId, (sums.get(f.indicatorId) ?? 0) + f.strength);
+  }
+  const ids = Object.keys(fresh).sort((a, b) => (sums.get(b) ?? 0) - (sums.get(a) ?? 0) || a.localeCompare(b));
+  const { smallPopulation } = build.ctx.input.config.thresholds;
+  for (const id of ids) {
+    const list = buildList(build, id, 'gmi', 1, smallPopulation);
+    if (list && list.top.length > 0) return list;
+  }
+  return null;
+}
+
 export function buildStart(build: FactsBuild, generatedAt: string): FactsStart {
   const { ctx } = build;
-  const month = new Date(generatedAt).getUTCMonth() + 1;
-  const daily = pickDaily(build, month).map((f) => ({ u: f.teryt, n: ctx.units.get(f.teryt)?.name ?? f.teryt, f: encodeFact(f) }));
-  const lists = ctx.input.config.start.lists
+  const daily = pickDailyWithFresh(build, generatedAt).map((f) => ({ u: f.teryt, n: ctx.units.get(f.teryt)?.name ?? f.teryt, f: encodeFact(f) }));
+  const configured = ctx.input.config.start.lists;
+  const freshList = buildFreshList(build);
+  const lists = (freshList ? configured.slice(1) : configured)
     .map((l) => buildList(build, l.indicatorId, l.level, l.dir))
     .filter((l): l is StartList => l !== null);
+  if (freshList) lists.unshift(freshList);
   return { generatedAt, daily, lists };
 }
