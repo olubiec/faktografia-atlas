@@ -42,7 +42,7 @@ Nowe polecenia właściciela (okno „Wybierz dane”, wejście do mapy, spójno
 
 ## Fale W27–W30: nowe dane, premiery GUS, świeżość Odkryć, kalendarium (25.11.2026)
 Polecenia właściciela: pobrać nowe, nieniszowe dane i pokazać je na mapach; premiery z kalendarium GUS pobierać w pierwszej kolejności; świeże i skrajne dane najpierw w „Odkryciach” i w materiałach; kilka dni etykiety „Nowość”; tablica kalendarium na górze repo; automat dopasowujący tematy do trendów (robot proponuje, właściciel decyduje).
-Zasada „nie niszowe” (W27-D01, wspólna dla wszystkich zadań): ≥ 95% gmin z wartością, ostatni rok ≥ bieżący − 2, seria ≥ 4 lata, wskaźnik względny.
+Zasada „nie niszowe” (W27-D01, wspólna dla wszystkich zadań): ≥ 75% gmin z wartością (obniżone z 95%), ostatni rok ≥ bieżący − 2, seria ≥ 4 lata, wskaźnik względny.
 
 | Fala | Zadania (w fali równolegle, rozłączne pliki) | Zależy od |
 |---|---|---|
