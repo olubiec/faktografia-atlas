@@ -232,8 +232,11 @@ try {
   // W26-F05: „Nowe dane GUS” – tylko pozycje zatwierdzone (scalony PR robota) w public/data/news.json.
   const newsItems = (await readJson(path.join(dataDir, 'news.json')).catch(() => ({ items: [] }))).items ?? [];
   const newsSite = await vite.ssrLoadModule('/src/core/facts/news-page.ts');
+  // W30-D10: kalendarium (public/data/calendar.json) tylko do statycznej strony /nowe-dane; brak pliku = puste sekcje.
+  const calendarPublic = await vite.ssrLoadModule('/src/core/facts/calendar-public.ts');
+  const calendar = calendarPublic.parsePublicCalendar(await readJson(path.join(dataDir, 'calendar.json')).catch(() => null));
   const news = newsSite.buildNewsSite(newsItems, { ...discoverCtx, gminaMinPopulation: discoverCtx.lists.gminaMinPopulation,
-    boundaryJump: factsConfig.news?.boundaryJump ?? discoverCtx.boundaryJump, recordMinYears: factsConfig.thresholds.recordMinYears, rows: factsConfig.news?.rows }, { css });
+    boundaryJump: factsConfig.news?.boundaryJump ?? discoverCtx.boundaryJump, recordMinYears: factsConfig.thresholds.recordMinYears, rows: factsConfig.news?.rows }, { css }, calendar);
   for (const page of news.pages) {
     await mkdir(path.join(dist, page.path), { recursive: true });
     await writeFile(path.join(dist, page.path, 'index.html'), page.html);
