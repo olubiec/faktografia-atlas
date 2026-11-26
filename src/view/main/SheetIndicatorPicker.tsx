@@ -52,7 +52,7 @@ export function SheetIndicatorPicker({ indicator, onSelect, defaultOpen = true }
         </button>
       </div>
       {open && (
-        <div className="max-h-[50dvh] overflow-y-auto border border-t-0 border-linia bg-arkusz p-3" data-slot="sheet-data-menu">
+        <div className="max-h-[50dvh] overflow-y-auto overscroll-contain border border-t-0 border-linia bg-arkusz p-3" data-slot="sheet-data-menu">
           <DataMenu selectedId={indicator.id} onSelect={onSelect} onClose={() => change(false)} layout="stack" initialQuery={initialQuery} />
         </div>
       )}

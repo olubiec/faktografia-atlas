@@ -101,12 +101,12 @@ export function ProfileChildren({
               type="button"
               onClick={() => onSelectUnit?.(row.teryt)}
               data-slot="child-unit-button"
-              className="flex-1 min-w-0 min-h-[44px] py-2 px-1 flex items-center justify-between text-left hover:bg-linia/10 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer transition-colors"
+              className="flex-1 min-w-0 min-h-[44px] py-2 px-1 flex flex-col items-start justify-center text-left hover:bg-linia/10 focus:outline-none focus:ring-2 focus:ring-tusz cursor-pointer transition-colors"
             >
-              <span className="text-sm font-medium text-tusz truncate pr-2">
+              <span className="text-sm font-medium text-tusz leading-tight [overflow-wrap:normal] [word-break:normal] hyphens-none" data-slot="child-unit-name">
                 {row.label}
               </span>
-              <span className="text-sm font-mono text-olowek shrink-0">
+              <span className="text-sm font-mono text-olowek mt-0.5">
                 {row.formattedValue}
               </span>
             </button>

@@ -137,8 +137,8 @@ export function PlacePickerView(p: PlacePickerViewProps) {
                 className={`flex items-center justify-between gap-2 px-3 min-h-[44px] cursor-pointer text-tusz ${i === p.state.active ? 'bg-linia/20' : ''}`}
               >
                 <span className="flex flex-col min-w-0">
-                  <span className="truncate text-sm font-[600]">{o.name}</span>
-                  {o.detail && <span className="truncate text-xs text-olowek">{o.detail}</span>}
+                  <span className="text-sm font-[600] leading-tight [overflow-wrap:normal] [word-break:normal] hyphens-none">{o.name}</span>
+                  {o.detail && <span className="text-xs text-olowek [overflow-wrap:normal] [word-break:normal] hyphens-none">{o.detail}</span>}
                 </span>
                 <span className="shrink-0 whitespace-nowrap border border-linia bg-kalka px-2 text-xs text-olowek">{o.badge}</span>
               </li>

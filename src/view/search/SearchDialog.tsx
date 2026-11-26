@@ -138,7 +138,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
             </div>
 
             {/* Lista wyników */}
-            <Command.List className="flex-1 overflow-y-auto p-2">
+            <Command.List className="flex-1 overflow-y-auto overscroll-contain p-2">
               {query.trim().length >= 2 && error && (
                 <div role="alert" className="p-6 text-center text-olowek text-sm">
                   Nie udało się wczytać listy miejsc. Odśwież stronę i spróbuj ponownie.

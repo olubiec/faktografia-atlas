@@ -17,6 +17,7 @@ import {
   type RankingsState,
 } from '../../core/ranking/rankings-url';
 import { allowedLevels } from '../../core/map/main-view';
+import { fallbackLevel, levelsWithData } from '../../core/map/level-data';
 import { isBasic } from '../../core/my-indicators/my-indicators';
 import type { Unit } from '../../core/units/types';
 import type { Indicator, IndicatorValues } from '../../core/profile/profile';
@@ -75,6 +76,22 @@ export function Rankings() {
     setParams(writeRankingsSearch(applyRankingsChange(state, patch)).replace(/^\?/, ''));
   };
 
+  // Poziomy z wartościami w wybranym roku (puste są wyłączone, jak w przełączniku mapy).
+  const availableLevels = useMemo(() => {
+    const allowed = allowedLevels(indicator?.minLevel);
+    if (!values) return allowed;
+    const year = state.y ?? values.years[values.years.length - 1];
+    const withData = levelsWithData(values, year);
+    return withData.length === 0 ? allowed : allowed.filter((l) => withData.includes(l));
+  }, [values, state.y, indicator]);
+
+  // Wybrany poziom bez danych: przechodzimy na najbliższy z danymi.
+  useEffect(() => {
+    if (!values || availableLevels.length === 0) return;
+    const next = fallbackLevel(state.l, availableLevels);
+    if (next !== state.l) setParams(writeRankingsSearch(applyRankingsChange(state, { l: next })).replace(/^\?/, ''), { replace: true });
+  }, [values, availableLevels, state, setParams]);
+
   const ranking = useMemo(() => {
     if (!values || !units.length) return null;
     const year = state.y ?? values.years[values.years.length - 1];
@@ -99,7 +116,7 @@ export function Rankings() {
             state={state}
             indicators={shown}
             years={values?.years ?? []}
-            availableLevels={allowedLevels(indicator?.minLevel)}
+            availableLevels={availableLevels}
             voivodeships={voivodeships}
             onChange={onChange}
           />

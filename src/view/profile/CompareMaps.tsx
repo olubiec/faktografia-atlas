@@ -137,7 +137,7 @@ function SingleMiniMap({
       aria-label={`Wybierz ${unitName}`}
       className="flex flex-col items-center justify-between border border-linia bg-arkusz hover:bg-kalka transition-colors p-3 w-full min-h-[160px] cursor-pointer text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-tusz"
     >
-      <span className="text-xs font-semibold text-tusz text-center truncate w-full mb-2">
+      <span className="text-xs font-semibold text-tusz text-center w-full mb-2 leading-tight [overflow-wrap:normal] [word-break:normal] hyphens-none">
         {unitName}
       </span>
 

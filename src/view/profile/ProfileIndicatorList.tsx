@@ -48,7 +48,7 @@ export function ChangeIndicatorWindow({ label, selectedId, onSelect, layout }: C
           <DialogTitle>Wybierz dane</DialogTitle>
           <DialogDescription>Dział, grupa, wskaźnik. Pokazujemy tylko dane, które mamy.</DialogDescription>
         </DialogHeader>
-        <div className="min-h-0 overflow-y-auto">
+        <div className="min-h-0 overflow-y-auto overscroll-contain">
           <DataMenu
             selectedId={selectedId}
             layout={menuLayout}

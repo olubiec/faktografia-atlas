@@ -130,3 +130,56 @@ function reshapeSide(valid: number[], breaks: number[]): number[] {
   }
   return result;
 }
+
+/** Od tylu razy większy od poprzedniego progu ostatni próg uchodzi za „oderwany” od reszty legendy. */
+export const TAIL_MAX_RATIO = 2.5;
+
+/** Najmniejsza górna klasa po przycięciu ogona: ułamek jednostek (min. 1). */
+export const TAIL_CAP_MIN_SHARE = 0.02;
+
+/**
+ * Ostatni próg nie może być oderwany od reszty legendy o rząd wielkości (np. „od 82 000 do 1 866 700”).
+ * Gdy ostatnia skończona klasa jest o ponad TAIL_MAX_RATIO razy szersza niż jej początek (liczby dodatnie),
+ * górny próg wyznaczają naturalne przerwy w skali logarytmicznej wśród wartości od przedostatniego progu.
+ * Skrajne wartości trafiają do ostatniej klasy „powyżej X”. Liczba klas bez zmian.
+ */
+export function capTail(valid: number[], breaks: number[]): number[] {
+  const k = breaks.length;
+  if (k < 3 || valid.length === 0) return breaks;
+  const lo = breaks[k - 2];
+  const hi = breaks[k - 1];
+  if (lo <= 0 || hi / lo <= TAIL_MAX_RATIO) return breaks;
+  const tail = valid.filter((v) => v >= lo).sort((a, b) => a - b);
+  const minCount = Math.max(1, Math.ceil(valid.length * TAIL_CAP_MIN_SHARE));
+  const split = jenksBreaks(tail.map(Math.log), 2, minCount);
+  if (split.length !== 1) return breaks;
+  // Jenks zwraca próg w skali logarytmicznej; wracamy do wartości (najmniejsza wartość górnej klasy).
+  const x = tail.find((v) => Math.log(v) >= split[0]);
+  if (x === undefined || x <= lo || x >= hi) return breaks;
+  return [...breaks.slice(0, k - 1), x];
+}
+
+/** Zaokrągla w dół do `digits` cyfr znaczących (bez artefaktów typu 30000.000000000004). */
+function floorSignificant(x: number, digits: number): number {
+  if (x <= 0) return x;
+  const p = 10 ** (Math.floor(Math.log10(x)) - digits + 1);
+  return Math.round(Math.floor(x / p + 1e-9) * p * 1e9) / 1e9;
+}
+
+/**
+ * Ostatnia straż ogona, po zaokrągleniu progów: jeśli górny próg nadal jest ponad TAIL_MAX_RATIO razy
+ * większy od przedostatniego (np. 80 000 → 230 000), obniżamy go do okrągłej liczby ≤ TAIL_MAX_RATIO × poprzedni.
+ * Obniżenie tylko powiększa górną klasę „powyżej X”, więc klasa nie robi się pusta.
+ */
+export function guardTail(breaks: number[]): number[] {
+  const k = breaks.length;
+  if (k < 3) return breaks;
+  const lo = breaks[k - 2];
+  const hi = breaks[k - 1];
+  if (lo <= 0 || hi / lo <= TAIL_MAX_RATIO) return breaks;
+  const limit = lo * TAIL_MAX_RATIO;
+  let x = floorSignificant(limit, 2);
+  if (x <= lo) x = floorSignificant(limit, 3);
+  if (x <= lo || x >= hi) return breaks;
+  return [...breaks.slice(0, k - 1), x];
+}

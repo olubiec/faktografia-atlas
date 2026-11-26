@@ -11,8 +11,8 @@ export const WINDOW_PADDING = 'p-4 md:p-6';
 
 const MODE_CLASS: Record<WindowMode, string> = {
   fullscreen: 'inset-0 top-0 left-0 h-dvh w-screen max-w-none translate-x-0 translate-y-0 border-0',
-  dialog: 'max-h-[85dvh] overflow-y-auto',
-  bottom: 'top-auto bottom-0 left-0 max-h-[85dvh] w-screen max-w-none translate-x-0 translate-y-0 overflow-y-auto border-x-0 border-b-0',
+  dialog: 'max-h-[85dvh] overflow-y-auto overscroll-contain',
+  bottom: 'top-auto bottom-0 left-0 max-h-[85dvh] w-screen max-w-none translate-x-0 translate-y-0 overflow-y-auto overscroll-contain border-x-0 border-b-0',
 };
 
 export type WindowProps = {
@@ -47,7 +47,7 @@ export function Window({ open, onOpenChange, title, description, mode = 'dialog'
           <DialogTitle>{title}</DialogTitle>
           {description ? <DialogDescription>{description}</DialogDescription> : null}
         </DialogHeader>
-        <div className="min-h-0 overflow-y-auto">{children}</div>
+        <div className="min-h-0 overflow-y-auto overscroll-contain">{children}</div>
       </DialogContent>
     </Dialog>
   );
