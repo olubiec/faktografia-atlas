@@ -37,6 +37,8 @@ export function levelOf(teryt: string): Level {
 /** Odkrycie dnia: ta sama pozycja dla wszystkich danego dnia (UTC), kolejny dzień = kolejna pozycja. */
 export function dailyEntry(start: FactsStart, date: Date): DailyEntry | null {
   if (!start.daily.length) return null;
+  // Widok dekoduje fakt sam i woła factView(fact) – zapamiętujemy [nazwa, jednostka] wskaźników z biblioteki (W29-D09b).
+  for (const d of start.daily) rememberLibraryMeta(d.i && decodeFact(d.u, d.f).indicatorId, d.i);
   return start.daily[dailyIndex(date, start.daily.length)];
 }
 
@@ -107,6 +109,21 @@ export function placeFacts(file: FactsFile, teryt: string, limit = 3): Fact[] {
 type IndicatorMeta = { id: string; name: string; unit: string };
 const INDICATORS = new Map((indicatorsData as IndicatorMeta[]).map((i) => [i.id, i]));
 
+/** Nazwa i jednostka wskaźników z biblioteki (`b<varId>`) z pola `i` w facts-start.json; rejestr strony ich nie zna. */
+const LIBRARY_META = new Map<string, [string, string]>();
+
+function rememberLibraryMeta(id: string | undefined | false, i: [string, string] | undefined): void {
+  if (id && i && !INDICATORS.has(id)) LIBRARY_META.set(id, i);
+}
+
+/** Wskaźnik z configu; gdy go tam nie ma – z pola `i` (zapamiętanego z dailyEntry/listView; bez drugiego parametru, bo PlaceFacts woła `.map(factView)`). Zwykłe wskaźniki bez zmian. */
+function resolveIndicator(id: string, i?: [string, string]): { name: string; unit: string } | null {
+  const ind = INDICATORS.get(id);
+  if (ind) return ind;
+  const meta = i ?? LIBRARY_META.get(id);
+  return meta ? { name: meta[0], unit: meta[1] } : null;
+}
+
 /** Liczba bez jednostki (duża) i jednostka osobno – długie liczby nie wychodzą poza kartę na 360 px. */
 export function bigNumber(value: number, unit: string): { number: string; unit: string } {
   const number = formatValue(value, null, getFractionDigits(unit)).replace(/^-/, '−');
@@ -125,7 +142,7 @@ export interface FactView {
 
 /** Karta faktu: zdanie z szablonu, duża liczba, link do mapy. null, gdy nie da się uczciwie napisać zdania. */
 export function factView(f: Fact): FactView | null {
-  const ind = INDICATORS.get(f.indicatorId);
+  const ind = resolveIndicator(f.indicatorId);
   if (!ind) return null;
   const sentence = factSentence(f, {
     indicator: ind,
@@ -148,7 +165,8 @@ export interface ListView {
 
 /** Karta zestawienia: nazwa wskaźnika, „3 gminy z najwyższą wartością, 2025”, 3 pozycje i link do mapy. */
 export function listView(list: StartList): ListView | null {
-  const ind = INDICATORS.get(list.indicatorId);
+  rememberLibraryMeta(list.indicatorId, list.i);
+  const ind = resolveIndicator(list.indicatorId, list.i);
   if (!ind) return null;
   const word = list.dir === 1 ? 'najwyższą' : 'najniższą';
   return {

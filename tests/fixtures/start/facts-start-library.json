@@ -1,0 +1,68 @@
+{
+ "generatedAt": "2026-11-17T10:00:00.000Z",
+ "daily": [
+  {
+   "u": "1465011",
+   "n": "Warszawa",
+   "f": [
+    "F1",
+    "b9001",
+    2025,
+    1866729,
+    11.73,
+    1,
+    1,
+    2479,
+    0
+   ],
+   "i": [
+    "Zużycie wody w gospodarstwach domowych",
+    "m3"
+   ]
+  },
+  {
+   "u": "2210011",
+   "n": "Krynica Morska",
+   "f": [
+    "F1",
+    "population",
+    2025,
+    1127,
+    11.73,
+    -1,
+    1,
+    2479,
+    0
+   ]
+  }
+ ],
+ "lists": [
+  {
+   "indicatorId": "b9001",
+   "level": "gmi",
+   "dir": 1,
+   "year": 2025,
+   "top": [
+    [
+     "1001042",
+     "Kleszczów",
+     35.5
+    ],
+    [
+     "2210011",
+     "Krynica Morska",
+     25.2
+    ],
+    [
+     "3205072",
+     "Rewal",
+     24.1
+    ]
+   ],
+   "i": [
+    "Zużycie wody w gospodarstwach domowych",
+    "m3"
+   ]
+  }
+ ]
+}
