@@ -1,0 +1,8 @@
+{"version":1,"generatedAt":"2026-11-26T00:00:00Z","variables":[
+{"id":"101","n":"Liczba ludności ogółem","u":"osoba","s":"11","c":"Ludność","lv":["pow"],"y":[2023,2024,2025]},
+{"id":"102","n":"Ludność w wieku produkcyjnym","u":"osoba","s":"11","c":"Ludność","lv":["gmi"],"y":[2023,2024]},
+{"id":"201","n":"Pracujący ogółem","u":"osoba","s":"21","c":"Rynek pracy","lv":["pow"],"y":[2023,2024]},
+{"id":"202","n":"Bezrobotni zarejestrowani","u":"osoba","s":"21","c":"Rynek pracy","lv":["pow"],"y":[2023,2024]},
+{"id":"103","n":"Małżeństwa na 1000 ludności","u":"1/1000","s":"11","c":"Ludność","lv":["pow"],"y":[2024]},
+{"id":"301","n":"Mieszkania oddane do użytkowania","u":"mieszkanie","s":"31","c":"Mieszkania","lv":["pow"],"y":[2024]},
+{"id":"302","n":"Powierzchnia użytkowa mieszkań","u":"m2","s":"31","c":"Mieszkania","lv":["woj"],"y":[2024]}]}
