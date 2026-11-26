@@ -8,6 +8,7 @@ import { dailyIndex, type DailyEntry, type FactsStart, type StartList } from '..
 import type { Fact, Level } from '../facts/types';
 import { displayUnit, formatValue, getFractionDigits } from '../format/number';
 import { shortIndicatorName } from '../seo/sentences';
+import { listLinks, type ListLink } from './list-links';
 import { WOJ_NAMES } from './start-data';
 
 export const FACTS_START_URL = '/data/facts-start.json';
@@ -117,7 +118,7 @@ function rememberLibraryMeta(id: string | undefined | false, i: [string, string]
 }
 
 /** Wskaźnik z configu; gdy go tam nie ma – z pola `i` (zapamiętanego z dailyEntry/listView; bez drugiego parametru, bo PlaceFacts woła `.map(factView)`). Zwykłe wskaźniki bez zmian. */
-function resolveIndicator(id: string, i?: [string, string]): { name: string; unit: string } | null {
+export function resolveIndicator(id: string, i?: [string, string]): { name: string; unit: string } | null {
   const ind = INDICATORS.get(id);
   if (ind) return ind;
   const meta = i ?? LIBRARY_META.get(id);
@@ -161,6 +162,9 @@ export interface ListView {
   subtitle: string;
   rows: { teryt: string; name: string; value: string; href: string }[];
   href: string;
+  /** Pełne zestawienie (`/zestawienie/<slug>`) i to samo z drugiego końca skali (najmłodsze ↔ najstarsze), gdy istnieją. */
+  full?: ListLink | null;
+  opposite?: ListLink | null;
 }
 
 /** Karta zestawienia: nazwa wskaźnika, „3 gminy z najwyższą wartością, 2025”, 3 pozycje i link do mapy. */
@@ -181,6 +185,7 @@ export function listView(list: StartList): ListView | null {
       href: mapHref({ indicatorId: list.indicatorId, year: list.year, teryt, level: list.level }),
     })),
     href: listHref(list),
+    ...listLinks(list.indicatorId, list.level, list.dir),
   };
 }
 
@@ -196,6 +201,7 @@ export function listPlaceholders(): ListView[] {
         subtitle: '',
         rows: [],
         href: mapHref({ indicatorId: l.indicatorId, level: l.level }),
+        ...listLinks(l.indicatorId, l.level, l.dir),
       };
     })
     .filter((l): l is ListView => l !== null);
