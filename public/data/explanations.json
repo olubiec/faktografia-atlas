@@ -184,6 +184,14 @@
    "world": null,
    "funFact": null,
    "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
+  },
+  {
+   "indicatorId": "people-per-pharmacy",
+   "short": "Ilu mieszkańców przypada na jedną aptekę ogólnodostępną.",
+   "howToRead": "Im mniej osób na aptekę, tym bliżej do niej. Przykład: 2000 to jedna apteka na dwa tysiące mieszkańców. W małych gminach wynik bywa bardzo zmienny.",
+   "world": null,
+   "funFact": null,
+   "definitionUrl": "https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/"
   }
  ]
 }

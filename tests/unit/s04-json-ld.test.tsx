@@ -56,8 +56,8 @@ describe('S04 datasetLd', () => {
     expect(ld.temporalCoverage).toBe('1995/2025');
   });
 
-  it('variableMeasured to nazwy 23 wskaźników', () => {
-    expect(indicators).toHaveLength(23);
+  it('variableMeasured to nazwy 24 wskaźników', () => {
+    expect(indicators).toHaveLength(24);
     expect(ld.variableMeasured).toEqual(indicators.map((i) => i.name));
   });
 });

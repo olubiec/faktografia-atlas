@@ -7,6 +7,8 @@ import { buildRegistry, type AvailableFile } from '../../src/core/indicators/reg
 import { checkValuesFile } from '../../scripts/data/contract.mjs';
 
 // W27-D01: nowe wskaźniki główne. Liczby pochodzą wyłącznie z pliku robota (public/data).
+// Próg pokrycia gmin = próg z scripts/data/contract.mjs (obniżony z 95% decyzją właściciela).
+const MIN_COVERAGE = 0.75;
 const root = process.cwd();
 const read = <T>(rel: string): T => JSON.parse(fs.readFileSync(path.join(root, rel), 'utf8')) as T;
 
@@ -14,6 +16,7 @@ const NEW: { id: string; bdlVarId: number }[] = [
   { id: 'births-per-1000', bdlVarId: 450540 },
   { id: 'deaths-per-1000', bdlVarId: 450541 },
   { id: 'old-per-100-young', bdlVarId: 60564 },
+  { id: 'people-per-pharmacy', bdlVarId: 60583 },
 ];
 
 const indicators = read<Indicator[]>('config/indicators.json');
@@ -35,7 +38,7 @@ describe('W27-D01: nowe wskaźniki główne', () => {
         expect(ind?.minLevel).toBe('gmi');
       });
 
-      it('plik wartości zgodny z kontraktem, ostatni rok ≥ 2024, ≥ 95% gmin, seria ≥ 4 lata', () => {
+      it('plik wartości zgodny z kontraktem, ostatni rok ≥ 2024, ≥ 75% gmin (próg kontraktu, PR #685), seria ≥ 4 lata', () => {
         const ind = indicators.find((i) => i.id === n.id)!;
         const json = read<ValuesFile>(`public/data/values/${n.id}.json`);
         expect(checkValuesFile(json, ind, units)).toEqual([]);
@@ -43,7 +46,7 @@ describe('W27-D01: nowe wskaźniki główne', () => {
         expect(json.years[last]).toBeGreaterThanOrEqual(2024);
         expect(json.years.length).toBeGreaterThanOrEqual(4);
         const withValue = gminy.filter((g) => typeof json.values[g.teryt]?.[last] === 'number').length;
-        expect(withValue / gminy.length).toBeGreaterThanOrEqual(0.95);
+        expect(withValue / gminy.length).toBeGreaterThanOrEqual(MIN_COVERAGE);
       });
 
       it('ma objaśnienie w explanations.json', () => {
