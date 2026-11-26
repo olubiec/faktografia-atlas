@@ -1,0 +1,5 @@
+{"version":1,"variables":[
+{"id":"101","n":"Liczba ludności <i>ogółem</i>","u":"osoba","s":"11","c":"Ludność","lv":["pow"],"y":[2023,2024,2025]},
+{"id":"102","n":"Odrzucona zmienna","u":"osoba","s":"11","c":"Ludność","lv":["gmi"],"y":[2024]},
+{"id":"104","n":"Stara zmienna","u":"osoba","s":"11","c":"Ludność","lv":["pow"],"y":[2024]}
+]}
