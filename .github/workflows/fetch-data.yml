@@ -163,6 +163,11 @@ jobs:
         run: node scripts/data/build-profiles.mjs
 
       # (W26-F01) Fakty o jednostkach (public/data/facts/<WW>.json) i Odkrycie dnia (public/data/facts-start.json).
+      # (W29-D09) Księga kalendarium i wartości zmiennych z gałęzi data/library (git show, bez API BDL); brak gałęzi nic nie psuje.
+      - name: Pobierz gałąź data/library (premiery z biblioteki w Odkryciach)
+        if: steps.checks.outcome == 'success'
+        run: git fetch --depth 1 origin data/library:refs/remotes/origin/data/library || echo "Brak gałęzi data/library – Odkrycia bez zmiennych biblioteki."
+
       - name: Zbuduj fakty (public/data/facts/, facts-start.json)
         id: facts
         if: steps.checks.outcome == 'success'
