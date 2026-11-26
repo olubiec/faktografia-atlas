@@ -14,8 +14,6 @@ const NEW: { id: string; bdlVarId: number }[] = [
   { id: 'births-per-1000', bdlVarId: 450540 },
   { id: 'deaths-per-1000', bdlVarId: 450541 },
   { id: 'old-per-100-young', bdlVarId: 60564 },
-  { id: 'people-per-pharmacy', bdlVarId: 60583 },
-  { id: 'bike-paths-per-10k', bdlVarId: 288082 },
 ];
 
 const indicators = read<Indicator[]>('config/indicators.json');

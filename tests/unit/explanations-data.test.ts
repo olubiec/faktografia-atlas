@@ -18,19 +18,19 @@ describe('Explanations Data Integrity (W18-P01)', () => {
     expect(parsed.success).toBe(true);
   });
 
-  it('contains complete coverage for all 25 indicators from config/indicators.json with character limits and valid URLs', () => {
+  it('contains complete coverage for all 23 indicators from config/indicators.json with character limits and valid URLs', () => {
     const raw = fs.readFileSync(explanationsPath, 'utf8');
     const json = JSON.parse(raw);
     const indicatorsRaw = fs.readFileSync(indicatorsPath, 'utf8');
     const indicators: Array<{ id: string }> = JSON.parse(indicatorsRaw);
 
-    expect(indicators.length).toBe(25);
-    expect(json.items.length).toBe(25);
+    expect(indicators.length).toBe(23);
+    expect(json.items.length).toBe(23);
 
     const itemsMap = new Map<string, any>(json.items.map((it: any) => [it.indicatorId, it]));
 
     // Brak duplikatów
-    expect(itemsMap.size).toBe(25);
+    expect(itemsMap.size).toBe(23);
 
     for (const ind of indicators) {
       const item = itemsMap.get(ind.id);

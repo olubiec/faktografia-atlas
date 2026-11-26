@@ -16,10 +16,10 @@ const available = JSON.parse(
 ) as AvailableFile;
 
 describe('rejestr wskaźników (QC602)', () => {
-  it('25 głównych + 5 z biblioteki = 30, b101 istnieje', () => {
+  it('23 główne + 5 z biblioteki = 28, b101 istnieje', () => {
     const r = buildRegistry(main, available);
-    expect(main).toHaveLength(25);
-    expect(r.all).toHaveLength(30);
+    expect(main).toHaveLength(23);
+    expect(r.all).toHaveLength(28);
     expect(r.library).toHaveLength(5);
     expect(r.byId.get('b101')).toBeDefined();
   });
@@ -41,16 +41,16 @@ describe('rejestr wskaźników (QC602)', () => {
     expect(i.unit).toBe('osoba');
   });
 
-  it('brak duplikatów id, najpierw 25 głównych, biblioteka po nazwie', () => {
+  it('brak duplikatów id, najpierw 23 głównych, biblioteka po nazwie', () => {
     const r = buildRegistry(main, available);
     expect(new Set(r.all.map((i) => i.id)).size).toBe(r.all.length);
-    expect(r.all.slice(0, 25).map((i) => i.id)).toEqual(main.map((i) => i.id));
+    expect(r.all.slice(0, 23).map((i) => i.id)).toEqual(main.map((i) => i.id));
     const names = r.library.map((i) => i.name);
     expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b, 'pl')));
   });
 
   it('available == null → tylko główne', () => {
-    expect(buildRegistry(main, null).all).toHaveLength(25);
+    expect(buildRegistry(main, null).all).toHaveLength(23);
   });
 
   it('uszkodzone wpisy pomijane, reszta zostaje', () => {
@@ -64,7 +64,7 @@ describe('rejestr wskaźników (QC602)', () => {
       ],
     };
     const r = buildRegistry(main, broken);
-    expect(r.all).toHaveLength(30);
+    expect(r.all).toHaveLength(28);
     expect(r.byId.has('b999')).toBe(false);
     expect(r.byId.has('b998')).toBe(false);
   });
@@ -96,7 +96,7 @@ describe('rejestr wskaźników (QC602)', () => {
     const r = buildRegistry(main, dup);
     expect(r.byId.has(`b${main[0].bdlVarId}`)).toBe(false);
     expect(r.byId.has('b450540')).toBe(false);
-    expect(r.all).toHaveLength(30);
+    expect(r.all).toHaveLength(28);
     const ids = r.all.map((i) => i.bdlVarId);
     expect(new Set(ids).size).toBe(ids.length);
   });

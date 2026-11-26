@@ -230,25 +230,5 @@
     "group": "Ludność",
     "higherIsBetter": null,
     "minLevel": "gmi"
-  },
-  {
-    "id": "people-per-pharmacy",
-    "bdlVarId": 60583,
-    "name": "Ludność na aptekę ogólnodostępną",
-    "unit": "osoba",
-    "description": "Ilu mieszkańców przypada na jedną aptekę ogólnodostępną.",
-    "group": "Życie",
-    "higherIsBetter": false,
-    "minLevel": "gmi"
-  },
-  {
-    "id": "bike-paths-per-10k",
-    "bdlVarId": 288082,
-    "name": "Drogi dla rowerów na 10 tys. ludności (km)",
-    "unit": "km",
-    "description": "Długość dróg dla rowerów w km w przeliczeniu na 10 tys. ludności.",
-    "group": "Transport",
-    "higherIsBetter": true,
-    "minLevel": "gmi"
   }
 ]
