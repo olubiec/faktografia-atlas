@@ -1,4 +1,7 @@
 import type { CatalogEntry } from '@/core/catalog/tree';
+import { isNewIndicator } from '@/core/facts/fresh-label';
+import { peekNewIds } from '@/core/indicators/load-available';
+import { NewBadge } from '@/view/ui/NewBadge';
 
 // Wiersze wskaźników w menu wyboru danych. Czysty komponent (bez stanu): lista + „Pokaż więcej”.
 
@@ -18,9 +21,12 @@ export type DataMenuListProps = {
   onMore: () => void;
   /** Ścieżka „Dział › Grupa” pod nazwą (w wynikach szukania). */
   showPath?: boolean;
+  /** Id z etykietą „Nowość”; domyślnie lista `new` z już wczytanego available.json (bez żądania). */
+  newIds?: readonly string[] | null;
 };
 
-export function DataMenuList({ entries, selectedId, onPick, isDisabled, limit, onMore, showPath = false }: DataMenuListProps) {
+export function DataMenuList({ entries, selectedId, onPick, isDisabled, limit, onMore, showPath = false, newIds }: DataMenuListProps) {
+  const fresh = newIds === undefined ? peekNewIds() : newIds;
   const shown = entries.slice(0, limit);
   return (
     <ul className="flex flex-col gap-1" aria-label="Wskaźniki">
@@ -38,7 +44,10 @@ export function DataMenuList({ entries, selectedId, onPick, isDisabled, limit, o
               className={`${rowClass} ${e.id === selectedId ? 'border-tusz font-bold' : ''}`}
             >
               <span className="min-w-0">
-                <span className="block break-words font-semibold">{e.name}</span>
+                <span className="block break-words font-semibold">
+                  {e.name}
+                  {isNewIndicator(e.id, fresh) && <NewBadge />}
+                </span>
                 {showPath && <span className="block break-words text-xs text-olowek">{`${e.section} › ${e.group}`}</span>}
                 {disabled && <span className="block text-xs text-olowek">Brak danych na tym poziomie</span>}
               </span>

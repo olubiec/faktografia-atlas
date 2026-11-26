@@ -26,6 +26,7 @@ try {
   const { buildFacts, buildShards } = await vite.ssrLoadModule('/src/core/facts/build.ts');
   const { buildStart } = await vite.ssrLoadModule('/src/core/facts/start.ts');
   const { updateLedger, freshYears } = await vite.ssrLoadModule('/src/core/facts/fresh.ts');
+  const { newMainYears, labelDaysOf } = await vite.ssrLoadModule('/src/core/facts/fresh-label.ts');
   const { ringsFromTopology } = await vite.ssrLoadModule('/src/core/facts/neighbours.ts');
 
   const config = await readJson(path.join(root, 'config/facts.json'));
@@ -57,13 +58,15 @@ try {
   const fresh = freshYears(ledger, generatedAt, freshDays);
   console.log(`facts/fresh.json: ${Object.keys(fresh).length} świeżych wskaźników z ${Object.keys(ledger).length}`);
   const build = buildFacts({ indicators, values, units, config, neighbours, fresh });
-  const shards = buildShards(build, generatedAt);
+  // Etykieta „Nowość” (W28-D06): wskaźniki z nowym rokiem sprzed najwyżej fresh.labelDays dni.
+  const newYears = newMainYears(ledger, generatedAt, labelDaysOf(config));
+  const shards = buildShards(build, generatedAt, newYears);
   for (const [woj, shard] of Object.entries(shards)) {
     const json = JSON.stringify(shard);
     await writeFile(path.join(outDir, `${woj}.json`), json, 'utf8');
     console.log(`facts/${woj}.json: ${Object.keys(shard.units).length} jednostek, ${json.length} B`);
   }
-  const start = JSON.stringify(buildStart(build, generatedAt));
+  const start = JSON.stringify(buildStart(build, generatedAt, newYears));
   await writeFile(path.join(dataDir, 'facts-start.json'), start, 'utf8');
   console.log(`facts-start.json: ${start.length} B`);
 
