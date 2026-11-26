@@ -119,6 +119,8 @@ export interface FactView {
   number: string;
   unit: string;
   href: string;
+  /** Fakt z najnowszego roku świeżego wskaźnika: karta pokazuje etykietę „Nowość” (W28-D06). */
+  isNew?: boolean;
 }
 
 /** Karta faktu: zdanie z szablonu, duża liczba, link do mapy. null, gdy nie da się uczciwie napisać zdania. */
@@ -131,7 +133,7 @@ export function factView(f: Fact): FactView | null {
     voivodeshipName: WOJ_NAMES[f.teryt.slice(0, 2)],
   });
   if (!sentence) return null;
-  return { key: `${f.type}-${f.indicatorId}-${f.teryt}`, sentence, ...bigNumber(f.value, ind.unit), href: factHref(f) };
+  return { key: `${f.type}-${f.indicatorId}-${f.teryt}`, sentence, ...bigNumber(f.value, ind.unit), href: factHref(f), ...((f as { isNew?: boolean }).isNew ? { isNew: true } : {}) };
 }
 
 const PEERS_NOM: Record<Level, string> = { gmi: 'gminy', pow: 'powiaty', woj: 'województwa' };

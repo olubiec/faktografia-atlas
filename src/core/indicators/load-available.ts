@@ -24,7 +24,13 @@ function validate(data: unknown): AvailableFile | null {
   if (!data || typeof data !== 'object') return null;
   const o = data as Record<string, unknown>;
   if (o.version !== 1 || !Array.isArray(o.variables)) return null;
-  return { ...(o as unknown as AvailableFile), variables: o.variables.filter(isEntry) };
+  const base = { ...(o as unknown as AvailableFile), variables: o.variables.filter(isEntry) };
+  // `new` (W28-D06): lista id z etykietą „Nowość”; zły kształt = brak listy, reszta pliku działa.
+  if ('new' in o) {
+    const ids = Array.isArray(o.new) ? o.new.filter((x): x is string => typeof x === 'string') : [];
+    (base as { new?: string[] }).new = ids;
+  }
+  return base;
 }
 
 /**
@@ -67,6 +73,14 @@ export function loadAvailable(
 /** Synchroniczny odczyt cache: undefined = jeszcze nie załadowano. */
 export function peekAvailable(): AvailableFile | null | undefined {
   return isCached ? cache : undefined;
+}
+
+/**
+ * Id z etykietą „Nowość” z już wczytanego spisu (bez żądania). null: spisu nie ma w pamięci albo nie ma pola `new`.
+ */
+export function peekNewIds(): readonly string[] | null {
+  const ids = (peekAvailable() as { new?: string[] } | null | undefined)?.new;
+  return Array.isArray(ids) ? ids : null;
 }
 
 /** Czyszczenie pamięci podręcznej (testy). */

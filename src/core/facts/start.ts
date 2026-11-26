@@ -1,6 +1,7 @@
 // public/data/facts-start.json (≤ 4 KB): Odkrycie dnia na 30 dni i 4 zestawienia (KONCEPT-ODKRYCIA §9).
 import type { FactsBuild } from './build';
 import { encodeFact, type EncodedFact } from './codec';
+import { markNew } from './fresh-label';
 import { compareFacts } from './select';
 import { calendarBoost } from './strength';
 import type { Direction, Fact, Level } from './types';
@@ -147,9 +148,13 @@ export function buildFreshList(build: FactsBuild): StartList | null {
   return null;
 }
 
-export function buildStart(build: FactsBuild, generatedAt: string): FactsStart {
+/**
+ * `newYears` (id wskaźnika → najnowszy rok, tylko wskaźniki nowe ≤ fresh.labelDays dni; newMainYears) dopisuje
+ * kartom Odkrycia dnia flagę „Nowość” (opcjonalny ostatni element zapisu). Bez niego plik jest taki sam jak dotąd.
+ */
+export function buildStart(build: FactsBuild, generatedAt: string, newYears?: Readonly<Record<string, number>>): FactsStart {
   const { ctx } = build;
-  const daily = pickDailyWithFresh(build, generatedAt).map((f) => ({ u: f.teryt, n: ctx.units.get(f.teryt)?.name ?? f.teryt, f: encodeFact(f) }));
+  const daily = markNew(pickDailyWithFresh(build, generatedAt), newYears).map((f) => ({ u: f.teryt, n: ctx.units.get(f.teryt)?.name ?? f.teryt, f: encodeFact(f) }));
   const configured = ctx.input.config.start.lists;
   const freshList = buildFreshList(build);
   const lists = (freshList ? configured.slice(1) : configured)

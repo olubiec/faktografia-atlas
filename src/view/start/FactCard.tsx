@@ -2,6 +2,7 @@ import { useId } from 'react';
 import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import type { FactView } from '@/core/start/discoveries';
+import { NewBadge } from '@/view/ui/NewBadge';
 
 export interface FactCardProps {
   fact: FactView;
@@ -22,6 +23,11 @@ export function FactCard({ fact, place, to, onWarm, large = false }: FactCardPro
       data-slot="fact-card"
       className={`flex min-w-0 flex-col gap-3 border border-linia bg-arkusz ${large ? 'p-4 md:p-6' : 'p-4'}`}
     >
+      {fact.isNew && (
+        <p className="m-0">
+          <NewBadge />
+        </p>
+      )}
       {place && <h4 className="m-0 text-lg font-bold leading-tight text-tusz break-words">{place}</h4>}
       <p className="m-0 flex min-w-0 flex-wrap items-baseline gap-x-2 text-tusz">
         <span

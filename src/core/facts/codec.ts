@@ -3,10 +3,15 @@
 //   F1/F2: kierunek, miejsce, z ilu, remis(0/1) · F4: kierunek, miejsce, z ilu, rok początku, wartość początku
 //   F3: kierunek, ilu sąsiadów, minimum, maksimum, pierścień poszerzony(0/1)
 //   F5: kierunek, mediana, rok początku serii · F9: mediana, percentyl
+// Opcjonalny ostatni element (W28-D06): 1 = fakt z najnowszego roku świeżego wskaźnika („Nowość”). Stare pliki go nie mają;
+// gdy flaga jest, a span nie, w miejscu span stoi 0. Zapis: [..., porównanie, span|0, 1].
 // Bliźniak (F8) to osobny rekord: ['F8', TERYT bliźniaka, rok, ile wskaźników, odległość].
 import { FRAME_BY_TYPE, type Direction, type Fact, type FactCompare, type FactType, type TwinFact } from './types';
 
 export type EncodedFact = (string | number)[];
+
+/** Fakt z opcjonalną flagą nowości. */
+export type FlaggedFact = Fact & { isNew?: boolean };
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
@@ -35,17 +40,20 @@ function decodeCompare(type: FactType, x: number[]): FactCompare {
   return { kind: 'typical', median: x[0], percentile: x[1] };
 }
 
-export function encodeFact(f: Fact): EncodedFact {
+export function encodeFact(f: FlaggedFact): EncodedFact {
   const out: EncodedFact = [f.type, f.indicatorId, f.year, round2(f.value), f.strength, ...encodeCompare(f.compare)];
-  if (f.span && f.span > 1) out.push(f.span);
+  const span = f.span && f.span > 1 ? f.span : 0;
+  if (span || f.isNew) out.push(span);
+  if (f.isNew) out.push(1);
   return out;
 }
 
-export function decodeFact(teryt: string, e: readonly (string | number)[]): Fact {
+export function decodeFact(teryt: string, e: readonly (string | number)[]): FlaggedFact {
   const type = e[0] as FactType;
   const n = COMPARE_LENGTH[type];
   const compareRaw = e.slice(5, 5 + n) as number[];
   const span = e[5 + n] as number | undefined;
+  const isNew = e[6 + n] === 1;
   return {
     type,
     teryt,
@@ -56,6 +64,7 @@ export function decodeFact(teryt: string, e: readonly (string | number)[]): Fact
     frame: FRAME_BY_TYPE[type],
     compare: decodeCompare(type, compareRaw),
     ...(span ? { span } : {}),
+    ...(isNew ? { isNew: true } : {}),
   };
 }
 
