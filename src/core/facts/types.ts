@@ -193,26 +193,3 @@ export interface FactsInput {
   /** Świeże wskaźniki (W27-D02): id → ostatni rok z danymi; brak = nic nie jest świeże. */
   fresh?: Record<string, number>;
 }
-
-/**
- * W31-O01: percentyle gmin w pliku województwa (zwarty zapis).
- * `u[teryt]` – jeden znak na wskaźnik (kolejność `ind`): kod 0x100 + percentyl; spacja = brak wartości.
- * `r[teryt]` – [indeks wskaźnika, stosunek do mediany, …] tylko dwa najdalsze od mediany, i tylko gdy stosunek ≥ 2 albo ≤ 0,5 (reszta „typowa”; zeroGuard: brak).
- */
-export interface PercentileShard {
-  ind: string[];
-  /** Rok danych użyty dla wskaźnika (kolejność jak `ind`). */
-  y: number[];
-  u: Record<string, string>;
-  r?: Record<string, number[]>;
-  /** [indeks wskaźnika, wartość, …] – tylko kandydaci do kart ról (potrzebne do zdania w ludzkiej skali). */
-  v?: Record<string, number[]>;
-}
-
-/** Histogram rozkładu wskaźnika wśród gmin kraju: równe przedziały między 1. a 99. percentylem. */
-export interface DistEntry {
-  m: number;
-  lo: number;
-  hi: number;
-  b: number[];
-}

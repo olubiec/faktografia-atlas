@@ -96,7 +96,7 @@ try {
   const { buildPercentiles } = await vite.ssrLoadModule('/src/core/facts/percentiles.ts');
   const pc = config.percentiles ?? { zeroGuard: true, bins: 20, minUnits: 100 };
   const gminas = units.filter((u) => u.level === 'gmi').map((u) => u.teryt);
-  const pcts = buildPercentiles({ values, gminas, ...pc });
+  const pcts = buildPercentiles({ values, gminas, ...pc, changeYears: config.thresholds.changeYears, changeExcluded: config.changeExcluded });
   for (const [woj, shard] of Object.entries(shards)) {
     if (pcts.shards[woj]) {
       shard.pct = pcts.shards[woj];
