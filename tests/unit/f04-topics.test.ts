@@ -44,7 +44,7 @@ const audited = site.map((p) => readPage(p.path, p.html));
 const sitemap = rankingSitemap(site);
 const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]!);
 /** Adresy, które generator buduje obok tych stron: miejsca, rankingi, strony aplikacji. */
-const known = ['/', '/mapa', '/ranking', '/miejsca', ...paths.terytByPath.keys(), ...rankingSpecs(indicators, units).map((s) => s.path)];
+const known = ['/', '/mapa', '/ranking', '/miejsca', '/o-projekcie', '/zrodla', '/prywatnosc', ...paths.terytByPath.keys(), ...rankingSpecs(indicators, units).map((s) => s.path)];
 const lastPopulation = (teryt: string) => values.population!.values[teryt]!.filter((v) => v != null).at(-1)!;
 const OPOLE = '1661011';
 const growth = lists.lists.find((l) => l.slug === 'najszybciej-rosnace-gminy')!;

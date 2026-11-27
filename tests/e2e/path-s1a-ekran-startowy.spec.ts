@@ -24,7 +24,7 @@ for (const width of [390, 1280]) {
       const dataRequests: string[] = [];
       page.on('request', (req) => {
         const url = req.url();
-        if (/\/values\/|units\.json|localities/.test(url)) dataRequests.push(url);
+        if (/\/data\/(values\/|units\.json|localities)/.test(url)) dataRequests.push(url);
       });
 
       await page.goto('/?e2e');
@@ -51,7 +51,9 @@ for (const width of [390, 1280]) {
       expect(await tabs.count()).toBeGreaterThanOrEqual(4);
       const hrefs: (string | null)[] = [];
       // Strzałkami na pasku, bez ruchu myszy: najechanie na link rozgrzewa mapę (to pobrałoby dane, a tu ich pobrań nie ma).
+      // Start jest losowy: Home zaznacza pierwszą pozycję paska.
       await tabs.nth(0).focus();
+      await page.keyboard.press('Home');
       for (let k = 0; k < 4; k++) {
         if (k > 0) await page.keyboard.press('ArrowRight');
         await expect(tabs.nth(k)).toHaveAttribute('aria-selected', 'true');

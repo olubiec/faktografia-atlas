@@ -103,10 +103,10 @@ export function StartCarousel({ lists, ready, to, onWarm }: StartCarouselProps) 
     setChosen(id);
   };
 
-  // Mapa po kliknięciu nie czeka na sieć: wartości zaznaczonego wskaźnika pobieramy z góry (pliki trafiają do pamięci podręcznej).
+  // Mapa po kliknięciu nie czeka na sieć: wartości zaznaczonego wskaźnika pobieramy z góry, ale dopiero po budżecie startu (3 s).
   useEffect(() => {
     if (!selId || !ready || isFrugalNetwork()) return;
-    const t = window.setTimeout(() => void loadUnits().then((units) => loadAnyValues(selId, { units })).catch(() => undefined), 500);
+    const t = window.setTimeout(() => void loadUnits().then((units) => loadAnyValues(selId, { units })).catch(() => undefined), 3200);
     return () => window.clearTimeout(t);
   }, [selId, ready]);
 
