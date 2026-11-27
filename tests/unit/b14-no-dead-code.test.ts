@@ -56,7 +56,7 @@ describe('B14: martwy kod usunięty', () => {
     const paths = [...app.matchAll(/<Route path="([^"]+)"/g)].map((m) => m[1]);
     expect(paths.sort()).toEqual(
       [
-        '/', '/mapa', '/rankingi', '/porownaj', '/o-projekcie', '/zrodla', '/prywatnosc',
+        '/', '/mapa', '/zestawienia', '/rankingi', '/porownaj', '/o-projekcie', '/zrodla', '/prywatnosc',
         '/design', '/__test/ui', '/__test/annotation', '/__test/interactive', '*',
       ].sort(),
     );

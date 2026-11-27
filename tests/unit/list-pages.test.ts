@@ -80,7 +80,7 @@ describe('pełne zestawienie: strony po 50 pozycji', () => {
   it('nawigacja: zwykłe linki, aria-current, pierwsza i ostatnia strona, pola ≥ 44 px; bez nawigacji przy jednej stronie', () => {
     const html = renderListPage(pages[1]!, ASSETS);
     expect(html).toContain('aria-current="page"');
-    expect(html.match(/aria-current="page" aria-label="Strona 2, bieżąca"/g)).toHaveLength(2); // nad tabelą i pod nią
+    expect(html.match(/aria-current="page" aria-label="Strona 2, bieżąca"/g)).toHaveLength(1); // tylko pod tabelą (u góry strony nawigacji nie ma)
     expect(html).toContain(`href="/zestawienie/${def.slug}"`);
     expect(html).toContain(`href="/zestawienie/${def.slug}/${pages.length}"`);
     expect(html).toContain('rel="prev"');

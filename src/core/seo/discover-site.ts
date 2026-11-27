@@ -41,7 +41,9 @@ export function validateLists(ctx: Pick<DiscoverContext, 'lists' | 'indicators'>
 }
 
 /** 7 tematów, wszystkie zestawienia i spis `/zestawienia`. */
-export function buildDiscoverSite(ctx: DiscoverContext, facts: readonly Fact[], assets: PageAssets): BuiltDiscoverPage[] {
+export function buildDiscoverSite(ctx: DiscoverContext, facts: readonly Fact[], allAssets: PageAssets): BuiltDiscoverPage[] {
+  // Skrypt aplikacji dostaje tylko spis `/zestawienia` (tam menu „Wybierz dane”); reszta stron zostaje statyczna.
+  const assets: PageAssets = { css: allAssets.css };
   const problems = validateLists(ctx);
   if (problems.length) throw new Error(`config/lists.json: ${problems.join('; ')}`);
   const topics = topicsOf(ctx.indicators);
@@ -57,6 +59,6 @@ export function buildDiscoverSite(ctx: DiscoverContext, facts: readonly Fact[], 
     }
   }
   const lastmod = pages.map((p) => p.lastmod).sort().at(-1) ?? new Date(0).toISOString();
-  pages.push({ path: DISCOVER_INDEX, html: renderDiscoverIndex(topics, ctx.lists.lists, lastmod, assets), indexable: true, lastmod, kind: 'index' });
+  pages.push({ path: DISCOVER_INDEX, html: renderDiscoverIndex(topics, ctx.lists.lists, lastmod, allAssets), indexable: true, lastmod, kind: 'index' });
   return pages;
 }

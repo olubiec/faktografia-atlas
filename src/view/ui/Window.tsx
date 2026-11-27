@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Link, useInRouterContext } from 'react-router';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
@@ -26,6 +27,8 @@ export type WindowProps = {
   slot?: string;
   /** Dodatkowe klasy treści okna (rzadko; domyślne dają odmiany `mode`). */
   className?: string;
+  /** true = nad tytułem logo prowadzące na stronę startową (okna na cały ekran, jak nagłówek strony). */
+  brand?: boolean;
   /** Element otwierający (np. DialogTrigger) – renderowany obok okna, w tym samym Dialogu. */
   trigger?: ReactNode;
   children: ReactNode;
@@ -35,7 +38,8 @@ export type WindowProps = {
  * Wspólne okno: Dialog z Radix (Esc zamyka, fokus uwięziony w oknie i wraca na element otwierający),
  * wspólny nagłówek (tytuł + opis) i przycisk zamknięcia 44 px z DialogContent.
  */
-export function Window({ open, onOpenChange, title, description, mode = 'dialog', slot, className, trigger, children }: WindowProps) {
+export function Window({ open, onOpenChange, title, description, mode = 'dialog', slot, className, trigger, brand = false, children }: WindowProps) {
+  const inRouter = useInRouterContext();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {trigger}
@@ -44,6 +48,12 @@ export function Window({ open, onOpenChange, title, description, mode = 'dialog'
         className={cn(WINDOW_Z, WINDOW_PADDING, 'overflow-hidden bg-arkusz', MODE_CLASS[mode], mode === 'fullscreen' && 'grid-rows-[auto_minmax(0,1fr)] gap-3', className)}
       >
         <DialogHeader className="pr-12">
+          {brand && inRouter && (
+            <Link to="/" onClick={() => onOpenChange(false)} aria-label="Faktografia – strona główna" data-slot="window-logo" className="mb-1 flex min-h-11 w-fit items-center">
+              <img src="/brand/faktografia-logo-granat.svg" alt="" className="logo-na-jasnym h-10 w-auto -ml-3" />
+              <img src="/brand/faktografia-logo-jasne.svg" alt="" className="logo-na-ciemnym h-10 w-auto -ml-3" />
+            </Link>
+          )}
           <DialogTitle>{title}</DialogTitle>
           {description ? <DialogDescription>{description}</DialogDescription> : null}
         </DialogHeader>

@@ -20,7 +20,7 @@ export interface IndicatorStripProps {
   idBase: string;
 }
 
-const SIDE = 'hidden min-h-[44px] w-11 shrink-0 cursor-pointer items-center justify-center border-b border-linia bg-arkusz text-tusz hover:bg-linia/20 focus-visible:outline-2 focus-visible:outline-tusz disabled:cursor-default disabled:text-olowek disabled:opacity-40 disabled:hover:bg-arkusz md:flex';
+const SIDE = 'hidden min-h-[44px] w-11 shrink-0 cursor-pointer items-center justify-center border-b border-linia bg-transparent text-tusz hover:bg-linia/20 focus-visible:outline-2 focus-visible:outline-tusz disabled:cursor-default disabled:text-olowek disabled:opacity-40 disabled:hover:bg-transparent md:flex';
 
 /**
  * Pasek wskaźników: zakładki według wzorca ARIA, przewijane palcem, a na komputerze strzałkami po bokach paska.
@@ -91,9 +91,9 @@ export function IndicatorStrip({ items, active, onSelect, panelId, idBase }: Ind
               tabIndex={on ? 0 : -1}
               onClick={() => onSelect(k)}
               onKeyDown={(e) => onKey(e, k)}
-              className={`flex min-h-[44px] w-40 shrink-0 cursor-pointer items-center border-b-4 px-3 py-2 text-left text-sm leading-tight focus-visible:outline-2 focus-visible:outline-tusz ${on ? 'border-korekta font-bold text-tusz' : 'border-transparent text-olowek hover:text-tusz'}`}
+              className={`flex h-20 w-40 shrink-0 cursor-pointer items-end border-b-4 px-3 py-2 text-left text-sm leading-tight focus-visible:outline-2 focus-visible:outline-tusz ${on ? 'border-korekta font-bold text-tusz' : 'border-transparent text-olowek hover:text-tusz'}`}
             >
-              {it.title}
+              <span className="line-clamp-3" title={it.title}>{it.title}</span>
               {it.note && <span className="sr-only"> {it.note}</span>}
             </button>
           );

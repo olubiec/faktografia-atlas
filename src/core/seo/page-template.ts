@@ -21,6 +21,8 @@ export interface RenderModel extends UnitPage {
 export interface PageAssets {
   /** Arkusze stylów zbudowanej aplikacji (`/assets/index-*.css`). */
   css: readonly string[];
+  /** Główny skrypt aplikacji (`/assets/index-*.js`): tylko strony, które po wczytaniu przejmuje aplikacja (spis `/zestawienia`). */
+  entry?: string;
 }
 
 /** Najwyżej tyle nazw miejscowości na stronie gminy. */
@@ -100,6 +102,7 @@ function head(doc: DocumentHead, assets: PageAssets): string {
     `<link rel="canonical" href="${attr(url)}">`,
     '<link rel="icon" type="image/svg+xml" href="/brand/faktografia-favicon.svg">',
     ...assets.css.map((href) => `<link rel="stylesheet" href="${attr(href)}">`),
+    ...(assets.entry ? [`<script type="module" crossorigin src="${attr(assets.entry)}"></script>`] : []),
     meta('property', 'og:type', 'website'),
     meta('property', 'og:site_name', 'Faktografia'),
     meta('property', 'og:locale', 'pl_PL'),
@@ -168,8 +171,8 @@ function localitiesSection(names: readonly string[] | undefined): string {
 }
 
 /** Przycisk do mapy (≥ 44 px). */
-export const mapButton = (href: string, label: string) =>
-  `<a href="${attr(href)}" class="mt-6 inline-flex min-h-[44px] items-center border border-tusz bg-tusz px-4 py-2 font-bold text-arkusz focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tusz">${text(label)}</a>`;
+export const mapButton = (href: string, label: string, margin = 'mt-6') =>
+  `<a href="${attr(href)}" class="${margin} inline-flex min-h-[44px] items-center border border-tusz bg-tusz px-4 py-2 font-bold text-arkusz focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tusz">${text(label)}</a>`;
 
 /** Pełny dokument: skip-link, nagłówek z menu, treść `main` (już w HTML), stopka jak w aplikacji ze źródłem i datą danych. */
 export function renderDocument(doc: DocumentHead & { lastmod: string }, main: string, assets: PageAssets): string {
@@ -178,13 +181,15 @@ export function renderDocument(doc: DocumentHead & { lastmod: string }, main: st
 <head>
 ${head(doc, assets)}
 </head>
-<body class="flex min-h-screen flex-col bg-kalka text-tusz">
+<body class="bg-kalka text-tusz">
+<div id="root" class="flex min-h-screen flex-col">
 <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:inline-flex focus:min-h-[44px] focus:items-center focus:border focus:border-linia focus:bg-tusz focus:px-4 focus:py-2 focus:text-arkusz">Przejdź do treści</a>
 ${HEADER}
 <main id="main-content" class="mx-auto w-full max-w-5xl flex-grow px-4 py-8 md:px-8 md:py-12">
 ${main}
 </main>
 ${footer(dataDate(doc.lastmod))}
+</div>
 </body>
 </html>
 `;

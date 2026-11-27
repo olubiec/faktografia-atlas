@@ -1,3 +1,5 @@
+import { NavArrowLeft } from 'iconoir-react';
+import { Icon } from '@/view/ui/Icon';
 import { type CatalogEntry, type CatalogSection, type CatalogTree } from '@/core/catalog/tree';
 import { DataMenuList, rowClass } from './DataMenuList';
 
@@ -56,8 +58,13 @@ export function DataMenuBranch({ section, groupId, selectedId, onPick, onHome, o
   // Dział z jedną grupą: bez podkategorii, wskaźniki od razu.
   const only = section.groups.length === 1 ? section.groups[0]! : null;
   const group = only ?? section.groups.find((g) => g.id === groupId) ?? null;
+  const back = group && !only ? () => onOpenSection(section.id) : onHome;
   return (
     <div className="flex flex-col gap-2">
+      <button type="button" onClick={back} data-slot="data-menu-back" className="inline-flex min-h-[44px] w-fit cursor-pointer items-center gap-1 border border-linia bg-arkusz px-3 text-sm font-bold text-tusz hover:bg-linia/20 focus-visible:outline-2 focus-visible:outline-tusz">
+        <Icon icon={NavArrowLeft} aria-hidden={true} size={18} />
+        Wróć
+      </button>
       <Crumbs
         items={[
           { label: 'Wszystkie', onClick: onHome },

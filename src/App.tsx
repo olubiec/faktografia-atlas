@@ -12,6 +12,7 @@ const About = lazy(() => import('./view/pages/About').then((m) => ({ default: m.
 const Sources = lazy(() => import('./view/pages/Sources').then((m) => ({ default: m.Sources })));
 const Privacy = lazy(() => import('./view/pages/Privacy').then((m) => ({ default: m.Privacy })));
 const Rankings = lazy(() => import('./view/pages/Rankings').then((m) => ({ default: m.Rankings })));
+const DiscoverIndex = lazy(() => import('./view/pages/DiscoverIndex').then((m) => ({ default: m.DiscoverIndex })));
 const ComparePage = lazy(() => import('./view/pages/ComparePage').then((m) => ({ default: m.ComparePage })));
 const DesignPage = lazy(() => import('./view/design/DesignPage').then((m) => ({ default: m.DesignPage })));
 const AnnotationTestPage = lazy(() => import('./view/test/AnnotationTestPage').then((m) => ({ default: m.AnnotationTestPage })));
@@ -44,6 +45,7 @@ export function App() {
           <Route path="/o-projekcie" element={<About />} />
           <Route path="/zrodla" element={<Sources />} />
           <Route path="/prywatnosc" element={<Privacy />} />
+          <Route path="/zestawienia" element={<DiscoverIndex />} />
           <Route path="/rankingi" element={<Rankings />} />
           <Route path="/porownaj" element={<ComparePage />} />
           <Route path="/design" element={<DesignPage />} />

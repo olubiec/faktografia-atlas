@@ -12,8 +12,11 @@ import type { PageLink } from './unit-page';
 import type { ListDef } from '../facts/lists';
 
 const MONO = 'font-mono tabular-nums whitespace-nowrap';
+/** Przycisk w stylu serwisu (obrys, pole ≥ 44 px); główny = pełny granat. */
+export const BTN = 'inline-flex min-h-[44px] items-center justify-center border border-linia bg-arkusz px-4 py-2 text-sm font-bold text-tusz no-underline hover:bg-linia/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tusz';
+const BTN_ON = 'inline-flex min-h-[44px] min-w-11 items-center justify-center border border-tusz bg-tusz px-4 py-2 text-sm font-bold text-arkusz no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tusz';
 const ul = (links: readonly PageLink[]) =>
-  `<ul class="mt-3 flex flex-wrap gap-x-6">${links.filter((l) => l.path).map((l) => `<li>${a(l.path, l.name)}</li>`).join('')}</ul>`;
+  `<ul class="mt-3 flex flex-wrap gap-3">${links.filter((l) => l.path).map((l) => `<li>${a(l.path, l.name, BTN)}</li>`).join('')}</ul>`;
 const section = (id: string, title: string, body: string) =>
   body ? `<section aria-labelledby="${id}" class="${SECTION}"><h2 id="${id}" class="${H2}">${text(title)}</h2>${body}</section>` : '';
 const name = (label: string, path: string) => (path ? `<a href="${attr(path)}">${text(label)}</a>` : text(label));
@@ -54,7 +57,7 @@ ${page.rows.map((r) => tr(r, change)).join('\n')}
   );
 }
 
-const PAGER_LINK = 'inline-flex min-h-[44px] min-w-11 items-center justify-center px-3 text-tusz underline underline-offset-4 hover:no-underline';
+const PAGER_LINK = `${BTN} min-w-11 px-3`;
 
 /** Nawigacja po stronach zestawienia: zwykłe linki (działają bez JS), pola ≥ 44 px, bieżąca strona z aria-current. */
 function pager(page: ListPage, id: string): string {
@@ -64,11 +67,11 @@ function pager(page: ListPage, id: string): string {
     n === 'gap'
       ? '<span aria-hidden="true" class="px-1 text-olowek">…</span>'
       : n.current
-        ? `<a href="${attr(n.path)}" aria-current="page" aria-label="Strona ${n.n}, bieżąca" class="${PAGER_LINK} font-bold no-underline">${n.n}</a>`
+        ? `<a href="${attr(n.path)}" aria-current="page" aria-label="Strona ${n.n}, bieżąca" class="${BTN_ON} px-3">${n.n}</a>`
         : `<a href="${attr(n.path)}" aria-label="Strona ${n.n}" class="${PAGER_LINK}">${n.n}</a>`,
   );
-  return `<nav aria-labelledby="${id}" class="mt-3"><p id="${id}" class="text-olowek">Pozycje ${page.from}–${page.to} z ${page.total}</p>
-<div class="flex flex-wrap items-center">${[step(page.prev, 'Poprzednia', 'prev'), ...numbers, step(page.next, 'Następna', 'next')].join('')}</div></nav>`;
+  return `<nav aria-labelledby="${id}" class="mt-6"><p id="${id}" class="text-olowek">Pozycje ${page.from}–${page.to} z ${page.total}</p>
+<div class="mt-3 flex flex-wrap items-center gap-2">${[step(page.prev, 'Poprzednia', 'prev'), ...numbers, step(page.next, 'Następna', 'next')].join('')}</div></nav>`;
 }
 
 /** Pełny dokument strony zestawienia. */
@@ -76,8 +79,7 @@ export function renderListPage(page: ListPage, assets: PageAssets): string {
   const main = `${crumbNav(page.crumbs)}
 <h1 class="${H1}">${text(page.h1)}</h1>
 <p class="mt-4 max-w-prose">${page.lead.map(text).join(' ')}${page.page > 1 ? ` ${a(page.firstPath, 'Wstęp i objaśnienia są na pierwszej stronie zestawienia.')}` : ''}</p>
-${mapButton(page.mapHref, 'Zobacz na mapie')}
-${pager(page, 'strony-gora')}
+<p class="mt-6 flex flex-wrap gap-3">${mapButton(page.mapHref, 'Zobacz na mapie', 'mt-0')}${a(DISCOVER_INDEX, DISCOVER_INDEX_NAME, BTN)}</p>
 ${listTable(page)}
 ${pager(page, 'strony-dol')}
 ${section('zobacz-tez', 'Zobacz też', ul(page.related))}`;
@@ -136,12 +138,12 @@ export function renderDiscoverIndex(topics: readonly Topic[], lists: readonly Li
   ];
   const groups = topics.map((t, i) => {
     const own = lists.filter((l) => t.indicators.some((ind) => ind.id === l.indicatorId));
-    return section(`t${i + 1}`, t.name, `<p class="mt-3">${a(t.path, `Temat: ${t.name}`)}</p>${own.length ? ul(own.map((l) => ({ teryt: '', name: l.h1, path: listPath(l.slug) }))) : ''}`);
+    return section(`t${i + 1}`, t.name, `<p class="mt-3">${a(t.path, `Zobacz temat: ${t.name}`, BTN_ON)}</p>${own.length ? ul(own.map((l) => ({ teryt: '', name: l.h1, path: listPath(l.slug) }))) : ''}`);
   });
   const main = `${crumbNav(crumbs)}
 <h1 class="${H1}">${DISCOVER_INDEX_NAME}</h1>
 <p class="mt-4 max-w-prose">${text(`${plural(topics.length, 'temat', 'tematy', 'tematów')} i ${plural(lists.length, 'zestawienie', 'zestawienia', 'zestawień')} z danych Banku Danych Lokalnych GUS. Każde zestawienie obejmuje całą listę porównanych jednostek, po 50 pozycji na stronę, z linkami do stron miejsc.`)}</p>
-<p class="mt-3 flex flex-wrap gap-x-6">${a('/ranking', 'Wszystkie rankingi wskaźników')}${a('/miejsca', 'Wszystkie miejsca')}</p>
+<p class="mt-6 flex flex-wrap gap-3">${a('/ranking', 'Wszystkie rankingi wskaźników', BTN)}${a('/miejsca', 'Wszystkie miejsca', BTN)}</p>
 ${groups.join('\n')}`;
   const doc = {
     path: DISCOVER_INDEX,

@@ -56,6 +56,7 @@ export function DataMenuWindow({ indicatorId, indicatorName, year = null, onSele
       open={open}
       onOpenChange={change}
       mode="fullscreen"
+      brand
       slot="data-menu-window"
       className="h-dvh w-screen"
       title="Wybierz dane"
