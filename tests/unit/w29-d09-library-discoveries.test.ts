@@ -140,7 +140,7 @@ describe('W29-D09 fakty biblioteki w Odkryciach', () => {
     expect(entry.i).toEqual([lib.indicators[0].name, 'na 1000']);
   });
 
-  it('zestawienie świeżej zmiennej jest pierwsze, bez małych gmin; facts-start.json ≤ 4 KB', () => {
+  it('zestawienie świeżej zmiennej jest pierwsze, bez małych gmin; facts-start.json ≤ 5 KB', () => {
     expect(start.lists[0]).toMatchObject({ indicatorId: 'b9001', level: 'gmi', dir: 1 });
     expect(start.lists[0].i).toEqual([lib.indicators[0].name, 'na 1000']);
     const pop = base.values.population.values;
@@ -149,7 +149,7 @@ describe('W29-D09 fakty biblioteki w Odkryciach', () => {
       expect(last).toBeGreaterThanOrEqual(cfg.thresholds.smallPopulation);
     }
     expect(start.lists).toHaveLength(buildStart(main, GEN).lists.length);
-    expect(JSON.stringify(start).length).toBeLessThanOrEqual(4096);
+    expect(JSON.stringify(start).length).toBeLessThanOrEqual(5120);
   });
 
   it('pliki województw są identyczne z wynikiem bez zmiennych biblioteki', () => {

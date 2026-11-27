@@ -1,4 +1,5 @@
-// public/data/facts-start.json (≤ 4 KB): Odkrycie dnia na 30 dni i 4 zestawienia (KONCEPT-ODKRYCIA §9).
+// public/data/facts-start.json (≤ 5 KB): Odkrycie dnia na 30 dni i 4 zestawienia (KONCEPT-ODKRYCIA §9).
+// Zestawienie: 5 pozycji w kierunku `dir` i 5 z drugiego końca skali (decyzja właściciela 26.11.2026).
 import type { FactsBuild } from './build';
 import { encodeFact, type EncodedFact } from './codec';
 import { markNew } from './fresh-label';
@@ -21,8 +22,10 @@ export interface StartList {
   level: Level;
   dir: Direction;
   year: number;
-  /** 3 pierwsze pozycje: [TERYT, nazwa, wartość]. */
+  /** Pierwsze pozycje w kierunku `dir`: [TERYT, nazwa, wartość]. */
   top: [string, string, number][];
+  /** Pierwsze pozycje z drugiego końca skali (kierunek −dir); starsze pliki go nie mają. */
+  bottom?: [string, string, number][];
   /** Tylko wskaźnik z biblioteki (W29-D09): [nazwa, jednostka]. */
   i?: [string, string];
 }
@@ -120,7 +123,10 @@ export function pickDailyWithFresh(build: FactsBuild, generatedAt: string, libra
   return out.map((f) => f ?? rest[next++]);
 }
 
-/** Zestawienie: 3 jednostki poziomu z najwyższą (dir 1) lub najniższą (dir −1) wartością w roku odniesienia. */
+/** Ile pozycji z każdego końca skali trafia do facts-start.json. */
+export const LIST_ROWS = 5;
+
+/** Zestawienie: LIST_ROWS jednostek poziomu z najwyższą (dir 1) lub najniższą (dir −1) wartością w roku odniesienia i tyle samo z drugiego końca. */
 export function buildList(build: FactsBuild, indicatorId: string, level: Level, dir: Direction, minPopulation = 0): StartList | null {
   const { ctx } = build;
   const data = ctx.input.values[indicatorId];
@@ -131,7 +137,10 @@ export function buildList(build: FactsBuild, indicatorId: string, level: Level, 
     .map((u) => [u.teryt, u.name, data.values[u.teryt]?.[idx]] as const)
     .filter((r): r is readonly [string, string, number] => r[2] != null)
     .sort((a, b) => dir * (b[2] - a[2]) || a[0].localeCompare(b[0]));
-  return { indicatorId, level, dir, year: data.years[idx], top: rows.slice(0, 3).map((r) => [r[0], r[1], r[2]]) };
+  const pick = (r: readonly [string, string, number]): [string, string, number] => [r[0], r[1], r[2]];
+  // Drugi koniec: od ostatniej pozycji wstecz (przy remisie kolejność TERYT, jak w kierunku głównym).
+  const bottom = [...rows].sort((a, b) => -dir * (b[2] - a[2]) || a[0].localeCompare(b[0]));
+  return { indicatorId, level, dir, year: data.years[idx], top: rows.slice(0, LIST_ROWS).map(pick), bottom: bottom.slice(0, LIST_ROWS).map(pick) };
 }
 
 /** Ostatnia znana ludność jednostki (0, gdy brak – taka gmina nie wchodzi do zestawienia z progiem). */

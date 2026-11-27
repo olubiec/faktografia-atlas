@@ -122,7 +122,7 @@ describe('W27-D02 Odkrycie dnia i zestawienia', () => {
     expect(L).toBeLessThanOrEqual(cfg.start.dailyCount);
   });
 
-  it('zestawienie świeżego wskaźnika jest pierwsze, bez małych gmin, a facts-start.json ≤ 4 KB', () => {
+  it('zestawienie świeżego wskaźnika jest pierwsze, bez małych gmin, a facts-start.json ≤ 5 KB', () => {
     expect(start.lists[0]).toMatchObject({ indicatorId: FRESH_ID, level: 'gmi', dir: 1 });
     expect(start.lists.slice(1).map((l) => l.indicatorId)).toEqual(baseline.lists.slice(1).map((l) => l.indicatorId));
     const pop = values.population;
@@ -131,7 +131,7 @@ describe('W27-D02 Odkrycie dnia i zestawienia', () => {
       const last = [...s].reverse().find((v) => v != null) as number;
       expect(last).toBeGreaterThanOrEqual(cfg.thresholds.smallPopulation);
     }
-    expect(JSON.stringify(start).length).toBeLessThanOrEqual(4096);
+    expect(JSON.stringify(start).length).toBeLessThanOrEqual(5120);
   });
 
   it('z kilku świeżych wybiera ten o większej sumie siły faktów krajowych', () => {

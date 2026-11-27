@@ -53,13 +53,13 @@ for (const width of [360, 1280]) {
       expect(atlas.choropleth?.indicatorId).toBe(i);
     });
 
-    test(`@F02 Zestawienia: 4 karty po 3 pozycje, każda z linkiem do mapy z tym wskaźnikiem (${width})`, async ({ page }) => {
+    test(`@F02 Zestawienia: 4 karty po 5 pozycji, każda z linkiem do mapy z tym wskaźnikiem (${width})`, async ({ page }) => {
       await page.goto('/?e2e');
       const section = await openDiscoveries(page);
       const lists = section.locator('[data-slot="start-list"]');
       await expect(lists).toHaveCount(4);
       for (let k = 0; k < 4; k++) {
-        await expect(lists.nth(k).locator('li')).toHaveCount(3);
+        await expect(lists.nth(k).locator('li')).toHaveCount(5);
         const href = await lists.nth(k).getByRole('link').getAttribute('href');
         expect(href).toMatch(/^\/mapa\?i=[\w-]+&y=\d{4}&l=(gmi|pow|woj)/);
       }

@@ -130,9 +130,9 @@ describe('F02 fakty miejsca i zestawienia', () => {
     expect(factsFileUrl('02')).toBe('/data/facts/02.json');
   });
 
-  it('karta zestawienia: 3 pozycje i podpis z rokiem', () => {
+  it('karta zestawienia: 5 pozycji i podpis z rokiem', () => {
     const view = listView(start.lists[0])!;
-    expect(view.rows).toHaveLength(3);
+    expect(view.rows).toHaveLength(5);
     expect(view.subtitle).toContain(String(start.lists[0].year));
   });
 
@@ -191,8 +191,8 @@ describe('F02 pamięć miejsca (sam TERYT)', () => {
 describe('F02 pobieranie danych', () => {
   const root = path.resolve(__dirname, '../..');
 
-  it('facts-start.json mieści się w 4 KB', () => {
-    expect(fs.statSync(path.join(root, 'public/data/facts-start.json')).size).toBeLessThanOrEqual(4 * 1024);
+  it('facts-start.json mieści się w 5 KB', () => {
+    expect(fs.statSync(path.join(root, 'public/data/facts-start.json')).size).toBeLessThanOrEqual(5 * 1024);
   });
 
   it('jedno żądanie na plik, plik województwa dopiero na prośbę', async () => {
