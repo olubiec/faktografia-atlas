@@ -98,3 +98,19 @@
   --radius: 0;
 }
 
+
+/* Logo zależne od motywu strony (nie od motywu systemu): dwa obrazki, widoczny jest ten pasujący do tła.
+   Działa też na statycznych stronach bez JavaScriptu; wybór „Jasny/Ciemny” w nagłówku ustawia data-theme. */
+.logo-na-ciemnym { display: none; }
+:root[data-theme="dark"] .logo-na-jasnym { display: none; }
+:root[data-theme="dark"] .logo-na-ciemnym { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .logo-na-jasnym { display: none; }
+  :root:not([data-theme="light"]) .logo-na-ciemnym { display: block; }
+}
+
+/* „Wybierz dane” na cały ekran (komputer): kolumny kończą się nad dolną krawędzią okna, więc okno samo się nie przewija
+   (przewijają się tylko listy w kolumnach). Poza oknem (np. spis /zestawienia) zostaje ograniczenie z klas. */
+@media (min-width: 48rem) {
+  [data-slot="data-menu-window"] .data-menu-grid { max-height: calc(100dvh - 22rem); }
+}

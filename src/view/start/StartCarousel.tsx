@@ -9,7 +9,6 @@ import { clampLevel } from '@/core/map/main-view';
 import type { Indicator } from '@/core/profile/profile';
 import { listView, mapHref, type ListView } from '@/core/start/discoveries';
 import type { EndKey } from '@/core/start/list-ends';
-import { ALL_LISTS_HREF } from '@/core/start/list-links';
 import { loadFactsLists } from '@/core/start/load-lists';
 import { shortIndicatorName } from '@/core/seo/sentences';
 import { LevelSwitch } from '@/view/main/LevelSwitch';
@@ -161,13 +160,9 @@ export function StartCarousel({ lists, ready, to, onWarm }: StartCarouselProps) 
             to={to}
             warm={warm}
             levelSwitch={levelSwitch}
-            side={{ hasPrev: index > 0, hasNext: index < stripIds.length - 1, onPrev: () => select(index - 1), onNext: () => select(index + 1) }}
           />
         )}
       </div>
-      <a href={ALL_LISTS_HREF} className="mt-2 inline-flex min-h-[44px] items-center self-start text-sm text-tusz underline underline-offset-4 hover:no-underline focus-visible:outline-2 focus-visible:outline-tusz">
-        Wszystkie tematy i zestawienia
-      </a>
     </div>
   );
 }

@@ -9,7 +9,7 @@ export const PAGE_SIZE = 50;
 const LEVEL_NAMES = { woj: 'woj.', pow: 'powiaty', gmi: 'gminy' } as const;
 
 export const rowClass =
-  'flex min-h-[44px] w-full items-center justify-between gap-3 border border-linia bg-arkusz px-3 py-2 text-left text-sm text-tusz hover:bg-linia/20 focus-visible:outline-2 focus-visible:outline-tusz cursor-pointer disabled:cursor-not-allowed disabled:text-olowek disabled:hover:bg-arkusz';
+  'flex min-h-[44px] w-full shrink-0 items-center justify-between gap-3 border border-linia bg-arkusz px-3 py-2 text-left text-sm text-tusz hover:bg-linia/20 focus-visible:outline-2 focus-visible:outline-tusz cursor-pointer disabled:cursor-not-allowed disabled:text-olowek disabled:hover:bg-arkusz';
 
 export type DataMenuListProps = {
   entries: CatalogEntry[];

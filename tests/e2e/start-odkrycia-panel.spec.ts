@@ -92,24 +92,10 @@ for (const width of [360, 1280]) {
     expect(new Set(mapHrefs).size).toBe(4);
     for (const h of mapHrefs) expect(h).toMatch(/^\/mapa\?i=[\w-]+&y=\d{4}&l=(gmi|pow|woj)/);
 
-    // Strzałki po bokach pozycji (tylko komputer), bez zapętlania; przesunięcie palcem działa na telefonie.
-    const prev = panel.locator('[data-slot="start-list-prev"]');
-    const next = panel.locator('[data-slot="start-list-next"]');
-    if (width >= 768) {
-      await tabs.nth(0).click();
-      await expect(prev).toBeDisabled();
-      await next.click();
-      await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
-      await prev.click();
-      await expect(tabs.nth(0)).toHaveAttribute('aria-selected', 'true');
-      await tabs.nth(total - 1).click();
-      await expect(next).toBeDisabled();
-      const [rowBox, prevBox] = [await rows.first().boundingBox(), await prev.boundingBox()];
-      expect(prevBox!.x + prevBox!.width).toBeLessThanOrEqual(rowBox!.x + 1);
-      expect(prevBox!.height).toBeGreaterThanOrEqual(44);
-    } else {
-      await expect(prev).toBeHidden();
-    }
+    // Strzałek po bokach pozycji nie ma (zostały tylko strzałki paska); zakładki mają równą wysokość.
+    await expect(panel.locator('[data-slot="start-list-prev"], [data-slot="start-list-next"]')).toHaveCount(0);
+    const heights = await Promise.all((await tabs.all()).map(async (t) => (await t.boundingBox())!.height));
+    expect(new Set(heights.map(Math.round)).size).toBe(1);
 
     // Klawiatura na pasku: strzałka w prawo i End.
     await tabs.nth(2).click();

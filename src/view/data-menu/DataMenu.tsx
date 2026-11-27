@@ -81,7 +81,7 @@ export function DataMenuBody({ tree, loading = false, failed = false, selectedId
         {loading ? 'Wczytuję spis…' : `${tree.total} wskaźników z danymi w ${tree.sections.length} działach.`}
         {failed && ' Spisu pobranych danych nie udało się wczytać – widać tylko wskaźniki wbudowane.'}
       </p>
-      <div className={columns ? 'grid min-h-0 gap-4 md:max-h-[65dvh] md:grid-cols-[16rem_1fr] md:grid-rows-[minmax(0,1fr)]' : 'flex min-h-0 flex-col gap-3'}>
+      <div className={columns ? 'data-menu-grid grid min-h-0 gap-4 md:max-h-[65dvh] md:grid-cols-[16rem_1fr] md:grid-rows-[minmax(0,1fr)]' : 'flex min-h-0 flex-col gap-3'}>
         {!searching && (!section || columns) && <DataMenuSections tree={tree} sectionId={sectionId} onOpen={openSection} scrollable={columns} />}
         <section ref={rightRef} aria-label="Wskaźniki" className={columns ? 'min-w-0 md:min-h-0 md:overflow-y-auto md:overscroll-contain' : 'min-w-0'}>
           {searching ? (
