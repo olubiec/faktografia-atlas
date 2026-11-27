@@ -4,6 +4,232 @@
     {
       "kind": "premiere",
       "premiere": {
+        "title": "Aktywność ekonomiczna ludności Polski w 2025 r.",
+        "href": "/obszary-tematyczne/rynek-pracy/pracujacy-bezrobotni-bierni-zawodowo-wg-bael/aktywnosc-ekonomiczna-ludnosci-polski-w-2025-r-,4,62.html",
+        "date": "2026-11-27"
+      },
+      "indicatorId": "unemployed-share-working-age",
+      "indicatorName": "Udział bezrobotnych w ludności w wieku produkcyjnym (%)",
+      "teryt": "1821022",
+      "unitName": "Cisna",
+      "year": 2025,
+      "title": "Udział bezrobotnych w ludności w wieku produkcyjnym: 16,6 % w 2025 r. – najwyższa…",
+      "sentence": "Udział bezrobotnych w ludności w wieku produkcyjnym: 16,6 % w 2025 r. – najwyższa wartość z 2 479 gmin w Polsce.",
+      "value": {
+        "value": 16.6,
+        "unit": "%",
+        "text": "16,6 %"
+      },
+      "ranking": {
+        "level": "gmi",
+        "compared": 1706,
+        "top": [
+          {
+            "rank": 1,
+            "teryt": "1430012",
+            "name": "Chlewiska",
+            "value": 14.4,
+            "text": "14,4 %"
+          },
+          {
+            "rank": 2,
+            "teryt": "2801052",
+            "name": "Górowo Iławeckie",
+            "value": 13.6,
+            "text": "13,6 %"
+          },
+          {
+            "rank": 3,
+            "teryt": "0606043",
+            "name": "Izbica",
+            "value": 13.1,
+            "text": "13,1 %"
+          },
+          {
+            "rank": 4,
+            "teryt": "2606023",
+            "name": "Iwaniska",
+            "value": 12.9,
+            "text": "12,9 %"
+          },
+          {
+            "rank": 5,
+            "teryt": "3201043",
+            "name": "Tychowo",
+            "value": 12.8,
+            "text": "12,8 %"
+          }
+        ],
+        "bottom": [
+          {
+            "rank": 1706,
+            "teryt": "3021062",
+            "name": "Kleszczewo",
+            "value": 0.7,
+            "text": "0,7 %"
+          },
+          {
+            "rank": 1705,
+            "teryt": "3021052",
+            "name": "Dopiewo",
+            "value": 0.7,
+            "text": "0,7 %"
+          },
+          {
+            "rank": 1704,
+            "teryt": "3021132",
+            "name": "Rokietnica",
+            "value": 0.8,
+            "text": "0,8 %"
+          },
+          {
+            "rank": 1703,
+            "teryt": "3021093",
+            "name": "Kórnik",
+            "value": 0.8,
+            "text": "0,8 %"
+          },
+          {
+            "rank": 1702,
+            "teryt": "3021072",
+            "name": "Komorniki",
+            "value": 0.8,
+            "text": "0,8 %"
+          }
+        ]
+      },
+      "context": {
+        "average": {
+          "value": 4.62,
+          "text": "4,6 %",
+          "basis": "średnia 1 706 gmin w rankingu"
+        },
+        "change10": "−0,9 pkt proc. od 2015 r."
+      },
+      "source": {
+        "text": "GUS, BDL, 2025",
+        "bdlVarId": 79214,
+        "map": "/mapa?i=unemployed-share-working-age&y=2025&u=1821022"
+      },
+      "warnings": [
+        "mała gmina (ok. 1 669 mieszkańców): liczby mogą silnie się wahać"
+      ]
+    },
+    {
+      "kind": "premiere",
+      "premiere": {
+        "title": "Aktywność ekonomiczna ludności Polski w 2025 r.",
+        "href": "/obszary-tematyczne/rynek-pracy/pracujacy-bezrobotni-bierni-zawodowo-wg-bael/aktywnosc-ekonomiczna-ludnosci-polski-w-2025-r-,4,62.html",
+        "date": "2026-11-27"
+      },
+      "indicatorId": "unemployment-rate",
+      "indicatorName": "Stopa bezrobocia rejestrowanego (%)",
+      "teryt": "1430",
+      "unitName": "powiat szydłowiecki",
+      "year": 2025,
+      "title": "Stopa bezrobocia rejestrowanego: 22,1 % w 2025 r. – najwyższa wartość z 380 powiatów w…",
+      "sentence": "Stopa bezrobocia rejestrowanego: 22,1 % w 2025 r. – najwyższa wartość z 380 powiatów w Polsce.",
+      "value": {
+        "value": 22.1,
+        "unit": "%",
+        "text": "22,1 %"
+      },
+      "ranking": {
+        "level": "pow",
+        "compared": 366,
+        "top": [
+          {
+            "rank": 1,
+            "teryt": "1430",
+            "name": "powiat szydłowiecki",
+            "value": 22.1,
+            "text": "22,1 %"
+          },
+          {
+            "rank": 2,
+            "teryt": "1802",
+            "name": "powiat brzozowski",
+            "value": 20.5,
+            "text": "20,5 %"
+          },
+          {
+            "rank": 3,
+            "teryt": "1821",
+            "name": "powiat leski",
+            "value": 19.7,
+            "text": "19,7 %"
+          },
+          {
+            "rank": 4,
+            "teryt": "1423",
+            "name": "powiat przysuski",
+            "value": 18.3,
+            "text": "18,3 %"
+          },
+          {
+            "rank": 5,
+            "teryt": "0619",
+            "name": "powiat włodawski",
+            "value": 17.8,
+            "text": "17,8 %"
+          }
+        ],
+        "bottom": [
+          {
+            "rank": 366,
+            "teryt": "3021",
+            "name": "powiat poznański",
+            "value": 1.2,
+            "text": "1,2 %"
+          },
+          {
+            "rank": 365,
+            "teryt": "3064",
+            "name": "powiat Poznań",
+            "value": 1.4,
+            "text": "1,4 %"
+          },
+          {
+            "rank": 364,
+            "teryt": "2469",
+            "name": "powiat Katowice",
+            "value": 1.5,
+            "text": "1,5 %"
+          },
+          {
+            "rank": 363,
+            "teryt": "1465",
+            "name": "powiat Warszawa",
+            "value": 1.5,
+            "text": "1,5 %"
+          },
+          {
+            "rank": 362,
+            "teryt": "3008",
+            "name": "powiat kępiński",
+            "value": 1.6,
+            "text": "1,6 %"
+          }
+        ]
+      },
+      "context": {
+        "average": {
+          "value": 7.99,
+          "text": "8,0 %",
+          "basis": "średnia 366 powiatów w rankingu"
+        },
+        "change10": "−8,7 pkt proc. od 2015 r."
+      },
+      "source": {
+        "text": "GUS, BDL, 2025",
+        "bdlVarId": 461691,
+        "map": "/mapa?i=unemployment-rate&y=2025&u=1430"
+      },
+      "warnings": []
+    },
+    {
+      "kind": "premiere",
+      "premiere": {
         "title": "Centra integracji społecznej, kluby integracji społecznej, zakłady aktywności zawodowej, warsztaty terapii zajęciowej w 2025 r.",
         "href": "/obszary-tematyczne/gospodarka-spoleczna-wolontariat/gospodarka-spoleczna-trzeci-sektor/centra-integracji-spolecznej-kluby-integracji-spolecznej-zaklady-aktywnosci-zawodowej-warsztaty-terapii-zajeciowej-w-2025-r-,6,14.html",
         "date": "2026-11-26"
@@ -114,118 +340,6 @@
       "warnings": [
         "mała gmina (ok. 1 261 mieszkańców): liczby mogą silnie się wahać"
       ]
-    },
-    {
-      "kind": "premiere",
-      "premiere": {
-        "title": "Centra integracji społecznej, kluby integracji społecznej, zakłady aktywności zawodowej, warsztaty terapii zajęciowej w 2025 r.",
-        "href": "/obszary-tematyczne/gospodarka-spoleczna-wolontariat/gospodarka-spoleczna-trzeci-sektor/centra-integracji-spolecznej-kluby-integracji-spolecznej-zaklady-aktywnosci-zawodowej-warsztaty-terapii-zajeciowej-w-2025-r-,6,14.html",
-        "date": "2026-11-26"
-      },
-      "indicatorId": "unemployment-rate",
-      "indicatorName": "Stopa bezrobocia rejestrowanego (%)",
-      "teryt": "1430",
-      "unitName": "powiat szydłowiecki",
-      "year": 2025,
-      "title": "Stopa bezrobocia rejestrowanego: 22,1 % w 2025 r. – najwyższa wartość z 380 powiatów w…",
-      "sentence": "Stopa bezrobocia rejestrowanego: 22,1 % w 2025 r. – najwyższa wartość z 380 powiatów w Polsce.",
-      "value": {
-        "value": 22.1,
-        "unit": "%",
-        "text": "22,1 %"
-      },
-      "ranking": {
-        "level": "pow",
-        "compared": 366,
-        "top": [
-          {
-            "rank": 1,
-            "teryt": "1430",
-            "name": "powiat szydłowiecki",
-            "value": 22.1,
-            "text": "22,1 %"
-          },
-          {
-            "rank": 2,
-            "teryt": "1802",
-            "name": "powiat brzozowski",
-            "value": 20.5,
-            "text": "20,5 %"
-          },
-          {
-            "rank": 3,
-            "teryt": "1821",
-            "name": "powiat leski",
-            "value": 19.7,
-            "text": "19,7 %"
-          },
-          {
-            "rank": 4,
-            "teryt": "1423",
-            "name": "powiat przysuski",
-            "value": 18.3,
-            "text": "18,3 %"
-          },
-          {
-            "rank": 5,
-            "teryt": "0619",
-            "name": "powiat włodawski",
-            "value": 17.8,
-            "text": "17,8 %"
-          }
-        ],
-        "bottom": [
-          {
-            "rank": 366,
-            "teryt": "3021",
-            "name": "powiat poznański",
-            "value": 1.2,
-            "text": "1,2 %"
-          },
-          {
-            "rank": 365,
-            "teryt": "3064",
-            "name": "powiat Poznań",
-            "value": 1.4,
-            "text": "1,4 %"
-          },
-          {
-            "rank": 364,
-            "teryt": "2469",
-            "name": "powiat Katowice",
-            "value": 1.5,
-            "text": "1,5 %"
-          },
-          {
-            "rank": 363,
-            "teryt": "1465",
-            "name": "powiat Warszawa",
-            "value": 1.5,
-            "text": "1,5 %"
-          },
-          {
-            "rank": 362,
-            "teryt": "3008",
-            "name": "powiat kępiński",
-            "value": 1.6,
-            "text": "1,6 %"
-          }
-        ]
-      },
-      "context": {
-        "average": {
-          "value": 7.99,
-          "text": "8,0 %",
-          "basis": "średnia 366 powiatów w rankingu"
-        },
-        "change10": "−8,7 pkt proc. od 2015 r."
-      },
-      "source": {
-        "text": "GUS, BDL, 2025",
-        "bdlVarId": 461691,
-        "map": "/mapa?i=unemployment-rate&y=2025&u=1430"
-      },
-      "warnings": []
     },
     {
       "kind": "premiere",
@@ -564,120 +678,6 @@
         "map": "/mapa?i=sewerage-share&y=2025&u=0201062"
       },
       "warnings": []
-    },
-    {
-      "kind": "premiere",
-      "premiere": {
-        "title": "Działalność gospodarcza przedsiębiorstw z kapitałem zagranicznym w 2025 r.",
-        "href": "/obszary-tematyczne/podmioty-gospodarcze-wyniki-finansowe/przedsiebiorstwa-niefinansowe/dzialalnosc-gospodarcza-przedsiebiorstw-z-kapitalem-zagranicznym-w-2025-r-,26,9.html",
-        "date": "2026-11-26"
-      },
-      "indicatorId": "unemployed-share-working-age",
-      "indicatorName": "Udział bezrobotnych w ludności w wieku produkcyjnym (%)",
-      "teryt": "1821022",
-      "unitName": "Cisna",
-      "year": 2025,
-      "title": "Udział bezrobotnych w ludności w wieku produkcyjnym: 16,6 % w 2025 r. – najwyższa…",
-      "sentence": "Udział bezrobotnych w ludności w wieku produkcyjnym: 16,6 % w 2025 r. – najwyższa wartość z 2 479 gmin w Polsce.",
-      "value": {
-        "value": 16.6,
-        "unit": "%",
-        "text": "16,6 %"
-      },
-      "ranking": {
-        "level": "gmi",
-        "compared": 1706,
-        "top": [
-          {
-            "rank": 1,
-            "teryt": "1430012",
-            "name": "Chlewiska",
-            "value": 14.4,
-            "text": "14,4 %"
-          },
-          {
-            "rank": 2,
-            "teryt": "2801052",
-            "name": "Górowo Iławeckie",
-            "value": 13.6,
-            "text": "13,6 %"
-          },
-          {
-            "rank": 3,
-            "teryt": "0606043",
-            "name": "Izbica",
-            "value": 13.1,
-            "text": "13,1 %"
-          },
-          {
-            "rank": 4,
-            "teryt": "2606023",
-            "name": "Iwaniska",
-            "value": 12.9,
-            "text": "12,9 %"
-          },
-          {
-            "rank": 5,
-            "teryt": "3201043",
-            "name": "Tychowo",
-            "value": 12.8,
-            "text": "12,8 %"
-          }
-        ],
-        "bottom": [
-          {
-            "rank": 1706,
-            "teryt": "3021062",
-            "name": "Kleszczewo",
-            "value": 0.7,
-            "text": "0,7 %"
-          },
-          {
-            "rank": 1705,
-            "teryt": "3021052",
-            "name": "Dopiewo",
-            "value": 0.7,
-            "text": "0,7 %"
-          },
-          {
-            "rank": 1704,
-            "teryt": "3021132",
-            "name": "Rokietnica",
-            "value": 0.8,
-            "text": "0,8 %"
-          },
-          {
-            "rank": 1703,
-            "teryt": "3021093",
-            "name": "Kórnik",
-            "value": 0.8,
-            "text": "0,8 %"
-          },
-          {
-            "rank": 1702,
-            "teryt": "3021072",
-            "name": "Komorniki",
-            "value": 0.8,
-            "text": "0,8 %"
-          }
-        ]
-      },
-      "context": {
-        "average": {
-          "value": 4.62,
-          "text": "4,6 %",
-          "basis": "średnia 1 706 gmin w rankingu"
-        },
-        "change10": "−0,9 pkt proc. od 2015 r."
-      },
-      "source": {
-        "text": "GUS, BDL, 2025",
-        "bdlVarId": 79214,
-        "map": "/mapa?i=unemployed-share-working-age&y=2025&u=1821022"
-      },
-      "warnings": [
-        "mała gmina (ok. 1 669 mieszkańców): liczby mogą silnie się wahać"
-      ]
     },
     {
       "kind": "premiere",
