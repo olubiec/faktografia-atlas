@@ -1,0 +1,908 @@
+{
+  "date": "2026-11-27",
+  "items": [
+    {
+      "kind": "premiere",
+      "premiere": {
+        "title": "Centra integracji społecznej, kluby integracji społecznej, zakłady aktywności zawodowej, warsztaty terapii zajęciowej w 2025 r.",
+        "href": "/obszary-tematyczne/gospodarka-spoleczna-wolontariat/gospodarka-spoleczna-trzeci-sektor/centra-integracji-spolecznej-kluby-integracji-spolecznej-zaklady-aktywnosci-zawodowej-warsztaty-terapii-zajeciowej-w-2025-r-,6,14.html",
+        "date": "2026-11-26"
+      },
+      "indicatorId": "share-65plus",
+      "indicatorName": "Udział ludności 65+ (%)",
+      "teryt": "2005052",
+      "unitName": "Dubicze Cerkiewne",
+      "year": 2025,
+      "title": "Udział ludności 65+: 36,2 % w 2025 r. – najwyższa wartość z 2 479 gmin w Polsce.",
+      "sentence": "Udział ludności 65+: 36,2 % w 2025 r. – najwyższa wartość z 2 479 gmin w Polsce.",
+      "value": {
+        "value": 36.2,
+        "unit": "%",
+        "text": "36,2 %"
+      },
+      "ranking": {
+        "level": "gmi",
+        "compared": 1706,
+        "top": [
+          {
+            "rank": 1,
+            "teryt": "0401021",
+            "name": "Ciechocinek",
+            "value": 32.1,
+            "text": "32,1 %"
+          },
+          {
+            "rank": 2,
+            "teryt": "2610011",
+            "name": "Skarżysko-Kamienna",
+            "value": 30.3,
+            "text": "30,3 %"
+          },
+          {
+            "rank": 3,
+            "teryt": "0208051",
+            "name": "Polanica-Zdrój",
+            "value": 30,
+            "text": "30,0 %"
+          },
+          {
+            "rank": 4,
+            "teryt": "2607011",
+            "name": "Ostrowiec Świętokrzyski",
+            "value": 29.5,
+            "text": "29,5 %"
+          },
+          {
+            "rank": 5,
+            "teryt": "2611011",
+            "name": "Starachowice",
+            "value": 29.2,
+            "text": "29,2 %"
+          }
+        ],
+        "bottom": [
+          {
+            "rank": 1706,
+            "teryt": "3021062",
+            "name": "Kleszczewo",
+            "value": 9.7,
+            "text": "9,7 %"
+          },
+          {
+            "rank": 1705,
+            "teryt": "3021072",
+            "name": "Komorniki",
+            "value": 10.5,
+            "text": "10,5 %"
+          },
+          {
+            "rank": 1704,
+            "teryt": "1418032",
+            "name": "Lesznowola",
+            "value": 10.6,
+            "text": "10,6 %"
+          },
+          {
+            "rank": 1703,
+            "teryt": "2215102",
+            "name": "Wejherowo",
+            "value": 10.9,
+            "text": "10,9 %"
+          },
+          {
+            "rank": 1702,
+            "teryt": "3021052",
+            "name": "Dopiewo",
+            "value": 11,
+            "text": "11,0 %"
+          }
+        ]
+      },
+      "context": {
+        "average": {
+          "value": 19.91,
+          "text": "19,9 %",
+          "basis": "średnia 1 706 gmin w rankingu"
+        },
+        "change10": "−3,3 pkt proc. od 2015 r."
+      },
+      "source": {
+        "text": "GUS, BDL, 2025",
+        "bdlVarId": 634989,
+        "map": "/mapa?i=share-65plus&y=2025&u=2005052"
+      },
+      "warnings": [
+        "mała gmina (ok. 1 261 mieszkańców): liczby mogą silnie się wahać"
+      ]
+    },
+    {
+      "kind": "premiere",
+      "premiere": {
+        "title": "Centra integracji społecznej, kluby integracji społecznej, zakłady aktywności zawodowej, warsztaty terapii zajęciowej w 2025 r.",
+        "href": "/obszary-tematyczne/gospodarka-spoleczna-wolontariat/gospodarka-spoleczna-trzeci-sektor/centra-integracji-spolecznej-kluby-integracji-spolecznej-zaklady-aktywnosci-zawodowej-warsztaty-terapii-zajeciowej-w-2025-r-,6,14.html",
+        "date": "2026-11-26"
+      },
+      "indicatorId": "unemployment-rate",
+      "indicatorName": "Stopa bezrobocia rejestrowanego (%)",
+      "teryt": "1430",
+      "unitName": "powiat szydłowiecki",
+      "year": 2025,
+      "title": "Stopa bezrobocia rejestrowanego: 22,1 % w 2025 r. – najwyższa wartość z 380 powiatów w…",
+      "sentence": "Stopa bezrobocia rejestrowanego: 22,1 % w 2025 r. – najwyższa wartość z 380 powiatów w Polsce.",
+      "value": {
+        "value": 22.1,
+        "unit": "%",
+        "text": "22,1 %"
+      },
+      "ranking": {
+        "level": "pow",
+        "compared": 366,
+        "top": [
+          {
+            "rank": 1,
+            "teryt": "1430",
+            "name": "powiat szydłowiecki",
+            "value": 22.1,
+            "text": "22,1 %"
+          },
+          {
+            "rank": 2,
+            "teryt": "1802",
+            "name": "powiat brzozowski",
+            "value": 20.5,
+            "text": "20,5 %"
+          },
+          {
+            "rank": 3,
+            "teryt": "1821",
+            "name": "powiat leski",
+            "value": 19.7,
+            "text": "19,7 %"
+          },
+          {
+            "rank": 4,
+            "teryt": "1423",
+            "name": "powiat przysuski",
+            "value": 18.3,
+            "text": "18,3 %"
+          },
+          {
+            "rank": 5,
+            "teryt": "0619",
+            "name": "powiat włodawski",
+            "value": 17.8,
+            "text": "17,8 %"
+          }
+        ],
+        "bottom": [
+          {
+            "rank": 366,
+            "teryt": "3021",
+            "name": "powiat poznański",
+            "value": 1.2,
+            "text": "1,2 %"
+          },
+          {
+            "rank": 365,
+            "teryt": "3064",
+            "name": "powiat Poznań",
+            "value": 1.4,
+            "text": "1,4 %"
+          },
+          {
+            "rank": 364,
+            "teryt": "2469",
+            "name": "powiat Katowice",
+            "value": 1.5,
+            "text": "1,5 %"
+          },
+          {
+            "rank": 363,
+            "teryt": "1465",
+            "name": "powiat Warszawa",
+            "value": 1.5,
+            "text": "1,5 %"
+          },
+          {
+            "rank": 362,
+            "teryt": "3008",
+            "name": "powiat kępiński",
+            "value": 1.6,
+            "text": "1,6 %"
+          }
+        ]
+      },
+      "context": {
+        "average": {
+          "value": 7.99,
+          "text": "8,0 %",
+          "basis": "średnia 366 powiatów w rankingu"
+        },
+        "change10": "−8,7 pkt proc. od 2015 r."
+      },
+      "source": {
+        "text": "GUS, BDL, 2025",
+        "bdlVarId": 461691,
+        "map": "/mapa?i=unemployment-rate&y=2025&u=1430"
+      },
+      "warnings": []
+    },
+    {
+      "kind": "premiere",
+      "premiere": {
+        "title": "Gospodarka wodociągowa i kanalizacyjna w Polsce w latach 2021-2025",
+        "href": "/obszary-tematyczne/infrastruktura-komunalna-nieruchomosci/nieruchomosci-budynki-infrastruktura-komunalna/gospodarka-wodociagowa-i-kanalizacyjna-w-polsce-w-latach-2021-2025,17,1.html",
+        "date": "2026-11-26"
+      },
+      "indicatorId": "density",
+      "indicatorName": "Gęstość zaludnienia (os./km²)",
+      "teryt": "1434031",
+      "unitName": "Ząbki",
+      "year": 2025,
+      "title": "Gęstość zaludnienia: 4 157,9 os./km² w 2025 r. – najwyższa wartość z 2 479 gmin w Polsce.",
+      "sentence": "Gęstość zaludnienia: 4 157,9 os./km² w 2025 r. – najwyższa wartość z 2 479 gmin w Polsce.",
+      "value": {
+        "value": 4157.9,
+        "unit": "os./km²",
+        "text": "4 157,9 os./km²"
+      },
+      "ranking": {
+        "level": "gmi",
+        "compared": 1706,
+        "top": [
+          {
+            "rank": 1,
+            "teryt": "1434031",
+            "name": "Ząbki",
+            "value": 4157.9,
+            "text": "4 157,9 os./km²"
+          },
+          {
+            "rank": 2,
+            "teryt": "1421011",
+            "name": "Piastów",
+            "value": 3917.9,
+            "text": "3 917,9 os./km²"
+          },
+          {
+            "rank": 3,
+            "teryt": "1408011",
+            "name": "Legionowo",
+            "value": 3830.8,
+            "text": "3 830,8 os./km²"
+          },
+          {
+            "rank": 4,
+            "teryt": "1465011",
+            "name": "Warszawa",
+            "value": 3609.3,
+            "text": "3 609,3 os./km²"
+          },
+          {
+            "rank": 5,
+            "teryt": "1421021",
+            "name": "Pruszków",
+            "value": 3436,
+            "text": "3 436,0 os./km²"
+          }
+        ],
+        "bottom": [
+          {
+            "rank": 1706,
+            "teryt": "3203033",
+            "name": "Kalisz Pomorski",
+            "value": 13.9,
+            "text": "13,9 os./km²"
+          },
+          {
+            "rank": 1705,
+            "teryt": "2002073",
+            "name": "Michałowo",
+            "value": 13.9,
+            "text": "13,9 os./km²"
+          },
+          {
+            "rank": 1704,
+            "teryt": "2801052",
+            "name": "Górowo Iławeckie",
+            "value": 14.4,
+            "text": "14,4 os./km²"
+          },
+          {
+            "rank": 1703,
+            "teryt": "2003032",
+            "name": "Bielsk Podlaski",
+            "value": 14.5,
+            "text": "14,5 os./km²"
+          },
+          {
+            "rank": 1702,
+            "teryt": "0807053",
+            "name": "Torzym",
+            "value": 16.3,
+            "text": "16,3 os./km²"
+          }
+        ]
+      },
+      "context": {
+        "average": {
+          "value": 267.7,
+          "text": "267,7 os./km²",
+          "basis": "średnia 1 706 gmin w rankingu"
+        },
+        "change10": "+35,0% od 2015 r."
+      },
+      "source": {
+        "text": "GUS, BDL, 2025",
+        "bdlVarId": 60559,
+        "map": "/mapa?i=density&y=2025&u=1434031"
+      },
+      "warnings": []
+    },
+    {
+      "kind": "premiere",
+      "premiere": {
+        "title": "Gospodarka wodociągowa i kanalizacyjna w Polsce w latach 2021-2025",
+        "href": "/obszary-tematyczne/infrastruktura-komunalna-nieruchomosci/nieruchomosci-budynki-infrastruktura-komunalna/gospodarka-wodociagowa-i-kanalizacyjna-w-polsce-w-latach-2021-2025,17,1.html",
+        "date": "2026-11-26"
+      },
+      "indicatorId": "regon-per-10k",
+      "indicatorName": "Podmioty REGON na 10 tys. ludności",
+      "teryt": "2011062",
+      "unitName": "Nowy Dwór",
+      "year": 2025,
+      "title": "Podmioty REGON na 10 tys. ludności: średnio 365,0 na 10 tys. w latach 2023–2025 –…",
+      "sentence": "Podmioty REGON na 10 tys. ludności: średnio 365,0 na 10 tys. w latach 2023–2025 – najniższa wartość z 2 461 gmin w Polsce.",
+      "value": {
+        "value": 365,
+        "unit": "na 10 tys.",
+        "text": "365,0 na 10 tys."
+      },
+      "ranking": {
+        "level": "gmi",
+        "compared": 1706,
+        "top": [
+          {
+            "rank": 1,
+            "teryt": "3207043",
+            "name": "Międzyzdroje",
+            "value": 3250,
+            "text": "3 250,0 na 10 tys."
+          },
+          {
+            "rank": 2,
+            "teryt": "1465011",
+            "name": "Warszawa",
+            "value": 3209,
+            "text": "3 209,0 na 10 tys."
+          },
+          {
+            "rank": 3,
+            "teryt": "1418032",
+            "name": "Lesznowola",
+            "value": 3083,
+            "text": "3 083,0 na 10 tys."
+          },
+          {
+            "rank": 4,
+            "teryt": "1217011",
+            "name": "Zakopane",
+            "value": 2713,
+            "text": "2 713,0 na 10 tys."
+          },
+          {
+            "rank": 5,
+            "teryt": "0206041",
+            "name": "Szklarska Poręba",
+            "value": 2635,
+            "text": "2 635,0 na 10 tys."
+          }
+        ],
+        "bottom": [
+          {
+            "rank": 1706,
+            "teryt": "1420043",
+            "name": "Czerwińsk nad Wisłą",
+            "value": 522,
+            "text": "522,0 na 10 tys."
+          },
+          {
+            "rank": 1705,
+            "teryt": "1804032",
+            "name": "Chłopice",
+            "value": 533,
+            "text": "533,0 na 10 tys."
+          },
+          {
+            "rank": 1704,
+            "teryt": "1804073",
+            "name": "Pruchnik",
+            "value": 541,
+            "text": "541,0 na 10 tys."
+          },
+          {
+            "rank": 1703,
+            "teryt": "0603153",
+            "name": "Rejowiec",
+            "value": 561,
+            "text": "561,0 na 10 tys."
+          },
+          {
+            "rank": 1702,
+            "teryt": "2801052",
+            "name": "Górowo Iławeckie",
+            "value": 578,
+            "text": "578,0 na 10 tys."
+          }
+        ]
+      },
+      "context": {
+        "average": {
+          "value": 1134.57,
+          "text": "1 134,6 na 10 tys.",
+          "basis": "średnia 1 706 gmin w rankingu"
+        },
+        "change10": "+87,0 na 10 tys. od 2015 r."
+      },
+      "source": {
+        "text": "GUS, BDL, 2025",
+        "bdlVarId": 60530,
+        "map": "/mapa?i=regon-per-10k&y=2025&u=2011062"
+      },
+      "warnings": [
+        "mała gmina (ok. 2 095 mieszkańców): liczby mogą silnie się wahać"
+      ]
+    },
+    {
+      "kind": "premiere",
+      "premiere": {
+        "title": "Gospodarka wodociągowa i kanalizacyjna w Polsce w latach 2021-2025",
+        "href": "/obszary-tematyczne/infrastruktura-komunalna-nieruchomosci/nieruchomosci-budynki-infrastruktura-komunalna/gospodarka-wodociagowa-i-kanalizacyjna-w-polsce-w-latach-2021-2025,17,1.html",
+        "date": "2026-11-26"
+      },
+      "indicatorId": "sewerage-share",
+      "indicatorName": "Ludność korzystająca z kanalizacji (%)",
+      "teryt": "0201062",
+      "unitName": "Warta Bolesławiecka",
+      "year": 2025,
+      "title": "Ludność korzystająca z kanalizacji: 100,0 % w 2025 r. – najwyższa wartość (ex aequo) z 2…",
+      "sentence": "Ludność korzystająca z kanalizacji: 100,0 % w 2025 r. – najwyższa wartość (ex aequo) z 2 479 gmin w Polsce.",
+      "value": {
+        "value": 100,
+        "unit": "%",
+        "text": "100,0 %"
+      },
+      "ranking": {
+        "level": "gmi",
+        "compared": 1706,
+        "top": [
+          {
+            "rank": 1,
+            "teryt": "0201062",
+            "name": "Warta Bolesławiecka",
+            "value": 100,
+            "text": "100,0 %"
+          },
+          {
+            "rank": 2,
+            "teryt": "0207011",
+            "name": "Kamienna Góra",
+            "value": 100,
+            "text": "100,0 %"
+          },
+          {
+            "rank": 3,
+            "teryt": "0222013",
+            "name": "Brzeg Dolny",
+            "value": 100,
+            "text": "100,0 %"
+          },
+          {
+            "rank": 4,
+            "teryt": "2462011",
+            "name": "Bytom",
+            "value": 100,
+            "text": "100,0 %"
+          },
+          {
+            "rank": 5,
+            "teryt": "2477011",
+            "name": "Tychy",
+            "value": 100,
+            "text": "100,0 %"
+          }
+        ],
+        "bottom": [
+          {
+            "rank": 1706,
+            "teryt": "2812032",
+            "name": "Grodziczno",
+            "value": 0,
+            "text": "0,0 %"
+          },
+          {
+            "rank": 1705,
+            "teryt": "2411042",
+            "name": "Krzyżanowice",
+            "value": 0,
+            "text": "0,0 %"
+          },
+          {
+            "rank": 1704,
+            "teryt": "2006032",
+            "name": "Kolno",
+            "value": 0,
+            "text": "0,0 %"
+          },
+          {
+            "rank": 1703,
+            "teryt": "1436032",
+            "name": "Przyłęk",
+            "value": 0,
+            "text": "0,0 %"
+          },
+          {
+            "rank": 1702,
+            "teryt": "1434082",
+            "name": "Poświętne",
+            "value": 0,
+            "text": "0,0 %"
+          }
+        ]
+      },
+      "context": {
+        "average": {
+          "value": 58.44,
+          "text": "58,4 %",
+          "basis": "średnia 1 706 gmin w rankingu"
+        },
+        "change10": "0,0 pkt proc. od 2015 r."
+      },
+      "source": {
+        "text": "GUS, BDL, 2025",
+        "bdlVarId": 79130,
+        "map": "/mapa?i=sewerage-share&y=2025&u=0201062"
+      },
+      "warnings": []
+    },
+    {
+      "kind": "premiere",
+      "premiere": {
+        "title": "Działalność gospodarcza przedsiębiorstw z kapitałem zagranicznym w 2025 r.",
+        "href": "/obszary-tematyczne/podmioty-gospodarcze-wyniki-finansowe/przedsiebiorstwa-niefinansowe/dzialalnosc-gospodarcza-przedsiebiorstw-z-kapitalem-zagranicznym-w-2025-r-,26,9.html",
+        "date": "2026-11-26"
+      },
+      "indicatorId": "unemployed-share-working-age",
+      "indicatorName": "Udział bezrobotnych w ludności w wieku produkcyjnym (%)",
+      "teryt": "1821022",
+      "unitName": "Cisna",
+      "year": 2025,
+      "title": "Udział bezrobotnych w ludności w wieku produkcyjnym: 16,6 % w 2025 r. – najwyższa…",
+      "sentence": "Udział bezrobotnych w ludności w wieku produkcyjnym: 16,6 % w 2025 r. – najwyższa wartość z 2 479 gmin w Polsce.",
+      "value": {
+        "value": 16.6,
+        "unit": "%",
+        "text": "16,6 %"
+      },
+      "ranking": {
+        "level": "gmi",
+        "compared": 1706,
+        "top": [
+          {
+            "rank": 1,
+            "teryt": "1430012",
+            "name": "Chlewiska",
+            "value": 14.4,
+            "text": "14,4 %"
+          },
+          {
+            "rank": 2,
+            "teryt": "2801052",
+            "name": "Górowo Iławeckie",
+            "value": 13.6,
+            "text": "13,6 %"
+          },
+          {
+            "rank": 3,
+            "teryt": "0606043",
+            "name": "Izbica",
+            "value": 13.1,
+            "text": "13,1 %"
+          },
+          {
+            "rank": 4,
+            "teryt": "2606023",
+            "name": "Iwaniska",
+            "value": 12.9,
+            "text": "12,9 %"
+          },
+          {
+            "rank": 5,
+            "teryt": "3201043",
+            "name": "Tychowo",
+            "value": 12.8,
+            "text": "12,8 %"
+          }
+        ],
+        "bottom": [
+          {
+            "rank": 1706,
+            "teryt": "3021062",
+            "name": "Kleszczewo",
+            "value": 0.7,
+            "text": "0,7 %"
+          },
+          {
+            "rank": 1705,
+            "teryt": "3021052",
+            "name": "Dopiewo",
+            "value": 0.7,
+            "text": "0,7 %"
+          },
+          {
+            "rank": 1704,
+            "teryt": "3021132",
+            "name": "Rokietnica",
+            "value": 0.8,
+            "text": "0,8 %"
+          },
+          {
+            "rank": 1703,
+            "teryt": "3021093",
+            "name": "Kórnik",
+            "value": 0.8,
+            "text": "0,8 %"
+          },
+          {
+            "rank": 1702,
+            "teryt": "3021072",
+            "name": "Komorniki",
+            "value": 0.8,
+            "text": "0,8 %"
+          }
+        ]
+      },
+      "context": {
+        "average": {
+          "value": 4.62,
+          "text": "4,6 %",
+          "basis": "średnia 1 706 gmin w rankingu"
+        },
+        "change10": "−0,9 pkt proc. od 2015 r."
+      },
+      "source": {
+        "text": "GUS, BDL, 2025",
+        "bdlVarId": 79214,
+        "map": "/mapa?i=unemployed-share-working-age&y=2025&u=1821022"
+      },
+      "warnings": [
+        "mała gmina (ok. 1 669 mieszkańców): liczby mogą silnie się wahać"
+      ]
+    },
+    {
+      "kind": "premiere",
+      "premiere": {
+        "title": "Biuletyn Statystyczny Nr 10/2026",
+        "href": "/obszary-tematyczne/inne-opracowania/informacje-o-sytuacji-spoleczno-gospodarczej/biuletyn-statystyczny-nr-102026,4,179.html",
+        "date": "2026-11-25"
+      },
+      "indicatorId": "avg-wage",
+      "indicatorName": "Przeciętne wynagrodzenie brutto (zł)",
+      "teryt": "0211",
+      "unitName": "powiat lubiński",
+      "year": 2025,
+      "title": "Przeciętne wynagrodzenie brutto: 14 874 zł w 2025 r. – najwyższa wartość z 380 powiatów…",
+      "sentence": "Przeciętne wynagrodzenie brutto: 14 874 zł w 2025 r. – najwyższa wartość z 380 powiatów w Polsce.",
+      "value": {
+        "value": 14874.22,
+        "unit": "zł",
+        "text": "14 874 zł"
+      },
+      "ranking": {
+        "level": "pow",
+        "compared": 366,
+        "top": [
+          {
+            "rank": 1,
+            "teryt": "0211",
+            "name": "powiat lubiński",
+            "value": 14874.22,
+            "text": "14 874 zł"
+          },
+          {
+            "rank": 2,
+            "teryt": "2467",
+            "name": "powiat Jastrzębie-Zdrój",
+            "value": 12938.72,
+            "text": "12 939 zł"
+          },
+          {
+            "rank": 3,
+            "teryt": "1465",
+            "name": "powiat Warszawa",
+            "value": 11677.57,
+            "text": "11 678 zł"
+          },
+          {
+            "rank": 4,
+            "teryt": "1462",
+            "name": "powiat Płock",
+            "value": 11514.62,
+            "text": "11 515 zł"
+          },
+          {
+            "rank": 5,
+            "teryt": "1261",
+            "name": "powiat Kraków",
+            "value": 11404.02,
+            "text": "11 404 zł"
+          }
+        ],
+        "bottom": [
+          {
+            "rank": 366,
+            "teryt": "3012",
+            "name": "powiat krotoszyński",
+            "value": 6463.65,
+            "text": "6 464 zł"
+          },
+          {
+            "rank": 365,
+            "teryt": "3008",
+            "name": "powiat kępiński",
+            "value": 6735.19,
+            "text": "6 735 zł"
+          },
+          {
+            "rank": 364,
+            "teryt": "3031",
+            "name": "powiat złotowski",
+            "value": 6846.04,
+            "text": "6 846 zł"
+          },
+          {
+            "rank": 363,
+            "teryt": "2812",
+            "name": "powiat nowomiejski",
+            "value": 6856.9,
+            "text": "6 857 zł"
+          },
+          {
+            "rank": 362,
+            "teryt": "3027",
+            "name": "powiat turecki",
+            "value": 7056.84,
+            "text": "7 057 zł"
+          }
+        ]
+      },
+      "context": {
+        "average": {
+          "value": 8252.89,
+          "text": "8 253 zł",
+          "basis": "średnia 366 powiatów w rankingu"
+        },
+        "change10": "+113,8% od 2015 r."
+      },
+      "source": {
+        "text": "GUS, BDL, 2025",
+        "bdlVarId": 64428,
+        "map": "/mapa?i=avg-wage&y=2025&u=0211"
+      },
+      "warnings": []
+    },
+    {
+      "kind": "premiere",
+      "premiere": {
+        "title": "Pracujący, bezrobotni i bierni zawodowo (wyniki wstępne Badania Aktywności Ekonomicznej Ludności w 3 kwartale 2026 r.)",
+        "href": "/obszary-tematyczne/rynek-pracy/pracujacy-bezrobotni-bierni-zawodowo-wg-bael/pracujacy-bezrobotni-i-bierni-zawodowo-wyniki-wstepne-badania-aktywnosci-ekonomicznej-ludnosci-w-3-kwartale-2026-r-,12,70.html",
+        "date": "2026-11-25"
+      },
+      "indicatorId": "median-age",
+      "indicatorName": "Mediana wieku",
+      "teryt": "1405021",
+      "unitName": "Podkowa Leśna",
+      "year": 2026,
+      "title": "Mediana wieku: 49,0 lat w 2026 r. – najwyższa wartość z 2 473 gmin w Polsce.",
+      "sentence": "Mediana wieku: 49,0 lat w 2026 r. – najwyższa wartość z 2 473 gmin w Polsce.",
+      "value": {
+        "value": 49,
+        "unit": "lata",
+        "text": "49,0 lat"
+      },
+      "ranking": {
+        "level": "gmi",
+        "compared": 1701,
+        "top": [
+          {
+            "rank": 1,
+            "teryt": "0618011",
+            "name": "Tomaszów Lubelski",
+            "value": 47,
+            "text": "47,0 lat"
+          },
+          {
+            "rank": 2,
+            "teryt": "1418023",
+            "name": "Konstancin-Jeziorna",
+            "value": 47,
+            "text": "47,0 lat"
+          },
+          {
+            "rank": 3,
+            "teryt": "1432022",
+            "name": "Izabelin",
+            "value": 47,
+            "text": "47,0 lat"
+          },
+          {
+            "rank": 4,
+            "teryt": "2609011",
+            "name": "Sandomierz",
+            "value": 47,
+            "text": "47,0 lat"
+          },
+          {
+            "rank": 5,
+            "teryt": "3021021",
+            "name": "Puszczykowo",
+            "value": 47,
+            "text": "47,0 lat"
+          }
+        ],
+        "bottom": [
+          {
+            "rank": 1701,
+            "teryt": "2205042",
+            "name": "Sierakowice",
+            "value": 39,
+            "text": "39,0 lat"
+          },
+          {
+            "rank": 1700,
+            "teryt": "3022023",
+            "name": "Jutrosin",
+            "value": 40,
+            "text": "40,0 lat"
+          },
+          {
+            "rank": 1699,
+            "teryt": "2215072",
+            "name": "Luzino",
+            "value": 40,
+            "text": "40,0 lat"
+          },
+          {
+            "rank": 1698,
+            "teryt": "2215062",
+            "name": "Linia",
+            "value": 40,
+            "text": "40,0 lat"
+          },
+          {
+            "rank": 1697,
+            "teryt": "2213132",
+            "name": "Zblewo",
+            "value": 40,
+            "text": "40,0 lat"
+          }
+        ]
+      },
+      "context": {
+        "average": {
+          "value": 43.21,
+          "text": "43,2 lat",
+          "basis": "średnia 1 701 gmin w rankingu"
+        }
+      },
+      "source": {
+        "text": "GUS, BDL, 2026",
+        "bdlVarId": 1650633,
+        "map": "/mapa?i=median-age&y=2026&u=1405021"
+      },
+      "warnings": [
+        "mała gmina (ok. 3 708 mieszkańców): liczby mogą silnie się wahać"
+      ]
+    }
+  ]
+}
