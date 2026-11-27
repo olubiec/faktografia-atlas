@@ -4,7 +4,7 @@ import { loadUnits } from '@/core/data/load-atlas-data';
 import type { Level } from '@/core/facts/types';
 import { loadAnyValues } from '@/core/indicators/load-any-values';
 import { peekAvailable } from '@/core/indicators/load-available';
-import { buildRegistry } from '@/core/indicators/registry';
+import { sharedRegistry } from '@/core/indicators/shared-registry';
 import { clampLevel } from '@/core/map/main-view';
 import type { Indicator } from '@/core/profile/profile';
 import { listView, mapHref, type ListView } from '@/core/start/discoveries';
@@ -32,7 +32,7 @@ export interface StartCarouselProps {
 const MAIN = indicatorsData as Indicator[];
 
 /** Wskaźnik z rejestru (główne zawsze, z biblioteki po wczytaniu spisu); null, gdy go nie ma. */
-const indicatorOf = (id: string) => buildRegistry(MAIN, peekAvailable() ?? null).byId.get(id) ?? null;
+const indicatorOf = (id: string) => sharedRegistry(MAIN, peekAvailable() ?? null).byId.get(id) ?? null;
 
 /**
  * „Zestawienia”: pasek wskaźników (zaznaczony jest ten, który wybrałeś), pod nim panel jak przy mapie: „Wybierz dane”
@@ -175,6 +175,6 @@ export function StartCarousel({ lists, ready, to, onWarm }: StartCarouselProps) 
 /** Poziomy z danymi wskaźnika z biblioteki (ze spisu); wskaźniki główne wynikają z minLevel. */
 function libraryLevels(id: string | null) {
   if (!id) return undefined;
-  const lv = buildRegistry(MAIN, peekAvailable() ?? null).levels.get(id);
+  const lv = sharedRegistry(MAIN, peekAvailable() ?? null).levels.get(id);
   return lv && lv.length > 0 ? lv : undefined;
 }

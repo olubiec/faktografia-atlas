@@ -4,7 +4,7 @@ import { loadUnits } from '@/core/data/load-atlas-data';
 import { loadAnyValues } from '@/core/indicators/load-any-values';
 import { peekAvailable } from '@/core/indicators/load-available';
 import { resetLibraryCache } from '@/core/library/load-library';
-import { buildRegistry } from '@/core/indicators/registry';
+import { sharedRegistry } from '@/core/indicators/shared-registry';
 import type { Level } from '@/core/facts/types';
 import type { Indicator } from '@/core/profile/profile';
 import { listView, type ListView } from '@/core/start/discoveries';
@@ -48,7 +48,7 @@ export function useLevelList(id: string | null, wish: LevelWish | null) {
     };
     void (async () => {
       try {
-        const ind = buildRegistry(MAIN, peekAvailable() ?? null).byId.get(id);
+        const ind = sharedRegistry(MAIN, peekAvailable() ?? null).byId.get(id);
         const [units, small] = await Promise.all([loadUnits(), loadGminaSmall()]);
         const values = await loadAnyValues(id, { units });
         if (!ind || !values) return done({ status: 'failed', view: null });
