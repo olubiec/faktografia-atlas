@@ -147,7 +147,7 @@ for (const width of [360, 1280]) {
     await visible.getByRole('button', { name: 'Najniższe' }).click();
     const full = visible.locator('[data-slot="start-list-full"]');
     await expect(full).toHaveText('Pełny ranking');
-    await expect(full).toHaveAttribute('href', /^\/rankingi\?i=avg-wage&l=pow&y=\d{4}$/);
+    await expect(full).toHaveAttribute('href', /^\/rankingi\?i=avg-wage&l=pow&y=\d{4}&d=low$/);
   });
 }
 
