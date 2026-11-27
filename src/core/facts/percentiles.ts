@@ -135,6 +135,8 @@ export function buildPercentiles(inp: PercentileInput): PercentileResult {
       .sort((a, b) => a.p - b.p);
     const keep = new Set<number>([...dirs.slice(0, VALUE_KEEP), ...dirs.slice(-VALUE_KEEP)].map((x) => x.i));
     for (let k = 0; k < rr.length; k += 2) keep.add(rr[k]);
+    const pop = used.findIndex((u) => u.id === 'population');
+    if (pop >= 0 && used[pop].at[t] !== undefined) keep.add(pop); // do doboru sąsiada o podobnej liczbie ludności
     const vv: number[] = [];
     for (const i of [...keep].sort((a, b) => a - b)) vv.push(i, round2(used[i].at[t]));
     if (vv.length) (shards[woj].v ??= {})[t] = vv;
