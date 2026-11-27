@@ -3,7 +3,6 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { MemoryRouter } from 'react-router';
 import { Rankings, MyIndicatorsBar } from '../../src/view/pages/Rankings';
-import { BASIC_INDICATORS } from '../../src/core/my-indicators/my-indicators';
 import type { Indicator } from '../../src/core/profile/profile';
 
 type El = React.ReactElement<Record<string, unknown>>;
