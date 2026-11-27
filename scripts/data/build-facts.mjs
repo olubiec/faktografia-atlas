@@ -92,7 +92,16 @@ try {
   // Etykieta „Nowość” (W28-D06): wskaźniki z nowym rokiem sprzed najwyżej fresh.labelDays dni.
   const newYears = newMainYears(ledger, generatedAt, labelDaysOf(config));
   const shards = buildShards(build, generatedAt, newYears);
+  // Percentyle gmin (W31-O01): percentyl kraju, stosunek do mediany i histogram rozkładu w każdym pliku województwa.
+  const { buildPercentiles } = await vite.ssrLoadModule('/src/core/facts/codec.ts');
+  const pc = config.percentiles ?? { zeroGuard: true, bins: 20, minUnits: 100 };
+  const gminas = units.filter((u) => u.level === 'gmi').map((u) => u.teryt);
+  const pcts = buildPercentiles({ values, gminas, ...pc });
   for (const [woj, shard] of Object.entries(shards)) {
+    if (pcts.shards[woj]) {
+      shard.pct = pcts.shards[woj];
+      shard.dist = pcts.dist;
+    }
     const json = JSON.stringify(shard);
     await writeFile(path.join(outDir, `${woj}.json`), json, 'utf8');
     console.log(`facts/${woj}.json: ${Object.keys(shard.units).length} jednostek, ${json.length} B`);
