@@ -19,6 +19,8 @@
     "strongPercentile": 75,
     "weakPercentile": 25,
     "minRatioToMedian": 2,
+    "unusualExcluded": ["density", "population"],
+    "personBased": ["library-readers-per-1000"],
     "dayWeights": { "unusual": 1, "strong": 0.8, "weak": 0.6, "change": 0.9 }
   }
 }

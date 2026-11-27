@@ -1,6 +1,6 @@
 // W31-O01: percentyl kraju, stosunek do mediany i histogram rozkładu (gminy). Zapis: patrz PercentileShard w types.ts.
 import { valenceOf } from './valence';
-import type { DistEntry, PercentileShard } from './types';
+import type { DistEntry, PercentileShard } from './percentile-types';
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
@@ -44,6 +44,9 @@ export interface PercentileInput {
   zeroGuard: boolean;
   bins: number;
   minUnits: number;
+  /** Okno zmiany w latach (domyślnie 10) i wskaźniki bez zmiany (np. gęstość). */
+  changeYears?: number;
+  changeExcluded?: readonly string[];
 }
 
 export interface PercentileResult {
@@ -87,6 +90,21 @@ export function buildPercentiles(inp: PercentileInput): PercentileResult {
     }
     dist[id] = { m: round2(median), lo: round2(lo), hi: round2(hi), b };
   }
+  // Zmiana w oknie (domyślnie 10 lat): względna, percentyl zmiany wśród gmin; do karty „Największa zmiana”.
+  const win = inp.changeYears ?? 10;
+  const change = used.map((u) => {
+    const s = inp.values[u.id];
+    const yi = s.years.indexOf(u.year);
+    const fi = s.years.indexOf(u.year - win);
+    const at: Record<string, { from: number; rel: number }> = {};
+    if (fi < 0 || inp.changeExcluded?.includes(u.id)) return { at, sorted: [] as number[] };
+    for (const t of inp.gminas) {
+      const a = s.values[t]?.[fi];
+      const b = s.values[t]?.[yi];
+      if (typeof a === 'number' && typeof b === 'number' && a > 0) at[t] = { from: a, rel: b / a - 1 };
+    }
+    return { at, sorted: Object.values(at).map((x) => x.rel).sort((x, y) => x - y) };
+  });
   const ind = used.map((u) => u.id);
   const y = used.map((u) => u.year);
   for (const t of inp.gminas) {
@@ -101,7 +119,7 @@ export function buildPercentiles(inp: PercentileInput): PercentileResult {
         return;
       }
       chars += String.fromCharCode(PCT_BASE + percentileOf(u.sorted, v));
-      const guarded = inp.zeroGuard && (u.median === 0 || v === 0);
+      const guarded = inp.zeroGuard && (u.median <= 0 || v <= 0);
       const ratio = v / u.median;
       if (!guarded && (ratio >= RATIO_HIGH || ratio <= RATIO_LOW)) cand.push([i, sig2(ratio)]);
     });
@@ -120,6 +138,15 @@ export function buildPercentiles(inp: PercentileInput): PercentileResult {
     const vv: number[] = [];
     for (const i of [...keep].sort((a, b) => a - b)) vv.push(i, round2(used[i].at[t]));
     if (vv.length) (shards[woj].v ??= {})[t] = vv;
+    // Największe zmiany: po 4 liczby [indeks, wartość z początku okna, zmiana względna, percentyl zmiany], 3 najdalsze od środka, min. 10%.
+    const ch: number[][] = [];
+    change.forEach((c, i) => {
+      const x = c.at[t];
+      if (!x || c.sorted.length < inp.minUnits || Math.abs(x.rel) < 0.1 || valenceOf(used[i].id) === null) return;
+      ch.push([i, round2(x.from), round2(x.rel), percentileOf(c.sorted, x.rel)]);
+    });
+    ch.sort((a, b) => Math.abs(b[3] - 50) - Math.abs(a[3] - 50));
+    if (ch.length) (shards[woj].c ??= {})[t] = ch.slice(0, 3).flat();
     if (rr.length) (shards[woj].r ??= {})[t] = rr;
   }
   return { shards, dist };
