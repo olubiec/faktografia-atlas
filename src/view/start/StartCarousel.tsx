@@ -5,6 +5,8 @@ import type { Level } from '@/core/facts/types';
 import { loadAnyValues } from '@/core/indicators/load-any-values';
 import { peekAvailable } from '@/core/indicators/load-available';
 import { sharedRegistry } from '@/core/indicators/shared-registry';
+import { buildRegistry } from '@/core/indicators/registry';
+import { wrapIndex } from '@/core/start/ring';
 import { clampLevel } from '@/core/map/main-view';
 import type { Indicator } from '@/core/profile/profile';
 import { listView, mapHref, type ListView } from '@/core/start/discoveries';
@@ -17,6 +19,7 @@ import { LibraryPick } from './LibraryPick';
 import { BUTTON_SECONDARY, ListPodium } from './ListPodium';
 import { isFrugalNetwork } from './preloadMap';
 import { useLevelList, type LevelWish } from './useLevelList';
+import { useLibraryRing } from './useLibraryRing';
 import { useSwipe } from './useSwipe';
 
 export interface StartCarouselProps {
@@ -70,9 +73,15 @@ export function StartCarousel({ lists, ready, to, onWarm }: StartCarouselProps) 
     const seen = new Set<string>();
     return [...lists, ...extra].filter((l) => l.indicatorId && !seen.has(l.indicatorId) && seen.add(l.indicatorId));
   }, [lists, extra]);
-  const ids = featured.map((l) => l.indicatorId!);
-  const libIsFeatured = libId !== null && ids.includes(libId);
-  const stripIds = libId && !libIsFeatured ? [...ids, libId] : ids;
+  const ids = useMemo(() => featured.map((l) => l.indicatorId!), [featured]);
+  // Pierścień karuzeli: zestawienia redakcyjne, potem cała biblioteka (po nazwie); wybrany z menu wskaźnik spoza spisu dochodzi na końcu.
+  const available = useLibraryRing(ready);
+  const stripIds = useMemo(() => {
+    const seen = new Set(ids);
+    const library = available ? buildRegistry(MAIN, available).library.map((i) => i.id).filter((id) => !seen.has(id)) : [];
+    const all = [...ids, ...library];
+    return libId && !all.includes(libId) ? [...all, libId] : all;
+  }, [ids, available, libId]);
 
   // Wybór użytkownika albo – do pierwszego ruchu – los (zmienia się razem z dochodzącymi zestawieniami).
   const selId = chosen && stripIds.includes(chosen) ? chosen : (ids[Math.floor(seed * ids.length)] ?? null);
@@ -110,17 +119,19 @@ export function StartCarousel({ lists, ready, to, onWarm }: StartCarouselProps) 
   }, [selId, ready]);
 
   const swipe = useSwipe(
-    () => index > 0 && select(index - 1),
-    () => index < stripIds.length - 1 && select(index + 1),
+    () => select(wrapIndex(index - 1, stripIds.length)),
+    () => select(wrapIndex(index + 1, stripIds.length)),
   );
 
   if (lists.length === 0 || !selId) return null;
   const name = ind ? shortIndicatorName(ind.name, ind.unit) : (pre?.title ?? '');
-  const stripItems = stripIds.map((id) => {
+  // Opis pozycji liczymy tylko dla tych, które pasek rysuje (biblioteka to tysiące wskaźników).
+  const itemAt = (i: number) => {
+    const id = stripIds[i] ?? '';
     const own = indicatorOf(id);
     const title = featured.find((l) => l.indicatorId === id)?.title ?? (own ? shortIndicatorName(own.name, own.unit) : id);
-    return { key: id, title, ...(id === libId && !libIsFeatured ? { note: 'z biblioteki' } : {}) };
-  });
+    return { key: id, title, ...(!ids.includes(id) ? { note: 'z biblioteki' } : {}) };
+  };
 
   const computed = needsCompute ? result : null;
   const view: ListView = computed?.view ?? pre ?? { key: `${selId}-loading`, title: name, subtitle: '', rows: [], href: mapHref({ indicatorId: selId, ...(wantLevel ? { level: wantLevel } : {}) }) };
@@ -136,7 +147,7 @@ export function StartCarousel({ lists, ready, to, onWarm }: StartCarouselProps) 
 
   return (
     <div className="flex w-full min-w-0 max-w-full flex-col" data-slot="start-carousel" onPointerDown={touch} onFocus={() => setArmed(true)}>
-      <IndicatorStrip items={stripItems} active={index} onSelect={select} panelId={panelId} idBase={base} />
+      <IndicatorStrip size={stripIds.length} itemAt={itemAt} active={index} onSelect={select} panelId={panelId} idBase={base} />
       <div id={panelId} role="tabpanel" aria-labelledby={`${base}-tab-${index}`} className="flex min-w-0 flex-col gap-3 border border-t-0 border-linia bg-arkusz p-4 md:p-6" data-slot="start-carousel-panel" {...swipe}>
         {ready && <LibraryPick selectedId={selId} selectedName={name} onPick={onPick} />}
         {state ? (

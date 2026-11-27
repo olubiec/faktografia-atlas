@@ -23,6 +23,12 @@ test.describe('@PATH-R4 @PATH-R6 przekierowania', () => {
     expect(url.search).toBe('?u=1217&i=density&y=2023&l=pow&e2e');
   });
 
+  test('@PATH-R1 `/rankingi?i=density&l=pow` → ten sam ranking na `/zestawienia`', async ({ page }) => {
+    await page.goto('/rankingi?i=density&l=pow&e2e');
+    await expect(page).toHaveURL(/\/zestawienia\?i=density&l=pow&e2e$/);
+    await expect(page.getByRole('heading', { name: 'Lista jednostek' })).toBeVisible({ timeout: 20000 });
+  });
+
   test('@PATH-R4 parametry techniczne `logo` i `tune` przeżywają przekierowanie', async ({ page }) => {
     await page.goto('/?u=1217&e2e&logo=znak&tune=1');
     await expect(page).toHaveURL(/\/mapa\?/);

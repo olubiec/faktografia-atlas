@@ -8,7 +8,7 @@ import { isLibraryIndicatorId } from '../indicators/registry';
 export interface ListLink {
   href: string;
   label: string;
-  /** Brak strony `/zestawienie`: link prowadzi do widoku Rankingi (cała lista wskaźnika), a nie do osobnego zestawienia. */
+  /** Brak strony `/zestawienie`: link prowadzi do pełnej listy na stronie Zestawienia (cała lista wskaźnika), a nie do osobnego zestawienia. */
   ranking?: true;
 }
 
@@ -31,10 +31,10 @@ export function listLinks(indicatorId: string, level: Level, dir: number): { ful
   };
 }
 
-/** „Pełny ranking”, gdy zestawienie nie ma własnej strony: widok Rankingi (`/rankingi`) tylko dla wskaźników głównych. */
+/** „Pełny ranking”, gdy zestawienie nie ma własnej strony: pełna lista na stronie Zestawienia (`/zestawienia?i=…`), tylko dla wskaźników głównych. */
 export function rankingLink(indicatorId: string, level: Level, year: number, label: string): ListLink | null {
   if (isLibraryIndicatorId(indicatorId)) return null;
-  return { href: `/rankingi?i=${encodeURIComponent(indicatorId)}&l=${level}&y=${year}`, label, ranking: true };
+  return { href: `${DISCOVER_INDEX}?i=${encodeURIComponent(indicatorId)}&l=${level}&y=${year}`, label, ranking: true };
 }
 
 /** Linki końców skali z „Pełnym rankingiem” tam, gdzie brak strony `/zestawienie` (wskaźniki główne). */

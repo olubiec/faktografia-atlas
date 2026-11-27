@@ -72,22 +72,26 @@ for (const width of [360, 1280]) {
     const tabs = lists.getByRole('tab');
     const panel = lists.locator('[data-slot="start-carousel-panel"]');
     const rows = panel.locator('[data-slot="start-list-row"]');
-    // Dalsze zestawienia dochodzą po wczytaniu; stary licznik i tor z przewijaniem nie istnieją.
+    // Pasek to pierścień: w DOM jest tylko okno wokół zaznaczonej pozycji, a rozmiar całości podaje aria-setsize.
     await expect.poll(() => tabs.count()).toBeGreaterThan(10);
     await expect(lists.locator('[data-slot="start-carousel-counter"], [data-slot="start-carousel-track"]')).toHaveCount(0);
     await expect(lists.getByRole('button', { name: /Wybierz dane · \d+ wskaźnik/ })).toBeVisible();
     expect(requests.length).toBeLessThanOrEqual(1);
-    const total = await tabs.count();
+    const selected = lists.locator('[role="tab"][aria-selected="true"]');
 
-    // Pasek: zaznaczona jest dokładnie ta pozycja, którą klikniemy (jedyny czerwony element), panel pokazuje 5 pozycji.
+    // Od pierwszej pozycji klikamy kolejne sąsiednie: zaznaczona jest zawsze jedna (jedyny czerwony element), panel pokazuje 5 pozycji.
+    await selected.focus();
+    await page.keyboard.press('Home');
+    await expect(selected).toHaveAttribute('aria-posinset', '1');
     const mapHrefs: string[] = [];
-    for (const k of [0, 3, 1, 2]) {
-      await tabs.nth(k).click();
-      await expect(tabs.nth(k)).toHaveAttribute('aria-selected', 'true');
+    for (let k = 0; k < 4; k++) {
+      await expect(rows).toHaveCount(5);
       await expect(lists.locator('.border-korekta')).toHaveCount(1);
       await expect(lists.locator('.border-korekta')).toHaveAttribute('aria-selected', 'true');
-      await expect(rows).toHaveCount(5);
       mapHrefs.push((await panel.locator('[data-slot="start-list-map"]').getAttribute('href'))!);
+      const at = await tabs.evaluateAll((els) => els.findIndex((e) => e.getAttribute('aria-selected') === 'true'));
+      await tabs.nth(at + 1).click();
+      await expect(selected).toHaveAttribute('aria-posinset', String(k + 2));
     }
     expect(new Set(mapHrefs).size).toBe(4);
     for (const h of mapHrefs) expect(h).toMatch(/^\/mapa\?i=[\w-]+&y=\d{4}&l=(gmi|pow|woj)/);
@@ -97,16 +101,15 @@ for (const width of [360, 1280]) {
     const heights = await Promise.all((await tabs.all()).map(async (t) => (await t.boundingBox())!.height));
     expect(new Set(heights.map(Math.round)).size).toBe(1);
 
-    // Klawiatura na pasku: strzałka w prawo i End.
-    await tabs.nth(2).click();
-    await tabs.nth(2).focus();
+    // Klawiatura na pasku: strzałka w prawo i Home.
+    await selected.focus();
     await page.keyboard.press('ArrowRight');
-    await expect(tabs.nth(3)).toBeFocused();
-    await page.keyboard.press('End');
-    await expect(tabs.nth(total - 1)).toHaveAttribute('aria-selected', 'true');
+    await expect(selected).toHaveAttribute('aria-posinset', '6');
+    await expect(selected).toBeFocused();
+    await page.keyboard.press('Home');
+    await expect(selected).toHaveAttribute('aria-posinset', '1');
 
     // „Najwyższe | Najniższe” i przełącznik poziomu mają pola ≥ 44 px; poziom wchodzi do linku do mapy.
-    await tabs.nth(0).click();
     await panel.getByRole('button', { name: 'Najniższe' }).click();
     await expect(panel.getByRole('button', { name: 'Najniższe' })).toHaveAttribute('aria-pressed', 'true');
     await expect(panel.locator('[data-slot="start-list-subtitle"]')).toContainText('z najniższą wartością');
@@ -135,32 +138,44 @@ for (const width of [360, 1280]) {
     expect(seen.size).toBeGreaterThan(1);
   });
 
-  test(`@F02b Karuzela: „Pełny ranking” prowadzi do /rankingi, gdy zestawienie nie ma własnej strony (${width})`, async ({ page }) => {
+  test(`@F02b Karuzela: „Pełny ranking” prowadzi do pełnej listy na /zestawienia, gdy zestawienie nie ma własnej strony (${width})`, async ({ page }) => {
     const section = await open(page, width);
     const lists = section.locator('section[aria-labelledby="start-lists-title"]');
     const tabs = lists.getByRole('tab');
-    await tabs.nth(0).click();
     await expect.poll(() => tabs.count()).toBeGreaterThan(10);
     // Wskaźnik „Przeciętne wynagrodzenie” ma zestawienie najwyższych, ale nie najniższych: drugi koniec skali kończy się rankingiem.
-    await lists.getByRole('tab', { name: /Przeciętne wynagrodzenie/ }).click();
+    await lists.getByRole('button', { name: /Wybierz dane/ }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByRole('searchbox').fill('Przeciętne wynagrodzenie');
+    await dialog.getByRole('button', { name: /Przeciętne wynagrodzenie/ }).first().click();
     const visible = lists.locator('[role="tabpanel"]:not([inert]) [data-slot="start-list"]');
     await visible.getByRole('button', { name: 'Najniższe' }).click();
     const full = visible.locator('[data-slot="start-list-full"]');
     await expect(full).toHaveText('Pełny ranking');
-    await expect(full).toHaveAttribute('href', /^\/rankingi\?i=avg-wage&l=pow&y=\d{4}&d=low$/);
+    await expect(full).toHaveAttribute('href', /^\/zestawienia\?i=avg-wage&l=pow&y=\d{4}&d=low$/);
   });
 }
 
-test('@F02b Pasek zestawień: przy ograniczeniu ruchu przewijanie strzałką jest bez animacji', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
+test('@F02b Karuzela bez końca: za ostatnim wskaźnikiem jest pierwszy, a w pierścieniu jest cała biblioteka', async ({ page }) => {
   const section = await open(page, 1280);
   const lists = section.locator('section[aria-labelledby="start-lists-title"]');
+  const selected = lists.locator('[role="tab"][aria-selected="true"]');
   await expect.poll(() => lists.getByRole('tab').count()).toBeGreaterThan(10);
-  const strip = lists.locator('[data-slot="indicator-strip"]');
-  // Start jest losowy: najpierw pierwsza pozycja, żeby pasek stał na początku.
-  await lists.getByRole('tab').first().click();
-  await expect.poll(() => strip.evaluate((el) => el.scrollLeft)).toBe(0);
+  await selected.focus();
+  await page.keyboard.press('Home');
+  await expect(selected).toHaveAttribute('aria-posinset', '1');
+  // Spis biblioteki dochodzi chwilę po danych startu: czekamy, aż pierścień urośnie do całości.
+  const label = (await lists.getByRole('button', { name: /Wybierz dane · \d+ wskaźnik/ }).textContent()) ?? '';
+  const total = Number(/(\d+)/.exec(label.replace(/\s/g, ''))?.[1]);
+  const sizeNow = async () => Number(await selected.getAttribute('aria-setsize'));
+  await expect.poll(sizeNow).toBeGreaterThanOrEqual(total);
+  // W lewo od pierwszego: ostatni.
+  await lists.locator('[data-slot="strip-scroll-left"]').click();
+  const size = await sizeNow();
+  await expect(selected).toHaveAttribute('aria-posinset', String(size));
+  // W prawo od ostatniego: znów pierwszy.
   await lists.locator('[data-slot="strip-scroll-right"]').click();
-  // Bez animacji pasek stoi od razu przesunięty o ~80% szerokości, a nie w trakcie przewijania.
-  await expect.poll(async () => strip.evaluate((el) => Math.round(el.scrollLeft - el.clientWidth * 0.8)), { timeout: 400 }).toBeLessThanOrEqual(2);
+  await expect(selected).toHaveAttribute('aria-posinset', '1');
+  // Pierścień zawiera zestawienia redakcyjne i bibliotekę; w DOM jest tylko okno wokół zaznaczonej.
+  expect(await lists.getByRole('tab').count()).toBeLessThanOrEqual(13);
 });

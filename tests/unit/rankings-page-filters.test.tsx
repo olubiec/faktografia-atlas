@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { MemoryRouter } from 'react-router';
-import { Rankings, MyIndicatorsBar } from '../../src/view/pages/Rankings';
+import { RankingsView as Rankings, MyIndicatorsBar } from '../../src/view/ranking/RankingsView';
 import type { Indicator } from '../../src/core/profile/profile';
 
 type El = React.ReactElement<Record<string, unknown>>;
@@ -23,7 +23,7 @@ const all = ['a', 'b', 'c', 'd'].map(mk);
 describe('Rankingi: wpięcie paska wyboru (QC106)', () => {
   it('strona na start pokazuje pasek jak przy mapie: „Wybierz dane”, poziom, „Najwyższe | Najniższe”, rok', () => {
     const html = renderToString(
-      <MemoryRouter initialEntries={['/rankingi']}>
+      <MemoryRouter initialEntries={['/zestawienia?i=population']}>
         <Rankings />
       </MemoryRouter>,
     ).replace(/<!-- -->/g, '');
