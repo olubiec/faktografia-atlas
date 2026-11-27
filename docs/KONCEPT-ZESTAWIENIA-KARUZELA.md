@@ -292,3 +292,13 @@ Gotowe, gdy:
 3. Pasek bez „liczby ludności”; reszta wskaźników głównych w kolejności z §3.3.
 4. Wybór z biblioteki pobiera ok. 330 KB (po kompresji) dopiero po kliknięciu, tyle co zmiana wskaźnika na mapie (§3.4).
 5. Zgoda na zmiany testów z §5.
+
+## 9. Wdrożenie (27.11.2026): odstępstwa od koncepcji
+
+Właściciel zatwierdził całość („Tak, zgadzam się. Wykonaj od razu całość”). Przy wdrożeniu wyszły trzy rzeczy, które różnią się od opisu wyżej:
+
+1. **„Pełny ranking” prowadzi do `/rankingi?i=<id>&l=<poziom>&y=<rok>`**, a nie do `/mapa?v=ranking…`. Widoku `v=ranking` na mapie nie ma, a strona Rankingi istnieje. Czyta tylko wskaźniki główne, więc **dla wskaźnika z biblioteki nie ma linku „Pełny ranking”** (zostaje „Zobacz na mapie”).
+2. **`StartLists.tsx` zostaje w repozytorium, nieużywany.** Plik sprawdza istniejący test `ui-global-views.test.ts`, którego bez zgody nie zmieniamy, a reguła „nie usuwamy plików z main” zabrania kasowania. Do usunięcia razem z tym testem, gdy właściciel się zgodzi.
+3. **`gmina-small.json` ma postać `{ "min": 5000, "t": "kod,kod,…" }`** (lista w jednym napisie), bo tablica kodów w cudzysłowach ledwie mieściła się w 8 KB. Jest 738 gmin, plik ma ok. 6 KB.
+
+Do tego: „Spróbuj jeszcze raz” czyści pamięć wartości biblioteki (`resetLibraryCache`), bo loader zapamiętuje także nieudane pobranie. Dalsze zestawienia (`facts-lists.json`) pobierają się po pierwszym ruchu w karuzeli albo po ok. 4 s od wczytania danych redakcyjnych (nie przy oszczędzaniu danych).

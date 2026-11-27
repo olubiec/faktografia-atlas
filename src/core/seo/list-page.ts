@@ -4,6 +4,7 @@ import { buildList, type ListDef, type ListInput, type ListResult, type ListsCon
 import type { IndicatorValues } from '../profile/profile';
 import type { FactUnit } from '../facts/types';
 import { LEVELS, rankingPath } from './ranking-page';
+import { pageCount, pageNav, pagePath, type PageNav } from './list-paging';
 import { changeSince, plNumber, shortIndicatorName, showValue } from './sentences';
 import type { UnitPaths } from './slug';
 import { DISCOVER_INDEX, DISCOVER_INDEX_NAME, fitText, listPath, showChange, topicPath, type TopicIndicator } from './topics';
@@ -55,7 +56,18 @@ export interface ListPage {
   related: PageLink[];
   indexable: boolean;
   lastmod: string;
-  /** Pełny wynik (do testów i raportu). */
+  /** Strona 1 z `pages`: pozycje `from`–`to` z `total` porównanych jednostek (numery miejsc są ciągłe). */
+  page: number;
+  pages: number;
+  from: number;
+  to: number;
+  total: number;
+  prev: string | null;
+  next: string | null;
+  nav: PageNav;
+  /** Adres strony 1 (wstęp i objaśnienia są tylko tam). */
+  firstPath: string;
+  /** Pełny wynik wszystkich stron (do testów i raportu). */
   result: ListResult;
 }
 
@@ -94,34 +106,59 @@ function leadOf(r: ListResult, rows: ListRow[], ind: TopicIndicator, ctx: Discov
   return out;
 }
 
-/** Buduje model strony jednego zestawienia. */
+/** Model wszystkich stron zestawienia: cała lista podzielona na strony po `ctx.lists.rows` pozycji. */
+export function buildListPages(def: ListDef, ctx: DiscoverContext): ListPage[] {
+  const result = buildFullList(def, ctx);
+  const pages = pageCount(result.entries.length, ctx.lists.rows);
+  return Array.from({ length: pages }, (_, k) => pageModel(def, ctx, result, k + 1, pages));
+}
+
+/** Strona 1 zestawienia (adres bez numeru). */
 export function buildListPage(def: ListDef, ctx: DiscoverContext): ListPage {
+  const result = buildFullList(def, ctx);
+  return pageModel(def, ctx, result, 1, pageCount(result.entries.length, ctx.lists.rows));
+}
+
+function buildFullList(def: ListDef, ctx: DiscoverContext): ListResult {
   const ind = ctx.indicators.find((i) => i.id === def.indicatorId);
   if (!ind) throw new Error(`config/lists.json: nieznany wskaźnik ${def.indicatorId} (${def.slug})`);
+  return buildList(def, { ...ctx.lists, rows: Infinity }, listInput(ctx, ind));
+}
+
+function pageModel(def: ListDef, ctx: DiscoverContext, result: ListResult, n: number, pages: number): ListPage {
+  const ind = ctx.indicators.find((i) => i.id === def.indicatorId)!;
   const data = ctx.values[def.indicatorId];
   const relative = ctx.relativeChangeUnits.includes(ind.unit);
-  const result = buildList(def, ctx.lists, listInput(ctx, ind));
-  const rows: ListRow[] = result.entries.map((e) => ({
+  const per = ctx.lists.rows;
+  const total = result.entries.length;
+  const slice = result.entries.slice((n - 1) * per, n * per);
+  const rows: ListRow[] = slice.map((e) => ({
     rank: e.rank,
     name: ctx.headings.get(e.teryt) ?? e.teryt,
     path: ctx.paths.pathByTeryt.get(e.teryt) ?? '',
     value: showValue(e.value, ind.unit),
     change: e.change === null ? null : showChange(e.change, ind.unit, relative),
   }));
-  const path = listPath(def.slug);
+  const firstPath = listPath(def.slug);
+  const path = pagePath(firstPath, n);
+  const from = rows.length ? (n - 1) * per + 1 : 0;
+  const to = (n - 1) * per + rows.length;
+  const more = n > 1 ? ` – strona ${n}` : '';
   const y = result.year === null ? '' : ` ${result.year}`;
-  const title = fitText([`${def.title}${y}`, def.title], TITLE_MAX);
+  const title = fitText([`${def.title}${y}${more}`, `${def.title}${more}`], TITLE_MAX);
   const [r1, r2] = rows;
   const shown = (r: ListRow) => `${r.name} – ${r.change ?? r.value}`;
   const period = result.fromYear !== null ? `${result.fromYear}–${result.year}` : `${result.year}`;
   let description = fitText(
-    r1
-      ? [
-          ...(r2 ? [`${def.h1} (GUS, ${period}): 1. ${shown(r1)}, 2. ${shown(r2)}. Tabela ${rows.length} pozycji.`] : []),
-          `${def.h1} (GUS, ${period}): 1. ${shown(r1)}. Tabela ${rows.length} pozycji.`,
-          `${def.h1}: ${rows.length} pozycji według danych GUS (${period}).`,
-        ]
-      : [`${def.h1}: GUS nie podaje danych dla tego zestawienia.`],
+    n > 1
+      ? [`${def.h1} (GUS, ${period}): pozycje ${from}–${to} z ${plNumber(total)}, strona ${n} z ${pages}.`]
+      : r1
+        ? [
+            ...(r2 ? [`${def.h1} (GUS, ${period}): 1. ${shown(r1)}, 2. ${shown(r2)}. Tabela ${rows.length} pozycji.`] : []),
+            `${def.h1} (GUS, ${period}): 1. ${shown(r1)}. Tabela ${rows.length} pozycji.`,
+            `${def.h1}: ${rows.length} pozycji według danych GUS (${period}).`,
+          ]
+        : [`${def.h1}: GUS nie podaje danych dla tego zestawienia.`],
     DESC_MAX,
   ).slice(0, DESC_MAX);
   if (description.length < DESC_MIN) description = `${description} Źródło: GUS, Bank Danych Lokalnych.`;
@@ -135,8 +172,8 @@ export function buildListPage(def: ListDef, ctx: DiscoverContext): ListPage {
     path,
     title,
     description,
-    h1: def.h1,
-    lead: leadOf(result, rows, ind, ctx, relative),
+    h1: `${def.h1}${more}`,
+    lead: n > 1 ? [`Strona ${n} z ${pages}: pozycje ${from}–${to} z ${plNumber(total)} porównanych.`] : leadOf(result, rows, ind, ctx, relative),
     year: result.year,
     fromYear: result.fromYear,
     column: LEVELS[def.level].column,
@@ -146,15 +183,26 @@ export function buildListPage(def: ListDef, ctx: DiscoverContext): ListPage {
       { teryt: '', name: 'Faktografia', path: '/' },
       { teryt: '', name: DISCOVER_INDEX_NAME, path: DISCOVER_INDEX },
       topic,
-      { teryt: '', name: def.h1, path },
+      ...(n > 1 ? [{ teryt: '', name: def.h1, path: firstPath }] : []),
+      { teryt: '', name: n > 1 ? `Strona ${n}` : def.h1, path },
     ],
     related: [
       { teryt: '', name: `Pełny ranking: ${shortIndicatorName(ind.name, ind.unit)} – ${LEVELS[def.level].short}`, path: rankingPath(ind, def.level) },
       { teryt: '', name: `Temat: ${ind.group}`, path: topic.path },
       ...siblings,
     ],
-    indexable: rows.length > 0,
+    // Strony 2+ zostają poza indeksem (noindex, follow): Google idzie po linkach do miejsc, ale nie indeksuje prawie takich samych tabel.
+    indexable: rows.length > 0 && n === 1,
     lastmod: data?.fetchedAt ?? new Date(0).toISOString(),
+    page: n,
+    pages,
+    from,
+    to,
+    total,
+    prev: n > 1 ? pagePath(firstPath, n - 1) : null,
+    next: n < pages ? pagePath(firstPath, n + 1) : null,
+    nav: pageNav(firstPath, n, pages),
+    firstPath,
     result,
   };
 }

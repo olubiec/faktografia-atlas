@@ -3,7 +3,7 @@ import type { FactsShard } from '../facts/build';
 import { decodeFact } from '../facts/codec';
 import type { Fact } from '../facts/types';
 import { renderDiscoverIndex, renderListPage, renderTopicPage } from './discover-template';
-import { buildListPage, type DiscoverContext } from './list-page';
+import { buildListPages, type DiscoverContext } from './list-page';
 import type { PageAssets } from './page-template';
 import { buildTopicPage } from './topic-page';
 import { DISCOVER_INDEX, topicsOf } from './topics';
@@ -51,8 +51,10 @@ export function buildDiscoverSite(ctx: DiscoverContext, facts: readonly Fact[], 
     pages.push({ path: page.path, html: renderTopicPage(page, assets), indexable: true, lastmod: page.lastmod, kind: 'topic' });
   }
   for (const def of ctx.lists.lists) {
-    const page = buildListPage(def, ctx);
-    pages.push({ path: page.path, html: renderListPage(page, assets), indexable: page.indexable, lastmod: page.lastmod, kind: 'list' });
+    // Cała lista: strona 1 pod adresem zestawienia, kolejne pod `/<slug>/N` (noindex, poza mapą strony).
+    for (const page of buildListPages(def, ctx)) {
+      pages.push({ path: page.path, html: renderListPage(page, assets), indexable: page.indexable, lastmod: page.lastmod, kind: 'list' });
+    }
   }
   const lastmod = pages.map((p) => p.lastmod).sort().at(-1) ?? new Date(0).toISOString();
   pages.push({ path: DISCOVER_INDEX, html: renderDiscoverIndex(topics, ctx.lists.lists, lastmod, assets), indexable: true, lastmod, kind: 'index' });

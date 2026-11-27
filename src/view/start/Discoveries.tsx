@@ -9,7 +9,7 @@ import { DailyDiscovery } from './DailyDiscovery';
 import { LocateButton, LocatedNote } from './LocateButton';
 import { PlaceFacts } from './PlaceFacts';
 import { PlaceSearch } from './PlaceSearch';
-import { StartLists } from './StartLists';
+import { StartCarousel } from './StartCarousel';
 import { useNearViewport } from './useNearViewport';
 
 export interface DiscoveriesProps {
@@ -100,7 +100,7 @@ export function Discoveries({ to, onWarm }: DiscoveriesProps) {
 
         <section aria-labelledby="start-lists-title" className="flex flex-col gap-3">
           <h3 id="start-lists-title" className={SUB}>Zestawienia</h3>
-          <StartLists lists={view && view.lists.length > 0 ? view.lists : PLACEHOLDERS} to={to} onWarm={onWarm} />
+          <StartCarousel lists={view && view.lists.length > 0 ? view.lists : PLACEHOLDERS} ready={!!view} to={to} onWarm={onWarm} />
         </section>
       </div>
     </PageSection>

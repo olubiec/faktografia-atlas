@@ -69,11 +69,12 @@ describe('F04 tematy i zestawienia: lista stron', () => {
     expect(lists.gminaMinPopulation).toBe(5000);
     expect(validateLists(ctx)).toEqual([]);
     expect(validateLists({ ...ctx, lists: { ...lists, lists: [...lists.lists, { ...lists.lists[0]!, slug: 'Zła Nazwa' }] } })).toHaveLength(3);
-    expect(site.filter((p) => p.kind === 'list').map((p) => p.path)).toEqual(lists.lists.map((l) => `/zestawienie/${l.slug}`));
+    // Strona 1 każdego zestawienia pod adresem zestawienia; kolejne strony (`/<slug>/N`) zostają w osobnych testach (list-pages).
+    expect(site.filter((p) => p.kind === 'list' && !/\/\d+$/.test(p.path)).map((p) => p.path)).toEqual(lists.lists.map((l) => `/zestawienie/${l.slug}`));
   });
 
   it('każdy temat i zestawienie: unikalny tytuł i opis, jeden H1, własny adres kanoniczny, w mapie strony', () => {
-    const pages = audited.filter((p) => p.path.startsWith('/temat/') || p.path.startsWith('/zestawienie/'));
+    const pages = audited.filter((p) => p.path.startsWith('/temat/') || (p.path.startsWith('/zestawienie/') && !/\/\d+$/.test(p.path)));
     expect(pages).toHaveLength(7 + lists.lists.length);
     expect(new Set(pages.map((p) => p.title)).size).toBe(pages.length);
     expect(new Set(pages.map((p) => p.description)).size).toBe(pages.length);

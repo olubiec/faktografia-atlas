@@ -146,6 +146,8 @@ export interface FactsConfig {
   start: {
     dailyCount: number;
     lists: { indicatorId: string; level: Level; dir: Direction }[];
+    /** Dalsze slajdy karuzeli zestawień (facts-lists.json): poziom wynika z danych (gminy, a gdy ich brak, powiaty). */
+    carousel?: { indicatorId: string; dir: Direction }[];
   };
   /** F3: najmniej sąsiadów z wartością; mniej bezpośrednich sąsiadów = pierścień z sąsiadami sąsiadów. */
   neighbours?: { min: number };
