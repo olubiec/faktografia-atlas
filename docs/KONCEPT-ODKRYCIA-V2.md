@@ -137,7 +137,7 @@ Czego nie robimy mimo pokusy: rankingów „najgorszych gmin”, nagłówków-pr
 - `src/core/facts/roles.ts` – wybór 5 ról z istniejących faktów + percentyle (nowe pole w faktach: percentyl kraju i stosunek do mediany).
 - `src/core/facts/human-scale.ts` – przeliczenia z §4 (czysta logika, testy na przykładach z §2).
 - `src/core/facts/neighbour-compare.ts` – „lepiej w N z 11” na tle sąsiada (wskaźniki z `valence`, wartości z `profiles/<WW>.json` – bez nowych żądań).
-- `config/facts.json`: `valence` (lista i kierunek), `roles` (progi 75/25, stosunek 2×, wagi Odkrycia dnia), `zeroGuard` (reguła zer).
+- `config/roles.json` (nowy, O03): `valence` (lista i kierunek), `roles` (progi 75/25, stosunek 2 razy, wagi Odkrycia dnia). `config/facts.json`: tylko `zeroGuard` (reguła zer, O01).
 - `scripts/data/build-facts.mjs`: do każdego faktu dopisuje percentyl i stosunek do mediany; do pliku województwa – histogram rozkładu każdego wskaźnika (20 przedziałów × 16 wskaźników ≈ 1 KB) dla paska „Na tle kraju”. Rozmiar `facts/<WW>.json` rośnie ok. 20–30% (~ +4 KB gzip) – mieści się w zasadzie „jeden plik województwa”.
 - Widok: `src/view/start/PlaceFacts.tsx` → nowe komponenty `RoleCard.tsx`, `YouAreHere.tsx` (SVG), `NeighbourCard.tsx`, `GuessReveal.tsx`, `ShareFact.tsx`. Tylko tokeny; jedno zakreślenie `korekta` na ekranie.
 - Strony miejsc (`/gmina/…`, S06/S07): `lead` bierze kartę „Najbardziej nietypowe” i „Mocną stronę” w ludzkiej skali – lepsze zdania do cytowania przez wyszukiwarki i czatboty; audyt „ten sam szablon > 30% stron” obejmuje nowe szablony.
