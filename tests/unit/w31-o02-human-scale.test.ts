@@ -25,7 +25,7 @@ describe('W31-O02 ludzka skala', () => {
   })
   it('kwoty zaokrąglone do 100 zł', () => {
     const r = humanScale({ ...base, value: 36049, unit: 'zł', median: 9000 })
-    expect(r.main).toContain('Ok. 36 000 zł')
+    expect(r.main).toMatch(/Ok\. 36\s000 zł/)
     expect(r.main).toContain('razy więcej')
   })
   it('żadne zdanie nie przekracza 90 znaków ani nie łamie tonu', () => {
