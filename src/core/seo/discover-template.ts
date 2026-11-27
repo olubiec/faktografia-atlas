@@ -28,7 +28,7 @@ function itemListLd(page: ListPage): LdObject {
     numberOfItems: page.rows.length,
     itemListElement: page.rows.map((r, i) => ({
       '@type': 'ListItem',
-      position: i + 1,
+      position: page.from + i,
       name: r.name,
       ...(r.path ? { url: absoluteUrl(r.path) } : {}),
     })),
@@ -54,13 +54,32 @@ ${page.rows.map((r) => tr(r, change)).join('\n')}
   );
 }
 
+const PAGER_LINK = 'inline-flex min-h-[44px] min-w-11 items-center justify-center px-3 text-tusz underline underline-offset-4 hover:no-underline';
+
+/** Nawigacja po stronach zestawienia: zwykłe linki (działają bez JS), pola ≥ 44 px, bieżąca strona z aria-current. */
+function pager(page: ListPage, id: string): string {
+  if (page.pages <= 1) return '';
+  const step = (path: string | null, label: string, rel: string) => (path ? `<a href="${attr(path)}" rel="${rel}" class="${PAGER_LINK}">${text(label)}</a>` : '');
+  const numbers = page.nav.map((n) =>
+    n === 'gap'
+      ? '<span aria-hidden="true" class="px-1 text-olowek">…</span>'
+      : n.current
+        ? `<a href="${attr(n.path)}" aria-current="page" aria-label="Strona ${n.n}, bieżąca" class="${PAGER_LINK} font-bold no-underline">${n.n}</a>`
+        : `<a href="${attr(n.path)}" aria-label="Strona ${n.n}" class="${PAGER_LINK}">${n.n}</a>`,
+  );
+  return `<nav aria-labelledby="${id}" class="mt-3"><p id="${id}" class="text-olowek">Pozycje ${page.from}–${page.to} z ${page.total}</p>
+<div class="flex flex-wrap items-center">${[step(page.prev, 'Poprzednia', 'prev'), ...numbers, step(page.next, 'Następna', 'next')].join('')}</div></nav>`;
+}
+
 /** Pełny dokument strony zestawienia. */
 export function renderListPage(page: ListPage, assets: PageAssets): string {
   const main = `${crumbNav(page.crumbs)}
 <h1 class="${H1}">${text(page.h1)}</h1>
-<p class="mt-4 max-w-prose">${page.lead.map(text).join(' ')}</p>
+<p class="mt-4 max-w-prose">${page.lead.map(text).join(' ')}${page.page > 1 ? ` ${a(page.firstPath, 'Wstęp i objaśnienia są na pierwszej stronie zestawienia.')}` : ''}</p>
 ${mapButton(page.mapHref, 'Zobacz na mapie')}
+${pager(page, 'strony-gora')}
 ${listTable(page)}
+${pager(page, 'strony-dol')}
 ${section('zobacz-tez', 'Zobacz też', ul(page.related))}`;
   return renderDocument({ ...page, ld: [itemListLd(page), breadcrumbLd(page.crumbs)] }, main, assets);
 }
@@ -121,7 +140,7 @@ export function renderDiscoverIndex(topics: readonly Topic[], lists: readonly Li
   });
   const main = `${crumbNav(crumbs)}
 <h1 class="${H1}">${DISCOVER_INDEX_NAME}</h1>
-<p class="mt-4 max-w-prose">${text(`${plural(topics.length, 'temat', 'tematy', 'tematów')} i ${plural(lists.length, 'zestawienie', 'zestawienia', 'zestawień')} z danych Banku Danych Lokalnych GUS. Każde zestawienie ma tabelę 50 pozycji z linkami do stron miejsc.`)}</p>
+<p class="mt-4 max-w-prose">${text(`${plural(topics.length, 'temat', 'tematy', 'tematów')} i ${plural(lists.length, 'zestawienie', 'zestawienia', 'zestawień')} z danych Banku Danych Lokalnych GUS. Każde zestawienie obejmuje całą listę porównanych jednostek, po 50 pozycji na stronę, z linkami do stron miejsc.`)}</p>
 <p class="mt-3 flex flex-wrap gap-x-6">${a('/ranking', 'Wszystkie rankingi wskaźników')}${a('/miejsca', 'Wszystkie miejsca')}</p>
 ${groups.join('\n')}`;
   const doc = {

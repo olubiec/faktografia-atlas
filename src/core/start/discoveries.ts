@@ -9,7 +9,7 @@ import type { Fact, Level } from '../facts/types';
 import { displayUnit, formatValue, getFractionDigits } from '../format/number';
 import { shortIndicatorName } from '../seo/sentences';
 import { endOf, endSubtitle, listEnds, type ListEnds, type ListRow } from './list-ends';
-import { listLinks, type ListLink } from './list-links';
+import { listLinks, withRankingFallback, type ListLink } from './list-links';
 import { WOJ_NAMES } from './start-data';
 
 export const FACTS_START_URL = '/data/facts-start.json';
@@ -185,7 +185,7 @@ export function listView(list: StartList): ListView | null {
     rows: list.top.map(row),
     href: listHref(list),
     ...links,
-    ends: listEnds(list, row, links),
+    ends: listEnds(list, row, withRankingFallback(links, list.indicatorId, list.level, list.year, shortIndicatorName(ind.name, ind.unit))),
   };
 }
 

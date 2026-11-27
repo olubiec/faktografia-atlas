@@ -6,17 +6,16 @@ export const TEXT_LINK =
   'inline-flex min-h-[44px] min-w-11 items-center self-start text-sm text-tusz underline underline-offset-4 break-words hover:no-underline focus-visible:outline-2 focus-visible:outline-tusz';
 const ROW = 'flex min-h-[44px] min-w-0 items-center gap-3 py-2 text-tusz no-underline hover:bg-linia/15 focus-visible:outline-2 focus-visible:outline-tusz';
 
-/** Wiersz podium: miejsce, nazwa i wartość pod nazwą; pierwsze miejsce większe (hierarchia rozmiarem, nie ramką). */
+/** Wiersz podium: miejsce, nazwa i wartość pod nazwą; wszystkie wiersze w jednym rozmiarze (o kolejności mówi numer). */
 function RowBody({ rank, name, value }: { rank: number; name: string; value: string }) {
-  const first = rank === 1;
   return (
     <>
-      <span className={`w-8 shrink-0 font-mono tabular-nums ${first ? 'text-xl font-bold text-tusz' : 'text-sm text-olowek'}`}>{rank}</span>
+      <span className="w-8 shrink-0 font-mono text-sm tabular-nums text-olowek">{rank}</span>
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className={`leading-tight [overflow-wrap:normal] [word-break:normal] hyphens-none ${first ? 'text-md font-bold' : 'text-sm'}`} data-slot="start-list-name">
+        <span className="text-sm leading-tight text-tusz [overflow-wrap:normal] [word-break:normal] hyphens-none" data-slot="start-list-name">
           {name}
         </span>
-        <span className={`font-mono tabular-nums ${first ? 'text-sm text-tusz' : 'text-xs text-olowek'}`}>{value}</span>
+        <span className="font-mono text-xs tabular-nums text-olowek">{value}</span>
       </span>
     </>
   );
@@ -24,9 +23,9 @@ function RowBody({ rank, name, value }: { rank: number; name: string; value: str
 
 export interface ListPodiumProps {
   list: ListView;
-  /** Zestawienie z aktywnej zakładki: tylko ono ma linki (ukryte nie mają niewidocznych pól dotykowych). */
+  /** Zestawienie z aktywnego slajdu: tylko ono ma linki (pozostałe slajdy nie mają niewidocznych pól dotykowych). */
   active: boolean;
-  /** Kierunek wybrany przez użytkownika (obowiązuje we wszystkich zakładkach); null = kierunek redakcyjny zestawienia. */
+  /** Kierunek wybrany przez użytkownika (obowiązuje na wszystkich slajdach); null = kierunek redakcyjny zestawienia. */
   end: EndKey | null;
   onEnd: (end: EndKey) => void;
   to: (href: string) => string;
@@ -42,7 +41,7 @@ export function ListPodium({ list: l, active, end, onEnd, to, warm }: ListPodium
   const shown = key && l.ends ? l.ends[key] : { subtitle: l.subtitle, rows: l.rows, full: l.full ?? null };
   return (
     <article data-slot="start-list" className="flex min-w-0 flex-col gap-3 border border-t-0 border-linia bg-arkusz p-4 md:p-6">
-      {/* Nazwa jest na zakładce; nagłówek zostaje dla czytników ekranu. */}
+      {/* Nazwa jest na pasku wskaźników; nagłówek zostaje dla czytników ekranu. */}
       <h4 className="sr-only">{l.title}</h4>
       {key && (
         <div role="group" aria-label="Który koniec skali" className="flex self-start border border-linia" data-slot="start-list-ends">
@@ -100,8 +99,8 @@ export function ListPodium({ list: l, active, end, onEnd, to, warm }: ListPodium
               Zobacz na mapie
             </Link>
             {shown.full && (
-              <a href={shown.full.href} aria-label={`Pełne zestawienie: ${shown.full.label}`} className={TEXT_LINK} data-slot="start-list-full">
-                Pełne zestawienie
+              <a href={shown.full.href} aria-label={`${shown.full.ranking ? 'Pełny ranking' : 'Pełne zestawienie'}: ${shown.full.label}`} className={TEXT_LINK} data-slot="start-list-full">
+                {shown.full.ranking ? 'Pełny ranking' : 'Pełne zestawienie'}
               </a>
             )}
           </div>

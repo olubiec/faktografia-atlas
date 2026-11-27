@@ -53,20 +53,23 @@ for (const width of [360, 1280]) {
       expect(atlas.choropleth?.indicatorId).toBe(i);
     });
 
-    test(`@F02 Zestawienia: 4 karty po 5 pozycji, każda z linkiem do mapy z tym wskaźnikiem (${width})`, async ({ page }) => {
+    test(`@F02 Zestawienia: pasek wskaźników z ≥ 4 pozycjami, aktywny slajd ma 5 pozycji z linkiem do mapy z tym wskaźnikiem (${width})`, async ({ page }) => {
       await page.goto('/?e2e');
       const section = await openDiscoveries(page);
-      const lists = section.locator('[data-slot="start-list"]');
-      await expect(lists).toHaveCount(4);
+      const tabs = section.getByRole('tablist', { name: 'Wybierz zestawienie' }).getByRole('tab');
+      expect(await tabs.count()).toBeGreaterThanOrEqual(4);
       for (let k = 0; k < 4; k++) {
-        await expect(lists.nth(k).locator('li')).toHaveCount(5);
-        const href = await lists.nth(k).getByRole('link').getAttribute('href');
+        await tabs.nth(k).click();
+        const active = section.locator('[role="tabpanel"]:not([inert]) [data-slot="start-list"]');
+        await expect(active).toHaveCount(1);
+        await expect(active.locator('li')).toHaveCount(5);
+        const href = await active.getByRole('link', { name: /^Zobacz na mapie/ }).getAttribute('href');
         expect(href).toMatch(/^\/mapa\?i=[\w-]+&y=\d{4}&l=(gmi|pow|woj)/);
       }
       // Napisy nie wychodzą poza karty, strona bez poziomego przewijania.
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
       const overflow = await section.evaluate((root) =>
-        [...root.querySelectorAll('[data-slot="fact-card"], [data-slot="start-list"]')].flatMap((card) => {
+        [...root.querySelectorAll('[data-slot="fact-card"], [role="tabpanel"]:not([inert]) [data-slot="start-list"]')].flatMap((card) => {
           const box = card.getBoundingClientRect();
           return [...card.querySelectorAll('*')]
             .filter((el) => getComputedStyle(el).textOverflow !== 'ellipsis')
