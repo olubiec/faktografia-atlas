@@ -22,7 +22,7 @@ function getJson<T>(url: string, fetchImpl: Fetch): Promise<T> {
   return p;
 }
 
-/** Odkrycie dnia i zestawienia (≤ 4 KB). */
+/** Odkrycie dnia i zestawienia (≤ 5 KB). */
 export function loadFactsStart(fetchImpl: Fetch = defaultFetch): Promise<FactsStart> {
   return getJson<FactsStart>(FACTS_START_URL, fetchImpl);
 }

@@ -58,19 +58,38 @@ for (const width of [360, 1280]) {
     for (let k = 0; k < 4; k++) {
       await tabs.nth(k).click();
       await expect(tabs.nth(k)).toHaveAttribute('aria-selected', 'true');
-      // Widać dokładnie jedno zestawienie: 3 wiersze z linkiem do jednostki.
+      // Widać dokładnie jedno zestawienie: 5 wierszy z linkiem do jednostki.
       const visible = lists.locator('[data-slot="start-list"]:visible');
       await expect(visible).toHaveCount(1);
       const rows = visible.locator('[data-slot="start-list-row"]');
-      await expect(rows).toHaveCount(3);
+      await expect(rows).toHaveCount(5);
       expect(await rows.first().getAttribute('href')).toMatch(/[?&]u=\d+/);
       await expect(visible.getByRole('link', { name: /^Zobacz na mapie/ })).toHaveAttribute('href', /^\/mapa\?i=[\w-]+&y=\d{4}&l=(gmi|pow|woj)/);
     }
-    // Skrajności w drugą stronę: przy najmłodszych gminach link do najstarszych (pełne zestawienie).
+    // Skrajności w drugą stronę: przełącznik „Najwyższe | Najniższe”; mediana wieku zaczyna od najmłodszych gmin.
     await lists.getByRole('tab', { name: 'Mediana wieku' }).click();
-    const opposite = lists.locator('[data-slot="start-list-opposite"]:visible');
-    await expect(opposite).toContainText('Na drugim końcu skali');
-    await expect(opposite.getByRole('link')).toHaveAttribute('href', '/zestawienie/najstarsze-gminy');
+    const visible = lists.locator('[data-slot="start-list"]:visible');
+    const ends = visible.locator('[data-slot="start-list-ends"]');
+    const low = ends.getByRole('button', { name: 'Najniższe' });
+    const high = ends.getByRole('button', { name: 'Najwyższe' });
+    await expect(low).toHaveAttribute('aria-pressed', 'true');
+    await expect(visible.locator('[data-slot="start-list-full"]')).toHaveAttribute('href', '/zestawienie/najmlodsze-gminy');
+    const youngest = await visible.locator('[data-slot="start-list-name"]').first().textContent();
+    await high.click();
+    await expect(high).toHaveAttribute('aria-pressed', 'true');
+    await expect(low).toHaveAttribute('aria-pressed', 'false');
+    await expect(visible.locator('[data-slot="start-list-subtitle"]')).toContainText('z najwyższą wartością');
+    await expect(visible.locator('[data-slot="start-list-row"]')).toHaveCount(5);
+    await expect(visible.locator('[data-slot="start-list-name"]').first()).not.toHaveText(youngest!);
+    await expect(visible.locator('[data-slot="start-list-full"]')).toHaveAttribute('href', '/zestawienie/najstarsze-gminy');
+    await expect(visible.locator('[data-slot="start-list-opposite"]')).toHaveCount(0);
+    // Wybór obowiązuje we wszystkich zakładkach: pierwsza też pokazuje teraz najwyższe.
+    await tabs.nth(0).click();
+    await expect(lists.locator('[data-slot="start-list"]:visible').getByRole('button', { name: 'Najwyższe' })).toHaveAttribute('aria-pressed', 'true');
+    // Pola dotykowe przełącznika ≥ 44 px.
+    for (const b of await lists.locator('[data-slot="start-list"]:visible [data-slot="start-list-ends"] button').all()) {
+      expect((await b.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    }
     await expect(lists.getByRole('link', { name: 'Wszystkie tematy i zestawienia' })).toHaveAttribute('href', '/zestawienia');
     // Klawiatura: strzałka w prawo przechodzi do następnej zakładki (z ostatniej do pierwszej).
     await tabs.nth(3).focus();

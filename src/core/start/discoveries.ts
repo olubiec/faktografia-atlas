@@ -8,6 +8,7 @@ import { dailyIndex, type DailyEntry, type FactsStart, type StartList } from '..
 import type { Fact, Level } from '../facts/types';
 import { displayUnit, formatValue, getFractionDigits } from '../format/number';
 import { shortIndicatorName } from '../seo/sentences';
+import { endOf, endSubtitle, listEnds, type ListEnds, type ListRow } from './list-ends';
 import { listLinks, type ListLink } from './list-links';
 import { WOJ_NAMES } from './start-data';
 
@@ -154,38 +155,37 @@ export function factView(f: Fact): FactView | null {
   return { key: `${f.type}-${f.indicatorId}-${f.teryt}`, sentence, ...bigNumber(f.value, ind.unit), href: factHref(f), ...((f as { isNew?: boolean }).isNew ? { isNew: true } : {}) };
 }
 
-const PEERS_NOM: Record<Level, string> = { gmi: 'gminy', pow: 'powiaty', woj: 'województwa' };
-
 export interface ListView {
   key: string;
   title: string;
   subtitle: string;
-  rows: { teryt: string; name: string; value: string; href: string }[];
+  rows: ListRow[];
   href: string;
   /** Pełne zestawienie (`/zestawienie/<slug>`) i to samo z drugiego końca skali (najmłodsze ↔ najstarsze), gdy istnieją. */
-  full?: ListLink | null;
-  opposite?: ListLink | null;
+  full?: ListLink | null; opposite?: ListLink | null;
+  /** „Najwyższe | Najniższe” (po 5 pozycji); brak = plik bez drugiego końca, karta jak dotąd. */
+  ends?: ListEnds | null;
 }
 
-/** Karta zestawienia: nazwa wskaźnika, „3 gminy z najwyższą wartością, 2025”, 3 pozycje i link do mapy. */
+/** Karta zestawienia: nazwa wskaźnika, „5 gmin z najwyższą wartością, 2025”, pozycje i link do mapy.
+ *  Wiersz prowadzi do mapy z tą jednostką zaznaczoną (otwiera się jej profil), z tym samym wskaźnikiem i rokiem. */
 export function listView(list: StartList): ListView | null {
   rememberLibraryMeta(list.indicatorId, list.i);
   const ind = resolveIndicator(list.indicatorId, list.i);
   if (!ind) return null;
-  const word = list.dir === 1 ? 'najwyższą' : 'najniższą';
+  const links = listLinks(list.indicatorId, list.level, list.dir);
+  const row = ([teryt, name, value]: [string, string, number]): ListRow => ({
+    teryt, name, value: formatValue(value, ind.unit).replace(/^-/, '−'),
+    href: mapHref({ indicatorId: list.indicatorId, year: list.year, teryt, level: list.level }),
+  });
   return {
     key: `${list.indicatorId}-${list.level}-${list.dir}`,
     title: shortIndicatorName(ind.name, ind.unit),
-    subtitle: `${list.top.length} ${PEERS_NOM[list.level]} z ${word} wartością, ${list.year}`,
-    rows: list.top.map(([teryt, name, value]) => ({
-      teryt,
-      name,
-      value: formatValue(value, ind.unit).replace(/^-/, '−'),
-      // Wiersz prowadzi do mapy z tą jednostką zaznaczoną (otwiera się jej profil), z tym samym wskaźnikiem i rokiem.
-      href: mapHref({ indicatorId: list.indicatorId, year: list.year, teryt, level: list.level }),
-    })),
+    subtitle: endSubtitle(list.top.length, list.level, endOf(list.dir), list.year),
+    rows: list.top.map(row),
     href: listHref(list),
-    ...listLinks(list.indicatorId, list.level, list.dir),
+    ...links,
+    ends: listEnds(list, row, links),
   };
 }
 
