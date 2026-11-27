@@ -143,7 +143,6 @@ export function renderDiscoverIndex(topics: readonly Topic[], lists: readonly Li
   const main = `${crumbNav(crumbs)}
 <h1 class="${H1}">${DISCOVER_INDEX_NAME}</h1>
 <p class="mt-4 max-w-prose">${text(`${plural(topics.length, 'temat', 'tematy', 'tematów')} i ${plural(lists.length, 'zestawienie', 'zestawienia', 'zestawień')} z danych Banku Danych Lokalnych GUS. Każde zestawienie obejmuje całą listę porównanych jednostek, po 50 pozycji na stronę, z linkami do stron miejsc.`)}</p>
-<p class="mt-6 flex flex-wrap gap-3">${a('/ranking', 'Wszystkie rankingi wskaźników', BTN)}${a('/miejsca', 'Wszystkie miejsca', BTN)}</p>
 ${groups.join('\n')}`;
   const doc = {
     path: DISCOVER_INDEX,

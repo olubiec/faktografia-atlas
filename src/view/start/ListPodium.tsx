@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import type { ListView } from '@/core/start/discoveries';
-import { END_KEYS, END_LABELS, type EndKey } from '@/core/start/list-ends';
+import type { EndKey } from '@/core/start/list-ends';
+import { EndSwitch } from './EndSwitch';
 
 export const TEXT_LINK =
   'inline-flex min-h-[44px] min-w-11 items-center self-start text-sm text-tusz underline underline-offset-4 break-words hover:no-underline focus-visible:outline-2 focus-visible:outline-tusz';
@@ -52,21 +53,7 @@ export function ListPodium({ list: l, active, end, onEnd, to, warm, levelSwitch 
       <h4 className="sr-only">{l.title}</h4>
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
       {levelSwitch}
-      {key && (
-        <div role="group" aria-label="Który koniec skali" className="flex self-start border border-linia" data-slot="start-list-ends">
-          {END_KEYS.map((k) => (
-            <button
-              key={k}
-              type="button"
-              aria-pressed={k === key}
-              onClick={() => onEnd(k)}
-              className={`min-h-[44px] min-w-11 cursor-pointer px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tusz ${k === key ? 'bg-tusz font-bold text-arkusz' : 'bg-arkusz text-tusz hover:bg-linia/20'}`}
-            >
-              {END_LABELS[k]}
-            </button>
-          ))}
-        </div>
-      )}
+      {key && <EndSwitch value={key} onChange={onEnd} />}
       </div>
       {shown.subtitle && (
         <p className="m-0 text-xs text-olowek" aria-live="polite" data-slot="start-list-subtitle">

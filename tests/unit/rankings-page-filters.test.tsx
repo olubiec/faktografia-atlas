@@ -22,18 +22,20 @@ const mk = (id: string): Indicator => ({
 const all = ['a', 'b', 'c', 'd'].map(mk);
 
 describe('Rankingi: wpięcie paska wyboru (QC106)', () => {
-  it('strona na start pokazuje pasek wyboru i dokładnie podstawowy zestaw', () => {
+  it('strona na start pokazuje pasek jak przy mapie: „Wybierz dane”, poziom, „Najwyższe | Najniższe”, rok', () => {
     const html = renderToString(
       <MemoryRouter initialEntries={['/rankingi']}>
         <Rankings />
       </MemoryRouter>,
     ).replace(/<!-- -->/g, '');
+    expect(html).toContain('Wybierz dane');
     expect(html).toContain('aria-label="Poziom"');
+    expect(html).toContain('aria-label="Który koniec skali"');
+    expect(html).toContain('Najwyższe');
+    expect(html).toContain('Najniższe');
     expect(html).toContain('aria-label="Rok"');
-    const chips = html.match(/aria-label="Usuń wskaźnik/g) ?? [];
-    expect(chips.length).toBe(BASIC_INDICATORS.length);
-    expect(html).toContain('Dodaj wskaźnik');
-    expect(html).not.toContain('Przywróć podstawowe');
+    // Stare „Moje wskaźniki” (lista z krzyżykami) zastąpiło pełne menu.
+    expect(html).not.toContain('aria-label="Usuń wskaźnik');
   });
 
   it('MyIndicatorsBar: × usuwa, wybór w liście dodaje, przycisk przywraca', () => {

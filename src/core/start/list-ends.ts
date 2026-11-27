@@ -62,7 +62,8 @@ export function listEnds(
   const end = (key: EndKey, rows: [string, string, number][], full: ListLink | null): ListEnd => ({
     subtitle: endSubtitle(rows.length, list.level, key, list.year),
     rows: rows.map(row),
-    full,
+    // „Pełny ranking” otwiera się z tym samym końcem skali, który widać w panelu.
+    full: full?.ranking ? { ...full, href: `${full.href}&d=${key}` } : full,
   });
   const a = end(main, list.top, links.full);
   const b = end(other, list.bottom, links.opposite);

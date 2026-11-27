@@ -1,4 +1,5 @@
-import { Link, useNavigate } from 'react-router';
+import { useState } from 'react';
+import { Link } from 'react-router';
 import { SiteLayout } from '../layout/SiteLayout';
 import { DataMenu } from '../data-menu/DataMenu';
 import { useIsMobile } from '../hooks/useIsMobile';
@@ -7,6 +8,8 @@ import indicators from '../../../config/indicators.json';
 import listsConfig from '../../../config/lists.json';
 import { DISCOVER_INDEX, DISCOVER_INDEX_NAME, listPath, plural, topicsOf, type TopicIndicator } from '@/core/seo/topics';
 import { mapHref } from '@/core/start/discoveries';
+import { useIndicatorRegistry } from '../hooks/useIndicatorRegistry';
+import { RANKINGS_DEFAULTS, writeRankingsSearch } from '@/core/ranking/rankings-url';
 
 const DESCRIPTION = 'Zestawienia gmin i powiatów Polski: ludność, praca, pieniądze, mieszkania i inne. Dane GUS.';
 
@@ -16,7 +19,9 @@ const DESCRIPTION = 'Zestawienia gmin i powiatów Polski: ludność, praca, pien
  * i czytelna bez JavaScriptu; po wczytaniu przejmuje ją ta.
  */
 export function DiscoverIndex() {
-  const navigate = useNavigate();
+  const [picked, setPicked] = useState<string | null>(null);
+  const { registry } = useIndicatorRegistry();
+  const pickedName = picked ? (registry.byId.get(picked)?.name ?? null) : null;
   const mobile = useIsMobile();
   const lists = listsConfig.lists;
   const topics = topicsOf(indicators as TopicIndicator[]).map((t) => ({ ...t, own: lists.filter((l) => t.indicators.some((i) => i.id === l.indicatorId)) }));
@@ -33,17 +38,22 @@ export function DiscoverIndex() {
         <p className="mt-4 max-w-prose">
           {`${plural(topics.length, 'temat', 'tematy', 'tematów')} i ${plural(lists.length, 'zestawienie', 'zestawienia', 'zestawień')} z danych Banku Danych Lokalnych GUS. Każde zestawienie obejmuje całą listę porównanych jednostek, po 50 pozycji na stronę, z linkami do stron miejsc.`}
         </p>
-        <p className="mt-6 flex flex-wrap gap-3">
-          <a href="/ranking" className={BUTTON_SECONDARY}>Wszystkie rankingi wskaźników</a>
-          <a href="/miejsca" className={BUTTON_SECONDARY}>Wszystkie miejsca</a>
-        </p>
 
         <section aria-labelledby="wybierz-dane" className="mt-12 md:mt-16" data-slot="discover-menu">
           <h2 id="wybierz-dane" className="text-xl font-bold">Wybierz dane</h2>
-          <p className="mt-2 max-w-prose text-sm text-olowek">Dział, grupa, wskaźnik – to samo menu co przy mapie. Wybrany wskaźnik otworzy się na mapie.</p>
+          <p className="mt-2 max-w-prose text-sm text-olowek">Dział, grupa, wskaźnik – to samo menu co przy mapie. Po wyborze wskaźnika zobaczysz jego ranking albo mapę.</p>
           <div className="mt-4 border border-linia bg-arkusz p-4 md:p-6">
-            <DataMenu selectedId={null} onSelect={(id) => void navigate(mapHref({ indicatorId: id }))} onClose={() => undefined} layout={mobile ? 'stack' : 'columns'} />
+            <DataMenu selectedId={picked} onSelect={setPicked} onClose={() => undefined} layout={mobile ? 'stack' : 'columns'} />
           </div>
+          {picked && (
+            <div className="mt-4 flex flex-col gap-3 border border-tusz bg-arkusz p-4 md:flex-row md:items-center md:justify-between" role="status" data-slot="discover-picked">
+              <p className="m-0 font-bold">{pickedName ?? 'Wybrany wskaźnik'}</p>
+              <div className="flex flex-wrap gap-3">
+                <Link to={`/rankingi${writeRankingsSearch({ ...RANKINGS_DEFAULTS, i: picked })}`} className={BUTTON_PRIMARY} data-slot="discover-ranking">Pokaż ranking</Link>
+                <Link to={mapHref({ indicatorId: picked })} className={BUTTON_SECONDARY} data-slot="discover-map">Zobacz na mapie</Link>
+              </div>
+            </div>
+          )}
         </section>
 
         {topics.map((t, i) => (

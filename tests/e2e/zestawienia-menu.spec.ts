@@ -58,7 +58,7 @@ test('@F03 logo w oknie prowadzi na stronę startową', async ({ page }) => {
 });
 
 for (const width of [390, 1280]) {
-  test(`@F03 spis /zestawienia: pełny nagłówek i stopka, to samo menu „Wybierz dane”, wybór otwiera mapę (${width})`, async ({ page }) => {
+  test(`@F03 spis /zestawienia: pełny nagłówek i stopka, to samo menu „Wybierz dane”, wybór pokazuje „Pokaż ranking” i mapę (${width})`, async ({ page }) => {
     await setup(page, width);
     await page.goto('/zestawienia?e2e');
     await expect(page.getByRole('heading', { level: 1, name: 'Tematy i zestawienia' })).toBeVisible();
@@ -68,7 +68,13 @@ for (const width of [390, 1280]) {
     await expect(menu.getByRole('searchbox', { name: 'Szukaj wskaźnika' })).toBeVisible();
     await menu.getByRole('searchbox', { name: 'Szukaj wskaźnika' }).fill('Ludność ogółem');
     await menu.getByRole('button', { name: /Ludność ogółem/ }).first().click();
-    await expect(page).toHaveURL(/\/mapa\?i=population/);
+    const picked = page.locator('[data-slot="discover-picked"]');
+    await expect(picked).toContainText('Ludność ogółem');
+    await expect(page.getByRole('link', { name: 'Wszystkie rankingi wskaźników' })).toHaveCount(0);
+    await expect(picked.getByRole('link', { name: 'Zobacz na mapie' })).toHaveAttribute('href', /\/mapa\?i=population/);
+    await picked.getByRole('link', { name: 'Pokaż ranking' }).click();
+    await expect(page).toHaveURL(/\/rankingi\?i=population/);
+    await expect(page.getByRole('heading', { name: 'Lista jednostek' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });
 }
