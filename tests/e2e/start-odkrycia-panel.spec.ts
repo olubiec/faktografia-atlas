@@ -138,7 +138,7 @@ for (const width of [360, 1280]) {
     expect(seen.size).toBeGreaterThan(1);
   });
 
-  test(`@F02b Karuzela: „Pełny ranking” prowadzi do pełnej listy na /zestawienia, gdy zestawienie nie ma własnej strony (${width})`, async ({ page }) => {
+  test(`@F02b Karuzela: „Pełne zestawienie” prowadzi do pełnej listy na /zestawienia, gdy zestawienie nie ma własnej strony (${width})`, async ({ page }) => {
     const section = await open(page, width);
     const lists = section.locator('section[aria-labelledby="start-lists-title"]');
     const tabs = lists.getByRole('tab');
@@ -151,7 +151,7 @@ for (const width of [360, 1280]) {
     const visible = lists.locator('[role="tabpanel"]:not([inert]) [data-slot="start-list"]');
     await visible.getByRole('button', { name: 'Najniższe' }).click();
     const full = visible.locator('[data-slot="start-list-full"]');
-    await expect(full).toHaveText('Pełny ranking');
+    await expect(full).toHaveText('Pełne zestawienie');
     await expect(full).toHaveAttribute('href', /^\/zestawienia\?i=avg-wage&l=pow&y=\d{4}&d=low$/);
   });
 }

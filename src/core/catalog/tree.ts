@@ -30,7 +30,7 @@ export type CatalogTree = { sections: CatalogSection[]; total: number };
 export const OTHER_GROUP = 'Pozostałe';
 /** Grupy archiwalne nie wchodzą do menu (decyzja właściciela: bez danych archiwalnych). */
 const ARCHIVE_NAME = 'dane archiwalne';
-const ACRONYMS = new Set(['PSR', 'GUGIK']);
+const ACRONYMS = new Set(['PSR', 'GUGIK', 'JST', 'UE', 'PIT', 'PKD', 'REGON', 'BAEL', 'LPG', 'ZUS', 'KRUS', 'NFZ']);
 
 /** Wbudowane wskaźniki → dział (początek nazwy działu GUS). */
 const BUILTIN_SECTION: Record<string, string> = {
@@ -53,10 +53,12 @@ const WEIGHT_KEYS = Object.keys(WEIGHTS).map((key) => ({ key, norm: normalize(ke
 
 /** „SZKOLNICTWO PODSTAWOWE” → „Szkolnictwo podstawowe” (skróty z listy zostają wielkie). */
 export function titleCase(raw: string): string {
-  const text = raw
-    .trim()
+  const trimmed = raw.trim();
+  // Tekst pisany wielkimi literami (działy GUS) zmniejszamy w całości; w zwykłym zdaniu skróty (JST, UE) zostają.
+  const allCaps = trimmed === trimmed.toLocaleUpperCase('pl');
+  const text = trimmed
     .split(/\s+/)
-    .map((w) => (ACRONYMS.has(w) ? w : w.toLowerCase()))
+    .map((w) => (ACRONYMS.has(w.toUpperCase()) && (allCaps || w === w.toUpperCase()) ? w.toUpperCase() : w.toLowerCase()))
     .join(' ');
   return text.charAt(0).toUpperCase() + text.slice(1);
 }

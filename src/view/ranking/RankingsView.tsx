@@ -113,7 +113,7 @@ export function RankingsView() {
 
   return (
     <section aria-labelledby="ranking-wskaznika" className="w-full text-tusz" data-slot="ranking-view">
-        <h2 id="ranking-wskaznika" className="mb-4 text-xl font-bold">{indicator ? `Ranking: ${indicator.name}` : 'Ranking'}</h2>
+        <h2 id="ranking-wskaznika" className="mb-4 text-xl font-bold">{indicator ? `Zestawienie: ${indicator.name}` : 'Zestawienie'}</h2>
 
         <div className="mb-8 flex flex-col gap-3">
           {indicator ? (
@@ -144,7 +144,7 @@ export function RankingsView() {
         {ranking && indicator && (
           <RankingsTable rows={rows} page={page.page} pages={page.pages} total={ordered.length} q={state.q} onQuery={(q) => onChange({ q })} onPage={(p) => onChange({ p })} unitLabel={displayUnit(indicator.unit)} />
         )}
-        {!ranking && indicator && <p role="status" className="text-sm text-olowek">Wczytujemy ranking…</p>}
+        {!ranking && indicator && <p role="status" className="text-sm text-olowek">Wczytujemy zestawienie…</p>}
     </section>
   );
 }

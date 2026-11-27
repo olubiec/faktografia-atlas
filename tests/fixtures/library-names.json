@@ -1,0 +1,1537 @@
+[
+ {
+  "n": "ogółem",
+  "u": "-",
+  "c": "LUDNOŚĆ > MAŁŻEŃSTWA, ROZWODY I SEPARACJE > Małżeństwa zawarte"
+ },
+ {
+  "n": "Urodzenia żywe – ogółem",
+  "u": "-",
+  "c": "LUDNOŚĆ > URODZENIA I ZGONY > Ruch naturalny wg płci"
+ },
+ {
+  "n": "Zgony niemowląt – ogółem",
+  "u": "-",
+  "c": "LUDNOŚĆ > URODZENIA I ZGONY > Ruch naturalny wg płci"
+ },
+ {
+  "n": "ogółem – 0",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Ludność wg pojedynczych roczników wieku i płci"
+ },
+ {
+  "n": "ogółem – 1",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Ludność wg pojedynczych roczników wieku i płci"
+ },
+ {
+  "n": "w wieku przedprodukcyjnym – ogółem",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Ludność w wieku przedprodukcyjnym (17 lat i mniej), produkcyjnym i poprodukcyjnym wg płci"
+ },
+ {
+  "n": "w wieku produkcyjnym – ogółem",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Ludność w wieku przedprodukcyjnym (17 lat i mniej), produkcyjnym i poprodukcyjnym wg płci"
+ },
+ {
+  "n": "ogółem – mieszkania",
+  "u": "-",
+  "c": "PRZEMYSŁ I BUDOWNICTWO > DANE ARCHIWALNE > Mieszkania oddane do użytkowania wg form budownictwa"
+ },
+ {
+  "n": "ogółem – powierzchnia użytkowa",
+  "u": "m2",
+  "c": "PRZEMYSŁ I BUDOWNICTWO > DANE ARCHIWALNE > Mieszkania oddane do użytkowania wg form budownictwa"
+ },
+ {
+  "n": "biblioteki i filie",
+  "u": "ob.",
+  "c": "KULTURA  > BIBLIOTEKI > Biblioteki publiczne"
+ },
+ {
+  "n": "wypożyczenia księgozbioru na zewnątrz",
+  "u": "wol.",
+  "c": "KULTURA  > BIBLIOTEKI > Biblioteki publiczne"
+ },
+ {
+  "n": "muzea łącznie z oddziałami",
+  "u": "ob.",
+  "c": "KULTURA  > MUZEA > Muzea"
+ },
+ {
+  "n": "zwiedzający muzea i oddziały",
+  "u": "osoba",
+  "c": "KULTURA  > MUZEA > Muzea"
+ },
+ {
+  "n": "ogółem w km2",
+  "u": "km2",
+  "c": "PODZIAŁ TERYTORIALNY > POWIERZCHNIA GEODEZYJNA KRAJU (DANE GUGIK) > Powierzchnia"
+ },
+ {
+  "n": "niedochowanie wierności małżeńskiej – wyłącznie",
+  "u": "-",
+  "c": "LUDNOŚĆ > MAŁŻEŃSTWA, ROZWODY I SEPARACJE > Rozwody wg przyczyn"
+ },
+ {
+  "n": "nadużywanie alkoholu – wyłącznie",
+  "u": "-",
+  "c": "LUDNOŚĆ > MAŁŻEŃSTWA, ROZWODY I SEPARACJE > Rozwody wg przyczyn"
+ },
+ {
+  "n": "samochody ciężarowo - osobowe",
+  "u": "szt.",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > POJAZDY > Pojazdy ogółem"
+ },
+ {
+  "n": "tężec",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > STAN ZDROWIA LUDNOŚCI > Zachorowania na choroby zakaźne i zatrucia"
+ },
+ {
+  "n": "krztusiec",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > STAN ZDROWIA LUDNOŚCI > Zachorowania na choroby zakaźne i zatrucia"
+ },
+ {
+  "n": "zużycie gazu w tys. m3",
+  "u": "tys.m3",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > DANE ARCHIWALNE > Sieć gazowa"
+ },
+ {
+  "n": "ogółem",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Przeciętna liczba osób"
+ },
+ {
+  "n": "pracujących",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Przeciętna liczba osób"
+ },
+ {
+  "n": "ogółem",
+  "u": "zł",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Przeciętne miesięczne wydatki na 1 osobę"
+ },
+ {
+  "n": "towary i usługi konsumpcyjne",
+  "u": "zł",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Przeciętne miesięczne wydatki na 1 osobę"
+ },
+ {
+  "n": "przyjazdy",
+  "u": "osoba",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > TRANSPORT LOTNICZY > Ruch pasażerów w portach lotniczych"
+ },
+ {
+  "n": "wyjazdy",
+  "u": "osoba",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > TRANSPORT LOTNICZY > Ruch pasażerów w portach lotniczych"
+ },
+ {
+  "n": "pojazdy samochodowe i ciągniki",
+  "u": "szt.",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > POJAZDY > Pojazdy ogółem"
+ },
+ {
+  "n": "zużycie gazu na ogrzewanie mieszkań w tys. m3",
+  "u": "tys.m3",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > DANE ARCHIWALNE > Sieć gazowa"
+ },
+ {
+  "n": "ogrody – liczba",
+  "u": "ob.",
+  "c": "STAN I OCHRONA ŚRODOWISKA > TERENY ZIELENI > Rodzinne ogrody działkowe"
+ },
+ {
+  "n": "ogrody – powierzchnia",
+  "u": "ha",
+  "c": "STAN I OCHRONA ŚRODOWISKA > TERENY ZIELENI > Rodzinne ogrody działkowe"
+ },
+ {
+  "n": "praktyki lekarskie na wsi",
+  "u": "-",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > AMBULATORYJNA OPIEKA ZDROWOTNA > Podmioty ambulatoryjne (stan w dniu 31 XII)"
+ },
+ {
+  "n": "przychodnie ogółem",
+  "u": "ob.",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > AMBULATORYJNA OPIEKA ZDROWOTNA > Podmioty ambulatoryjne (stan w dniu 31 XII)"
+ },
+ {
+  "n": "reprodukcja brutto",
+  "u": "-",
+  "c": "LUDNOŚĆ > URODZENIA I ZGONY > Współczynnik dzietności i reprodukcji brutto"
+ },
+ {
+  "n": "dzietność",
+  "u": "-",
+  "c": "LUDNOŚĆ > URODZENIA I ZGONY > Współczynnik dzietności i reprodukcji brutto"
+ },
+ {
+  "n": "księgozbiór bibliotek na 1000 ludności",
+  "u": "wol.",
+  "c": "KULTURA  > BIBLIOTEKI > Biblioteki publiczne - wskaźniki"
+ },
+ {
+  "n": "czytelnicy bibliotek publicznych na 1000 ludności",
+  "u": "osoba",
+  "c": "KULTURA  > BIBLIOTEKI > Biblioteki publiczne - wskaźniki"
+ },
+ {
+  "n": "współczynnik skolaryzacji brutto – szkoły podstawowe",
+  "u": "%",
+  "c": "SZKOLNICTWO > SKOLARYZACJA > Współczynniki skolaryzacji (szkolnictwo podstawowe i gimnazjalne)"
+ },
+ {
+  "n": "współczynnik skolaryzacji netto – szkoły podstawowe",
+  "u": "%",
+  "c": "SZKOLNICTWO > SKOLARYZACJA > Współczynniki skolaryzacji (szkolnictwo podstawowe i gimnazjalne)"
+ },
+ {
+  "n": "ogółem",
+  "u": "%",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Stopa bezrobocia rejestrowanego"
+ },
+ {
+  "n": "udzielone noclegi na 1000 ludności – ogółem",
+  "u": "-",
+  "c": "TURYSTYKA > TURYSTYCZNE OBIEKTY NOCLEGOWE I ICH WYKORZYSTANIE > Turystyczne obiekty noclegowe - wskaźniki"
+ },
+ {
+  "n": "dochody własne",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > DOCHODY BUDŻETÓW POWIATÓW > Dochody na 1 mieszkańca"
+ },
+ {
+  "n": "ogółem",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > DOCHODY BUDŻETÓW POWIATÓW > Dochody na 1 mieszkańca"
+ },
+ {
+  "n": "ogółem",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > DOCHODY BUDŻETÓW WOJEWÓDZTW > Dochody na 1 mieszkańca"
+ },
+ {
+  "n": "dochody własne",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > DOCHODY BUDŻETÓW WOJEWÓDZTW > Dochody na 1 mieszkańca"
+ },
+ {
+  "n": "w Dziale 921 - Kultura i ochrona dziedzictwa narodowego",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > WYDATKI BUDŻETÓW POWIATÓW > Wydatki na 1 mieszkańca"
+ },
+ {
+  "n": "ogółem",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > WYDATKI BUDŻETÓW POWIATÓW > Wydatki na 1 mieszkańca"
+ },
+ {
+  "n": "w Dziale 801- Oświata i wychowanie",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > WYDATKI BUDŻETÓW WOJEWÓDZTW > Wydatki na 1 mieszkańca"
+ },
+ {
+  "n": "ogółem",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > WYDATKI BUDŻETÓW WOJEWÓDZTW > Wydatki na 1 mieszkańca"
+ },
+ {
+  "n": "drogi miejskie o twardej nawierzchni – na 100 km2",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI PUBLICZNE > Drogi - wskaźniki"
+ },
+ {
+  "n": "drogi o twardej nawierzchni – na 100 km2",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI PUBLICZNE > Drogi - wskaźniki"
+ },
+ {
+  "n": "podmioty wpisane do rejestru REGON na 10 tys. ludności",
+  "u": "-",
+  "c": "PODMIOTY GOSPODARKI NARODOWEJ, PRZEKSZTAŁCENIA WŁASNOŚCIOWE I STRUKTURALNE > PODMIOTY GOSPODARKI NARODOWEJ - WSKAŹNIKI > Podmioty - wskaźniki"
+ },
+ {
+  "n": "samochody ciężarowe na 1000 ludności",
+  "u": "szt.",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > POJAZDY > Pojazdy samochodowe i ciągniki - wskaźniki"
+ },
+ {
+  "n": "motocykle na 1000 ludności",
+  "u": "szt.",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > POJAZDY > Pojazdy samochodowe i ciągniki - wskaźniki"
+ },
+ {
+  "n": "ofiary śmiertelne na 100 tys. ludności",
+  "u": "osoba",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > WYPADKI DROGOWE > Wypadki drogowe i ich ofiary - wskaźniki"
+ },
+ {
+  "n": "ofiary śmiertelne na 100 tys. pojazdów",
+  "u": "osoba",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > WYPADKI DROGOWE > Wypadki drogowe i ich ofiary - wskaźniki"
+ },
+ {
+  "n": "linie kolejowe normalnotorowe na 100 km2",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > TRANSPORT KOLEJOWY > Linie kolejowe - wskaźniki"
+ },
+ {
+  "n": "linie kolejowe ogółem na 10 tysięcy ludności",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > TRANSPORT KOLEJOWY > Linie kolejowe - wskaźniki"
+ },
+ {
+  "n": "ludność na 1 km2",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Gęstość zaludnienia oraz wskaźniki"
+ },
+ {
+  "n": "ludność w wieku poprodukcyjnym na 100 osób w wieku produkcyjnym",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Wskaźniki obciążenia demograficznego"
+ },
+ {
+  "n": "ludność w wieku nieprodukcyjnym na 100 osób w wieku produkcyjnym",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Wskaźniki obciążenia demograficznego"
+ },
+ {
+  "n": "w wieku poprodukcyjnym",
+  "u": "%",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Udział ludności wg ekonomicznych grup wieku w % ludności ogółem"
+ },
+ {
+  "n": "w wieku produkcyjnym",
+  "u": "%",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Udział ludności wg ekonomicznych grup wieku w % ludności ogółem"
+ },
+ {
+  "n": "zgony niemowląt na 1000 urodzeń żywych",
+  "u": "-",
+  "c": "LUDNOŚĆ > URODZENIA I ZGONY > Zgony ogółem, zgony niemowląt i zgony osób w wieku do 65 lat - wskaźniki"
+ },
+ {
+  "n": "telefoniczne łącza główne na 1000 ludności",
+  "u": "szt.",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > ŁĄCZNOŚĆ > Placówki pocztowe operatorów pocztowych - wskaźniki"
+ },
+ {
+  "n": "przeciętna powierzchnia użytkowa 1 mieszkania",
+  "u": "m2",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > ZASOBY MIESZKANIOWE > Zasoby mieszkaniowe - wskaźniki"
+ },
+ {
+  "n": "przeciętna powierzchnia użytkowa mieszkania na 1 osobę",
+  "u": "m2",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > ZASOBY MIESZKANIOWE > Zasoby mieszkaniowe - wskaźniki"
+ },
+ {
+  "n": "ludność na aptekę ogólnodostępną",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > APTEKI I PUNKTY APTECZNE > Apteki ogólnodostępne - wskaźniki"
+ },
+ {
+  "n": "ogółem – mieszkania",
+  "u": "-",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > ZASOBY MIESZKANIOWE > Zasoby mieszkaniowe"
+ },
+ {
+  "n": "automat pralniczy",
+  "u": "%",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Wyposażenie w niektóre przedmioty trwałego użytkowania w % ogółu gospodarstw domowych"
+ },
+ {
+  "n": "zmywarka do naczyń",
+  "u": "%",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Wyposażenie w niektóre przedmioty trwałego użytkowania w % ogółu gospodarstw domowych"
+ },
+ {
+  "n": "pieczywo i produkty zbożowe",
+  "u": "kg",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Przeciętne miesięczne spożycie wybranych artykułów żywnościowych na 1 osobę"
+ },
+ {
+  "n": "mięso",
+  "u": "kg",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Przeciętne miesięczne spożycie wybranych artykułów żywnościowych na 1 osobę"
+ },
+ {
+  "n": "rok",
+  "u": "%",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Ludność w miastach w % ogółu ludności (dane półroczne)"
+ },
+ {
+  "n": "ogółem",
+  "u": "zł",
+  "c": "WYNAGRODZENIA I ŚWIADCZENIA SPOŁECZNE > WYNAGRODZENIA > Przeciętne miesięczne wynagrodzenia brutto"
+ },
+ {
+  "n": "przeciętne miesięczne wynagrodzenia brutto w relacji do średniej krajowej (Polska=100)",
+  "u": "%",
+  "c": "WYNAGRODZENIA I ŚWIADCZENIA SPOŁECZNE > WYNAGRODZENIA > Przeciętne miesięczne wynagrodzenia brutto"
+ },
+ {
+  "n": "służące ochronie środowiska",
+  "u": "zł",
+  "c": "STAN I OCHRONA ŚRODOWISKA > EKONOMICZNE ASPEKTY OCHRONY ŚRODOWISKA > Nakłady na środki trwałe na 1 mieszkańca"
+ },
+ {
+  "n": "służące gospodarce wodnej",
+  "u": "zł",
+  "c": "STAN I OCHRONA ŚRODOWISKA > EKONOMICZNE ASPEKTY OCHRONY ŚRODOWISKA > Nakłady na środki trwałe na 1 mieszkańca"
+ },
+ {
+  "n": "ogółem – ogółem",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Ludność wg grup wieku i płci"
+ },
+ {
+  "n": "porady ogółem – przychodnie podległe samorządowi terytorialnemu",
+  "u": "-",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > AMBULATORYJNA OPIEKA ZDROWOTNA > Podstawowa opieka zdrowotna - porady lekarskie"
+ },
+ {
+  "n": "współczynnik skolaryzacji brutto – licea ogólnokształcące (wiek 16-18 lat)",
+  "u": "%",
+  "c": "SZKOLNICTWO > SKOLARYZACJA > Współczynniki skolaryzacji (szkolnictwo ponadpodstawowe i ponadgimnazjalne)"
+ },
+ {
+  "n": "współczynnik skolaryzacji netto – licea ogólnokształcące (wiek 16-18 lat)",
+  "u": "%",
+  "c": "SZKOLNICTWO > SKOLARYZACJA > Współczynniki skolaryzacji (szkolnictwo ponadpodstawowe i ponadgimnazjalne)"
+ },
+ {
+  "n": "gminy łącznie z miastami na prawach powiatu – ogółem",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > WYDATKI BUDŻETÓW GMIN I MIAST NA PRAWACH POWIATU > Wydatki na 1 mieszkańca"
+ },
+ {
+  "n": "gminy łącznie z miastami na prawach powiatu – ogółem",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > DOCHODY BUDŻETÓW GMIN I MIAST NA PRAWACH POWIATU > Dochody na 1 mieszkańca"
+ },
+ {
+  "n": "gminy łącznie z miastami na prawach powiatu – dochody własne",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > DOCHODY BUDŻETÓW GMIN I MIAST NA PRAWACH POWIATU > Dochody na 1 mieszkańca"
+ },
+ {
+  "n": "ogółem – gaz",
+  "u": "%",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > URZĄDZENIA SIECIOWE > Korzystający z instalacji w % ogółu ludności"
+ },
+ {
+  "n": "ogółem – kanalizacja",
+  "u": "%",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > URZĄDZENIA SIECIOWE > Korzystający z instalacji w % ogółu ludności"
+ },
+ {
+  "n": "ogółem – sieć gazowa",
+  "u": "km",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > URZĄDZENIA SIECIOWE > Sieć wodociągowa i kanalizacyjna na 100 km2"
+ },
+ {
+  "n": "ogółem – sieć kanalizacyjna",
+  "u": "km",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > URZĄDZENIA SIECIOWE > Sieć wodociągowa i kanalizacyjna na 100 km2"
+ },
+ {
+  "n": "ogółem – gaz z sieci w m3 – na 1 mieszkańca",
+  "u": "m3",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > URZĄDZENIA SIECIOWE > Zużycie wody, energii elektrycznej oraz gazu w gospodarstwach domowych"
+ },
+ {
+  "n": "ogółem",
+  "u": "%",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Udział bezrobotnych zarejestrowanych w liczbie ludności w wieku produkcyjnym wg płci"
+ },
+ {
+  "n": "ogółem",
+  "u": "osoba",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Bezrobotni zarejestrowani pozostający bez pracy dłużej niż 1 rok"
+ },
+ {
+  "n": "w % ludności aktywnej zawodowo",
+  "u": "%",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Bezrobotni zarejestrowani pozostający bez pracy dłużej niż 1 rok"
+ },
+ {
+  "n": "zespoły ratownictwa medycznego - specjalistyczne",
+  "u": "szt.",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > POMOC DORAŹNA I RATOWNICTWO MEDYCZNE > Jednostki systemu ratownictwa medycznego"
+ },
+ {
+  "n": "zespoły ratownictwa medycznego - podstawowe",
+  "u": "szt.",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > POMOC DORAŹNA I RATOWNICTWO MEDYCZNE > Jednostki systemu ratownictwa medycznego"
+ },
+ {
+  "n": "wskaźnik zagrożenia ubóstwem",
+  "u": "%",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Wskaźnik zasięgu ubóstwem po uwzględnieniu w dochodach transferów społecznych"
+ },
+ {
+  "n": "\"ustawowej\" granicy ubóstwa",
+  "u": "%",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Wskaźniki zasięgu ubóstwem - % osób w gosp. dom. o wydatkach poniżej granicy ubóstwa"
+ },
+ {
+  "n": "relatywnej granicy ubóstwa",
+  "u": "%",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Wskaźniki zasięgu ubóstwem - % osób w gosp. dom. o wydatkach poniżej granicy ubóstwa"
+ },
+ {
+  "n": "mężczyźni – ogółem – 0",
+  "u": "lata",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Przeciętne dalsze trwanie życia"
+ },
+ {
+  "n": "kobiety – ogółem – 0",
+  "u": "lata",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Przeciętne dalsze trwanie życia"
+ },
+ {
+  "n": "liczba ludności na łóżko w szpitalach ogólnych",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > SZPITALE > Liczba ludności na łóżko w szpitalach ogólnych i psychiatrycznych"
+ },
+ {
+  "n": "Sekcja J",
+  "u": "zł",
+  "c": "WYNAGRODZENIA I ŚWIADCZENIA SPOŁECZNE > WYNAGRODZENIA > Przeciętne miesięczne wynagrodzenia brutto wg sekcji PKD"
+ },
+ {
+  "n": "Sekcja R",
+  "u": "zł",
+  "c": "WYNAGRODZENIA I ŚWIADCZENIA SPOŁECZNE > WYNAGRODZENIA > Przeciętne miesięczne wynagrodzenia brutto wg sekcji PKD"
+ },
+ {
+  "n": "ogółem",
+  "u": "ob.",
+  "c": "SZKOLNICTWO > SZKOLNICTWO PODSTAWOWE > Szkoły podstawowe ogółem"
+ },
+ {
+  "n": "uczniowie",
+  "u": "osoba",
+  "c": "SZKOLNICTWO > SZKOLNICTWO PODSTAWOWE > Szkoły podstawowe ogółem"
+ },
+ {
+  "n": "szpitale ogólne - łóżka",
+  "u": "-",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > SZPITALE > Szpitale ogólne i psychiatryczne"
+ },
+ {
+  "n": "poszkodowani ogółem na 1000 pracujących",
+  "u": "osoba",
+  "c": "RYNEK PRACY > WARUNKI PRACY > Poszkodowani w wypadkach przy pracy - wskaźniki"
+ },
+ {
+  "n": "poszkodowani w wypadkach śmiertelnych na 100 tys. pracujących",
+  "u": "osoba",
+  "c": "RYNEK PRACY > WARUNKI PRACY > Poszkodowani w wypadkach przy pracy - wskaźniki"
+ },
+ {
+  "n": "osoby z pozarolniczego systemu ubezpieczeń społecznych pobierające emerytury",
+  "u": "osoba",
+  "c": "WYNAGRODZENIA I ŚWIADCZENIA SPOŁECZNE > ŚWIADCZENIA SPOŁECZNE > Emeryci i renciści"
+ },
+ {
+  "n": "osoby z pozarolniczego systemu ubezpieczeń społecznych pobierające renty rodzinne",
+  "u": "osoba",
+  "c": "WYNAGRODZENIA I ŚWIADCZENIA SPOŁECZNE > ŚWIADCZENIA SPOŁECZNE > Emeryci i renciści"
+ },
+ {
+  "n": "z pozarolniczego systemu ubezpieczeń społecznych razem",
+  "u": "zł",
+  "c": "WYNAGRODZENIA I ŚWIADCZENIA SPOŁECZNE > ŚWIADCZENIA SPOŁECZNE > Przeciętna miesięczna emerytura i renta brutto"
+ },
+ {
+  "n": "z pozarolniczego systemu ubezpieczeń społecznych emerytury",
+  "u": "zł",
+  "c": "WYNAGRODZENIA I ŚWIADCZENIA SPOŁECZNE > ŚWIADCZENIA SPOŁECZNE > Przeciętna miesięczna emerytura i renta brutto"
+ },
+ {
+  "n": "lesistość w %",
+  "u": "%",
+  "c": "LEŚNICTWO I ŁOWIECTWO > LEŚNICTWO WSZYSTKICH FORM WŁASNOŚCI > Powierzchnia gruntów leśnych"
+ },
+ {
+  "n": "apteki",
+  "u": "ob.",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > APTEKI I PUNKTY APTECZNE > Apteki ogólnodostępne"
+ },
+ {
+  "n": " farmaceuci",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > APTEKI I PUNKTY APTECZNE > Apteki ogólnodostępne"
+ },
+ {
+  "n": "ogółem",
+  "u": "-",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > ZASOBY MIESZKANIOWE > Budynki mieszkalne w gminie"
+ },
+ {
+  "n": "ogółem",
+  "u": "zł",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Przeciętny miesięczny dochód rozporządzalny na 1 osobę"
+ },
+ {
+  "n": "z pracy najemnej",
+  "u": "zł",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Przeciętny miesięczny dochód rozporządzalny na 1 osobę"
+ },
+ {
+  "n": "ogółem – woda z wodociągów – na 1 korzystającego",
+  "u": "m3",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > URZĄDZENIA SIECIOWE > Zużycie wody, energii elektrycznej oraz gazu w gospodarstwach domowych"
+ },
+ {
+  "n": "ogółem",
+  "u": "%",
+  "c": "STAN I OCHRONA ŚRODOWISKA > ODPADY KOMUNALNE > Odpady zebrane selektywnie w relacji do ogółu odpadów"
+ },
+ {
+  "n": "choroby układu krążenia ogółem",
+  "u": "%",
+  "c": "LUDNOŚĆ > URODZENIA I ZGONY > Zgony wg przyczyn - wskaźniki"
+ },
+ {
+  "n": "nowotwory ogółem",
+  "u": "%",
+  "c": "LUDNOŚĆ > URODZENIA I ZGONY > Zgony wg przyczyn - wskaźniki"
+ },
+ {
+  "n": "drogi dla rowerów ogółem",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI DLA ROWERÓW > Długość dróg dla rowerów"
+ },
+ {
+  "n": "drogi dla rowerów na 10 tys. km2",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI DLA ROWERÓW > Długość dróg dla rowerów"
+ },
+ {
+  "n": "uzależnieni od alkoholu na 1000 mieszkańców",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > STAN ZDROWIA LUDNOŚCI > Leczeni w poradniach dla osób z zaburzeniami psychicznymi - wskaźniki"
+ },
+ {
+  "n": "lekarze posiadający prawo wykonywania zawodu medycznego",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > KADRA MEDYCZNA > Lekarze na 10 tys. ludności"
+ },
+ {
+  "n": "fundacje, stowarzyszenia i organizacje społeczne na 10 tys. mieszkańców",
+  "u": "-",
+  "c": "PODMIOTY GOSPODARKI NARODOWEJ, PRZEKSZTAŁCENIA WŁASNOŚCIOWE I STRUKTURALNE > PODMIOTY GOSPODARKI NARODOWEJ - WSKAŹNIKI > Podmioty - wskaźniki"
+ },
+ {
+  "n": "ogółem",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > DOCHODY I WYDATKI BUDŻETÓW JST - WSKAŹNIKI > Środki z UE na finansowanie programów i projektów w przeliczeniu na 1 mieszkańca"
+ },
+ {
+  "n": "ogółem",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > DOCHODY I WYDATKI BUDŻETÓW JST - WSKAŹNIKI > Wydatki na obsługę długu publicznego JST wszystkich szczebli na 1000 zł dochodów budżetów JST"
+ },
+ {
+  "n": "ogółem",
+  "u": "%",
+  "c": "FINANSE PUBLICZNE > DOCHODY I WYDATKI BUDŻETÓW JST - WSKAŹNIKI > Udział wydatków inwestycyjnych JST w wydatkach ogółem"
+ },
+ {
+  "n": "ogółem",
+  "u": "%",
+  "c": "SZKOLNICTWO > ZDAWALNOŚĆ EGZAMINÓW > Zdawalność egzaminów maturalnych"
+ },
+ {
+  "n": "w stosunku do średniej krajowej",
+  "u": "-",
+  "c": "SZKOLNICTWO > ZDAWALNOŚĆ EGZAMINÓW > Zdawalność egzaminów maturalnych"
+ },
+ {
+  "n": "istniejące - stan w dniu 31 grudnia",
+  "u": "szt.",
+  "c": "STAN I OCHRONA ŚRODOWISKA > ODPADY KOMUNALNE > Dzikie wysypiska"
+ },
+ {
+  "n": "zlikwidowane - w ciągu roku",
+  "u": "szt.",
+  "c": "STAN I OCHRONA ŚRODOWISKA > ODPADY KOMUNALNE > Dzikie wysypiska"
+ },
+ {
+  "n": "kluby dziecięce",
+  "u": "ob.",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > OPIEKA NAD DZIEĆMI W WIEKU DO LAT 3.  ŻŁOBKI > Żłobki i kluby dziecięce"
+ },
+ {
+  "n": "dzieci w wieku 3 lat (łącznie z oddziałami i klubami dziecięcymi)",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > OPIEKA NAD DZIEĆMI W WIEKU DO LAT 3.  ŻŁOBKI > Żłobki i kluby dziecięce"
+ },
+ {
+  "n": "ogółem",
+  "u": "ob.",
+  "c": "KULTURA  > DZIAŁALNOŚĆ CENTRÓW, DOMÓW, OŚRODKÓW KULTURY, KLUBÓW I ŚWIETLIC > Centra, domy i ośrodki kultury, kluby i świetlice ogółem i wg sektora własności"
+ },
+ {
+  "n": "dzieci w żłobkach, oddziałach i klubach dziecięcych na 1000 dzieci w wieku do lat 3",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > OPIEKA NAD DZIEĆMI W WIEKU DO LAT 3.  ŻŁOBKI > Żłobki i kluby dziecięce - wskaźniki"
+ },
+ {
+  "n": "zgony osób w wieku do 65 lat na 1000 ludności w tej grupie wiekowej",
+  "u": "-",
+  "c": "LUDNOŚĆ > URODZENIA I ZGONY > Zgony ogółem, zgony niemowląt i zgony osób w wieku do 65 lat - wskaźniki"
+ },
+ {
+  "n": "drogi gminne i powiatowe o gruntowej nawierzchni – na 100 km2",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI PUBLICZNE POWIATOWE > Drogi - wskaźniki"
+ },
+ {
+  "n": "drogi gminne i powiatowe o twardej nawierzchni – na 100 km2",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI PUBLICZNE POWIATOWE > Drogi - wskaźniki"
+ },
+ {
+  "n": "średnie ogólnokształcące",
+  "u": "%",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Udział bezrobotnych zarejestrowanych wg wykształcenia w liczbie ludności w wieku produkcyjnym"
+ },
+ {
+  "n": "zasadnicze zawodowe",
+  "u": "%",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Udział bezrobotnych zarejestrowanych wg wykształcenia w liczbie ludności w wieku produkcyjnym"
+ },
+ {
+  "n": "gminy łącznie z miastami na prawach powiatu",
+  "u": "%",
+  "c": "FINANSE PUBLICZNE > DOCHODY I WYDATKI BUDŻETÓW JST - WSKAŹNIKI > Udział wydatków na drogi publiczne w wydatkach ogółem"
+ },
+ {
+  "n": "miasta na prawach powiatu",
+  "u": "%",
+  "c": "FINANSE PUBLICZNE > DOCHODY I WYDATKI BUDŻETÓW JST - WSKAŹNIKI > Udział wydatków na drogi publiczne w wydatkach ogółem"
+ },
+ {
+  "n": "ogółem",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > DOCHODY I WYDATKI BUDŻETÓW JST - WSKAŹNIKI > Środki gmin i powiatów z UE na finansowanie programów i projektów w przeliczeniu na 1 mieszkańca"
+ },
+ {
+  "n": "ogółem",
+  "u": "-",
+  "c": "FINANSE PUBLICZNE > DOCHODY I WYDATKI BUDŻETÓW JST - WSKAŹNIKI > Wydatki gmin i powiatów w dziale 757 Obsługa długu publicznego na 1000 zł dochodów budżetowych ogółem"
+ },
+ {
+  "n": "ogółem",
+  "u": "%",
+  "c": "FINANSE PUBLICZNE > DOCHODY I WYDATKI BUDŻETÓW JST - WSKAŹNIKI > Udział wydatków inwestycyjnych gmin i powiatów w wydatkach ogółem"
+ },
+ {
+  "n": "zużycie wody w gospodarstwach domowych ogółem na 1 mieszkańca",
+  "u": "m3",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > URZĄDZENIA SIECIOWE > Wodociągi"
+ },
+ {
+  "n": "szkoły ponadgimnazjalne zawodowe",
+  "u": "%",
+  "c": "SZKOLNICTWO > SZKOŁY PONADGIMNAZJALNE I PONADPODSTAWOWE ORAZ POLICEALNE > Zdawalność egzaminów maturalnych"
+ },
+ {
+  "n": "licea ogólnokształcące",
+  "u": "%",
+  "c": "SZKOLNICTWO > SZKOŁY PONADGIMNAZJALNE I PONADPODSTAWOWE ORAZ POLICEALNE > Zdawalność egzaminów maturalnych"
+ },
+ {
+  "n": "absolwenci, którzy otrzymali świadectwo dojrzałości – ogółem",
+  "u": "osoba",
+  "c": "SZKOLNICTWO > SZKOŁY PONADGIMNAZJALNE I PONADPODSTAWOWE ORAZ POLICEALNE > Maturzyści i absolwenci liceów ogólnokształcących, którzy otrzymali świadectwo dojrzałości"
+ },
+ {
+  "n": "absolwenci, którzy przystąpili do egzaminu maturalnego – ogółem",
+  "u": "osoba",
+  "c": "SZKOLNICTWO > SZKOŁY PONADGIMNAZJALNE I PONADPODSTAWOWE ORAZ POLICEALNE > Maturzyści i absolwenci liceów ogólnokształcących, którzy otrzymali świadectwo dojrzałości"
+ },
+ {
+  "n": "dzieci objęte opieką w żłobkach – ogółem",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > OPIEKA NAD DZIEĆMI W WIEKU DO LAT 3.  ŻŁOBKI > Dzieci objęte opieką w żłobkach i w wieku żłobkowym"
+ },
+ {
+  "n": "odsetek dzieci objętych opieką w żłobkach – ogółem",
+  "u": "%",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > OPIEKA NAD DZIEĆMI W WIEKU DO LAT 3.  ŻŁOBKI > Dzieci objęte opieką w żłobkach i w wieku żłobkowym"
+ },
+ {
+  "n": "ludność na 1 placówkę operatora wyznaczonego",
+  "u": "osoba",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > ŁĄCZNOŚĆ > Placówki pocztowe operatorów pocztowych - wskaźniki"
+ },
+ {
+  "n": "urodzenia żywe na 1000 ludności",
+  "u": "-",
+  "c": "LUDNOŚĆ > URODZENIA I ZGONY > Urodzenia żywe, zgony i przyrost naturalny na 1000 ludności"
+ },
+ {
+  "n": "zgony na 1000 ludności",
+  "u": "-",
+  "c": "LUDNOŚĆ > URODZENIA I ZGONY > Urodzenia żywe, zgony i przyrost naturalny na 1000 ludności"
+ },
+ {
+  "n": "ogółem",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Współczynnik feminizacji"
+ },
+ {
+  "n": "odsetek ludności objętej zbiórką odpadów komunalnych",
+  "u": "%",
+  "c": "STAN I OCHRONA ŚRODOWISKA > ODPADY KOMUNALNE > Odsetek ludności objętej zbiórką odpadów komunalnych"
+ },
+ {
+  "n": "na wsi",
+  "u": "%",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI PUBLICZNE > Odsetek długości dróg publicznych o nawierzchni twardej ulepszonej wg lokalizacji"
+ },
+ {
+  "n": "nowo utworzone miejsca pracy",
+  "u": "tys. msc.",
+  "c": "RYNEK PRACY > MIEJSCA PRACY > Nowo utworzone i zlikwidowane miejsca pracy"
+ },
+ {
+  "n": "zlikwidowane miejsca pracy",
+  "u": "tys. msc.",
+  "c": "RYNEK PRACY > MIEJSCA PRACY > Nowo utworzone i zlikwidowane miejsca pracy"
+ },
+ {
+  "n": "saldo migracji na 1000 ludności – ogółem",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > MIGRACJE WEWNĘTRZNE I ZAGRANICZNE > Migracje na pobyt stały gminne wg płci migrantów i kierunku (miasto, wieś)"
+ },
+ {
+  "n": "długość buspasów",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > KOMUNIKACJA MIEJSKA > Długość buspasów"
+ },
+ {
+  "n": "bardzo dobra",
+  "u": "%",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Subiektywna ocena sytuacji materialnej gospodarstw domowych"
+ },
+ {
+  "n": "raczej dobra",
+  "u": "%",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Subiektywna ocena sytuacji materialnej gospodarstw domowych"
+ },
+ {
+  "n": "szkoły podstawowe dla dzieci i młodzieży ogółem",
+  "u": "-",
+  "c": "SZKOLNICTWO > SZKOLNICTWO PODSTAWOWE > Uczniowie przypadający na 1 oddział w szkołach podstawowych"
+ },
+ {
+  "n": "pracujący na 1000 ludności ogółem",
+  "u": "osoba",
+  "c": "RYNEK PRACY > DANE ARCHIWALNE > Pracujący na 1000 ludności"
+ },
+ {
+  "n": "łóżka na oddziałach kardiologicznych na 10 tys. ludności",
+  "u": "-",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > SZPITALE > Szpitale ogólne i psychiatryczne"
+ },
+ {
+  "n": "lekarze (personel pracujący ogółem)",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > KADRA MEDYCZNA > Lekarze na 10 tys. ludności"
+ },
+ {
+  "n": "ogółem",
+  "u": "ob.",
+  "c": "SZKOLNICTWO > SZKOLNICTWO OGÓLNOKSZTAŁCĄCE > Szkoły ogólnokształcące razem"
+ },
+ {
+  "n": "uczniowie",
+  "u": "osoba",
+  "c": "SZKOLNICTWO > SZKOLNICTWO OGÓLNOKSZTAŁCĄCE > Szkoły ogólnokształcące razem"
+ },
+ {
+  "n": "ogółem – ogółem",
+  "u": "ob.",
+  "c": "SZKOLNICTWO > SZKOLNICTWO PONADGIMNAZJALNE I PONADPODSTAWOWE, ZAWODOWE I ARTYSTYCZNE > Szkoły średnie zawodowe razem"
+ },
+ {
+  "n": "z gospodarstw domowych",
+  "u": "%",
+  "c": "STAN I OCHRONA ŚRODOWISKA > ODPADY KOMUNALNE > Odpady zebrane selektywnie w relacji do ogółu odpadów"
+ },
+ {
+  "n": "gęstość zaludnienia powierzchni zabudowanej i zurbanizowanej (osoby/km2)",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Gęstość zaludnienia oraz wskaźniki"
+ },
+ {
+  "n": "dzieci w przedszkolach i innych formach wychowania przedszkolnego na 1 tys. dzieci w wieku 3-5 lat",
+  "u": "osoba",
+  "c": "WYCHOWANIE PRZEDSZKOLNE > WYCHOWANIE PRZEDSZKOLNE > Wychowanie przedszkolne - wskaźniki"
+ },
+ {
+  "n": "dzieci w wieku 3-5 lat przypadające na jedno miejsce w placówce wychowania przedszkolnego",
+  "u": "osoba",
+  "c": "WYCHOWANIE PRZEDSZKOLNE > WYCHOWANIE PRZEDSZKOLNE > Wychowanie przedszkolne - wskaźniki"
+ },
+ {
+  "n": "absolwenci zasadniczych szkół zawodowych w ogólnej liczbie absolwentów szkół ponadgimnazjalnych",
+  "u": "%",
+  "c": "SZKOLNICTWO > SZKOŁY PONADGIMNAZJALNE I PONADPODSTAWOWE ORAZ POLICEALNE > Absolwenci szkół ponadgimnazjalnych i ponadpodstawowych - wskaźniki"
+ },
+ {
+  "n": "absolwenci techników w ogólnej liczbie absolwentów szkół ponadgimnazjalnych",
+  "u": "%",
+  "c": "SZKOLNICTWO > SZKOŁY PONADGIMNAZJALNE I PONADPODSTAWOWE ORAZ POLICEALNE > Absolwenci szkół ponadgimnazjalnych i ponadpodstawowych - wskaźniki"
+ },
+ {
+  "n": "autostrady na 1000 km2",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI PUBLICZNE > Drogi ekspresowe i autostrady na 1000 km2"
+ },
+ {
+  "n": "grudzień – stopa bezrobocia rejestrowanego",
+  "u": "%",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Stopa bezrobocia rejestrowanego i stopa napływu bezrobotnych zarejestrowanych (dane miesięczne)"
+ },
+ {
+  "n": "wyższe",
+  "u": "%",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Odsetek bezrobotnych zarejestrowanych wg poziomu wykształcenia"
+ },
+ {
+  "n": "policealne oraz średnie zawodowe",
+  "u": "%",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Odsetek bezrobotnych zarejestrowanych wg poziomu wykształcenia"
+ },
+ {
+  "n": "personel posiadający prawo wykonywania zawodu medycznego",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > KADRA MEDYCZNA > Pielęgniarki i położne na 10 tys. ludności"
+ },
+ {
+  "n": "personel pracujący wg podstawowego miejsca pracy",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > KADRA MEDYCZNA > Pielęgniarki i położne na 10 tys. ludności"
+ },
+ {
+  "n": "drogi ekspresowe i autostrady na 1000 km2",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI PUBLICZNE > Drogi ekspresowe i autostrady na 1000 km2"
+ },
+ {
+  "n": "samochody osobowe – gaz (LPG)",
+  "u": "szt.",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > POJAZDY > Pojazdy według rodzajów stosowanego paliwa"
+ },
+ {
+  "n": "samochody osobowe – olej napędowy",
+  "u": "szt.",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > POJAZDY > Pojazdy według rodzajów stosowanego paliwa"
+ },
+ {
+  "n": "ogółem – kanalizacja",
+  "u": "%",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > URZĄDZENIA SIECIOWE > Budynki mieszkalne podłączone do infrastruktury technicznej - w % ogółu budynków mieszkalnych"
+ },
+ {
+  "n": "ogółem – wodociąg",
+  "u": "%",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > URZĄDZENIA SIECIOWE > Budynki mieszkalne podłączone do infrastruktury technicznej - w % ogółu budynków mieszkalnych"
+ },
+ {
+  "n": "odpady komunalne wytworzone przez jednego mieszkańca",
+  "u": "kg",
+  "c": "STAN I OCHRONA ŚRODOWISKA > ODPADY KOMUNALNE > Masa wytworzonych odpadów komunalnych przez jednego mieszkańca"
+ },
+ {
+  "n": "25-34",
+  "u": "%",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Odsetek bezrobotnych zarejestrowanych wg grup wieku"
+ },
+ {
+  "n": "24 lata i mniej",
+  "u": "%",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Odsetek bezrobotnych zarejestrowanych wg grup wieku"
+ },
+ {
+  "n": "saldo migracji wewnętrznych na 1000 ludności – ogółem",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > MIGRACJE WEWNĘTRZNE I ZAGRANICZNE > Migracje na pobyt stały gminne wg płci migrantów, w ruchu wewnętrznym i zagranicznym"
+ },
+ {
+  "n": "55-59/64 lata w liczbie ludności w tym wieku",
+  "u": "%",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Udział bezrobotnych zarejestrowanych wg grup wieku w liczbie ludności w tym wieku"
+ },
+ {
+  "n": "25-34 lata w liczbie ludności w tym wieku",
+  "u": "%",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Udział bezrobotnych zarejestrowanych wg grup wieku w liczbie ludności w tym wieku"
+ },
+ {
+  "n": "liczba gmin, w których była prowadzona selektywna zbiórka odpadów komunalnych - ogółem",
+  "u": "szt.",
+  "c": "STAN I OCHRONA ŚRODOWISKA > ODPADY KOMUNALNE > Selektywna zbiórka odpadów komunalnych w gminach"
+ },
+ {
+  "n": "liczba gmin, w których była prowadzona selektywna zbiórka papieru i tektury",
+  "u": "szt.",
+  "c": "STAN I OCHRONA ŚRODOWISKA > ODPADY KOMUNALNE > Selektywna zbiórka odpadów komunalnych w gminach"
+ },
+ {
+  "n": "liczba podatników dokonujących odliczenia od podatku z tytułu ulgi prorodzinnej",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > ŚWIADCZENIA NA RZECZ RODZINY > Ulga prorodzinna w zeznaniach podatkowych PIT"
+ },
+ {
+  "n": "kwota odliczeń od podatku z tytułu ulgi prorodzinnej",
+  "u": "zł",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > ŚWIADCZENIA NA RZECZ RODZINY > Ulga prorodzinna w zeznaniach podatkowych PIT"
+ },
+ {
+  "n": "zużycie energii elektrycznej na 1 mieszkańca",
+  "u": "kWh",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > URZĄDZENIA SIECIOWE > Energia elektryczna w gospodarstwach domowych w miastach"
+ },
+ {
+  "n": "ogółem",
+  "u": "-",
+  "c": "PODMIOTY GOSPODARKI NARODOWEJ, PRZEKSZTAŁCENIA WŁASNOŚCIOWE I STRUKTURALNE > PODMIOTY GOSPODARKI NARODOWEJ - WSKAŹNIKI > Podmioty wg klas wielkości na 1000 mieszkańców ogółem"
+ },
+ {
+  "n": "ogółem",
+  "u": "-",
+  "c": "PODMIOTY GOSPODARKI NARODOWEJ, PRZEKSZTAŁCENIA WŁASNOŚCIOWE I STRUKTURALNE > PODMIOTY GOSPODARKI NARODOWEJ - WSKAŹNIKI > Podmioty na 1000 mieszkańców wg wag klas wielkości"
+ },
+ {
+  "n": "przeciętna miesięczna liczba rodzin pobierających świadczenie",
+  "u": "-",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > ŚWIADCZENIA WYCHOWAWCZE > Świadczenie wychowawcze"
+ },
+ {
+  "n": "liczba dzieci, na które rodziny otrzymują świadczenie",
+  "u": "-",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > ŚWIADCZENIA WYCHOWAWCZE > Świadczenie wychowawcze"
+ },
+ {
+  "n": "przewozy pasażerskie na 1 mieszkańca",
+  "u": "-",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > KOMUNIKACJA MIEJSKA > Przewozy pasażerskie"
+ },
+ {
+  "n": "rodziny posiadające Kartę Dużej Rodziny",
+  "u": "-",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > ŚWIADCZENIA NA RZECZ RODZINY > Karta Dużej Rodziny"
+ },
+ {
+  "n": "Wydatki w Dziale 921 - Kultura i ochrona dziedzictwa narodowego - ogółem",
+  "u": "%",
+  "c": "FINANSE PUBLICZNE > DOCHODY I WYDATKI BUDŻETÓW JST - WSKAŹNIKI > Udział wydatków JST na kulturę i ochronę dziedzictwa narodowego w wydatkach ogółem"
+ },
+ {
+  "n": "ogółem",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > DOCHODY I WYDATKI BUDŻETÓW JST - WSKAŹNIKI > Łączne wydatki gmin i powiatów na bezpieczeństwo publiczne i ochronę przeciwpożarową na mieszkańca"
+ },
+ {
+  "n": "ogółem",
+  "u": "%",
+  "c": "FINANSE PUBLICZNE > DOCHODY I WYDATKI BUDŻETÓW JST - WSKAŹNIKI > Udział dochodów własnych budżetów miast na prawach powiatu w dochodach własnych budżetów gmin i miast na prawach powiatu"
+ },
+ {
+  "n": "miejsca w żłobkach, oddziałach i klubach dziecięcych na 1000 dzieci w wieku do lat 3",
+  "u": "-",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > OPIEKA NAD DZIEĆMI W WIEKU DO LAT 3.  ŻŁOBKI > Żłobki i kluby dziecięce - wskaźniki"
+ },
+ {
+  "n": "saldo migracji zagranicznych na 1000 ludności – ogółem",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > MIGRACJE WEWNĘTRZNE I ZAGRANICZNE > Migracje na pobyt stały gminne wg płci migrantów, w ruchu wewnętrznym i zagranicznym"
+ },
+ {
+  "n": "ogółem",
+  "u": "-",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Mediana wieku ludności według płci"
+ },
+ {
+  "n": "mieszkania oddane do użytkowania na 1000 ludności",
+  "u": "-",
+  "c": "PRZEMYSŁ I BUDOWNICTWO > BUDOWNICTWO - WSKAŹNIKI > Budownictwo mieszkaniowe – wskaźniki"
+ },
+ {
+  "n": "mieszkania oddane do użytkowania na 1000 zawartych małżeństw",
+  "u": "-",
+  "c": "PRZEMYSŁ I BUDOWNICTWO > BUDOWNICTWO - WSKAŹNIKI > Budownictwo mieszkaniowe – wskaźniki"
+ },
+ {
+  "n": "zdarzenia wymagające udziału jednostek ochrony przeciwpożarowej na 1000 ludności",
+  "u": "-",
+  "c": "ORGANIZACJA PAŃSTWA I WYMIAR SPRAWIEDLIWOŚCI > DZIAŁALNOŚĆ JEDNOSTEK OCHRONY PRZECIWPOŻAROWEJ > Zdarzenia wg rodzaju - wskaźniki"
+ },
+ {
+  "n": "pożary przypadające na 1000 ludności",
+  "u": "-",
+  "c": "ORGANIZACJA PAŃSTWA I WYMIAR SPRAWIEDLIWOŚCI > DZIAŁALNOŚĆ JEDNOSTEK OCHRONY PRZECIWPOŻAROWEJ > Zdarzenia wg rodzaju - wskaźniki"
+ },
+ {
+  "n": "wskaźnik przedsiębiorstw realizujących odbiór zmieszanych odpadów komunalnych",
+  "u": "%",
+  "c": "STAN I OCHRONA ŚRODOWISKA > ODPADY KOMUNALNE > Wskaźniki gospodarki odpadami komunalnymi"
+ },
+ {
+  "n": "wskaźnik świadczenia usług odbioru odpadów komunalnych z nieruchomości zamieszkanych",
+  "u": "%",
+  "c": "STAN I OCHRONA ŚRODOWISKA > ODPADY KOMUNALNE > Wskaźniki gospodarki odpadami komunalnymi"
+ },
+ {
+  "n": "beneficjenci środowiskowej pomocy społecznej na 10 tys. ludności",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > BENEFICJENCI ŚRODOWISKOWEJ POMOCY SPOŁECZNEJ > Beneficjenci środowiskowej pomocy społecznej - wskaźniki"
+ },
+ {
+  "n": "mężczyźni – 0",
+  "u": "lata",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Oczekiwane trwanie życia w zdrowiu"
+ },
+ {
+  "n": "mężczyźni – 15",
+  "u": "lata",
+  "c": "LUDNOŚĆ > STAN LUDNOŚCI > Oczekiwane trwanie życia w zdrowiu"
+ },
+ {
+  "n": "łącza abonenckie - ogółem w tysiącach",
+  "u": "-",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > ŁĄCZNOŚĆ > Łącza abonenckie, dostęp do sieci Internet"
+ },
+ {
+  "n": "łącza abonenckie - konsumenci w tysiącach",
+  "u": "-",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > ŁĄCZNOŚĆ > Łącza abonenckie, dostęp do sieci Internet"
+ },
+ {
+  "n": "wina kierujących pojazdami - ogółem",
+  "u": "szt.",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > WYPADKI DROGOWE > Wypadki drogowe według ważniejszych przyczyn"
+ },
+ {
+  "n": "wina kierujących pojazdami - niedostosowanie prędkości do warunków ruchu",
+  "u": "szt.",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > WYPADKI DROGOWE > Wypadki drogowe według ważniejszych przyczyn"
+ },
+ {
+  "n": "ogółem",
+  "u": "szt.",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > WYPADKI DROGOWE > Wypadki drogowe z udziałem nietrzeźwych użytkowników dróg"
+ },
+ {
+  "n": "kierujący pojazdami ogółem",
+  "u": "szt.",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > WYPADKI DROGOWE > Wypadki drogowe z udziałem nietrzeźwych użytkowników dróg"
+ },
+ {
+  "n": "urodzenia żywe – ogółem – ogółem",
+  "u": "-",
+  "c": "LUDNOŚĆ > URODZENIA I ZGONY > Urodzenia żywe małżeńskie/pozamałżeńskie według płci w podziale na miasta i wieś"
+ },
+ {
+  "n": "urodzenia żywe – ogółem – chłopcy",
+  "u": "-",
+  "c": "LUDNOŚĆ > URODZENIA I ZGONY > Urodzenia żywe małżeńskie/pozamałżeńskie według płci w podziale na miasta i wieś"
+ },
+ {
+  "n": "ogółem – wodociąg",
+  "u": "%",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > ZASOBY MIESZKANIOWE > Mieszkania wyposażone w instalacje - w % ogółu mieszkań"
+ },
+ {
+  "n": "ogółem – łazienka",
+  "u": "%",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > ZASOBY MIESZKANIOWE > Mieszkania wyposażone w instalacje - w % ogółu mieszkań"
+ },
+ {
+  "n": "dochody własne JST na 1 mieszkańca",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > DOCHODY I WYDATKI BUDŻETÓW JST - WSKAŹNIKI > Wskaźniki"
+ },
+ {
+  "n": "wydatki inwestycyjne JST w przeliczeniu na 1 mieszkańca",
+  "u": "zł",
+  "c": "FINANSE PUBLICZNE > DOCHODY I WYDATKI BUDŻETÓW JST - WSKAŹNIKI > Wskaźniki"
+ },
+ {
+  "n": "miasta",
+  "u": "-",
+  "c": "LUDNOŚĆ > MAŁŻEŃSTWA, ROZWODY I SEPARACJE > Małżeństwa zawarte"
+ },
+ {
+  "n": "rozwody – ogółem",
+  "u": "-",
+  "c": "LUDNOŚĆ > MAŁŻEŃSTWA, ROZWODY I SEPARACJE > Rozwody i separacje"
+ },
+ {
+  "n": "rozwody na 10 tys. ludności – ogółem",
+  "u": "-",
+  "c": "LUDNOŚĆ > MAŁŻEŃSTWA, ROZWODY I SEPARACJE > Rozwody i separacje"
+ },
+ {
+  "n": "porady lekarskie ogółem",
+  "u": "-",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > AMBULATORYJNA OPIEKA ZDROWOTNA > Ambulatoryjna opieka zdrowotna - porady lekarskie"
+ },
+ {
+  "n": "odsetek dzieci objętych wychowaniem przedszkolnym – ogółem – dzieci w wieku 3 - 6 lat",
+  "u": "%",
+  "c": "WYCHOWANIE PRZEDSZKOLNE > WYCHOWANIE PRZEDSZKOLNE > Dzieci w wieku przedszkolnym, dzieci objęte wychowaniem przedszkolnym i odsetek dzieci objętych wychowaniem przedszkolnym"
+ },
+ {
+  "n": "pracujący na 1000 ludności w wieku produkcyjnym",
+  "u": "osoba",
+  "c": "RYNEK PRACY > DANE ARCHIWALNE > Pracujący na 1000 ludności"
+ },
+ {
+  "n": "zasoby zakładów pracy – czynsz",
+  "u": "zł",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > KOSZTY UTRZYMANIA ZASOBÓW > Średnie opłaty eksploatacyjne za mieszkania"
+ },
+ {
+  "n": "zasoby Skarbu Państwa – czynsz",
+  "u": "zł",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > KOSZTY UTRZYMANIA ZASOBÓW > Średnie opłaty eksploatacyjne za mieszkania"
+ },
+ {
+  "n": "udział powierzchni terenów zieleni w powierzchni ogółem",
+  "u": "%",
+  "c": "STAN I OCHRONA ŚRODOWISKA > TERENY ZIELENI > Tereny zieleni - wskaźniki"
+ },
+ {
+  "n": "kwoty świadczeń Dobry Start wypłacone w roku",
+  "u": "zł",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > ŚWIADCZENIA NA RZECZ RODZINY > Dobry Start"
+ },
+ {
+  "n": "liczba dzieci (i osób uczących się), na które wypłacono świadczenia Dobry Start w roku",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > ŚWIADCZENIA NA RZECZ RODZINY > Dobry Start"
+ },
+ {
+  "n": "liczba ludności na łóżko w szpitalach psychiatrycznych",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > SZPITALE > Liczba ludności na łóżko w szpitalach ogólnych i psychiatrycznych"
+ },
+ {
+  "n": "wyższe – wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Stopa bezrobocia wg poziomu wykształcenia"
+ },
+ {
+  "n": "policealne oraz średnie zawodowe/branżowe – wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Stopa bezrobocia wg poziomu wykształcenia"
+ },
+ {
+  "n": "ogółem – wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Stopa bezrobocia wg wieku"
+ },
+ {
+  "n": "ogółem, Polska = 100 – wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Stopa bezrobocia wg wieku"
+ },
+ {
+  "n": "wyższe – wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Wskaźnik zatrudnienia wg poziomu wykształcenia"
+ },
+ {
+  "n": "policealne oraz średnie zawodowe/branżowe – wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Wskaźnik zatrudnienia wg poziomu wykształcenia"
+ },
+ {
+  "n": "ogółem – ogółem – wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Stopa bezrobocia wg wieku produkcyjnego i płci"
+ },
+ {
+  "n": "w wieku produkcyjnym – ogółem – wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Stopa bezrobocia wg wieku produkcyjnego i płci"
+ },
+ {
+  "n": "ogółem – wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Stopa bezrobocia wg miejsca zamieszkania"
+ },
+ {
+  "n": "miasta – wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Stopa bezrobocia wg miejsca zamieszkania"
+ },
+ {
+  "n": "wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Osoby dorosłe uczestniczące w kształceniu lub szkoleniu w wieku 25-64 lata"
+ },
+ {
+  "n": "ogółem – wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT, DLA MIAST WOJEWÓDZKICH ORAZ DLA OBSZARU WOJEWÓDZTWA BEZ MIASTA WOJEWÓDZKIEGO WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Wskaźnik zatrudnienia według wieku"
+ },
+ {
+  "n": "15-24 – wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT, DLA MIAST WOJEWÓDZKICH ORAZ DLA OBSZARU WOJEWÓDZTWA BEZ MIASTA WOJEWÓDZKIEGO WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Wskaźnik zatrudnienia według wieku"
+ },
+ {
+  "n": "wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT, DLA MIAST WOJEWÓDZKICH ORAZ DLA OBSZARU WOJEWÓDZTWA BEZ MIASTA WOJEWÓDZKIEGO WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Współczynnik aktywności zawodowej osób w wieku 18-59/64 lata"
+ },
+ {
+  "n": "wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT, DLA MIAST WOJEWÓDZKICH ORAZ DLA OBSZARU WOJEWÓDZTWA BEZ MIASTA WOJEWÓDZKIEGO WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Wskaźnik zatrudnienia kobiet"
+ },
+ {
+  "n": "liczba mieszkań objętych wydanymi decyzjami o pozwoleniu na budowę lub przyjętymi zgłoszeniami budowy z projektem budowlanym (do których nie wniesiono sprzeciwu) w przeliczeniu na 1000 ludności",
+  "u": "-",
+  "c": "PRZEMYSŁ I BUDOWNICTWO > POZWOLENIA WYDANE NA BUDOWĘ I ZGŁOSZENIA BUDOWY Z PROJEKTEM BUDOWLANYM > Wskaźniki"
+ },
+ {
+  "n": "powierzchnia użytkowa mieszkań objętych wydanymi decyzjami o pozwoleniu na budowę lub przyjętymi zgłoszeniami budowy z projektem budowlanym (do których nie wniesiono sprzeciwu) w przeliczeniu na 1000 ludności",
+  "u": "m2",
+  "c": "PRZEMYSŁ I BUDOWNICTWO > POZWOLENIA WYDANE NA BUDOWĘ I ZGŁOSZENIA BUDOWY Z PROJEKTEM BUDOWLANYM > Wskaźniki"
+ },
+ {
+  "n": "systemy rowerów publicznych",
+  "u": "szt.",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI DLA ROWERÓW > System rowerów publicznych"
+ },
+ {
+  "n": "stacje",
+  "u": "szt.",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI DLA ROWERÓW > System rowerów publicznych"
+ },
+ {
+  "n": "maksymalna cena wskaźnikowa za 1 m3 dostarczanej wody dla gospodarstw domowych",
+  "u": "zł",
+  "c": "STAN I OCHRONA ŚRODOWISKA > USŁUGI ZBIOROWEGO ZAOPATRZENIA W WODĘ I ZBIOROWEGO ODPROWADZANIA ŚCIEKÓW > Dostępność cenowa wody i ścieków"
+ },
+ {
+  "n": "maksymalna cena wskaźnikowa za 1 m3 dostarczanej wody dla przedsiębiorstw",
+  "u": "zł",
+  "c": "STAN I OCHRONA ŚRODOWISKA > USŁUGI ZBIOROWEGO ZAOPATRZENIA W WODĘ I ZBIOROWEGO ODPROWADZANIA ŚCIEKÓW > Dostępność cenowa wody i ścieków"
+ },
+ {
+  "n": "styczeń – mediana wieku – ogółem",
+  "u": "lata",
+  "c": "RYNEK PRACY > PRACUJĄCY WEDŁUG INNEGO PODZIAŁU NIŻ PKD > Pracujący w gospodarce narodowej wg płci i miejsca zamieszkania (dane miesięczne)"
+ },
+ {
+  "n": "wolne miejsca pracy",
+  "u": "tys. msc.",
+  "c": "RYNEK PRACY > MIEJSCA PRACY > Wolne miejsca pracy"
+ },
+ {
+  "n": "wskaźnik wolnych miejsc pracy",
+  "u": "%",
+  "c": "RYNEK PRACY > MIEJSCA PRACY > Wolne miejsca pracy"
+ },
+ {
+  "n": "zarejestrowani bezrobotni na 1 ofertę pracy",
+  "u": "osoba",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Zarejestrowani bezrobotni na 1 ofertę pracy"
+ },
+ {
+  "n": "oferty pracy w ciągu roku",
+  "u": "-",
+  "c": "RYNEK PRACY > BEZROBOCIE REJESTROWANE > Zarejestrowani bezrobotni na 1 ofertę pracy"
+ },
+ {
+  "n": "o nawierzchni twardej",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI PUBLICZNE GMINNE > Drogi gminne wg typu nawierzchni"
+ },
+ {
+  "n": "o nawierzchni twardej ulepszonej",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI PUBLICZNE GMINNE > Drogi gminne wg typu nawierzchni"
+ },
+ {
+  "n": "migracje międzywojewódzkie na pobyt stały - wymeldowania osób w wieku 20–40 lat",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > MIGRACJE WEWNĘTRZNE I ZAGRANICZNE > Migracje - wskaźniki"
+ },
+ {
+  "n": "migracje międzywojewódzkie na pobyt stały - zameldowania osób w wieku 20–40 lat",
+  "u": "osoba",
+  "c": "LUDNOŚĆ > MIGRACJE WEWNĘTRZNE I ZAGRANICZNE > Migracje - wskaźniki"
+ },
+ {
+  "n": "łóżka w szpitalach ogólnych na 10 tys. ludności",
+  "u": "-",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > SZPITALE > Łóżka w szpitalach ogólnych i psychiatrycznych - wskaźniki"
+ },
+ {
+  "n": "łóżka w szpitalach psychiatrycznych na 10 tys. ludności",
+  "u": "-",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > SZPITALE > Łóżka w szpitalach ogólnych i psychiatrycznych - wskaźniki"
+ },
+ {
+  "n": "odsetek wychowanków w wieku poniżej 10 r. życia przebywających w placówkach opiekuńczo-wychowawczych typu socjalizacyjnego, interwencyjnego, specjalistyczno-terapeutycznego w ogólnej liczbie wychowanków przebywających w tych placówkach",
+  "u": "%",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > PIECZA ZASTĘPCZA - WSKAŹNIKI > Opieka nad dziećmi i młodzieżą - piecza zastępcza - wskaźniki"
+ },
+ {
+  "n": "liczba dzieci umieszczonych w rodzinnej pieczy zastępczej na 1000 dzieci do 18 r. życia",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > PIECZA ZASTĘPCZA - WSKAŹNIKI > Opieka nad dziećmi i młodzieżą - piecza zastępcza - wskaźniki"
+ },
+ {
+  "n": "powierzchnia terenów zieleni ogółem na 1 mieszkańca",
+  "u": "m2",
+  "c": "STAN I OCHRONA ŚRODOWISKA > TERENY ZIELENI > Tereny zieleni - wskaźniki"
+ },
+ {
+  "n": "odsetek pracujących w sekcji A",
+  "u": "%",
+  "c": "RYNEK PRACY > PRACUJĄCY, ZATRUDNIENI I PRZECIĘTNE ZATRUDNIENIE WEDŁUG PKD > Pracujący - wskaźniki"
+ },
+ {
+  "n": "odsetek pracujących w sekcjach B-E",
+  "u": "%",
+  "c": "RYNEK PRACY > PRACUJĄCY, ZATRUDNIENI I PRZECIĘTNE ZATRUDNIENIE WEDŁUG PKD > Pracujący - wskaźniki"
+ },
+ {
+  "n": "liczba nowych budynków oddanych do użytkowania na 1000 ludności",
+  "u": "-",
+  "c": "PRZEMYSŁ I BUDOWNICTWO > BUDOWNICTWO - WSKAŹNIKI > Nowe budynki na 1000 ludności"
+ },
+ {
+  "n": "liczba nowych budynków niemieszkalnych oddanych do użytkowania na 1000 ludności",
+  "u": "-",
+  "c": "PRZEMYSŁ I BUDOWNICTWO > BUDOWNICTWO - WSKAŹNIKI > Nowe budynki na 1000 ludności"
+ },
+ {
+  "n": "przewozy pasażerów w tys.",
+  "u": "-",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > KOMUNIKACJA MIEJSKA > Przewozy pasażerskie"
+ },
+ {
+  "n": "wartość liczbowa",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Odsetek osób w wieku 30-34 lata posiadających wyższe wykształcenie"
+ },
+ {
+  "n": "średniomiesięczna liczba świadczeń rodzinnych dla rodzin z dziećmi na 1000 mieszkańców w wieku do 24 roku życia",
+  "u": "szt.",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > ŚWIADCZENIA NA RZECZ RODZINY > Świadczenie dla rodzin z dziećmi i o charakterze opiekuńczym"
+ },
+ {
+  "n": "średniomiesięczna liczba świadczeń rodzinnych dla rodzin z dziećmi",
+  "u": "szt.",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > ŚWIADCZENIA NA RZECZ RODZINY > Świadczenie dla rodzin z dziećmi i o charakterze opiekuńczym"
+ },
+ {
+  "n": "liczba osób pobierających świadczenie z funduszu alimentacyjnego (średniomiesięczna)",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > ŚWIADCZENIA NA RZECZ RODZINY > Świadczenie alimentacyjne - wskaźniki"
+ },
+ {
+  "n": "suma kwot wydatkowanych z funduszu alimentacyjnego w ciągu roku",
+  "u": "zł",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > ŚWIADCZENIA NA RZECZ RODZINY > Świadczenie alimentacyjne - wskaźniki"
+ },
+ {
+  "n": "ofiary wypadków ogółem",
+  "u": "osoba",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > WYPADKI DROGOWE > Wypadki drogowe i ich ofiary"
+ },
+ {
+  "n": "wartość liczbowa – 15-34",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Osoby młode niepracujące, nieuczące się i niedokształcające się (NEET)"
+ },
+ {
+  "n": "wartość liczbowa – 15-24",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Osoby młode niepracujące, nieuczące się i niedokształcające się (NEET)"
+ },
+ {
+  "n": "ogółem",
+  "u": "osoba",
+  "c": "GOSPODARKA MIESZKANIOWA I KOMUNALNA > URZĄDZENIA SIECIOWE > Ludność korzystająca z sieci gazowej"
+ },
+ {
+  "n": "wyjeżdżający do szkół podstawowych",
+  "u": "-",
+  "c": "SZKOLNICTWO > DOJAZDY UCZNIÓW DO SZKÓŁ > Dojazdy uczniów do szkół podstawowych"
+ },
+ {
+  "n": "przyjeżdżający do szkół podstawowych",
+  "u": "-",
+  "c": "SZKOLNICTWO > DOJAZDY UCZNIÓW DO SZKÓŁ > Dojazdy uczniów do szkół podstawowych"
+ },
+ {
+  "n": "wyjeżdżający do szkół ponadpodstawowych",
+  "u": "-",
+  "c": "SZKOLNICTWO > DOJAZDY UCZNIÓW DO SZKÓŁ > Dojazdy uczniów do szkół ponadpodstawowych"
+ },
+ {
+  "n": "przyjeżdżający do szkół ponadpodstawowych",
+  "u": "-",
+  "c": "SZKOLNICTWO > DOJAZDY UCZNIÓW DO SZKÓŁ > Dojazdy uczniów do szkół ponadpodstawowych"
+ },
+ {
+  "n": "gęstość dróg publicznych",
+  "u": "km",
+  "c": "TRANSPORT I ŁĄCZNOŚĆ > DROGI PUBLICZNE > Gęstość dróg publicznych"
+ },
+ {
+  "n": "AIDS",
+  "u": "osoba",
+  "c": "OCHRONA ZDROWIA, OPIEKA SPOŁECZNA I ŚWIADCZENIA NA RZECZ RODZINY > STAN ZDROWIA LUDNOŚCI > Zachorowania na choroby zakaźne i zatrucia"
+ },
+ {
+  "n": "zdrowie",
+  "u": "zł",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Przeciętne miesięczne wydatki na 1 osobę"
+ },
+ {
+  "n": "dobra",
+  "u": "%",
+  "c": "LUDNOŚĆ > GOSPODARSTWA DOMOWE > Subiektywna ocena sytuacji materialnej gospodarstw domowych"
+ },
+ {
+  "n": "biodegradowalne",
+  "u": "%",
+  "c": "STAN I OCHRONA ŚRODOWISKA > ODPADY KOMUNALNE > Odpady zebrane selektywnie w relacji do ogółu odpadów"
+ },
+ {
+  "n": "wartość liczbowa – 15-29",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Osoby młode niepracujące, nieuczące się i niedokształcające się (NEET)"
+ },
+ {
+  "n": "wartość liczbowa – 20-24",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Osoby młode niepracujące, nieuczące się i niedokształcające się (NEET)"
+ },
+ {
+  "n": "wartość liczbowa – 25-29",
+  "u": "%",
+  "c": "RYNEK PRACY > AKTYWNOŚĆ EKONOMICZNA LUDNOŚCI W WIEKU 15-89 LAT WEDŁUG BAEL (DANE ŚREDNIOROCZNE) > Osoby młode niepracujące, nieuczące się i niedokształcające się (NEET)"
+ }
+]

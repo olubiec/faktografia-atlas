@@ -98,8 +98,8 @@ export function ListPodium({ list: l, active, end, onEnd, to, warm, levelSwitch 
               Zobacz na mapie
             </Link>
             {shown.full && (
-              <a href={shown.full.href} aria-label={`${shown.full.ranking ? 'Pełny ranking' : 'Pełne zestawienie'}: ${shown.full.label}`} className={BUTTON_SECONDARY} data-slot="start-list-full">
-                {shown.full.ranking ? 'Pełny ranking' : 'Pełne zestawienie'}
+              <a href={shown.full.href} aria-label={`Pełne zestawienie: ${shown.full.label}`} className={BUTTON_SECONDARY} data-slot="start-list-full">
+                Pełne zestawienie
               </a>
             )}
           </div>

@@ -39,7 +39,7 @@ export function RankingsTable({ rows, page, pages, total, q, onQuery, onPage, un
         <p role="status" className="text-sm text-olowek">Brak jednostek do pokazania.</p>
       ) : (
         <table className="w-full table-fixed border-collapse text-left text-sm">
-          <caption className="sr-only">{`Ranking: ${total} jednostek`}</caption>
+          <caption className="sr-only">{`Zestawienie: ${total} jednostek`}</caption>
           <thead>
             <tr className="border-b border-linia text-olowek">
               <th scope="col" className="w-20 py-2 pr-2 font-normal">Miejsce</th>

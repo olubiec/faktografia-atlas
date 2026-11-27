@@ -6,7 +6,7 @@ import { useIsMobile } from '../hooks/useIsMobile';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '../start/ListPodium';
 import indicators from '../../../config/indicators.json';
 import listsConfig from '../../../config/lists.json';
-import { DISCOVER_INDEX, DISCOVER_INDEX_NAME, listPath, plural, topicsOf, type TopicIndicator } from '@/core/seo/topics';
+import { DISCOVER_INDEX, DISCOVER_INDEX_NAME, plural, topicsOf, type TopicIndicator } from '@/core/seo/topics';
 import { mapHref } from '@/core/start/discoveries';
 import { useIndicatorRegistry } from '../hooks/useIndicatorRegistry';
 import { RANKINGS_DEFAULTS, writeRankingsParams } from '@/core/ranking/rankings-url';
@@ -28,7 +28,7 @@ export function DiscoverIndex() {
   const pickedName = picked ? (registry.byId.get(picked)?.name ?? null) : null;
   const mobile = useIsMobile();
   const lists = listsConfig.lists;
-  const topics = topicsOf(indicators as TopicIndicator[]).map((t) => ({ ...t, own: lists.filter((l) => t.indicators.some((i) => i.id === l.indicatorId)) }));
+  const topicCount = topicsOf(indicators as TopicIndicator[]).length;
   return (
     <SiteLayout meta={{ title: 'Tematy i zestawienia gmin i powiatów – dane GUS', description: DESCRIPTION, canonical: DISCOVER_INDEX }}>
       <div className="mx-auto w-full max-w-5xl px-4 py-8 md:px-8 md:py-12 text-tusz">
@@ -40,7 +40,7 @@ export function DiscoverIndex() {
         </nav>
         <h1 className="mt-6 break-words text-3xl font-extrabold leading-tight md:text-4xl">{DISCOVER_INDEX_NAME}</h1>
         <p className="mt-4 max-w-prose">
-          {`${plural(topics.length, 'temat', 'tematy', 'tematów')} i ${plural(lists.length, 'zestawienie', 'zestawienia', 'zestawień')} z danych Banku Danych Lokalnych GUS. Każde zestawienie obejmuje całą listę porównanych jednostek, po 50 pozycji na stronę, z linkami do stron miejsc.`}
+          {`${plural(topicCount, 'temat', 'tematy', 'tematów')} i ${plural(lists.length, 'zestawienie', 'zestawienia', 'zestawień')} z danych Banku Danych Lokalnych GUS. Każde zestawienie obejmuje całą listę porównanych jednostek, po 50 pozycji na stronę, z linkami do stron miejsc.`}
         </p>
 
         {showRanking && (
@@ -55,7 +55,7 @@ export function DiscoverIndex() {
         {!showRanking && (
         <section aria-labelledby="wybierz-dane" className="mt-12 md:mt-16" data-slot="discover-menu">
           <h2 id="wybierz-dane" className="text-xl font-bold">Wybierz dane</h2>
-          <p className="mt-2 max-w-prose text-sm text-olowek">Dział, grupa, wskaźnik – to samo menu co przy mapie. Po wyborze wskaźnika zobaczysz jego ranking albo mapę.</p>
+          <p className="mt-2 max-w-prose text-sm text-olowek">Dział, grupa, wskaźnik – to samo menu co przy mapie. Po wyborze wskaźnika zobaczysz jego zestawienie albo mapę.</p>
           <div className="mt-4 border border-linia bg-arkusz p-4 md:p-6">
             <DataMenu selectedId={picked} onSelect={setPicked} onClose={() => undefined} layout={mobile ? 'stack' : 'columns'} />
           </div>
@@ -63,7 +63,7 @@ export function DiscoverIndex() {
             <div className="mt-4 flex flex-col gap-3 border border-tusz bg-arkusz p-4 md:flex-row md:items-center md:justify-between" role="status" data-slot="discover-picked">
               <p className="m-0 font-bold">{pickedName ?? 'Wybrany wskaźnik'}</p>
               <div className="flex flex-wrap gap-3">
-                <button type="button" onClick={() => setParams(writeRankingsParams({ ...RANKINGS_DEFAULTS, i: picked }))} className={`${BUTTON_PRIMARY} cursor-pointer`} data-slot="discover-ranking">Pokaż ranking</button>
+                <button type="button" onClick={() => setParams(writeRankingsParams({ ...RANKINGS_DEFAULTS, i: picked }))} className={`${BUTTON_PRIMARY} cursor-pointer`} data-slot="discover-ranking">Pokaż zestawienie</button>
                 <Link to={mapHref({ indicatorId: picked })} className={BUTTON_SECONDARY} data-slot="discover-map">Zobacz na mapie</Link>
               </div>
             </div>
@@ -71,19 +71,6 @@ export function DiscoverIndex() {
         </section>
         )}
 
-        {topics.map((t, i) => (
-          <section key={t.slug} aria-labelledby={`t${i + 1}`} className="mt-12 md:mt-16">
-            <h2 id={`t${i + 1}`} className="text-xl font-bold">{t.name}</h2>
-            <p className="mt-3"><a href={t.path} className={BUTTON_PRIMARY}>{`Zobacz temat: ${t.name}`}</a></p>
-            {t.own.length > 0 && (
-              <ul className="mt-3 flex flex-wrap gap-3">
-                {t.own.map((l) => (
-                  <li key={l.slug}><a href={listPath(l.slug)} className={BUTTON_SECONDARY}>{l.h1}</a></li>
-                ))}
-              </ul>
-            )}
-          </section>
-        ))}
       </div>
     </SiteLayout>
   );

@@ -191,7 +191,7 @@ export function buildNewsPage(entry: NewsEntry, ctx: NewsContext): NewsPage | nu
       { teryt: '', name: `${short} ${entry.year}`, path },
     ],
     related: [
-      { teryt: '', name: `Pełny ranking: ${short} – ${LEVELS[level].short}`, path: rankingPath(ind, level) },
+      { teryt: '', name: `Pełne zestawienie: ${short} – ${LEVELS[level].short}`, path: rankingPath(ind, level) },
       { teryt: '', name: `Temat: ${ind.group}`, path: topicPath(ind.group) },
     ],
     indexable: rises.length + falls.length > 0,
