@@ -20,6 +20,7 @@ import { BUTTON_SECONDARY, ListPodium } from './ListPodium';
 import { isFrugalNetwork } from './preloadMap';
 import { useLevelList, type LevelWish } from './useLevelList';
 import { useLibraryRing } from './useLibraryRing';
+import { useLevelsWithData } from './useLevelsWithData';
 import { useSwipe } from './useSwipe';
 
 export interface StartCarouselProps {
@@ -88,13 +89,18 @@ export function StartCarousel({ lists, ready, to, onWarm }: StartCarouselProps) 
   const index = Math.max(0, stripIds.indexOf(selId ?? ''));
   const pre = featured.find((l) => l.indicatorId === selId) ?? null;
   const ind = selId ? indicatorOf(selId) : null;
-  const wantLevel = level && ind ? clampLevel(level, ind.minLevel) : null;
+  // Poziomy z danymi: wybrany poziom bez danych zastępujemy najgłębszym, który je ma (jego przycisk jest nieklikalny).
+  const dataLevels = useLevelsWithData(selId, ready);
+  const withData = dataLevels?.levels ?? [];
+  const deepest = withData[withData.length - 1] ?? null;
+  const chosenLevel = level && ind ? clampLevel(level, ind.minLevel) : null;
+  const current = chosenLevel ?? pre?.level ?? null;
+  const wantLevel: Level | null = deepest && current && !withData.includes(current) ? deepest : chosenLevel;
 
   // Gotowy plik, gdy poziom się zgadza; inaczej liczy przeglądarka (wskaźnik z biblioteki zawsze).
   const needsCompute = !!selId && (!pre || (wantLevel !== null && wantLevel !== pre.level));
   const wish: LevelWish | null = needsCompute ? (wantLevel ?? 'auto') : null;
   const { result, retry } = useLevelList(needsCompute ? selId : null, wish);
-
   // Najbliższy ruch w sekcji zamraża wybór losowy; dalsze zestawienia dociągamy także przy oszczędzaniu danych.
   const touch = () => {
     setArmed(true);
@@ -141,7 +147,7 @@ export function StartCarousel({ lists, ready, to, onWarm }: StartCarouselProps) 
   const levelSwitch = ind && (
     <div className="flex min-w-0 flex-col gap-1.5 md:w-72" data-slot="start-level">
       <span className="text-sm font-semibold text-tusz">Poziom</span>
-      <LevelSwitch value={shownLevel} minLevel={ind.minLevel} {...(libraryLevels(selId) ? { levels: libraryLevels(selId)! } : {})} onChange={(l) => { touch(); setLevel(l); }} />
+      <LevelSwitch value={shownLevel} minLevel={ind.minLevel} {...(libraryLevels(selId) ? { levels: libraryLevels(selId)! } : {})} {...(dataLevels ? { withData: dataLevels.levels } : {})} onChange={(l) => { touch(); setLevel(l); }} />
     </div>
   );
 

@@ -1,4 +1,6 @@
 import { titleCase } from './tree';
+import { pkdSection } from './name-pkd';
+import { qualifyByTopic, withBudgetOwner } from './name-topic';
 
 const norm = (s: string) => s.toLocaleLowerCase('pl').replace(/ł/g, 'l').normalize('NFKD').replace(/[̀-ͯ]/g, '');
 const stems = (s: string) =>
@@ -23,7 +25,7 @@ function isBareQualifier(name: string): boolean {
  * Gdy nazwa już zawiera słowo z tematu – zostaje bez zmian.
  */
 export function standaloneName(name: string, categoryPath?: string | null): string {
-  return tidyName(withDivision(ageWords(withTopic(tidyName(name), categoryPath)), categoryPath));
+  return tidyName(withBudgetOwner(withDivision(ageWords(withTopic(pkdSection(tidyName(name)), categoryPath)), categoryPath), categoryPath));
 }
 
 /** „5” na końcu nazwy to wiek: „mężczyźni – 5” → „mężczyźni w wieku 5 lat”. */
@@ -44,6 +46,9 @@ export function tidyName(name: string): string {
   let out = name
     .replace(/\s*\(?\s*stan w dniu 31 grudnia\s*\)?/gi, '')
     .replace(/(\d)\*(\p{L})/gu, '$1 $2')
+    .replace(/\s*[-–]\s*wartość liczbowa\s*$/i, '')
+    .replace(/^wartość liczbowa(?=\s*[-–]|$)/i, 'ogółem')
+    .replace(/\s+[-–]\s*$/, '')
     .replace(/\s+/g, ' ')
     .trim();
   const trimmed = out.replace(/( – ogółem)+$/i, '');
@@ -56,7 +61,7 @@ export function tidyName(name: string): string {
 function withTopic(name: string, categoryPath?: string | null): string {
   const topicRaw = (categoryPath ?? '').split(' > ').map((p) => p.trim()).filter(Boolean).pop() ?? '';
   if (!topicRaw) return name;
-  if (!isBareQualifier(name)) return withSubject(name, topicRaw);
+  if (!isBareQualifier(name)) return withSubject(qualifyByTopic(name, topicRaw, categoryPath ?? ''), topicRaw);
   const topicStems = stems(topicRaw).filter((st) => !GENERIC_STEMS.has(st));
   const own = new Set(stems(name));
   if (topicStems.length === 0 || topicStems.some((s) => own.has(s))) return name;

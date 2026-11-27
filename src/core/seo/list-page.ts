@@ -187,7 +187,7 @@ function pageModel(def: ListDef, ctx: DiscoverContext, result: ListResult, n: nu
       { teryt: '', name: n > 1 ? `Strona ${n}` : def.h1, path },
     ],
     related: [
-      { teryt: '', name: `Pełny ranking: ${shortIndicatorName(ind.name, ind.unit)} – ${LEVELS[def.level].short}`, path: rankingPath(ind, def.level) },
+      { teryt: '', name: `Pełne zestawienie: ${shortIndicatorName(ind.name, ind.unit)} – ${LEVELS[def.level].short}`, path: rankingPath(ind, def.level) },
       { teryt: '', name: `Temat: ${ind.group}`, path: topic.path },
       ...siblings,
     ],

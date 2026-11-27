@@ -1,0 +1,51 @@
+{
+  "_opis": "Wyjątki od automatu nazw (src/core/catalog/name-topic.ts). Klucz = początek tematu GUS (ostatni człon ścieżki), małymi literami, bez polskich znaków. mode: after = „Nazwa – label”, before = „label – nazwa”, replace = tylko label. Tylko tam, gdzie automat „Temat – nazwa” brzmi źle.",
+  "zachorowania na choroby zakazne": {
+    "label": "zachorowania",
+    "mode": "after"
+  },
+  "przecietne miesieczne wydatki na 1 osobe": {
+    "label": "Wydatki gospodarstw domowych na osobę",
+    "mode": "before"
+  },
+  "wyposazenie w niektore przedmioty": {
+    "label": "Gospodarstwa domowe z wyposażeniem (%)",
+    "mode": "before"
+  },
+  "przecietne miesieczne spozycie wybranych artykulow": {
+    "label": "Miesięczne spożycie na osobę",
+    "mode": "before"
+  },
+  "subiektywna ocena sytuacji materialnej": {
+    "label": "Sytuacja materialna gospodarstw oceniana jako",
+    "mode": "join"
+  },
+  "wskazniki zasiegu ubostwem": {
+    "label": "Odsetek osób poniżej",
+    "mode": "join"
+  },
+  "odpady zebrane selektywnie w relacji do ogolu": {
+    "label": "Odpady zebrane selektywnie (% ogółu odpadów)",
+    "mode": "before"
+  },
+  "korzystajacy z instalacji w %": {
+    "label": "Ludność korzystająca z instalacji (%)",
+    "mode": "before"
+  },
+  "siec wodociagowa i kanalizacyjna na 100 km2": {
+    "label": "na 100 km²",
+    "mode": "after"
+  },
+  "udzial bezrobotnych zarejestrowanych wg wyksztalcenia": {
+    "label": "Udział bezrobotnych z wykształceniem",
+    "mode": "join"
+  },
+  "odsetek bezrobotnych zarejestrowanych wg poziomu wyksztalcenia": {
+    "label": "Odsetek bezrobotnych z wykształceniem",
+    "mode": "join"
+  },
+  "przecietne miesieczne wynagrodzenia brutto wg sekcji pkd": {
+    "label": "Przeciętne wynagrodzenie brutto:",
+    "mode": "join"
+  }
+}
