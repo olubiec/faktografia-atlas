@@ -32,6 +32,11 @@ describe('W31-O01 percentyle', () => {
       expect(d.b.reduce((s, x) => s + x, 0)).toBe(withValue)
     }
   })
+  it('wartości kandydatów do kart są w pliku (potrzebne do ludzkiej skali)', () => {
+    const a = rows(g(10)).a
+    expect(a.ratio).toBe(10)
+    expect(a.value).toBe(100)
+  })
   it('percentileOf: kraniec i pojedyncza wartość', () => {
     expect(percentileOf([1], 1)).toBe(50)
     expect(percentileOf([1, 2, 3], 3)).toBe(100)

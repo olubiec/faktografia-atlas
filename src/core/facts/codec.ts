@@ -6,6 +6,7 @@
 // Opcjonalny ostatni element (W28-D06): 1 = fakt z najnowszego roku świeżego wskaźnika („Nowość”). Stare pliki go nie mają;
 // gdy flaga jest, a span nie, w miejscu span stoi 0. Zapis: [..., porównanie, span|0, 1].
 // Bliźniak (F8) to osobny rekord: ['F8', TERYT bliźniaka, rok, ile wskaźników, odległość].
+import { valenceOf } from './valence';
 import { FRAME_BY_TYPE, type DistEntry, type Direction, type Fact, type FactCompare, type FactType, type PercentileShard, type TwinFact } from './types';
 
 export type EncodedFact = (string | number)[];
@@ -83,6 +84,7 @@ export function decodeTwin(teryt: string, e: readonly (string | number)[]): Twin
 const RATIO_LOW = 0.5;
 const RATIO_HIGH = 2;
 const RATIO_KEEP = 2;
+const VALUE_KEEP = 3;
 const PCT_BASE = 0x100;
 const sig2 = (n: number) => Number(n.toPrecision(2));
 
@@ -182,6 +184,17 @@ export function buildPercentiles(inp: PercentileInput): PercentileResult {
     // Tylko dwa najdalsze od mediany (to one wybiera „Najbardziej nietypowe”).
     cand.sort((a, b) => Math.abs(Math.log(b[1])) - Math.abs(Math.log(a[1])));
     const rr = cand.slice(0, RATIO_KEEP).flat();
+    // Wartości kandydatów do kart: 3 najlepsze i 3 najgorsze percentyle wśród wskaźników z kierunkiem + wskaźniki ze stosunkiem.
+    const dirs = used
+      .map((u, i) => ({ i, p: percentileOf(u.sorted, u.at[t]), ok: u.at[t] !== undefined && valenceOf(u.id) !== null }))
+      .filter((x) => x.ok)
+      .map((x) => ({ i: x.i, p: valenceOf(used[x.i].id) === 'up' ? x.p : 100 - x.p }))
+      .sort((a, b) => a.p - b.p);
+    const keep = new Set<number>([...dirs.slice(0, VALUE_KEEP), ...dirs.slice(-VALUE_KEEP)].map((x) => x.i));
+    for (let k = 0; k < rr.length; k += 2) keep.add(rr[k]);
+    const vv: number[] = [];
+    for (const i of [...keep].sort((a, b) => a - b)) vv.push(i, round2(used[i].at[t]));
+    if (vv.length) (shards[woj].v ??= {})[t] = vv;
     if (rr.length) (shards[woj].r ??= {})[t] = rr;
   }
   return { shards, dist };
@@ -193,6 +206,8 @@ export interface UnitPercentile {
   percentile: number;
   /** Stosunek do mediany kraju; null, gdy gmina jest typowa (0,5–2) albo zadziałał zeroGuard. */
   ratio: number | null;
+  /** Wartość wskaźnika – tylko dla kandydatów do kart (3 najlepsze, 3 najgorsze, najbardziej nietypowe); inaczej null. */
+  value: number | null;
 }
 
 /** Odczyt percentyli jednostki z pliku województwa; stary plik bez `pct` daje pustą listę. */
@@ -202,10 +217,13 @@ export function decodePercentiles(pct: PercentileShard | undefined, teryt: strin
   const ratios = new Map<number, number>();
   const rr = pct.r?.[teryt] ?? [];
   for (let k = 0; k + 1 < rr.length; k += 2) ratios.set(rr[k], rr[k + 1]);
+  const vals = new Map<number, number>();
+  const vv = pct.v?.[teryt] ?? [];
+  for (let k = 0; k + 1 < vv.length; k += 2) vals.set(vv[k], vv[k + 1]);
   const out: UnitPercentile[] = [];
   pct.ind.forEach((indicatorId, i) => {
     const code = row.charCodeAt(i);
-    if (code >= PCT_BASE) out.push({ indicatorId, year: pct.y[i], percentile: code - PCT_BASE, ratio: ratios.get(i) ?? null });
+    if (code >= PCT_BASE) out.push({ indicatorId, year: pct.y[i], percentile: code - PCT_BASE, ratio: ratios.get(i) ?? null, value: vals.get(i) ?? null });
   });
   return out;
 }
