@@ -47,7 +47,7 @@ vi.mock('react/jsx-dev-runtime', async (importOriginal) => {
 });
 
 import { RankingsShare } from '../../src/view/pages/RankingsShare';
-import { Rankings } from '../../src/view/pages/Rankings';
+import { RankingsView as Rankings } from '../../src/view/ranking/RankingsView';
 
 const units = profileSample.units as Unit[];
 const indicator: Indicator = {
@@ -77,7 +77,7 @@ beforeEach(() => {
   captured.forceOpen = false;
   writeText = vi.fn<(text: string) => Promise<void>>(() => Promise.resolve());
   vi.stubGlobal('navigator', { clipboard: { writeText } });
-  vi.stubGlobal('window', { location: { origin: 'https://atlas.test', pathname: '/rankingi', search: '?share=1' } });
+  vi.stubGlobal('window', { location: { origin: 'https://atlas.test', pathname: '/zestawienia', search: '?share=1' } });
 });
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -94,7 +94,7 @@ describe('Rankingi: pasek udostępniania (QC802)', () => {
     render({ state: state({ i: 'population', l: 'pow', y: 2022 }) });
     clickCopy();
     const url = writeText.mock.calls[0][0] as string;
-    expect(url.startsWith('https://atlas.test/rankingi?')).toBe(true);
+    expect(url.startsWith('https://atlas.test/zestawienia?')).toBe(true);
     const p = new URL(url).searchParams;
     expect(p.get('i')).toBe('population');
     expect(p.get('l')).toBe('pow');
@@ -111,7 +111,7 @@ describe('Rankingi: pasek udostępniania (QC802)', () => {
     expect(render({ indicator: undefined })).toBe('');
     expect(render({ year: null })).toBe('');
     const page = renderToString(
-      <MemoryRouter initialEntries={['/rankingi']}>
+      <MemoryRouter initialEntries={['/zestawienia?i=population']}>
         <Rankings />
       </MemoryRouter>,
     );
@@ -145,7 +145,7 @@ describe('Rankingi: pasek udostępniania (QC802)', () => {
   });
 
   it('pliki Rankings.tsx i RankingsShare.tsx mają najwyżej 200 linii', () => {
-    for (const f of ['src/view/pages/Rankings.tsx', 'src/view/pages/RankingsShare.tsx']) {
+    for (const f of ['src/view/ranking/RankingsView.tsx', 'src/view/pages/RankingsShare.tsx']) {
       expect(readFileSync(f, 'utf8').split('\n').length).toBeLessThanOrEqual(200);
     }
   });

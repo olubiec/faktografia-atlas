@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { renderToString } from 'react-dom/server';
-import { RankingMedian } from '../../src/view/pages/Rankings';
+import { RankingMedian } from '../../src/view/ranking/RankingsView';
 import type { RankedUnit } from '../../src/core/ranking/ranking';
 import type { Unit } from '../../src/core/units/types';
 

@@ -9,9 +9,9 @@ async function setup(page: Page, width = 1280) {
 const firstRowName = (page: Page) => page.locator('[data-slot="rankings-row"]').first().locator('span').first().innerText();
 
 for (const width of [390, 1280]) {
-  test(`@F04 /rankingi: lista z nazwami, kolejność i poziom zmieniają listę, klik otwiera mapę (${width})`, async ({ page }) => {
+  test(`@F04 ranking na /zestawienia: lista z nazwami, kolejność i poziom zmieniają listę, klik otwiera mapę (${width})`, async ({ page }) => {
     await setup(page, width);
-    await page.goto('/rankingi?i=population&l=pow&e2e');
+    await page.goto('/zestawienia?i=population&l=pow&e2e');
     const rows = page.locator('[data-slot="rankings-row"]');
     await expect(rows).toHaveCount(50);
     const top = await firstRowName(page);
@@ -34,9 +34,9 @@ for (const width of [390, 1280]) {
   });
 }
 
-test('@F04 /rankingi: „Wybierz dane” otwiera pełne menu, wybór zmienia wskaźnik rankingu', async ({ page }) => {
+test('@F04 ranking na /zestawienia: „Wybierz dane” otwiera pełne menu, wybór zmienia wskaźnik rankingu', async ({ page }) => {
   await setup(page);
-  await page.goto('/rankingi?e2e');
+  await page.goto('/zestawienia?i=population&e2e');
   await page.locator('[data-slot="rankings-pick"]').click();
   const dialog = page.getByRole('dialog', { name: 'Wybierz dane' });
   await expect(dialog.getByRole('navigation', { name: 'Działy' })).toBeVisible();
@@ -46,9 +46,9 @@ test('@F04 /rankingi: „Wybierz dane” otwiera pełne menu, wybór zmienia wsk
   await expect(page.getByRole('heading', { name: 'Lista jednostek' })).toBeVisible();
 });
 
-test('@F04 /rankingi: szukajka po nazwie i numeracja stron pod listą', async ({ page }) => {
+test('@F04 ranking na /zestawienia: szukajka po nazwie i numeracja stron pod listą', async ({ page }) => {
   await setup(page);
-  await page.goto('/rankingi?i=population&l=gmi&e2e');
+  await page.goto('/zestawienia?i=population&l=gmi&e2e');
   await expect(page.locator('[data-slot="rankings-row"]')).toHaveCount(50);
   await page.getByRole('button', { name: 'Następna' }).click();
   await expect(page).toHaveURL(/p=2/);

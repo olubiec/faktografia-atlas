@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { SiteLayout } from '../layout/SiteLayout';
 import { DataMenu } from '../data-menu/DataMenu';
 import { useIsMobile } from '../hooks/useIsMobile';
@@ -9,7 +9,8 @@ import listsConfig from '../../../config/lists.json';
 import { DISCOVER_INDEX, DISCOVER_INDEX_NAME, listPath, plural, topicsOf, type TopicIndicator } from '@/core/seo/topics';
 import { mapHref } from '@/core/start/discoveries';
 import { useIndicatorRegistry } from '../hooks/useIndicatorRegistry';
-import { RANKINGS_DEFAULTS, writeRankingsSearch } from '@/core/ranking/rankings-url';
+import { RANKINGS_DEFAULTS, writeRankingsParams } from '@/core/ranking/rankings-url';
+import { RankingsView } from '../ranking/RankingsView';
 
 const DESCRIPTION = 'Zestawienia gmin i powiatów Polski: ludność, praca, pieniądze, mieszkania i inne. Dane GUS.';
 
@@ -20,6 +21,9 @@ const DESCRIPTION = 'Zestawienia gmin i powiatów Polski: ludność, praca, pien
  */
 export function DiscoverIndex() {
   const [picked, setPicked] = useState<string | null>(null);
+  const [params, setParams] = useSearchParams();
+  // Ranking jest na tej samej stronie: stan (wskaźnik, poziom, rok…) siedzi w adresie, więc link działa po wysłaniu dalej.
+  const showRanking = params.has('i');
   const { registry } = useIndicatorRegistry();
   const pickedName = picked ? (registry.byId.get(picked)?.name ?? null) : null;
   const mobile = useIsMobile();
@@ -39,6 +43,16 @@ export function DiscoverIndex() {
           {`${plural(topics.length, 'temat', 'tematy', 'tematów')} i ${plural(lists.length, 'zestawienie', 'zestawienia', 'zestawień')} z danych Banku Danych Lokalnych GUS. Każde zestawienie obejmuje całą listę porównanych jednostek, po 50 pozycji na stronę, z linkami do stron miejsc.`}
         </p>
 
+        {showRanking && (
+          <div className="mt-8" data-slot="discover-ranking-view">
+            <RankingsView />
+            <p className="mt-4">
+              <Link to={DISCOVER_INDEX} className={BUTTON_SECONDARY} data-slot="discover-back">Wybierz inne dane</Link>
+            </p>
+          </div>
+        )}
+
+        {!showRanking && (
         <section aria-labelledby="wybierz-dane" className="mt-12 md:mt-16" data-slot="discover-menu">
           <h2 id="wybierz-dane" className="text-xl font-bold">Wybierz dane</h2>
           <p className="mt-2 max-w-prose text-sm text-olowek">Dział, grupa, wskaźnik – to samo menu co przy mapie. Po wyborze wskaźnika zobaczysz jego ranking albo mapę.</p>
@@ -49,12 +63,13 @@ export function DiscoverIndex() {
             <div className="mt-4 flex flex-col gap-3 border border-tusz bg-arkusz p-4 md:flex-row md:items-center md:justify-between" role="status" data-slot="discover-picked">
               <p className="m-0 font-bold">{pickedName ?? 'Wybrany wskaźnik'}</p>
               <div className="flex flex-wrap gap-3">
-                <Link to={`/rankingi${writeRankingsSearch({ ...RANKINGS_DEFAULTS, i: picked })}`} className={BUTTON_PRIMARY} data-slot="discover-ranking">Pokaż ranking</Link>
+                <button type="button" onClick={() => setParams(writeRankingsParams({ ...RANKINGS_DEFAULTS, i: picked }))} className={`${BUTTON_PRIMARY} cursor-pointer`} data-slot="discover-ranking">Pokaż ranking</button>
                 <Link to={mapHref({ indicatorId: picked })} className={BUTTON_SECONDARY} data-slot="discover-map">Zobacz na mapie</Link>
               </div>
             </div>
           )}
         </section>
+        )}
 
         {topics.map((t, i) => (
           <section key={t.slug} aria-labelledby={`t${i + 1}`} className="mt-12 md:mt-16">

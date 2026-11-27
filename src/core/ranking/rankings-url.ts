@@ -74,3 +74,11 @@ export function applyRankingsChange(prev: RankingsState, patch: Partial<Rankings
   if (patch.l !== undefined && patch.l !== prev.l && next.l === 'woj' && patch.w === undefined) next.w = null;
   return next;
 }
+
+/** Jak `writeRankingsSearch`, ale z wskaźnikiem zawsze (także domyślnym): na stronie Zestawienia `i` oznacza „pokaż ranking”. */
+export function writeRankingsParams(state: RankingsState): string {
+  const rest = new URLSearchParams(writeRankingsSearch(state));
+  rest.delete('i');
+  const tail = rest.toString();
+  return `i=${encodeURIComponent(state.i)}${tail ? `&${tail}` : ''}`;
+}

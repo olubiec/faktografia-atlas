@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { BUTTON_PRIMARY } from '../start/ListPodium';
-import { SiteLayout } from '../layout/SiteLayout';
-import { RankingsToolbar } from '../ranking/RankingsToolbar';
-import { RankingsTable } from '../ranking/RankingsTable';
-import { RankingsShare } from './RankingsShare';
+import { RankingsToolbar } from './RankingsToolbar';
+import { RankingsTable } from './RankingsTable';
+import { RankingsShare } from '../pages/RankingsShare';
 import { useIndicatorRegistry } from '../hooks/useIndicatorRegistry';
 import { loadAnyValues } from '../../core/indicators/load-any-values';
 import { isLibraryIndicatorId } from '../../core/indicators/registry';
@@ -19,7 +18,7 @@ import { summarizeRanking } from '../../core/ranking/rankings-summary';
 import {
   applyRankingsChange,
   readRankingsState,
-  writeRankingsSearch,
+  writeRankingsParams,
   type RankingsState,
 } from '../../core/ranking/rankings-url';
 import { allowedLevels } from '../../core/map/main-view';
@@ -41,9 +40,10 @@ export function RankingMedian({ items, units, unit }: { items: RankedUnit[]; uni
   return text ? <p data-testid="ranking-median">{text}</p> : null;
 }
 
-export { MyIndicatorsBar } from './MyIndicatorsBar';
+export { MyIndicatorsBar } from '../pages/MyIndicatorsBar';
 
-export function Rankings() {
+/** Ranking wskaźnika w całości (strona `/zestawienia?i=…`): pasek wyboru, podsumowanie i lista z nazwami. Stan w adresie. */
+export function RankingsView() {
   const [params, setParams] = useSearchParams();
   const state = useMemo(() => readRankingsState(params.toString(), isKnownId), [params]);
   const { registry, ready } = useIndicatorRegistry();
@@ -67,7 +67,7 @@ export function Rankings() {
 
   // Nieznany wskaźnik z biblioteki (spis wczytany, a go nie ma) wraca do domyślnego.
   useEffect(() => {
-    if (ready && !indicator) setParams(writeRankingsSearch({ ...state, i: DEFAULT_INDICATOR_ID }).replace(/^\?/, ''), { replace: true });
+    if (ready && !indicator) setParams(writeRankingsParams({ ...state, i: DEFAULT_INDICATOR_ID }), { replace: true });
   }, [ready, indicator, state, setParams]);
 
   const values = loaded?.id === state.i ? loaded.values : null;
@@ -75,7 +75,7 @@ export function Rankings() {
   const byTeryt = useMemo(() => new Map(units.map((u) => [u.teryt, u])), [units]);
 
   const onChange = (patch: Partial<RankingsState>) => {
-    setParams(writeRankingsSearch(applyRankingsChange(state, patch)).replace(/^\?/, ''), { replace: patch.q !== undefined });
+    setParams(writeRankingsParams(applyRankingsChange(state, patch)), { replace: patch.q !== undefined });
   };
 
   const year = values ? (state.y !== null && values.years.includes(state.y) ? state.y : values.years[values.years.length - 1]) : null;
@@ -91,7 +91,7 @@ export function Rankings() {
   useEffect(() => {
     if (!values || availableLevels.length === 0) return;
     const next = fallbackLevel(state.l, availableLevels);
-    if (next !== state.l) setParams(writeRankingsSearch(applyRankingsChange(state, { l: next })).replace(/^\?/, ''), { replace: true });
+    if (next !== state.l) setParams(writeRankingsParams(applyRankingsChange(state, { l: next })), { replace: true });
   }, [values, availableLevels, state, setParams]);
 
   const ranking = useMemo(() => {
@@ -112,9 +112,8 @@ export function Rankings() {
   const last = ordered[ordered.length - 1];
 
   return (
-    <SiteLayout>
-      <div className="container mx-auto p-4 w-full text-tusz">
-        <h1 className="text-2xl font-bold mb-4">Rankingi</h1>
+    <section aria-labelledby="ranking-wskaznika" className="w-full text-tusz" data-slot="ranking-view">
+        <h2 id="ranking-wskaznika" className="mb-4 text-xl font-bold">{indicator ? `Ranking: ${indicator.name}` : 'Ranking'}</h2>
 
         <div className="mb-8 flex flex-col gap-3">
           {indicator ? (
@@ -146,7 +145,6 @@ export function Rankings() {
           <RankingsTable rows={rows} page={page.page} pages={page.pages} total={ordered.length} q={state.q} onQuery={(q) => onChange({ q })} onPage={(p) => onChange({ p })} unitLabel={displayUnit(indicator.unit)} />
         )}
         {!ranking && indicator && <p role="status" className="text-sm text-olowek">Wczytujemy ranking…</p>}
-      </div>
-    </SiteLayout>
+    </section>
   );
 }

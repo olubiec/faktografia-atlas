@@ -72,8 +72,8 @@ for (const width of [390, 1280]) {
     await expect(picked).toContainText('Ludność ogółem');
     await expect(page.getByRole('link', { name: 'Wszystkie rankingi wskaźników' })).toHaveCount(0);
     await expect(picked.getByRole('link', { name: 'Zobacz na mapie' })).toHaveAttribute('href', /\/mapa\?i=population/);
-    await picked.getByRole('link', { name: 'Pokaż ranking' }).click();
-    await expect(page).toHaveURL(/\/rankingi\?i=population/);
+    await picked.getByRole('button', { name: 'Pokaż ranking' }).click();
+    await expect(page).toHaveURL(/\/zestawienia\?i=population/);
     await expect(page.getByRole('heading', { name: 'Lista jednostek' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });

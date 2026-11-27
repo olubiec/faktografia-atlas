@@ -5,8 +5,8 @@ import { fallbackLevel, levelsWithData } from '../../src/core/map/level-data';
 const src = (p: string) => readFileSync(p, 'utf8');
 
 describe('UI-GLOBAL 3: poziomy bez danych we wszystkich przełącznikach', () => {
-  test('ranking (strona Rankingi) wyłącza i omija poziomy bez danych tak jak mapa', () => {
-    const s = src('src/view/pages/Rankings.tsx');
+  test('ranking (widok na stronie Zestawienia) wyłącza i omija poziomy bez danych tak jak mapa', () => {
+    const s = src('src/view/ranking/RankingsView.tsx');
     expect(s).toContain('levelsWithData');
     expect(s).toContain('fallbackLevel');
   });

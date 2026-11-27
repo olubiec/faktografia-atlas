@@ -9,7 +9,7 @@ import {
 } from './helpers/layoutGuard';
 
 // C09: strażnik układu na każdej trasie i w czterech rozmiarach: nic się nie zasłania, nie wychodzi poza ekran,
-// pola dotykowe ≥ 44 px, brak poziomego przewijania. Na /rankingi i /porownaj tylko zasłanianie i przewijanie.
+// pola dotykowe ≥ 44 px, brak poziomego przewijania. Na /zestawienia z rankingiem i /porownaj tylko zasłanianie i przewijanie.
 const WIDTHS = [360, 390, 768, 1280];
 const HEIGHT = 800;
 
@@ -32,7 +32,7 @@ const ROUTES: Route[] = [
   { name: 'o projekcie', url: '/o-projekcie?e2e', touch: true },
   { name: 'źródła', url: '/zrodla?e2e', touch: true },
   { name: 'prywatność', url: '/prywatnosc?e2e', touch: true },
-  { name: 'rankingi', url: '/rankingi?e2e', touch: false },
+  { name: 'ranking', url: '/zestawienia?i=population&e2e', touch: false },
   { name: 'porównaj', url: '/porownaj?e2e', touch: false },
 ];
 
