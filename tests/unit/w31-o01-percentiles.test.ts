@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
-import { buildPercentiles, decodePercentiles, decodeFact, percentileOf } from '../../src/core/facts/codec'
+import { decodeFact } from '../../src/core/facts/codec'
+import { buildPercentiles, decodePercentiles, percentileOf } from '../../src/core/facts/percentiles'
 
 const fx = JSON.parse(readFileSync('tests/fixtures/facts-percentile/values.json', 'utf8'))
 const base = { values: fx.values, gminas: fx.gminas, zeroGuard: true, bins: 20, minUnits: 5 }
