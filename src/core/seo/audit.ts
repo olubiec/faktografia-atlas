@@ -48,6 +48,9 @@ export interface AuditOptions {
   templateShare?: number;
 }
 
+/** Strony z nagłówka i stopki każdej strony statycznej (page-chrome.ts): istnieją w aplikacji lub w generatorze, więc nie są martwymi linkami. */
+export const CHROME_PATHS = ['/', '/mapa', '/miejsca', '/zestawienia', '/o-projekcie', '/zrodla', '/prywatnosc'] as const;
+
 export const TITLE_MAX = 65;
 export const DESCRIPTION_MIN = 70;
 export const DESCRIPTION_MAX = 160;
@@ -123,7 +126,7 @@ export function auditPages(
   const add = (level: AuditIssue['level'], code: AuditCode, path: string, message: string) =>
     issues.push({ level, code, path, message });
   const byPath = new Map(pages.map((p) => [p.path, p]));
-  const known = new Set([...byPath.keys(), ...[...(options.knownPaths ?? [])].map((p) => internalPath(p) ?? p)]);
+  const known = new Set([...byPath.keys(), ...CHROME_PATHS, ...[...(options.knownPaths ?? [])].map((p) => internalPath(p) ?? p)]);
 
   for (const [field, code, label] of [
     ['title', 'duplicate-title', 'Ten sam tytuł'],

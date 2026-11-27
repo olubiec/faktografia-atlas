@@ -157,6 +157,8 @@ export function factView(f: Fact): FactView | null {
 
 export interface ListView {
   key: string;
+  /** Wskaźnik i poziom zestawienia (panel przełącza poziom); brak tylko w widokach zastępczych. */
+  indicatorId?: string; level?: Level;
   title: string;
   subtitle: string;
   rows: ListRow[];
@@ -179,12 +181,10 @@ export function listView(list: StartList): ListView | null {
     href: mapHref({ indicatorId: list.indicatorId, year: list.year, teryt, level: list.level }),
   });
   return {
-    key: `${list.indicatorId}-${list.level}-${list.dir}`,
+    key: `${list.indicatorId}-${list.level}-${list.dir}`, indicatorId: list.indicatorId, level: list.level,
     title: shortIndicatorName(ind.name, ind.unit),
     subtitle: endSubtitle(list.top.length, list.level, endOf(list.dir), list.year),
-    rows: list.top.map(row),
-    href: listHref(list),
-    ...links,
+    rows: list.top.map(row), href: listHref(list), ...links,
     ends: listEnds(list, row, withRankingFallback(links, list.indicatorId, list.level, list.year, shortIndicatorName(ind.name, ind.unit))),
   };
 }
@@ -196,10 +196,9 @@ export function listPlaceholders(): ListView[] {
       const ind = INDICATORS.get(l.indicatorId);
       if (!ind) return null;
       return {
-        key: `${l.indicatorId}-${l.level}-${l.dir}`,
+        key: `${l.indicatorId}-${l.level}-${l.dir}`, indicatorId: l.indicatorId, level: l.level,
         title: shortIndicatorName(ind.name, ind.unit),
-        subtitle: '',
-        rows: [],
+        subtitle: '', rows: [],
         href: mapHref({ indicatorId: l.indicatorId, level: l.level }),
         ...listLinks(l.indicatorId, l.level, l.dir),
       };

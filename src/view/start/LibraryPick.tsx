@@ -1,39 +1,34 @@
-import { useState } from 'react';
-import { DialogTrigger } from '@/components/ui/dialog';
-import { DataMenu } from '@/view/data-menu/DataMenu';
+import { DataMenuWindow } from '@/view/data-menu/DataMenuWindow';
+import { useCatalog } from '@/view/data-menu/useCatalog';
 import { useIsMobile } from '@/view/hooks/useIsMobile';
-import { Window } from '@/view/ui/Window';
-import { TEXT_LINK } from './ListPodium';
+import { plural } from '@/core/seo/topics';
 
 export interface LibraryPickProps {
-  selectedId: string | null;
+  /** Wskaźnik pokazany teraz w panelu (nazwa w przycisku, zaznaczenie w menu). */
+  selectedId: string;
+  selectedName: string;
   onPick: (id: string) => void;
 }
 
+/** Podpis przycisku z liczbą wskaźników; bez liczby, dopóki spis się nie wczyta. */
+const pickLabel = (total: number | null): string => (total ? `Wybierz dane · ${plural(total, 'wskaźnik', 'wskaźniki', 'wskaźników')}` : 'Wybierz dane');
+
 /**
- * „+ Więcej danych”: to samo menu wyboru danych co na mapie (cała biblioteka), w oknie na cały ekran na telefonie
- * i w oknie pośrodku na komputerze. Spis (available.json) pobiera się dopiero po otwarciu okna.
+ * „Wybierz dane”: to samo menu kategorii co przy mapie (Dział › Grupa › Wskaźnik z szukajką), w oknie na cały ekran.
+ * Liczba wskaźników w podpisie pochodzi ze spisu (available.json, jedno lekkie żądanie), więc okno otwiera się od razu.
  */
-export function LibraryPick({ selectedId, onPick }: LibraryPickProps) {
-  const [open, setOpen] = useState(false);
+export function LibraryPick({ selectedId, selectedName, onPick }: LibraryPickProps) {
   const mobile = useIsMobile();
+  const { tree, loading, failed } = useCatalog();
   return (
-    <Window
-      open={open}
-      onOpenChange={setOpen}
-      mode={mobile ? 'fullscreen' : 'dialog'}
-      slot="library-pick-window"
-      title="Wybierz dane"
-      description="Pokażemy 5 najwyższych i 5 najniższych wartości wybranego wskaźnika."
-      trigger={
-        <DialogTrigger asChild>
-          <button type="button" aria-haspopup="dialog" data-slot="library-pick" className={`${TEXT_LINK} cursor-pointer font-bold`}>
-            + Więcej danych
-          </button>
-        </DialogTrigger>
-      }
-    >
-      <DataMenu selectedId={selectedId} onSelect={onPick} onClose={() => setOpen(false)} layout={mobile ? 'stack' : 'columns'} />
-    </Window>
+    <DataMenuWindow
+      indicatorId={selectedId}
+      indicatorName={selectedName}
+      onSelect={onPick}
+      layout={mobile ? 'stack' : 'columns'}
+      label={pickLabel(loading || failed ? null : tree.total)}
+      syncUrl={false}
+      triggerSlot="library-pick"
+    />
   );
 }

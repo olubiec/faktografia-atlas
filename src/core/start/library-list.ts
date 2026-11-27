@@ -12,6 +12,8 @@ export interface LibraryListInput {
   units: Pick<Unit, 'teryt' | 'name' | 'level'>[];
   /** Kody TERYT gmin pomijanych w zestawieniach (poniżej progu ludności; gmina-small.json). */
   small: ReadonlySet<string>;
+  /** Poziom wybrany przez użytkownika; brak = najgłębszy z danymi (libraryLevel). */
+  level?: Level;
 }
 
 /** Poziom zestawienia: gminy, gdy wskaźnik ma dla nich dane, inaczej powiaty, inaczej województwa. */
@@ -27,8 +29,8 @@ export const MIN_YEAR_SHARE = 0.5;
  * 5 jednostek z najwyższą i 5 z najniższą wartością w ostatnim roku, w którym dane ma co najmniej połowa jednostek poziomu
  * (rok z kilkoma wynikami dałby przypadkowe rekordy). Gminy z `small` są pominięte. null, gdy żaden rok nie spełnia progu.
  */
-export function libraryList({ indicator, values, units, small }: LibraryListInput): StartList | null {
-  const level = libraryLevel(values, units);
+export function libraryList({ indicator, values, units, small, level: wanted }: LibraryListInput): StartList | null {
+  const level = wanted ?? libraryLevel(values, units);
   const pool = units.filter((u) => u.level === level && !(level === 'gmi' && small.has(u.teryt)));
   if (pool.length === 0) return null;
   for (let idx = values.years.length - 1; idx >= 0; idx--) {
