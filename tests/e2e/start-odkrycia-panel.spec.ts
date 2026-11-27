@@ -64,82 +64,89 @@ for (const width of [360, 1280]) {
     for (const row of await lists.locator('[data-slot="start-list-row"]').all()) expect((await row.boundingBox())!.height).toBeGreaterThanOrEqual(44);
   });
 
-  test(`@F02b Karuzela: pasek wskaźników, strzałki i przesunięcie zmieniają slajd; przełącznik jest wspólny (${width})`, async ({ page }) => {
+  test(`@F02b Panel zestawień: wybór kliknięciem, strzałki po bokach, poziom, przyciski i losowy start (${width})`, async ({ page }) => {
     const requests: string[] = [];
     page.on('request', (r) => /facts-lists\.json/.test(r.url()) && requests.push(r.url()));
     const section = await open(page, width);
     const lists = section.locator('section[aria-labelledby="start-lists-title"]');
     const tabs = lists.getByRole('tab');
-    const counter = lists.locator('[data-slot="start-carousel-counter"]');
-    const track = lists.locator('[data-slot="start-carousel-track"]');
-    await expect(tabs).toHaveCount(4);
-    await expect(counter).toHaveText('1 z 4');
-    // Pierwsze sekundy: dalszych zestawień jeszcze nie pobieramy; dopiero ruch w karuzeli.
-    await page.waitForTimeout(1500);
-    expect(requests).toEqual([]);
+    const panel = lists.locator('[data-slot="start-carousel-panel"]');
+    const rows = panel.locator('[data-slot="start-list-row"]');
+    // Dalsze zestawienia dochodzą po wczytaniu; stary licznik i tor z przewijaniem nie istnieją.
+    await expect.poll(() => tabs.count()).toBeGreaterThan(10);
+    await expect(lists.locator('[data-slot="start-carousel-counter"], [data-slot="start-carousel-track"]')).toHaveCount(0);
+    await expect(lists.getByRole('button', { name: /Wybierz dane · \d+ wskaźnik/ })).toBeVisible();
+    expect(requests.length).toBeLessThanOrEqual(1);
+    const total = await tabs.count();
 
-    // Pasek: kliknięcie zmienia slajd; widać jedno zestawienie z 5 pozycjami i linkiem do mapy.
+    // Pasek: zaznaczona jest dokładnie ta pozycja, którą klikniemy (jedyny czerwony element), panel pokazuje 5 pozycji.
     const mapHrefs: string[] = [];
-    for (let k = 0; k < 4; k++) {
+    for (const k of [0, 3, 1, 2]) {
       await tabs.nth(k).click();
       await expect(tabs.nth(k)).toHaveAttribute('aria-selected', 'true');
-      await expect(lists.locator('[data-slot="start-list-row"]')).toHaveCount(5);
-      mapHrefs.push((await lists.getByRole('link', { name: /^Zobacz na mapie/ }).getAttribute('href'))!);
+      await expect(lists.locator('.border-korekta')).toHaveCount(1);
+      await expect(lists.locator('.border-korekta')).toHaveAttribute('aria-selected', 'true');
+      await expect(rows).toHaveCount(5);
+      mapHrefs.push((await panel.locator('[data-slot="start-list-map"]').getAttribute('href'))!);
     }
     expect(new Set(mapHrefs).size).toBe(4);
     for (const h of mapHrefs) expect(h).toMatch(/^\/mapa\?i=[\w-]+&y=\d{4}&l=(gmi|pow|woj)/);
 
-    // Po ruchu dochodzą dalsze wskaźniki: pasek ma więcej niż 4 pozycje, licznik liczy wszystkie.
-    await expect.poll(() => tabs.count()).toBeGreaterThan(10);
-    const total = await tabs.count();
-    expect(requests).toHaveLength(1);
-    await expect(counter).toHaveText(`4 z ${total}`);
+    // Strzałki po bokach pozycji (tylko komputer), bez zapętlania; przesunięcie palcem działa na telefonie.
+    const prev = panel.locator('[data-slot="start-list-prev"]');
+    const next = panel.locator('[data-slot="start-list-next"]');
+    if (width >= 768) {
+      await tabs.nth(0).click();
+      await expect(prev).toBeDisabled();
+      await next.click();
+      await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
+      await prev.click();
+      await expect(tabs.nth(0)).toHaveAttribute('aria-selected', 'true');
+      await tabs.nth(total - 1).click();
+      await expect(next).toBeDisabled();
+      const [rowBox, prevBox] = [await rows.first().boundingBox(), await prev.boundingBox()];
+      expect(prevBox!.x + prevBox!.width).toBeLessThanOrEqual(rowBox!.x + 1);
+      expect(prevBox!.height).toBeGreaterThanOrEqual(44);
+    } else {
+      await expect(prev).toBeHidden();
+    }
 
-    // Strzałki: „Następne” przechodzi dalej, na końcach są wyłączone, karuzela się nie zapętla.
-    const prev = lists.getByRole('button', { name: /Poprzednie/ });
-    const next = lists.getByRole('button', { name: /Następne/ });
-    await tabs.nth(0).click();
-    await expect(prev).toBeDisabled();
-    await next.click();
-    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
-    await expect(counter).toHaveText(`2 z ${total}`);
-    await prev.click();
-    await expect(tabs.nth(0)).toHaveAttribute('aria-selected', 'true');
-    await tabs.nth(total - 1).click();
-    await expect(next).toBeDisabled();
-    await expect(counter).toHaveText(`${total} z ${total}`);
-
-    // Przesunięcie palcem (tor z scroll-snap) zmienia aktywną pozycję paska.
-    await tabs.nth(0).click();
-    await track.evaluate((el) => el.scrollTo({ left: el.clientWidth * 2, behavior: 'instant' }));
-    await expect(tabs.nth(2)).toHaveAttribute('aria-selected', 'true');
-    await expect(counter).toHaveText(`3 z ${total}`);
-
-    // Tylko aktywny slajd ma linki w kolejności Tab; pozostałe są inert.
-    await expect(lists.locator('[data-slot="start-list-row"]')).toHaveCount(5);
-    await expect(track.locator('[inert]')).toHaveCount(total - 1);
-
-    // Klawiatura: strzałka w prawo i End na pasku.
+    // Klawiatura na pasku: strzałka w prawo i End.
+    await tabs.nth(2).click();
     await tabs.nth(2).focus();
     await page.keyboard.press('ArrowRight');
     await expect(tabs.nth(3)).toBeFocused();
     await page.keyboard.press('End');
     await expect(tabs.nth(total - 1)).toHaveAttribute('aria-selected', 'true');
 
-    // „Najwyższe | Najniższe” obowiązuje na wszystkich slajdach i ma pola ≥ 44 px.
+    // „Najwyższe | Najniższe” i przełącznik poziomu mają pola ≥ 44 px; poziom wchodzi do linku do mapy.
     await tabs.nth(0).click();
-    const visible = lists.locator('[role="tabpanel"]:not([inert]) [data-slot="start-list"]');
-    await visible.getByRole('button', { name: 'Najniższe' }).click();
-    await next.click();
-    await expect(visible.getByRole('button', { name: 'Najniższe' })).toHaveAttribute('aria-pressed', 'true');
-    await expect(visible.locator('[data-slot="start-list-subtitle"]')).toContainText('z najniższą wartością');
-    for (const b of await visible.locator('[data-slot="start-list-ends"] button').all()) expect((await b.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    await panel.getByRole('button', { name: 'Najniższe' }).click();
+    await expect(panel.getByRole('button', { name: 'Najniższe' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(panel.locator('[data-slot="start-list-subtitle"]')).toContainText('z najniższą wartością');
+    for (const b of await panel.locator('[data-slot="start-list-ends"] button').all()) expect((await b.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    const level = panel.getByRole('group', { name: 'Poziom' });
+    await expect(level.getByRole('button')).toHaveCount(3);
+    for (const b of await level.getByRole('button').all()) expect((await b.boundingBox())!.height).toBeGreaterThanOrEqual(44);
 
-    // Jedyny czerwony element sekcji to aktywna pozycja paska; pola dotykowe strzałek ≥ 44 px.
-    await expect(lists.locator('.border-korekta')).toHaveCount(1);
-    await expect(lists.locator('.border-korekta')).toHaveAttribute('aria-selected', 'true');
-    for (const b of [prev, next]) expect((await b.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    // „Zobacz na mapie” i „Pełne zestawienie” są przyciskami (pole ≥ 44 px, obrys/wypełnienie).
+    for (const slot of ['start-list-map', 'start-list-full']) {
+      const b = panel.locator(`[data-slot="${slot}"]`);
+      await expect(b).toBeVisible();
+      expect((await b.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  });
+
+  test(`@F02b Panel zestawień: po każdym wejściu otwiera się losowe zestawienie z paska (${width})`, async ({ page }) => {
+    const seen = new Set<string>();
+    for (let k = 0; k < 8 && seen.size < 2; k++) {
+      const section = await open(page, width);
+      const selected = section.locator('[role="tab"][aria-selected="true"]');
+      await expect(selected).toHaveCount(1);
+      seen.add((await selected.textContent()) ?? '');
+    }
+    expect(seen.size).toBeGreaterThan(1);
   });
 
   test(`@F02b Karuzela: „Pełny ranking” prowadzi do /rankingi, gdy zestawienie nie ma własnej strony (${width})`, async ({ page }) => {
@@ -158,12 +165,16 @@ for (const width of [360, 1280]) {
   });
 }
 
-test('@F02b Karuzela: przy ograniczeniu ruchu przewijanie jest bez animacji', async ({ page }) => {
+test('@F02b Pasek zestawień: przy ograniczeniu ruchu przewijanie strzałką jest bez animacji', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  const section = await open(page, 360);
+  const section = await open(page, 1280);
   const lists = section.locator('section[aria-labelledby="start-lists-title"]');
-  await lists.getByRole('tab').nth(2).click();
-  const track = lists.locator('[data-slot="start-carousel-track"]');
-  // Bez animacji tor stoi na slajdzie od razu, a nie w trakcie przewijania.
-  await expect.poll(async () => track.evaluate((el) => Math.round(el.scrollLeft - el.clientWidth * 2)), { timeout: 400 }).toBe(0);
+  await expect.poll(() => lists.getByRole('tab').count()).toBeGreaterThan(10);
+  const strip = lists.locator('[data-slot="indicator-strip"]');
+  // Start jest losowy: najpierw pierwsza pozycja, żeby pasek stał na początku.
+  await lists.getByRole('tab').first().click();
+  await expect.poll(() => strip.evaluate((el) => el.scrollLeft)).toBe(0);
+  await lists.locator('[data-slot="strip-scroll-right"]').click();
+  // Bez animacji pasek stoi od razu przesunięty o ~80% szerokości, a nie w trakcie przewijania.
+  await expect.poll(async () => strip.evaluate((el) => Math.round(el.scrollLeft - el.clientWidth * 0.8)), { timeout: 400 }).toBeLessThanOrEqual(2);
 });

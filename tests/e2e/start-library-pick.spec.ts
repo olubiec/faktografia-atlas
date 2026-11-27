@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import availableFixture from '../fixtures/library/available.json' with { type: 'json' };
 
-// @F02c: „+ Więcej danych” pod karuzelą zestawień: dowolny wskaźnik z biblioteki mapy jako ostatni slajd (5 + 5 pozycji).
+// @F02c: „Wybierz dane · N wskaźników” w panelu zestawień: dowolny wskaźnik z biblioteki mapy jako ostatnia pozycja paska (5 pozycji).
 type Counts = { available: number; v101: number; v201: number };
 
 /** Wartości syntetyczne dla wszystkich powiatów (id BDL z units.json), żeby rok miał dane dla ≥ 50% jednostek. */
@@ -53,14 +53,15 @@ async function pick(page: Page, name: string) {
 }
 
 for (const width of [390, 1280]) {
-  test(`@F02c „+ Więcej danych”: spis i wartości dopiero po wyborze, wskaźnik z biblioteki jest ostatnim slajdem, kolejny wybór go zastępuje (${width})`, async ({ page }) => {
+  test(`@F02c menu danych: spis i wartości dopiero po wyborze, wskaźnik z biblioteki jest ostatnim slajdem, kolejny wybór go zastępuje (${width})`, async ({ page }) => {
     const counts = await mockLibrary(page);
     const lists = await open(page, width);
     const tabs = lists.getByRole('tab');
-    expect(counts).toEqual({ available: 0, v101: 0, v201: 0 });
+    // Spis jest lekki i daje liczbę wskaźników w przycisku; wartości wskaźników dopiero po wyborze.
+    expect(counts).toEqual({ available: 1, v101: 0, v201: 0 });
     const before = await tabs.count();
 
-    const more = lists.getByRole('button', { name: '+ Więcej danych' });
+    const more = lists.getByRole('button', { name: /^Wybierz dane · \d+ wskaźnik/ });
     expect((await more.boundingBox())!.height).toBeGreaterThanOrEqual(44);
     await more.click();
     await pick(page, 'Liczba ludności ogółem');
@@ -72,7 +73,7 @@ for (const width of [390, 1280]) {
     await expect(last).toHaveAttribute('aria-selected', 'true');
     await expect(last).toContainText('Liczba ludności ogółem');
     await expect(last).toContainText('z biblioteki');
-    const active = lists.locator('[role="tabpanel"]:not([inert]) [data-slot="start-list"]');
+    const active = lists.locator('[data-slot="start-carousel-panel"]');
     await expect(active.locator('[data-slot="start-list-row"]')).toHaveCount(5);
     await expect(active.getByRole('link', { name: /^Zobacz na mapie/ })).toHaveAttribute('href', /^\/mapa\?i=b101&/);
     await expect(active.locator('[data-slot="start-list-subtitle"]')).toContainText('powiatów z najwyższą wartością');
@@ -82,7 +83,7 @@ for (const width of [390, 1280]) {
     const total = await tabs.count();
 
     // Kolejny wybór zastępuje poprzedni: pasek nie rośnie, a na końcu jest nowy wskaźnik.
-    await lists.getByRole('button', { name: '+ Więcej danych' }).click();
+    await lists.getByRole('button', { name: /^Wybierz dane · \d+ wskaźnik/ }).click();
     await pick(page, 'Pracujący ogółem');
     await expect(tabs.last()).toContainText('Pracujący ogółem');
     expect(await tabs.count()).toBe(total);
@@ -91,15 +92,15 @@ for (const width of [390, 1280]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });
 
-  test(`@F02c „+ Więcej danych”: błąd wczytania pokazuje komunikat i „Spróbuj jeszcze raz” (${width})`, async ({ page }) => {
+  test(`@F02c menu danych: błąd wczytania pokazuje komunikat i „Spróbuj jeszcze raz” (${width})`, async ({ page }) => {
     const counts = await mockLibrary(page, { failV201Times: 1 });
     const lists = await open(page, width);
-    await lists.getByRole('button', { name: '+ Więcej danych' }).click();
+    await lists.getByRole('button', { name: /^Wybierz dane · \d+ wskaźnik/ }).click();
     await pick(page, 'Pracujący ogółem');
     const state = lists.locator('[data-slot="library-state"]');
     await expect(state).toContainText('Nie udało się wczytać danych.');
     await state.getByRole('button', { name: 'Spróbuj jeszcze raz' }).click();
-    const active = lists.locator('[role="tabpanel"]:not([inert]) [data-slot="start-list"]');
+    const active = lists.locator('[data-slot="start-carousel-panel"]');
     await expect(active.locator('[data-slot="start-list-row"]')).toHaveCount(5);
     await expect(state).toHaveCount(0);
     expect(counts.v201).toBe(2);

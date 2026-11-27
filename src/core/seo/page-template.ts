@@ -6,6 +6,7 @@ import { serializeLd, type LdObject } from './json-ld';
 import { absoluteUrl, OG_IMAGE_HEIGHT, OG_IMAGE_PATH, OG_IMAGE_WIDTH } from './site';
 import type { SlugUnit } from './slug';
 import { twinIntro } from './fact-lead';
+import { footer, HEADER } from './page-chrome';
 import type { PageLink, PageRow, UnitPage } from './unit-page';
 
 /** Model strony z S06 uzupełniony o to, czego potrzebuje dokument. */
@@ -166,30 +167,24 @@ function localitiesSection(names: readonly string[] | undefined): string {
   }</section>`;
 }
 
-const LOGO =
-  '<a href="/" aria-label="Faktografia – strona główna" class="flex min-h-[44px] items-center"><picture>' +
-  '<source srcset="/brand/faktografia-logo-jasne.svg" media="(prefers-color-scheme: dark)">' +
-  '<img src="/brand/faktografia-logo-granat.svg" alt="Faktografia" class="h-10 md:h-12 w-auto -ml-3 md:-ml-3.5"></picture></a>';
-
 /** Przycisk do mapy (≥ 44 px). */
 export const mapButton = (href: string, label: string) =>
   `<a href="${attr(href)}" class="mt-6 inline-flex min-h-[44px] items-center border border-tusz bg-tusz px-4 py-2 font-bold text-arkusz focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tusz">${text(label)}</a>`;
 
-/** Pełny dokument: nagłówek z logo, treść `main` (już w HTML), stopka ze źródłem i datą danych. */
+/** Pełny dokument: skip-link, nagłówek z menu, treść `main` (już w HTML), stopka jak w aplikacji ze źródłem i datą danych. */
 export function renderDocument(doc: DocumentHead & { lastmod: string }, main: string, assets: PageAssets): string {
   return `<!doctype html>
 <html lang="pl">
 <head>
 ${head(doc, assets)}
 </head>
-<body class="min-h-screen bg-kalka text-tusz">
-<header class="flex h-14 md:h-18 items-center border-b border-linia px-4 md:px-8">${LOGO}</header>
-<main id="main-content" class="mx-auto max-w-5xl px-4 py-8 md:px-8 md:py-12">
+<body class="flex min-h-screen flex-col bg-kalka text-tusz">
+<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:inline-flex focus:min-h-[44px] focus:items-center focus:border focus:border-linia focus:bg-tusz focus:px-4 focus:py-2 focus:text-arkusz">Przejdź do treści</a>
+${HEADER}
+<main id="main-content" class="mx-auto w-full max-w-5xl flex-grow px-4 py-8 md:px-8 md:py-12">
 ${main}
 </main>
-<footer class="border-t border-linia bg-arkusz px-4 py-8 md:px-8">
-<p class="mx-auto max-w-5xl text-sm text-olowek">Źródło: GUS, Bank Danych Lokalnych, CC BY 4.0 · dane z ${text(dataDate(doc.lastmod))}</p>
-</footer>
+${footer(dataDate(doc.lastmod))}
 </body>
 </html>
 `;
