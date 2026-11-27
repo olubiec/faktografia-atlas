@@ -155,6 +155,7 @@
       { "indicatorId": "cars-per-1000", "dir": 1 }
     ]
   },
+  "percentiles": { "zeroGuard": true, "bins": 20, "minUnits": 100 },
   "neighbours": {
     "$opis": "F3 (W26-F03): fakt, gdy co najmniej tylu sąsiadów ma wartość; przy mniejszej liczbie bezpośrednich sąsiadów pierścień obejmuje sąsiadów sąsiadów.",
     "min": 4

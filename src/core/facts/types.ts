@@ -151,6 +151,8 @@ export interface FactsConfig {
   };
   /** F3: najmniej sąsiadów z wartością; mniej bezpośrednich sąsiadów = pierścień z sąsiadami sąsiadów. */
   neighbours?: { min: number };
+  /** W31-O01: reguły percentyli (zeroGuard: mediana 0 albo wartość 0 = brak stosunku do mediany). */
+  percentiles?: { zeroGuard: boolean; bins: number; minUnits: number };
   /** F8: wskaźniki wektora podobieństwa (standaryzowane), te w skali logarytmicznej i minimalny udział wspólnych. */
   twin?: { indicators: string[]; log: string[]; minShare: number };
 }
@@ -190,4 +192,25 @@ export interface FactsInput {
   neighbours?: Record<string, NeighbourRing>;
   /** Świeże wskaźniki (W27-D02): id → ostatni rok z danymi; brak = nic nie jest świeże. */
   fresh?: Record<string, number>;
+}
+
+/**
+ * W31-O01: percentyle gmin w pliku województwa (zwarty zapis).
+ * `u[teryt]` – jeden znak na wskaźnik (kolejność `ind`): kod 0x100 + percentyl; spacja = brak wartości.
+ * `r[teryt]` – [indeks wskaźnika, stosunek do mediany, …] tylko dwa najdalsze od mediany, i tylko gdy stosunek ≥ 2 albo ≤ 0,5 (reszta „typowa”; zeroGuard: brak).
+ */
+export interface PercentileShard {
+  ind: string[];
+  /** Rok danych użyty dla wskaźnika (kolejność jak `ind`). */
+  y: number[];
+  u: Record<string, string>;
+  r?: Record<string, number[]>;
+}
+
+/** Histogram rozkładu wskaźnika wśród gmin kraju: równe przedziały między 1. a 99. percentylem. */
+export interface DistEntry {
+  m: number;
+  lo: number;
+  hi: number;
+  b: number[];
 }
