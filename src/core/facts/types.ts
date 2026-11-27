@@ -205,6 +205,8 @@ export interface PercentileShard {
   y: number[];
   u: Record<string, string>;
   r?: Record<string, number[]>;
+  /** [indeks wskaźnika, wartość, …] – tylko kandydaci do kart ról (potrzebne do zdania w ludzkiej skali). */
+  v?: Record<string, number[]>;
 }
 
 /** Histogram rozkładu wskaźnika wśród gmin kraju: równe przedziały między 1. a 99. percentylem. */

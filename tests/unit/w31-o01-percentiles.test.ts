@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
-import { buildPercentiles, decodePercentiles, decodeFact, percentileOf } from '../../src/core/facts/codec'
+import { decodeFact } from '../../src/core/facts/codec'
+import { buildPercentiles, decodePercentiles, percentileOf } from '../../src/core/facts/percentiles'
 
 const fx = JSON.parse(readFileSync('tests/fixtures/facts-percentile/values.json', 'utf8'))
 const base = { values: fx.values, gminas: fx.gminas, zeroGuard: true, bins: 20, minUnits: 5 }
@@ -31,6 +32,11 @@ describe('W31-O01 percentyle', () => {
       const withValue = Object.values(fx.values[id].values).filter((x) => (x as (number | null)[])[1] !== null).length
       expect(d.b.reduce((s, x) => s + x, 0)).toBe(withValue)
     }
+  })
+  it('wartości kandydatów do kart są w pliku (potrzebne do ludzkiej skali)', () => {
+    const a = rows(g(10)).a
+    expect(a.ratio).toBe(10)
+    expect(a.value).toBe(100)
   })
   it('percentileOf: kraniec i pojedyncza wartość', () => {
     expect(percentileOf([1], 1)).toBe(50)
