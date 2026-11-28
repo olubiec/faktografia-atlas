@@ -58,13 +58,13 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           mkdir -p lib-wt/library
-          node scripts/data/calendar-board.mjs --lib lib-wt/library --out "$RUNNER_TEMP/board.md" --badge lib-wt/library/badge.json --materials lib-wt/library/materials --issue | tee -a "$GITHUB_STEP_SUMMARY"
+          node scripts/data/calendar-board.mjs --lib lib-wt/library --badge lib-wt/library/badge.json --materials lib-wt/library/materials --out lib-wt/library/kalendarium.md | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Zapisz znaczek i pakiet „Do materiałów” (library/badge.json, library/materials/) na gałęzi data/library
         run: |
           [ -d lib-wt/.git ] || [ -f lib-wt/.git ] || { echo "Brak gałęzi $BRANCH – znaczek powstanie po pierwszym przebiegu biblioteki."; exit 0; }
           cd lib-wt
-          git add -f library/badge.json
+          git add -f library/badge.json library/kalendarium.md
           [ -d library/materials ] && git add -f library/materials
           if git diff --staged --quiet; then echo "Znaczek i pakiet bez zmian."; exit 0; fi
           git commit -m "data: znaczek kalendarium i pakiet Do materiałów"

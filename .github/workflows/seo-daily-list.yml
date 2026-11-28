@@ -25,6 +25,8 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       LABEL: seo-dzien
+      PANEL_LABEL: kalendarium
+      CALENDAR_URL: https://github.com/${{ github.repository }}/blob/data/library/library/kalendarium.md
     steps:
       - uses: actions/checkout@v7
 
@@ -45,8 +47,10 @@ jobs:
           gh label create "$LABEL" --color 0E8A16 --description "Lista dnia do Search Console" --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
           TITLE=$(cat "$RUNNER_TEMP/daily/title.txt")
           # otwarte zgłoszenia seo-dzien, od najnowszego; najnowsze zostaje, reszta to duplikaty
-          OPEN=$(gh issue list --repo "$GITHUB_REPOSITORY" --label "$LABEL" --state open --limit 100 --json number -q 'sort_by(.number) | reverse | .[].number')
-          KEEP=$(echo "$OPEN" | head -n 1)
+          # panel = już przypięte zgłoszenie z etykietą kalendarium (najstarsze); jego treść to link do kalendarium + lista SEO
+          OPEN=$(gh issue list --repo "$GITHUB_REPOSITORY" --label "$LABEL" --state open --limit 100 --json number -q '.[].number')
+          KEEP=$(gh issue list --repo "$GITHUB_REPOSITORY" --label "$PANEL_LABEL" --state open --limit 100 --json number -q 'sort_by(.number) | .[0].number // empty')
+          if [ -n "$KEEP" ]; then gh issue edit "$KEEP" --repo "$GITHUB_REPOSITORY" --add-label "$LABEL"; OPEN=$(printf '%s\n%s' "$KEEP" "$OPEN" | awk 'NF && !s[$0]++'); fi
           if [ -z "$KEEP" ]; then
             if [ ! -s "$RUNNER_TEMP/daily/batch.txt" ]; then
               echo "::warning::Lista dnia jest pusta (wszystko odhaczone albo brak mapy strony) i nie ma zgłoszenia – nic nie zakładam."
@@ -60,5 +64,5 @@ jobs:
           gh issue edit "$KEEP" --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body-file "$RUNNER_TEMP/daily/issue.md"
           echo "Zaktualizowano zgłoszenie #$KEEP."
           for N in $(echo "$OPEN" | tail -n +2); do
-            gh issue close "$N" --repo "$GITHUB_REPOSITORY" --comment "Duplikat: lista dnia jest teraz w jednym stałym zgłoszeniu #$KEEP. Odhaczone adresy zostały przeniesione." || true
+            gh issue close "$N" --repo "$GITHUB_REPOSITORY" --comment "Lista SEO jest teraz w przypiętym panelu #$KEEP. Odhaczone adresy zostały przeniesione." || true
           done

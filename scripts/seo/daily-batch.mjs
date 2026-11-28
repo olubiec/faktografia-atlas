@@ -72,7 +72,7 @@ async function main() {
     await mkdir(out, { recursive: true });
     await writeFile(path.join(out, 'batch.txt'), batch.join('\n') + (batch.length ? '\n' : ''));
     const doneAll = [...new Set(done)];
-    await writeFile(path.join(out, 'issue.md'), db.renderIssueBody(batch, date, doneAll));
+    await writeFile(path.join(out, 'issue.md'), db.renderIssueBody(batch, date, doneAll, process.env.CALENDAR_URL || undefined));
     await writeFile(path.join(out, 'title.txt'), db.issueTitleUpdated(date));
 
     const bing = args['dry-run'] ? 'dry-run' : await sendIndexNow(batch, SITE_URL);
