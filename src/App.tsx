@@ -13,6 +13,7 @@ const Sources = lazy(() => import('./view/pages/Sources').then((m) => ({ default
 const Privacy = lazy(() => import('./view/pages/Privacy').then((m) => ({ default: m.Privacy })));
 const DiscoverIndex = lazy(() => import('./view/pages/DiscoverIndex').then((m) => ({ default: m.DiscoverIndex })));
 const ComparePage = lazy(() => import('./view/pages/ComparePage').then((m) => ({ default: m.ComparePage })));
+const CalendarPage = lazy(() => import('./view/calendar/CalendarPage').then((m) => ({ default: m.CalendarPage })));
 const DesignPage = lazy(() => import('./view/design/DesignPage').then((m) => ({ default: m.DesignPage })));
 const AnnotationTestPage = lazy(() => import('./view/test/AnnotationTestPage').then((m) => ({ default: m.AnnotationTestPage })));
 const UiTestPage = lazy(() => import('./view/test/UiTestPage'));
@@ -53,7 +54,8 @@ export function App() {
           <Route path="/zestawienia" element={<DiscoverIndex />} />
           <Route path="/rankingi" element={<RankingsRedirect />} />
           <Route path="/porownaj" element={<ComparePage />} />
-          <Route path="/design" element={<DesignPage />} />
+          <Route path="/kalendarium" element={<CalendarPage />} />
+          <Route path="/design"element={<DesignPage />} />
           <Route path="/__test/ui" element={<UiTestPage />} />
           <Route path="/__test/annotation" element={<AnnotationTestPage />} />
           <Route path="/__test/interactive" element={<InteractiveTestPage />} />

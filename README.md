@@ -2,7 +2,7 @@
 
 [SEO – lista stron do zgłoszenia w Google](https://github.com/olubiec/faktografia-atlas/issues/696): 10 adresów dziennie, odhaczasz kratką po zgłoszeniu.
 
-[Kalendarium danych](https://github.com/olubiec/faktografia-atlas/blob/data/library/library/kalendarium.md): co GUS publikuje w najbliższych dniach i co już pobraliśmy.
+[Kalendarium danych](https://faktografia.eu/kalendarium): klikalny kalendarz miesięczny: co GUS publikuje, co pobraliśmy i pomysły na media.
 
 Interaktywna mapa Polski z danymi GUS. Projekt marki Faktografia.
 

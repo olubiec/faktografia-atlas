@@ -4,6 +4,7 @@
 // Wejście z wiersza poleceń (workflow calendar-board.yml):
 //   node scripts/data/calendar-board.mjs --lib lib-wt/library --out board.md --badge lib-wt/library/badge.json [--issue]
 //     [--materials lib-wt/library/materials [--materials-force]]   (W29-D08: pakiet „Do materiałów”)
+//     [--days lib-wt/library/kalendarium-dni.json]   (S19: mały plik dla strony /kalendarium)
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -170,6 +171,61 @@ export function shouldBuildMaterials({ today, ledger, force = false }) {
 /** latest.json pakietu „Do materiałów”: ta sama treść co plik .md, w strukturze (deterministyczny zapis). */
 export const materialsJson = (pack) => `${JSON.stringify(pack, null, 2)}\n`;
 
+// ── S19: plik dla strony /kalendarium (library/kalendarium-dni.json) ──────────────────────────────────────────
+/** Ile nazw zmiennych zapisujemy przy jednej publikacji (reszta idzie do `more`), żeby plik był mały. */
+export const DAYS_ITEMS_LIMIT = 40;
+const GUS = 'https://stat.gov.pl';
+const STATE_ORDER = { downloaded: 0, waiting: 1, planned: 2 };
+
+/**
+ * Dane dnia po dniu: publikacje GUS (z liczbą i nazwami zmiennych, bez odrzuconych) oraz pomysły na media.
+ * Czysta funkcja, bez zegara: `today` podaje wywołanie (decyduje, czy wskaźnik główny jest „zaplanowany”).
+ */
+export function buildKalendariumDni({ today, ledger, available, indicators = [], fresh = {}, materials = [] }) {
+  const days = {};
+  const day = (d) => (days[d] ??= { publications: [], media: [] });
+
+  for (const e of ledger?.entries ?? []) {
+    const items = [];
+    for (const v of e.library ?? []) {
+      if (!['downloaded', 'waiting', 'planned'].includes(v.state)) continue; // odrzuconych nie pokazujemy
+      const x = nameOf(available, v.id);
+      const item = { name: x?.n ?? `zmienna ${v.id}`, state: v.state };
+      if (v.state === 'downloaded') item.on = v.on ?? e.date;
+      if (v.state === 'waiting') item.on = e.date;
+      if (v.state === 'downloaded' && x) item.mapUrl = mapUrl({ id: `b${v.id}`, year: lastYear(x) });
+      items.push(item);
+    }
+    for (const id of e.main ?? []) {
+      const since = fresh?.[id]?.since;
+      const done = since && !since.startsWith('1970') && since.slice(0, 10) >= e.date;
+      const state = done ? 'downloaded' : e.date >= today ? 'planned' : null;
+      if (!state) continue; // bez dowodu pobrania i po terminie: nie zgadujemy
+      const item = { name: indicators.find((i) => i.id === id)?.name ?? id, state };
+      if (done) {
+        item.on = since.slice(0, 10);
+        item.mapUrl = mapUrl({ id, year: fresh[id].year });
+      }
+      items.push(item);
+    }
+    items.sort((a, b) => STATE_ORDER[a.state] - STATE_ORDER[b.state] || a.name.localeCompare(b.name, 'pl'));
+    const counts = { downloaded: 0, waiting: 0, planned: 0 };
+    for (const i of items) counts[i.state] += 1;
+    const pub = { title: e.title, gusUrl: /^https?:/.test(e.href) ? e.href : `${GUS}${e.href}`, counts, items: items.slice(0, DAYS_ITEMS_LIMIT) };
+    if (items.length > DAYS_ITEMS_LIMIT) pub.more = items.length - DAYS_ITEMS_LIMIT;
+    day(e.date).publications.push(pub);
+  }
+
+  for (const m of materials) {
+    const d = m.premiere?.date ?? today;
+    day(d).media.push({ sentence: m.sentence ?? m.title, value: m.value.text, source: m.source.text, mapUrl: `${SITE}${m.source.map}` });
+  }
+
+  const sorted = Object.fromEntries(Object.entries(days).sort(([a], [b]) => a.localeCompare(b)));
+  for (const d of Object.values(sorted)) d.publications.sort((a, b) => a.title.localeCompare(b.title, 'pl'));
+  return { updated: today, days: sorted };
+}
+
 const KIND_LABEL = { premiere: 'Premiera GUS', fresh: 'Świeże dane', extreme: 'Skrajność', trend: 'Temat na czasie' };
 
 /** Plik library/materials/<data>.md; `site` dopisuje domenę do linków mapy. */
@@ -335,6 +391,12 @@ async function main() {
     });
     const out = arg('out');
     if (out) await writeFile(out, markdown);
+    const daysOut = arg('days');
+    if (daysOut) {
+      const dni = buildKalendariumDni({ today, ledger, available: await readJson(path.join(lib, 'available.json'), null), indicators, fresh, materials: pack.items });
+      await writeFile(daysOut, `${JSON.stringify(dni)}\n`);
+      console.log(`Kalendarium dni: ${Object.keys(dni.days).length} dni → ${daysOut}`);
+    }
     const badge = arg('badge');
     if (badge) await writeFile(badge, JSON.stringify(buildBadge(counts)));
     console.log(`Tablica: ${markdown.length} znaków, premier ${counts.premieres}, nowości ${counts.news}`);

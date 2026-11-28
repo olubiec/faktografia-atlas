@@ -3,7 +3,7 @@ name: Calendar board
 # W28-D07: tablica „Kalendarium danych” = jedno zgłoszenie (etykieta `kalendarium`), którego treść robot podmienia.
 # Nie zakłada nowych zgłoszeń, nie komentuje (bez powiadomień), niczego nie scala i nie pisze na main.
 # Pisze tylko library/badge.json i library/materials/ (W29-D08: pakiet „Do materiałów”, w poniedziałek i w dniu nowych
-# `downloaded` w księdze) na gałęzi data/library. Nic nie trafia na main. Sekretów poza GITHUB_TOKEN brak.
+# `downloaded` w księdze) i library/kalendarium-dni.json (S19: dane strony /kalendarium) na gałęzi data/library. Nic nie trafia na main. Sekretów poza GITHUB_TOKEN brak.
 # Stany biorą się z księgi library/calendar.json (fetch-library), a „Wdrożone” i „Odkrycia” z plików na main.
 on:
   workflow_run:
@@ -58,13 +58,13 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           mkdir -p lib-wt/library
-          node scripts/data/calendar-board.mjs --lib lib-wt/library --badge lib-wt/library/badge.json --materials lib-wt/library/materials --out lib-wt/library/kalendarium.md | tee -a "$GITHUB_STEP_SUMMARY"
+          node scripts/data/calendar-board.mjs --lib lib-wt/library --badge lib-wt/library/badge.json --materials lib-wt/library/materials --out lib-wt/library/kalendarium.md --days lib-wt/library/kalendarium-dni.json | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Zapisz znaczek i pakiet „Do materiałów” (library/badge.json, library/materials/) na gałęzi data/library
         run: |
           [ -d lib-wt/.git ] || [ -f lib-wt/.git ] || { echo "Brak gałęzi $BRANCH – znaczek powstanie po pierwszym przebiegu biblioteki."; exit 0; }
           cd lib-wt
-          git add -f library/badge.json library/kalendarium.md
+          git add -f library/badge.json library/kalendarium.md library/kalendarium-dni.json
           [ -d library/materials ] && git add -f library/materials
           if git diff --staged --quiet; then echo "Znaczek i pakiet bez zmian."; exit 0; fi
           git commit -m "data: znaczek kalendarium i pakiet Do materiałów"
