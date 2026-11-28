@@ -62,42 +62,7 @@ Scalone autonomicznie na polecenie właściciela (22.11, „bądź decyzyjny”)
 
 **Dalej:** fala 2 (B13, C04) po wpisaniu „Zakres potwierdzony” na podstawie raportu C03.
 
-## Stan na 20.11.2026 (fala W4 scalona; wcześniejsze sekcje niżej są starsze – tam, gdzie się różnią, obowiązuje ta sekcja)
-Fala W4 (15 zadań QC + poprawka #571) scalona do `main` przez właściciela-zlecenie 20.11, **bez czekania na zielone testy** (testy `testy-shard` na PR-ach były w kolejce lub w toku w chwili scalania). Stan CI na `main` po scaleniu: **do sprawdzenia**.
-
-| Status | Praca | PR | Co dało |
-|---|---|---|---|
-| ✅ scalone | W4-QC802 pasek udostępniania na Rankingach | #556 | `RankingsShare.tsx` |
-| ✅ scalone | W4-QC505 okno dodawania wskaźnika: zakładki Szukaj / Kategorie, okruszki | #557 | `LibrarySearchPanel.tsx` |
-| ✅ scalone | W4-QC916 cztery nowe rodzaje kart udostępniania (logika) | #558 | `card.ts`, `deck-scene.ts` |
-| ✅ scalone | W4-QC508 komunikat „Dodano” przy „Dodaj do moich” (3 s) | #559 | `AddToMineButton.tsx` |
-| ✅ scalone | W4-QC903 domyślny zestaw kart (logika, niepodłączona) | #560 | `deck-defaults.ts` |
-| ✅ scalone | W4-QC904 podział talii na strony (logika, niepodłączona) | #561 | `deck-split.ts` |
-| ✅ scalone | W4-QC912 reducer i loader wartości talii (niepodłączone) | #562 | `deckReducer.ts`, `valueLoader.ts` |
-| ✅ scalone | W4-QC204 testy e2e porównania na telefonie (390 i 360 px) | #563 | tylko testy |
-| ✅ scalone | W4-QC803 strona udostępniania porównania, `?c=A,B`, karta „compare” | #564 | `CompareShare.tsx` |
-| ✅ scalone | W4-QC403 przyciski +/− zoomu (wycofane w #571) | #565 | `zoom-by.ts`, logika zostaje |
-| ✅ scalone | W4-QC404 lot kamery do miejscowości nie przerywany panelem profilu | #566 | `isSameView` w `camera-plan.ts` |
-| ✅ scalone | W4-QC504 strzałki poprzedni/następny w „Moich wskaźnikach”, fokus | #567 | `myIndicatorsFocus.ts` |
-| ✅ scalone | W4-QC506 aktywny wskaźnik wyróżniony w pasku na telefonie | #568 | `MobileIndicatorBar.tsx` |
-| ✅ scalone | W4-QC606 wspólny hook rejestru wskaźników, stan ładowania | #569 | `useIndicatorRegistry.ts` |
-| ✅ scalone | W4-QC607 grupa „Z biblioteki GUS” w wyborze wskaźników (50 + „Pokaż więcej”) | #570 | `LibraryGroup.tsx` |
-| ✅ scalone | Usunięcie paska +/− zoomu z mapy (na prośbę właściciela) | #571 | usunięto `ZoomButtons.tsx` i jego test |
-
-**Usunięte z `main` w W4:** `src/view/map/ZoomButtons.tsx`, `tests/unit/zoom-buttons.test.tsx` (#571, na prośbę właściciela).
-
-**Do sprawdzenia przez właściciela na faktografia.eu** (lista z uwagami w sekcji „Co działa”, ta wiadomość zastępuje ją dla W4):
-- Rankingi: pasek udostępniania, bez przewijania w bok na telefonie.
-- Dodaj wskaźnik: zakładki Szukaj/Kategorie, okruszki.
-- Biblioteka: „Dodano” po „Dodaj do moich”, znika po ok. 3 s.
-- Porównanie: `?c=A,B`, karta „compare”, telefon 390 i 360 px.
-- Mapa: lot kamery do miejscowości przy zoomie 8–9 dochodzi do końca.
-- Moje wskaźniki: strzałki, fokus klawiaturą; na telefonie wyróżniony aktywny wskaźnik.
-- Wybór wskaźnika: „Z biblioteki GUS”, „Pokaż więcej”.
-- Mapa: brak paska +/− (zoom palcem i scrollem).
-
-**Znane ograniczenia W4:** kliknięcia nie są testowane automatycznie (Vitest bez DOM); trzy specyfikacje e2e z QC403 (`drill`, `fix6-camera-driver`, `localities-map`) mogą być czerwone na CI; zrzuty pikselowe do odświeżenia workflowem „Update snapshots” (uruchamia właściciel); testy czasowe (`library-query-perf` i inne) nie były sprawdzone na czystym `main`.
-
+- Sekcja „Stan na 20.11.2026” (fala W4 QC, #556–#571) przeniesiona do `docs/STAN-ARCHIWUM.md` 28.11.2026.
 - Sekcja 18.11.2026 (FIX6, W2-FIX7, lista „Do zrobienia”) i decyzje z 26–28.10.2026 przeniesione do `docs/STAN-ARCHIWUM.md` 21.11.2026.
 - Starsze sekcje (Co działa, Sesja teraz, Plan, Przypomnienia, Znane problemy / dług – stan z 28.10) przeniesione do `docs/STAN-ARCHIWUM.md` 20.11.2026 (U00).
 
