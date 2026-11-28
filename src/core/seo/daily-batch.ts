@@ -76,11 +76,20 @@ export function pickDailyBatch({ urls, done = [], date, limit = DAILY_LIMIT }: B
   return out;
 }
 
-/** Tytuł zgłoszenia dnia. */
+/** Tytuł zgłoszenia dnia (wariant z jednego dnia, zostaje dla zgodności). */
 export const issueTitle = (date: string): string => `SEO – dzień ${date.slice(0, 10)}`;
 
-/** Treść zgłoszenia: krótka instrukcja i checklista adresów. */
-export function renderIssueBody(urls: readonly string[], date: string): string {
+/** Tytuł stałego zgłoszenia: ta sama kartka, nadpisywana codziennie. */
+export const issueTitleUpdated = (date: string): string => `SEO – do zgłoszenia w Google (aktualizacja ${date.slice(0, 10)})`;
+
+/** Nagłówek sekcji z pamięcią odhaczonych adresów. */
+export const DONE_HEADING = '## Zrobione';
+
+/**
+ * Treść stałego zgłoszenia: krótka instrukcja, checklista adresów na dziś i sekcja „Zrobione”
+ * (pamięć odhaczonych adresów między dniami; `done` bez duplikatów i bez adresów z dzisiejszej listy).
+ */
+export function renderIssueBody(urls: readonly string[], date: string, done: readonly string[] = []): string {
   const head = [
     `Lista na ${date.slice(0, 10)}: ${urls.length} adresów do zgłoszenia w Google.`,
     '',
@@ -89,16 +98,22 @@ export function renderIssueBody(urls: readonly string[], date: string): string {
     '2. Wklej adres z listy poniżej i kliknij „Poproś o zindeksowanie”.',
     '3. Po zrobieniu odznacz kratkę przy tym adresie. Odhaczony adres nie wróci na kolejne listy.',
     '',
-    'Nieodhaczone adresy wrócą na listę następnego dnia. Bing dostaje te same adresy automatycznie (IndexNow).',
+    'To jedno stałe zgłoszenie: automat codziennie nadpisuje listę. Nieodhaczone adresy wrócą na listę następnego dnia. Bing dostaje te same adresy automatycznie (IndexNow).',
     '',
   ];
-  if (urls.length === 0) return [...head, 'Na dziś nic nie zostało do zgłoszenia.'].join('\n');
-  return [...head, ...urls.map((u) => `- [ ] ${u}`)].join('\n');
+  const today = new Set(urls);
+  const doneList = [...new Set(done)].filter((u) => !today.has(u));
+  const list = urls.length === 0 ? ['Na dziś nic nie zostało do zgłoszenia.'] : urls.map((u) => `- [ ] ${u}`);
+  const memory = doneList.length === 0 ? [] : ['', DONE_HEADING, '', ...doneList.map((u) => `- [x] ${u}`)];
+  return [...head, ...list, ...memory].join('\n');
 }
 
-/** Odhaczone adresy (`- [x] https://…`, także duże X) z treści zgłoszenia; reszta linii jest ignorowana. */
+/**
+ * Odhaczone adresy (`- [x] https://…`, także duże X) z treści zgłoszenia: z listy dnia i z sekcji „Zrobione”,
+ * bez duplikatów (kolejność pierwszego wystąpienia); reszta linii jest ignorowana.
+ */
 export function parseCheckedUrls(body: string): string[] {
-  const out: string[] = [];
-  for (const m of body.matchAll(/^\s*[-*]\s+\[[xX]\]\s+(https?:\/\/\S+)\s*$/gm)) out.push(m[1] ?? '');
-  return out;
+  const out = new Set<string>();
+  for (const m of body.matchAll(/^\s*[-*]\s+\[[xX]\]\s+(https?:\/\/\S+)\s*$/gm)) out.add(m[1] ?? '');
+  return [...out];
 }

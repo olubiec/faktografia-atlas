@@ -79,13 +79,15 @@ Czerwone flagi (sesja Claude): spadek zaindeksowanych > 20% w tydzień; „Wykry
 
 Teksty z AI na tysiącach stron; strony dla miejscowości i par „gmina A vs B”; kupowanie i wymiana linków, katalogi; sztuczne odświeżanie dat; codzienne ręczne zgłaszanie adresów; Indexing API poza ofertami pracy; klucz konta usługi w czacie lub w repo.
 
-## 10. Lista dnia: 10 adresów dziennie (S18)
+## 10. Lista dnia: 10 adresów dziennie (S18, S18b)
 
-**Co robi automat:** co dobę rano wybiera do 10 najważniejszych adresów, które jeszcze nie są odhaczone: najpierw strona główna, potem województwa, powiaty, rankingi i tematy. Gmin, miejscowości i porównań gmin nie wybiera nigdy (zob. §9). Te same adresy od razu wysyła do Binga (IndexNow), a dla Google zakłada przypięte zgłoszenie „SEO – dzień RRRR-MM-DD” z checklistą.
+**Co robi automat:** co dobę rano wybiera do 10 najważniejszych adresów, które jeszcze nie są odhaczone: najpierw strona główna, potem województwa, powiaty, rankingi i tematy. Gmin, miejscowości i porównań gmin nie wybiera nigdy (zob. §9). Te same adresy od razu wysyła do Binga (IndexNow), a dla Google aktualizuje JEDNO stałe zgłoszenie z etykietą `seo-dzien`, o tytule „SEO – do zgłoszenia w Google (aktualizacja RRRR-MM-DD)”. Nie zakłada nowego co dzień: nadpisuje treść tego samego zgłoszenia.
+
+**Raz przypnij zgłoszenie:** otwórz je na GitHubie → ⋯ (trzy kropki) → „Pin issue”. Automat nie umie tego zrobić sam (brak uprawnień), więc robisz to tylko jeden raz, a zgłoszenie zostaje na górze listy. Jeśli zgłoszenia jeszcze nie ma, uruchom ręcznie w Actions: „SEO – lista dnia” (Run workflow), a potem je przypnij.
 
 **Co robisz Ty (około 5 minut, wystarczy telefon):**
-1. Otwórz przypięte zgłoszenie na GitHubie.
+1. Otwórz przypięte zgłoszenie.
 2. Dla każdego adresu: Search Console → Sprawdzanie adresu URL → wklej adres → „Poproś o zindeksowanie”.
-3. Po zrobieniu odznacz kratkę przy adresie. Odhaczony adres nie wróci już na żadną listę.
+3. Po zrobieniu odznacz kratkę przy adresie. Odhaczony adres nie wróci już na żadną listę: następnego dnia automat przenosi go do sekcji „Zrobione” na dole zgłoszenia (to jego pamięć, nie ruszaj jej).
 
-Nie zdążyłeś? Nic się nie dzieje: poprzednie zgłoszenie zamyka się samo, a nieodhaczone adresy wracają na listę następnego dnia. Gdy wszystko jest odhaczone, lista jest pusta i zgłoszenie się nie zakłada. Pierwszy raz uruchom ręcznie w Actions: „SEO – lista dnia” (Run workflow).
+Nie zdążyłeś? Nic się nie dzieje: nieodhaczone adresy zostają niezrobione i wracają na listę następnego dnia. Gdyby kiedyś powstało więcej niż jedno zgłoszenie `seo-dzien`, automat zbierze z nich odhaczenia, zostawi najnowsze, a resztę zamknie. Gdy wszystko jest odhaczone, lista jest pusta (zgłoszenie zostaje, z sekcją „Zrobione”).
