@@ -24,7 +24,7 @@ for (const width of [390, 1280]) {
       const dataRequests: string[] = [];
       page.on('request', (req) => {
         const url = req.url();
-        if (/\/values\/|units\.json|localities/.test(url)) dataRequests.push(url);
+        if (/\/data\/(values\/|units\.json|localities)/.test(url)) dataRequests.push(url);
       });
 
       await page.goto('/?e2e');
@@ -41,17 +41,28 @@ for (const width of [390, 1280]) {
       expect(box!.height).toBeGreaterThanOrEqual(44);
       expect(box!.width).toBeGreaterThanOrEqual(44);
 
-      // Odkrycia (W26-F02 zastąpiło „Przykłady”): 4 zestawienia, każde prowadzi na /mapa.
-      const discoveries = page.getByRole('region', { name: 'Odkrycia' });
-      const hrefs = await discoveries
-        .getByRole('link', { name: /^Zobacz na mapie: / })
-        .evaluateAll((els) => els.map((e) => e.getAttribute('href')));
-      expect(hrefs).toHaveLength(4);
-      for (const href of hrefs) expect(href).toMatch(/^\/mapa\?/);
-
       // Na `/` nie pobieramy żadnych danych.
       await page.waitForLoadState('networkidle');
       expect(dataRequests).toEqual([]);
+
+      // Odkrycia (W26-F02 zastąpiło „Przykłady”): karuzela zestawień, na starcie 4 slajdy redakcyjne; każdy prowadzi na /mapa.
+      const discoveries = page.getByRole('region', { name: 'Odkrycia' });
+      const tabs = discoveries.getByRole('tab');
+      expect(await tabs.count()).toBeGreaterThanOrEqual(4);
+      const hrefs: (string | null)[] = [];
+      // Strzałkami na pasku, bez ruchu myszy: najechanie na link rozgrzewa mapę (to pobrałoby dane, a tu ich pobrań nie ma).
+      // Start jest losowy: Home zaznacza pierwszą pozycję paska.
+      await tabs.nth(0).focus();
+      await page.keyboard.press('Home');
+      for (let k = 0; k < 4; k++) {
+        if (k > 0) await page.keyboard.press('ArrowRight');
+        await expect(tabs.nth(k)).toHaveAttribute('aria-selected', 'true');
+        const link = discoveries.getByRole('link', { name: /^Zobacz na mapie: / });
+        await expect(link).toHaveCount(1);
+        hrefs.push(await link.getAttribute('href'));
+      }
+      expect(new Set(hrefs).size).toBe(4);
+      for (const href of hrefs) expect(href).toMatch(/^\/mapa\?/);
 
       // Brak poziomego przewijania.
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);

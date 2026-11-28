@@ -149,10 +149,10 @@ Strona startowa („Odkrycia”, §6) pokazuje W1 dla Twojego miejsca, a W2–W4
 - **Ryzyko:** gdy fakty na 2 000 stronach gmin będą zbyt podobne („3. miejsce w województwie…” × 2 000), Google je zignoruje. Dlatego: różnorodność typów (§4), gminy dalej `noindex` do decyzji D7, audyt S08 rozszerzony o test „ten sam szablon zdania na > 30% stron = ostrzeżenie”.
 
 ## 9. Architektura i budżety (zgodnie z `ARCHITEKTURA.md`)
-- **Robot (GitHub Actions)**, nowy krok po `build-profiles`: `scripts/data/build-facts.mjs` → `public/data/facts/<WW>.json` (fakty jednostek województwa; szacunek 60–80 KB surowo, ~15 KB gzip) i `public/data/facts-start.json` (Odkrycie dnia na 30 dni + 4 zestawienia, ≤ 4 KB).
+- **Robot (GitHub Actions)**, nowy krok po `build-profiles`: `scripts/data/build-facts.mjs` → `public/data/facts/<WW>.json` (fakty jednostek województwa; szacunek 60–80 KB surowo, ~15 KB gzip) i `public/data/facts-start.json` (Odkrycie dnia na 30 dni + 4 zestawienia po 5 pozycji z obu końców skali, ≤ 5 KB – podniesione z 4 KB decyzją właściciela 26.11.2026).
 - **Logika** w `src/core/facts/` (czysta, Vitest): wykrywanie (F1–F9), siła, dobór, szablony zdań. Te same funkcje używa generator stron statycznych (S07) – jeden kod, dwa wyjścia.
 - **Widok** w `src/view/start/` (nowe komponenty sekcji); `StartPage.tsx` – jedna podmiana sekcji. Pliki ekranu mapy bez zmian (deep link przez istniejący format `/mapa?u=…&i=…&y=…`).
-- **Budżety startu (PRODUKT §3.1):** w pierwszych 3 s tylko `facts-start.json` (nowy próg ≤ 4 KB – wymaga dopisania do §7); `facts/<WW>.json` dopiero po wyborze miejsca lub z pamięci podręcznej przy zapamiętanym miejscu (jedno województwo = jeden plik, nie wszystkie).
+- **Budżety startu (PRODUKT §3.1):** w pierwszych 3 s tylko `facts-start.json` (próg ≤ 5 KB, PRODUKT §7); `facts/<WW>.json` dopiero po wyborze miejsca lub z pamięci podręcznej przy zapamiętanym miejscu (jedno województwo = jeden plik, nie wszystkie).
 - **Bezpieczeństwo:** fakty to dane, tekst składa React (bez `dangerouslySetInnerHTML`); strony statyczne przez `escapeHtml` (S07).
 - **Zgoda/prywatność:** `localStorage` z jednym TERYT, geolokalizacja tylko na przycisk, nic nie wychodzi z urządzenia; kliknięcia faktów mierzone w PostHog tylko po zgodzie (jak dziś).
 
@@ -199,7 +199,7 @@ Automatycznych stron pod chwilowe trendy, nieoficjalnego pobierania Google Trend
 - **Jak długo:** `fresh.days` w `config/facts.json` (start: 28 dni od `since`). Potem mnożniki znikają same, bez ręcznej pracy i bez AI.
 - **Siła faktów:** fakt z najnowszego roku świeżego wskaźnika × `fresh.boost` (1,6) – także fakty jednostek, więc nowe dane wypychają stare z „3 rzeczy” w profilu. Dodatkowo × `fresh.extremeBoost` (1,3) dla 1. miejsca w kraju bez remisu (F1) i rekordu serii (F5). Skrajność „zmiana rok do roku w górnym 1%” pominięta: typ F4 ma okno 10 lat, a zdanie „… od 2024 r. – największy wzrost z N …” dublowałoby się z faktem 10-letnim tego samego wskaźnika; wymaga osobnej decyzji.
 - **Odkrycie dnia:** pierwsze `fresh.dailySlots` (7) dni po `generatedAt` pokazują najsilniejsze krajowe fakty świeżych wskaźników (indeksy `dailyIndex(generatedAt + k dni)`, różne jednostki); resztę wypełnia dotychczasowy algorytm. Bez świeżych wskaźników wynik jest taki jak dawniej.
-- **Zestawienia:** pierwsze z 4 zestawień zastępuje zestawienie najsilniejszego świeżego wskaźnika (gminy, „najwyżej”, gminy poniżej `thresholds.smallPopulation` pominięte); „najsilniejszy” = największa suma siły jego faktów krajowych. Pozostałe trzy bez zmian; `facts-start.json` zostaje ≤ 4 KB.
+- **Zestawienia:** pierwsze z 4 zestawień zastępuje zestawienie najsilniejszego świeżego wskaźnika (gminy, „najwyżej”, gminy poniżej `thresholds.smallPopulation` pominięte); „najsilniejszy” = największa suma siły jego faktów krajowych. Pozostałe trzy bez zmian; `facts-start.json` zostaje ≤ 5 KB.
 - **Profil miejsca:** „3 rzeczy” biorą fakty z wyboru po mnożnikach, więc świeże fakty wskaźnika są wyżej.
 
 ## 16. Pakiet „Do materiałów” (W29-D08)

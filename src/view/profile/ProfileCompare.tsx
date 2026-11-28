@@ -434,7 +434,7 @@ export function ProfileCompare({
       <div className="flex items-center justify-between gap-3 p-3 border border-linia bg-kalka/30">
         <div className="min-w-0 flex-1">
           <span className="text-xs text-olowek block">Porównanie z:</span>
-          <span className="text-sm font-bold text-tusz truncate block">
+          <span className="text-sm font-bold text-tusz block leading-tight [overflow-wrap:normal] [word-break:normal] hyphens-none">
             {profileB.unit ? unitTitle(profileB.unit) : `TERYT ${profileB.teryt}`}
           </span>
         </div>{profileB.unit && <UnitKindInfo unit={profileB.unit} />}

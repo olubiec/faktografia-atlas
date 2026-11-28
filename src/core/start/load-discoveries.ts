@@ -8,7 +8,7 @@ const defaultFetch: Fetch = (...a) => fetch(...a);
 
 const cache = new Map<string, Promise<unknown>>();
 
-function getJson<T>(url: string, fetchImpl: Fetch): Promise<T> {
+export function getJson<T>(url: string, fetchImpl: Fetch = defaultFetch): Promise<T> {
   let p = cache.get(url) as Promise<T> | undefined;
   if (!p) {
     p = fetchImpl(url).then((res) => {
@@ -22,7 +22,7 @@ function getJson<T>(url: string, fetchImpl: Fetch): Promise<T> {
   return p;
 }
 
-/** Odkrycie dnia i zestawienia (≤ 4 KB). */
+/** Odkrycie dnia i zestawienia (≤ 5 KB). */
 export function loadFactsStart(fetchImpl: Fetch = defaultFetch): Promise<FactsStart> {
   return getJson<FactsStart>(FACTS_START_URL, fetchImpl);
 }

@@ -3,7 +3,7 @@ import { ShareBar } from '../share/ShareBar';
 import { LazyShareDialog } from '../share/LazyShareDialog';
 import type { RankingCardData } from '../../core/share/card-ranking';
 import type { RankedUnit } from '../../core/ranking/ranking';
-import { writeRankingsSearch, type RankingsState } from '../../core/ranking/rankings-url';
+import { writeRankingsParams, type RankingsState } from '../../core/ranking/rankings-url';
 import { formatValue } from '../../core/format/number';
 import type { Unit } from '../../core/units/types';
 import type { Indicator } from '../../core/profile/profile';
@@ -38,7 +38,7 @@ export function RankingsShare({ state, ranking, units, indicator, year }: Rankin
     [ranking, units, indicator, year],
   );
   if (!card) return null;
-  const url = window.location.origin + window.location.pathname + writeRankingsSearch(state);
+  const url = window.location.origin + window.location.pathname + '?' + writeRankingsParams(state);
   return (
     <div className="mb-8" data-testid="rankings-share">
       <ShareBar url={url} onOpenDialog={() => setOpen(true)} />

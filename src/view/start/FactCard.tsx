@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import type { FactView } from '@/core/start/discoveries';
@@ -13,10 +13,12 @@ export interface FactCardProps {
   onWarm?: () => void;
   /** Większa karta (Odkrycie dnia). */
   large?: boolean;
+  /** Dodatkowy przycisk obok „Zobacz na mapie” (Odkrycie dnia: „Pokaż inną ciekawostkę”). */
+  extra?: ReactNode;
 }
 
 /** Karta faktu: (miejsce), duża liczba, zdanie, „Zobacz na mapie” – jedno kliknięcie do mapy. */
-export function FactCard({ fact, place, to, onWarm, large = false }: FactCardProps) {
+export function FactCard({ fact, place, to, onWarm, large = false, extra }: FactCardProps) {
   const sentenceId = useId();
   return (
     <article
@@ -40,11 +42,14 @@ export function FactCard({ fact, place, to, onWarm, large = false }: FactCardPro
       <p id={sentenceId} className="m-0 text-sm leading-normal text-tusz break-words">
         {fact.sentence}
       </p>
-      <Button asChild variant="secondary" className="self-start">
-        <Link to={to(fact.href)} aria-describedby={sentenceId} onPointerEnter={onWarm} onTouchStart={onWarm} onFocus={onWarm}>
-          Zobacz na mapie
-        </Link>
-      </Button>
+      <div className="flex flex-wrap items-center gap-3">
+        <Button asChild variant="secondary">
+          <Link to={to(fact.href)} aria-describedby={sentenceId} onPointerEnter={onWarm} onTouchStart={onWarm} onFocus={onWarm}>
+            Zobacz na mapie
+          </Link>
+        </Button>
+        {extra}
+      </div>
     </article>
   );
 }

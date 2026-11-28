@@ -11,7 +11,7 @@ const NotFound = lazy(() => import('./view/NotFound').then((m) => ({ default: m.
 const About = lazy(() => import('./view/pages/About').then((m) => ({ default: m.About })));
 const Sources = lazy(() => import('./view/pages/Sources').then((m) => ({ default: m.Sources })));
 const Privacy = lazy(() => import('./view/pages/Privacy').then((m) => ({ default: m.Privacy })));
-const Rankings = lazy(() => import('./view/pages/Rankings').then((m) => ({ default: m.Rankings })));
+const DiscoverIndex = lazy(() => import('./view/pages/DiscoverIndex').then((m) => ({ default: m.DiscoverIndex })));
 const ComparePage = lazy(() => import('./view/pages/ComparePage').then((m) => ({ default: m.ComparePage })));
 const DesignPage = lazy(() => import('./view/design/DesignPage').then((m) => ({ default: m.DesignPage })));
 const AnnotationTestPage = lazy(() => import('./view/test/AnnotationTestPage').then((m) => ({ default: m.AnnotationTestPage })));
@@ -23,6 +23,12 @@ function StartRoute() {
   const { pathname, search } = useLocation();
   const target = legacyRedirect(pathname, search);
   return target ? <Navigate to={target} replace /> : <StartPage />;
+}
+
+/** `/rankingi` już nie ma: stary link (z tym samym stanem w adresie) otwiera ten sam ranking na stronie Zestawienia. */
+function RankingsRedirect() {
+  const { search } = useLocation();
+  return <Navigate to={`/zestawienia${search}`} replace />;
 }
 
 export function App() {
@@ -44,7 +50,8 @@ export function App() {
           <Route path="/o-projekcie" element={<About />} />
           <Route path="/zrodla" element={<Sources />} />
           <Route path="/prywatnosc" element={<Privacy />} />
-          <Route path="/rankingi" element={<Rankings />} />
+          <Route path="/zestawienia" element={<DiscoverIndex />} />
+          <Route path="/rankingi" element={<RankingsRedirect />} />
           <Route path="/porownaj" element={<ComparePage />} />
           <Route path="/design" element={<DesignPage />} />
           <Route path="/__test/ui" element={<UiTestPage />} />

@@ -88,64 +88,54 @@ export function RankingBars({
 
           const ariaLabel = `${item.name}: ${formattedVal}, ${item.rank}. miejsce`;
 
+          // Układ dwuliniowy: w 1. linii numer i pełna nazwa (zawija się tylko między słowami),
+          // w 2. linii pasek i wartość, wcięte pod nazwą.
           const rowContent = (
             <>
-              <span
-                className="text-xs font-mono text-olowek shrink-0 text-right"
-                style={{ width: rankWidth }}
-              >
-                {item.rank}.
-              </span>
-
-              <span
-                className={cn(
-                  'text-sm min-w-0 flex-1 flex text-left',
-                  isSelected ? 'font-bold text-korekta-tekst' : 'font-normal text-tusz'
-                )}
-                title={item.name}
-              >
-                {(() => {
-                  // Typ jednostki w nawiasie (np. „gmina wiejska”) zostaje widoczny, ścinana jest sama nazwa.
-                  // Nazwa zawija się do 2 linii zamiast ucinać się do „powiat w…”.
-                  const m = /^(.*?)(\s\([^)]*\))$/.exec(item.name);
-                  const stripped = m && /powiat/i.test(m[2]) ? m[1].replace(/^powiat\s+/i, '') : m?.[1];
-                  return m ? (
-                    <>
-                      <span className="line-clamp-2 min-w-0 break-words leading-tight">{stripped}</span>
-                      <span className="shrink-0 whitespace-pre self-start leading-tight">{m[2]}</span>
-                    </>
-                  ) : (
-                    <span className="line-clamp-2 min-w-0 break-words leading-tight">{item.name}</span>
-                  );
-                })()}
-              </span>
-
-              <div className="w-24 sm:w-32 h-2.5 bg-kalka relative shrink-0 overflow-hidden">
-                {minVal < 0 && (
-                  <div
-                    className="absolute top-0 bottom-0 w-px bg-olowek/40 z-10"
-                    style={{ left: `${zeroPos}%` }}
-                  />
-                )}
-                <div
+              <span className="flex items-start gap-3 w-full">
+                <span
+                  className="text-xs font-mono text-olowek shrink-0 text-right leading-tight pt-0.5"
+                  style={{ width: rankWidth }}
+                >
+                  {item.rank}.
+                </span>
+                <span
                   className={cn(
-                    'absolute top-0 bottom-0 transition-all',
-                    isSelected ? 'bg-korekta' : 'bg-linia'
+                    'text-sm min-w-0 flex-1 text-left leading-tight [overflow-wrap:normal] [word-break:normal] hyphens-none',
+                    isSelected ? 'font-bold text-korekta-tekst' : 'font-normal text-tusz'
                   )}
-                  style={{
-                    left: `${leftPercent}%`,
-                    width: `${widthPercent}%`,
-                  }}
-                />
-              </div>
-
-              <span
-                className={cn(
-                  'text-xs font-mono shrink-0 tabular-nums text-right min-w-[60px]',
-                  isSelected ? 'font-bold text-korekta-tekst' : 'font-semibold text-tusz'
-                )}
-              >
-                {formattedVal}
+                  data-slot="ranking-name"
+                >
+                  {item.name}
+                </span>
+              </span>
+              <span className="flex items-center gap-3 w-full mt-1" style={{ paddingLeft: `calc(${rankWidth} + 0.75rem)` }}>
+                <span className="flex-1 min-w-0 h-2.5 bg-kalka relative overflow-hidden" data-slot="ranking-bar">
+                  {minVal < 0 && (
+                    <span
+                      className="absolute top-0 bottom-0 w-px bg-olowek/40 z-10"
+                      style={{ left: `${zeroPos}%` }}
+                    />
+                  )}
+                  <span
+                    className={cn(
+                      'absolute top-0 bottom-0 transition-all',
+                      isSelected ? 'bg-korekta' : 'bg-linia'
+                    )}
+                    style={{
+                      left: `${leftPercent}%`,
+                      width: `${widthPercent}%`,
+                    }}
+                  />
+                </span>
+                <span
+                  className={cn(
+                    'text-xs font-mono shrink-0 tabular-nums text-right whitespace-nowrap min-w-[60px]',
+                    isSelected ? 'font-bold text-korekta-tekst' : 'font-semibold text-tusz'
+                  )}
+                >
+                  {formattedVal}
+                </span>
               </span>
             </>
           );
@@ -156,7 +146,7 @@ export function RankingBars({
               <button
                 type="button"
                 onClick={() => onSelect(item.teryt)}
-                className="flex items-center gap-4 w-full py-2 min-h-[44px] text-left transition-colors cursor-pointer border-0 rounded-none bg-transparent hover:bg-linia/15 focus:outline-none focus:ring-1 focus:ring-tusz px-1"
+                className="flex flex-col items-stretch w-full py-2 min-h-[44px] text-left transition-colors cursor-pointer border-0 rounded-none bg-transparent hover:bg-linia/15 focus:outline-none focus:ring-1 focus:ring-tusz px-1"
               >
                 {rowContent}
               </button>
@@ -168,7 +158,7 @@ export function RankingBars({
             <li
               key={item.teryt}
               aria-label={ariaLabel}
-              className="flex items-center gap-4 w-full py-2 min-h-[44px] text-left px-1"
+              className="flex flex-col items-stretch w-full py-2 min-h-[44px] text-left px-1"
             >
               {rowContent}
             </li>

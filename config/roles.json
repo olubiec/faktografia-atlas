@@ -1,0 +1,26 @@
+{
+  "$opis": "Odkrycia v2 (W31-O03, docs/KONCEPT-ODKRYCIA-V2.md §3, §5). valence: up = wyższy wynik lepszy, down = niższy lepszy. Wskaźnik bez wpisu nie trafia do kart „Mocna/Słabsza strona” ani do porównania z sąsiadem.",
+  "valence": {
+    "unemployment-rate": "down",
+    "unemployed-share-working-age": "down",
+    "avg-wage": "up",
+    "income-per-capita": "up",
+    "sewerage-share": "up",
+    "preschool-3-6": "up",
+    "library-readers-per-1000": "up",
+    "forest-cover": "up",
+    "natural-increase": "up",
+    "migration-balance": "up",
+    "dwellings-per-1000": "up",
+    "dwelling-area-per-person": "up",
+    "regon-per-10k": "up"
+  },
+  "roles": {
+    "strongPercentile": 75,
+    "weakPercentile": 25,
+    "minRatioToMedian": 2,
+    "unusualExcluded": ["density", "population"],
+    "personBased": ["library-readers-per-1000"],
+    "dayWeights": { "unusual": 1, "strong": 0.8, "weak": 0.6, "change": 0.9 }
+  }
+}

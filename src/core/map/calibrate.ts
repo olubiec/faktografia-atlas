@@ -54,6 +54,59 @@ const emptyClasses = (counts: number[]) => counts.filter((c) => c === 0).length;
  */
 export function calibrateBreaks(raw: number[], valid: number[]): number[] {
   if (valid.length === 0 || raw.length === 0) return raw;
+  return roundestBreaks(raw, valid, safeCalibrate(raw, valid));
+}
+
+/** Dodatkowy zapas przesunięcia jednostek (ułamek), za który wolno uzyskać okrąglejszy próg. */
+export const ROUNDER_SHIFT_SHARE = 0.04;
+
+/** Największa względna zmiana progu przy okrąglaniu (46 207 → 46 000 tak, → 50 000 nie). */
+export const ROUNDER_MAX_REL = 0.05;
+
+/**
+ * Każdy próg po kolei zastępuje najokrąglejszą liczbą (1, potem 2 cyfry znaczące), jeśli klasy nadal
+ * są rosnące i niepuste, a do przesunięcia jednostek dochodzi co najwyżej ROUNDER_SHIFT_SHARE.
+ * Wąski rozrzut, w którym okrągły próg zlałby klasy, zostaje przy dokładniejszych liczbach.
+ */
+function roundestBreaks(raw: number[], valid: number[], start: number[]): number[] {
+  const min = Math.min(...valid);
+  const integers = valid.every((v) => Number.isInteger(v));
+  const base = cleanBreaks(raw, min);
+  if (start.length !== base.length) return start;
+  const baseCounts = classCounts(valid, base);
+  const shiftOf = (counts: number[]) => counts.reduce((s, c, i) => s + Math.abs(c - baseCounts[i]), 0) / 2;
+  const out = [...start];
+  let shifted = shiftOf(classCounts(valid, out));
+  const limit = Math.max(shifted, 0) + valid.length * ROUNDER_SHIFT_SHARE;
+  for (let i = 0; i < out.length; i++) {
+    // Kandydaci tylko z surowego progu (jak dotąd): najpierw 1 cyfra znacząca, potem 2.
+    // Trzecia cyfra tylko, gdy próg po kalibracji ma więcej niż 3 cyfry znaczące (np. 2920,43 → 2920).
+    const maxDigits = Number(Math.abs(out[i]).toPrecision(3)) === Math.abs(out[i]) ? 2 : 3;
+    for (let digits = 1; digits <= maxDigits; digits++) {
+      const r = roundSignificant(base[i], digits);
+      const cand = integers ? Math.round(r) : r;
+      if (cand === out[i]) break;
+      // Okrąglenie nie może odjechać od surowego progu o więcej niż ROUNDER_MAX_REL.
+      if (Math.abs(cand - base[i]) > Math.abs(base[i]) * ROUNDER_MAX_REL) continue;
+      const trial = [...out];
+      trial[i] = cand;
+      if (!trial.every((b, j) => (j === 0 ? b > min : b > trial[j - 1]))) continue;
+      const current = classCounts(valid, out);
+      const counts = classCounts(valid, trial);
+      if (emptyClasses(counts) > emptyClasses(baseCounts)) continue;
+      const s = shiftOf(counts);
+      // Jeden krok może przesunąć tylko garstkę jednostek (przy małych zbiorach: żadnej).
+      const step = counts.reduce((t, c, j) => t + Math.abs(c - current[j]), 0) / 2;
+      if (s > limit || step > Math.floor(valid.length * ROUNDER_SHIFT_SHARE)) continue;
+      out[i] = cand;
+      shifted = s;
+      break;
+    }
+  }
+  return out;
+}
+
+function safeCalibrate(raw: number[], valid: number[]): number[] {
   const min = Math.min(...valid);
   const integers = valid.every((v) => Number.isInteger(v));
   const base = cleanBreaks(raw, min);

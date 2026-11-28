@@ -136,8 +136,26 @@
         "level": "gmi",
         "dir": -1
       }
+    ],
+    "carousel": [
+      { "indicatorId": "unemployment-rate", "dir": -1 },
+      { "indicatorId": "unemployed-share-working-age", "dir": -1 },
+      { "indicatorId": "spending-per-capita", "dir": 1 },
+      { "indicatorId": "regon-per-10k", "dir": 1 },
+      { "indicatorId": "migration-balance", "dir": 1 },
+      { "indicatorId": "natural-increase", "dir": 1 },
+      { "indicatorId": "share-65plus", "dir": 1 },
+      { "indicatorId": "density", "dir": 1 },
+      { "indicatorId": "dwellings-per-1000", "dir": 1 },
+      { "indicatorId": "dwelling-area-per-person", "dir": 1 },
+      { "indicatorId": "sewerage-share", "dir": -1 },
+      { "indicatorId": "preschool-3-6", "dir": 1 },
+      { "indicatorId": "library-readers-per-1000", "dir": 1 },
+      { "indicatorId": "tourist-nights-per-1000", "dir": 1 },
+      { "indicatorId": "cars-per-1000", "dir": 1 }
     ]
   },
+  "percentiles": { "zeroGuard": true, "bins": 20, "minUnits": 100 },
   "neighbours": {
     "$opis": "F3 (W26-F03): fakt, gdy co najmniej tylu sąsiadów ma wartość; przy mniejszej liczbie bezpośrednich sąsiadów pierścień obejmuje sąsiadów sąsiadów.",
     "min": 4

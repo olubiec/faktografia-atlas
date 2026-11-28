@@ -35,14 +35,14 @@ for (const vp of VIEWPORTS) {
     });
 
     test('Rankingi: brak „Pobierz i udostępnij”, jest „Kopiuj link”', async ({ page }) => {
-      await page.goto('/rankingi');
+      await page.goto('/zestawienia?i=population');
       await expect(page.getByText(/lista jednostek/i)).toBeVisible({ timeout: 20000 });
       await expect(page.getByText('Kopiuj link')).toBeVisible();
       await expect(shareButton(page)).toHaveCount(0);
     });
 
     test('z ?share=1 przycisk wraca i otwiera okno (Rankingi)', async ({ page }) => {
-      await page.goto('/rankingi?share=1');
+      await page.goto('/zestawienia?i=population&share=1');
       const btn = shareButton(page);
       await expect(btn).toBeVisible({ timeout: 20000 });
       await btn.click();

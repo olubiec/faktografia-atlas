@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { PageSection } from '@/view/ui/PageSection';
 import type { FactsStart } from '@/core/facts/start';
-import { dailyEntry, factView, listPlaceholders, listView, placeFacts, type FactView, type ListView } from '@/core/start/discoveries';
+import { listPlaceholders, listView, type ListView } from '@/core/start/discoveries';
+import { discoveryDeck, type DiscoveryView } from '@/core/start/extremes';
 import { loadFactsStart } from '@/core/start/load-discoveries';
 import { forgetPlace, readPlace, savePlace } from '@/core/start/place-memory';
-import { FactCard } from './FactCard';
+import { DailyDiscovery } from './DailyDiscovery';
 import { LocateButton, LocatedNote } from './LocateButton';
 import { PlaceFacts } from './PlaceFacts';
 import { PlaceSearch } from './PlaceSearch';
-import { StartLists } from './StartLists';
+import { StartCarousel } from './StartCarousel';
 import { useNearViewport } from './useNearViewport';
 
 export interface DiscoveriesProps {
@@ -16,15 +17,10 @@ export interface DiscoveriesProps {
   onWarm?: () => void;
 }
 
-type Daily = { place: string; fact: FactView };
-
-/** Odkrycie dnia (wybór po dacie) i zestawienia z `facts-start.json`. */
-function fromStart(start: FactsStart, now: Date): { daily: Daily | null; lists: ListView[] } {
-  const entry = dailyEntry(start, now);
-  const fact = entry ? placeFacts({ woj: '', generatedAt: '', units: { [entry.u]: [entry.f] } }, entry.u, 1)[0] : null;
-  const view = fact ? factView(fact) : null;
+/** Talia ciekawostek od dzisiejszej (Odkrycie dnia) i zestawienia z `facts-start.json`. */
+function fromStart(start: FactsStart, now: Date): { deck: DiscoveryView[]; lists: ListView[] } {
   return {
-    daily: entry && view ? { place: entry.n, fact: view } : null,
+    deck: discoveryDeck(start, now),
     lists: start.lists.map(listView).filter((l): l is ListView => l !== null),
   };
 }
@@ -93,8 +89,8 @@ export function Discoveries({ to, onWarm }: DiscoveriesProps) {
 
         <section aria-labelledby="start-daily-title" className="flex flex-col gap-3">
           <h3 id="start-daily-title" className={SUB}>Odkrycie dnia</h3>
-          {view?.daily ? (
-            <FactCard fact={view.daily.fact} place={view.daily.place} to={to} onWarm={onWarm} large />
+          {view && view.deck.length > 0 ? (
+            <DailyDiscovery deck={view.deck} to={to} onWarm={onWarm} />
           ) : (
             <p className="m-0 text-sm text-olowek" role="status">
               {failed ? 'Nie udało się wczytać odkryć. Sprawdź połączenie i odśwież stronę.' : 'Wczytujemy odkrycie dnia…'}
@@ -104,7 +100,7 @@ export function Discoveries({ to, onWarm }: DiscoveriesProps) {
 
         <section aria-labelledby="start-lists-title" className="flex flex-col gap-3">
           <h3 id="start-lists-title" className={SUB}>Zestawienia</h3>
-          <StartLists lists={view && view.lists.length > 0 ? view.lists : PLACEHOLDERS} to={to} onWarm={onWarm} />
+          <StartCarousel lists={view && view.lists.length > 0 ? view.lists : PLACEHOLDERS} ready={!!view} to={to} onWarm={onWarm} />
         </section>
       </div>
     </PageSection>

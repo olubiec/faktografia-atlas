@@ -146,9 +146,13 @@ export interface FactsConfig {
   start: {
     dailyCount: number;
     lists: { indicatorId: string; level: Level; dir: Direction }[];
+    /** Dalsze slajdy karuzeli zestawień (facts-lists.json): poziom wynika z danych (gminy, a gdy ich brak, powiaty). */
+    carousel?: { indicatorId: string; dir: Direction }[];
   };
   /** F3: najmniej sąsiadów z wartością; mniej bezpośrednich sąsiadów = pierścień z sąsiadami sąsiadów. */
   neighbours?: { min: number };
+  /** W31-O01: reguły percentyli (zeroGuard: mediana 0 albo wartość 0 = brak stosunku do mediany). */
+  percentiles?: { zeroGuard: boolean; bins: number; minUnits: number };
   /** F8: wskaźniki wektora podobieństwa (standaryzowane), te w skali logarytmicznej i minimalny udział wspólnych. */
   twin?: { indicators: string[]; log: string[]; minShare: number };
 }

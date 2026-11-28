@@ -20,8 +20,8 @@ test.describe('Rankings and Compare pages (@W16-M02)', () => {
       };
 
       await openMenu();
-      await page.goto('/rankingi');
-      await expect(page).toHaveURL(/\/rankingi/);
+      await page.goto('/zestawienia?i=population');
+      await expect(page).toHaveURL(/\/zestawienia/);
 
       await openMenu();
       await page.goto('/porownaj');
@@ -37,8 +37,8 @@ test.describe('Rankings and Compare pages (@W16-M02)', () => {
     });
   }
 
-  test('na /rankingi widac podsumowanie mediany, najwyzej/najnizej i liste jednostek', async ({ page }) => {
-    await page.goto('/rankingi');
+  test('na /zestawienia z rankingiem widac podsumowanie mediany, najwyzej/najnizej i liste jednostek', async ({ page }) => {
+    await page.goto('/zestawienia?i=population');
     await expect(page.getByText(/mediana/i)).toBeVisible();
     await expect(page.getByText(/najwyżej/i)).toBeVisible();
     await expect(page.getByText(/najniżej/i)).toBeVisible();

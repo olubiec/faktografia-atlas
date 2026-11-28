@@ -1,5 +1,5 @@
 {
-  "$opis": "Zestawienia /zestawienie/<slug> (W26-F04, docs/KONCEPT-ODKRYCIA.md §7, §7a). kind: value – wartość w ostatnim roku, change – zmiana 10 lat (okna ze zmianą granic pominięte). dir: 1 – od najwyższej, -1 – od najniższej. Gminy poniżej gminaMinPopulation mieszkańców są pomijane (szum małych liczb). Temat strony = grupa wskaźnika z config/indicators.json. Tytuł bez roku (rok dopisuje generator), najwyżej 58 znaków. Po zmianie: pnpm build.",
+  "$opis": "Zestawienia /zestawienie/<slug> (W26-F04, docs/KONCEPT-ODKRYCIA.md §7, §7a). kind: value – wartość w ostatnim roku, change – zmiana 10 lat (okna ze zmianą granic pominięte). dir: 1 – od najwyższej, -1 – od najniższej. Gminy poniżej gminaMinPopulation mieszkańców są pomijane (szum małych liczb). Temat strony = grupa wskaźnika z config/indicators.json. Tytuł bez roku (rok dopisuje generator), najwyżej 58 znaków. rows – pozycji na stronę: cała lista porównanych jednostek jest dzielona na strony /zestawienie/<slug>, /<slug>/2… (strony od drugiej: noindex). Po zmianie: pnpm build.",
   "gminaMinPopulation": 5000,
   "rows": 50,
   "changeYears": 10,

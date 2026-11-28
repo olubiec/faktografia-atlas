@@ -5,9 +5,12 @@ import factsConfig from '../../../config/facts.json';
 import { decodeFact, decodeTwin, type EncodedFact } from '../facts/codec';
 import { factSentence } from '../facts/sentences';
 import { dailyIndex, type DailyEntry, type FactsStart, type StartList } from '../facts/start';
+import type { DistEntry, PercentileShard } from '../facts/percentile-types';
 import type { Fact, Level } from '../facts/types';
 import { displayUnit, formatValue, getFractionDigits } from '../format/number';
 import { shortIndicatorName } from '../seo/sentences';
+import { endOf, endSubtitle, listEnds, type ListEnds, type ListRow } from './list-ends';
+import { listLinks, withRankingFallback, type ListLink } from './list-links';
 import { WOJ_NAMES } from './start-data';
 
 export const FACTS_START_URL = '/data/facts-start.json';
@@ -22,10 +25,9 @@ export interface FactsFile {
   woj: string;
   generatedAt: string;
   units: Record<string, EncodedFact[]>;
-  /** Sąsiedzi jednostki (ten sam poziom), W26-F03. */
   near?: Record<string, string[]>;
-  /** Bliźniak F8: ['F8', TERYT bliźniaka, rok, ile wskaźników, odległość]. */
   twins?: Record<string, (string | number)[]>;
+  pct?: PercentileShard; dist?: Record<string, DistEntry>;
 }
 
 export function levelOf(teryt: string): Level {
@@ -117,7 +119,7 @@ function rememberLibraryMeta(id: string | undefined | false, i: [string, string]
 }
 
 /** Wskaźnik z configu; gdy go tam nie ma – z pola `i` (zapamiętanego z dailyEntry/listView; bez drugiego parametru, bo PlaceFacts woła `.map(factView)`). Zwykłe wskaźniki bez zmian. */
-function resolveIndicator(id: string, i?: [string, string]): { name: string; unit: string } | null {
+export function resolveIndicator(id: string, i?: [string, string]): { name: string; unit: string } | null {
   const ind = INDICATORS.get(id);
   if (ind) return ind;
   const meta = i ?? LIBRARY_META.get(id);
@@ -153,34 +155,37 @@ export function factView(f: Fact): FactView | null {
   return { key: `${f.type}-${f.indicatorId}-${f.teryt}`, sentence, ...bigNumber(f.value, ind.unit), href: factHref(f), ...((f as { isNew?: boolean }).isNew ? { isNew: true } : {}) };
 }
 
-const PEERS_NOM: Record<Level, string> = { gmi: 'gminy', pow: 'powiaty', woj: 'województwa' };
-
 export interface ListView {
   key: string;
+  /** Wskaźnik i poziom zestawienia (panel przełącza poziom); brak tylko w widokach zastępczych. */
+  indicatorId?: string; level?: Level;
   title: string;
   subtitle: string;
-  rows: { teryt: string; name: string; value: string; href: string }[];
+  rows: ListRow[];
   href: string;
+  /** Pełne zestawienie (`/zestawienie/<slug>`) i to samo z drugiego końca skali (najmłodsze ↔ najstarsze), gdy istnieją. */
+  full?: ListLink | null; opposite?: ListLink | null;
+  /** „Najwyższe | Najniższe” (po 5 pozycji); brak = plik bez drugiego końca, karta jak dotąd. */
+  ends?: ListEnds | null;
 }
 
-/** Karta zestawienia: nazwa wskaźnika, „3 gminy z najwyższą wartością, 2025”, 3 pozycje i link do mapy. */
+/** Karta zestawienia: nazwa wskaźnika, „5 gmin z najwyższą wartością, 2025”, pozycje i link do mapy.
+ *  Wiersz prowadzi do mapy z tą jednostką zaznaczoną (otwiera się jej profil), z tym samym wskaźnikiem i rokiem. */
 export function listView(list: StartList): ListView | null {
   rememberLibraryMeta(list.indicatorId, list.i);
   const ind = resolveIndicator(list.indicatorId, list.i);
   if (!ind) return null;
-  const word = list.dir === 1 ? 'najwyższą' : 'najniższą';
+  const links = listLinks(list.indicatorId, list.level, list.dir);
+  const row = ([teryt, name, value]: [string, string, number]): ListRow => ({
+    teryt, name, value: formatValue(value, ind.unit).replace(/^-/, '−'),
+    href: mapHref({ indicatorId: list.indicatorId, year: list.year, teryt, level: list.level }),
+  });
   return {
-    key: `${list.indicatorId}-${list.level}-${list.dir}`,
+    key: `${list.indicatorId}-${list.level}-${list.dir}`, indicatorId: list.indicatorId, level: list.level,
     title: shortIndicatorName(ind.name, ind.unit),
-    subtitle: `${list.top.length} ${PEERS_NOM[list.level]} z ${word} wartością, ${list.year}`,
-    rows: list.top.map(([teryt, name, value]) => ({
-      teryt,
-      name,
-      value: formatValue(value, ind.unit).replace(/^-/, '−'),
-      // Wiersz prowadzi do mapy z tą jednostką zaznaczoną (otwiera się jej profil), z tym samym wskaźnikiem i rokiem.
-      href: mapHref({ indicatorId: list.indicatorId, year: list.year, teryt, level: list.level }),
-    })),
-    href: listHref(list),
+    subtitle: endSubtitle(list.top.length, list.level, endOf(list.dir), list.year),
+    rows: list.top.map(row), href: listHref(list), ...links,
+    ends: listEnds(list, row, withRankingFallback(links, list.indicatorId, list.level, list.year, shortIndicatorName(ind.name, ind.unit))),
   };
 }
 
@@ -191,11 +196,11 @@ export function listPlaceholders(): ListView[] {
       const ind = INDICATORS.get(l.indicatorId);
       if (!ind) return null;
       return {
-        key: `${l.indicatorId}-${l.level}-${l.dir}`,
+        key: `${l.indicatorId}-${l.level}-${l.dir}`, indicatorId: l.indicatorId, level: l.level,
         title: shortIndicatorName(ind.name, ind.unit),
-        subtitle: '',
-        rows: [],
+        subtitle: '', rows: [],
         href: mapHref({ indicatorId: l.indicatorId, level: l.level }),
+        ...listLinks(l.indicatorId, l.level, l.dir),
       };
     })
     .filter((l): l is ListView => l !== null);

@@ -38,6 +38,7 @@ const vite = await createServer({
 try {
   const { buildFacts, buildShards } = await vite.ssrLoadModule('/src/core/facts/build.ts');
   const { buildStart } = await vite.ssrLoadModule('/src/core/facts/start.ts');
+  const { buildCarousel, smallGminas } = await vite.ssrLoadModule('/src/core/facts/carousel.ts');
   const { updateLedger, freshYears } = await vite.ssrLoadModule('/src/core/facts/fresh.ts');
   const { newMainYears, labelDaysOf } = await vite.ssrLoadModule('/src/core/facts/fresh-label.ts');
   const { prepareLibraryFresh, buildLibraryFacts } = await vite.ssrLoadModule('/src/core/facts/library-fresh.ts');
@@ -91,14 +92,32 @@ try {
   // Etykieta „Nowość” (W28-D06): wskaźniki z nowym rokiem sprzed najwyżej fresh.labelDays dni.
   const newYears = newMainYears(ledger, generatedAt, labelDaysOf(config));
   const shards = buildShards(build, generatedAt, newYears);
+  // Percentyle gmin (W31-O01): percentyl kraju, stosunek do mediany i histogram rozkładu w każdym pliku województwa.
+  const { buildPercentiles } = await vite.ssrLoadModule('/src/core/facts/percentiles.ts');
+  const pc = config.percentiles ?? { zeroGuard: true, bins: 20, minUnits: 100 };
+  const gminas = units.filter((u) => u.level === 'gmi').map((u) => u.teryt);
+  const pcts = buildPercentiles({ values, gminas, ...pc, changeYears: config.thresholds.changeYears, changeExcluded: config.changeExcluded });
   for (const [woj, shard] of Object.entries(shards)) {
+    if (pcts.shards[woj]) {
+      shard.pct = pcts.shards[woj];
+      shard.dist = pcts.dist;
+    }
     const json = JSON.stringify(shard);
     await writeFile(path.join(outDir, `${woj}.json`), json, 'utf8');
     console.log(`facts/${woj}.json: ${Object.keys(shard.units).length} jednostek, ${json.length} B`);
   }
-  const start = JSON.stringify(buildStart(build, generatedAt, newYears, libBuild));
+  const startData = buildStart(build, generatedAt, newYears, libBuild);
+  const start = JSON.stringify(startData);
   await writeFile(path.join(dataDir, 'facts-start.json'), start, 'utf8');
   console.log(`facts-start.json: ${start.length} B`);
+  // Karuzela zestawień (slajdy poza redakcyjnymi) i lista małych gmin (pomijanych w zestawieniach z biblioteki).
+  const { gminaMinPopulation } = await readJson(path.join(root, 'config/lists.json'));
+  const lists = JSON.stringify(buildCarousel(build, generatedAt, gminaMinPopulation));
+  await writeFile(path.join(dataDir, 'facts-lists.json'), lists, 'utf8');
+  console.log(`facts-lists.json: ${lists.length} B`);
+  const small = JSON.stringify({ min: gminaMinPopulation, t: smallGminas(build, gminaMinPopulation).join(',') });
+  await writeFile(path.join(dataDir, 'gmina-small.json'), small, 'utf8');
+  console.log(`gmina-small.json: ${small.length} B`);
 
   const short = [...build.byUnit.entries()].filter(([, f]) => f.selected.length < config.selection.count);
   if (short.length) throw new Error(`Jednostki z mniej niż ${config.selection.count} faktami: ${short.map(([t]) => t).join(', ')}`);

@@ -99,6 +99,7 @@ try {
   const indexHtml = await readFile(path.join(dist, 'index.html'), 'utf8');
   const css = [...indexHtml.matchAll(/<link rel="stylesheet"[^>]*href="([^"]+\.css)"/g)].map((m) => m[1]);
   if (css.length === 0) throw new Error('Brak arkusza CSS w dist/index.html – najpierw `vite build`.');
+  const entry = indexHtml.match(/<script type="module"[^>]*src="([^"]+\.js)"/)?.[1];
 
   // Strony stałe: adresy z public/sitemap.xml (S01) – jedno źródło listy.
   const staticSitemap = await readFile(path.join(root, 'public/sitemap.xml'), 'utf8');
@@ -219,7 +220,7 @@ try {
     lists: await readJson(path.join(root, 'config/lists.json')),
     relativeChangeUnits: factsConfig.relativeChangeUnits, boundaryJump: factsConfig.thresholds.boundaryJump,
   };
-  const discoverPages = discover.buildDiscoverSite(discoverCtx, discover.factsFromShards(shards), { css });
+  const discoverPages = discover.buildDiscoverSite(discoverCtx, discover.factsFromShards(shards), { css, entry });
   for (const page of discoverPages) {
     await mkdir(path.join(dist, page.path), { recursive: true });
     await writeFile(path.join(dist, page.path, 'index.html'), page.html);

@@ -2,13 +2,15 @@ import { DEFAULT_INDICATOR_ID, DEFAULT_LEVEL, isUnitLevel } from '../map/main-vi
 import type { UnitLevel } from '../units/types';
 import indicators from '../../../config/indicators.json';
 
-// Stan strony Rankingi zapisany w adresie: ?i=&l=&y=&w=&q=
+// Stan strony Rankingi zapisany w adresie: ?i=&l=&y=&w=&q=&d=&p=
 export type RankingsState = {
   i: string; // wskaźnik
   l: UnitLevel; // poziom
   y: number | null; // rok (null = najnowszy)
   w: string | null; // kod województwa TERYT (null = cała Polska)
   q: string; // szukany tekst
+  d: 'high' | 'low'; // kolejność: najwyższe albo najniższe wartości na górze
+  p: number; // strona listy (od 1)
 };
 
 export const RANKINGS_DEFAULTS: RankingsState = {
@@ -17,6 +19,8 @@ export const RANKINGS_DEFAULTS: RankingsState = {
   y: null,
   w: null,
   q: '',
+  d: 'high',
+  p: 1,
 };
 
 const MAX_QUERY = 60;
@@ -40,6 +44,8 @@ export function readRankingsState(
     y: year !== null && year >= 1900 && year <= 2100 ? year : null,
     w: w !== null && /^\d{2}$/.test(w) ? w : null,
     q: (p.get('q') ?? '').trim().slice(0, MAX_QUERY).trim(),
+    d: p.get('d') === 'low' ? 'low' : 'high',
+    p: /^\d{1,4}$/.test(p.get('p') ?? '') && Number(p.get('p')) >= 1 ? Number(p.get('p')) : 1,
   };
 }
 
@@ -52,6 +58,8 @@ export function writeRankingsSearch(state: RankingsState): string {
   if (state.y !== d.y) p.set('y', String(state.y));
   if (state.w !== d.w && state.w !== null) p.set('w', state.w);
   if (state.q !== d.q) p.set('q', state.q);
+  if (state.d !== d.d) p.set('d', state.d);
+  if (state.p !== d.p) p.set('p', String(state.p));
   const s = p.toString();
   return s ? `?${s}` : '';
 }
@@ -61,6 +69,16 @@ export function applyRankingsChange(prev: RankingsState, patch: Partial<Rankings
   const next = { ...prev, ...patch };
   const changed = (patch.i !== undefined && patch.i !== prev.i) || (patch.l !== undefined && patch.l !== prev.l);
   if (changed && patch.y === undefined) next.y = null;
+  // Każda zmiana filtra (poza samym numerem strony) wraca na pierwszą stronę.
+  if (patch.p === undefined) next.p = 1;
   if (patch.l !== undefined && patch.l !== prev.l && next.l === 'woj' && patch.w === undefined) next.w = null;
   return next;
+}
+
+/** Jak `writeRankingsSearch`, ale z wskaźnikiem zawsze (także domyślnym): na stronie Zestawienia `i` oznacza „pokaż ranking”. */
+export function writeRankingsParams(state: RankingsState): string {
+  const rest = new URLSearchParams(writeRankingsSearch(state));
+  rest.delete('i');
+  const tail = rest.toString();
+  return `i=${encodeURIComponent(state.i)}${tail ? `&${tail}` : ''}`;
 }

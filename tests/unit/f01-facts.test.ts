@@ -105,15 +105,18 @@ describe('F01 pliki public/data/facts', () => {
   const units = JSON.parse(readPublic('units.json')) as FactUnit[];
   const wojs = units.filter((u) => u.level === 'woj').map((u) => u.teryt);
 
-  it('facts-start.json ma ≤ 4096 bajtów, 30 faktów dnia i 4 zestawienia', () => {
+  it('facts-start.json ma ≤ 5120 bajtów, 30 faktów dnia i 4 zestawienia po 5 pozycji z obu końców skali', () => {
     const raw = readPublic('facts-start.json');
-    expect(Buffer.byteLength(raw, 'utf8')).toBeLessThanOrEqual(4096);
+    expect(Buffer.byteLength(raw, 'utf8')).toBeLessThanOrEqual(5120);
     const start = JSON.parse(raw);
     expect(start.daily).toHaveLength(30);
     expect(new Set(start.daily.map((d: { u: string }) => d.u)).size).toBe(30);
     for (const d of start.daily) expect(['F1', 'F4']).toContain(d.f[0]);
     expect(start.lists).toHaveLength(4);
-    for (const l of start.lists) expect(l.top).toHaveLength(3);
+    for (const l of start.lists) {
+      expect(l.top).toHaveLength(5);
+      expect(l.bottom).toHaveLength(5);
+    }
   });
 
   it.each(wojs)('facts/%s.json ma wszystkie jednostki województwa, każdą z ≥ 3 faktami', (woj) => {

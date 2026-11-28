@@ -38,9 +38,9 @@ for (const vp of VIEWPORTS) {
         await expect(page.getByTestId('comparison-result')).toBeVisible();
       }
 
-      // 4. Przejście do /rankingi
-      await page.goto('/rankingi');
-      await expect(page).toHaveURL(/\/rankingi/);
+      // 4. Przejście do rankingu na /zestawienia
+      await page.goto('/zestawienia?i=population');
+      await expect(page).toHaveURL(/\/zestawienia/);
       await expect(page.getByText(/mediana/i)).toBeVisible();
 
       // 5-6. Seria Wstecz w historii przeglądarki (strony Biblioteki już nie ma)

@@ -44,7 +44,7 @@ const audited = site.map((p) => readPage(p.path, p.html));
 const sitemap = rankingSitemap(site);
 const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]!);
 /** Adresy, które generator buduje obok tych stron: miejsca, rankingi, strony aplikacji. */
-const known = ['/', '/mapa', '/ranking', '/miejsca', ...paths.terytByPath.keys(), ...rankingSpecs(indicators, units).map((s) => s.path)];
+const known = ['/', '/mapa', '/ranking', '/miejsca', '/o-projekcie', '/zrodla', '/prywatnosc', ...paths.terytByPath.keys(), ...rankingSpecs(indicators, units).map((s) => s.path)];
 const lastPopulation = (teryt: string) => values.population!.values[teryt]!.filter((v) => v != null).at(-1)!;
 const OPOLE = '1661011';
 const growth = lists.lists.find((l) => l.slug === 'najszybciej-rosnace-gminy')!;
@@ -69,11 +69,12 @@ describe('F04 tematy i zestawienia: lista stron', () => {
     expect(lists.gminaMinPopulation).toBe(5000);
     expect(validateLists(ctx)).toEqual([]);
     expect(validateLists({ ...ctx, lists: { ...lists, lists: [...lists.lists, { ...lists.lists[0]!, slug: 'Zła Nazwa' }] } })).toHaveLength(3);
-    expect(site.filter((p) => p.kind === 'list').map((p) => p.path)).toEqual(lists.lists.map((l) => `/zestawienie/${l.slug}`));
+    // Strona 1 każdego zestawienia pod adresem zestawienia; kolejne strony (`/<slug>/N`) zostają w osobnych testach (list-pages).
+    expect(site.filter((p) => p.kind === 'list' && !/\/\d+$/.test(p.path)).map((p) => p.path)).toEqual(lists.lists.map((l) => `/zestawienie/${l.slug}`));
   });
 
   it('każdy temat i zestawienie: unikalny tytuł i opis, jeden H1, własny adres kanoniczny, w mapie strony', () => {
-    const pages = audited.filter((p) => p.path.startsWith('/temat/') || p.path.startsWith('/zestawienie/'));
+    const pages = audited.filter((p) => p.path.startsWith('/temat/') || (p.path.startsWith('/zestawienie/') && !/\/\d+$/.test(p.path)));
     expect(pages).toHaveLength(7 + lists.lists.length);
     expect(new Set(pages.map((p) => p.title)).size).toBe(pages.length);
     expect(new Set(pages.map((p) => p.description)).size).toBe(pages.length);

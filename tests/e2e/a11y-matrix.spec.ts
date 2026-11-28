@@ -191,11 +191,11 @@ for (const theme of THEMES) {
       await runAxe(page, 'Trasa /mapa - zakładka części miasta/wsi');
     });
 
-    // 7. Trasa /rankingi
-    test('Trasa /rankingi', async ({ page }) => {
-      await page.goto('/rankingi');
+    // 7. Trasa /zestawienia z rankingiem
+    test('Trasa /zestawienia z rankingiem', async ({ page }) => {
+      await page.goto('/zestawienia?i=population');
       await expect(page.getByText(/mediana/i)).toBeVisible();
-      await runAxe(page, 'Trasa /rankingi');
+      await runAxe(page, 'Trasa /zestawienia z rankingiem');
     });
 
     // 8. Trasa /porownaj
