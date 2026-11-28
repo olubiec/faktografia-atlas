@@ -462,15 +462,15 @@
       },
       "indicatorId": "regon-per-10k",
       "indicatorName": "Podmioty REGON na 10 tys. ludności",
-      "teryt": "2011062",
-      "unitName": "Nowy Dwór",
+      "teryt": "0206011",
+      "unitName": "Karpacz",
       "year": 2025,
-      "title": "Podmioty REGON na 10 tys. ludności: średnio 365,0 na 10 tys. w latach 2023–2025 –…",
-      "sentence": "Podmioty REGON na 10 tys. ludności: średnio 365,0 na 10 tys. w latach 2023–2025 – najniższa wartość z 2 461 gmin w Polsce.",
+      "title": "Podmioty REGON na 10 tys. ludności: 9 518,0 na 10 tys. w 2025 r. – najwyższa wartość z 2…",
+      "sentence": "Podmioty REGON na 10 tys. ludności: 9 518,0 na 10 tys. w 2025 r. – najwyższa wartość z 2 479 gmin w Polsce.",
       "value": {
-        "value": 365,
+        "value": 9518,
         "unit": "na 10 tys.",
-        "text": "365,0 na 10 tys."
+        "text": "9 518,0 na 10 tys."
       },
       "ranking": {
         "level": "gmi",
@@ -556,15 +556,15 @@
           "text": "1 134,6 na 10 tys.",
           "basis": "średnia 1 706 gmin w rankingu"
         },
-        "change10": "+87,0 na 10 tys. od 2015 r."
+        "change10": "+1 564,0 na 10 tys. od 2015 r."
       },
       "source": {
         "text": "GUS, BDL, 2025",
         "bdlVarId": 60530,
-        "map": "/mapa?i=regon-per-10k&y=2025&u=2011062"
+        "map": "/mapa?i=regon-per-10k&y=2025&u=0206011"
       },
       "warnings": [
-        "mała gmina (ok. 2 095 mieszkańców): liczby mogą silnie się wahać"
+        "mała gmina (ok. 4 090 mieszkańców): liczby mogą silnie się wahać"
       ]
     },
     {
@@ -800,15 +800,15 @@
       },
       "indicatorId": "median-age",
       "indicatorName": "Mediana wieku",
-      "teryt": "1405021",
-      "unitName": "Podkowa Leśna",
+      "teryt": "2205042",
+      "unitName": "Sierakowice",
       "year": 2026,
-      "title": "Mediana wieku: 49,0 lat w 2026 r. – najwyższa wartość z 2 473 gmin w Polsce.",
-      "sentence": "Mediana wieku: 49,0 lat w 2026 r. – najwyższa wartość z 2 473 gmin w Polsce.",
+      "title": "Mediana wieku: 39,0 lat w 2026 r. – najniższa wartość z 2 473 gmin w Polsce.",
+      "sentence": "Mediana wieku: 39,0 lat w 2026 r. – najniższa wartość z 2 473 gmin w Polsce.",
       "value": {
-        "value": 49,
+        "value": 39,
         "unit": "lata",
-        "text": "49,0 lat"
+        "text": "39,0 lat"
       },
       "ranking": {
         "level": "gmi",
@@ -898,11 +898,9 @@
       "source": {
         "text": "GUS, BDL, 2026",
         "bdlVarId": 1650633,
-        "map": "/mapa?i=median-age&y=2026&u=1405021"
+        "map": "/mapa?i=median-age&y=2026&u=2205042"
       },
-      "warnings": [
-        "mała gmina (ok. 3 708 mieszkańców): liczby mogą silnie się wahać"
-      ]
+      "warnings": []
     }
   ]
 }
