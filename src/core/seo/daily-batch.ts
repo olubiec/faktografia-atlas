@@ -89,8 +89,9 @@ export const DONE_HEADING = '## Zrobione';
  * Treść stałego zgłoszenia: krótka instrukcja, checklista adresów na dziś i sekcja „Zrobione”
  * (pamięć odhaczonych adresów między dniami; `done` bez duplikatów i bez adresów z dzisiejszej listy).
  */
-export function renderIssueBody(urls: readonly string[], date: string, done: readonly string[] = []): string {
+export function renderIssueBody(urls: readonly string[], date: string, done: readonly string[] = [], calendarUrl?: string): string {
   const head = [
+    ...(calendarUrl ? [`📅 [Kalendarium danych](${calendarUrl})`, ''] : []),
     `Lista na ${date.slice(0, 10)}: ${urls.length} adresów do zgłoszenia w Google.`,
     '',
     'Jak to zrobić (około 5 minut, wystarczy telefon):',

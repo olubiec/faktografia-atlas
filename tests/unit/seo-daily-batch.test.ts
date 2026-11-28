@@ -114,3 +114,12 @@ describe('S18b stałe zgłoszenie: sekcja Zrobione', () => {
     expect(day3).toContain(`- [ ] ${S}/b`);
   });
 });
+
+describe('link do kalendarium w panelu', () => {
+  it('na górze treści jest link do kalendarium, a lista i odhaczanie działają jak wcześniej', () => {
+    const body = renderIssueBody([`${S}/a`], '2026-11-29', [], 'https://example.test/kalendarium.md');
+    expect(body.startsWith('📅 [Kalendarium danych](https://example.test/kalendarium.md)')).toBe(true);
+    expect(body).toContain(`- [ ] ${S}/a`);
+    expect(renderIssueBody([`${S}/a`], '2026-11-29')).not.toContain('Kalendarium danych');
+  });
+});
