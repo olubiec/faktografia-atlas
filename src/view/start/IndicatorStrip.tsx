@@ -2,6 +2,7 @@ import { NavArrowLeft, NavArrowRight } from 'iconoir-react';
 import { useRef, type KeyboardEvent } from 'react';
 import { Icon } from '@/view/ui/Icon';
 import { ringWindow, wrapIndex } from '@/core/start/ring';
+import { useSwipe } from './useSwipe';
 
 export interface StripItem {
   key: string;
@@ -37,6 +38,8 @@ const SIDE = 'hidden min-h-[44px] w-11 shrink-0 cursor-pointer items-center just
 export function IndicatorStrip({ size, itemAt, active, onSelect, panelId, idBase }: IndicatorStripProps) {
   const tabs = useRef(new Map<number, HTMLButtonElement>());
   const go = (index: number) => onSelect(wrapIndex(index, size));
+  // Przesunięcie palcem po pasku działa jak karuzela: w lewo następny wskaźnik, w prawo poprzedni.
+  const swipe = useSwipe(() => go(active - 1), () => go(active + 1));
 
   const onKey = (e: KeyboardEvent, k: number) => {
     const step = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
@@ -53,7 +56,7 @@ export function IndicatorStrip({ size, itemAt, active, onSelect, panelId, idBase
       <button type="button" className={SIDE} onClick={() => go(active - 1)} aria-label="Poprzedni wskaźnik" data-slot="strip-scroll-left">
         <Icon icon={NavArrowLeft} aria-hidden={true} size={18} />
       </button>
-      <div role="tablist" aria-label="Wybierz zestawienie" data-slot="indicator-strip" className="relative flex min-w-0 flex-1 justify-center overflow-hidden border-b border-linia">
+      <div role="tablist" aria-label="Wybierz zestawienie" data-slot="indicator-strip" className="relative flex min-w-0 flex-1 touch-pan-y justify-center overflow-hidden border-b border-linia" {...swipe}>
         {ringWindow(size, active, RADIUS).map(({ index, offset }) => {
           const it = itemAt(index);
           const on = offset === 0;
