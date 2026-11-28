@@ -10,7 +10,8 @@ import path from 'node:path';
 import { parseArgs } from 'node:util';
 import { SITE, WM, accessToken, api, loadAccount, searchAnalytics } from './gsc-client.mjs';
 
-const SAMPLE_SIZE = 40;
+// Limit dobowy URL Inspection to 2000 na właściwość; 150 adresów tygodniowo obraca się po całej mapie strony (S15).
+const SAMPLE_SIZE = 150;
 const root = path.resolve(import.meta.dirname, '../..');
 const { values: args } = parseArgs({ options: { 'dry-run': { type: 'boolean', default: false }, record: { type: 'string' } } });
 
@@ -70,7 +71,7 @@ try {
   } catch (err) {
     console.log(`::warning::Nie udało się pobrać mapy strony (${err.message}) – raport bez próbki indeksowania.`);
   }
-  const inspections = await inspect(token, core.sample(urls, SAMPLE_SIZE));
+  const sampling = await vite.ssrLoadModule('/src/core/seo/gsc-sample.ts');
 
   let previousState = null;
   const canIssue = !args['dry-run'] && process.env.GITHUB_TOKEN && process.env.GITHUB_REPOSITORY;
@@ -78,6 +79,10 @@ try {
     const res = await github('GET', '/issues?labels=seo&state=all&per_page=1&sort=created&direction=desc');
     if (res.ok) previousState = core.parseState((await res.json())[0]?.body ?? '');
   }
+  // Kursor i stan adresów z poprzedniego zgłoszenia; pierwszy tydzień → kursor 0, bez flagi spadku.
+  const rotation = sampling.readRotation(previousState);
+  const picked = sampling.pickSample(urls, rotation.cursor, SAMPLE_SIZE);
+  const inspections = await inspect(token, picked.sample);
 
   if (args.record) {
     const dir = path.resolve(args.record);
@@ -95,7 +100,19 @@ try {
   const keywords = JSON.parse(await readFile(path.join(root, 'config/topic-keywords.json'), 'utf8'));
   const pages = [...urls, ...(current.page.rows ?? []).map((r) => r.keys?.[0] ?? '')];
   const signals = renderSignals(trend.topicTrends(current.query, previous.query, keywords), topicCandidates(current.query, pages, keywords));
-  const markdown = `${core.renderMarkdown(core.buildReport({ window: range, current, previous, sitemaps, inspections, previousState }))}\n${signals}`;
+  // previousState: null – porównanie spadku robi teraz S15 (na stanie z całej mapy), nie stara flaga z jednej próbki.
+  const report = core.buildReport({ window: range, current, previous, sitemaps, inspections, previousState: null });
+  const toPath = (u) => u.replace(SITE_URL, '') || '/';
+  const inspected = Object.fromEntries(inspections.filter((i) => i.result?.inspectionResult?.indexStatusResult).map((i) => [toPath(i.url), i.result.inspectionResult.indexStatusResult.verdict === 'PASS' ? 'i' : 'n']));
+  const known = new Set(urls.map(toPath));
+  const before = rotation.coverage && Object.fromEntries(Object.entries(rotation.coverage).filter(([u]) => known.has(u)));
+  const merged = sampling.mergeCoverage(before, inspected);
+  const dropFlag = sampling.coverageDropFlag(before, merged);
+  if (dropFlag) report.flags.push(dropFlag);
+  // Stan w zgłoszeniu: dotychczasowe pola + kursor i skrócona mapa adres → stan.
+  const state = { ...report.state, cursor: picked.cursor, coverage: merged.coverage };
+  const rendered = core.renderMarkdown(report).replace(/<!-- gsc-state:.*? -->/, () => `<!-- gsc-state:${JSON.stringify(state)} -->`);
+  const markdown = `${rendered}\n${signals}`;
   const title = `SEO – tydzień ${range.current.start} – ${range.current.end}`;
   if (!canIssue) {
     console.log(`# ${title}\n\n${markdown}`);

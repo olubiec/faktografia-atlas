@@ -1,0 +1,69 @@
+name: SEO – kontrola produkcji
+
+# S16 (docs/SEO-AUTOMAT.md §3–§4): strażnik treści sprawdza produkcję po każdym wdrożeniu i raz na dobę.
+# Szuka obcych skryptów, ukrytych linków, przekierowań i przypadkowego noindex; sprawdza robots.txt i mapę strony.
+# Problem = jedno otwarte zgłoszenie „SEO – alarm” z etykietą seo-alert (aktualizowane, nie mnożone);
+# brak problemów = zgłoszenie zamykane z komentarzem. Błąd sieci = ostrzeżenie, bez alarmu.
+on:
+  deployment_status:
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+# contents: read – checkout; issues: write – zgłoszenie seo-alert.
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: seo-live-check
+  cancel-in-progress: false
+
+jobs:
+  live-check:
+    if: >-
+      github.event_name != 'deployment_status' ||
+      (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ALERT_TITLE: SEO – alarm
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Sprawdź produkcję
+        id: guard
+        run: |
+          set +e
+          node scripts/seo/content-guard.mjs --live https://faktografia.eu --report "$RUNNER_TEMP/report.md" | tee "$RUNNER_TEMP/guard.log"
+          echo "code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Zgłoszenie seo-alert
+        env:
+          GUARD_CODE: ${{ steps.guard.outputs.code }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create seo-alert --color B60205 --description "Alarm strażnika SEO" --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
+          NUM=$(gh issue list --repo "$GITHUB_REPOSITORY" --label seo-alert --state open --limit 1 --json number -q '.[0].number // empty')
+          if [ "$GUARD_CODE" = "1" ]; then
+            { echo "Strażnik treści znalazł problemy na produkcji ($(date -u +%F)). Przebieg: $RUN_URL"; echo; cat "$RUNNER_TEMP/report.md"; } > "$RUNNER_TEMP/body.md"
+            if [ -n "$NUM" ]; then
+              gh issue comment "$NUM" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/body.md"
+            else
+              gh issue create --repo "$GITHUB_REPOSITORY" --title "$ALERT_TITLE" --label seo-alert --body-file "$RUNNER_TEMP/body.md"
+            fi
+            exit 1
+          fi
+          if [ "$GUARD_CODE" = "0" ] && [ -n "$NUM" ] && ! grep -q '::warning::' "$RUNNER_TEMP/guard.log"; then
+            gh issue close "$NUM" --repo "$GITHUB_REPOSITORY" --comment "Strażnik treści: produkcja bez uwag ($(date -u +%F)). Przebieg: $RUN_URL"
+          fi

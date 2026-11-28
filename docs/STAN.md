@@ -1,4 +1,16 @@
-# Stan – 23.11.2026
+# Stan – 28.11.2026
+
+## Stan na 28.11.2026 (SEO W35 S14–S17 scalone; sekcje niżej są starsze – tam, gdzie się różnią, obowiązuje ta)
+Plan i rutyna: `docs/SEO-AUTOMAT.md`. Scalone na polecenie właściciela (28.11, „scalaj wszystkie”); lint, typecheck, build lokalnie zielone, testy zadań zielone (pełny przebieg lokalnie: 3–4 testy `ui-global-legend-all` przekraczały limit 10 s przy obciążeniu, osobno przechodzą). CI testów w chwili scalania jeszcze trwało – **do sprawdzenia na `main`**.
+
+| Co | PR | Efekt |
+|---|---|---|
+| W35-S14 mapa do Google | #724 | `seo-sitemap-submit.yml`: po wdrożeniu produkcji PUT mapy do Search Console + status w podsumowaniu (wymaga konta usługi z uprawnieniem „Pełne” – nadane 28.11) |
+| W35-S15 kontrola indeksowania | #722 | raport tygodniowy: obracana próbka 150 adresów, kursor i `coverage` w `gsc-state`, flaga spadku > 20 pp |
+| W35-S16 strażnik treści | #725 | `seo-live-check.yml`: po wdrożeniu i raz na dobę; problem = zgłoszenie `seo-alert` |
+| W35-S17 IndexNow | #723 | pełna lista adresów przy pierwszym przebiegu + harmonogram dobowy |
+
+**Do zrobienia przez właściciela:** w Actions uruchomić ręcznie „SEO – IndexNow” i „SEO – sitemap” (Run workflow); sprawdzić, czy zgłoszenia `seo-alert` nie ma; test na żywo `sitemap.xml` w GSC wyszedł zielony 28.11. Uwaga: skaner sekretów mógł zgłosić publiczny klucz IndexNow w historii #723 – nie jest sekretem.
 
 ## Stan na 23.11.2026 (SEO W25 S01–S13 i „Odkrycia” W26 F01–F06 scalone; sekcje niżej są starsze – tam, gdzie się różnią, obowiązuje ta)
 Scalone autonomicznie na polecenie właściciela (22.11, „bądź decyzyjny”). Przed scaleniem każdego PR: `pnpm lint`, `typecheck`, `test`, `build` (audyt SEO) lokalnie zielone; e2e danej fali uruchomione lokalnie. Pełne e2e w CI na `main` od wcześniej czerwone / przekracza 20 min – **do sprawdzenia**.

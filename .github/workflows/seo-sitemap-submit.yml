@@ -1,0 +1,40 @@
+name: SEO – wysyłka mapy do Google
+
+# S14 (docs/SEO-AUTOMAT.md §4): po udanym wdrożeniu produkcji (Vercel → deployment_status) wysyła
+# https://faktografia.eu/sitemap.xml (i pliki z indeksu) do Search Console, a status mapy zapisuje
+# w podsumowaniu przebiegu. Sekret GSC_SERVICE_ACCOUNT trafia tylko do zmiennej środowiska kroku skryptu.
+# Brak sekretu lub konto tylko do odczytu → komunikat i zielony przebieg.
+on:
+  deployment_status:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: seo-sitemap-submit
+  cancel-in-progress: false
+
+jobs:
+  submit:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Wyślij mapę strony do Search Console
+        env:
+          GSC_SERVICE_ACCOUNT: ${{ secrets.GSC_SERVICE_ACCOUNT }}
+        run: node scripts/seo/gsc-submit-sitemap.mjs
