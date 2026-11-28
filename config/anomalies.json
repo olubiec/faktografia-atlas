@@ -1,0 +1,28 @@
+{
+  "$opis": "Anomalie z całej biblioteki GUS (panel „{Gmina} na tle Polski”). Skrypt scripts/data/build-facts.mjs bierze wszystkie wskaźniki gminne z biblioteki (po wspólnym sicie config/library-curation.json), liczy percentyl każdej gminy i zostawia po kilka najbardziej odstających. Zmiana tu = uruchom build-facts.",
+  "minUnits": 1500,
+  "minYear": 2021,
+  "bins": 20,
+  "changeYears": 10,
+  "pick": { "extreme": 8, "ratio": 2, "side": 2, "change": 3, "neighbour": 4, "minExtremity": 40, "maxNameLength": 80 },
+  "countUnits": ["osoba", "szt.", "ob.", "etat", "gosp."],
+  "rateUnits": ["zł", "m3", "kg", "kWh", "lata", "msc.", "m2"],
+  "dropNamePatterns": [
+    "w wieku \\d",
+    "^w wieku",
+    " ogółem i ",
+    "średnia trzyletnia",
+    "zawartych małżeństw",
+    "roczników",
+    "^gminy łącznie",
+    "\\(pkob",
+    "\\(pkd",
+    "^ogółem$",
+    "\\bwg\\b",
+    "według"
+  ],
+  "valence": {
+    "down": ["bezrobo", "zgon", "zmarł", "wypadk", "ofiar", "przestęp", "dzikie wysypisk", "ubóstw", "samobój", "zachorowa", "zadłuż", "odpady zmieszane", "wymeldowa"],
+    "up": ["wodociąg", "kanalizac", "żłobk", "przedszkol", "czytelni", "wynagrodz", "dochody", "mieszkania oddane", "skolaryzac", "zdawalno", "podmioty gospodarcze", "turystyczne obiekty", "ścieżki rowerowe", "drogi rowerowe", "przyrost naturalny", "saldo migracji"]
+  }
+}

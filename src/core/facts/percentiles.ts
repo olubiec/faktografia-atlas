@@ -30,7 +30,7 @@ export function medianOf(sorted: readonly number[]): number {
 }
 
 /** Wartość kwantyla z posortowanej listy (interpolacja liniowa). */
-function quantile(sorted: readonly number[], q: number): number {
+export function quantile(sorted: readonly number[], q: number): number {
   const pos = q * (sorted.length - 1);
   const i = Math.floor(pos);
   return sorted[i] + (sorted[Math.min(i + 1, sorted.length - 1)] - sorted[i]) * (pos - i);

@@ -7,6 +7,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { createServer } from 'vite';
 import { factsFromValues } from './premieres.mjs';
+import { loadAnomalySources } from './anomaly-sources.mjs';
 
 const root = path.resolve(import.meta.dirname, '../..');
 const dataDir = path.join(root, 'public/data');
@@ -97,8 +98,20 @@ try {
   const pc = config.percentiles ?? { zeroGuard: true, bins: 20, minUnits: 100 };
   const gminas = units.filter((u) => u.level === 'gmi').map((u) => u.teryt);
   const pcts = buildPercentiles({ values, gminas, ...pc, changeYears: config.thresholds.changeYears, changeExcluded: config.changeExcluded });
+  // Anomalie z całej biblioteki GUS (config/anomalies.json): po kilka najbardziej odstających wskaźników dla każdej gminy.
+  // Bez gałęzi data/library plik dostaje dawne percentyle 20 wskaźników (pct + dist), z biblioteką – tylko `an`.
+  const { buildAnomalies } = await vite.ssrLoadModule('/src/core/facts/anomalies.ts');
+  const anConfig = await readJson(path.join(root, 'config/anomalies.json'));
+  const population = values.population;
+  const popLast = population ? population.years.length - 1 : -1;
+  const popByTeryt = Object.fromEntries(gminas.map((t) => [t, population?.values[t]?.[popLast]]).filter(([, v]) => typeof v === 'number'));
+  const sources = population ? await loadAnomalySources({ vite, readLibraryFile, units, population }) : [];
+  const neighbourIds = Object.fromEntries(Object.entries(neighbours).map(([t, n]) => [t, n.ids]));
+  const anomalies = sources.length ? buildAnomalies({ sources, gminas, population: popByTeryt, neighbours: neighbourIds }) : {};
+  console.log(`anomalie: ${Object.keys(anomalies).length} województw, próg ${anConfig.minUnits} gmin na wskaźnik`);
   for (const [woj, shard] of Object.entries(shards)) {
-    if (pcts.shards[woj]) {
+    if (anomalies[woj]) shard.an = anomalies[woj];
+    else if (pcts.shards[woj]) {
       shard.pct = pcts.shards[woj];
       shard.dist = pcts.dist;
     }
