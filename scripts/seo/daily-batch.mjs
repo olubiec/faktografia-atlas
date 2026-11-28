@@ -1,9 +1,9 @@
-// Codzienna porcja do 10 adresów (S18, docs/SEO-AUTOMAT.md): wylicza adresy dnia, zapisuje treść zgłoszenia
+// Codzienna porcja do 10 adresów (S18/S18b, docs/SEO-AUTOMAT.md): wylicza adresy dnia, zapisuje treść zgłoszenia
 // i wysyła te same adresy do IndexNow (Bing). Google dostaje je z listy do odhaczenia w zgłoszeniu.
 //
 // Użycie: node scripts/seo/daily-batch.mjs --out-dir <katalog> [--date RRRR-MM-DD] [--done <plik>] [--dry-run]
-// Wynik w katalogu: batch.txt (adresy), issue.md (treść), title.txt (tytuł). Odhaczone adresy: ze zgłoszeń z etykietą
-// seo-dzien (gh issue list), chyba że podano --done. Błąd IndexNow lub sieci → ::warning::, kod 0 (nigdy czerwony przebieg).
+// Wynik w katalogu: batch.txt (adresy), issue.md (treść), title.txt (tytuł). Odhaczone adresy (lista dnia i sekcja „Zrobione”): ze zgłoszeń z etykietą
+// seo-dzien (gh issue list; stałe zgłoszenie i ewentualne starsze duplikaty), chyba że podano --done. Błąd IndexNow lub sieci → ::warning::, kod 0 (nigdy czerwony przebieg).
 import { execFile } from 'node:child_process';
 import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -71,8 +71,9 @@ async function main() {
     const out = args['out-dir'];
     await mkdir(out, { recursive: true });
     await writeFile(path.join(out, 'batch.txt'), batch.join('\n') + (batch.length ? '\n' : ''));
-    await writeFile(path.join(out, 'issue.md'), db.renderIssueBody(batch, date));
-    await writeFile(path.join(out, 'title.txt'), db.issueTitle(date));
+    const doneAll = [...new Set(done)];
+    await writeFile(path.join(out, 'issue.md'), db.renderIssueBody(batch, date, doneAll));
+    await writeFile(path.join(out, 'title.txt'), db.issueTitleUpdated(date));
 
     const bing = args['dry-run'] ? 'dry-run' : await sendIndexNow(batch, SITE_URL);
     const line = `Lista dnia ${date}: ${batch.length} adresów (w mapie ${urls.length}, odhaczonych ${new Set(done).size}); IndexNow: ${bing}.`;
