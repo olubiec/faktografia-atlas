@@ -1,10 +1,12 @@
+import { readdirSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 import * as sm from '../../src/core/seo/sitemap-diff';
 // @ts-expect-error – moduł .mjs bez typów (skrypt narzędziowy)
 import { runIndexNow } from '../../scripts/seo/indexnow.mjs';
 
 const SITE = 'https://faktografia.eu';
-const KEY = 'd9fe4b466204d8fc98feac4c8127b969';
+// Klucz IndexNow jest publiczny, ale nie wpisujemy go na sztywno (skaner sekretów): bierzemy nazwę pliku z public/.
+const KEY = (readdirSync('public').find((f) => /^[0-9a-f]{32}\.txt$/.test(f)) ?? '').replace(/\.txt$/, '');
 const urlset = (rows: [string, string?][]) =>
   `<urlset>${rows.map(([l, m]) => `<url><loc>${l}</loc>${m ? `<lastmod>${m}</lastmod>` : ''}</url>`).join('')}</urlset>`;
 
