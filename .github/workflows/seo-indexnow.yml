@@ -7,6 +7,9 @@ name: SEO – IndexNow
 on:
   deployment_status:
   workflow_dispatch:
+  # Zapas na dobę (S17), gdy wyzwalacz Vercel nie zadziała; bez zmian w mapie strony nic nie wysyła.
+  schedule:
+    - cron: '17 4 * * *'
 
 # contents: read – checkout; actions: read – pobranie artefaktu z poprzedniego przebiegu (tylko odczyt).
 permissions:
@@ -21,6 +24,7 @@ jobs:
   indexnow:
     if: >-
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule' ||
       (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production')
     runs-on: ubuntu-24.04
     timeout-minutes: 10

@@ -30,6 +30,11 @@ export function parseSitemap(xml: string): Map<string, string> {
   return out;
 }
 
+/** Wszystkie adresy z mapy strony (także z kilku sklejonych plików), każdy raz, w kolejności pojawienia się. */
+export function allUrls(xml: string): string[] {
+  return [...parseSitemap(xml).keys()];
+}
+
 /** Adresy plików wymienionych w indeksie mapy strony (`<sitemapindex>`). */
 export function sitemapLocs(indexXml: string): string[] {
   return [...indexXml.matchAll(/<sitemap>([\s\S]*?)<\/sitemap>/g)]
