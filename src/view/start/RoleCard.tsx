@@ -1,5 +1,5 @@
 // Karta roli panelu „{Gmina} na tle Polski” (W33-O07, docs/KONCEPT-ODKRYCIA-V2.md §3).
-import { ArrowDownCircle, ArrowUpCircle, GraphUp, WarningCircle } from 'iconoir-react';
+import { ArrowDownCircle, ArrowUpCircle, GraphUp, StatsUpSquare, WarningCircle } from 'iconoir-react';
 import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import type { RoleCard as Card, RoleId } from '@/core/facts/roles';
@@ -11,6 +11,7 @@ import { YouAreHere } from './YouAreHere';
 
 const LABEL: Record<RoleId, { text: string; icon: typeof GraphUp }> = {
   unusual: { text: 'Najbardziej nietypowe', icon: WarningCircle },
+  extreme: { text: 'Na krańcu rozkładu', icon: StatsUpSquare },
   strong: { text: 'Mocna strona', icon: ArrowUpCircle },
   weak: { text: 'Słabsza strona', icon: ArrowDownCircle },
   change: { text: 'Największa zmiana w 10 lat', icon: GraphUp },
@@ -30,6 +31,9 @@ export interface RoleCardProps {
 export function RoleCard({ card, teryt, name, dist, to, onWarm, highlight = false }: RoleCardProps) {
   const label = LABEL[card.role];
   const ind = card.indicatorId ? resolveIndicator(card.indicatorId) : null;
+  // Karta z pliku anomalii niesie własną jednostkę i rozkład; starsze karty biorą je z configu wskaźników.
+  const unitLabel = card.unit ?? ind?.unit;
+  const distribution = card.dist ?? dist;
   const href = card.indicatorId ? mapHref({ indicatorId: card.indicatorId, year: card.year, teryt, level: levelOf(teryt) }) : '';
   // Udostępniamy adres mapy z tym wskaźnikiem i miejscem (pełny, z domeną).
   const link = `${typeof window === 'undefined' ? '' : window.location.origin}${href}`;
@@ -41,18 +45,20 @@ export function RoleCard({ card, teryt, name, dist, to, onWarm, highlight = fals
         {label.text}
       </h4>
       <p className="m-0 text-base font-semibold leading-snug text-tusz break-words">{card.main}</p>
-      {!card.none && ind && card.value !== undefined && (
-        <YouAreHere dist={dist} value={card.value} name={name} unitLabel={ind.unit} />
+      {!card.none && unitLabel !== undefined && card.value !== undefined && (
+        <YouAreHere dist={distribution} value={card.value} name={name} unitLabel={unitLabel} />
       )}
       {card.reference && <p className="m-0 text-sm text-tusz">{card.reference}</p>}
       {card.source && <p className="m-0 text-xs text-olowek">{card.source}</p>}
       {!card.none && card.indicatorId && (
         <div className="flex flex-wrap items-center gap-3">
-          <Button asChild variant="secondary">
-            <Link to={to(href)} onPointerEnter={onWarm} onTouchStart={onWarm} onFocus={onWarm}>
-              Ranking gmin
-            </Link>
-          </Button>
+          {!card.noRanking && (
+            <Button asChild variant="secondary">
+              <Link to={to(href)} onPointerEnter={onWarm} onTouchStart={onWarm} onFocus={onWarm}>
+                Ranking gmin
+              </Link>
+            </Button>
+          )}
           <ShareFact place={name} card={card} link={link} />
         </div>
       )}

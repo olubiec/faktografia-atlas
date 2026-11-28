@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { profileFromShard, type NeighbourProfile } from '@/core/facts/neighbour-compare';
+import { pickAnomalyCards } from '@/core/facts/anomaly-cards';
 import { pickRoles, type RoleCard as Card } from '@/core/facts/roles';
 import {
   factView,
@@ -16,6 +17,7 @@ import {
 } from '@/core/start/discoveries';
 import { loadPlaceFacts } from '@/core/start/load-discoveries';
 import { loadUnits } from '@/core/data/load-atlas-data';
+import { AnomalyNeighbourCard } from './AnomalyNeighbourCard';
 import { FactCard } from './FactCard';
 import { NeighbourCard } from './NeighbourCard';
 import { PlaceExtras } from './PlaceExtras';
@@ -65,10 +67,10 @@ export function PlacePanel({ file, cards, teryt, name, names, twin, to, onWarm, 
   // Losowa gmina z tego samego województwa: wybór raz na wizytę panelu.
   const [seed] = useState(() => Math.random());
   const random = useMemo(() => {
-    const ids = Object.keys(file.pct?.u ?? {}).filter((t) => t !== teryt);
+    const ids = Object.keys(file.an?.u ?? file.pct?.u ?? {}).filter((t) => t !== teryt);
     return ids.length ? ids[Math.floor(seed * ids.length)] : null;
   }, [file, teryt, seed]);
-  const anyIndicator = cards.find((c) => c.indicatorId)?.indicatorId ?? 'population';
+  const anyIndicator = cards.find((c) => c.indicatorId && !c.noRanking)?.indicatorId ?? 'population';
   const near = firstNeighbour(file, teryt);
   return (
     <div className="flex flex-col gap-4" data-slot="place-facts" data-teryt={teryt}>
@@ -84,7 +86,11 @@ export function PlacePanel({ file, cards, teryt, name, names, twin, to, onWarm, 
         {cards.map((c, i) => (
           <RoleCard key={c.role} card={c} teryt={teryt} name={name} dist={c.indicatorId ? file.dist?.[c.indicatorId] : null} to={to} onWarm={onWarm} highlight={i === 0 && c.role === 'unusual'} />
         ))}
-        {me && neighbours.length > 0 && <NeighbourCard me={me} neighbours={neighbours} to={to} onWarm={onWarm} />}
+        {file.an ? (
+          <AnomalyNeighbourCard an={file.an} teryt={teryt} name={name} names={names} to={to} onWarm={onWarm} />
+        ) : (
+          me && neighbours.length > 0 && <NeighbourCard me={me} neighbours={neighbours} to={to} onWarm={onWarm} />
+        )}
       </div>
       {twin && twinName && <SimilarPlace twin={twin} twinName={twinName} to={to} onWarm={onWarm} />}
       <p className="m-0 flex flex-wrap gap-x-4 gap-y-2">
@@ -140,7 +146,7 @@ export function PlaceFacts({ teryt, name, to, onWarm, onChange }: PlaceFactsProp
   const known = name ?? names?.get(teryt) ?? null;
   const current = loaded?.teryt === teryt ? loaded : null;
   const ok = current && 'facts' in current ? current : null;
-  const cards = useMemo(() => (ok ? pickRoles(ok.file, teryt) : []), [ok, teryt]);
+  const cards = useMemo(() => (ok ? (ok.file.an ? pickAnomalyCards(ok.file.an, teryt) : pickRoles(ok.file, teryt)) : []), [ok, teryt]);
 
   if (ok && known && cards.length > 0) {
     return <PlacePanel file={ok.file} cards={cards} teryt={teryt} name={known} names={names} twin={ok.twin} to={to} onWarm={onWarm} onChange={onChange} />;

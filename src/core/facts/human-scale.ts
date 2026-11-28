@@ -61,7 +61,7 @@ function perCapita(value: number, unit: string): string | null {
   return `${Math.round(share * 10)} na 10 mieszkańców`
 }
 
-function times(ratio: number): string {
+export function times(ratio: number): string {
   const r = ratio >= 1 ? ratio : 1 / ratio
   const rounded = r >= 10 ? Math.round(r) : Math.round(r * 10) / 10
   const word = Number.isInteger(rounded) ? 'razy' : 'raza'

@@ -5,6 +5,7 @@ import factsConfig from '../../../config/facts.json';
 import { decodeFact, decodeTwin, type EncodedFact } from '../facts/codec';
 import { factSentence } from '../facts/sentences';
 import { dailyIndex, type DailyEntry, type FactsStart, type StartList } from '../facts/start';
+import type { AnomalyShard } from '../facts/anomaly-types';
 import type { DistEntry, PercentileShard } from '../facts/percentile-types';
 import type { Fact, Level } from '../facts/types';
 import { displayUnit, formatValue, getFractionDigits } from '../format/number';
@@ -27,7 +28,7 @@ export interface FactsFile {
   units: Record<string, EncodedFact[]>;
   near?: Record<string, string[]>;
   twins?: Record<string, (string | number)[]>;
-  pct?: PercentileShard; dist?: Record<string, DistEntry>;
+  pct?: PercentileShard; dist?: Record<string, DistEntry>; an?: AnomalyShard; // an = anomalie z biblioteki GUS; stary plik ma tylko pct
 }
 
 export function levelOf(teryt: string): Level {

@@ -7,7 +7,7 @@ import { humanScale } from './human-scale';
 import type { DistEntry, PercentileShard } from './percentile-types';
 import { valenceOf } from './valence';
 
-export type RoleId = 'unusual' | 'strong' | 'weak' | 'change';
+export type RoleId = 'unusual' | 'extreme' | 'strong' | 'weak' | 'change';
 
 export interface RoleCard {
   role: RoleId;
@@ -20,6 +20,10 @@ export interface RoleCard {
   percentile?: number;
   value?: number;
   year?: number;
+  /** Jednostka i rozkład z pliku anomalii (karta nie szuka ich w configu); brak linku do rankingu, gdy wartość jest przeliczona. */
+  unit?: string;
+  dist?: DistEntry;
+  noRanking?: boolean;
 }
 
 /** Podzbiór pliku województwa potrzebny do kart. */
