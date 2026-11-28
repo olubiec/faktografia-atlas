@@ -90,7 +90,7 @@ function changeCard(pct: PercentileShard, teryt: string, used: Set<string>): Rol
       role: 'change',
       indicatorId: id,
       main: `${subjectOf(id)}: o ${pctChange}% ${rel > 0 ? 'więcej' : 'mniej'} niż w ${to - 10} roku.`,
-      reference: `W ${to - 10} roku: ${fmt(from)} ${ind.unit}, w ${to}: ${fmt(now)} ${ind.unit}.`,
+      reference: `W ${to - 10} roku: ${fmt(from)}, w ${to}: ${fmt(now)} (${ind.unit}).`,
       source: `GUS BDL, ${to - 10}–${to} · ${ind.unit}`,
       percentile: flat[k + 3],
       value: now,

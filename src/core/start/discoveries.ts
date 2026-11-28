@@ -5,6 +5,7 @@ import factsConfig from '../../../config/facts.json';
 import { decodeFact, decodeTwin, type EncodedFact } from '../facts/codec';
 import { factSentence } from '../facts/sentences';
 import { dailyIndex, type DailyEntry, type FactsStart, type StartList } from '../facts/start';
+import type { DistEntry, PercentileShard } from '../facts/percentile-types';
 import type { Fact, Level } from '../facts/types';
 import { displayUnit, formatValue, getFractionDigits } from '../format/number';
 import { shortIndicatorName } from '../seo/sentences';
@@ -24,10 +25,9 @@ export interface FactsFile {
   woj: string;
   generatedAt: string;
   units: Record<string, EncodedFact[]>;
-  /** Sąsiedzi jednostki (ten sam poziom), W26-F03. */
   near?: Record<string, string[]>;
-  /** Bliźniak F8: ['F8', TERYT bliźniaka, rok, ile wskaźników, odległość]. */
   twins?: Record<string, (string | number)[]>;
+  pct?: PercentileShard; dist?: Record<string, DistEntry>;
 }
 
 export function levelOf(teryt: string): Level {
