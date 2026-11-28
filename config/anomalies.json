@@ -5,6 +5,7 @@
   "bins": 20,
   "changeYears": 10,
   "pick": { "extreme": 8, "ratio": 2, "side": 2, "change": 3, "neighbour": 4, "minExtremity": 40, "maxNameLength": 80 },
+  "twin": { "minShare": 0.7, "minDims": 30 },
   "countUnits": ["osoba", "szt.", "ob.", "etat", "gosp."],
   "rateUnits": ["zł", "m3", "kg", "kWh", "lata", "msc.", "m2"],
   "dropNamePatterns": [

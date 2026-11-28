@@ -109,7 +109,13 @@ try {
   const neighbourIds = Object.fromEntries(Object.entries(neighbours).map(([t, n]) => [t, n.ids]));
   const anomalies = sources.length ? buildAnomalies({ sources, gminas, population: popByTeryt, neighbours: neighbourIds }) : {};
   console.log(`anomalie: ${Object.keys(anomalies).length} województw, próg ${anConfig.minUnits} gmin na wskaźnik`);
+  // Najbardziej podobna gmina: z całej biblioteki (te same wskaźniki co anomalie); bez biblioteki zostaje dawny bliźniak z ~10 wskaźników.
+  const { findLibraryTwins } = await vite.ssrLoadModule('/src/core/facts/anomaly-twins.ts');
+  const { encodeTwin } = await vite.ssrLoadModule('/src/core/facts/codec.ts');
+  const libTwins = sources.length ? findLibraryTwins({ sources, gminas, population: popByTeryt }) : new Map();
+  console.log(`bliźniaki z biblioteki: ${libTwins.size} gmin`);
   for (const [woj, shard] of Object.entries(shards)) {
+    for (const [t, tw] of libTwins) if (t.startsWith(woj)) (shard.twins ??= {})[t] = encodeTwin(tw);
     if (anomalies[woj]) shard.an = anomalies[woj];
     else if (pcts.shards[woj]) {
       shard.pct = pcts.shards[woj];
