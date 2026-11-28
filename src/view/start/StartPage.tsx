@@ -12,7 +12,10 @@ import { homeSearch } from '@/core/url/home';
 import { Discoveries } from './Discoveries';
 
 /** Dane mapy rozgrzewamy dopiero po tym czasie (po „networkidle” strony), żeby `/` ładowała się lekko. */
-const DATA_PRELOAD_MS = 3000;
+// Kod mapy (ok. 1,3 MB) nie jest „na zapas” zaraz po starcie: najpierw strona ma być lekka (Lighthouse: TBT, nieużywany JS).
+// Pobieramy go, gdy przeglądarka odpoczywa, po dłuższej chwili; zamiar użytkownika (dotyk, najechanie) uruchamia to od razu.
+const CODE_PRELOAD_MS = 8000;
+const DATA_PRELOAD_MS = 10000;
 
 const STEPS = [
   '1. Wybierz dane, np. bezrobocie albo ludność.',
@@ -43,13 +46,19 @@ export function StartPage() {
 
   // Po wczytaniu strony (w wolnej chwili) pobieramy kod mapy, a chwilę później jej dane (nie przy oszczędzaniu danych).
   useEffect(() => {
-    const codeId = window.setTimeout(preloadMap, 600);
+    let idleId: number | undefined;
+    const codeId = window.setTimeout(() => {
+      if (isFrugalNetwork()) return;
+      if ('requestIdleCallback' in window) idleId = window.requestIdleCallback(preloadMap, { timeout: 4000 });
+      else preloadMap();
+    }, CODE_PRELOAD_MS);
     const dataId = window.setTimeout(() => {
       if (!isFrugalNetwork()) preloadMapData();
     }, DATA_PRELOAD_MS);
     return () => {
       window.clearTimeout(codeId);
       window.clearTimeout(dataId);
+      if (idleId !== undefined) window.cancelIdleCallback(idleId);
     };
   }, []);
 

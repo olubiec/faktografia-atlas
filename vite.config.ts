@@ -60,6 +60,10 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
+  build: {
+    // Mapy źródeł (Lighthouse: „Brakuje map źródeł”) – kod strony i tak jest publiczny w repozytorium.
+    sourcemap: true,
+  },
   preview: {
     headers: getVercelHeaders(),
   },
