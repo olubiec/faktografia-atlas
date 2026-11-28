@@ -1,0 +1,82 @@
+{
+ "avg-wage": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "cars-per-1000": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "density": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "dwelling-area-per-person": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "dwellings-per-1000": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "forest-cover": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "income-per-capita": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "library-readers-per-1000": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "median-age": {
+  "year": 2026,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "migration-balance": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "natural-increase": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "population": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "preschool-3-6": {
+  "year": 2025,
+  "since": "2026-11-17T10:24:24.317Z"
+ },
+ "regon-per-10k": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "sewerage-share": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "share-65plus": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "spending-per-capita": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "tourist-nights-per-1000": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "unemployed-share-working-age": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ },
+ "unemployment-rate": {
+  "year": 2025,
+  "since": "1970-01-01T00:00:00.000Z"
+ }
+}
