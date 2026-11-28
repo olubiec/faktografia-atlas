@@ -89,10 +89,13 @@ export function Header() {
   let logoSrc = activeIsDark ? '/brand/faktografia-logo-jasne.svg' : '/brand/faktografia-logo-granat.svg';
   // STYL §4: logo w nagłówku 40 px (telefon) i 48 px (komputer); ujemne -ml i -top cofają margines wewnątrz pliku SVG (litery są w nim przesunięte w dół i w prawo), więc litery stoją równo.
   let logoClass = 'relative -top-1.5 md:-top-2 h-10 md:h-12 w-auto -ml-3 md:-ml-3.5';
+  // Wymiary w proporcji pliku SVG (Lighthouse: rezerwuje miejsce, zero przesunięć układu).
+  let logoSize = { width: 114, height: 40 };
 
   if (isZnakLogo) {
     logoSrc = activeIsDark ? '/brand/faktografia-znak-jasny.svg' : '/brand/faktografia-znak-granat.svg';
     logoClass = 'h-10 md:h-12 w-auto';
+    logoSize = { width: 40, height: 40 };
   }
 
   // Menu telefonu: Start i Mapa jak na komputerze + strony opisowe; każdy link raz.
@@ -122,7 +125,7 @@ export function Header() {
   return (
     <header className="h-14 md:h-18 flex justify-between items-center gap-2 px-4 md:px-8 border-b border-linia bg-kalka text-tusz relative z-20 shrink-0">
       <Link to={startTo} aria-label="Faktografia – strona główna" className="flex items-center min-h-11 shrink-0">
-        <img src={logoSrc} alt="Faktografia" className={logoClass} />
+        <img src={logoSrc} alt="Faktografia" className={logoClass} {...logoSize} />
       </Link>
 
       <div className="flex items-center gap-2 md:gap-4">

@@ -77,8 +77,8 @@ export function SiteFooter({ decorativeLogo = false, initialStatus }: SiteFooter
           src={logoSrc}
           alt={decorativeLogo ? '' : 'Faktografia'}
           className="block h-10 md:h-12 w-auto -ml-3 md:-ml-3.5 -mt-4 -mb-1"
-          width={160}
-          height={32}
+          width={114}
+          height={40}
         />
         <p className="mt-4 max-w-prose text-sm font-[400] text-olowek leading-[1.6]">
           Faktografia to niezależna, interaktywna mapa Polski prezentująca rzetelne statystyki GUS dla każdego województwa, powiatu i gminy. Dane i opracowanie na licencji CC BY 4.0.

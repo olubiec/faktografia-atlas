@@ -50,8 +50,8 @@ export function Window({ open, onOpenChange, title, description, mode = 'dialog'
         <DialogHeader className="pr-12">
           {brand && inRouter && (
             <Link to="/" onClick={() => onOpenChange(false)} aria-label="Faktografia – strona główna" data-slot="window-logo" className="mb-1 flex min-h-11 w-fit items-center">
-              <img src="/brand/faktografia-logo-granat.svg" alt="" className="logo-na-jasnym h-10 w-auto -ml-3" />
-              <img src="/brand/faktografia-logo-jasne.svg" alt="" className="logo-na-ciemnym h-10 w-auto -ml-3" />
+              <img src="/brand/faktografia-logo-granat.svg" alt="" className="logo-na-jasnym h-10 w-auto -ml-3" width={114} height={40} />
+              <img src="/brand/faktografia-logo-jasne.svg" alt="" className="logo-na-ciemnym h-10 w-auto -ml-3" width={114} height={40} />
             </Link>
           )}
           <DialogTitle>{title}</DialogTitle>
