@@ -26,7 +26,7 @@ async function readOptional(file) {
 }
 
 /** Klucz = nazwa jedynego pliku public/<32 znaki hex>.txt (publiczny z założenia protokołu IndexNow). */
-async function findKey() {
+export async function findKey() {
   const files = (await readdir(path.join(root, 'public'))).filter((f) => /^[0-9a-f]{32}\.txt$/.test(f));
   if (files.length !== 1) throw new Error(`oczekiwano jednego pliku klucza w public/, jest ${files.length}`);
   return files[0].replace(/\.txt$/, '');
@@ -39,7 +39,7 @@ async function fetchText(url, fetch = globalThis.fetch) {
 }
 
 /** Cała mapa strony z produkcji: indeks + wszystkie wymienione w nim pliki, sklejone w jeden tekst. */
-async function fetchSitemap(siteUrl, sitemapLocs, fetch = globalThis.fetch) {
+export async function fetchSitemap(siteUrl, sitemapLocs, fetch = globalThis.fetch) {
   const index = await fetchText(`${siteUrl}/sitemap.xml`, fetch);
   const locs = sitemapLocs(index);
   // stary format (jeden plik urlset zamiast indeksu) też obsługujemy
@@ -50,7 +50,7 @@ async function fetchSitemap(siteUrl, sitemapLocs, fetch = globalThis.fetch) {
 }
 
 /** Wysyła jedną paczkę; zwraca kod HTTP. */
-async function submit(batch, { key, host, siteUrl, fetch }) {
+export async function submit(batch, { key, host, siteUrl, fetch }) {
   const res = await fetch(ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
@@ -63,7 +63,7 @@ async function submit(batch, { key, host, siteUrl, fetch }) {
 }
 
 /** Czy `{siteUrl}/{key}.txt` zwraca dokładnie klucz (IndexNow sprawdza to samo). */
-async function keyIsLive(siteUrl, key, fetch) {
+export async function keyIsLive(siteUrl, key, fetch) {
   const url = `${siteUrl}/${key}.txt`;
   try {
     const res = await fetch(url, { headers: { 'User-Agent': 'faktografia-atlas-indexnow' } });

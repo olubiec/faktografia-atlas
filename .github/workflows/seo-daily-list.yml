@@ -1,0 +1,65 @@
+name: SEO – lista dnia
+
+# S18 (docs/SEO-AUTOMAT.md): raz na dobę wybiera do 10 priorytetowych adresów (bez gmin i miejscowości), wysyła je do
+# IndexNow (Bing) i zakłada przypięte zgłoszenie „SEO – dzień RRRR-MM-DD” z checklistą dla Search Console (Google).
+# Odhaczone adresy nie wracają; nieodhaczone wracają na listę następnego dnia (poprzednie zgłoszenie jest zamykane).
+# Błąd IndexNow lub przypięcia = ostrzeżenie, nie czerwony przebieg.
+on:
+  schedule:
+    - cron: '43 5 * * *'
+  workflow_dispatch:
+
+# contents: read – checkout; issues: write – zgłoszenia seo-dzien i ich przypinanie.
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: seo-daily-list
+  cancel-in-progress: false
+
+jobs:
+  daily-list:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      LABEL: seo-dzien
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Wylicz listę dnia i wyślij do IndexNow
+        run: node scripts/seo/daily-batch.mjs --out-dir "$RUNNER_TEMP/daily"
+
+      - name: Zgłoszenie z listą dnia
+        run: |
+          gh label create "$LABEL" --color 0E8A16 --description "Lista dnia do Search Console" --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
+          if [ ! -s "$RUNNER_TEMP/daily/batch.txt" ]; then
+            echo "::warning::Lista dnia jest pusta (wszystko odhaczone albo brak mapy strony) – zgłoszenia nie zakładam."
+            exit 0
+          fi
+          TITLE=$(cat "$RUNNER_TEMP/daily/title.txt")
+          OLD=$(gh issue list --repo "$GITHUB_REPOSITORY" --label "$LABEL" --state open --json number -q '.[].number')
+          NEW_URL=$(gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --label "$LABEL" --body-file "$RUNNER_TEMP/daily/issue.md")
+          echo "Zgłoszenie: $NEW_URL"
+          NEW=${NEW_URL##*/}
+          # poprzednie: odpięcie i zamknięcie (nieodhaczone adresy wrócą do puli, bo pomijamy tylko odhaczone)
+          for N in $OLD; do
+            ID=$(gh issue view "$N" --repo "$GITHUB_REPOSITORY" --json id -q .id || true)
+            [ -n "$ID" ] && { gh api graphql -f query='mutation($id:ID!){unpinIssue(input:{issueId:$id}){issue{number}}}' -f id="$ID" >/dev/null 2>&1 || echo "::warning::Nie udało się odpiąć zgłoszenia #$N."; }
+            gh issue close "$N" --repo "$GITHUB_REPOSITORY" --comment "Zastąpione listą z nowego dnia ($NEW_URL). Nieodhaczone adresy wrócą na nową listę." || true
+          done
+          # przypięcie nowego (limit GitHuba: 3 przypięte)
+          NEW_ID=$(gh issue view "$NEW" --repo "$GITHUB_REPOSITORY" --json id -q .id || true)
+          if [ -z "$NEW_ID" ] || ! gh api graphql -f query='mutation($id:ID!){pinIssue(input:{issueId:$id}){issue{number}}}' -f id="$NEW_ID" >/dev/null 2>&1; then
+            echo "::warning::Nie udało się przypiąć zgłoszenia #$NEW (limit 3 przypiętych albo brak uprawnień)."
+          fi
